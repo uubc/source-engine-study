@@ -64,6 +64,7 @@
 #include "playernet_vars.h"
 #include "c_playerlocaldata.h"
 #include "ivmodemanager.h"
+#include "iclientshadowmgr.h"
 
 #ifdef PORTAL
 //#include "C_Portal_Player.h"
@@ -2211,7 +2212,7 @@ void CViewRender::DrawRenderablesInList( CUtlVector< IClientRenderable * > &list
 		// Non-view models wanting to render in view model list...
 		if ( pRenderable->ShouldDraw() )
 		{
-			m_pCurrentlyDrawingEntity = (C_BaseEntity*)pUnk->GetBaseEntity();
+			m_pCurrentlyDrawingEntity = pUnk->GetBaseEntity();
 			pRenderable->DrawModel( STUDIO_RENDER | flags );
 		}
 	}
