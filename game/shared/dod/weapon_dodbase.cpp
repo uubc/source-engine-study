@@ -536,7 +536,7 @@ bool CWeaponDODBase::Deploy()
 		// clientside animation sequences on this model, which will be using bad sequences for the world model.
 		int iDesiredModelIndex = 0;
 		C_BasePlayer *localplayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-		if ( localplayer && localplayer == GetOwner() && !C_BasePlayer::ShouldDrawLocalPlayer() )		// FIXME: use localplayer->ShouldDrawThisPlayer() instead.
+		if ( localplayer && localplayer == GetOwner() && !localplayer->GetClientPlayer()->ShouldDrawLocalPlayer() )		// FIXME: use localplayer->ShouldDrawThisPlayer() instead.
 		{
 			iDesiredModelIndex = m_iViewModelIndex;
 		}
