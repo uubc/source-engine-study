@@ -65,6 +65,7 @@
 #include "c_playerlocaldata.h"
 #include "ivmodemanager.h"
 #include "iclientshadowmgr.h"
+#include "particles/particles.h"
 
 #ifdef PORTAL
 //#include "C_Portal_Player.h"

@@ -18,7 +18,7 @@
 #include "materialsystem/MaterialSystemUtil.h"
 
 #ifndef PORTAL 
-#pragma message ( "This file should only be built with portal builds" )
+//#pragma message ( "This file should only be built with portal builds" )
 #endif
 
 // externs
