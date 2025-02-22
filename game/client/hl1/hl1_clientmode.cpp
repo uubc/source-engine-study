@@ -30,6 +30,8 @@ public:
 	virtual void	CreateMove( float flInputSampleTime, CUserCmd *cmd );
 	virtual void	LevelInit( const char *newmap );
 	virtual void	LevelShutdown( void );
+	int GetKillCamMode() const { return OBS_MODE_NONE; }
+	int GetKillCamTarget1() const { return 0; }
 };
 
 CHLModeManager::CHLModeManager( void )

@@ -14,11 +14,12 @@
 
 #include "mathlib/vector.h"
 #include "iprediction.h"
-#include "c_baseplayer.h"
+//#include "c_baseplayer.h"
 #include "cdll_bounded_cvars.h"
 
 class CMoveData;
 class CUserCmd;
+class C_BasePlayer;
 
 #if !defined( NO_ENTITY_PREDICTION )
 //-----------------------------------------------------------------------------

@@ -55,6 +55,7 @@
 
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
+#include "ivmodemanager.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -64,9 +65,7 @@
 #undef CBasePlayer	
 #endif
 
-int g_nKillCamMode = OBS_MODE_NONE;
-int g_nKillCamTarget1 = 0;
-int g_nKillCamTarget2 = 0;
+
 
 extern ConVar mp_forcecamera; // in gamevars_shared.h
 
@@ -556,7 +555,7 @@ C_BaseEntity	*C_BasePlayer::GetObserverTarget() const	// returns players target 
 }
 
 // Called from Recv Proxy, mainly to reset tone map scale
-void C_BasePlayer::SetObserverTarget( EHANDLE hObserverTarget )
+void C_BasePlayer::SetObserverTarget(CBaseHandle hObserverTarget )
 {
 	// If the observer target is changing to an entity that the client doesn't know about yet,
 	// it can resolve to NULL.  If the client didn't have an observer target before, then
@@ -789,8 +788,8 @@ void C_BasePlayer::PostDataUpdate( DataUpdateType_t updateType )
 
 		int iLocalPlayerIndex = engine->GetLocalPlayer();
 
-		if ( g_nKillCamMode )
-			iLocalPlayerIndex = g_nKillCamTarget1;
+		if (modemanager->GetKillCamMode())
+			iLocalPlayerIndex = modemanager->GetKillCamTarget1();
 
 		if ( iLocalPlayerIndex == entindex())
 		{
@@ -1875,7 +1874,6 @@ void C_BasePlayer::ThirdPersonSwitch( bool bThirdperson )
 	static ConVarRef vr_first_person_uses_world_model( "vr_first_person_uses_world_model" );
 	return !LocalPlayerInFirstPersonView() || vr_first_person_uses_world_model.GetBool();
 }
-
 
 
 //-----------------------------------------------------------------------------

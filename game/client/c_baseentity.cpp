@@ -2894,7 +2894,7 @@ void C_BaseEntity::UpdateOnRemove( void )
 #endif
 	{
 		Assert(!GetEngineObject()->GetMoveParent());
-		C_BaseAnimating::AutoAllowBoneAccess boneaccess(true, true);
+		AutoAllowBoneAccess boneaccess(true, true);
 		GetEngineObject()->UnlinkFromHierarchy();
 		//GetEngineObject()->UnlinkFromHierarchy();
 		GetEngineObject()->SetGroundEntity(NULL);

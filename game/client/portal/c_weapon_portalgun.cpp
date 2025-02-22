@@ -756,7 +756,7 @@ void C_WeaponPortalgun::OnDataChanged( DataUpdateType_t updateType )
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 		{
-			C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, true );
+			AutoAllowBoneAccess boneaccess( true, true );
 			StartEffects();
 		}
 

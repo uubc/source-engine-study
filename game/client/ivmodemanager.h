@@ -24,6 +24,8 @@ public:
 	virtual void	SwitchMode( bool commander, bool force ) = 0;
 	virtual void	LevelInit( const char *newmap ) = 0;
 	virtual void	LevelShutdown( void ) = 0;
+	virtual int		GetKillCamMode() const = 0;
+	virtual int GetKillCamTarget1() const = 0;
 };
 
 extern IVModeManager *modemanager;

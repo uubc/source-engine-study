@@ -25,7 +25,7 @@
 
 // NVNT for fov updates
 #include "haptics/ihaptics.h"
-
+#include "ivmodemanager.h"
 
 // Don't alias here
 #if defined( CPortal_Player )
@@ -968,7 +968,7 @@ bool C_Portal_Player::ShouldDraw( void )
 
 const QAngle& C_Portal_Player::EyeAngles()
 {
-	if ( IsLocalPlayer() && g_nKillCamMode == OBS_MODE_NONE )
+	if ( IsLocalPlayer() && modemanager->GetKillCamMode() == OBS_MODE_NONE )
 	{
 		return BaseClass::EyeAngles();
 	}
@@ -1395,7 +1395,7 @@ void C_Portal_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNe
 
 	if ( m_lifeState != LIFE_ALIVE )
 	{
-		if ( g_nKillCamMode != 0 )
+		if (modemanager->GetKillCamMode() != 0 )
 		{
 			return;
 		}

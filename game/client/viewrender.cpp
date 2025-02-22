@@ -61,6 +61,9 @@
 #include "cl_mat_stub.h"
 #include "portal_render_targets.h" //depth doubler
 #include "PortalRender.h"
+#include "playernet_vars.h"
+#include "c_playerlocaldata.h"
+#include "ivmodemanager.h"
 
 #ifdef PORTAL
 //#include "C_Portal_Player.h"
@@ -1161,7 +1164,7 @@ void CViewRender::DriftPitch(void)
 {
 	float		delta, move;
 
-	C_BasePlayer* player = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity* player = EntityList()->GetLocalPlayer();
 	if (!player)
 		return;
 
@@ -1259,15 +1262,15 @@ void CViewRender::OnRenderStart()
 	SetUpViews();
 
 	// Adjust mouse sensitivity based upon the current FOV
-	C_BasePlayer* player = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity* player = EntityList()->GetLocalPlayer();
 	if (player)
 	{
-		default_fov.SetValue(player->m_iDefaultFOV);
+		default_fov.SetValue(player->GetClientPlayer()->GetDefaultFOV());
 
 		//Update our FOV, including any zooms going on
 		int iDefaultFOV = default_fov.GetInt();
-		int	localFOV = player->GetFOV();
-		int min_fov = player->GetMinFOV();
+		int	localFOV = player->GetClientPlayer()->GetFOV();
+		int min_fov = player->GetClientPlayer()->GetMinFOV();
 
 		// Don't let it go too low
 		localFOV = MAX(min_fov, localFOV);
@@ -1360,12 +1363,12 @@ float CViewRender::GetZFar()
 		// Use the far Z from the map's parameters.
 		farZ = r_mapextents.GetFloat() * 1.73205080757f;
 
-		C_BasePlayer* pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-		if (pPlayer && pPlayer->GetFogParams())
+		IClientEntity* pPlayer = EntityList()->GetLocalPlayer();
+		if (pPlayer && pPlayer->GetClientPlayer()->GetFogParams())
 		{
-			if (pPlayer->GetFogParams()->farz > 0)
+			if (pPlayer->GetClientPlayer()->GetFogParams()->farz > 0)
 			{
-				farZ = pPlayer->GetFogParams()->farz;
+				farZ = pPlayer->GetClientPlayer()->GetFogParams()->farz;
 			}
 		}
 	}
@@ -1433,7 +1436,7 @@ void CViewRender::SetUpViews()
 	// Enable spatial partition access to edicts
 	partition->SuppressLists(PARTITION_ALL_CLIENT_EDICTS, false);
 
-	C_BasePlayer* pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity* pPlayer = EntityList()->GetLocalPlayer();
 
 	// You in-view weapon aim.
 	bool bCalcViewModelView = false;
@@ -1456,14 +1459,14 @@ void CViewRender::SetUpViews()
 		// FIXME: What happens when there's no player?
 		if (pPlayer)
 		{
-			pPlayer->CalcView(view.origin, view.angles, view.zNear, view.zFar, view.fov);
+			pPlayer->GetClientPlayer()->CalcView(view.origin, view.angles, view.zNear, view.zFar, view.fov);
 
 			// If we are looking through another entities eyes, then override the angles/origin for view
 			int viewentity = render->GetViewEntity();
 
-			if (!g_nKillCamMode && (pPlayer->entindex() != viewentity))
+			if (!modemanager->GetKillCamMode() && (pPlayer->entindex() != viewentity))
 			{
-				C_BaseEntity* ve = (C_BaseEntity*)EntityList()->GetEnt(viewentity);
+				IClientEntity* ve = EntityList()->GetEnt(viewentity);
 				if (ve)
 				{
 					VectorCopy(ve->GetEngineObject()->GetAbsOrigin(), view.origin);
@@ -1547,7 +1550,7 @@ void CViewRender::SetUpViews()
 	if (bCalcViewModelView)
 	{
 		Assert(pPlayer != NULL);
-		pPlayer->CalcViewModelView(ViewModelOrigin, ViewModelAngles);
+		pPlayer->GetClientPlayer()->CalcViewModelView(ViewModelOrigin, ViewModelAngles);
 	}
 
 	// Disable spatial partition access
@@ -1566,7 +1569,7 @@ void CViewRender::SetUpViews()
 	AudioState_t audioState;
 	audioState.m_Origin = view.origin;
 	audioState.m_Angles = view.angles;
-	audioState.m_bIsUnderwater = pPlayer && pPlayer->AudioStateIsUnderwater(view.origin);
+	audioState.m_bIsUnderwater = pPlayer && pPlayer->GetClientPlayer()->AudioStateIsUnderwater(view.origin);
 
 	ToolFramework_SetupAudioState(audioState);
 
@@ -1830,7 +1833,7 @@ void CViewRender::Render(vrect_t* rect)
 	// Assume normal vis
 	m_bForceNoVis = false;
 
-	C_BasePlayer* pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity* pPlayer = EntityList()->GetLocalPlayer();
 
 
 	// Set for console commands, etc.
@@ -1992,7 +1995,7 @@ void CViewRender::Render(vrect_t* rect)
 		if (pPlayer)
 		{
 			// Override view model if necessary
-			if (!pPlayer->m_Local.m_bDrawViewmodel)
+			if (!pPlayer->GetClientPlayer()->GetLocalData()->m_bDrawViewmodel)
 			{
 				drawViewModel = false;
 			}
@@ -2027,7 +2030,7 @@ void CViewRender::Render(vrect_t* rect)
 			// logic here all cloned from code in viewrender.cpp around RenderHUDQuad:
 
 			// figure out if we really want to draw the HUD based on freeze cam
-			bool bInFreezeCam = (pPlayer && pPlayer->GetObserverMode() == OBS_MODE_FREEZECAM);
+			bool bInFreezeCam = (pPlayer && pPlayer->GetClientPlayer()->GetObserverMode() == OBS_MODE_FREEZECAM);
 
 			// draw the HUD after the view model so its "I'm closer" depth queues work right.
 			if (!bInFreezeCam && g_ClientVirtualReality.ShouldRenderHUDInWorld())
@@ -2116,7 +2119,9 @@ bool CViewRender::ShouldDrawViewModel( bool bDrawViewmodel )
 	if ( !r_drawviewmodel.GetBool() )
 		return false;
 
-	if ( C_BasePlayer::ShouldDrawLocalPlayer() )
+	IClientEntity* pEntity =  EntityList()->GetLocalPlayer();
+
+	if (pEntity->GetClientPlayer()->ShouldDrawLocalPlayer() )
 		return false;
 
 	if ( !ShouldDrawEntities() )
@@ -2672,7 +2677,7 @@ static void GetFogColorTransition( fogparams_t *pFogParams, float *pColorPrimary
 //-----------------------------------------------------------------------------
 static void GetFogColor( fogparams_t *pFogParams, float *pColor )
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if ( !pbp || !pFogParams )
 		return;
 
@@ -2863,12 +2868,12 @@ static float GetFogMaxDensity( fogparams_t *pFogParams )
 //-----------------------------------------------------------------------------
 static void GetSkyboxFogColor( float *pColor )
 {			   
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if( !pbp )
 	{
 		return;
 	}
-	CPlayerLocalData	*local		= &pbp->m_Local;
+	CPlayerLocalData	*local		= pbp->GetClientPlayer()->GetLocalData();
 
 	const char *fogColorString = fog_colorskybox.GetString();
 	if( fog_override.GetInt() && fogColorString )
@@ -2911,12 +2916,12 @@ static void GetSkyboxFogColor( float *pColor )
 
 static float GetSkyboxFogStart( void )
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if( !pbp )
 	{
 		return 0.0f;
 	}
-	CPlayerLocalData	*local		= &pbp->m_Local;
+	CPlayerLocalData	*local		= pbp->GetClientPlayer()->GetLocalData();
 
 	if( fog_override.GetInt() )
 	{
@@ -2937,12 +2942,12 @@ static float GetSkyboxFogStart( void )
 
 static float GetSkyboxFogEnd( void )
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if( !pbp )
 	{
 		return 0.0f;
 	}
-	CPlayerLocalData	*local		= &pbp->m_Local;
+	CPlayerLocalData	*local		= pbp->GetClientPlayer()->GetLocalData();
 
 	if( fog_override.GetInt() )
 	{
@@ -2964,11 +2969,11 @@ static float GetSkyboxFogEnd( void )
 
 static float GetSkyboxFogMaxDensity()
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if ( !pbp )
 		return 1.0f;
 
-	CPlayerLocalData *local = &pbp->m_Local;
+	CPlayerLocalData *local = pbp->GetClientPlayer()->GetLocalData();
 
 	if ( cl_leveloverview.GetFloat() > 0 )
 		return 1.0f;
@@ -3139,7 +3144,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 	m_CurrentView = view;
 
-	C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, true );
+	AutoAllowBoneAccess boneaccess( true, true );
 	VPROF( "CViewRender::RenderView" );
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
 
@@ -3293,7 +3298,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 				PIXEVENT( pRenderContext, "DoEnginePostProcessing" );
 
 				bool bFlashlightIsOn = false;
-				C_BasePlayer *pLocal = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+				IClientEntity *pLocal = EntityList()->GetLocalPlayer();
 				if ( pLocal )
 				{
 					bFlashlightIsOn = pLocal->GetEngineObject()->IsEffectActive( EF_DIMLIGHT );
@@ -3526,8 +3531,8 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		if ( UseVR() )
 		{
 			// figure out if we really want to draw the HUD based on freeze cam
-			C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-			bool bInFreezeCam = ( pPlayer && pPlayer->GetObserverMode() == OBS_MODE_FREEZECAM );
+			IClientEntity *pPlayer = EntityList()->GetLocalPlayer();
+			bool bInFreezeCam = ( pPlayer && pPlayer->GetClientPlayer()->GetObserverMode() == OBS_MODE_FREEZECAM );
 
 			// draw the HUD after the view model so its "I'm closer" depth queues work right.
 			if( !bInFreezeCam && g_ClientVirtualReality.ShouldRenderHUDInWorld() )
@@ -4363,7 +4368,7 @@ bool CViewRender::DrawOneMonitor( ITexture *pRenderTarget, int cameraNum, C_Poin
 		if ( !localPlayer )
 			return false;
 
-		pFogParams = localPlayer->GetFogParams();
+		pFogParams = localPlayer->GetClientPlayer()->GetFogParams();
 
 		// Save old fog data.
 		oldFogParams = *pFogParams;
@@ -4439,7 +4444,7 @@ void CViewRender::DrawMonitors( const CViewSetup &cameraView )
 	int width = pCameraTarget->GetActualWidth();
 	int height = pCameraTarget->GetActualHeight();
 
-	C_BasePlayer *player = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *player = EntityList()->GetLocalPlayer();
 	
 	int cameraNum;
 	for ( cameraNum = 0; pCameraEnt != NULL; pCameraEnt = pCameraEnt->m_pNext )
@@ -4627,7 +4632,7 @@ void CRendering3dView::UpdateRenderablesOpacity()
 {
 	// Compute the prop opacity based on the view position and fov zoom scale
 	float flFactor = 1.0f;
-	C_BasePlayer *pLocal = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pLocal = EntityList()->GetLocalPlayer();
 	if ( pLocal )
 	{
 		flFactor = pLocal->GetFOVDistanceAdjustFactor();
@@ -5146,7 +5151,7 @@ ConVar r_drawopaquesbucket_stats( "r_drawopaquesbucket_stats", "0", FCVAR_CHEAT,
 #endif
 
 
-static void SetupBonesOnBaseAnimating( C_BaseAnimating *&pBaseAnimating )
+static void SetupBonesOnBaseAnimating( IClientEntity *&pBaseAnimating )
 {
 	pBaseAnimating->GetEngineObject()->SetupBones( NULL, -1, -1, gpGlobals->curtime );
 }
@@ -5297,7 +5302,7 @@ void CRendering3dView::DrawOpaqueRenderables( ERenderDepthMode DepthMode )
 	for ( int bucket = 0; bucket < RENDER_GROUP_CFG_NUM_OPAQUE_ENT_BUCKETS; ++ bucket )
 		numOpaqueEnts += m_pRenderablesList->m_RenderGroupCounts[ RENDER_GROUP_OPAQUE_ENTITY_HUGE + 2 * bucket ];
 
-	CUtlVector< C_BaseAnimating * > arrBoneSetupNpcsLast( (C_BaseAnimating **)_alloca( numOpaqueEnts * sizeof( C_BaseAnimating * ) ), numOpaqueEnts, numOpaqueEnts );
+	CUtlVector< IClientEntity* > arrBoneSetupNpcsLast( (IClientEntity**)_alloca( numOpaqueEnts * sizeof(IClientEntity* ) ), numOpaqueEnts, numOpaqueEnts );
 	CUtlVector< CClientRenderablesList::CEntry > arrRenderEntsNpcsFirst( (CClientRenderablesList::CEntry *)_alloca( numOpaqueEnts * sizeof( CClientRenderablesList::CEntry ) ), numOpaqueEnts, numOpaqueEnts );
 	int numNpcs = 0, numNonNpcsAnimating = 0;
 
@@ -5308,12 +5313,12 @@ void CRendering3dView::DrawOpaqueRenderables( ERenderDepthMode DepthMode )
 			* const pEntitiesEnd = pEntitiesBegin + m_pRenderablesList->m_RenderGroupCounts[ RENDER_GROUP_OPAQUE_ENTITY_HUGE + 2 * bucket ],
 			*itEntity = pEntitiesBegin; itEntity < pEntitiesEnd; ++ itEntity )
 		{
-			C_BaseEntity *pEntity = itEntity->m_pRenderable ? (C_BaseEntity*)itEntity->m_pRenderable->GetIClientUnknown()->GetBaseEntity() : NULL;
+			IClientEntity *pEntity = itEntity->m_pRenderable ? itEntity->m_pRenderable->GetIClientUnknown()->GetBaseEntity() : NULL;
 			if ( pEntity )
 			{
 				if ( pEntity->IsNPC() )
 				{
-					C_BaseAnimating *pba = assert_cast<C_BaseAnimating *>( pEntity );
+					IClientEntity *pba = assert_cast<IClientEntity*>( pEntity );
 					arrRenderEntsNpcsFirst[ numNpcs ++ ] = *itEntity;
 					arrBoneSetupNpcsLast[ numOpaqueEnts - numNpcs ] = pba;
 					
@@ -5324,7 +5329,7 @@ void CRendering3dView::DrawOpaqueRenderables( ERenderDepthMode DepthMode )
 				}
 				else if ( pEntity->GetEngineObject()->GetModelPtr() )
 				{
-					C_BaseAnimating *pba = assert_cast<C_BaseAnimating *>( pEntity );
+					IClientEntity *pba = assert_cast<IClientEntity*>( pEntity );
 					arrBoneSetupNpcsLast[ numNonNpcsAnimating ++ ] = pba;
 					// fall through
 				}
@@ -5865,10 +5870,10 @@ void CRendering3dView::EnableWorldFog( void )
 	CMatRenderContextPtr pRenderContext( materials );
 
 	fogparams_t *pFogParams = NULL;
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if ( pbp )
 	{
-		pFogParams = pbp->GetFogParams();
+		pFogParams = pbp->GetClientPlayer()->GetFogParams();
 	}
 
 	if( GetFogEnable( pFogParams ) )
@@ -5934,12 +5939,12 @@ SkyboxVisibility_t CSkyboxView::ComputeSkyboxVisibility()
 //-----------------------------------------------------------------------------
 bool CSkyboxView::GetSkyboxFogEnable()
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if( !pbp )
 	{
 		return false;
 	}
-	CPlayerLocalData	*local		= &pbp->m_Local;
+	CPlayerLocalData	*local		= pbp->GetClientPlayer()->GetLocalData();
 
 	if( fog_override.GetInt() )
 	{
@@ -5964,12 +5969,12 @@ bool CSkyboxView::GetSkyboxFogEnable()
 //-----------------------------------------------------------------------------
 void CSkyboxView::Enable3dSkyboxFog( void )
 {
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 	if( !pbp )
 	{
 		return;
 	}
-	CPlayerLocalData	*local		= &pbp->m_Local;
+	CPlayerLocalData	*local		= pbp->GetClientPlayer()->GetLocalData();
 
 	CMatRenderContextPtr pRenderContext( materials );
 
@@ -6007,13 +6012,13 @@ sky3dparams_t *CSkyboxView::PreRender3dSkyboxWorld( SkyboxVisibility_t nSkyboxVi
 	if ( !r_3dsky.GetInt() )
 		return NULL;
 
-	C_BasePlayer *pbp = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pbp = EntityList()->GetLocalPlayer();
 
 	// No local player object yet...
 	if ( !pbp )
 		return NULL;
 
-	CPlayerLocalData* local = &pbp->m_Local;
+	CPlayerLocalData* local = pbp->GetClientPlayer()->GetLocalData();
 	if ( local->m_skybox3d.area == 255 )
 		return NULL;
 
@@ -6612,14 +6617,14 @@ void CBaseWorldView::DrawSetup( float waterHeight, int nSetupFlags, float waterZ
 
 void MaybeInvalidateLocalPlayerAnimation()
 {
-	C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-	if ( ( pPlayer != NULL ) && pPlayer->InFirstPersonView() )
+	IClientEntity *pPlayer = EntityList()->GetLocalPlayer();
+	if ( ( pPlayer != NULL ) && pPlayer->GetClientPlayer()->InFirstPersonView() )
 	{
 		// We sometimes need different animation for the main view versus the shadow rendering,
 		// so we need to reset the cache to ensure this actually happens.
 		pPlayer->GetEngineObject()->InvalidateBoneCache();
 
-		C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
+		IClientEntity *pWeapon = pPlayer->GetClientPlayer()->GetActiveWeapon();
 		if ( pWeapon != NULL )
 		{
 			pWeapon->GetEngineObject()->InvalidateBoneCache();
@@ -8557,7 +8562,7 @@ static void GetPos(const CCommand& args, Vector& vecOrigin, QAngle& angles)
 	angles = g_pViewRender->MainViewAngles();
 	if (args.ArgC() == 2 && atoi(args[1]) == 2)
 	{
-		C_BasePlayer* pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+		IClientEntity* pPlayer = EntityList()->GetLocalPlayer();
 		if (pPlayer)
 		{
 			vecOrigin = pPlayer->GetEngineObject()->GetAbsOrigin();

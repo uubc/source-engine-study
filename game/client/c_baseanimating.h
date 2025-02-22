@@ -216,23 +216,6 @@ public:
 	// original attachment origin instead of the adjusted one. To get that, call this on the 
 	// adjusted attachment origin.
 	virtual void					UncorrectViewModelAttachment( Vector &vOrigin ) {}
-
-
-
-
-
-	// Used for debugging. Will produce asserts if someone tries to setup bones or
-	// attachments before it's allowed.
-	// Use the "AutoAllowBoneAccess" class to auto push/pop bone access.
-	// Use a distinct "tag" when pushing/popping - asserts when push/pop tags do not match.
-	struct AutoAllowBoneAccess
-	{
-		AutoAllowBoneAccess( bool bAllowForNormalModels, bool bAllowForViewModels );
-		~AutoAllowBoneAccess( void );
-	};
-
-	
-
 	
 
 	// Purpose: My physics object has been updated, react or extract data

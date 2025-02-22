@@ -41,9 +41,9 @@ class C_FuncLadder;
 class CFlashlightEffect;
 class C_EconWearable;
 
-extern int g_nKillCamMode;
-extern int g_nKillCamTarget1;
-extern int g_nKillCamTarget2;
+//extern int m_nKillCamMode;
+//extern int m_nKillCamTarget1;
+//extern int m_nKillCamTarget2;
 
 class C_CommandContext
 {
@@ -152,8 +152,8 @@ public:
 	// observer mode
 	virtual int			GetObserverMode() const;
 	void				SetObserverMode ( int iNewMode );
-	virtual CBaseEntity	*GetObserverTarget() const;
-	void			SetObserverTarget( EHANDLE hObserverTarget );
+	virtual C_BaseEntity	*GetObserverTarget() const;
+	void			SetObserverTarget(CBaseHandle hObserverTarget );
 
 	bool			AudioStateIsUnderwater( Vector vecMainViewOrigin );
 
@@ -220,8 +220,8 @@ public:
 
 	// Global/static methods
 	virtual void				ThirdPersonSwitch( bool bThirdperson );
-	static bool					LocalPlayerInFirstPersonView();
-	static bool					ShouldDrawLocalPlayer();
+	bool					LocalPlayerInFirstPersonView();
+	bool					ShouldDrawLocalPlayer();
 	int							GetUserID( void );
 	virtual bool				CanSetSoundMixer( void );
 	virtual int					GetVisionFilterFlags( bool bWeaponsCheck = false ) { return 0x00; }
@@ -411,7 +411,7 @@ protected:
 	VMatrix					m_PendingPortalMatrix;
 public:
 	int m_StuckLast;
-	
+	virtual CPlayerLocalData* GetLocalData() { return &m_Local; }
 	// Data for only the local player
 	CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 

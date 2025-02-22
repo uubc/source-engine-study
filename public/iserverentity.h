@@ -1126,7 +1126,10 @@ public:
 
 class IServerPlayer {
 public:
-
+	virtual bool SetObserverMode(int mode) = 0; // sets new observer mode, returns true if successful
+	virtual int GetObserverMode(void) const = 0; // returns observer mode or OBS_NONE
+	virtual IServerEntity* GetObserverTarget(void) const = 0; // returns players targer or NULL
+	virtual bool SetObserverTarget(IServerEntity* target) = 0;
 };
 
 // Derive a class from this if you want to filter entity list searches

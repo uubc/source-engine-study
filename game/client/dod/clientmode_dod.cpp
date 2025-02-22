@@ -50,35 +50,7 @@ ConVar dod_playwinmusic( "dod_playwinmusic", "1", FCVAR_ARCHIVE );
 
 IClientMode *g_pClientMode = NULL;
 
-void MsgFunc_KillCam(bf_read &msg) 
-{
-	C_DODPlayer *pPlayer = C_DODPlayer::GetLocalDODPlayer();
 
-	if ( !pPlayer )
-		return;
-
-	int newMode = msg.ReadByte();
-
-	if ( newMode != g_nKillCamMode )
-	{
-#if !defined( NO_ENTITY_PREDICTION )
-		if ( g_nKillCamMode == OBS_MODE_NONE )
-		{
-			// kill cam is switch on, turn off prediction
-			g_bForceCLPredictOff = true;
-		}
-		else if ( newMode == OBS_MODE_NONE )
-		{
-			// kill cam is switched off, restore old prediction setting is we switch back to normal mode
-			g_bForceCLPredictOff = false;
-		}
-#endif
-		g_nKillCamMode = newMode;
-	}
-
-	g_nKillCamTarget1	= msg.ReadByte();
-	g_nKillCamTarget2	= msg.ReadByte();
-}
 
 // --------------------------------------------------------------------------------- //
 // CDODModeManager.
@@ -92,10 +64,48 @@ public:
 	virtual void	LevelInit( const char *newmap );
 	virtual void	LevelShutdown( void );
 	virtual void	ActivateMouse( bool isactive ) {}
+
+
+	int GetKillCamMode() const { return m_nKillCamMode; }
+	int GetKillCamTarget1() const { return m_nKillCamTarget1; }
+
+	int m_nKillCamMode = OBS_MODE_NONE;
+	int m_nKillCamTarget1 = 0;
+	int m_nKillCamTarget2 = 0;
 };
 
 static CDODModeManager g_ModeManager;
 IVModeManager *modemanager = ( IVModeManager * )&g_ModeManager;
+
+void MsgFunc_KillCam(bf_read& msg)
+{
+	C_DODPlayer* pPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+	if (!pPlayer)
+		return;
+
+	int newMode = msg.ReadByte();
+
+	if (newMode != g_ModeManager.m_nKillCamMode)
+	{
+#if !defined( NO_ENTITY_PREDICTION )
+		if (g_ModeManager.m_nKillCamMode == OBS_MODE_NONE)
+		{
+			// kill cam is switch on, turn off prediction
+			g_bForceCLPredictOff = true;
+		}
+		else if (newMode == OBS_MODE_NONE)
+		{
+			// kill cam is switched off, restore old prediction setting is we switch back to normal mode
+			g_bForceCLPredictOff = false;
+		}
+#endif
+		g_ModeManager.m_nKillCamMode = newMode;
+	}
+
+	g_ModeManager.m_nKillCamTarget1 = msg.ReadByte();
+	g_ModeManager.m_nKillCamTarget2 = msg.ReadByte();
+}
 
 // --------------------------------------------------------------------------------- //
 // CDODModeManager implementation.
@@ -115,15 +125,15 @@ void CDODModeManager::LevelInit( const char *newmap )
 	g_pClientMode->LevelInit( newmap );
 
 #if !defined( NO_ENTITY_PREDICTION )
-	if ( g_nKillCamMode > OBS_MODE_NONE )
+	if ( m_nKillCamMode > OBS_MODE_NONE )
 	{
 		g_bForceCLPredictOff = false;
 	}
 #endif
 
-	g_nKillCamMode		= OBS_MODE_NONE;
-	g_nKillCamTarget1	= 0;
-	g_nKillCamTarget2	= 0;
+	m_nKillCamMode		= OBS_MODE_NONE;
+	m_nKillCamTarget1	= 0;
+	m_nKillCamTarget2	= 0;
 }
 
 void CDODModeManager::LevelShutdown( void )

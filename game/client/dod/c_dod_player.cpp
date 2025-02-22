@@ -61,6 +61,8 @@
 
 #include "materialsystem/imesh.h"		//for materials->FindMaterial
 #include "iviewrender.h"				//for view->
+#include "ivmodemanager.h"
+
 ConVar cl_ragdoll_physics_enable( "cl_ragdoll_physics_enable", "1", 0, "Enable/disable ragdoll physics." );
 
 ConVar cl_autoreload( "cl_autoreload", "1", FCVAR_USERINFO | FCVAR_ARCHIVE, "Set to 1 to auto reload your weapon when it is empty" );
@@ -1393,7 +1395,7 @@ void C_DODPlayer::PopHelmet( Vector vecDir, Vector vecForceOrigin, int iModel )
 	QAngle angHeadAngles;
 
 	{
-		C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );
+		AutoAllowBoneAccess boneaccess( true, false );
 		int iAttachment = GetEngineObject()->LookupAttachment( "head" );
 		GetEngineObject()->GetAttachment( iAttachment, vecHead, angHeadAngles );	//attachment 1 is the head attachment
 	}
@@ -2216,7 +2218,7 @@ Vector C_DODPlayer::GetChaseCamViewOffset( CBaseEntity *target )
 
 const QAngle& C_DODPlayer::EyeAngles()
 {
-	if ( IsLocalPlayer() && g_nKillCamMode == OBS_MODE_NONE )
+	if ( IsLocalPlayer() && modemanager->GetKillCamMode() == OBS_MODE_NONE )
 	{
 		return BaseClass::EyeAngles();
 	}

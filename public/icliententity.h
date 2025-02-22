@@ -39,6 +39,7 @@ class IClientEntity;
 class IClientGameRules;
 struct fogparams_t;
 class IBoneSetup;
+class CPlayerLocalData;
 
 class VarMapEntry_t
 {
@@ -987,7 +988,6 @@ public:
 	virtual RenderGroup_t GetRenderGroup() = 0;
 	virtual IClientEntity* GetRenderedWeaponModel() = 0;
 	virtual int GetWorldModelIndex(void) = 0;
-	virtual fogparams_t* GetFogParams(void) = 0;
 	virtual int DrawModel(int flags) = 0;
 
 	virtual void RecordToolMessage() = 0;
@@ -1007,7 +1007,23 @@ public:
 
 class IClientPlayer {
 public:
-
+	virtual int GetDefaultFOV() const = 0;
+	virtual float GetFOV(void) = 0;
+	virtual float GetMinFOV() const = 0;
+	virtual fogparams_t* GetFogParams(void) = 0;
+	virtual void CalcView(Vector& eyeOrigin, QAngle& eyeAngles, float& zNear, float& zFar, float& fov) = 0;
+	virtual void CalcViewModelView(const Vector& eyeOrigin, const QAngle& eyeAngles) = 0;
+	virtual bool AudioStateIsUnderwater(Vector vecMainViewOrigin) = 0;
+	virtual CPlayerLocalData* GetLocalData() = 0;
+	virtual bool InFirstPersonView() = 0;
+	virtual bool ShouldDrawThisPlayer() = 0;
+	virtual int GetObserverMode() const = 0;
+	virtual void SetObserverMode(int iNewMode) = 0;
+	virtual IClientEntity* GetObserverTarget() const = 0;
+	virtual void SetObserverTarget(CBaseHandle hObserverTarget) = 0;
+	virtual bool LocalPlayerInFirstPersonView() = 0;
+	virtual bool ShouldDrawLocalPlayer() = 0;
+	virtual IClientEntity* GetActiveWeapon(void) const = 0;
 };
 
 #define INPVS_YES			0x0001		// The entity thinks it's in the PVS.

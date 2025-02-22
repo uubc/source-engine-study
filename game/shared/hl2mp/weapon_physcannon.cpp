@@ -855,7 +855,7 @@ void CWeaponPhysCannon::OnDataChanged( DataUpdateType_t type )
 	{
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
 
-		C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );
+		AutoAllowBoneAccess boneaccess( true, false );
 		StartEffects();
 	}
 

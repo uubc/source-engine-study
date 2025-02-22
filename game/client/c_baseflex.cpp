@@ -292,7 +292,7 @@ bool C_BaseFlex::GetSoundSpatialization( SpatializationInfo_t& info )
 			Vector origin;
 			QAngle angles;
 			
-			C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );
+			AutoAllowBoneAccess boneaccess( true, false );
 
 			if (GetEngineObject()->GetAttachment( m_iMouthAttachment, origin, angles ))
 			{

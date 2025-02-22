@@ -56,6 +56,8 @@
 
 #include "iviewrender_beams.h"			// flashlight beam
 #include "ragdoll.h"
+#include "cdll_bounded_cvars.h"
+#include "ivmodemanager.h"
 
 //=============================================================================
 // HPE_BEGIN:
@@ -1551,7 +1553,7 @@ void C_CSPlayer::UpdateIDTarget()
 bool C_CSPlayer::CreateMove( float flInputSampleTime, CUserCmd *pCmd )
 {
 	// Bleh... we will wind up needing to access bones for attachments in here.
-	C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, true );
+	AutoAllowBoneAccess boneaccess( true, true );
 
 	return BaseClass::CreateMove( flInputSampleTime, pCmd );
 }
@@ -1833,7 +1835,7 @@ int C_CSPlayer::DrawModel(int flags)
 
 const QAngle& C_CSPlayer::EyeAngles()
 {
-	if ( IsLocalPlayer() && !g_nKillCamMode )
+	if ( IsLocalPlayer() && !modemanager->GetKillCamMode() )
 	{
 		return BaseClass::EyeAngles();
 	}

@@ -41,8 +41,8 @@ vgui::HScheme g_hVGuiCombineScheme = 0;
 //
 //	g_eKillTarget1 = 0;
 //	g_eKillTarget2 = 0;
-//	g_nKillCamTarget1 = 0;
-//	g_nKillCamTarget1 = 0;
+//	m_nKillCamTarget1 = 0;
+//	m_nKillCamTarget1 = 0;
 //
 //	long iEncodedEHandle = msg.ReadLong();
 //
@@ -69,12 +69,12 @@ vgui::HScheme g_hVGuiCombineScheme = 0;
 //
 //	if ( g_eKillTarget1.Get() )
 //	{
-//		g_nKillCamTarget1	= g_eKillTarget1.Get()->entindex();
+//		m_nKillCamTarget1	= g_eKillTarget1.Get()->entindex();
 //	}
 //
 //	if ( g_eKillTarget2.Get() )
 //	{
-//		g_nKillCamTarget2	= g_eKillTarget2.Get()->entindex();
+//		m_nKillCamTarget2	= g_eKillTarget2.Get()->entindex();
 //	}
 //}
 
@@ -130,6 +130,14 @@ public:
 	virtual void	CreateMove( float flInputSampleTime, CUserCmd *cmd );
 	virtual void	LevelInit( const char *newmap );
 	virtual void	LevelShutdown( void );
+
+
+	int GetKillCamMode() const { return m_nKillCamMode; }
+	int GetKillCamTarget1() const { return m_nKillCamTarget1; }
+
+	int m_nKillCamMode = OBS_MODE_NONE;
+	int m_nKillCamTarget1 = 0;
+	int m_nKillCamTarget2 = 0;
 };
 
 CHLModeManager::CHLModeManager( void )
@@ -162,14 +170,14 @@ void CHLModeManager::LevelInit( const char *newmap )
 {
 	g_pClientMode->LevelInit( newmap );
 
-	if ( g_nKillCamMode > OBS_MODE_NONE )
+	if ( m_nKillCamMode > OBS_MODE_NONE )
 	{
 		g_bForceCLPredictOff = false;
 	}
 
-	g_nKillCamMode		= OBS_MODE_NONE;
-	//g_nKillCamTarget1	= 0;
-	//g_nKillCamTarget2	= 0;
+	m_nKillCamMode		= OBS_MODE_NONE;
+	//m_nKillCamTarget1	= 0;
+	//m_nKillCamTarget2	= 0;
 }
 
 void CHLModeManager::LevelShutdown( void )

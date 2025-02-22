@@ -672,7 +672,7 @@ bool C_BaseAnimating::GetAttachmentLocal( int iAttachment, Vector &origin )
 bool C_BaseAnimating::GetSoundSpatialization( SpatializationInfo_t& info )
 {
 	{
-		C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );
+		AutoAllowBoneAccess boneaccess( true, false );
 		if ( !BaseClass::GetSoundSpatialization( info ) )
 			return false;
 	}
@@ -976,16 +976,6 @@ void C_BaseAnimating::CalculateIKLocks( float currentTime )
 
 	EntityList()->PopEnableAbsRecomputations();
 	partition->SuppressLists( curSuppressed, true );
-}
-
-C_BaseAnimating::AutoAllowBoneAccess::AutoAllowBoneAccess( bool bAllowForNormalModels, bool bAllowForViewModels )
-{
-	EntityList()->PushAllowBoneAccess(bAllowForNormalModels, bAllowForViewModels, (char const*)1);
-}
-
-C_BaseAnimating::AutoAllowBoneAccess::~AutoAllowBoneAccess( )
-{
-	EntityList()->PopBoneAccess( ( char const * ) 1 );
 }
 
 bool C_BaseAnimating::ShouldDraw()

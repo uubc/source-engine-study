@@ -199,7 +199,7 @@ void C_ServerRagdoll::UpdateOnRemove()
 	//	( anim->GetModel() == GetModel() ) )
 	//{
 	//	// Need to tell C_BaseAnimating to blend out of the ragdoll data that we received last
-	//	C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );
+	//	AutoAllowBoneAccess boneaccess( true, false );
 	//	anim->GetEngineObject()->CreateUnragdollInfo(this);
 	//}
 

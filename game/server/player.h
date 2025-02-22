@@ -482,10 +482,10 @@ public:
 	virtual void			StopObserverMode( void );	// stop spectator mode
 	virtual bool			ModeWantsSpectatorGUI( int iMode ) { return true; }
 	virtual bool			SetObserverMode(int mode); // sets new observer mode, returns true if successful
-	virtual int				GetObserverMode( void ); // returns observer mode or OBS_NONE
+	virtual int				GetObserverMode( void ) const; // returns observer mode or OBS_NONE
 	virtual bool			SetObserverTarget(IServerEntity* target);
 	virtual void			ObserverUse( bool bIsPressed ); // observer pressed use
-	virtual IServerEntity		*GetObserverTarget( void ); // returns players targer or NULL
+	virtual IServerEntity		*GetObserverTarget( void ) const; // returns players targer or NULL
 	virtual IServerEntity		*FindNextObserverTarget( bool bReverse ); // returns next/prev player to follow or NULL
 	virtual int				GetNextObserverSearchStartPoint( bool bReverse ); // Where we should start looping the player list in a FindNextObserverTarget call
 	virtual bool			IsValidObserverTarget(IServerEntity * target); // true, if player is allowed to see this target
@@ -674,9 +674,6 @@ public:
 	bool	IsOnTarget() const		{ return m_fOnTarget; }
 	float	MuzzleFlashTime() const { return m_flFlashTime; }
 	float	PlayerDrownTime() const	{ return m_AirFinished; }
-
-	int		GetObserverMode() const	{ return m_iObserverMode; }
-	IServerEntity *GetObserverTarget() const	{ return m_hObserverTarget; }
 
 	// Round gamerules
 	virtual bool	IsReadyToPlay( void ) { return true; }

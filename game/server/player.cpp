@@ -2398,7 +2398,7 @@ bool CBasePlayer::SetObserverMode(int mode )
 	return true;	
 }
 
-int CBasePlayer::GetObserverMode()
+int CBasePlayer::GetObserverMode() const
 {
 	return m_iObserverMode;
 }
@@ -2582,7 +2582,7 @@ int CBasePlayer::GetReplayEntity()
 	return m_iReplayEntity;
 }
 
-IServerEntity* CBasePlayer::GetObserverTarget()
+IServerEntity* CBasePlayer::GetObserverTarget() const
 {
 	return m_hObserverTarget.Get();
 }

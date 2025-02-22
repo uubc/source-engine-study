@@ -1785,7 +1785,7 @@ void CPrediction::_Update( bool received_new_world_update, bool validframe,
 	// it'll wind up needing to get a bone transform.
 	{
 		EntityList()->InvalidateBoneCaches();
-		C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, true );
+		AutoAllowBoneAccess boneaccess( true, true );
 
 		// Remove any purely client predicted entities that were left "dangling" because the 
 		//  server didn't acknowledge them or which can now safely be removed
