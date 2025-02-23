@@ -53,7 +53,7 @@ void CBaseSpriteProjectile::Spawn(	char *pszModel,
 	UTIL_SetOrigin( this, vecOrigin );
 	GetEngineObject()->SetAbsVelocity( vecVelocity );
 
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	m_hIntendedTarget.Set( pIntendedTarget );
 
@@ -72,19 +72,19 @@ void CBaseSpriteProjectile::Touch( IServerEntity *pOther )
 //---------------------------------------------------------
 void CBaseSpriteProjectile::HandleTouch( IServerEntity *pOther )
 {
-	IServerEntity *pOwner;
+	IEngineObjectServer *pOwner;
 
 	pOwner = GetEngineObject()->GetOwnerEntity();
 
 	if( !pOwner )
 	{
-		pOwner = this;
+		pOwner = this->GetEngineObject();
 	}
 
 	trace_t	tr;
 	tr = GetEngineObject()->GetTouchTrace( );
 
-	CTakeDamageInfo info( this, pOwner, m_iDmg, m_iDmgType );
+	CTakeDamageInfo info( this, pOwner->GetHandleEntity(), m_iDmg, m_iDmgType);
 	GuessDamageForce( &info, (tr.endpos - tr.startpos), tr.endpos );
 	pOther->TakeDamage( info );
 	

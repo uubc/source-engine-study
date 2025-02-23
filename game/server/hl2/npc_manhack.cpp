@@ -3055,11 +3055,11 @@ void CNPC_Manhack::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 	}
 	else
 	{
-		m_pPrevOwner.Set((CBaseEntity*)GetEngineObject()->GetOwnerEntity() );
+		m_pPrevOwner.Set(GetEngineObject()->GetOwnerEntity() ? (CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 
 		// Suppress collisions between the manhack and the player; we're currently bumping
 		// almost certainly because it's not purely a physics object.
-		GetEngineObject()->SetOwnerEntity( pPhysGunUser );
+		GetEngineObject()->SetOwnerEntity(pPhysGunUser ? pPhysGunUser->GetEngineObject() : NULL);
 		m_bHeld = true;
 	}
 }
@@ -3072,7 +3072,7 @@ void CNPC_Manhack::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 //-----------------------------------------------------------------------------
 void CNPC_Manhack::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
 {
-	GetEngineObject()->SetOwnerEntity( m_pPrevOwner.Get() );
+	GetEngineObject()->SetOwnerEntity(m_pPrevOwner.Get() ? m_pPrevOwner.Get()->GetEngineObject() : NULL);
 
 	// Stop suppressing collisions between the manhack and the player
 	m_pPrevOwner.Set( NULL );

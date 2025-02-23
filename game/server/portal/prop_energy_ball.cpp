@@ -391,7 +391,7 @@ void CPropEnergyBall::StartTouch( IServerEntity *pOther )
 	// Kill the player on hit.
 	if ( pOther->IsPlayer() )
 	{
-		CTakeDamageInfo info( this, GetEngineObject()->GetOwnerEntity(), GetEngineObject()->GetAbsVelocity(), GetEngineObject()->GetAbsOrigin(), 1500.0f, DMG_DISSOLVE );
+		CTakeDamageInfo info(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, GetEngineObject()->GetAbsVelocity(), GetEngineObject()->GetAbsOrigin(), 1500.0f, DMG_DISSOLVE);
 	 	pOther->OnTakeDamage( info );
 		
 		// Destruct when we hit the player

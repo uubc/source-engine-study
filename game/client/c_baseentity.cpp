@@ -3448,7 +3448,7 @@ void C_BaseEntity::GetToolRecordingState( KeyValues *msg )
 
 	VPROF_BUDGET( "C_BaseEntity::GetToolRecordingState", VPROF_BUDGETGROUP_TOOLS );
 
-	IClientEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectClient *pOwner = GetEngineObject()->GetOwnerEntity();
 
 	static BaseEntityRecordingState_t state;
 	state.m_flTime = gpGlobals->curtime;
@@ -3461,7 +3461,7 @@ void C_BaseEntity::GetToolRecordingState( KeyValues *msg )
 	state.m_vecRenderAngles = GetRenderAngles();
 
 	// use EF_NOINTERP if the owner or a hierarchical parent has NO_INTERP
-	if ( pOwner && pOwner->GetEngineObject()->IsNoInterpolationFrame() )
+	if ( pOwner && pOwner->IsNoInterpolationFrame() )
 	{
 		state.m_nEffects |= EF_NOINTERP;
 	}
@@ -3659,7 +3659,7 @@ bool C_BoneFollower::TestCollision(const Ray_t& ray, unsigned int mask, trace_t&
 		return false;
 
 	// return owner as trace hit
-	trace.m_pEnt = GetEngineObject()->GetOwnerEntity();
+	trace.m_pEnt = GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetClientEntity() : NULL;
 	trace.hitgroup = 0;//m_hitGroup;
 	trace.physicsbone = 0;//m_physicsBone; // UNDONE: Get physics bone index & hitgroup
 	return trace.DidHit();

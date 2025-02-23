@@ -5593,7 +5593,7 @@ void CSprayCan::Spawn ( CBasePlayer *pOwner )
 {
 	GetEngineObject()->SetLocalOrigin( pOwner->WorldSpaceCenter() + Vector ( 0 , 0 , 32 ) );
 	GetEngineObject()->SetLocalAngles( pOwner->EyeAngles() );
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity( pOwner->GetEngineObject() );
 	GetEngineObject()->SetNextThink( gpGlobals->curtime );
 	const char* soundname = "SprayCan.Paint";
 	CPASAttenuationFilter filter(this, soundname);
@@ -5615,7 +5615,7 @@ void CSprayCan::Precache()
 
 void CSprayCan::Think( void )
 {
-	CBasePlayer *pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() );
+	CBasePlayer* pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 	if ( pPlayer )
 	{
        	int playernum = pPlayer->entindex();
@@ -5647,7 +5647,7 @@ void CBloodSplat::Spawn ( CBaseEntity *pOwner )
 {
 	GetEngineObject()->SetLocalOrigin( pOwner->WorldSpaceCenter() + Vector ( 0 , 0 , 32 ) );
 	GetEngineObject()->SetLocalAngles( pOwner->GetEngineObject()->GetLocalAngles() );
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity( pOwner->GetEngineObject() );
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 }
@@ -5659,7 +5659,7 @@ void CBloodSplat::Think( void )
 	if ( g_Language.GetInt() != LANGUAGE_GERMAN )
 	{
 		CBasePlayer *pPlayer;
-		pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() );
+		pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 
 		Vector forward;
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &forward );

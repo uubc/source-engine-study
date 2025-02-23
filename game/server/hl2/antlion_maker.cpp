@@ -206,7 +206,7 @@ void CAntlionTemplateMaker::AddChild( CNPC_Antlion *pAnt )
 	m_Children.AddToTail( pAnt );
 	m_nLiveChildren = m_Children.Count();
 
-	pAnt->GetEngineObject()->SetOwnerEntity( this );
+	pAnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 }
 
 //-----------------------------------------------------------------------------
@@ -1370,9 +1370,9 @@ void CAntlionTemplateMaker::ChildPostSpawn( CAI_BaseNPC *pChild )
 	// Save our name for level transitions
 	pAntlion->SetParentSpawnerName( STRING( GetEntityName() ) );
 
-	if ( m_hIgnoreEntity != NULL )
+	if ( m_hIgnoreEntity.Get() != NULL )
 	{
-		pChild->GetEngineObject()->SetOwnerEntity( m_hIgnoreEntity );
+		pChild->GetEngineObject()->SetOwnerEntity( m_hIgnoreEntity.Get()->GetEngineObject() );
 	}
 }
 

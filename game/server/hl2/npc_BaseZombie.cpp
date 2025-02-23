@@ -1151,7 +1151,7 @@ void CNPC_BaseZombie::DieChopped( const CTakeDamageInfo &info )
 			pAnimating->GetEngineObject()->SetBodygroup( ZOMBIE_BODYGROUP_HEADCRAB, !m_fIsHeadless );
 		}
 
-		pTorsoGib->GetEngineObject()->SetOwnerEntity( this );
+		pTorsoGib->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 		CopyRenderColorTo( pTorsoGib );
 
 	}
@@ -1230,7 +1230,7 @@ void CNPC_BaseZombie::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize
 #ifdef HL2_EPISODIC
 	if ( HL2GameRules()->IsAlyxInDarknessMode() == true && GetEngineObject()->GetEffectEntity() != NULL )
 	{
-		GetEngineObject()->GetEffectEntity()->GetEngineObject()->AddEffects( EF_DIMLIGHT );
+		GetEngineObject()->GetEffectEntity()->AddEffects( EF_DIMLIGHT );
 	}
 #endif // HL2_EPISODIC
 
@@ -2296,7 +2296,7 @@ void CNPC_BaseZombie::BecomeTorso( const Vector &vecTorsoForce, const Vector &ve
 		// don't collide with this thing ever
 		if ( pGib )
 		{
-			pGib->GetEngineObject()->SetOwnerEntity( this );
+			pGib->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 		}
 	}
 
@@ -2446,7 +2446,7 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 				return;
 			}
 
-			pGib->GetEngineObject()->SetOwnerEntity( this );
+			pGib->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 			CopyRenderColorTo( pGib );
 
 			
@@ -2487,7 +2487,7 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 		pCrab->GetEngineObject()->AddSpawnFlags(GetEngineObject()->GetSpawnFlags() & ZOMBIE_CRAB_INHERITED_SPAWNFLAGS);
 		
 		// make me the crab's owner to avoid collision issues
-		pCrab->GetEngineObject()->SetOwnerEntity( this );
+		pCrab->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 		pCrab->GetEngineObject()->SetAbsOrigin( vecSpot );
 		pCrab->GetEngineObject()->SetAbsAngles(GetEngineObject()->GetAbsAngles() );

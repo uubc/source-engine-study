@@ -5700,7 +5700,7 @@ void CCSPlayer::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 		}
 
 		pCSWeapon->GetEngineObject()->SetSolidFlags( FSOLID_NOT_SOLID );
-		pCSWeapon->GetEngineObject()->SetOwnerEntity( this );
+		pCSWeapon->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 	}
 
 	BaseClass::Weapon_Equip( pWeapon );

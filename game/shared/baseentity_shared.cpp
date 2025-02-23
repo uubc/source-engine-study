@@ -919,7 +919,7 @@ public:
 		{
 			CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
 			CBaseEntity *pPassEntity = EntityFromEntityHandle( m_PassEntities[0] );
-			if ( pEntity && pPassEntity && pEntity->GetEngineObject()->GetOwnerEntity() == pPassEntity &&
+			if ( pEntity && pPassEntity && pEntity->GetEngineObject()->GetOwnerEntity() == pPassEntity->GetEngineObject() &&
 				pPassEntity->GetEngineObject()->IsSolidFlagSet(FSOLID_NOT_SOLID) && pPassEntity->GetEngineObject()->IsSolidFlagSet( FSOLID_CUSTOMBOXTEST ) &&
 				pPassEntity->GetEngineObject()->IsSolidFlagSet( FSOLID_CUSTOMRAYTEST ) )
 			{

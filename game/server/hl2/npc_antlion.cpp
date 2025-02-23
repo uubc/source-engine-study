@@ -1121,7 +1121,7 @@ void CNPC_Antlion::HandleAnimEvent( animevent_t *pEvent )
 					pGrenade->GetEngineObject()->SetAbsAngles( vec3_angle );
 					EntityList()->DispatchSpawn( pGrenade );
 					pGrenade->SetThrower( this );
-					pGrenade->GetEngineObject()->SetOwnerEntity( this );
+					pGrenade->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 										
 					if ( i == 0 )
 					{
@@ -1762,11 +1762,11 @@ void CNPC_Antlion::StartTask( const Task_t *pTask )
 		// If the task parameter is non-zero, remove us when we vanish
 		if ( pTask->flTaskData )
 		{
-			IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+			IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 			
 			if( pOwner != NULL )
 			{
-				pOwner->DeathNotice( this );
+				pOwner->GetServerEntity()->DeathNotice(this);
 				GetEngineObject()->SetOwnerEntity( NULL );
 			}
 
@@ -2282,7 +2282,7 @@ int CNPC_Antlion::ChooseMoveSchedule( void )
 		SetMoveState( ANTLION_MOVE_FOLLOW );
 
 		// Tell our parent that we've swapped modes
-		CAntlionTemplateMaker *pMaker = dynamic_cast<CAntlionTemplateMaker *>(GetEngineObject()->GetOwnerEntity());
+		CAntlionTemplateMaker* pMaker = dynamic_cast<CAntlionTemplateMaker*>(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 
 		if ( pMaker != NULL )
 		{

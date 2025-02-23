@@ -589,7 +589,7 @@ void CWeapon_SLAM::SatchelAttach( void )
 			pSatchel->m_bIsAttached		= true;
 			pSatchel->m_bIsLive			= true;
 			pSatchel->SetThrower( GetOwner() );
-			pSatchel->GetEngineObject()->SetOwnerEntity( ((CBaseEntity*)GetOwner()) );
+			pSatchel->GetEngineObject()->SetOwnerEntity( ((CBaseEntity*)GetOwner())->GetEngineObject() );
 			pSatchel->m_pMyWeaponSLAM	= this;
 
 			pOwner->RemoveAmmo( 1, m_iSecondaryAmmoType );

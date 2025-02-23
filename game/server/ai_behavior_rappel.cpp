@@ -57,7 +57,7 @@ void CRopeAnchor::Spawn()
 
 	if(GetEngineObject()->GetOwnerEntity() )
 	{
-		flDist = fabs(GetEngineObject()->GetOwnerEntity()->GetEngineObject()->GetAbsOrigin().z - GetEngineObject()->GetAbsOrigin().z );
+		flDist = fabs(GetEngineObject()->GetOwnerEntity()->GetAbsOrigin().z - GetEngineObject()->GetAbsOrigin().z );
 	}
 
 	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, flDist, RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
@@ -369,7 +369,7 @@ void CAI_RappelBehavior::CutZipline()
 	}
 
 	IServerEntity *pAnchor = EntityList()->CreateEntityByName( "rope_anchor" );
-	pAnchor->GetEngineObject()->SetOwnerEntity( GetOuter() ); // Boy, this is a hack!!
+	pAnchor->GetEngineObject()->SetOwnerEntity(GetOuter() ? GetOuter()->GetEngineObject() : NULL); // Boy, this is a hack!!
 	pAnchor->GetEngineObject()->SetAbsOrigin( m_vecRopeAnchor );
 	pAnchor->Spawn();
 }

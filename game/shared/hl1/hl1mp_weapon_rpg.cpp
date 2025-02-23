@@ -344,7 +344,7 @@ CRpgRocket *CRpgRocket::Create( const Vector &vecOrigin, const QAngle &angAngles
 	UTIL_SetOrigin( pRocket, vecOrigin );
 	pRocket->GetEngineObject()->SetAbsAngles( angAngles );
 	pRocket->Spawn();
-	pRocket->GetEngineObject()->SetOwnerEntity( pentOwner );
+	pRocket->GetEngineObject()->SetOwnerEntity(pentOwner ? pentOwner->GetEngineObject() : NULL);
 
 	return pRocket;
 }
@@ -452,7 +452,7 @@ CLaserDot *CLaserDot::Create( const Vector &origin, CBaseEntity *pOwner, bool bV
 	pLaserDot->GetEngineObject()->AddEffects( EF_NOSHADOW );
 	pLaserDot->GetEngineObject()->SetSize( -Vector(6,6,6), Vector(6,6,6) );
 
-	pLaserDot->GetEngineObject()->SetOwnerEntity( pOwner );
+	pLaserDot->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	pLaserDot->GetEngineObject()->AddEFlags( EFL_FORCE_CHECK_TRANSMIT );
 
@@ -528,7 +528,7 @@ int CLaserDot::DrawModel( int flags )
 	float	scale;
 	Vector	endPos;
 
-	C_HL1MP_Player *pOwner = ToHL1MPPlayer(GetEngineObject()->GetOwnerEntity() );
+	C_HL1MP_Player* pOwner = ToHL1MPPlayer(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetOuter() : NULL);
 
 	if ( pOwner != NULL && pOwner->IsDormant() == false )
 	{

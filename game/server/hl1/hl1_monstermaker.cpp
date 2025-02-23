@@ -254,7 +254,7 @@ void CNPCMaker::MakeNPC( void )
 
 
 	EntityList()->DispatchSpawn( pent );
-	pent->GetEngineObject()->SetOwnerEntity( this );
+	pent->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 	m_cLiveChildren++;// count this NPC
 

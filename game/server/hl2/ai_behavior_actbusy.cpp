@@ -1099,10 +1099,10 @@ int	CAI_ActBusyBehavior::SelectScheduleForLeaving( void )
 			{
 				if ( !GetOuter()->GetEngineObject()->IsMarkedForDeletion() )
 				{
-					IServerEntity *pOwner = GetOuter()->GetEngineObject()->GetOwnerEntity();
+					IEngineObjectServer *pOwner = GetOuter()->GetEngineObject()->GetOwnerEntity();
 					if ( pOwner )
 					{
-						pOwner->DeathNotice( GetOuter() );
+						pOwner->GetServerEntity()->DeathNotice(GetOuter());
 						GetOuter()->GetEngineObject()->SetOwnerEntity( NULL );
 					}
 					GetOuter()->SetThink( &CBaseEntity::SUB_Remove); //SUB_Remove) ; //GetOuter()->SUB_Remove );

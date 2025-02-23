@@ -3715,7 +3715,7 @@ void	CNPC_Citizen::TossHealthKit(CBaseCombatCharacter *pThrowAt, const Vector &o
 	if (pHealthKit)
 	{
 		pHealthKit->GetEngineObject()->SetAbsOrigin( medKitOriginPoint );
-		pHealthKit->GetEngineObject()->SetOwnerEntity( this );
+		pHealthKit->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 		// pHealthKit->SetAbsVelocity( tossVelocity );
 		EntityList()->DispatchSpawn( pHealthKit );
 
@@ -4216,7 +4216,7 @@ void CCitizenResponseSystem::ResponseThink()
 void CNPC_Citizen::AddInsignia()
 {
 	IServerEntity *pMark = EntityList()->CreateEntityByName( "squadinsignia" );
-	pMark->GetEngineObject()->SetOwnerEntity( this );
+	pMark->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 	pMark->Spawn();
 }
 
@@ -4228,7 +4228,7 @@ void CNPC_Citizen::RemoveInsignia()
 
 	while( pEntity )
 	{
-		if( pEntity->GetEngineObject()->GetOwnerEntity() == this )
+		if( pEntity->GetEngineObject()->GetOwnerEntity() == this->GetEngineObject() )
 		{
 			// Is this my insignia?
 			CSquadInsignia *pInsignia = dynamic_cast<CSquadInsignia *>(pEntity);
@@ -4249,15 +4249,15 @@ LINK_ENTITY_TO_CLASS( squadinsignia, CSquadInsignia );
 
 void CSquadInsignia::Spawn()
 {
-	CAI_BaseNPC *pOwner = (GetEngineObject()->GetOwnerEntity() ) ? ((CBaseEntity*)GetEngineObject()->GetOwnerEntity())->MyNPCPointer() : NULL;
+	CAI_BaseNPC *pOwner = (GetEngineObject()->GetOwnerEntity() ) ? ((CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity())->MyNPCPointer() : NULL;
 
 	if ( pOwner )
 	{
 		int attachment = pOwner->GetEngineObject()->LookupAttachment( "eyes" );
 		if ( attachment )
 		{
-			GetEngineObject()->SetAbsAngles(GetEngineObject()->GetOwnerEntity()->GetEngineObject()->GetAbsAngles() );
-			GetEngineObject()->SetParent(GetEngineObject()->GetOwnerEntity()->GetEngineObject(), attachment);
+			GetEngineObject()->SetAbsAngles(GetEngineObject()->GetOwnerEntity()->GetAbsAngles() );
+			GetEngineObject()->SetParent(GetEngineObject()->GetOwnerEntity(), attachment);
 
 			Vector vecPosition;
 			vecPosition.Init( -2.5, 0, 3.9 );

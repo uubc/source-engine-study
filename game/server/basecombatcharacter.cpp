@@ -843,10 +843,10 @@ void CBaseCombatCharacter::UpdateOnRemove( void )
 	}
 
 	// tell owner ( if any ) that we're dead.This is mostly for NPCMaker functionality.
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )
 	{
-		pOwner->DeathNotice( this );
+		pOwner->GetServerEntity()->DeathNotice(this);
 		GetEngineObject()->SetOwnerEntity( NULL );
 	}
 
@@ -1455,7 +1455,7 @@ void CBaseCombatCharacter::FixupBurningServerRagdoll( CBaseEntity *pRagdoll )
 		return;
 
 	// Move the fire effects entity to the ragdoll
-	CEntityFlame *pFireChild = dynamic_cast<CEntityFlame *>(GetEngineObject()->GetEffectEntity() );
+	CEntityFlame* pFireChild = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity() ? GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 	if ( pFireChild )
 	{
 		GetEngineObject()->SetEffectEntity( NULL );
@@ -1463,7 +1463,7 @@ void CBaseCombatCharacter::FixupBurningServerRagdoll( CBaseEntity *pRagdoll )
 		pFireChild->GetEngineObject()->SetAbsOrigin( pRagdoll->GetEngineObject()->GetAbsOrigin() );
 		pFireChild->AttachToEntity( pRagdoll );
 		pFireChild->GetEngineObject()->AddEFlags( EFL_FORCE_CHECK_TRANSMIT );
- 		pRagdoll->GetEngineObject()->SetEffectEntity( pFireChild );
+ 		pRagdoll->GetEngineObject()->SetEffectEntity( pFireChild->GetEngineObject() );
 
 		color32 color = GetEngineObject()->GetRenderColor();
 		pRagdoll->GetEngineObject()->SetRenderColor( color.r, color.g, color.b );
@@ -1695,7 +1695,7 @@ void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 	// L4D specific hack for zombie commentary mode
 	if( GetOwnerEntity() != NULL )
 	{
-		GetOwnerEntity()->DeathNotice( this );
+		GetOwnerEntity()->GetServerEntity()->DeathNotice(this);
 	}
 #endif
 	

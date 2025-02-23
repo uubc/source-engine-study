@@ -2091,7 +2091,7 @@ void CBaseHeadcrab::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, 
 #ifdef HL2_EPISODIC
 		if ( HL2GameRules()->IsAlyxInDarknessMode() == true )
 		{
-			GetEngineObject()->GetEffectEntity()->GetEngineObject()->AddEffects( EF_DIMLIGHT );
+			GetEngineObject()->GetEffectEntity()->AddEffects( EF_DIMLIGHT );
 		}
 #endif // HL2_EPISODIC
 

@@ -509,7 +509,7 @@ CBaseCombatCharacter *CBaseGrenade::GetThrower( void )
 	CBaseCombatCharacter *pResult = ToBaseCombatCharacter( m_hThrower );
 	if ( !pResult && GetEngineObject()->GetOwnerEntity() != NULL )
 	{
-		pResult = ToBaseCombatCharacter(GetEngineObject()->GetOwnerEntity() );
+		pResult = ToBaseCombatCharacter(GetEngineObject()->GetOwnerEntity()->GetOuter() );
 	}
 	return pResult;
 }

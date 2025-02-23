@@ -140,7 +140,7 @@ void CSatchelCharge::SatchelThink( void )
 		Vector	vUpABit = GetEngineObject()->GetAbsOrigin();
 		vUpABit.z += 5.0;
 
-		IServerEntity* saveOwner	= GetEngineObject()->GetOwnerEntity();
+		IEngineObjectServer* saveOwner	= GetEngineObject()->GetOwnerEntity();
 		GetEngineObject()->SetOwnerEntity( NULL );
 		EntityList()->GetEngineWorld()->TraceEntity( this->GetEngineObject(), GetEngineObject()->GetAbsOrigin(), vUpABit, MASK_SOLID, &tr);
 		if ( tr.startsolid || tr.fraction != 1.0 )

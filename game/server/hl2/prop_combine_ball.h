@@ -88,7 +88,7 @@ public:
 	void SetWeaponLaunched( bool state = true ) { m_bWeaponLaunched = state; m_bLaunched = state; }
 	bool WasWeaponLaunched( void ) const { return m_bWeaponLaunched; }
 
-	bool WasFiredByNPC() const { return (GetEngineObject()->GetOwnerEntity() && GetEngineObject()->GetOwnerEntity()->IsNPC()); }
+	bool WasFiredByNPC() const { return (GetEngineObject()->GetOwnerEntity() && GetEngineObject()->GetOwnerEntity()->GetServerEntity()->IsNPC()); }
 
 	bool ShouldHitPlayer() const;
 

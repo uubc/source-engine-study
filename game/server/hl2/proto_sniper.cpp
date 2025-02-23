@@ -1926,7 +1926,7 @@ bool CProtoSniper::FireBullet( const Vector &vecTarget, bool bDirectShot )
 		return false;
 	}
 
-	pBullet->GetEngineObject()->SetOwnerEntity( this );
+	pBullet->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 	CPASAttenuationFilter filternoatten( this, ATTN_NONE );
 	g_pSoundEmitterSystem->EmitSound( filternoatten, entindex(), "NPC_Sniper.FireBullet" );
@@ -3214,16 +3214,16 @@ void CSniperBullet::BulletThink( void )
 		{
 			CAI_BaseNPC *pSniper;
 			CAI_BaseNPC *pEnemyNPC;
-			pSniper = ((CBaseEntity*)GetEngineObject()->GetOwnerEntity())->MyNPCPointer();
+			pSniper = ((CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity())->MyNPCPointer();
 
 			if( pSniper && pSniper->GetEnemy() )
 			{
 				pEnemyNPC = pSniper->GetEnemy()->MyNPCPointer();
 
 				// Warn my enemy if they can see the sniper.
-				if( pEnemyNPC && GetEngineObject()->GetOwnerEntity() && pEnemyNPC->FVisible(GetEngineObject()->GetOwnerEntity()->WorldSpaceCenter() ) )
+				if( pEnemyNPC && GetEngineObject()->GetOwnerEntity() && pEnemyNPC->FVisible(GetEngineObject()->GetOwnerEntity()->GetServerEntity()->WorldSpaceCenter()))
 				{
-					CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_FROM_SNIPER, pSniper->GetEnemy()->EarPosition(), 16, 1.0f, GetEngineObject()->GetOwnerEntity() );
+					CSoundEnt::InsertSound(SOUND_DANGER | SOUND_CONTEXT_FROM_SNIPER, pSniper->GetEnemy()->EarPosition(), 16, 1.0f, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 				}
 			}
 		}
@@ -3250,7 +3250,7 @@ void CSniperBullet::BulletThink( void )
 	if( tr.fraction != 1.0 )
 	{
 		// This slice of bullet will hit something.
-		((CBaseEntity*)GetEngineObject()->GetOwnerEntity())->FireBullets( 1, vecStart, m_vecDir, vec3_origin, flDist, m_AmmoType, 0 );
+		((CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity())->FireBullets( 1, vecStart, m_vecDir, vec3_origin, flDist, m_AmmoType, 0 );
 		m_iImpacts++;
 
 #ifdef HL2_EPISODIC
@@ -3341,7 +3341,7 @@ bool CSniperBullet::Start( const Vector &vecOrigin, const Vector &vecTarget, CBa
 		return false;
 	}
 
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	UTIL_SetOrigin( this, vecOrigin );
 

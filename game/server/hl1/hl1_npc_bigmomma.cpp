@@ -861,7 +861,7 @@ void CNPC_BigMomma::HandleAnimEvent( animevent_t *pEvent )
 			{
 				if ( pList[i] != this )
 				{
-					if ( pList[i]->GetEngineObject()->GetOwnerEntity() != this )
+					if ( pList[i]->GetEngineObject()->GetOwnerEntity() != this->GetEngineObject() )
 					{
 						pHurt = pList[i];
 					}
@@ -978,7 +978,7 @@ void CNPC_BigMomma::LayHeadcrab( void )
 
 	pChild->GetEngineObject()->AddSpawnFlags( SF_NPC_FALL_TO_GROUND );
 
-	pChild->GetEngineObject()->SetOwnerEntity( this );
+	pChild->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 	// Is this the second crab in a pair?
 	if ( HasMemory( bits_MEMORY_CHILDPAIR ) )
@@ -1200,7 +1200,7 @@ CBMortar *CBMortar::Shoot( CBaseEntity *pOwner, Vector vecStart, Vector vecVeloc
 	
 	UTIL_SetOrigin( pSpit, vecStart );
 	pSpit->GetEngineObject()->SetAbsVelocity( vecVelocity );
-	pSpit->GetEngineObject()->SetOwnerEntity( pOwner );
+	pSpit->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pSpit->SetThink ( &CBMortar::Animate );
 	pSpit->GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1 );
 
@@ -1274,9 +1274,9 @@ void CBMortar::Touch( IServerEntity *pOther )
 	// make some flecks
 	MortarSpray( tr.endpos + Vector( 0, 0, 15 ), tr.plane.normal, gSpitSprite, 24 );
 
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 
-	RadiusDamage( CTakeDamageInfo( this, pOwner, sk_bigmomma_dmg_blast.GetFloat(), DMG_ACID ), GetEngineObject()->GetAbsOrigin(), sk_bigmomma_radius_blast.GetFloat(), CLASS_NONE, NULL );
+	RadiusDamage(CTakeDamageInfo(this, pOwner ? pOwner->GetHandleEntity() : NULL, sk_bigmomma_dmg_blast.GetFloat(), DMG_ACID), GetEngineObject()->GetAbsOrigin(), sk_bigmomma_radius_blast.GetFloat(), CLASS_NONE, NULL);
 		
 	EntityList()->DestroyEntity( pSprite );
 	EntityList()->DestroyEntity( this );

@@ -3368,7 +3368,7 @@ bool C_EngineObjectInternal::EntityHasMatchingRootParent(IEngineObjectClient* pR
 		// NOTE: Don't let siblings/parents collide.
 		if (pRootParent == this->GetRootMoveParent())
 			return true;
-		if (this->GetOwnerEntity() && pRootParent == this->GetOwnerEntity()->GetEngineObject()->GetRootMoveParent())
+		if (this->GetOwnerEntity() && pRootParent == this->GetOwnerEntity()->GetRootMoveParent())
 			return true;
 	}
 	return false;
@@ -9486,16 +9486,16 @@ void C_EngineObjectInternal::PhysForceClearVelocity(IPhysicsObject* pPhys)
 // Purpose: 
 // Input  : *pOwner - 
 //-----------------------------------------------------------------------------
-void C_EngineObjectInternal::SetOwnerEntity(IClientEntity* pOwner)
+void C_EngineObjectInternal::SetOwnerEntity(IEngineObjectClient* pOwner)
 {
-	m_hOwnerEntity = pOwner;
+	m_hOwnerEntity = (pOwner ? pOwner->GetClientEntity() : NULL);
 }
 
-void C_EngineObjectInternal::SetEffectEntity(IClientEntity* pEffectEnt)
+void C_EngineObjectInternal::SetEffectEntity(IEngineObjectClient* pEffectEnt)
 {
-	if (m_hEffectEntity.Get() != pEffectEnt)
+	if (m_hEffectEntity.Get() != (pEffectEnt ? pEffectEnt->GetClientEntity() : NULL))
 	{
-		m_hEffectEntity = pEffectEnt;
+		m_hEffectEntity = (pEffectEnt ? pEffectEnt->GetClientEntity() : NULL);
 	}
 }
 

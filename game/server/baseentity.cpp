@@ -2173,7 +2173,7 @@ void CBaseEntity::PhysicsRelinkChildren( float dt )
 		{
 			child->GetOuter()->UpdatePhysicsShadowToCurrentPosition( dt );
 		}
-		else if ( child->GetOwnerEntity() != this )
+		else if ( child->GetOwnerEntity() != this->GetEngineObject() )
 		{
 			// the only case where this is valid is if this entity is an attached ragdoll.
 			// So assert here to catch the non-ragdoll case.
@@ -2648,7 +2648,7 @@ CBaseEntity * CBaseEntity::CreateNoSpawn( const char *szName, const Vector &vecO
 
 	pEntity->GetEngineObject()->SetLocalOrigin( vecOrigin );
 	pEntity->GetEngineObject()->SetLocalAngles( vecAngles );
-	pEntity->GetEngineObject()->SetOwnerEntity( pOwner );
+	pEntity->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	EntityList()->NotifyCreateEntity( pEntity );
 
@@ -3447,10 +3447,10 @@ void CBaseEntity::GetInputDispatchEffectPosition( const char *sInputString, Vect
 void CBaseEntity::InputKill( inputdata_t &inputdata )
 {
 	// tell owner ( if any ) that we're dead.This is mostly for NPCMaker functionality.
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )
 	{
-		pOwner->DeathNotice( this );
+		pOwner->GetServerEntity()->DeathNotice(this);
 		GetEngineObject()->SetOwnerEntity( NULL );
 	}
 
@@ -3467,10 +3467,10 @@ void CBaseEntity::InputKillHierarchy( inputdata_t &inputdata )
 	}
 
 	// tell owner ( if any ) that we're dead. This is mostly for NPCMaker functionality.
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )
 	{
-		pOwner->DeathNotice( this );
+		pOwner->GetServerEntity()->DeathNotice(this);
 		GetEngineObject()->SetOwnerEntity( NULL );
 	}
 
@@ -5509,7 +5509,7 @@ void CBaseEntity::Ignite(float flFlameLifetime, bool bNPCOnly, float flSize, boo
 		pFlame->SetLifetime(flFlameLifetime);
 		GetEngineObject()->AddFlag(FL_ONFIRE);
 
-		GetEngineObject()->SetEffectEntity(pFlame);
+		GetEngineObject()->SetEffectEntity(pFlame->GetEngineObject());
 
 		if (flSize > 0.0f)
 		{
@@ -5525,7 +5525,7 @@ void CBaseEntity::IgniteLifetime(float flFlameLifetime)
 	if (!IsOnFire())
 		Ignite(30, false, 0.0f, true);
 
-	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity());
+	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity() ? GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 
 	if (!pFlame)
 		return;
@@ -5538,7 +5538,7 @@ void CBaseEntity::IgniteNumHitboxFires(int iNumHitBoxFires)
 	if (!IsOnFire())
 		Ignite(30, false, 0.0f, true);
 
-	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity());
+	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity() ? GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 
 	if (!pFlame)
 		return;
@@ -5551,7 +5551,7 @@ void CBaseEntity::IgniteHitboxFireScale(float flHitboxFireScale)
 	if (!IsOnFire())
 		Ignite(30, false, 0.0f, true);
 
-	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity());
+	CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(GetEngineObject()->GetEffectEntity() ? GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 
 	if (!pFlame)
 		return;
@@ -5576,7 +5576,7 @@ bool CBaseEntity::Dissolve(const char* pMaterialName, float flStartTime, bool bN
 	CEntityDissolve* pDissolve = CEntityDissolve::Create(this, pMaterialName, flStartTime, nDissolveType, &bRagdollCreated);
 	if (pDissolve)
 	{
-		GetEngineObject()->SetEffectEntity(pDissolve);
+		GetEngineObject()->SetEffectEntity(pDissolve->GetEngineObject());
 
 		GetEngineObject()->AddFlag(FL_DISSOLVING);
 		m_flDissolveStartTime = flStartTime;
@@ -5613,7 +5613,7 @@ void CBaseEntity::TransferDissolveFrom(CBaseEntity* pAnim)
 		GetEngineObject()->AddFlag(FL_DISSOLVING);
 		m_flDissolveStartTime = pAnim->m_flDissolveStartTime;
 
-		CEntityDissolve* pDissolveFrom = dynamic_cast <CEntityDissolve*> (pAnim->GetEngineObject()->GetEffectEntity());
+		CEntityDissolve* pDissolveFrom = dynamic_cast <CEntityDissolve*> (pAnim->GetEngineObject()->GetEffectEntity() ? pAnim->GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 
 		if (pDissolveFrom)
 		{

@@ -101,7 +101,7 @@ CCrossbowBolt *CCrossbowBolt::BoltCreate( const Vector &vecOrigin, const QAngle 
 	UTIL_SetOrigin( pBolt, vecOrigin );
 	pBolt->GetEngineObject()->SetAbsAngles( angAngles );
 	pBolt->Spawn();
-	pBolt->GetEngineObject()->SetOwnerEntity( pentOwner );
+	pBolt->GetEngineObject()->SetOwnerEntity(pentOwner ? pentOwner->GetEngineObject() : NULL);
 
 	return pBolt;
 }
@@ -221,20 +221,20 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		{
 			// Change the owner to stop further collisions with Alyx. We do this by making her the owner.
 			// The player won't get credit for this kill but at least the bolt won't magically disappear!
-			GetEngineObject()->SetOwnerEntity(pOther );
+			GetEngineObject()->SetOwnerEntity(pOther ? pOther->GetEngineObject() : NULL);
 			return;
 		}
 #endif//HL2_EPISODIC
 
 		if(GetEngineObject()->GetOwnerEntity() && GetEngineObject()->GetOwnerEntity()->IsPlayer() && pOther->IsNPC() )
 		{
-			CTakeDamageInfo	dmgInfo( this, GetEngineObject()->GetOwnerEntity(), sk_plr_dmg_crossbow.GetFloat(), DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo( this, GetEngineObject()->GetOwnerEntity()->GetHandleEntity(), sk_plr_dmg_crossbow.GetFloat(), DMG_NEVERGIB);
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.7f );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 
-			CBasePlayer *pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() );
+			CBasePlayer *pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity()->GetServerEntity());
 			if ( pPlayer )
 			{
 				gamestats->Event_WeaponHit( pPlayer, true, "weapon_crossbow", dmgInfo );
@@ -243,7 +243,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		}
 		else
 		{
-			CTakeDamageInfo	dmgInfo( this, GetEngineObject()->GetOwnerEntity(), sk_plr_dmg_crossbow.GetFloat(), DMG_BULLET | DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, sk_plr_dmg_crossbow.GetFloat(), DMG_BULLET | DMG_NEVERGIB);
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.7f );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );

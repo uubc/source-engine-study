@@ -322,7 +322,7 @@ void CEnvExplosion::InputExplode( inputdata_t &inputdata )
 	// do damage
 	if ( !(GetEngineObject()->GetSpawnFlags() & SF_ENVEXPLOSION_NODAMAGE))
 	{
-		IServerEntity *pAttacker = GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity() : this;
+		IEngineObjectServer *pAttacker = GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity() : this->GetEngineObject();
 
 		// Only calculate damage type if we didn't get a custom one passed in
 		int iDamageType = m_iCustomDamageType;
@@ -331,7 +331,7 @@ void CEnvExplosion::InputExplode( inputdata_t &inputdata )
 			iDamageType = GetEngineObject()->HasSpawnFlags( SF_ENVEXPLOSION_GENERIC_DAMAGE ) ? DMG_GENERIC : DMG_BLAST;
 		}
 
-		CTakeDamageInfo info( m_hInflictor ? m_hInflictor : this, pAttacker, m_iMagnitude, iDamageType );
+		CTakeDamageInfo info(m_hInflictor ? m_hInflictor : this, pAttacker ? pAttacker->GetHandleEntity() : NULL, m_iMagnitude, iDamageType);
 
 		if(GetEngineObject()->HasSpawnFlags( SF_ENVEXPLOSION_SURFACEONLY ) )
 		{
@@ -408,7 +408,7 @@ void ExplosionCreate( const Vector &center, const QAngle &angles,
 
 	variant_t emptyVariant;
 	pExplosion->GetEngineObject()->SetRenderMode(kRenderTransAdd);
-	pExplosion->GetEngineObject()->SetOwnerEntity( pOwner );
+	pExplosion->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pExplosion->Spawn();
 	pExplosion->m_hInflictor = pInflictor;
 	pExplosion->SetCustomDamageType( iCustomDamageType );

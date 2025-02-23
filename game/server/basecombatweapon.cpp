@@ -199,7 +199,7 @@ CBaseEntity* CBaseCombatWeapon::Respawn( void )
 {
 	// make a copy of this weapon that is invisible and inaccessible to players (no touch function). The weapon spawn/respawn code
 	// will decide when to make the weapon visible and touchable.
-	CBaseEntity *pNewWeapon = CBaseEntity::Create( GetClassname(), g_pGameRules->VecWeaponRespawnSpot( this ), GetEngineObject()->GetLocalAngles(), GetEngineObject()->GetOwnerEntity() );
+	CBaseEntity* pNewWeapon = CBaseEntity::Create(GetClassname(), g_pGameRules->VecWeaponRespawnSpot(this), GetEngineObject()->GetLocalAngles(), GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 
 	if ( pNewWeapon )
 	{
@@ -313,7 +313,7 @@ bool CBaseCombatWeapon::WeaponLOSCondition( const Vector &ownerPos, const Vector
 		// Also, check to see if the owner of the entity is the vehicle, in which case it's valid too.
 		// This catches vehicles that use bone followers.
 		CBaseEntity	*pVehicle  = pEnemyPlayer->GetVehicle()->GetVehicleEnt();
-		if ( pHitEnt == pVehicle || pHitEnt->GetEngineObject()->GetOwnerEntity() == pVehicle )
+		if (pHitEnt == pVehicle || pHitEnt->GetEngineObject()->GetOwnerEntity() == (pVehicle ? pVehicle->GetEngineObject() : NULL))
 			return true;
 	}
 

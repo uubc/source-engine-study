@@ -877,7 +877,7 @@ void CPropCrane::SetNPCDriver( CNPC_VehicleDriver *pDriver )
 		m_flTurnDecel = CRANE_DECEL * 10;	// Npcs stop quickly to make them more accurate
 
 		// Set our owner entity to be the NPC, so it can path check without hitting us
-		GetEngineObject()->SetOwnerEntity( pDriver );
+		GetEngineObject()->SetOwnerEntity(pDriver ? pDriver->GetEngineObject() : NULL);
 	}
 	else
 	{

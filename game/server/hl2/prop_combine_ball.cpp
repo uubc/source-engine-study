@@ -71,7 +71,7 @@ CBaseEntity *CreateCombineBall( const Vector &origin, const Vector &velocity, fl
 	pBall->SetRadius( radius );
 
 	pBall->GetEngineObject()->SetAbsOrigin( origin );
-	pBall->GetEngineObject()->SetOwnerEntity( pOwner );
+	pBall->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pBall->SetOriginalOwner( pOwner );
 
 	pBall->GetEngineObject()->SetAbsVelocity( velocity );
@@ -116,7 +116,7 @@ CBasePlayer *CPropCombineBall::HasPhysicsAttacker( float dt )
 		return NULL;
 
 	// We don't care about the time passed in
-	return static_cast<CBasePlayer *>(GetEngineObject()->GetOwnerEntity());
+	return static_cast<CBasePlayer *>(GetEngineObject()->GetOwnerEntity()->GetServerEntity());
 }
 
 //-----------------------------------------------------------------------------
@@ -553,7 +553,7 @@ bool CPropCombineBall::ShouldHitPlayer() const
 { 
 	if (GetEngineObject()->GetOwnerEntity() )
 	{
-		CAI_BaseNPC *pNPC = ((CBaseEntity*)GetEngineObject()->GetOwnerEntity())->MyNPCPointer();
+		CAI_BaseNPC *pNPC = ((CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity())->MyNPCPointer();
 		if ( pNPC && !pNPC->IsPlayerAlly() )
 		{
 			return true;
@@ -568,10 +568,10 @@ bool CPropCombineBall::ShouldHitPlayer() const
 void CPropCombineBall::InputKill( inputdata_t &inputdata )
 {
 	// tell owner ( if any ) that we're dead.This is mostly for NPCMaker functionality.
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )
 	{
-		pOwner->DeathNotice( this );
+		pOwner->GetServerEntity()->DeathNotice(this);
 		GetEngineObject()->SetOwnerEntity( NULL );
 	}
 
@@ -586,15 +586,15 @@ void CPropCombineBall::InputKill( inputdata_t &inputdata )
 void CPropCombineBall::InputSocketed( inputdata_t &inputdata )
 {
 	// tell owner ( if any ) that we're dead.This is mostly for NPCMaker functionality.
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )
 	{
-		pOwner->DeathNotice( this );
+		pOwner->GetServerEntity()->DeathNotice(this);
 		GetEngineObject()->SetOwnerEntity( NULL );
 	}
 
 	// if our owner is a player, tell them we were socketed
-	CHL2_Player *pPlayer = ToHL2Player( pOwner );
+	CHL2_Player* pPlayer = ToHL2Player(pOwner ? pOwner->GetServerEntity() : NULL);
 	if ( pPlayer )
 	{
 		pPlayer->CombineBallSocketed( this );
@@ -885,7 +885,7 @@ void CPropCombineBall::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup
 void CPropCombineBall::SetPlayerLaunched( CBasePlayer *pOwner )
 {
 	// Now we own this ball
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	SetWeaponLaunched( false );
 	
 	if(GetEngineObject()->VPhysicsGetObject() )
@@ -1150,7 +1150,7 @@ void CPropCombineBall::DoExplosion( )
 	if( !m_bStruckEntity && hl2_episodic.GetBool() && GetEngineObject()->GetOwnerEntity() != NULL )
 	{
 		// Notify the player proxy that this combine ball missed so that it can fire an output.
-		CHL2_Player *pPlayer = ToHL2Player(GetEngineObject()->GetOwnerEntity() );
+		CHL2_Player *pPlayer = ToHL2Player(GetEngineObject()->GetOwnerEntity()->GetServerEntity() );
 		if ( pPlayer )
 		{
 			pPlayer->MissedAR2AltFire();
@@ -1231,13 +1231,13 @@ void CPropCombineBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 {
 	// Detonate on the strider + the bone followers in the strider
 	if ( FClassnameIs( pHitEntity, "npc_strider" ) || 
-		(pHitEntity->GetEngineObject()->GetOwnerEntity() && FClassnameIs( pHitEntity->GetEngineObject()->GetOwnerEntity(), "npc_strider" )) )
+		(pHitEntity->GetEngineObject()->GetOwnerEntity() && FClassnameIs( pHitEntity->GetEngineObject()->GetOwnerEntity()->GetServerEntity(), "npc_strider")))
 	{
 		DoExplosion();
 		return;
 	}
 
-	CTakeDamageInfo info( this, GetEngineObject()->GetOwnerEntity(), GetEngineObject()->GetAbsVelocity(), GetEngineObject()->GetAbsOrigin(), sk_npc_dmg_combineball.GetFloat(), DMG_DISSOLVE );
+	CTakeDamageInfo info(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, GetEngineObject()->GetAbsVelocity(), GetEngineObject()->GetAbsOrigin(), sk_npc_dmg_combineball.GetFloat(), DMG_DISSOLVE);
 
 	bool bIsDissolving = (pHitEntity->GetEngineObject()->GetFlags() & FL_DISSOLVING) != 0;
 	bool bShouldHit = pHitEntity->PassesDamageFilter( info );
@@ -1248,7 +1248,7 @@ void CPropCombineBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 
 	if ( pBCC )
 	{
-		bShouldHit = pBCC->IRelationType( (CBaseEntity*)GetEngineObject()->GetOwnerEntity() ) != D_LI;
+		bShouldHit = pBCC->IRelationType(GetEngineObject()->GetOwnerEntity() ? (CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL) != D_LI;
 	}
 
 	if ( !bIsDissolving && bShouldHit == true )
@@ -1306,7 +1306,7 @@ void CPropCombineBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 				if ( (m_nState != STATE_HOLDING) )
 				{
 
-					CBasePlayer *pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() );
+					CBasePlayer* pPlayer = ToBasePlayer(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 					if ( pPlayer && UTIL_IsAR2CombineBall( this ) && ToBaseCombatCharacter( pHitEntity ) )
 					{
 						gamestats->Event_WeaponHit( pPlayer, false, "weapon_ar2", info );
@@ -1419,7 +1419,7 @@ bool CPropCombineBall::IsAttractiveTarget( CBaseEntity *pEntity )
 			return false;
 
 		// Don't seek entities of the same class.
-		if ( pEntity->GetEngineObject()->GetClassname() == GetEngineObject()->GetOwnerEntity()->GetEngineObject()->GetClassname())
+		if ( pEntity->GetEngineObject()->GetClassname() == GetEngineObject()->GetOwnerEntity()->GetClassname())
 			return false;
 	}
 	else
@@ -1452,13 +1452,13 @@ bool CPropCombineBall::IsAttractiveTarget( CBaseEntity *pEntity )
 		if ( pEntity->IsPlayer() == false )
 			 return false;
 
-		if ( pEntity == GetEngineObject()->GetOwnerEntity() )
+		if ( pEntity->GetEngineObject() == GetEngineObject()->GetOwnerEntity())
 			 return false;
 		
 		//No tracking teammates in teammode!
 		if ( g_pGameRules->IsTeamplay() )
 		{
-			if ( g_pGameRules->PlayerRelationship((CBaseEntity*)GetEngineObject()->GetOwnerEntity(), pEntity ) == GR_TEAMMATE )
+			if (g_pGameRules->PlayerRelationship(GetEngineObject()->GetOwnerEntity() ? (CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL, pEntity) == GR_TEAMMATE)
 				 return false;
 		}
 #endif
@@ -1607,7 +1607,7 @@ bool CPropCombineBall::IsHittableEntity( CBaseEntity *pHitEntity )
 
 	if ( pHitEntity->GetEngineObject()->GetMoveType() == MOVETYPE_PUSH )
 	{
-		if( pHitEntity->GetEngineObject()->GetOwnerEntity() && FClassnameIs(pHitEntity->GetEngineObject()->GetOwnerEntity(), "npc_strider") )
+		if( pHitEntity->GetEngineObject()->GetOwnerEntity() && FClassnameIs(pHitEntity->GetEngineObject()->GetOwnerEntity()->GetServerEntity(), "npc_strider"))
 		{
 			// The Strider's Bone Followers are MOVETYPE_PUSH, and we want the combine ball to hit these.
 			return true;
@@ -2244,7 +2244,7 @@ public:
 		if ( pBall )
 		{
 			//Playtest HACK: If we have an NPC owner then we were shot from an AR2.
-			if ( pBall->GetEngineObject()->GetOwnerEntity() && pBall->GetEngineObject()->GetOwnerEntity()->IsNPC() )
+			if ( pBall->GetEngineObject()->GetOwnerEntity() && pBall->GetEngineObject()->GetOwnerEntity()->GetServerEntity()->IsNPC())
 				return false;
 
 			return pBall->GetState() == m_iBallType;

@@ -971,10 +971,10 @@ public:
 
 	// Owner entity.
 // FIXME: These are virtual only because of CNodeEnt
-	IServerEntity* GetOwnerEntity() const;
-	virtual void SetOwnerEntity(IServerEntity* pOwner);
-	void SetEffectEntity(IServerEntity* pEffectEnt);
-	IServerEntity* GetEffectEntity() const;
+	CEngineObjectInternal* GetOwnerEntity() const;
+	virtual void SetOwnerEntity(IEngineObjectServer* pOwner);
+	void SetEffectEntity(IEngineObjectServer* pEffectEnt);
+	CEngineObjectInternal* GetEffectEntity() const;
 
 	bool IsWorld() { return false; }
 	IEngineWorldServer* AsEngineWorld() { Error("I am not EngineWorld!"); }
@@ -1959,14 +1959,14 @@ inline void CEngineObjectInternal::SetRenderColorA(byte a)
 	m_clrRender.SetA(a);
 }
 
-inline IServerEntity* CEngineObjectInternal::GetOwnerEntity() const
+inline CEngineObjectInternal* CEngineObjectInternal::GetOwnerEntity() const
 {
-	return m_hOwnerEntity.Get();
+	return m_hOwnerEntity.Get() ? (CEngineObjectInternal*)m_hOwnerEntity.Get()->GetEngineObject() : NULL;
 }
 
-inline IServerEntity* CEngineObjectInternal::GetEffectEntity() const
+inline CEngineObjectInternal* CEngineObjectInternal::GetEffectEntity() const
 {
-	return m_hEffectEntity.Get();
+	return m_hEffectEntity.Get() ? (CEngineObjectInternal*)m_hEffectEntity.Get()->GetEngineObject() : NULL;
 }
 
 class CEngineWorldInternal : public CEngineObjectInternal, public IEngineWorldServer {

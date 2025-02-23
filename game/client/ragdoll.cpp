@@ -439,7 +439,7 @@ C_EntityDissolve* DissolveEffect(C_BaseEntity* pTarget, float flTime)
 
 		// Let this entity know it needs to delete itself when it's done
 		pDissolve->SetServerLinkState(false);
-		pTarget->GetEngineObject()->SetEffectEntity(pDissolve);
+		pTarget->GetEngineObject()->SetEffectEntity(pDissolve->GetEngineObject());
 	}
 
 	return pDissolve;
@@ -515,11 +515,11 @@ void C_ClientRagdoll::OnRestore(void)
 	}
 	else if (GetEngineObject()->GetFlags() & FL_ONFIRE)
 	{
-		C_EntityFlame* pFireChild = dynamic_cast<C_EntityFlame*>(GetEngineObject()->GetEffectEntity());
+		C_EntityFlame* pFireChild = dynamic_cast<C_EntityFlame*>(GetEngineObject()->GetEffectEntity() ? GetEngineObject()->GetEffectEntity()->GetClientEntity() : NULL);
 		C_EntityFlame* pNewFireChild = FireEffect(this, pFireChild, m_flScaleEnd, m_flScaleTimeStart, m_flScaleTimeEnd);
 
 		//Set the new fire child as the new effect entity.
-		GetEngineObject()->SetEffectEntity(pNewFireChild);
+		GetEngineObject()->SetEffectEntity(pNewFireChild->GetEngineObject());
 	}
 
 	SetNextClientThink(CLIENT_THINK_ALWAYS);
@@ -709,27 +709,27 @@ void C_ClientRagdoll::SUB_Remove(void)
 
 void C_ClientRagdoll::IgniteRagdoll(C_BaseEntity* pSource)
 {
-	IClientEntity* pChild = pSource->GetEngineObject()->GetEffectEntity();
+	IEngineObjectClient* pChild = pSource->GetEngineObject()->GetEffectEntity();
 
 	if (pChild)
 	{
-		C_EntityFlame* pFireChild = dynamic_cast<C_EntityFlame*>(pChild);
+		C_EntityFlame* pFireChild = dynamic_cast<C_EntityFlame*>(pChild->GetClientEntity());
 		C_ClientRagdoll* pRagdoll = dynamic_cast<C_ClientRagdoll*> (this);
 
 		if (pFireChild)
 		{
-			pRagdoll->GetEngineObject()->SetEffectEntity(FireEffect(pRagdoll, pFireChild, NULL, NULL, NULL));
+			pRagdoll->GetEngineObject()->SetEffectEntity(FireEffect(pRagdoll, pFireChild, NULL, NULL, NULL)->GetEngineObject());
 		}
 	}
 }
 
 void C_ClientRagdoll::TransferDissolveFrom(C_BaseEntity* pSource)
 {
-	IClientEntity* pChild = pSource->GetEngineObject()->GetEffectEntity();
+	IEngineObjectClient* pChild = pSource->GetEngineObject()->GetEffectEntity();
 
 	if (pChild)
 	{
-		C_EntityDissolve* pDissolveChild = dynamic_cast<C_EntityDissolve*>(pChild);
+		C_EntityDissolve* pDissolveChild = dynamic_cast<C_EntityDissolve*>(pChild->GetClientEntity());
 
 		if (pDissolveChild)
 		{

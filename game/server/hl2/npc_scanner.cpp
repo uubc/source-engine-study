@@ -930,7 +930,7 @@ void CNPC_CScanner::DeployMine()
 		{
 			child->SetParent( NULL );
 			child->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() );
-			child->SetOwnerEntity(this);
+			child->SetOwnerEntity(this->GetEngineObject());
 
 			ScannerEmitSound( "DeployMine" );
 
@@ -1009,7 +1009,7 @@ void CNPC_CScanner::InputEquipMine(inputdata_t &inputdata)
 			
 			pEnt->GetEngineObject()->SetAbsOrigin( vecOrigin );
 			pEnt->GetEngineObject()->SetAbsAngles( angles );
-			pEnt->GetEngineObject()->SetOwnerEntity( this );
+			pEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 			pEnt->GetEngineObject()->SetParent( this->GetEngineObject(), attachment);
 
 			m_bIsOpen = true;
@@ -1026,7 +1026,7 @@ void CNPC_CScanner::InputEquipMine(inputdata_t &inputdata)
 
 		pEnt->GetEngineObject()->SetAbsOrigin( vecMineLocation );
 		pEnt->GetEngineObject()->SetAbsAngles(GetEngineObject()->GetAbsAngles() );
-		pEnt->GetEngineObject()->SetOwnerEntity( this );
+		pEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 		pEnt->GetEngineObject()->SetParent( this->GetEngineObject() );
 	}
 
@@ -1592,7 +1592,7 @@ void CNPC_CScanner::SpotlightCreate(void)
 	m_hSpotlightTarget = (CSpotlightEnd*)EntityList()->CreateEntityByName( "spotlight_end" );
 	m_hSpotlightTarget->Spawn();
 	m_hSpotlightTarget->GetEngineObject()->SetLocalOrigin( tr.endpos );
-	m_hSpotlightTarget->GetEngineObject()->SetOwnerEntity( this );
+	m_hSpotlightTarget->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 	// YWB:  Because the scanner only moves the target during think, make sure we interpolate over 0.1 sec instead of every tick!!!
 	m_hSpotlightTarget->GetEngineObject()->SetSimulatedEveryTick( false );
 

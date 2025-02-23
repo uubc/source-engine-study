@@ -1001,7 +1001,7 @@ void CPropVehicleDriveable::VPhysicsCollision( int index, gamevcollisionevent_t 
 	// if this is a bone follower, promote to the owner entity
 	if ( pHitEntity->GetEngineObject()->GetOwnerEntity() && (pHitEntity->GetEngineObject()->GetEffects() & EF_NODRAW) )
 	{
-		CBaseEntity *pOwner = (CBaseEntity*)pHitEntity->GetEngineObject()->GetOwnerEntity();
+		CBaseEntity *pOwner = (CBaseEntity*)pHitEntity->GetEngineObject()->GetOwnerEntity()->GetServerEntity();
 		// no friendly bone follower damage
 		// this allows strider legs to damage the player on impact but not d0g for example
 		if ( pDriver->IRelationType( pOwner ) == D_LI )
@@ -1331,7 +1331,7 @@ void CFourWheelServerVehicle::NPC_SetDriver( CNPC_VehicleDriver *pDriver )
 		SetVehicleVolume( 1.0 );	// Vehicles driven by NPCs are louder
 
 		// Set our owner entity to be the NPC, so it can path check without hitting us
-		GetFourWheelVehicle()->GetEngineObject()->SetOwnerEntity( pDriver );
+		GetFourWheelVehicle()->GetEngineObject()->SetOwnerEntity( pDriver ->GetEngineObject());
 
 		// Start Thinking
 		GetFourWheelVehicle()->GetEngineObject()->SetNextThink( gpGlobals->curtime );

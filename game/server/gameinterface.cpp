@@ -2366,7 +2366,7 @@ void CServerGameDLL::InternalEmitCloseCaption(IRecipientFilter& filter, int enti
 	}
 
 	bool fromplayer = false;
-	IServerEntity* ent = EntityList()->GetBaseEntity(entindex);
+	IEngineObjectServer* ent = EntityList()->GetEngineObject(entindex);
 	if (ent)
 	{
 		while (ent)
@@ -2377,7 +2377,7 @@ void CServerGameDLL::InternalEmitCloseCaption(IRecipientFilter& filter, int enti
 				break;
 			}
 
-			ent = ent->GetEngineObject()->GetOwnerEntity();
+			ent = ent->GetOwnerEntity();
 		}
 	}
 	InternalEmitCloseCaption(filter, entindex, fromplayer, ep.m_pSoundName, ep.m_UtlVecSoundOrigin, duration, ep.m_bWarnOnMissingCloseCaption);
@@ -2393,7 +2393,7 @@ void CServerGameDLL::InternalEmitCloseCaption(IRecipientFilter& filter, int enti
 void CServerGameDLL::EmitCloseCaption(IRecipientFilter& filter, int entindex, char const* token, CUtlVector< Vector >& soundorigin, float duration, bool warnifmissing /*= false*/)// CBaseEntity::
 {
 	bool fromplayer = false;
-	IServerEntity* ent = EntityList()->GetBaseEntity(entindex);
+	IEngineObjectServer* ent = EntityList()->GetEngineObject(entindex);
 	while (ent)
 	{
 		if (ent->IsPlayer())
@@ -2401,7 +2401,7 @@ void CServerGameDLL::EmitCloseCaption(IRecipientFilter& filter, int entindex, ch
 			fromplayer = true;
 			break;
 		}
-		ent = ent->GetEngineObject()->GetOwnerEntity();
+		ent = ent->GetOwnerEntity();
 	}
 
 	InternalEmitCloseCaption(filter, entindex, fromplayer, token, soundorigin, duration, warnifmissing);

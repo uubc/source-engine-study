@@ -201,7 +201,7 @@ void CWeaponSatchel::PrimaryAttack( void )
 
 			while ( (pSatchel = EntityList()->FindEntityByClassname( pSatchel, "monster_satchel" ) ) != NULL)
 			{
-				if ( pSatchel->GetEngineObject()->GetOwnerEntity() == pPlayer )
+				if ( pSatchel->GetEngineObject()->GetOwnerEntity() == pPlayer->GetEngineObject() )
 				{
 					pSatchel->Use( pPlayer, pPlayer, USE_ON, 0 );
 				}

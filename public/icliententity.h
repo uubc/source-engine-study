@@ -659,10 +659,10 @@ public:
 	virtual bool PhysModelParseSolid(solid_t& solid) = 0;
 	virtual bool PhysModelParseSolidByIndex(solid_t& solid, int solidIndex) = 0;
 	virtual void PhysForceClearVelocity(IPhysicsObject* pPhys) = 0;
-	virtual IClientEntity* GetOwnerEntity(void) const = 0;
-	virtual void SetOwnerEntity(IClientEntity* pOwner) = 0;
-	virtual IClientEntity* GetEffectEntity(void) const = 0;
-	virtual void SetEffectEntity(IClientEntity* pEffectEnt) = 0;
+	virtual IEngineObjectClient* GetOwnerEntity(void) const = 0;
+	virtual void SetOwnerEntity(IEngineObjectClient* pOwner) = 0;
+	virtual IEngineObjectClient* GetEffectEntity(void) const = 0;
+	virtual void SetEffectEntity(IEngineObjectClient* pEffectEnt) = 0;
 
 	virtual bool IsWorld() = 0;
 	virtual IEngineWorldClient* AsEngineWorld() = 0;

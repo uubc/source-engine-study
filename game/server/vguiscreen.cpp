@@ -287,8 +287,8 @@ bool CVGuiScreen::IsVisibleToTeam( int nTeam )
 	if ( IsVisibleOnlyToTeammates() && (nTeam > 0) )
 	{
 		// Hmmm... sort of a hack...
-		IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
-		if ( pOwner && (nTeam != pOwner->GetTeamNumber()) )
+		IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
+		if ( pOwner && (nTeam != pOwner->GetServerEntity()->GetTeamNumber()))
 			return false;
 	}
 	
@@ -325,11 +325,11 @@ int CVGuiScreen::ShouldTransmit( const CCheckTransmitInfo *pInfo )
 {
 	Assert( IsAttachedToViewModel() );
 
-	IServerEntity *pViewModel = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pViewModel = GetEngineObject()->GetOwnerEntity();
 
 	if ( pViewModel )
 	{
-		return pViewModel->ShouldTransmit( pInfo );
+		return pViewModel->GetServerEntity()->ShouldTransmit(pInfo);
 	}
 
 	return BaseClass::ShouldTransmit( pInfo );
@@ -405,7 +405,7 @@ CVGuiScreen *CreateVGuiScreen( const char *pScreenClassname, const char *pScreen
 
 	pScreen->SetPanelName( pScreenType );
 	pScreen->GetEngineObject()->FollowEntity( pAttachedTo->GetEngineObject());
-	pScreen->GetEngineObject()->SetOwnerEntity( pOwner );
+	pScreen->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pScreen->SetAttachmentIndex( nAttachmentIndex );
 
 	return pScreen;

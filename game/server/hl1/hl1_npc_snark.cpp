@@ -111,7 +111,7 @@ void CSnark::Spawn( void )
 	m_flFieldOfView = 0; // 180 degrees
 
 	if (GetEngineObject()->GetOwnerEntity() )
-		m_hOwner = (CBaseEntity*)GetEngineObject()->GetOwnerEntity();
+		m_hOwner = (CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity();
 
 	m_flNextBounceSoundTime = gpGlobals->curtime;// reset each time a snark is spawned.
 
@@ -177,8 +177,8 @@ void CSnark::Event_Killed( const CTakeDamageInfo &inputInfo )
 	}
 
 	// reset owner so death message happens
-	if ( m_hOwner != NULL )
-		GetEngineObject()->SetOwnerEntity( m_hOwner );
+	if (m_hOwner.Get() != NULL)
+		GetEngineObject()->SetOwnerEntity(m_hOwner.Get() ? m_hOwner.Get()->GetEngineObject() : NULL);
 
 	CTakeDamageInfo info = inputInfo;
 	int iGibDamage = g_pGameRules->Damage_GetShouldGibCorpse();
@@ -410,7 +410,7 @@ void CSnark::SuperBounceTouch( IServerEntity *pOther )
 	tr = GetEngineObject()->GetTouchTrace( );
 
 	// don't hit the guy that launched this grenade
-	if (GetEngineObject()->GetOwnerEntity() && ( pOther == GetEngineObject()->GetOwnerEntity() ) )
+	if (GetEngineObject()->GetOwnerEntity() && ( pOther->GetEngineObject() == GetEngineObject()->GetOwnerEntity()))
 		return;
 
 	// at least until we've bounced once

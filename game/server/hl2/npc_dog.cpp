@@ -591,7 +591,7 @@ void CNPC_Dog::PullObject( bool bMantain )
 	{
 		if ( flDistance <= DOG_CATCH_DISTANCE )
 		{
-			m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+			m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 			GetNavigator()->StopMoving();
 
@@ -822,7 +822,7 @@ void CNPC_Dog::ThrowObject( const char *pAttachmentName )
 			{
 				m_hPhysicsEnt->GetEngineObject()->SetParent( NULL );
 				m_hPhysicsEnt->GetEngineObject()->SetMoveType( (MoveType_t)m_iContainerMoveType );
-				m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+				m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 				pPhysObj->RemoveShadowController();
 				pPhysObj->SetPosition( m_hPhysicsEnt->GetEngineObject()->GetLocalOrigin(), m_hPhysicsEnt->GetEngineObject()->GetLocalAngles(), true );
@@ -954,7 +954,7 @@ void CNPC_Dog::PickupOrCatchObject( const char *pAttachmentName )
 		
 
 		if ( m_hPhysicsEnt->GetEngineObject()->GetOwnerEntity() == NULL )
-			 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+			 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 		if ( pPhysicsObject )
 			 pPhysicsObject->RecheckCollisionFilter();
@@ -1236,7 +1236,7 @@ void CNPC_Dog::RunTask( const Task_t *pTask )
 			vecDir.z = 0;
 		
 			if ( m_hPhysicsEnt->GetEngineObject()->GetOwnerEntity() == NULL )
-				 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+				 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 		
 			if ( pPhysicsObject )
 				 pPhysicsObject->RecheckCollisionFilter();
@@ -1379,7 +1379,7 @@ void CNPC_Dog::RunTask( const Task_t *pTask )
 					return;
 				}
 
-				m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+				m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 
 				Vector vForward;
 				AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward );
@@ -1568,7 +1568,7 @@ void CNPC_Dog::StartTask( const Task_t *pTask )
 			vecDir.z = 0;
 		
 			if ( m_hPhysicsEnt->GetEngineObject()->GetOwnerEntity() == NULL )
-				 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this );
+				 m_hPhysicsEnt->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 		
 			if ( pPhysicsObject )
 				 pPhysicsObject->RecheckCollisionFilter();

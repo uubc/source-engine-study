@@ -534,7 +534,7 @@ float CalculateObjectStress( IPhysicsObject *pObject, CBaseEntity *pInputOwnerEn
 			CBaseEntity *pOtherOwner = pOtherEntity;
 			if ( pOtherEntity->GetEngineObject()->GetOwnerEntity() )
 			{
-				pOtherOwner = (CBaseEntity*)pOtherEntity->GetEngineObject()->GetOwnerEntity();
+				pOtherOwner = (CBaseEntity*)pOtherEntity->GetEngineObject()->GetOwnerEntity()->GetServerEntity();
 			}
 
 			int outIndex = 0;

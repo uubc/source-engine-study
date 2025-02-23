@@ -152,7 +152,7 @@ CGrenadeBeam* CGrenadeBeam::Create( CBaseEntity* pOwner, const Vector &vStart)
 {
 	CGrenadeBeam *pEnergy = (CGrenadeBeam *)EntityList()->CreateEntityByName( "grenade_beam" );
 	pEnergy->Spawn();
-	pEnergy->GetEngineObject()->SetOwnerEntity( pOwner );
+	pEnergy->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pEnergy->GetEngineObject()->SetRenderColor( 255, 0, 0, 0 );
 	pEnergy->m_flBeamWidth		= GRENADEBEAM_DEFAULTWIDTH;
 	UTIL_SetOrigin( pEnergy, vStart );

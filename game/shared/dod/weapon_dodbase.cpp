@@ -1286,7 +1286,7 @@ void CWeaponDODBase::Smack()
 		{
 			if ( ShouldDrawMuzzleFlash() )
 			{
-				Assert(GetEngineObject()->GetOwnerEntity() == EntityList()->GetLocalPlayer() );
+				Assert(GetEngineObject()->GetOwnerEntity() == EntityList()->GetLocalPlayer()->GetEngineObject() );
 
 				const char *pszMuzzleFlashEffect;
 

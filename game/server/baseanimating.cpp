@@ -370,7 +370,7 @@ CBaseEntity* CBaseAnimating::CreateServerRagdoll(int forceBone, const CTakeDamag
 	EntityList()->NotifyCreateEntity(pRagdoll);
 
 	pRagdoll->CopyAnimationDataFrom(this);
-	pRagdoll->GetEngineObject()->SetOwnerEntity(this);
+	pRagdoll->GetEngineObject()->SetOwnerEntity(this->GetEngineObject());
 
 	pRagdoll->InitRagdollAnimation();
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES], pBoneToWorldNext[MAXSTUDIOBONES];

@@ -299,7 +299,7 @@ int CCollisionEvent::ShouldCollide_2(IPhysicsObject* pObj0, IPhysicsObject* pObj
 	if (pEntity0->entindex() != -1 && pEntity1->entindex() != -1)
 	{
 		// don't collide with your owner
-		if (pEntity0->GetEngineObject()->GetOwnerEntity() == pEntity1 || pEntity1->GetEngineObject()->GetOwnerEntity() == pEntity0)
+		if (pEntity0->GetEngineObject()->GetOwnerEntity() == pEntity1->GetEngineObject() || pEntity1->GetEngineObject()->GetOwnerEntity() == pEntity0->GetEngineObject())
 			return 0;
 	}
 
@@ -10044,33 +10044,33 @@ bool CEngineObjectInternal::EntityHasMatchingRootParent(IEngineObjectServer* pRo
 		// NOTE: Don't let siblings/parents collide.
 		if (pRootParent == this->GetRootMoveParent())
 			return true;
-		if (this->GetOwnerEntity() && pRootParent == this->GetOwnerEntity()->GetEngineObject()->GetRootMoveParent())
+		if (this->GetOwnerEntity() && pRootParent == this->GetOwnerEntity()->GetRootMoveParent())
 			return true;
 	}
 	return false;
 }
 
-void CEngineObjectInternal::SetOwnerEntity(IServerEntity* pOwner)
+void CEngineObjectInternal::SetOwnerEntity(IEngineObjectServer* pOwner)
 {
 	if (m_pOuter->IsNodeEnt()) {
 		m_hOwnerEntity = NULL;
 	}
 	else 
 	{
-		if (m_hOwnerEntity.Get() != pOwner)
+		if (m_hOwnerEntity.Get() != (pOwner ? pOwner->GetServerEntity() : NULL))
 		{
-			m_hOwnerEntity = pOwner;
+			m_hOwnerEntity = (pOwner ? pOwner->GetServerEntity() : NULL);
 
 			CollisionRulesChanged();
 		}
 	}
 }
 
-void CEngineObjectInternal::SetEffectEntity(IServerEntity* pEffectEnt)
+void CEngineObjectInternal::SetEffectEntity(IEngineObjectServer* pEffectEnt)
 {
-	if (m_hEffectEntity.Get() != pEffectEnt)
+	if (m_hEffectEntity.Get() != (pEffectEnt ? pEffectEnt->GetServerEntity() : NULL))
 	{
-		m_hEffectEntity = pEffectEnt;
+		m_hEffectEntity = (pEffectEnt ? pEffectEnt->GetServerEntity() : NULL);
 	}
 }
 

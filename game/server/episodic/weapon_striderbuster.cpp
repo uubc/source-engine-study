@@ -350,7 +350,7 @@ bool CWeaponStriderBuster::CreateConstraintToObject( CBaseEntity *pObject )
 	// Hold on to us
 	m_pConstraint = pConstraint;
 	pConstraint->SetGameData( (void *)this );
-	m_hConstrainedEntity = (CBaseEntity*)pObject->GetEngineObject()->GetOwnerEntity();;
+	m_hConstrainedEntity = pObject->GetEngineObject()->GetOwnerEntity() ? (CBaseEntity*)pObject->GetEngineObject()->GetOwnerEntity() : NULL;
 
 	// Disable collisions between the two ents
 	PhysDisableObjectCollisions( pPhysObject, pMyPhysObject );
@@ -399,12 +399,12 @@ bool CWeaponStriderBuster::ShouldStickToEntity( CBaseEntity *pEntity )
 		return false;
 
 	// Must have a follow parent
-	IServerEntity *pFollowParent = pEntity->GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pFollowParent = pEntity->GetEngineObject()->GetOwnerEntity();
 	if ( pFollowParent == NULL )
 		return false;
 
 	// Must be a strider
-	CNPC_Strider *pStrider = dynamic_cast<CNPC_Strider *>(pFollowParent);
+	CNPC_Strider *pStrider = dynamic_cast<CNPC_Strider *>(pFollowParent->GetServerEntity());
 	if ( pStrider == NULL )
 		return false;
 
@@ -445,7 +445,7 @@ bool CWeaponStriderBuster::StickToEntity( CBaseEntity *pOther )
 			if ( CreateConstraintToObject( pOther ) )
 			{
 				// Only works for striders, at the moment
-				IServerEntity *pFollowParent = pOther->GetEngineObject()->GetOwnerEntity();
+				IEngineObjectServer *pFollowParent = pOther->GetEngineObject()->GetOwnerEntity();
 				if ( pFollowParent == NULL )
 					return false;
 
@@ -540,7 +540,7 @@ void CWeaponStriderBuster::CreateDestroyedEffect( void )
 	for ( int i = 0; i < 3; i++ )
 	{
 		pTrail = EntityList()->CreateEntityByName( "sparktrail" );
-		pTrail->GetEngineObject()->SetOwnerEntity( this );
+		pTrail->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 		EntityList()->DispatchSpawn( pTrail );
 	}
 	
@@ -607,8 +607,8 @@ void CWeaponStriderBuster::VPhysicsCollision( int index, gamevcollisionevent_t *
 		return;
 
 	// Determine if we should shatter
-	IServerEntity *pOwnerEntity = pVictim->GetEngineObject()->GetOwnerEntity();
-	bool bVictimIsStrider = ( ( pOwnerEntity != NULL ) && FClassnameIs( pOwnerEntity, "npc_strider" ) );
+	IEngineObjectServer *pOwnerEntity = pVictim->GetEngineObject()->GetOwnerEntity();
+	bool bVictimIsStrider = ( ( pOwnerEntity != NULL ) && FClassnameIs( pOwnerEntity->GetServerEntity(), "npc_strider"));
 
 	// Break if we hit anything other than a strider while going fast enough.
 	// Launched duds detonate if they hit anything other than a strider any speed.
@@ -638,8 +638,8 @@ void CWeaponStriderBuster::BusterTouch( IServerEntity *pOther )
 //-----------------------------------------------------------------------------
 inline bool CWeaponStriderBuster::IsAttachedToStrider( void ) const
 {
-	IServerEntity *pAttachedEnt = GetEngineObject()->GetOwnerEntity();
-	if ( pAttachedEnt && FClassnameIs( pAttachedEnt, "npc_strider" ) )
+	IEngineObjectServer *pAttachedEnt = GetEngineObject()->GetOwnerEntity();
+	if ( pAttachedEnt && FClassnameIs( pAttachedEnt->GetServerEntity(), "npc_strider"))
 		return true;
 
 	return false;
@@ -650,20 +650,20 @@ inline bool CWeaponStriderBuster::IsAttachedToStrider( void ) const
 //-----------------------------------------------------------------------------
 void CWeaponStriderBuster::Detonate( void )
 {
-	IServerEntity *pVictim = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pVictim = GetEngineObject()->GetOwnerEntity();
 	if ( !m_bDud && pVictim )
 	{
 		// Kill the strider (with magic effect)
 		CBasePlayer *pPlayer = AI_GetSinglePlayer();
-		CTakeDamageInfo info( pPlayer, this, RandomVector( -100.0f, 100.0f ), GetEngineObject()->GetAbsOrigin(), pVictim->GetHealth(), DMG_GENERIC );
-		pVictim->TakeDamage( info );
+		CTakeDamageInfo info( pPlayer, this, RandomVector( -100.0f, 100.0f ), GetEngineObject()->GetAbsOrigin(), pVictim->GetServerEntity()->GetHealth(), DMG_GENERIC);
+		pVictim->GetServerEntity()->TakeDamage(info);
 
 		gamestats->Event_WeaponHit( ToBasePlayer( pPlayer ), true, GetClassname(), info );
 
 		// Tracker 62293:  There's a bug where the inflictor/attacker are reversed when calling TakeDamage above so the player never gets
 		//  credit for the strider buster kills.  The code has a bunch of assumptions lower level, so it's safer to just fix it here by 
 		//  crediting a kill to the player directly.
-		gamestats->Event_PlayerKilledOther( pPlayer, pVictim, info );
+		gamestats->Event_PlayerKilledOther( pPlayer, pVictim->GetServerEntity(), info);
 	}
 
 	m_OnDetonate.FireOutput( this, this );
@@ -697,7 +697,7 @@ void CWeaponStriderBuster::Detonate( void )
 	}
 
 	// Go to bits!
-	Shatter( pVictim );
+	Shatter(pVictim ? pVictim->GetServerEntity() : NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -750,7 +750,7 @@ int CWeaponStriderBuster::OnTakeDamage( const CTakeDamageInfo &info )
 					// Make the buster fall off and break.
 					m_takedamage = DAMAGE_NO;
 
-					CNPC_Strider *pStrider = dynamic_cast<CNPC_Strider *>(GetEngineObject()->GetOwnerEntity());
+					CNPC_Strider* pStrider = dynamic_cast<CNPC_Strider*>(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 					Assert( pStrider != NULL );
 					pStrider->StriderBusterDetached( this );
 					DestroyConstraint();

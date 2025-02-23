@@ -284,11 +284,11 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		{
 			CCorpse *next = ( CCorpse * )EntityList()->CreateEntityByName( "bodyque" );
 			next->GetEngineObject()->AddEFlags( EFL_KEEP_ON_RECREATE_ENTITIES );
-			p->GetEngineObject()->SetOwnerEntity( next );
+			p->GetEngineObject()->SetOwnerEntity( next->GetEngineObject() );
 			p = next;
 		}
 		
-		p->GetEngineObject()->SetOwnerEntity( g_pBodyQueueHead );
+		p->GetEngineObject()->SetOwnerEntity(g_pBodyQueueHead ? g_pBodyQueueHead->GetEngineObject() : NULL);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -313,7 +313,7 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		UTIL_SetOrigin(pHead, pCorpse->GetEngineObject()->GetAbsOrigin());
 
 		pHead->GetEngineObject()->SetSize(pCorpse->GetEngineObject()->WorldAlignMins(), pCorpse->GetEngineObject()->WorldAlignMaxs());
-		g_pBodyQueueHead = (CCorpse *)pHead->GetEngineObject()->GetOwnerEntity();
+		g_pBodyQueueHead = pHead->GetEngineObject()->GetOwnerEntity() ? (CCorpse*)pHead->GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL;
 	}
 
 	//------------------------------------------------------------------------------

@@ -456,7 +456,7 @@ void CNPCMaker::MakeNPC( void )
 	ChildPreSpawn( pent );
 
 	EntityList()->DispatchSpawn( pent );
-	pent->GetEngineObject()->SetOwnerEntity( this );
+	pent->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 	DispatchActivate( pent );
 
 	if ( m_ChildTargetName != NULL_STRING )
@@ -510,9 +510,9 @@ void CBaseNPCMaker::ChildPostSpawn( CAI_BaseNPC *pChild )
 
 		bFound = false;
 	}
-	if ( m_hIgnoreEntity != NULL )
+	if ( m_hIgnoreEntity.Get() != NULL )
 	{
-		pChild->GetEngineObject()->SetOwnerEntity( m_hIgnoreEntity );
+		pChild->GetEngineObject()->SetOwnerEntity( m_hIgnoreEntity.Get()->GetEngineObject() );
 	}
 }
 
@@ -852,7 +852,7 @@ void CTemplateNPCMaker::MakeNPC( void )
 	ChildPreSpawn( pent );
 
 	EntityList()->DispatchSpawn( pent );
-	pent->GetEngineObject()->SetOwnerEntity( this );
+	pent->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 	DispatchActivate( pent );
 
 	ChildPostSpawn( pent );
@@ -905,7 +905,7 @@ void CTemplateNPCMaker::MakeNPCInLine( void )
 	ChildPreSpawn( pent );
 
 	EntityList()->DispatchSpawn( pent );
-	pent->GetEngineObject()->SetOwnerEntity( this );
+	pent->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 	DispatchActivate( pent );
 
 	ChildPostSpawn( pent );
@@ -1006,7 +1006,7 @@ void CTemplateNPCMaker::MakeNPCInRadius( void )
 
 	EntityList()->DispatchSpawn( pent );
 
-	pent->GetEngineObject()->SetOwnerEntity( this );
+	pent->GetEngineObject()->SetOwnerEntity( this->GetEngineObject());
 	DispatchActivate( pent );
 
 	ChildPostSpawn( pent );

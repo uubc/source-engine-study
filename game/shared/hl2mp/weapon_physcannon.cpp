@@ -1501,7 +1501,7 @@ bool CWeaponPhysCannon::AttachObject( CBaseEntity *pObject, const Vector &vPosit
 
 	if ( m_hAttachedObject->GetEngineObject()->GetOwnerEntity() == NULL )
 	{
-		m_hAttachedObject->GetEngineObject()->SetOwnerEntity( pOwner );
+		m_hAttachedObject->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 		m_bResetOwnerEntity = true;
 	}
 

@@ -510,7 +510,7 @@ void C_PhysPropClientside::Clone( Vector &velocity )
 	pEntity->GetEngineObject()->SetModelName(GetEngineObject()->GetModelName() );
 	pEntity->GetEngineObject()->SetLocalOrigin(GetEngineObject()->GetLocalOrigin() );
 	pEntity->GetEngineObject()->SetLocalAngles(GetEngineObject()->GetLocalAngles() );
-	pEntity->GetEngineObject()->SetOwnerEntity( this );
+	pEntity->GetEngineObject()->SetOwnerEntity( this->GetEngineObject() );
 	pEntity->SetPhysicsMode( PHYSICS_MULTIPLAYER_CLIENTSIDE );
 
 	if ( !pEntity->Initialize() )
@@ -749,7 +749,7 @@ CBaseEntity *BreakModelCreateSingle( CBaseEntity *pOwner, breakmodel_t *pModel, 
 	pEntity->GetEngineObject()->SetModelName( AllocPooledString( pModel->modelName ) );
 	pEntity->GetEngineObject()->SetLocalOrigin( position );
 	pEntity->GetEngineObject()->SetLocalAngles( angles );
-	pEntity->GetEngineObject()->SetOwnerEntity( pOwner );
+	pEntity->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pEntity->SetPhysicsMode( PHYSICS_MULTIPLAYER_CLIENTSIDE );
 
 	if ( !pEntity->Initialize() )

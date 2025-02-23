@@ -701,7 +701,7 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 		GetEngineObject()->SetAbsVelocity( vecVelocity );
 	}
 
-	IServerEntity *pOwner = GetEngineObject()->GetOwnerEntity();
+	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 1.0f );
 	GetEngineObject()->SetOwnerEntity( NULL );
@@ -709,7 +709,7 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 
 	// If we're not allowing to spawn due to the gamerules,
 	// remove myself when I'm dropped by an NPC.
-	if ( pOwner && pOwner->IsNPC() )
+	if ( pOwner && pOwner->GetServerEntity()->IsNPC())
 	{
 		if ( g_pGameRules->IsAllowedToSpawn( this ) == false )
 		{
@@ -979,7 +979,7 @@ void CBaseCombatWeapon::Equip( CBaseCombatCharacter *pOwner )
 	GetEngineObject()->RemoveSolidFlags( FSOLID_TRIGGER );
 	GetEngineObject()->FollowEntity(pOwner->GetEngineObject());
 	SetOwner( pOwner );
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	// Break any constraint I might have to the world.
 	GetEngineObject()->RemoveEffects( EF_ITEM_BLINK );

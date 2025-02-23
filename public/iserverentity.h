@@ -589,10 +589,10 @@ public:
 	virtual float PhysGetEntityMass() = 0;
 	virtual IEngineObjectServer* GetClonesOfEntity() const = 0;
 	virtual IEnginePortalServer* GetPortalThatOwnsEntity() = 0;
-	virtual IServerEntity* GetOwnerEntity() const = 0;
-	virtual void SetOwnerEntity(IServerEntity* pOwner) = 0;
-	virtual IServerEntity* GetEffectEntity() const = 0;
-	virtual void SetEffectEntity(IServerEntity* pEffectEnt) = 0;
+	virtual IEngineObjectServer* GetOwnerEntity() const = 0;
+	virtual void SetOwnerEntity(IEngineObjectServer* pOwner) = 0;
+	virtual IEngineObjectServer* GetEffectEntity() const = 0;
+	virtual void SetEffectEntity(IEngineObjectServer* pEffectEnt) = 0;
 
 	virtual bool IsWorld() = 0;
 	virtual IEngineWorldServer* AsEngineWorld() = 0;

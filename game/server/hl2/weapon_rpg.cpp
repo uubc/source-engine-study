@@ -357,7 +357,7 @@ void CMissile::ShotDown( void )
 void CMissile::DoExplosion( void )
 {
 	// Explode
-	ExplosionCreate(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetOwnerEntity(), GetDamage(), CMissile::EXPLOSION_RADIUS,
+	ExplosionCreate(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL, GetDamage(), CMissile::EXPLOSION_RADIUS,
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this);
 }
 
@@ -501,7 +501,7 @@ void CMissile::GetShootPosition( CLaserDot *pLaserDot, Vector *pShootPosition )
 	if ( pLaserDot->GetEngineObject()->GetOwnerEntity() != NULL )
 	{
 		//FIXME: Do we care this isn't exactly the muzzle position?
-		*pShootPosition = pLaserDot->GetEngineObject()->GetOwnerEntity()->WorldSpaceCenter();
+		*pShootPosition = pLaserDot->GetEngineObject()->GetOwnerEntity()->GetServerEntity()->WorldSpaceCenter();
 	}
 	else
 	{
@@ -738,7 +738,7 @@ CMissile *CMissile::Create( const Vector &vecOrigin, const QAngle &vecAngles, CB
 {
 	//CMissile *pMissile = (CMissile *)CreateEntityByName("rpg_missile" );
 	CMissile *pMissile = (CMissile *) CBaseEntity::Create( "rpg_missile", vecOrigin, vecAngles, pentOwner );
-	pMissile->GetEngineObject()->SetOwnerEntity( pentOwner );
+	pMissile->GetEngineObject()->SetOwnerEntity(pentOwner ? pentOwner->GetEngineObject() : NULL);
 	pMissile->Spawn();
 	pMissile->GetEngineObject()->AddEffects( EF_NOSHADOW );
 	
@@ -985,7 +985,7 @@ LINK_ENTITY_TO_CLASS( apc_missile, CAPCMissile );
 CAPCMissile *CAPCMissile::Create( const Vector &vecOrigin, const QAngle &vecAngles, const Vector &vecVelocity, CBaseEntity *pOwner )
 {
 	CAPCMissile *pMissile = (CAPCMissile *)CBaseEntity::Create( "apc_missile", vecOrigin, vecAngles, pOwner );
-	pMissile->GetEngineObject()->SetOwnerEntity( pOwner );
+	pMissile->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 	pMissile->Spawn();
 	pMissile->GetEngineObject()->SetAbsVelocity( vecVelocity );
 	pMissile->GetEngineObject()->AddFlag( FL_NOTARGET );
@@ -1182,7 +1182,7 @@ void CAPCMissile::DoExplosion( void )
 #ifdef HL2_EPISODIC
 		ExplosionCreate(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), this, APC_MISSILE_DAMAGE, 100, true, 20000 );
 #else
-		ExplosionCreate(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetOwnerEntity(), APC_MISSILE_DAMAGE, 100, true, 20000 );
+		ExplosionCreate(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL, APC_MISSILE_DAMAGE, 100, true, 20000);
 #endif
 	}
 }
@@ -2007,7 +2007,7 @@ void CWeaponRPG::CreateLaserPointer( void )
 	if ( m_hLaserDot != NULL )
 		return;
 
-	m_hLaserDot = CLaserDot::Create(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetOwnerEntity() );
+	m_hLaserDot = CLaserDot::Create(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL);
 	m_hLaserDot->TurnOff();
 
 	UpdateLaserPosition();
@@ -2320,7 +2320,7 @@ CLaserDot *CLaserDot::Create( const Vector &origin, IServerEntity *pOwner, bool 
 	pLaserDot->SetTransparency( kRenderGlow, 255, 255, 255, 255, kRenderFxNoDissipation );
 	pLaserDot->SetScale( 0.5f );
 
-	pLaserDot->GetEngineObject()->SetOwnerEntity( pOwner );
+	pLaserDot->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	pLaserDot->SetContextThink( &CLaserDot::LaserThink, gpGlobals->curtime + 0.1f, g_pLaserDotThink );
 	pLaserDot->GetEngineObject()->SetSimulatedEveryTick( true );
@@ -2343,7 +2343,7 @@ void CLaserDot::LaserThink( void )
 	if (GetEngineObject()->GetOwnerEntity() == NULL )
 		return;
 
-	Vector	viewDir = GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetOwnerEntity()->GetEngineObject()->GetAbsOrigin();
+	Vector	viewDir = GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetOwnerEntity()->GetAbsOrigin();
 	float	dist = VectorNormalize( viewDir );
 
 	float	scale = RemapVal( dist, 32, 1024, 0.01f, 0.5f );

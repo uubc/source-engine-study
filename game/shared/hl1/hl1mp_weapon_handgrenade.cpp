@@ -76,7 +76,7 @@ void CHandGrenade::ShootTimed( CBaseCombatCharacter *pOwner, Vector vecVelocity,
 	GetEngineObject()->SetAbsVelocity( vecVelocity );
 
 	SetThrower( pOwner );
-	GetEngineObject()->SetOwnerEntity( pOwner );
+	GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	SetTouch( &CHandGrenade::BounceTouch );	// Bounce if touched
 

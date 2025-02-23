@@ -163,14 +163,14 @@ void CSquidSpit::Shoot( CBaseEntity *pOwner, Vector vecStart, Vector vecVelocity
 	
 	UTIL_SetOrigin( pSpit, vecStart );
 	pSpit->GetEngineObject()->SetAbsVelocity( vecVelocity );
-	pSpit->GetEngineObject()->SetOwnerEntity( pOwner );
+	pSpit->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
 	CSprite *pSprite = (CSprite*)pSpit->GetSprite();
 
 	if ( pSprite )
 	{
 		pSprite->SetAttachment( pSpit, 0 );
-		pSprite->GetEngineObject()->SetOwnerEntity( pSpit );
+		pSprite->GetEngineObject()->SetOwnerEntity( pSpit->GetEngineObject() );
 
 		pSprite->SetScale( 0.5 );
 		pSprite->SetTransparency( pSpit->GetEngineObject()->GetRenderMode(), pSpit->GetEngineObject()->GetRenderColor().r, pSpit->GetEngineObject()->GetRenderColor().g, pSpit->GetEngineObject()->GetRenderColor().b, pSpit->GetEngineObject()->GetRenderColor().a, pSpit->GetEngineObject()->GetRenderFX());

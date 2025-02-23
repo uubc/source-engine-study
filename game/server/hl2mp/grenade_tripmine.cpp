@@ -171,7 +171,7 @@ void CTripmineGrenade::MakeBeam( void )
 	float drawLength = tr.fraction;
 	if (pBCC)
 	{
-		GetEngineObject()->SetOwnerEntity( pBCC );
+		GetEngineObject()->SetOwnerEntity( pBCC->GetEngineObject() );
 		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		m_flBeamLength = tr.fraction;
 		GetEngineObject()->SetOwnerEntity( NULL );

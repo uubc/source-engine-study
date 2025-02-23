@@ -127,7 +127,7 @@ public:
 
 	virtual int UpdateTransmitState( void )
 	{
-		if ( (( CDODBombDispenser * )GetEngineObject()->GetOwnerEntity())->IsActive() )
+		if (((CDODBombDispenser*)GetEngineObject()->GetOwnerEntity()->GetServerEntity())->IsActive())
 		{
 			return SetTransmitState( FL_EDICT_ALWAYS );
 		}

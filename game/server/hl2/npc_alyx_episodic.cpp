@@ -495,7 +495,7 @@ void CNPC_Alyx::CreateEmpTool( void )
 		m_hEmpTool->GetEngineObject()->SetName( "Alyx_Emptool" );
 		int iAttachment = GetEngineObject()->LookupAttachment( "Emp_Holster" );
 		m_hEmpTool->GetEngineObject()->SetParent(this->GetEngineObject(), iAttachment);
-		m_hEmpTool->GetEngineObject()->SetOwnerEntity(this);
+		m_hEmpTool->GetEngineObject()->SetOwnerEntity(this->GetEngineObject());
 		m_hEmpTool->GetEngineObject()->SetSolid( SOLID_NONE );
 		m_hEmpTool->GetEngineObject()->SetLocalOrigin( Vector( 0, 0, 0 ) );
 		m_hEmpTool->GetEngineObject()->SetLocalAngles( QAngle( 0, 0, 0 ) );
@@ -1195,7 +1195,7 @@ void CNPC_Alyx::DoCustomSpeechAI( void )
 				SpeakIfAllowed( "TLK_SPOTTED_INCOMING_HEADCRAB" );
 			}
 			// If we see a headcrab leaving a zombie that just died, mention it
-			else if ( pHC->GetEngineObject()->GetOwnerEntity() && ( ((CBaseEntity*)pHC->GetEngineObject()->GetOwnerEntity())->Classify() == CLASS_ZOMBIE ) && !pHC->GetEngineObject()->GetOwnerEntity()->IsAlive() )
+			else if ( pHC->GetEngineObject()->GetOwnerEntity() && ( ((CBaseEntity*)pHC->GetEngineObject()->GetOwnerEntity()->GetServerEntity())->Classify() == CLASS_ZOMBIE ) && !pHC->GetEngineObject()->GetOwnerEntity()->GetServerEntity()->IsAlive())
 			{
 				SpeakIfAllowed( "TLK_SPOTTED_HEADCRAB_LEAVING_ZOMBIE" );
 			}

@@ -80,11 +80,11 @@ C_BaseCombatWeapon *CViewC4Panel::GetOwningWeapon()
 	if (!pScreenEnt)
 		return NULL;
 
-	IClientEntity *pOwner = pScreenEnt->GetEngineObject()->GetOwnerEntity();
+	IEngineObjectClient *pOwner = pScreenEnt->GetEngineObject()->GetOwnerEntity();
 	if (!pOwner)
 		return NULL;
 
-	C_BaseViewModel *pViewModel = dynamic_cast< C_BaseViewModel * >( pOwner );
+	C_BaseViewModel *pViewModel = dynamic_cast< C_BaseViewModel * >( pOwner->GetClientEntity() );
 	if ( !pViewModel )
 		return NULL;
 

@@ -356,7 +356,7 @@ void CTripmineGrenade::Spawn( void )
 			g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
 		}
 
-		m_hRealOwner = (CBaseEntity*)GetEngineObject()->GetOwnerEntity();
+		m_hRealOwner = GetEngineObject()->GetOwnerEntity() ? (CBaseEntity*)GetEngineObject()->GetOwnerEntity()->GetServerEntity() : NULL;
 	}
 	AngleVectors(GetEngineObject()->GetAbsAngles(), &m_vecDir );
 	m_vecEnd = GetEngineObject()->GetAbsOrigin() + m_vecDir * MAX_TRACE_LENGTH;
@@ -388,13 +388,13 @@ void CTripmineGrenade::PowerupThink( void  )
 	if ( m_hStuckOn == NULL )
 	{
 		trace_t tr;
-		IServerEntity *pOldOwner = GetEngineObject()->GetOwnerEntity();
+		IEngineObjectServer *pOldOwner = GetEngineObject()->GetOwnerEntity();
 
 		// don't explode if the player is standing in front of the laser
 		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 32, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.m_pEnt && pOldOwner &&
-			( tr.m_pEnt == pOldOwner ) && pOldOwner->IsPlayer() )
+			( tr.m_pEnt == pOldOwner->GetServerEntity() ) && pOldOwner->IsPlayer() )
 		{
 			m_flPowerUp += 0.1;	//delay the arming
 			GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
@@ -404,7 +404,7 @@ void CTripmineGrenade::PowerupThink( void  )
 		// find out what we've been stuck on		
 		GetEngineObject()->SetOwnerEntity( NULL );
 		
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 32, MASK_SHOT, pOldOwner, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 32, MASK_SHOT, pOldOwner ? pOldOwner->GetServerEntity() : NULL, COLLISION_GROUP_NONE, &tr);
 
 		if ( tr.startsolid )
 		{
@@ -415,7 +415,7 @@ void CTripmineGrenade::PowerupThink( void  )
 		}
 		if ( tr.fraction < 1.0 )
 		{
-			GetEngineObject()->SetOwnerEntity((CBaseEntity*)tr.m_pEnt );
+			GetEngineObject()->SetOwnerEntity(((CBaseEntity*)tr.m_pEnt)->GetEngineObject() );
 			m_hStuckOn		= (CBaseEntity*)tr.m_pEnt;
 			m_posStuckOn	= m_hStuckOn->GetEngineObject()->GetAbsOrigin();
 			m_angStuckOn	= m_hStuckOn->GetEngineObject()->GetAbsAngles();
@@ -552,7 +552,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 
 	if ( bBlowup )
 	{
-		GetEngineObject()->SetOwnerEntity( m_hRealOwner );
+		GetEngineObject()->SetOwnerEntity(m_hRealOwner.Get() ? m_hRealOwner.Get()->GetEngineObject() : NULL);
 		m_iHealth = 0;
 		Event_Killed( CTakeDamageInfo( this, m_hRealOwner, 100, GIB_NORMAL ) );
 		return;
@@ -582,7 +582,7 @@ void CTripmineGrenade::Event_Killed( const CTakeDamageInfo &info )
 	if ( info.GetAttacker() && ( info.GetAttacker()->GetEngineObject()->GetFlags() & FL_CLIENT ) )
 	{
 		// some client has destroyed this mine, he'll get credit for any kills
-		GetEngineObject()->SetOwnerEntity((IServerEntity*)info.GetAttacker() );
+		GetEngineObject()->SetOwnerEntity(((IServerEntity*)info.GetAttacker())->GetEngineObject() );
 	}
 
 	SetThink( &CTripmineGrenade::DelayDeathThink );

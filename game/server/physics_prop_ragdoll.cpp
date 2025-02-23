@@ -1066,7 +1066,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	m_pAttachConstraint = EntityList()->PhysGetEnv()->CreateRagdollConstraint( pRefObject, pAttached, GetEngineObject()->GetConstraintGroup(), constraint);
 
 	GetEngineObject()->SetParent( pFollow->GetEngineObject() );
-	GetEngineObject()->SetOwnerEntity( pFollow );
+	GetEngineObject()->SetOwnerEntity( pFollow->GetEngineObject() );
 
 	GetEngineObject()->ActiveRagdoll();
 

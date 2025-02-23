@@ -79,8 +79,8 @@ public:
 	virtual MoveType_t GetMoveType() const = 0;
 	virtual IPhysicsObject* VPhysicsGetObject(void) const = 0;
 	virtual bool IsRagdoll() const = 0;
-	//virtual IHandleEntity* GetOwnerEntity(void) const = 0;
-	//virtual IHandleEntity* GetEffectEntity(void) const = 0;
+	virtual IEngineObject* GetOwnerEntity(void) const = 0;
+	virtual IEngineObject* GetEffectEntity(void) const = 0;
 
 	virtual bool IsWorld() = 0;
 	virtual bool IsPlayer() = 0;

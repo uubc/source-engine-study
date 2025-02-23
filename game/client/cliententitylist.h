@@ -1238,10 +1238,10 @@ public:
 	void PhysForceClearVelocity(IPhysicsObject* pPhys);
 
 	// To mimic server call convention
-	IClientEntity* GetOwnerEntity(void) const;
-	void SetOwnerEntity(IClientEntity* pOwner);
-	IClientEntity* GetEffectEntity(void) const;
-	void SetEffectEntity(IClientEntity* pEffectEnt);
+	C_EngineObjectInternal* GetOwnerEntity(void) const;
+	void SetOwnerEntity(IEngineObjectClient* pOwner);
+	C_EngineObjectInternal* GetEffectEntity(void) const;
+	void SetEffectEntity(IEngineObjectClient* pEffectEnt);
 
 	bool IsWorld() { return false; }
 	IEngineWorldClient* AsEngineWorld() { Error("I am not EngineWorld!"); }
@@ -2385,14 +2385,14 @@ inline void C_EngineObjectInternal::SetRenderColorA(byte a)
 	SetRenderColor(GetRenderColor().r, GetRenderColor().g, GetRenderColor().b, a);
 }
 
-inline IClientEntity* C_EngineObjectInternal::GetOwnerEntity() const
+inline C_EngineObjectInternal* C_EngineObjectInternal::GetOwnerEntity() const
 {
-	return m_hOwnerEntity.Get();
+	return m_hOwnerEntity.Get() ? (C_EngineObjectInternal*)m_hOwnerEntity.Get()->GetEngineObject() : NULL;
 }
 
-inline IClientEntity* C_EngineObjectInternal::GetEffectEntity() const
+inline C_EngineObjectInternal* C_EngineObjectInternal::GetEffectEntity() const
 {
-	return m_hEffectEntity.Get();
+	return m_hEffectEntity.Get() ? (C_EngineObjectInternal*)m_hEffectEntity.Get()->GetEngineObject() : NULL;
 }
 
 class C_EngineWorldInternal : public C_EngineObjectInternal, public IEngineWorldClient {

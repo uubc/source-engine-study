@@ -99,7 +99,7 @@ CCrossbowBolt *CCrossbowBolt::BoltCreate( const Vector &vecOrigin, const QAngle 
 	UTIL_SetOrigin( pBolt, vecOrigin );
 	pBolt->GetEngineObject()->SetAbsAngles( angAngles );
 	pBolt->Spawn();
-	pBolt->GetEngineObject()->SetOwnerEntity( pentOwner );
+	pBolt->GetEngineObject()->SetOwnerEntity(pentOwner ? pentOwner->GetEngineObject() : NULL);
 
 	pBolt->m_iDamage = iDamage;
 
@@ -214,7 +214,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 		if(GetEngineObject()->GetOwnerEntity() && GetEngineObject()->GetOwnerEntity()->IsPlayer() && pOther->IsNPC() )
 		{
-			CTakeDamageInfo	dmgInfo( this, GetEngineObject()->GetOwnerEntity(), m_iDamage, DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, m_iDamage, DMG_NEVERGIB);
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.7f );
 			dmgInfo.SetDamagePosition( tr.endpos );
@@ -222,7 +222,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		}
 		else
 		{
-			CTakeDamageInfo	dmgInfo( this, GetEngineObject()->GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, m_iDamage, DMG_BULLET | DMG_NEVERGIB);
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.7f );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
