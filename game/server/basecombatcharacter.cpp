@@ -9,7 +9,6 @@
 #include "basecombatweapon.h"
 #include "animation.h"
 #include "gib.h"
-#include "gamerules.h"
 #include "ai_basenpc.h"
 #include "ai_squadslot.h"
 #include "ammodef.h"

@@ -7,7 +7,6 @@
 
 #include "cbase.h"
 #include "hl1_player.h"
-#include "gamerules.h"
 #include "trains.h"
 #include "hl1_basecombatweapon_shared.h"
 #include "vcollide_parse.h"

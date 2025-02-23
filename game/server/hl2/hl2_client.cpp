@@ -16,7 +16,6 @@
 #include "cbase.h"
 #include "hl2_player.h"
 #include "hl2_gamerules.h"
-#include "gamerules.h"
 #include "teamplay_gamerules.h"
 //#include "physics.h"
 #include "game.h"

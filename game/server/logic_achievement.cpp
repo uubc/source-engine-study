@@ -3,7 +3,6 @@
 //	Defines a logical entity which passes achievement related events to the gamerules system.
 
 #include "cbase.h"
-#include "gamerules.h"
 #include "entityinput.h"
 #include "entityoutput.h"
 

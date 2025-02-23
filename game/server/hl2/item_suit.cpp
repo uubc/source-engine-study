@@ -14,7 +14,6 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "gamerules.h"
 #include "items.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

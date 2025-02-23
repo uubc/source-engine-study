@@ -14,7 +14,6 @@
 #include "ai_senses.h"
 #include "ai_memory.h"
 #include "soundenvelope.h"
-#include "gamerules.h"
 #include "grenade_homer.h"
 #include "ndebugoverlay.h"
 #include "cbasehelicopter.h"

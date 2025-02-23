@@ -15,7 +15,6 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "gamerules.h"
 //#include "physics.h"
 #include "game.h"
 #include "ai_network.h"

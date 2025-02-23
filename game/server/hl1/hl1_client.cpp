@@ -17,7 +17,6 @@
 #include "hl1_player.h"
 #include "hl1mp_player.h"
 #include "hl1_gamerules.h"
-#include "gamerules.h"
 #include "teamplay_gamerules.h"
 //#include "physics.h"
 #include "game.h"

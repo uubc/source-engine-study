@@ -10,7 +10,6 @@
 #include "shake.h"
 #include "decals.h"
 #include "player.h"
-#include "gamerules.h"
 #include "bspfile.h"
 #include "mathlib/mathlib.h"
 #include "IEffects.h"

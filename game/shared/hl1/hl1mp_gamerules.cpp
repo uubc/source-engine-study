@@ -14,7 +14,6 @@
 
 #include "eventqueue.h"
 #include "player.h"
-#include "gamerules.h"
 #include "game.h"
 #include "items.h"
 #include "in_buttons.h"

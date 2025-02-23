@@ -12,7 +12,6 @@
 #include "gib.h"
 #include "shake.h"
 #include "decals.h"
-#include "gamerules.h"
 #include "game.h"
 #include "entityapi.h"
 #include "eventqueue.h"

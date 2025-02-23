@@ -14,7 +14,6 @@
 */
 
 #include "cbase.h"
-#include "gamerules.h"
 #include "player.h"
 #include "engine/IEngineSound.h"
 #include "in_buttons.h"

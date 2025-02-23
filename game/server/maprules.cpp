@@ -6,7 +6,6 @@
 
 #include "cbase.h"
 #include "datamap.h"
-#include "gamerules.h"
 #include "maprules.h"
 #include "player.h"
 #include "ai_hull.h"

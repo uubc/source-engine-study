@@ -13,7 +13,6 @@
 #include "player.h"
 #include "weapon_ar2.h"
 #include "grenade_ar2.h"
-#include "gamerules.h"
 #include "game.h"
 #include "in_buttons.h"
 #include "ai_memory.h"

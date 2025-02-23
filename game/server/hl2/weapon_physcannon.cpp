@@ -6,7 +6,6 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "gamerules.h"
 #include "soundenvelope.h"
 #include "engine/IEngineSound.h"
 //#include "physics.h"

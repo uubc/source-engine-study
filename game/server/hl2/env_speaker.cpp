@@ -12,7 +12,6 @@
 #include "env_speaker.h"
 #include "ai_speech.h"
 #include "stringregistry.h"
-#include "gamerules.h"
 #include "game.h"
 #include <ctype.h>
 #include "vstdlib/random.h"

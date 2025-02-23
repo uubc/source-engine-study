@@ -7,7 +7,6 @@
 #include "cbase.h"
 #include "ai_basenpc.h"
 #include "player.h"
-#include "gamerules.h"
 #include "entityapi.h"
 #include "ndebugoverlay.h"
 #include "filters.h"

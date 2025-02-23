@@ -8,7 +8,6 @@
 #include "cbase.h"
 #include "player.h"
 #include "basecombatweapon.h"
-#include "gamerules.h"
 #include "items.h"
 #include "engine/IEngineSound.h"
 #include "hl1_items.h"

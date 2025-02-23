@@ -16,7 +16,6 @@
 #include "cbase.h"
 #include "portal_player.h"
 #include "portal_gamerules.h"
-#include "gamerules.h"
 #include "teamplay_gamerules.h"
 //#include "physics.h"
 #include "game.h"

@@ -9,7 +9,6 @@
 #include "weapon_portalgun.h"
 #include "prop_portal_shared.h"
 #include "portal_util_shared.h"
-#include "gamerules.h"
 #include "soundenvelope.h"
 #include "engine/IEngineSound.h"
 //#include "physics.h"

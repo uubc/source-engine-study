@@ -6,7 +6,6 @@
 
 #include "cbase.h"
 #include "cam_thirdperson.h"
-#include "gamerules.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

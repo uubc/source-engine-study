@@ -6,7 +6,6 @@
 //=============================================================================//
 #include "cbase.h"
 #include "KeyValues.h"
-#include "gamerules.h"
 #include "teamplay_gamerules.h"
 
 #ifdef CLIENT_DLL

@@ -12,7 +12,6 @@
 #include "game.h"
 #include "entityapi.h"
 #include "client.h"
-#include "gamerules.h"
 #include "soundent.h"
 #include "player.h"
 #include "server_class.h"

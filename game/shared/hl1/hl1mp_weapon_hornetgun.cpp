@@ -10,7 +10,6 @@
 #include "hl1mp_basecombatweapon_shared.h"
 //#include "basecombatcharacter.h"
 //#include "AI_BaseNPC.h"
-#include "gamerules.h"
 #include "in_buttons.h"
 #ifdef CLIENT_DLL
 #include "hl1/c_hl1mp_player.h"

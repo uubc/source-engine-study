@@ -7,7 +7,6 @@
 
 #include "cbase.h"
 #include <stdarg.h>
-#include "gamerules.h"
 #include "player.h"
 #include "model_types.h"
 #include "movehelper_server.h"

@@ -13,7 +13,6 @@
 #include "EnvMessage.h"
 #include "player.h"
 #include "player_resource.h"
-#include "gamerules.h"
 #include "teamplay_gamerules.h"
 //#include "physics.h"
 #include "isaverestore.h"

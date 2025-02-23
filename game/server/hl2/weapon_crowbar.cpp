@@ -8,7 +8,6 @@
 #include "cbase.h"
 #include "basehlcombatweapon.h"
 #include "player.h"
-#include "gamerules.h"
 #include "ammodef.h"
 #include "mathlib/mathlib.h"
 #include "in_buttons.h"

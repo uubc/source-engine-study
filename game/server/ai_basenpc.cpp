@@ -16,7 +16,6 @@
 #include "eventqueue.h"
 #include "entityapi.h"
 #include "bitstring.h"
-#include "gamerules.h"		// For g_pGameRules
 #include "scripted.h"
 #include "worldsize.h"
 #include "game.h"

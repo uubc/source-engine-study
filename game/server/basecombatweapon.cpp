@@ -9,7 +9,6 @@
 #include "animation.h"
 #include "basecombatweapon.h"
 #include "player.h"			// For gEvilImpulse101 / CBasePlayer
-#include "gamerules.h"		// For g_pGameRules
 #include <KeyValues.h>
 #include "ammodef.h"
 #include "baseviewmodel.h"

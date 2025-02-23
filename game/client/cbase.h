@@ -36,6 +36,7 @@ typedef CHandle<C_BaseEntity> EHANDLE;
 #include "recvproxy.h"
 #include "engine/IEngineTrace.h"
 #include "entitylist_base.h"
+#include "gamerules.h"
 // This is a precompiled header.  Include a bunch of common stuff.
 // This is kind of ugly in that it adds a bunch of dependency where it isn't needed.
 // But on balance, the compile time is much lower (even incrementally) once the precompiled
@@ -45,7 +46,6 @@ typedef CHandle<C_BaseEntity> EHANDLE;
 //#include "c_basecombatcharacter.h"
 //#include "shared_classnames.h"
 #include "baseentity_shared.h"
-#include "gamerules.h"
 #include "c_baseplayer.h"
 //#include "cliententitylist.h"
 #include "itempents.h"

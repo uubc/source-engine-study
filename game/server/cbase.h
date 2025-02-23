@@ -80,6 +80,7 @@ typedef CHandle<CBaseEntity> EHANDLE;
 #include "networkvar.h"
 #include "igameevents.h"
 #include "entitylist_base.h"
+#include "gamerules.h"
 #ifdef _XBOX
 //#define FUNCTANK_AUTOUSE  We haven't made the decision to use this yet (sjb)
 #else
@@ -97,7 +98,6 @@ typedef CHandle<CBaseEntity> EHANDLE;
 //#include "basecombatweapon.h"
 //#include "basecombatcharacter.h"
 #include "baseentity_shared.h"
-#include "gamerules.h"
 #include "player.h"
 #include "basetempentity.h"
 #include "te.h"

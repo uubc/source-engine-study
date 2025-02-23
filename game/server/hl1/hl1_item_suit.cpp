@@ -11,7 +11,6 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "gamerules.h"
 #include "items.h"
 #include "hl1_items.h"
 

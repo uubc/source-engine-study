@@ -8,7 +8,6 @@
 #include "cbase.h"
 #include "hl2mp/weapon_crowbar.h"
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
-#include "gamerules.h"
 #include "ammodef.h"
 #include "mathlib/mathlib.h"
 #include "in_buttons.h"

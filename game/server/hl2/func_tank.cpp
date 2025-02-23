@@ -11,7 +11,6 @@
 #include "basecombatweapon.h"
 #include "explode.h"
 #include "eventqueue.h"
-#include "gamerules.h"
 #include "ammodef.h"
 #include "in_buttons.h"
 #include "soundent.h"

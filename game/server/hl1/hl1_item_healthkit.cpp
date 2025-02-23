@@ -5,7 +5,6 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "gamerules.h"
 #include "player.h"
 #include "items.h"
 #include "engine/IEngineSound.h"

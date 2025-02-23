@@ -6,7 +6,6 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "gamerules.h"
 #include "items.h"
 #include "ammodef.h"
 #include "eventlist.h"

@@ -11,7 +11,6 @@
 
 #include "player.h"
 #include "ai_basenpc.h"
-#include "gamerules.h"
 #include "mempool.h"
 #include "engine/IEngineSound.h"
 #include "datacache/imdlcache.h"

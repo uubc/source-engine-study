@@ -13,18 +13,25 @@
 
 #include "platform.h"
 #include "iserverentity.h"
+#include "irecipientfilter.h"
 
 // Debug history should be disabled in release builds
 //#define DISABLE_DEBUG_HISTORY	
 
 //#include "items.h"
 class CBaseCombatWeapon;
+class C_BaseCombatWeapon;
 class CBaseCombatCharacter;
+class C_BaseCombatCharacter;
 class CBasePlayer;
+class C_BasePlayer;
 class CItem;
+class C_Item;
 class CAmmoDef;
 class CTacticalMissionManager;
 class CViewVectors;
+class CBaseEntity;
+class C_BaseEntity;
 
 // Autoaiming modes
 enum
@@ -93,14 +100,12 @@ public:
 // Ammo Definitions
 	//CAmmoDef* GetAmmoDef();
 
-	virtual bool SwitchToNextBestWeapon( CBaseCombatCharacter *pPlayer, CBaseCombatWeapon *pCurrentWeapon ) = 0; // Switch to the next best weapon
-	virtual CBaseCombatWeapon *GetNextBestWeapon( CBaseCombatCharacter *pPlayer, CBaseCombatWeapon *pCurrentWeapon ) = 0; // I can't use this weapon anymore, get me the next best one.
+
 	virtual bool ShouldCollide( int collisionGroup0, int collisionGroup1 ) = 0;
 	virtual int DefaultFOV(void) = 0;
 	// Get the view vectors for this mod.
 	virtual const CViewVectors* GetViewVectors() const = 0;
-// Damage rules for ammo types
-	virtual float GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType ) = 0;
+
 	virtual float GetDamageMultiplier(void) = 0;
 // Functions to verify the single/multiplayer status of a game
 	virtual bool IsMultiplayer( void ) = 0;// is this a multiplayer game? (either coop or deathmatch)
@@ -111,7 +116,6 @@ public:
 	virtual void ClientCommandKeyValues(int pEntity, KeyValues* pKeyValues) = 0;
 	// IsConnectedUserInfoChangeAllowed allows the clients to change
 	// cvars with the FCVAR_NOT_CONNECTED rule if it returns true
-	virtual bool IsConnectedUserInfoChangeAllowed(CBasePlayer* pPlayer) = 0;
 	virtual const char* GetGameTypeName(void) = 0;
 	virtual int GetGameType(void) = 0;
 	virtual bool ShouldDrawHeadLabels() = 0;
@@ -124,6 +128,8 @@ public:
 class IServerGameRules : public IGameRules
 {
 public:
+	virtual bool SwitchToNextBestWeapon(CBaseCombatCharacter* pPlayer, CBaseCombatWeapon* pCurrentWeapon) = 0; // Switch to the next best weapon
+	virtual CBaseCombatWeapon* GetNextBestWeapon(CBaseCombatCharacter* pPlayer, CBaseCombatWeapon* pCurrentWeapon) = 0; // I can't use this weapon anymore, get me the next best one.
 	virtual void GetTaggedConVarList(KeyValues* pCvarTagList) = 0;
 	// NVNT see if the client of the player entered is using a haptic device.
 	virtual void CheckHaptics(CBasePlayer* pPlayer) = 0;
@@ -153,6 +159,7 @@ public:
 	virtual bool ClientConnected( int pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;// a client just connected to the server (player hasn't spawned yet)
 	virtual void InitHUD( CBasePlayer *pl ) = 0;		// the client dll is ready for updating
 	virtual void ClientDisconnected( int pClient ) = 0;// a client just disconnected from the server
+	virtual bool IsConnectedUserInfoChangeAllowed(CBasePlayer* pPlayer) = 0;
 // Client damage rules
 	virtual float FlPlayerFallDamage( CBasePlayer *pPlayer ) = 0;// this client just hit the ground after a fall. How much damage?
 	virtual bool  FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker, const CTakeDamageInfo& info) = 0;;// can this player take damage from this attacker?
@@ -203,6 +210,8 @@ public:
 	virtual bool CanHaveAmmo( CBaseCombatCharacter *pPlayer, const char *szName ) = 0;
 	virtual void PlayerGotAmmo( CBaseCombatCharacter *pPlayer, char *szName, int iCount ) = 0;// called each time a player picks up some ammo in the world
 	virtual float GetAmmoQuantityScale(int iAmmoIndex) = 0;
+	// Damage rules for ammo types
+	virtual float GetAmmoDamage(CBaseEntity* pAttacker, CBaseEntity* pVictim, int nAmmoType) = 0;
 // AI Definitions
 	virtual void InitDefaultAIRelationships(void) = 0;
 	virtual const char* AIClassText(int classType) = 0;
@@ -258,6 +267,8 @@ public:
 class IClientGameRules : public IGameRules
 {
 public:
+	virtual bool SwitchToNextBestWeapon(C_BaseCombatCharacter* pPlayer, C_BaseCombatWeapon* pCurrentWeapon) = 0; // Switch to the next best weapon
+	virtual C_BaseCombatWeapon* GetNextBestWeapon(C_BaseCombatCharacter* pPlayer, C_BaseCombatWeapon* pCurrentWeapon) = 0; // I can't use this weapon anymore, get me the next best one.
 	virtual bool IsBonusChallengeTimeBased(void) = 0;
 	virtual bool AllowMapParticleEffect(const char* pszParticleEffect) = 0;
 	virtual bool AllowWeatherParticles(void) = 0;
@@ -266,6 +277,9 @@ public:
 	virtual bool IsLocalPlayer(int nEntIndex) = 0;
 	virtual void ModifySentChat(char* pBuf, int iBufSize) = 0;
 	virtual bool ShouldWarnOfAbandonOnQuit() = 0;
+	// Damage rules for ammo types
+	virtual float GetAmmoDamage(C_BaseEntity* pAttacker, C_BaseEntity* pVictim, int nAmmoType) = 0;
+	virtual bool IsConnectedUserInfoChangeAllowed(C_BasePlayer* pPlayer) = 0;
 };
 
 #endif // GAMERULES_H

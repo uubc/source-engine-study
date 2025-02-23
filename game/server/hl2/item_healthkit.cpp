@@ -6,7 +6,6 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "gamerules.h"
 #include "player.h"
 #include "items.h"
 #include "in_buttons.h"

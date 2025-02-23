@@ -17,7 +17,6 @@
 #include "player.h"
 #include "client.h"
 #include "soundent.h"
-#include "gamerules.h"
 #include "game.h"
 //#include "physics.h"
 #include "shake.h"

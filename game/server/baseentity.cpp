@@ -9,7 +9,6 @@
 #include "isaverestore.h"
 #include "client.h"
 #include "decals.h"
-#include "gamerules.h"
 #include "entityapi.h"
 #include "eventqueue.h"
 #include "hierarchy.h"

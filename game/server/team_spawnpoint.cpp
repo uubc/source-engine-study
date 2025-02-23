@@ -8,7 +8,6 @@
 #include "entityoutput.h"
 #include "player.h"
 #include "eventqueue.h"
-#include "gamerules.h"
 #include "team_spawnpoint.h"
 #include "team.h"
 

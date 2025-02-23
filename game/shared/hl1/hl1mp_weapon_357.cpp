@@ -13,7 +13,6 @@
 #else
 #include "player.h"
 #endif
-#include "gamerules.h"
 #include "in_buttons.h"
 #ifndef CLIENT_DLL
 #include "soundent.h"

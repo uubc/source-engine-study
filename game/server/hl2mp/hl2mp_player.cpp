@@ -8,7 +8,6 @@
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "hl2mp_player.h"
 #include "game.h"
-#include "gamerules.h"
 #include "hl2mp_player_shared.h"
 #include "predicted_viewmodel.h"
 #include "in_buttons.h"

@@ -14,7 +14,6 @@
 #include "basecombatweapon.h"
 #include "soundenvelope.h"
 #include "gib.h"
-#include "gamerules.h"
 #include "ammodef.h"
 #include "grenade_homer.h"
 #include "cbasehelicopter.h"

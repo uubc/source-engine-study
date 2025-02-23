@@ -19,7 +19,6 @@
 #include "mempool.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 #include "tier0/vprof.h"
-#include "gamerules.h"
 #ifdef GAME_DLL
 #include "gameinterface.h"
 #endif // GAME_DLL

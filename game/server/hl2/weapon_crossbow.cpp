@@ -10,7 +10,6 @@
 #include "basecombatcharacter.h"
 #include "ai_basenpc.h"
 #include "player.h"
-#include "gamerules.h"
 #include "in_buttons.h"
 #include "soundent.h"
 #include "game.h"

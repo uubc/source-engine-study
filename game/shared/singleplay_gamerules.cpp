@@ -13,7 +13,6 @@
 
 	#include "player.h"
 	#include "basecombatweapon.h"
-	#include "gamerules.h"
 	#include "game.h"
 	#include "items.h"
 

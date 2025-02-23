@@ -17,7 +17,6 @@
 #endif
 //#include "AI_BaseNPC.h"
 //#include "player.h"
-#include "gamerules.h"
 #include "in_buttons.h"
 #ifndef CLIENT_DLL
 #include "soundent.h"

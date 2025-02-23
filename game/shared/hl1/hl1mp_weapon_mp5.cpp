@@ -22,7 +22,6 @@
 #else
 #include "hl1_grenade_mp5.h"
 #endif
-#include "gamerules.h"
 #ifdef CLIENT_DLL
 #else
 #include "soundent.h"

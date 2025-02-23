@@ -7,7 +7,6 @@
 #include "cbase.h"
 #include "basehlcombatweapon.h"
 #include "player.h"
-#include "gamerules.h"
 #include "grenade_frag.h"
 #include "npcevent.h"
 #include "engine/IEngineSound.h"

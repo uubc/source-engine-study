@@ -5,7 +5,6 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "gamerules.h"
 #include "npcevent.h"
 #include "in_buttons.h"
 #include "engine/IEngineSound.h"

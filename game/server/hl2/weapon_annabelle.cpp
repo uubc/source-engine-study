@@ -10,7 +10,6 @@
 #include	"basecombatcharacter.h"
 #include	"ai_basenpc.h"
 #include	"player.h"
-#include	"gamerules.h"		// For g_pGameRules
 #include	"in_buttons.h"
 #include	"soundent.h"
 #include	"vstdlib/random.h"

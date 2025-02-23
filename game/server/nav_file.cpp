@@ -11,7 +11,6 @@
 
 #include "cbase.h"
 #include "nav_mesh.h"
-#include "gamerules.h"
 #include "datacache/imdlcache.h"
 
 #ifdef TERROR

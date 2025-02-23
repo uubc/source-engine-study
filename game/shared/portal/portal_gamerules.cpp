@@ -16,7 +16,6 @@
 #else
 	#include "player.h"
 	#include "game.h"
-	#include "gamerules.h"
 	#include "teamplay_gamerules.h"
 	#include "portal_player.h"
 	#include "ai_basenpc.h"

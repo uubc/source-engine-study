@@ -10,7 +10,6 @@
 #include "ai_baseactor.h"
 #include "ai_hull.h"
 #include "ammodef.h"
-#include "gamerules.h"
 #include "IEffects.h"
 #include "engine/IEngineSound.h"
 #include "ai_behavior.h"

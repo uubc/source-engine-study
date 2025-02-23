@@ -23,7 +23,6 @@
 #endif
 
 //#include "player.h"
-#include "gamerules.h"
 #include "in_buttons.h"
 
 #ifdef CLIENT_DLL

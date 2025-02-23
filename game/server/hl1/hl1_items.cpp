@@ -8,7 +8,6 @@
 #include "cbase.h"
 #include "player.h"
 #include "items.h"
-#include "gamerules.h"
 #include "hl1_items.h"
 
 

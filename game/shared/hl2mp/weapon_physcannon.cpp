@@ -28,7 +28,6 @@
 	#include "util.h"
 #endif
 
-#include "gamerules.h"
 #include "soundenvelope.h"
 #include "engine/IEngineSound.h"
 //#include "physics.h"

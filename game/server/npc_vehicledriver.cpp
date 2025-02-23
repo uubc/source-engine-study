@@ -15,7 +15,6 @@
 #include "ai_navigator.h"
 #include "ai_route.h"
 #include "soundenvelope.h"
-#include "gamerules.h"
 #include "ndebugoverlay.h"
 #include "soundflags.h"
 #include "trains.h"

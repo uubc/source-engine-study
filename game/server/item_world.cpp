@@ -8,7 +8,6 @@
 #include "cbase.h"
 #include "player.h"
 #include "items.h"
-#include "gamerules.h"
 #include "engine/IEngineSound.h"
 #include "game/server/iservervehicle.h"
 #include "physics_saverestore.h"
