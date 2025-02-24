@@ -335,7 +335,13 @@ public:
 	bool IsCareer( void ) const		{ return false; }		// returns true if this is a CZ "career" game
 
 	virtual bool FAllowNPCs( void );
-
+#ifdef GAME_DLL
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { 
+		if (((CBaseEntity*)pHandleEntity)->Classify() == CLASS_PLAYER_ALLY)
+			return true; // CS hostages are CLASS_PLAYER_ALLY but not IsNPC()
+		return false;
+	}
+#endif // GAME_DLL
 protected:
 	virtual void GoToIntermission( void );
 

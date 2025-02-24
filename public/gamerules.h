@@ -102,6 +102,7 @@ public:
 
 
 	virtual bool ShouldCollide( int collisionGroup0, int collisionGroup1 ) = 0;
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) = 0;
 	virtual int DefaultFOV(void) = 0;
 	// Get the view vectors for this mod.
 	virtual const CViewVectors* GetViewVectors() const = 0;
@@ -262,6 +263,7 @@ public:
 	virtual CTacticalMissionManager *TacticalMissionManagerFactory( void ) = 0;
 	virtual void ProcessVerboseLogOutput(void) = 0;
 	virtual bool	MegaPhyscannonActive(void) = 0;
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 };
 
 class IClientGameRules : public IGameRules
@@ -280,6 +282,7 @@ public:
 	// Damage rules for ammo types
 	virtual float GetAmmoDamage(C_BaseEntity* pAttacker, C_BaseEntity* pVictim, int nAmmoType) = 0;
 	virtual bool IsConnectedUserInfoChangeAllowed(C_BasePlayer* pPlayer) = 0;
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 };
 
 #endif // GAMERULES_H

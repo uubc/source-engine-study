@@ -7715,6 +7715,11 @@ const model_t* CEngineObjectInternal::GetModel(void) const
 	return m_pModel;
 }
 
+int CEngineObjectInternal::GetModelType() const
+{
+	return modelinfo->GetModelType(m_pModel);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Force a clientside-animating entity to reset it's frame
 //-----------------------------------------------------------------------------

@@ -432,6 +432,7 @@ public:
 	virtual float GetModelScale() const = 0;
 	virtual void UpdateModelScale() = 0;
 	virtual const model_t* GetModel(void) const = 0;
+	virtual int GetModelType() const = 0;
 	virtual IStudioHdr* GetModelPtr(void) const = 0;
 	virtual void InvalidateMdlCache() = 0;
 	virtual float GetCycle() const = 0;

@@ -158,6 +158,7 @@ public:
 	virtual bool ShouldSavePhysics() { return false; }
 	virtual bool CreateVPhysics() { return false; }
 	virtual bool IsWorld() const { return false; }
+	virtual bool IsStaticProp() const { return false; }
 	virtual bool IsBSPModel() const { return false; }
 	virtual bool IsNPC(void) const { return false; }
 	virtual bool IsPlayer(void) const { return false; }

@@ -759,6 +759,7 @@ public:
 	void				UpdateModelScale();
 
 	const model_t* GetModel(void) const;
+	int GetModelType() const;
 	void SetModelPointer(const model_t* pModel);
 	IStudioHdr* GetModelPtr(void) const;
 	void InvalidateMdlCache();

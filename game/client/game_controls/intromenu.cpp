@@ -16,7 +16,6 @@
 #include <convar.h>
 #include <game/client/iviewport.h>
 #include "spectatorgui.h"
-#include "gamerules.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

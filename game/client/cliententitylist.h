@@ -861,6 +861,7 @@ public:
 	inline bool IsModelScaled() const;
 	void UpdateModelScale(void);
 	const model_t* GetModel(void) const;
+	int GetModelType() const;
 	void SetModelPointer(const model_t* pModel);
 	IStudioHdr* GetModelPtr(void) const;
 	void InvalidateMdlCache();
@@ -2128,6 +2129,11 @@ inline bool C_EngineObjectInternal::IsModelScaled() const
 inline const model_t* C_EngineObjectInternal::GetModel(void) const
 {
 	return m_pModel;
+}
+
+inline int C_EngineObjectInternal::GetModelType() const
+{
+	return modelinfo->GetModelType(m_pModel);
 }
 
 //-----------------------------------------------------------------------------

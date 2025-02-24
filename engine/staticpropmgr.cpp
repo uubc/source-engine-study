@@ -135,6 +135,7 @@ public:
 	virtual IClientEntity*		GetIClientEntity()		{ return NULL; }
 	virtual IClientEntity*		GetBaseEntity()			{ return NULL; }
 	virtual IClientThinkable*	GetClientThinkable()	{ return NULL; }
+	virtual bool				IsStaticProp() const	{ return true; }
 public:
 	// These methods return a box defined in the space of the entity
 	virtual const Vector&	OBBMinsPreScaled() const { return OBBMins(); }
