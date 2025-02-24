@@ -771,7 +771,8 @@ void PixelvisDrawChanged( IConVar *pPixelvisVar, const char *pOld, float flOldVa
 class CTraceFilterGlow : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterGlow, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterGlow ThisClass;;
 	
 	CTraceFilterGlow( const IHandleEntity *passentity, int collisionGroup ) : CTraceFilterSimple(passentity, collisionGroup) {}
 	virtual bool ShouldHitEntity( IHandleEntity *pHandleEntity, int contentsMask )

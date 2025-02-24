@@ -126,7 +126,8 @@ protected:
 
 class CTraceFilterPushMove : public CTraceFilterSimple
 {
-	DECLARE_CLASS( CTraceFilterPushMove, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterPushMove ThisClass;;
 
 public:
 	CTraceFilterPushMove( CBaseEntity *pEntity, int nCollisionGroup ) 

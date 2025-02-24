@@ -93,7 +93,8 @@ extern ConVar hl2_walkspeed;
 class CTraceFilterPhyscannon : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterPhyscannon, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterPhyscannon ThisClass;;
 
 	CTraceFilterPhyscannon( const IHandleEntity *passentity, int collisionGroup )
 		: CTraceFilterSimple( NULL, collisionGroup ), m_pTraceOwner( passentity ) {	}
@@ -184,7 +185,8 @@ protected:
 class CTraceFilterOnlyBrushes : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterOnlyBrushes, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterOnlyBrushes ThisClass;;
 	CTraceFilterOnlyBrushes( int collisionGroup ) : CTraceFilterSimple( NULL, collisionGroup ) {}
 	virtual TraceType_t	GetTraceType() const { return TRACE_WORLD_ONLY; }
 };
@@ -195,7 +197,8 @@ public:
 class CTraceFilterNoOwnerTest : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterNoOwnerTest, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterNoOwnerTest ThisClass;;
 
 	CTraceFilterNoOwnerTest( const IHandleEntity *passentity, int collisionGroup )
 		: CTraceFilterSimple( NULL, collisionGroup ), m_pPassNotOwner(passentity)

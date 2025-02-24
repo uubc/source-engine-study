@@ -10126,7 +10126,8 @@ void UTIL_TraceEntityThroughPortal(IServerEntity* pEntity, const Vector& vecAbsS
 //-----------------------------------------------------------------------------
 class CTraceFilterEntity : public CTraceFilterSimple
 {
-	DECLARE_CLASS(CTraceFilterEntity, CTraceFilterSimple);
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterEntity ThisClass;;
 
 public:
 	CTraceFilterEntity(IServerEntity* pEntity, int nCollisionGroup)

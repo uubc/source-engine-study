@@ -168,7 +168,8 @@ void CPhysicsPushedEntities::ComputeRotationalPushDirection( CBaseEntity *pBlock
 
 class CTraceFilterPushFinal : public CTraceFilterSimple
 {
-	DECLARE_CLASS( CTraceFilterPushFinal, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterPushFinal ThisClass;;
 
 public:
 	CTraceFilterPushFinal( CBaseEntity *pEntity, int nCollisionGroup ) 

@@ -1640,7 +1640,8 @@ void CNPC_AttackHelicopter::InputResetIdleTime( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 class CTraceFilterChopper : public CTraceFilterSimple
 {
-	DECLARE_CLASS( CTraceFilterChopper, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterChopper ThisClass;;
 
 public:
 	CTraceFilterChopper( const IHandleEntity *passentity, int collisionGroup );

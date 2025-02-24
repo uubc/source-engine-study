@@ -116,7 +116,8 @@ bool PhysCannonAccountableForObject( CBaseCombatWeapon *pPhysCannon, CBaseEntity
 class CTraceFilterNoOwnerTest : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterNoOwnerTest, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterNoOwnerTest ThisClass;;
 	
 	CTraceFilterNoOwnerTest( const IHandleEntity *passentity, int collisionGroup )
 		: CTraceFilterSimple( NULL, collisionGroup ), m_pPassNotOwner(passentity)

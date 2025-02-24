@@ -453,7 +453,8 @@ class CTraceFilterIgnorePlayersExceptFor : public CTraceFilterSimple
 {
 public:
 	// It does have a base, but we'll never network anything below here..
-	DECLARE_CLASS( CTraceFilterIgnorePlayersExceptFor, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterIgnorePlayersExceptFor ThisClass;;
 
 	CTraceFilterIgnorePlayersExceptFor( const IHandleEntity *passentity, int collisionGroup )
 		: CTraceFilterSimple( passentity, collisionGroup )

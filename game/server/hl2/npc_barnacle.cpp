@@ -2460,7 +2460,8 @@ IterationRetval_t CTongueEntitiesEnum::EnumElement( IHandleEntity *pHandleEntity
 //-----------------------------------------------------------------------------
 class CBarnacleTongueFilter : public CTraceFilterSimple
 {
-	DECLARE_CLASS( CBarnacleTongueFilter, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CBarnacleTongueFilter ThisClass;;
 
 public:
 	CBarnacleTongueFilter( CBaseEntity *pLastEnemy, const IHandleEntity *passedict, int collisionGroup ) : 

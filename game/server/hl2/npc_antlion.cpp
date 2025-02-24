@@ -3269,7 +3269,8 @@ void CNPC_Antlion::ClearBurrowPoint( const Vector &origin )
 class CTraceFilterSimpleNPCExclude : public CTraceFilterSimple
 {
 public:
-	DECLARE_CLASS( CTraceFilterSimpleNPCExclude, CTraceFilterSimple );
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterSimpleNPCExclude ThisClass;;
 
 	CTraceFilterSimpleNPCExclude( const IHandleEntity *passentity, int collisionGroup )
 		: CTraceFilterSimple( passentity, collisionGroup )
