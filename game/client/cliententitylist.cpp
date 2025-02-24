@@ -9546,7 +9546,8 @@ void UTIL_TraceEntityThroughPortal(IClientEntity* pEntity, const Vector& vecAbsS
 //-----------------------------------------------------------------------------
 class CTraceFilterEntity : public CTraceFilterSimple
 {
-	DECLARE_CLASS(CTraceFilterEntity, CTraceFilterSimple);
+	typedef CTraceFilterSimple BaseClass; 
+	typedef CTraceFilterEntity ThisClass;;
 
 public:
 	CTraceFilterEntity(IClientEntity* pEntity, int nCollisionGroup)
@@ -9617,7 +9618,8 @@ void C_EngineWorldInternal::TraceEntity(IEngineObjectClient* pEntity, const Vect
 
 class CTraceFilterEntityIgnoreOther : public CTraceFilterEntity
 {
-	DECLARE_CLASS(CTraceFilterEntityIgnoreOther, CTraceFilterEntity);
+	typedef CTraceFilterEntity BaseClass; 
+	typedef CTraceFilterEntityIgnoreOther ThisClass;;
 public:
 	CTraceFilterEntityIgnoreOther(IClientEntity* pEntity, const IHandleEntity* pIgnore, int nCollisionGroup) :
 		CTraceFilterEntity(pEntity, nCollisionGroup), m_pIgnoreOther(pIgnore)
