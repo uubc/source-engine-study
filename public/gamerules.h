@@ -12,13 +12,24 @@
 #endif
 
 #include "platform.h"
-#include "iserverentity.h"
 #include "irecipientfilter.h"
 
 // Debug history should be disabled in release builds
 //#define DISABLE_DEBUG_HISTORY	
 
 //#include "items.h"
+class CTakeDamageInfo;
+class CCommand;
+class CAmmoDef;
+class CTacticalMissionManager;
+class CViewVectors;
+class KeyValues;
+class CGameTrace;
+typedef CGameTrace trace_t;
+class IHandleEntity;
+class IServerEntity;
+class CBaseEntity;
+class C_BaseEntity;
 class CBaseCombatWeapon;
 class C_BaseCombatWeapon;
 class CBaseCombatCharacter;
@@ -27,11 +38,6 @@ class CBasePlayer;
 class C_BasePlayer;
 class CItem;
 class C_Item;
-class CAmmoDef;
-class CTacticalMissionManager;
-class CViewVectors;
-class CBaseEntity;
-class C_BaseEntity;
 
 // Autoaiming modes
 enum

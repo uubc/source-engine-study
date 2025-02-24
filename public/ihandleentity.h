@@ -13,6 +13,8 @@
 #include "const.h"
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
+#include "model_types.h"
+#include "gamerules.h"
 
 class IHandleEntity;
 class CBaseHandle;
@@ -76,6 +78,7 @@ public:
 	virtual const Vector& OBBSize() const = 0;
 	virtual const Vector& GetCollisionOrigin() const = 0;
 	virtual const QAngle& GetCollisionAngles() const = 0;
+	virtual int GetCollisionGroup() const = 0;
 	virtual MoveType_t GetMoveType() const = 0;
 	virtual IPhysicsObject* VPhysicsGetObject(void) const = 0;
 	virtual bool IsRagdoll() const = 0;
@@ -154,7 +157,10 @@ public:
 	virtual bool Init(int entnum, int iSerialNum) { return true; }
 	virtual void AfterInit() {};
 	virtual char const* GetClassname(void) const { return NULL; }
+	virtual bool ClassMatches(const char* pszClassOrWildcard) { return false; }
 	virtual char const* GetDebugName(void) const { return NULL; }
+	virtual int GetModelType() const { return mod_bad; }
+	virtual	bool ShouldCollide(int collisionGroup, int contentsMask) const { return false; }
 	virtual bool ShouldSavePhysics() { return false; }
 	virtual bool CreateVPhysics() { return false; }
 	virtual bool IsWorld() const { return false; }
@@ -164,6 +170,8 @@ public:
 	virtual bool IsPlayer(void) const { return false; }
 	virtual bool IsAlive(void) { return false; }
 	virtual bool IsStandable() const { return false; }
+	virtual bool IsTransparent() const { return false; }
+	virtual bool BlocksLOS(void) { return false; }
 	virtual const Vector& WorldSpaceCenter() const { return *(Vector*)0; }
 	virtual int GetTeamNumber(void) const { return 0; }
 	virtual int GetMaxHealth() const { return 0; }
@@ -224,6 +232,7 @@ abstract_class IEntityList
 public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
+	virtual IGameRules* GetGameRules() = 0;
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;
 };

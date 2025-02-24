@@ -982,6 +982,7 @@ public:
 	virtual bool IsAlive(void) = 0;
 	virtual bool IsStandable() const = 0;
 	virtual bool IsMoving(void) = 0;
+	virtual bool IsTransparent() const = 0;
 	virtual bool IsVisible(void) = 0;
 	virtual bool IsFloating() = 0;
 	virtual bool IsNavIgnored() const = 0;
