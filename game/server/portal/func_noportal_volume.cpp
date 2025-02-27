@@ -99,7 +99,7 @@ void CFuncNoPortalVolume::OnActivate( void )
 									  GetEngineObject()->GetAbsOrigin(), GetCollideable()->GetCollisionAngles(), GetCollideable()->OBBMins(), GetCollideable()->OBBMaxs() ) )
 			{
 				//pTempPortal->DoFizzleEffect( PORTAL_FIZZLE_KILLED, false );
-				EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetOuter());
+				EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetHandleEntity());
 			}
 		}
 	}

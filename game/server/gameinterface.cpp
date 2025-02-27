@@ -3238,7 +3238,7 @@ int TestAreaPortalVisibilityThroughPortals ( CFuncAreaPortalBase* pAreaPortal, I
 
 			// Make sure this portal's linked portal is in the PVS before we add what it can see
 			if ( pRemotePortal && pRemotePortal->IsActivated() &&//&& pRemotePortal->NetworkProp() 
-				pRemotePortal->AsEngineObject()->IsInPVS( (CBaseEntity*)pViewEntity, pvs, pvssize ) )
+				pRemotePortal->AsEngineObject()->AsEngineObjectServer()->IsInPVS( (CBaseEntity*)pViewEntity, pvs, pvssize ) )
 			{
 				bool bIsOpenOnClient = true;
 				float fovDistanceAdjustFactor = 1.0f;

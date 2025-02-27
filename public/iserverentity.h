@@ -380,6 +380,11 @@ public:
 class IEngineObjectServer : public IEngineObject {
 public:
 
+	virtual bool IsEngineObjectServer() const { return true; }
+	virtual IEngineObjectServer* AsEngineObjectServer() { return this; }
+	virtual bool IsEngineObjectClient() const { return false; }
+	virtual IEngineObjectClient* AsEngineObjectClient() { return NULL; }
+
 	virtual IServerEntity* GetServerEntity() = 0;
 	virtual IServerEntity* GetOuter() = 0;
 	virtual IHandleEntity* GetHandleEntity() const = 0;

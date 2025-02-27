@@ -1060,7 +1060,7 @@ void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 				pbeam->PointsInit(vTransformedStart, vTransformedEnd);
 			if (bIsReversed)
 				pbeam->SetEndWidth(pbeam->GetWidth());
-			pbeam->SetStartEntity((C_BaseEntity*)pPortal->GetLinkedPortal()->AsEngineObject()->GetOuter());
+			pbeam->SetStartEntity((C_BaseEntity*)pPortal->GetLinkedPortal()->AsEngineObject()->GetHandleEntity());
 
 			// Draw the sub beam
 			bBeamDrawingThroughPortal = true;

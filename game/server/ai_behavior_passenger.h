@@ -216,7 +216,8 @@ protected:
 class CTraceFilterVehicleTransition : public CTraceFilterSkipTwoEntities
 {
 public:
-	DECLARE_CLASS( CTraceFilterVehicleTransition, CTraceFilterSkipTwoEntities );
+	typedef CTraceFilterSkipTwoEntities BaseClass; 
+	typedef CTraceFilterVehicleTransition ThisClass;;
 
 	CTraceFilterVehicleTransition( const IHandleEntity *passentity, const IHandleEntity *passentity2, int collisionGroup ) : 
 	CTraceFilterSkipTwoEntities( passentity, passentity2, collisionGroup ) {}

@@ -915,7 +915,7 @@ void CBreakable::ResetOnGroundFlags(void)
 			if( UTIL_IsBoxIntersectingPortal( vBoxCenter, vBoxExtents, pTempPortal ) )
 			{
 				//pTempPortal->DoFizzleEffect( PORTAL_FIZZLE_KILLED, false );
-				EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetOuter());
+				EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetHandleEntity());
 			}
 		}
 	}

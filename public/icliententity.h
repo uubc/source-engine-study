@@ -280,6 +280,11 @@ public:
 class IEngineObjectClient : public IEngineObject, public IClientNetworkable, public IClientRenderable {
 public:
 
+	virtual bool IsEngineObjectServer() const { return false; }
+	virtual IEngineObjectServer* AsEngineObjectServer() { return NULL; }
+	virtual bool IsEngineObjectClient() const { return true; }
+	virtual IEngineObjectClient* AsEngineObjectClient() { return this; }
+
 	virtual datamap_t* GetPredDescMap(void) const = 0;
 	virtual IClientRenderable* GetClientRenderable() { return this; }
 	virtual IClientEntity* GetClientEntity() = 0;

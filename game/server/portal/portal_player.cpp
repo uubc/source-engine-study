@@ -1752,7 +1752,7 @@ void CPortal_Player::Event_Killed( const CTakeDamageInfo &info )
 
 		if( pTempPortal && pTempPortal->IsActivated() )
 		{
-			EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetOuter());
+			EntityList()->DestroyEntity(pTempPortal->AsEngineObject()->GetHandleEntity());
 		}
 	}
 #endif // PORTAL_HIDE_PLAYER_RAGDOLL
@@ -2133,9 +2133,9 @@ void PortalSetupVisibility( CBaseEntity *pPlayer, int area, unsigned char *pvs, 
 
 		if ( pPortal && pPortal->IsActivated() )
 		{
-			if ( pPortal->AsEngineObject()->IsInPVS( pPlayer, pvs, pvssize ) )
+			if ( pPortal->AsEngineObject()->AsEngineObjectServer()->IsInPVS( pPlayer, pvs, pvssize ) )
 			{
-				if ( engine->CheckAreasConnected( area, pPortal->AsEngineObject()->AreaNum() ) )
+				if ( engine->CheckAreasConnected( area, pPortal->AsEngineObject()->AsEngineObjectServer()->AreaNum() ) )
 				{
 					IEnginePortalServer *pLinkedPortal = pPortal->GetLinkedPortal();
 					if ( pLinkedPortal )
@@ -2204,7 +2204,7 @@ void CPortal_Player::PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServ
 
 CProp_Portal* CPortal_Player::GetPortalEnvironment()
 {
-	return GetEnginePlayer()->GetPortalEnvironment() ? (CProp_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetOuter() : NULL;
+	return GetEnginePlayer()->GetPortalEnvironment() ? (CProp_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity() : NULL;
 }
 
 #ifdef PORTAL_MP

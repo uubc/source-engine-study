@@ -117,7 +117,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Simple trace filter
 //-----------------------------------------------------------------------------
-	CTraceFilterSimple::CTraceFilterSimple(const IHandleEntity* passedict, int collisionGroup,
+	CTraceFilterSimple(const IHandleEntity* passedict, int collisionGroup,
 		ShouldHitFunc_t pExtraShouldHitFunc = NULL)
 	{
 		m_pPassEnt = passedict;
@@ -175,7 +175,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Trace filter that skips two entities
 //-----------------------------------------------------------------------------
-	CTraceFilterSkipTwoEntities::CTraceFilterSkipTwoEntities(const IHandleEntity* passentity, const IHandleEntity* passentity2, int collisionGroup) :
+	CTraceFilterSkipTwoEntities(const IHandleEntity* passentity, const IHandleEntity* passentity2, int collisionGroup) :
 		BaseClass(passentity, collisionGroup), m_pPassEnt2(passentity2)
 	{
 	}
@@ -199,7 +199,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Trace filter that can take a list of entities to ignore
 //-----------------------------------------------------------------------------
-	CTraceFilterSimpleList::CTraceFilterSimpleList(int collisionGroup) :
+	CTraceFilterSimpleList(int collisionGroup) :
 		CTraceFilterSimple(NULL, collisionGroup)
 	{
 	}
@@ -295,7 +295,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Purpose: Custom trace filter used for NPC LOS traces
 //-----------------------------------------------------------------------------
-	CTraceFilterLOS::CTraceFilterLOS(IHandleEntity* pHandleEntity, int collisionGroup, IHandleEntity* pHandleEntity2 = NULL) :
+	CTraceFilterLOS(IHandleEntity* pHandleEntity, int collisionGroup, IHandleEntity* pHandleEntity2 = NULL) :
 		CTraceFilterSkipTwoEntities(pHandleEntity, pHandleEntity2, collisionGroup)
 	{
 	}
@@ -317,7 +317,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Trace filter that can take a classname to ignore
 //-----------------------------------------------------------------------------
-	CTraceFilterSkipClassname::CTraceFilterSkipClassname(const IHandleEntity* passentity, const char* pchClassname, int collisionGroup) :
+	CTraceFilterSkipClassname(const IHandleEntity* passentity, const char* pchClassname, int collisionGroup) :
 		CTraceFilterSimple(passentity, collisionGroup), m_pchClassname(pchClassname)
 	{
 	}
@@ -347,7 +347,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Trace filter that skips two classnames
 //-----------------------------------------------------------------------------
-	CTraceFilterSkipTwoClassnames::CTraceFilterSkipTwoClassnames(const IHandleEntity* passentity, const char* pchClassname, const char* pchClassname2, int collisionGroup) :
+	CTraceFilterSkipTwoClassnames(const IHandleEntity* passentity, const char* pchClassname, const char* pchClassname2, int collisionGroup) :
 		BaseClass(passentity, pchClassname, collisionGroup), m_pchClassname2(pchClassname2)
 	{
 	}
@@ -369,7 +369,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Trace filter that can take a list of entities to ignore
 //-----------------------------------------------------------------------------
-	CTraceFilterSimpleClassnameList::CTraceFilterSimpleClassnameList(const IHandleEntity* passentity, int collisionGroup) :
+	CTraceFilterSimpleClassnameList(const IHandleEntity* passentity, int collisionGroup) :
 		CTraceFilterSimple(passentity, collisionGroup)
 	{
 	}
@@ -404,7 +404,7 @@ private:
 class CTraceFilterChain : public CTraceFilter
 {
 public:
-	CTraceFilterChain::CTraceFilterChain(ITraceFilter* pTraceFilter1, ITraceFilter* pTraceFilter2)
+	CTraceFilterChain(ITraceFilter* pTraceFilter1, ITraceFilter* pTraceFilter2)
 	{
 		m_pTraceFilter1 = pTraceFilter1;
 		m_pTraceFilter2 = pTraceFilter2;

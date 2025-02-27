@@ -12,7 +12,7 @@
 #include "platform.h"
 #include "const.h"
 #include "string_t.h"
-#include "utlvector.h" //need CUtlVector for IEngineTrace::GetBrushesIn*()
+#include "tier1/utlvector.h" //need CUtlVector for IEngineTrace::GetBrushesIn*()
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #include "mathlib/vector4d.h"
@@ -21,6 +21,8 @@
 #include "model_types.h"
 #include "gamerules.h"
 
+class IEngineObjectServer;
+class IEngineObjectClient;
 class IEngineObject;
 class IServerEntity;
 class IClientEntity;
@@ -269,6 +271,7 @@ public:
 	virtual const Vector& GetAbsOrigin(void) const = 0;
 	virtual const QAngle& GetAbsAngles(void) const = 0;
 	virtual const Vector& GetAbsVelocity() const = 0;
+	virtual const Vector& GetLocalOrigin(void) const = 0;
 	virtual void GetVectors(Vector* forward, Vector* right, Vector* up) const = 0;
 	virtual IHandleEntity* GetHandleEntity() const = 0;
 	virtual const Vector& WorldAlignMins() const = 0;
@@ -286,6 +289,11 @@ public:
 	virtual bool IsRagdoll() const = 0;
 	virtual IEngineObject* GetOwnerEntity(void) const = 0;
 	virtual IEngineObject* GetEffectEntity(void) const = 0;
+
+	virtual bool IsEngineObjectServer() const = 0;
+	virtual IEngineObjectServer* AsEngineObjectServer() = 0;
+	virtual bool IsEngineObjectClient() const = 0;
+	virtual IEngineObjectClient* AsEngineObjectClient() = 0;
 
 	virtual bool IsWorld() = 0;
 	virtual IEngineWorld* AsEngineWorld() = 0;

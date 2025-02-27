@@ -1496,7 +1496,7 @@ void C_Portal_Player::SetViewAngles( const QAngle& ang )
 
 C_Prop_Portal* C_Portal_Player::GetPortalEnvironment()
 {
-	return GetEnginePlayer()->GetPortalEnvironment() ? (C_Prop_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetOuter() : NULL;
+	return GetEnginePlayer()->GetPortalEnvironment() ? (C_Prop_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity() : NULL;
 }
 
 void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )

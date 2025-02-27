@@ -225,7 +225,8 @@ CBaseEntity* CBaseCombatWeapon::Respawn( void )
 //-----------------------------------------------------------------------------
 class CWeaponLOSFilter : public CTraceFilterSkipTwoEntities
 {
-	DECLARE_CLASS( CWeaponLOSFilter, CTraceFilterSkipTwoEntities );
+	typedef CTraceFilterSkipTwoEntities BaseClass; 
+	typedef CWeaponLOSFilter ThisClass;;
 public:
 	CWeaponLOSFilter( IHandleEntity *pHandleEntity, IHandleEntity *pHandleEntity2, int collisionGroup ) :
 	  CTraceFilterSkipTwoEntities( pHandleEntity, pHandleEntity2, collisionGroup ), m_pVehicle( NULL )
