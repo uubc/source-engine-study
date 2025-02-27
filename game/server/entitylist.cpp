@@ -10292,7 +10292,8 @@ void CEngineWorldInternal::TraceEntity(IEngineObjectServer* pEntity, const Vecto
 
 class CTraceFilterEntityIgnoreOther : public CTraceFilterEntity
 {
-	DECLARE_CLASS(CTraceFilterEntityIgnoreOther, CTraceFilterEntity);
+	typedef CTraceFilterEntity BaseClass; 
+	typedef CTraceFilterEntityIgnoreOther ThisClass;;
 public:
 	CTraceFilterEntityIgnoreOther(IServerEntity* pEntity, const IHandleEntity* pIgnore, int nCollisionGroup) :
 		CTraceFilterEntity(pEntity, nCollisionGroup), m_pIgnoreOther(pIgnore)
