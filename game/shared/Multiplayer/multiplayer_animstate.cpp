@@ -1307,7 +1307,7 @@ void CMultiPlayerAnimState::Update( float eyeYaw, float eyePitch )
 	}
 
 #ifdef CLIENT_DLL
-	if (EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer() )
+	if (EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer() )
 	{
 		GetBasePlayer()->GetEngineObject()->SetPlaybackRate( 1.0f );
 	}

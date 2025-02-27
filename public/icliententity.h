@@ -35,6 +35,7 @@ struct PS_SD_Static_SurfaceProperties_t;
 class CIKContext;
 typedef unsigned int HTOOLHANDLE;
 class CUserCmd;
+class IEngineObjectClient;
 class IClientEntity;
 class IClientGameRules;
 struct fogparams_t;
@@ -96,14 +97,6 @@ struct clientthinkfunc_t
 	int			m_nLastThinkTick;
 };
 
-class IEngineWorldClient;
-class IEnginePlayerClient;
-class IEnginePortalClient;
-class IEngineShadowCloneClient;
-class IEngineVehicleClient;
-class IEngineRopeClient;
-class IEngineGhostClient;
-
 class IGrabControllerClient {
 public:
 	virtual void AttachEntity(IClientEntity* pPlayer, IClientEntity* pEntity, IPhysicsObject* pPhys, bool bIsMegaPhysCannon, const Vector& vGrabPosition, bool bUseGrabPosition) = 0;
@@ -122,6 +115,166 @@ public:
 	virtual void GetSavedParamsForCarriedPhysObject(IPhysicsObject* pObject, float* pSavedMassOut, float* pSavedRotationalDampingOut) = 0;
 	virtual void GetTargetPosition(Vector* target, QAngle* targetOrientation) = 0;
 	virtual void SetPortalPenetratingEntity(IClientEntity* pPenetrated) = 0;
+};
+
+class IEngineWorldClient : public IEngineWorld {
+public:
+	// Sweeps a particular entity through the world
+	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, trace_t* ptr) = 0;
+	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) = 0;
+	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, const IHandleEntity* ignore, int collisionGroup, trace_t* ptr) = 0;
+	virtual void TraceLineFilterEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, const int nCollisionGroup, trace_t* ptr) = 0;
+};
+
+class IEnginePortalClient;
+
+class IEnginePlayerClient : public IEnginePlayer {
+public:
+	virtual IEnginePortalClient* GetPortalEnvironment() = 0;
+	virtual IEnginePortalClient* GetHeldObjectPortal(void) = 0;
+	virtual void ToggleHeldObjectOnOppositeSideOfPortal(void) = 0;
+	virtual void SetHeldObjectOnOppositeSideOfPortal(bool p_bHeldObjectOnOppositeSideOfPortal) = 0;
+	virtual bool IsHeldObjectOnOppositeSideOfPortal(void) = 0;
+};
+
+class IEnginePortalClient : public IEnginePortal {
+public:
+	virtual int GetPortalSimulatorGUID(void) const = 0;
+	virtual void SetVPhysicsSimulationEnabled(bool bEnabled) = 0;
+	virtual bool IsSimulatingVPhysics(void) const = 0;
+	virtual bool IsLocalDataIsReady() const = 0;
+	virtual void SetLocalDataIsReady(bool bLocalDataIsReady) = 0;
+	virtual bool IsReadyToSimulate(void) const = 0;
+	virtual bool IsActivedAndLinked(void) const = 0;
+	virtual void MoveTo(const Vector& ptCenter, const QAngle& angles) = 0;
+	virtual void AttachTo(IEnginePortalClient* pLinkedPortal) = 0;
+	virtual IEnginePortalClient* GetLinkedPortal() = 0;
+	virtual const IEnginePortalClient* GetLinkedPortal() const = 0;
+	virtual void DetachFromLinked(void) = 0;
+	virtual void UpdateLinkMatrix(IEnginePortalClient* pRemoteCollisionEntity) = 0;
+	virtual bool EntityIsInPortalHole(IEngineObjectClient* pEntity) const = 0; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
+	virtual bool EntityHitBoxExtentIsInPortalHole(IEngineObjectClient* pBaseAnimating) const = 0; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
+	virtual bool RayIsInPortalHole(const Ray_t& ray) const = 0; //traces a ray against the same detector for EntityIsInPortalHole(), bias is towards false positives
+	virtual bool TraceWorldBrushes(const Ray_t& ray, trace_t* pTrace) const = 0;
+	virtual bool TraceWallTube(const Ray_t& ray, trace_t* pTrace) const = 0;
+	virtual bool TraceWallBrushes(const Ray_t& ray, trace_t* pTrace) const = 0;
+	virtual bool TraceTransformedWorldBrushes(const IEnginePortalClient* pRemoteCollisionEntity, const Ray_t& ray, trace_t* pTrace) const = 0;
+	virtual void TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const = 0;
+	virtual void TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const = 0;
+	virtual int GetStaticPropsCount() const = 0;
+	virtual const PS_SD_Static_World_StaticProps_ClippedProp_t* GetStaticProps(int index) const = 0;
+	virtual bool StaticPropsCollisionExists() const = 0;
+	//const Vector& GetOrigin() const;
+	//const QAngle& GetAngles() const;
+	virtual const Vector& GetTransformedOrigin() const = 0;
+	virtual const QAngle& GetTransformedAngles() const = 0;
+	virtual const VMatrix& MatrixThisToLinked() const = 0;
+	virtual const VMatrix& MatrixLinkedToThis() const = 0;
+	virtual const cplane_t& GetPortalPlane() const = 0;
+	virtual const Vector& GetVectorForward() const = 0;
+	virtual const Vector& GetVectorUp() const = 0;
+	virtual const Vector& GetVectorRight() const = 0;
+	virtual const PS_SD_Static_SurfaceProperties_t& GetSurfaceProperties() const = 0;
+	virtual IPhysicsObject* GetWorldBrushesPhysicsObject() const = 0;
+	virtual IPhysicsObject* GetWallBrushesPhysicsObject() const = 0;
+	virtual IPhysicsObject* GetWallTubePhysicsObject() const = 0;
+	virtual IPhysicsObject* GetRemoteWallBrushesPhysicsObject() const = 0;
+	virtual IPhysicsEnvironment* GetPhysicsEnvironment() = 0;
+	virtual void CreatePhysicsEnvironment() = 0;
+	virtual void ClearPhysicsEnvironment() = 0;
+	virtual void CreatePolyhedrons(void) = 0;
+	virtual void ClearPolyhedrons(void) = 0;
+	virtual void CreateLocalCollision(void) = 0;
+	virtual void ClearLocalCollision(void) = 0;
+	virtual void CreateLocalPhysics(void) = 0;
+	virtual void CreateLinkedPhysics(IEnginePortalClient* pRemoteCollisionEntity) = 0;
+	virtual void ClearLocalPhysics(void) = 0;
+	virtual void ClearLinkedPhysics(void) = 0;
+	virtual bool CreatedPhysicsObject(const IPhysicsObject* pObject, PS_PhysicsObjectSourceType_t* pOut_SourceType = NULL) const = 0; //true if the physics object was generated by this portal simulator
+	virtual void CreateHoleShapeCollideable() = 0;
+	virtual void ClearHoleShapeCollideable() = 0;
+	virtual void BeforeMove() = 0;
+	virtual void AfterMove() = 0;
+	virtual IEngineObject* AsEngineObject() = 0;
+	virtual const IEngineObject* AsEngineObject() const = 0;
+	virtual bool IsActivated() const = 0;
+	virtual bool IsPortal2() const = 0;
+	virtual void SetPortal2(bool bPortal2) = 0;
+};
+
+class IEngineShadowCloneClient : public IEngineShadowClone {
+public:
+
+};
+
+class IEngineVehicleClient : public IEngineVehicle {
+public:
+
+};
+
+class IEngineRopeClient : public IEngineRope {
+public:
+	// Use this when rope length and slack change to recompute the spring length.
+	virtual void RecomputeSprings() = 0;
+	virtual void UpdateBBox() = 0;
+	virtual void CalcLightValues() = 0;
+	virtual void ShakeRope(const Vector& vCenter, float flRadius, float flMagnitude) = 0;
+	virtual bool AnyPointsMoved() = 0;
+	virtual bool InitRopePhysics() = 0;
+	virtual void ConstrainNodesBetweenEndpoints(void) = 0;
+	virtual bool DetectRestingState(bool& bApplyWind) = 0;
+	// Specify ROPE_ATTACHMENT_START_POINT or ROPE_ATTACHMENT_END_POINT for the attachment.
+	// Hook the physics. Pass in your own implementation of CSimplePhysics::IHelper. The
+// default implementation is returned so you can call through to it if you want.
+	//virtual CSimplePhysics::IHelper* HookPhysics(CSimplePhysics::IHelper* pHook) = 0;
+	// Get the attachment position of one of the endpoints.
+	virtual bool GetEndPointPos(int iPt, Vector& vPos, QAngle& vAngle) = 0;
+	virtual bool CalculateEndPointAttachment(IClientEntity* pEnt, int iAttachment, Vector& vPos, QAngle& pAngles) = 0;
+	virtual void SetRopeFlags(int flags) = 0;
+	virtual int GetRopeFlags() const = 0;
+	virtual int GetSlack() = 0;
+	// Set the slack.
+	virtual void SetSlack(int slack) = 0;
+	virtual void SetupHangDistance(float flHangDist) = 0;
+	// Change which entities the rope is connected to.
+	virtual void SetStartEntity(IClientEntity* pEnt) = 0;
+	virtual void SetEndEntity(IClientEntity* pEnt) = 0;
+
+	virtual IClientEntity* GetStartEntity() const = 0;
+	virtual IClientEntity* GetEndEntity() const = 0;
+	// Get the rope material data.
+	virtual IMaterial* GetSolidMaterial(void) = 0;
+	virtual IMaterial* GetBackMaterial(void) = 0;
+
+	virtual int& GetLockedPoints() = 0;
+	virtual void SetStartAttachment(short iStartAttachment) = 0;
+	virtual void SetEndAttachment(short iEndAttachment) = 0;
+	virtual void SetWidth(float fWidth) = 0;
+	virtual void SetSegments(int nSegments) = 0;
+	virtual int& GetRopeFlags() = 0;
+	virtual void FinishInit(const char* pMaterialName) = 0;
+	virtual void SetRopeLength(int RopeLength) = 0;
+	virtual void SetTextureScale(float TextureScale) = 0;
+	virtual float GetTextureScale() = 0;
+	virtual void AddToRenderCache() = 0;
+	virtual void RopeThink() = 0;
+	virtual Vector& GetImpulse() = 0;
+};
+
+class IEngineGhostClient : public IEngineGhost {
+public:
+	virtual void SetMatGhostTransform(const VMatrix& matGhostTransform) = 0;
+	virtual void SetGhostedSource(IClientEntity* pGhostedSource) = 0;
+	virtual IClientEntity* GetGhostedSource() = 0;
+	virtual void PerFrameUpdate(void) = 0;
+	virtual bool GetSourceIsBaseAnimating() = 0;
+	virtual Vector const& GetRenderOrigin(void) = 0;
+	virtual QAngle const& GetRenderAngles(void) = 0;
+	virtual bool SetupBones(matrix3x4_t* pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime) = 0;
+	virtual void GetRenderBounds(Vector& mins, Vector& maxs) = 0;
+	virtual void GetRenderBoundsWorldspace(Vector& mins, Vector& maxs) = 0;
+	virtual void GetShadowRenderBounds(Vector& mins, Vector& maxs, ShadowType_t shadowType) = 0;
+	virtual const matrix3x4_t& RenderableToWorldTransform() = 0;
 };
 
 class IEngineObjectClient : public IEngineObject, public IClientNetworkable, public IClientRenderable {
@@ -689,167 +842,32 @@ public:
 	virtual IGrabControllerClient* GetGrabController() = 0;
 };
 
-class IEngineWorldClient : public IEngineWorld {
-public:
-	// Sweeps a particular entity through the world
-	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, trace_t* ptr) = 0;
-	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) = 0;
-	virtual void TraceEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, const IHandleEntity* ignore, int collisionGroup, trace_t* ptr) = 0;
-	virtual void TraceLineFilterEntity(IEngineObjectClient* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, const int nCollisionGroup, trace_t* ptr) = 0;
-};
-
-class IEnginePortalClient;
-
-class IEnginePlayerClient : public IEnginePlayer {
-public:
-	virtual IEnginePortalClient* GetPortalEnvironment() = 0;
-	virtual IEnginePortalClient* GetHeldObjectPortal(void) = 0;
-	virtual void ToggleHeldObjectOnOppositeSideOfPortal(void) = 0;
-	virtual void SetHeldObjectOnOppositeSideOfPortal(bool p_bHeldObjectOnOppositeSideOfPortal) = 0;
-	virtual bool IsHeldObjectOnOppositeSideOfPortal(void) = 0;
-};
-
-class IEnginePortalClient : public IEnginePortal {
-public:
-	virtual int					GetPortalSimulatorGUID(void) const = 0;
-	virtual void				SetVPhysicsSimulationEnabled(bool bEnabled) = 0;
-	virtual bool				IsSimulatingVPhysics(void) const = 0;
-	virtual bool				IsLocalDataIsReady() const = 0;
-	virtual void				SetLocalDataIsReady(bool bLocalDataIsReady) = 0;
-	virtual bool				IsReadyToSimulate(void) const = 0;
-	virtual bool				IsActivedAndLinked(void) const = 0;
-	virtual void				MoveTo(const Vector& ptCenter, const QAngle& angles) = 0;
-	virtual void				AttachTo(IEnginePortalClient* pLinkedPortal) = 0;
-	virtual IEnginePortalClient* GetLinkedPortal() = 0;
-	virtual const IEnginePortalClient* GetLinkedPortal() const = 0;
-	virtual void				DetachFromLinked(void) = 0;
-	virtual void				UpdateLinkMatrix(IEnginePortalClient* pRemoteCollisionEntity) = 0;
-	virtual bool				EntityIsInPortalHole(IEngineObjectClient* pEntity) const = 0; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
-	virtual bool				EntityHitBoxExtentIsInPortalHole(IEngineObjectClient* pBaseAnimating) const = 0; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
-	virtual bool				RayIsInPortalHole(const Ray_t& ray) const = 0; //traces a ray against the same detector for EntityIsInPortalHole(), bias is towards false positives
-	virtual bool				TraceWorldBrushes(const Ray_t& ray, trace_t* pTrace) const = 0;
-	virtual bool				TraceWallTube(const Ray_t& ray, trace_t* pTrace) const = 0;
-	virtual bool				TraceWallBrushes(const Ray_t& ray, trace_t* pTrace) const = 0;
-	virtual bool				TraceTransformedWorldBrushes(const IEnginePortalClient* pRemoteCollisionEntity, const Ray_t& ray, trace_t* pTrace) const = 0;
-	virtual void				TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const = 0;
-	virtual void				TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const = 0;
-	virtual int					GetStaticPropsCount() const = 0;
-	virtual const PS_SD_Static_World_StaticProps_ClippedProp_t* GetStaticProps(int index) const = 0;
-	virtual bool				StaticPropsCollisionExists() const = 0;
-	//const Vector& GetOrigin() const;
-	//const QAngle& GetAngles() const;
-	virtual const Vector& GetTransformedOrigin() const = 0;
-	virtual const QAngle& GetTransformedAngles() const = 0;
-	virtual const VMatrix& MatrixThisToLinked() const = 0;
-	virtual const VMatrix& MatrixLinkedToThis() const = 0;
-	virtual const cplane_t& GetPortalPlane() const = 0;
-	virtual const Vector& GetVectorForward() const = 0;
-	virtual const Vector& GetVectorUp() const = 0;
-	virtual const Vector& GetVectorRight() const = 0;
-	virtual const PS_SD_Static_SurfaceProperties_t& GetSurfaceProperties() const = 0;
-	virtual IPhysicsObject* GetWorldBrushesPhysicsObject() const = 0;
-	virtual IPhysicsObject* GetWallBrushesPhysicsObject() const = 0;
-	virtual IPhysicsObject* GetWallTubePhysicsObject() const = 0;
-	virtual IPhysicsObject* GetRemoteWallBrushesPhysicsObject() const = 0;
-	virtual IPhysicsEnvironment* GetPhysicsEnvironment() = 0;
-	virtual void				CreatePhysicsEnvironment() = 0;
-	virtual void				ClearPhysicsEnvironment() = 0;
-	virtual void				CreatePolyhedrons(void) = 0;
-	virtual void				ClearPolyhedrons(void) = 0;
-	virtual void				CreateLocalCollision(void) = 0;
-	virtual void				ClearLocalCollision(void) = 0;
-	virtual void				CreateLocalPhysics(void) = 0;
-	virtual void				CreateLinkedPhysics(IEnginePortalClient* pRemoteCollisionEntity) = 0;
-	virtual void				ClearLocalPhysics(void) = 0;
-	virtual void				ClearLinkedPhysics(void) = 0;
-	virtual bool				CreatedPhysicsObject(const IPhysicsObject* pObject, PS_PhysicsObjectSourceType_t* pOut_SourceType = NULL) const = 0; //true if the physics object was generated by this portal simulator
-	virtual void				CreateHoleShapeCollideable() = 0;
-	virtual void				ClearHoleShapeCollideable() = 0;
-	virtual void				BeforeMove() = 0;
-	virtual void				AfterMove() = 0;
-	virtual IEngineObjectClient* AsEngineObject() = 0;
-	virtual const IEngineObjectClient* AsEngineObject() const = 0;
-	virtual bool				IsActivated() const = 0;
-	virtual bool				IsPortal2() const = 0;
-	virtual void				SetPortal2(bool bPortal2) = 0;
-};
-
-class IEngineShadowCloneClient : public IEngineShadowClone {
+class IClientWorld : public IHandleWorld, public IClientGameRules {
 public:
 
 };
 
-class IEngineVehicleClient : public IEngineVehicle {
+class IClientPlayer : public IHandlePlayer {
 public:
-
+	virtual int GetDefaultFOV() const = 0;
+	virtual float GetFOV(void) = 0;
+	virtual float GetMinFOV() const = 0;
+	virtual fogparams_t* GetFogParams(void) = 0;
+	virtual void CalcView(Vector& eyeOrigin, QAngle& eyeAngles, float& zNear, float& zFar, float& fov) = 0;
+	virtual void CalcViewModelView(const Vector& eyeOrigin, const QAngle& eyeAngles) = 0;
+	virtual bool AudioStateIsUnderwater(Vector vecMainViewOrigin) = 0;
+	virtual CPlayerLocalData* GetLocalData() = 0;
+	virtual bool InFirstPersonView() = 0;
+	virtual bool ShouldDrawThisPlayer() = 0;
+	virtual int GetObserverMode() const = 0;
+	virtual void SetObserverMode(int iNewMode) = 0;
+	virtual IClientEntity* GetObserverTarget() const = 0;
+	virtual void SetObserverTarget(CBaseHandle hObserverTarget) = 0;
+	virtual bool LocalPlayerInFirstPersonView() = 0;
+	virtual bool ShouldDrawLocalPlayer() = 0;
+	virtual IClientEntity* GetActiveWeapon(void) const = 0;
 };
 
-class IEngineRopeClient : public IEngineRope {
-public:
-	// Use this when rope length and slack change to recompute the spring length.
-	virtual void			RecomputeSprings() = 0;
-	virtual void			UpdateBBox() = 0;
-	virtual void			CalcLightValues() = 0;
-	virtual void			ShakeRope(const Vector& vCenter, float flRadius, float flMagnitude) = 0;
-	virtual bool			AnyPointsMoved() = 0;
-	virtual bool			InitRopePhysics() = 0;
-	virtual void			ConstrainNodesBetweenEndpoints(void) = 0;
-	virtual bool			DetectRestingState(bool& bApplyWind) = 0;
-	// Specify ROPE_ATTACHMENT_START_POINT or ROPE_ATTACHMENT_END_POINT for the attachment.
-	// Hook the physics. Pass in your own implementation of CSimplePhysics::IHelper. The
-// default implementation is returned so you can call through to it if you want.
-	//virtual CSimplePhysics::IHelper* HookPhysics(CSimplePhysics::IHelper* pHook) = 0;
-	// Get the attachment position of one of the endpoints.
-	virtual bool			GetEndPointPos(int iPt, Vector& vPos, QAngle& vAngle) = 0;
-	virtual bool			CalculateEndPointAttachment(IClientEntity* pEnt, int iAttachment, Vector& vPos, QAngle& pAngles) = 0;
-	virtual void			SetRopeFlags(int flags) = 0;
-	virtual int				GetRopeFlags() const = 0;
-	virtual int				GetSlack() = 0;
-	// Set the slack.
-	virtual void			SetSlack(int slack) = 0;
-	virtual void			SetupHangDistance(float flHangDist) = 0;
-	// Change which entities the rope is connected to.
-	virtual void			SetStartEntity(IClientEntity* pEnt) = 0;
-	virtual void			SetEndEntity(IClientEntity* pEnt) = 0;
-
-	virtual IClientEntity*	GetStartEntity() const = 0;
-	virtual IClientEntity*	GetEndEntity() const = 0;
-	// Get the rope material data.
-	virtual IMaterial*		GetSolidMaterial(void) = 0;
-	virtual IMaterial*		GetBackMaterial(void) = 0;
-
-	virtual int& GetLockedPoints() = 0;
-	virtual void SetStartAttachment(short iStartAttachment) = 0;
-	virtual void SetEndAttachment(short iEndAttachment) = 0;
-	virtual void SetWidth(float fWidth) = 0;
-	virtual void SetSegments(int nSegments) = 0;
-	virtual int& GetRopeFlags() = 0;
-	virtual void FinishInit(const char* pMaterialName) = 0;
-	virtual void SetRopeLength(int RopeLength) = 0;
-	virtual void SetTextureScale(float TextureScale) = 0;
-	virtual float GetTextureScale() = 0;
-	virtual void AddToRenderCache() = 0;
-	virtual void RopeThink() = 0;
-	virtual Vector& GetImpulse() = 0;
-};
-
-class IEngineGhostClient : public IEngineGhost {
-public:
-	virtual void SetMatGhostTransform(const VMatrix& matGhostTransform) = 0;
-	virtual void SetGhostedSource(IClientEntity* pGhostedSource) = 0;
-	virtual IClientEntity* GetGhostedSource() = 0;
-	virtual void PerFrameUpdate(void) = 0;
-	virtual bool GetSourceIsBaseAnimating() = 0;
-	virtual Vector const& GetRenderOrigin(void) = 0;
-	virtual QAngle const& GetRenderAngles(void) = 0;
-	virtual bool	SetupBones(matrix3x4_t* pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime) = 0;
-	virtual void	GetRenderBounds(Vector& mins, Vector& maxs) = 0;
-	virtual void	GetRenderBoundsWorldspace(Vector& mins, Vector& maxs) = 0;
-	virtual void	GetShadowRenderBounds(Vector& mins, Vector& maxs, ShadowType_t shadowType) = 0;
-	virtual const matrix3x4_t& RenderableToWorldTransform() = 0;
-};
-
-class IClientPlayer;
 //-----------------------------------------------------------------------------
 // Purpose: All client entities must implement this interface.
 //-----------------------------------------------------------------------------
@@ -863,6 +881,10 @@ public:
 	virtual RecvTable* GetRecvTable() {
 		return GetClientClass()->m_pRecvTable;
 	}
+	virtual bool IsServerEntity() { return false; }
+	virtual IServerEntity* AsServerEntity() { return NULL; }
+	virtual bool IsClientEntity() { return true; }
+	virtual IClientEntity* AsClientEntity() { return this; }
 	virtual int entindex() const { return IClientUnknown::entindex(); }
 	virtual char const* GetClassname(void) const = 0;
 	virtual char const* GetDebugName(void) const = 0;
@@ -897,10 +919,11 @@ public:
 	virtual void Release(void) = 0;
 
 	virtual bool IsWorld() const = 0;
+	virtual IClientWorld* AsHandleWorld() = 0;
 	virtual bool IsBSPModel() const = 0;
 	virtual bool IsNPC(void) const = 0;
 	virtual bool IsPlayer(void) const = 0;
-	virtual IClientPlayer* GetClientPlayer() = 0;
+	virtual IClientPlayer* AsHandlePlayer() = 0;
 	virtual bool IsViewModel() const = 0;
 	virtual bool IsBaseCombatCharacter(void) = 0;
 	virtual bool IsBaseCombatWeapon(void) const = 0;
@@ -1004,27 +1027,6 @@ public:
 	virtual int GetWaterLevel() const = 0;
 	virtual int GetTeamNumber(void) const = 0;
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
-};
-
-class IClientPlayer {
-public:
-	virtual int GetDefaultFOV() const = 0;
-	virtual float GetFOV(void) = 0;
-	virtual float GetMinFOV() const = 0;
-	virtual fogparams_t* GetFogParams(void) = 0;
-	virtual void CalcView(Vector& eyeOrigin, QAngle& eyeAngles, float& zNear, float& zFar, float& fov) = 0;
-	virtual void CalcViewModelView(const Vector& eyeOrigin, const QAngle& eyeAngles) = 0;
-	virtual bool AudioStateIsUnderwater(Vector vecMainViewOrigin) = 0;
-	virtual CPlayerLocalData* GetLocalData() = 0;
-	virtual bool InFirstPersonView() = 0;
-	virtual bool ShouldDrawThisPlayer() = 0;
-	virtual int GetObserverMode() const = 0;
-	virtual void SetObserverMode(int iNewMode) = 0;
-	virtual IClientEntity* GetObserverTarget() const = 0;
-	virtual void SetObserverTarget(CBaseHandle hObserverTarget) = 0;
-	virtual bool LocalPlayerInFirstPersonView() = 0;
-	virtual bool ShouldDrawLocalPlayer() = 0;
-	virtual IClientEntity* GetActiveWeapon(void) const = 0;
 };
 
 #define INPVS_YES			0x0001		// The entity thinks it's in the PVS.

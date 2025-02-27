@@ -168,7 +168,7 @@ int CWeaponPortalBase::DrawModel( int flags )
 	if ( !GetEngineObject()->IsReadyToDraw() )
 		return 0;
 
-	if ( GetOwner() && (GetOwner() == EntityList()->GetLocalPlayer()) && !g_pViewRender->IsRenderingPortal() && !EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer() )
+	if ( GetOwner() && (GetOwner() == EntityList()->GetLocalPlayer()) && !g_pViewRender->IsRenderingPortal() && !EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer() )
 		return 0;
 
 	//Sometimes the return value of ShouldDrawLocalPlayer() fluctuates too often to draw the correct model all the time, so this is a quick fix if it's changed too fast

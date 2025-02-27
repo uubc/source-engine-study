@@ -81,7 +81,7 @@ public:
 
 	C_BasePlayer();
 	virtual			~C_BasePlayer();
-	virtual IClientPlayer* GetClientPlayer() { return this; }
+	virtual IClientPlayer* AsHandlePlayer() { return this; }
 	bool Init(int entnum, int iSerialNum);
 
 	virtual void	Spawn( void );

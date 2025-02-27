@@ -9519,6 +9519,98 @@ void C_EngineWorldInternal::Init(IClientEntity* pOuter)
 	}
 }
 
+int C_EngineWorldInternal::GetPointContents(const Vector& vecAbsPosition, IHandleEntity** ppEntity)
+{
+	return enginetrace->GetPointContents(vecAbsPosition, ppEntity);
+}
+
+int C_EngineWorldInternal::GetPointContents_Collideable(ICollideable* pCollide, const Vector& vecAbsPosition)
+{
+	return enginetrace->GetPointContents_Collideable(pCollide, vecAbsPosition);
+}
+
+void C_EngineWorldInternal::ClipRayToEntity(const Ray_t& ray, unsigned int fMask, IHandleEntity* pEnt, trace_t* pTrace)
+{
+	enginetrace->ClipRayToEntity(ray, fMask, pEnt, pTrace);
+}
+
+void C_EngineWorldInternal::ClipRayToCollideable(const Ray_t& ray, unsigned int fMask, ICollideable* pCollide, trace_t* pTrace)
+{
+	enginetrace->ClipRayToCollideable(ray, fMask, pCollide, pTrace);
+}
+
+void C_EngineWorldInternal::TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace)
+{
+	enginetrace->TraceRay(ray, fMask, pTraceFilter, pTrace);
+}
+
+void C_EngineWorldInternal::SetupLeafAndEntityListRay(const Ray_t& ray, CTraceListData& traceData)
+{
+	enginetrace->SetupLeafAndEntityListRay(ray, traceData);
+}
+
+void C_EngineWorldInternal::SetupLeafAndEntityListBox(const Vector& vecBoxMin, const Vector& vecBoxMax, CTraceListData& traceData)
+{
+	enginetrace->SetupLeafAndEntityListBox(vecBoxMin, vecBoxMax, traceData);
+}
+
+void C_EngineWorldInternal::TraceRayAgainstLeafAndEntityList(const Ray_t& ray, CTraceListData& traceData, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace)
+{
+	enginetrace->TraceRayAgainstLeafAndEntityList(ray, traceData, fMask, pTraceFilter, pTrace);
+}
+
+void C_EngineWorldInternal::SweepCollideable(ICollideable* pCollide, const Vector& vecAbsStart, const Vector& vecAbsEnd,
+	const QAngle& vecAngles, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace)
+{
+	enginetrace->SweepCollideable(pCollide, vecAbsStart, vecAbsEnd, vecAngles, fMask, pTraceFilter, pTrace);
+}
+
+void C_EngineWorldInternal::EnumerateEntities(const Ray_t& ray, bool triggers, IEntityEnumerator* pEnumerator)
+{
+	enginetrace->EnumerateEntities(ray, triggers, pEnumerator);
+}
+
+void C_EngineWorldInternal::EnumerateEntities(const Vector& vecAbsMins, const Vector& vecAbsMaxs, IEntityEnumerator* pEnumerator)
+{
+	enginetrace->EnumerateEntities(vecAbsMins, vecAbsMaxs, pEnumerator);
+}
+
+ICollideable* C_EngineWorldInternal::GetCollideable(IHandleEntity* pEntity)
+{
+	return enginetrace->GetCollideable(pEntity);
+}
+
+int C_EngineWorldInternal::GetStatByIndex(int index, bool bClear)
+{
+	return enginetrace->GetStatByIndex(index, bClear);
+}
+
+void C_EngineWorldInternal::GetBrushesInAABB(const Vector& vMins, const Vector& vMaxs, CUtlVector<int>* pOutput, int iContentsMask)
+{
+	enginetrace->GetBrushesInAABB(vMins, vMaxs, pOutput, iContentsMask);
+}
+
+CPhysCollide* C_EngineWorldInternal::GetCollidableFromDisplacementsInAABB(const Vector& vMins, const Vector& vMaxs)
+{
+	return enginetrace->GetCollidableFromDisplacementsInAABB(vMins, vMaxs);
+}
+
+bool C_EngineWorldInternal::GetBrushInfo(int iBrush, CUtlVector<Vector4D>* pPlanesOut, int* pContentsOut)
+{
+	return enginetrace->GetBrushInfo(iBrush, pPlanesOut, pContentsOut);
+}
+
+bool C_EngineWorldInternal::PointOutsideWorld(const Vector& ptTest)
+{
+	return enginetrace->PointOutsideWorld(ptTest);
+}
+
+
+int C_EngineWorldInternal::GetLeafContainingPoint(const Vector& ptTest)
+{
+	return enginetrace->GetLeafContainingPoint(ptTest);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: A version of trace entity which detects portals and translates the trace through portals
 //-----------------------------------------------------------------------------
@@ -9797,7 +9889,7 @@ void C_EnginePortalInternal::MoveTo(const Vector& ptCenter, const QAngle& angles
 
 void C_EnginePortalInternal::AttachTo(IEnginePortalClient* pLinkedPortal)
 {
-	m_hLinkedPortal = pLinkedPortal->AsEngineObject()->GetOuter();
+	m_hLinkedPortal = pLinkedPortal->AsEngineObject()->GetHandleEntity()->AsClientEntity();
 	GetLinkedPortal()->m_hLinkedPortal = this->AsEngineObject()->GetOuter();
 }
 

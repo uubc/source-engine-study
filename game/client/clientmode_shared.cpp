@@ -547,7 +547,7 @@ bool ClientModeShared::ShouldDrawCrosshair( void )
 //-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawLocalPlayer( C_BasePlayer *pPlayer )
 {
-	if ( ( pPlayer->entindex() == render->GetViewEntity() ) && !EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer() )
+	if ( ( pPlayer->entindex() == render->GetViewEntity() ) && !EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer() )
 		return false;
 
 	return true;

@@ -775,7 +775,7 @@ void CClientTools::EnableParticleSystems( bool bEnable )
 //-----------------------------------------------------------------------------
 bool CClientTools::IsRenderingThirdPerson() const
 {			  
-	return !EntityList()->GetLocalPlayer()->GetClientPlayer()->LocalPlayerInFirstPersonView();
+	return !EntityList()->GetLocalPlayer()->AsHandlePlayer()->LocalPlayerInFirstPersonView();
 }
 
 

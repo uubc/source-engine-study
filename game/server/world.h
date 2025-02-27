@@ -18,7 +18,7 @@
 extern ConVar g_Language;
 extern ConVar sk_autoaim_mode;
 
-class CWorld : public CBaseEntity, public IServerGameRules
+class CWorld : public CBaseEntity, public IServerWorld
 {
 public:
 	DECLARE_CLASS( CWorld, CBaseEntity );
@@ -33,6 +33,7 @@ public:
 	void PostConstructor(const char* szClassname, int iForceEdictIndex);
 	static void RegisterSharedActivities( void );
 	static void RegisterSharedEvents( void );
+	IServerWorld* AsHandleWorld() { return this; }
 	// ALWAYS transmit to all clients.
 	virtual int UpdateTransmitState(void);
 	virtual void Spawn( void );

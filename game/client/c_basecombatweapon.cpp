@@ -83,7 +83,7 @@ static inline bool ShouldDrawLocalPlayerViewModel( void )
 #if defined( PORTAL )
 	return false;
 #else
-	return !EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer();
+	return !EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer();
 #endif
 }
 
@@ -208,7 +208,7 @@ ShadowType_t C_BaseCombatWeapon::ShadowCastType()
 	if (!IsBeingCarried())
 		return SHADOWS_RENDER_TO_TEXTURE;
 
-	if (IsCarriedByLocalPlayer() && !EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer())
+	if (IsCarriedByLocalPlayer() && !EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer())
 		return SHADOWS_NONE;
 
 	return SHADOWS_RENDER_TO_TEXTURE;
@@ -331,7 +331,7 @@ bool C_BaseCombatWeapon::IsCarriedByLocalPlayer( void )
 //-----------------------------------------------------------------------------
 bool C_BaseCombatWeapon::ShouldDrawUsingViewModel( void )
 {
-	return IsCarriedByLocalPlayer() && !EntityList()->GetLocalPlayer()->GetClientPlayer()->ShouldDrawLocalPlayer();
+	return IsCarriedByLocalPlayer() && !EntityList()->GetLocalPlayer()->AsHandlePlayer()->ShouldDrawLocalPlayer();
 }
 
 

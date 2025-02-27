@@ -11,33 +11,235 @@
 #endif
 #include "platform.h"
 #include "const.h"
+#include "string_t.h"
+#include "utlvector.h" //need CUtlVector for IEngineTrace::GetBrushesIn*()
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
+#include "mathlib/vector4d.h"
+#include "mathlib/vmatrix.h"
+#include "engine/ICollideable.h"
 #include "model_types.h"
 #include "gamerules.h"
 
+class IEngineObject;
+class IServerEntity;
+class IClientEntity;
 class IHandleEntity;
 class CBaseHandle;
 class IEntityFactory;
 class IEntityList;
 class datamap_t;
-struct string_t;
-class VMatrix;
-struct Ray_t;
 struct PS_SD_Static_SurfaceProperties_t;
-class ITraceFilter;
-class CGameTrace;
-typedef CGameTrace trace_t;
-struct cplane_t;
+class CTraceListData;
+class CPhysCollide;
 class IStudioHdr;
 class IPhysicsObject;
-class IEngineWorld;
-class IEnginePlayer;
-class IEnginePortal;
-class IEngineShadowClone;
-class IEngineVehicle;
-class IEngineRope;
-class IEngineGhost;
+
+//-----------------------------------------------------------------------------
+// A ray...
+//-----------------------------------------------------------------------------
+
+struct Ray_t
+{
+	VectorAligned  m_Start;	// starting point, centered within the extents
+	VectorAligned  m_Delta;	// direction + length of the ray
+	VectorAligned  m_StartOffset;	// Add this to m_Start to get the actual ray start
+	VectorAligned  m_Extents;	// Describes an axis aligned box extruded along a ray
+	bool	m_IsRay;	// are the extents zero?
+	bool	m_IsSwept;	// is delta != 0?
+
+	void Init(Vector const& start, Vector const& end)
+	{
+		VectorSubtract(end, start, m_Delta);
+
+		m_IsSwept = (m_Delta.LengthSqr() != 0);
+
+		VectorClear(m_Extents);
+		m_IsRay = true;
+
+		// Offset m_Start to be in the center of the box...
+		VectorClear(m_StartOffset);
+		VectorCopy(start, m_Start);
+	}
+
+	void Init(Vector const& start, Vector const& end, Vector const& mins, Vector const& maxs)
+	{
+		VectorSubtract(end, start, m_Delta);
+
+		m_IsSwept = (m_Delta.LengthSqr() != 0);
+
+		VectorSubtract(maxs, mins, m_Extents);
+		m_Extents *= 0.5f;
+		m_IsRay = (m_Extents.LengthSqr() < 1e-6);
+
+		// Offset m_Start to be in the center of the box...
+		VectorAdd(mins, maxs, m_StartOffset);
+		m_StartOffset *= 0.5f;
+		VectorAdd(start, m_StartOffset, m_Start);
+		m_StartOffset *= -1.0f;
+	}
+
+	// compute inverse delta
+	Vector InvDelta() const
+	{
+		Vector vecInvDelta;
+		for (int iAxis = 0; iAxis < 3; ++iAxis)
+		{
+			if (m_Delta[iAxis] != 0.0f)
+			{
+				vecInvDelta[iAxis] = 1.0f / m_Delta[iAxis];
+			}
+			else
+			{
+				vecInvDelta[iAxis] = FLT_MAX;
+			}
+		}
+		return vecInvDelta;
+	}
+
+private:
+};
+
+//-----------------------------------------------------------------------------
+// The standard trace filter... NOTE: Most normal traces inherit from CTraceFilter!!!
+//-----------------------------------------------------------------------------
+enum TraceType_t
+{
+	TRACE_EVERYTHING = 0,
+	TRACE_WORLD_ONLY,				// NOTE: This does *not* test static props!!!
+	TRACE_ENTITIES_ONLY,			// NOTE: This version will *not* test static props
+	TRACE_EVERYTHING_FILTER_PROPS,	// NOTE: This version will pass the IHandleEntity for props through the filter, unlike all other filters
+};
+
+abstract_class ITraceFilter
+{
+public:
+	virtual bool ShouldHitEntity(IHandleEntity * pEntity, int contentsMask) = 0;
+	virtual TraceType_t	GetTraceType() const = 0;
+};
+
+//-----------------------------------------------------------------------------
+// Enumeration interface for EnumerateLinkEntities
+//-----------------------------------------------------------------------------
+abstract_class IEntityEnumerator
+{
+public:
+	// This gets called with each handle
+	virtual bool EnumEntity(IHandleEntity * pHandleEntity) = 0;
+};
+
+//-----------------------------------------------------------------------------
+// Interface the engine exposes to the game DLL
+//-----------------------------------------------------------------------------
+#define INTERFACEVERSION_ENGINETRACE_SERVER	"EngineTraceServer003"
+#define INTERFACEVERSION_ENGINETRACE_CLIENT	"EngineTraceClient003"
+abstract_class IEngineTrace
+{
+public:
+	// Returns the contents mask + entity at a particular world-space position
+	virtual int		GetPointContents(const Vector & vecAbsPosition, IHandleEntity * *ppEntity = NULL) = 0;
+
+	// Get the point contents, but only test the specific entity. This works
+	// on static props and brush models.
+	//
+	// If the entity isn't a static prop or a brush model, it returns CONTENTS_EMPTY and sets
+	// bFailed to true if bFailed is non-null.
+	virtual int		GetPointContents_Collideable(ICollideable* pCollide, const Vector& vecAbsPosition) = 0;
+
+	// Traces a ray against a particular entity
+	virtual void	ClipRayToEntity(const Ray_t& ray, unsigned int fMask, IHandleEntity* pEnt, trace_t* pTrace) = 0;
+
+	// Traces a ray against a particular entity
+	virtual void	ClipRayToCollideable(const Ray_t& ray, unsigned int fMask, ICollideable* pCollide, trace_t* pTrace) = 0;
+
+	// A version that simply accepts a ray (can work as a traceline or tracehull)
+	virtual void	TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace) = 0;
+
+	// A version that sets up the leaf and entity lists and allows you to pass those in for collision.
+	virtual void	SetupLeafAndEntityListRay(const Ray_t& ray, CTraceListData& traceData) = 0;
+	virtual void    SetupLeafAndEntityListBox(const Vector& vecBoxMin, const Vector& vecBoxMax, CTraceListData& traceData) = 0;
+	virtual void	TraceRayAgainstLeafAndEntityList(const Ray_t& ray, CTraceListData& traceData, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace) = 0;
+
+	// A version that sweeps a collideable through the world
+	// abs start + abs end represents the collision origins you want to sweep the collideable through
+	// vecAngles represents the collision angles of the collideable during the sweep
+	virtual void	SweepCollideable(ICollideable* pCollide, const Vector& vecAbsStart, const Vector& vecAbsEnd,
+		const QAngle& vecAngles, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace) = 0;
+
+	// Enumerates over all entities along a ray
+	// If triggers == true, it enumerates all triggers along a ray
+	virtual void	EnumerateEntities(const Ray_t& ray, bool triggers, IEntityEnumerator* pEnumerator) = 0;
+
+	// Same thing, but enumerate entitys within a box
+	virtual void	EnumerateEntities(const Vector& vecAbsMins, const Vector& vecAbsMaxs, IEntityEnumerator* pEnumerator) = 0;
+
+	// Convert a handle entity to a collideable.  Useful inside enumer
+	virtual ICollideable* GetCollideable(IHandleEntity* pEntity) = 0;
+
+	// HACKHACK: Temp for performance measurments
+	virtual int GetStatByIndex(int index, bool bClear) = 0;
+
+
+	//finds brushes in an AABB, prone to some false positives
+	virtual void GetBrushesInAABB(const Vector& vMins, const Vector& vMaxs, CUtlVector<int>* pOutput, int iContentsMask = 0xFFFFFFFF) = 0;
+
+	//Creates a CPhysCollide out of all displacements wholly or partially contained in the specified AABB
+	virtual CPhysCollide* GetCollidableFromDisplacementsInAABB(const Vector& vMins, const Vector& vMaxs) = 0;
+
+	//retrieve brush planes and contents, returns true if data is being returned in the output pointers, false if the brush doesn't exist
+	virtual bool GetBrushInfo(int iBrush, CUtlVector<Vector4D>* pPlanesOut, int* pContentsOut) = 0;
+
+	virtual bool PointOutsideWorld(const Vector& ptTest) = 0; //Tests a point to see if it's outside any playable area
+
+	// Walks bsp to find the leaf containing the specified point
+	virtual int GetLeafContainingPoint(const Vector& ptTest) = 0;
+};
+
+class IEngineWorld : public IEngineTrace {
+public:
+
+};
+
+class IEnginePlayer {
+public:
+
+};
+
+class IEnginePortal {
+public:
+	virtual bool IsActivated() const = 0;
+	virtual bool IsPortal2() const = 0;
+	virtual bool IsActivedAndLinked(void) const = 0;
+	virtual bool IsReadyToSimulate(void) const = 0;
+	virtual const IEngineObject* AsEngineObject() const = 0;
+	virtual const VMatrix& MatrixThisToLinked() const = 0;
+	virtual const cplane_t& GetPortalPlane() const = 0;
+	virtual const IEnginePortal* GetLinkedPortal() const = 0;
+	virtual bool RayIsInPortalHole(const Ray_t& ray) const = 0;
+	virtual void TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const = 0;
+	virtual void TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const = 0;
+	virtual const PS_SD_Static_SurfaceProperties_t& GetSurfaceProperties() const = 0;
+};
+
+class IEngineShadowClone {
+public:
+
+};
+
+class IEngineVehicle {
+public:
+
+};
+
+class IEngineRope {
+public:
+
+};
+
+class IEngineGhost {
+public:
+
+};
 
 class IEngineObject {
 public:
@@ -86,56 +288,34 @@ public:
 	virtual IEngineObject* GetEffectEntity(void) const = 0;
 
 	virtual bool IsWorld() = 0;
+	virtual IEngineWorld* AsEngineWorld() = 0;
+	virtual const IEngineWorld* AsEngineWorld() const = 0;
 	virtual bool IsPlayer() = 0;
+	virtual IEnginePlayer* AsEnginePlayer() = 0;
+	virtual const IEnginePlayer* AsEnginePlayer() const = 0;
 	virtual bool IsPortal() = 0;
+	virtual IEnginePortal* AsEnginePortal() = 0;
+	virtual const IEnginePortal* AsEnginePortal() const = 0;
 	virtual bool IsShadowClone() = 0;
+	virtual IEngineShadowClone* AsEngineShadowClone() = 0;
+	virtual const IEngineShadowClone* AsEngineShadowClone() const = 0;
 	virtual bool IsVehicle() = 0;
+	virtual IEngineVehicle* AsEngineVehicle() = 0;
+	virtual const IEngineVehicle* AsEngineVehicle() const = 0;
 	virtual bool IsRope() = 0;
+	virtual IEngineRope* AsEngineRope() = 0;
+	virtual const IEngineRope* AsEngineRope() const = 0;
 	virtual bool IsGhost() = 0;
+	virtual IEngineGhost* AsEngineGhost() = 0;
+	virtual const IEngineGhost* AsEngineGhost() const = 0;
 };
 
-class IEngineWorld {
+abstract_class IHandleWorld{
 public:
 
 };
 
-class IEnginePlayer {
-public:
-
-};
-
-class IEnginePortal {
-public:
-	virtual bool IsActivated() const = 0;
-	virtual bool IsPortal2() const = 0;
-	virtual bool IsActivedAndLinked(void) const = 0;
-	virtual bool IsReadyToSimulate(void) const = 0;
-	virtual const IEngineObject* AsEngineObject() const = 0;
-	virtual const VMatrix& MatrixThisToLinked() const = 0;
-	virtual const cplane_t& GetPortalPlane() const = 0;
-	virtual const IEnginePortal* GetLinkedPortal() const = 0;
-	virtual bool RayIsInPortalHole(const Ray_t& ray) const = 0;
-	virtual void TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const = 0;
-	virtual void TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const = 0;
-	virtual const PS_SD_Static_SurfaceProperties_t& GetSurfaceProperties() const = 0;
-};
-
-class IEngineShadowClone {
-public:
-
-};
-
-class IEngineVehicle {
-public:
-
-};
-
-class IEngineRope {
-public:
-
-};
-
-class IEngineGhost {
+abstract_class IHandlePlayer{
 public:
 
 };
@@ -153,6 +333,10 @@ public:
 	virtual IEntityList* GetEntityList() const { return NULL; }
 	virtual IEngineObject* GetEngineObject() { return NULL; }
 	virtual const IEngineObject* GetEngineObject() const { return NULL; }
+	virtual bool IsServerEntity() { return false; }
+	virtual IServerEntity* AsServerEntity() { return NULL; }
+	virtual bool IsClientEntity() { return false; }
+	virtual IClientEntity* AsClientEntity() { return NULL; }
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex) {}
 	virtual bool Init(int entnum, int iSerialNum) { return true; }
 	virtual void AfterInit() {};
@@ -164,10 +348,12 @@ public:
 	virtual bool ShouldSavePhysics() { return false; }
 	virtual bool CreateVPhysics() { return false; }
 	virtual bool IsWorld() const { return false; }
+	virtual IHandleWorld* AsHandleWorld() { return NULL; }
 	virtual bool IsStaticProp() const { return false; }
 	virtual bool IsBSPModel() const { return false; }
 	virtual bool IsNPC(void) const { return false; }
 	virtual bool IsPlayer(void) const { return false; }
+	virtual IHandlePlayer* AsHandlePlayer() { return NULL; }
 	virtual bool IsAlive(void) { return false; }
 	virtual bool IsStandable() const { return false; }
 	virtual bool IsTransparent() const { return false; }

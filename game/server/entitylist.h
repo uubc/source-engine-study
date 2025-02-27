@@ -1980,6 +1980,47 @@ public:
 	bool IsWorld() { return true; }
 	CEngineWorldInternal* AsEngineWorld() { return this; }
 	const CEngineWorldInternal* AsEngineWorld() const { return this; }
+	// Returns the contents mask + entity at a particular world-space position
+	int GetPointContents(const Vector& vecAbsPosition, IHandleEntity** ppEntity = NULL);
+	// Get the point contents, but only test the specific entity. This works
+	// on static props and brush models.
+	//
+	// If the entity isn't a static prop or a brush model, it returns CONTENTS_EMPTY and sets
+	// bFailed to true if bFailed is non-null.
+	int GetPointContents_Collideable(ICollideable* pCollide, const Vector& vecAbsPosition);
+	// Traces a ray against a particular entity
+	void ClipRayToEntity(const Ray_t& ray, unsigned int fMask, IHandleEntity* pEnt, trace_t* pTrace);
+	// Traces a ray against a particular entity
+	void ClipRayToCollideable(const Ray_t& ray, unsigned int fMask, ICollideable* pCollide, trace_t* pTrace);
+	// A version that simply accepts a ray (can work as a traceline or tracehull)
+	void TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace);
+	// A version that sets up the leaf and entity lists and allows you to pass those in for collision.
+	void SetupLeafAndEntityListRay(const Ray_t& ray, CTraceListData& traceData);
+	void SetupLeafAndEntityListBox(const Vector& vecBoxMin, const Vector& vecBoxMax, CTraceListData& traceData);
+	void TraceRayAgainstLeafAndEntityList(const Ray_t& ray, CTraceListData& traceData, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace);
+	// A version that sweeps a collideable through the world
+	// abs start + abs end represents the collision origins you want to sweep the collideable through
+	// vecAngles represents the collision angles of the collideable during the sweep
+	void SweepCollideable(ICollideable* pCollide, const Vector& vecAbsStart, const Vector& vecAbsEnd,
+		const QAngle& vecAngles, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace);
+	// Enumerates over all entities along a ray
+	// If triggers == true, it enumerates all triggers along a ray
+	void EnumerateEntities(const Ray_t& ray, bool triggers, IEntityEnumerator* pEnumerator);
+	// Same thing, but enumerate entitys within a box
+	void EnumerateEntities(const Vector& vecAbsMins, const Vector& vecAbsMaxs, IEntityEnumerator* pEnumerator);
+	// Convert a handle entity to a collideable.  Useful inside enumer
+	ICollideable* GetCollideable(IHandleEntity* pEntity);
+	// HACKHACK: Temp for performance measurments
+	int GetStatByIndex(int index, bool bClear);
+	//finds brushes in an AABB, prone to some false positives
+	void GetBrushesInAABB(const Vector& vMins, const Vector& vMaxs, CUtlVector<int>* pOutput, int iContentsMask = 0xFFFFFFFF);
+	//Creates a CPhysCollide out of all displacements wholly or partially contained in the specified AABB
+	CPhysCollide* GetCollidableFromDisplacementsInAABB(const Vector& vMins, const Vector& vMaxs);
+	//retrieve brush planes and contents, returns true if data is being returned in the output pointers, false if the brush doesn't exist
+	bool GetBrushInfo(int iBrush, CUtlVector<Vector4D>* pPlanesOut, int* pContentsOut);
+	bool PointOutsideWorld(const Vector& ptTest); //Tests a point to see if it's outside any playable area
+	// Walks bsp to find the leaf containing the specified point
+	int GetLeafContainingPoint(const Vector& ptTest);
 	// Sweeps a particular entity through the world
 	void TraceEntity(IEngineObjectServer* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, trace_t* ptr);
 	void TraceEntity(IEngineObjectServer* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr);
@@ -1996,12 +2037,12 @@ public:
 	DECLARE_DATADESC();
 	CEnginePlayerInternal(IServerEntityList* pServerEntityList, int iForceEdictIndex, int iSerialNum);
 	~CEnginePlayerInternal();
-	virtual void			VPhysicsDestroyObject();
+	virtual void VPhysicsDestroyObject();
 	// Player Physics Shadow
-	void					SetupVPhysicsShadow(const Vector& vHullMin, const Vector& vHullMax, const Vector& vDuckHullMin, const Vector& vDuckHullMax);
+	void SetupVPhysicsShadow(const Vector& vHullMin, const Vector& vHullMax, const Vector& vDuckHullMin, const Vector& vDuckHullMax);
 	IPhysicsPlayerController* GetPhysicsController() { return m_pPhysicsController; }
 	void UpdateVPhysicsPosition(const Vector& position, const Vector& velocity, float secondsToArrival);
-	void					SetVCollisionState(const Vector& vecAbsOrigin, const Vector& vecAbsVelocity, int collisionState);
+	void SetVCollisionState(const Vector& vecAbsOrigin, const Vector& vecAbsVelocity, int collisionState);
 	int GetVphysicsCollisionState() { return m_vphysicsCollisionState; }
 	bool IsPlayer() { return true; }
 	CEnginePlayerInternal* AsEnginePlayer() { return this; }
@@ -2009,9 +2050,9 @@ public:
 	CEngineObjectInternal* AsEngineObject() { return this; }
 	const CEngineObjectInternal* AsEngineObject() const { return this; }
 	IEnginePortalServer* GetPortalEnvironment() { return m_hPortalEnvironment.Get() ? m_hPortalEnvironment.Get()->GetEnginePortal() : NULL; }
-	void SetPortalEnvironment(IEnginePortalServer* pEnginePortal) { m_hPortalEnvironment = pEnginePortal ? pEnginePortal->AsEngineObject()->GetOuter() : NULL; }
+	void SetPortalEnvironment(IEnginePortalServer* pEnginePortal) { m_hPortalEnvironment = pEnginePortal ? pEnginePortal->AsEngineObject()->GetHandleEntity()->AsServerEntity() : NULL; }
 	IEnginePortalServer* GetHeldObjectPortal(void) { return m_pHeldObjectPortal.Get() ? m_pHeldObjectPortal.Get()->GetEnginePortal() : NULL; }
-	void SetHeldObjectPortal(IEnginePortalServer* pPortal) { m_pHeldObjectPortal = pPortal ? pPortal->AsEngineObject()->GetOuter() : NULL; }
+	void SetHeldObjectPortal(IEnginePortalServer* pPortal) { m_pHeldObjectPortal = pPortal ? pPortal->AsEngineObject()->GetHandleEntity()->AsServerEntity() : NULL; }
 	void ToggleHeldObjectOnOppositeSideOfPortal(void) { m_bHeldObjectOnOppositeSideOfPortal = !m_bHeldObjectOnOppositeSideOfPortal; }
 	void SetHeldObjectOnOppositeSideOfPortal(bool p_bHeldObjectOnOppositeSideOfPortal) { m_bHeldObjectOnOppositeSideOfPortal = p_bHeldObjectOnOppositeSideOfPortal; }
 	bool IsHeldObjectOnOppositeSideOfPortal(void) { return m_bHeldObjectOnOppositeSideOfPortal; }
@@ -2052,34 +2093,34 @@ public:
 	CEnginePortalInternal(IServerEntityList* pServerEntityList, int iForceEdictIndex, int iSerialNum);
 	~CEnginePortalInternal();
 	virtual IPhysicsObject* VPhysicsGetObject(void) const;
-	virtual int		VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
-	void	VPhysicsDestroyObject(void);
-	virtual void			OnRestore(void);
-	int					GetPortalSimulatorGUID(void) const { return m_iPortalSimulatorGUID; }
-	void				SetVPhysicsSimulationEnabled(bool bEnabled); //enable/disable vphysics simulation. Will automatically update the linked portal to be the same
-	bool				IsSimulatingVPhysics(void) const; //this portal is setup to handle any physically simulated object, false means the portal is handling player movement only
-	bool				IsLocalDataIsReady() const { return m_bLocalDataIsReady; }
-	void				SetLocalDataIsReady(bool bLocalDataIsReady) { m_bLocalDataIsReady = bLocalDataIsReady; }
-	bool				IsReadyToSimulate(void) const; //is active and linked to another portal
-	bool				IsActivedAndLinked(void) const;
-	void				MoveTo(const Vector& ptCenter, const QAngle& angles);
-	void				AttachTo(IEnginePortalServer* pLinkedPortal);
+	virtual int VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
+	void VPhysicsDestroyObject(void);
+	virtual void OnRestore(void);
+	int GetPortalSimulatorGUID(void) const { return m_iPortalSimulatorGUID; }
+	void SetVPhysicsSimulationEnabled(bool bEnabled); //enable/disable vphysics simulation. Will automatically update the linked portal to be the same
+	bool IsSimulatingVPhysics(void) const; //this portal is setup to handle any physically simulated object, false means the portal is handling player movement only
+	bool IsLocalDataIsReady() const { return m_bLocalDataIsReady; }
+	void SetLocalDataIsReady(bool bLocalDataIsReady) { m_bLocalDataIsReady = bLocalDataIsReady; }
+	bool IsReadyToSimulate(void) const; //is active and linked to another portal
+	bool IsActivedAndLinked(void) const;
+	void MoveTo(const Vector& ptCenter, const QAngle& angles);
+	void AttachTo(IEnginePortalServer* pLinkedPortal);
 	CEnginePortalInternal* GetLinkedPortal() { return m_hLinkedPortal.Get() ? (CEnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
 	const CEnginePortalInternal* GetLinkedPortal() const { return m_hLinkedPortal.Get() ? (const CEnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
-	void				DetachFromLinked(void);
-	void				UpdateLinkMatrix(IEnginePortalServer* pRemoteCollisionEntity);
-	bool				EntityIsInPortalHole(IEngineObjectServer* pEntity) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
-	bool				EntityHitBoxExtentIsInPortalHole(IEngineObjectServer* pBaseAnimating) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
-	bool				RayIsInPortalHole(const Ray_t& ray) const; //traces a ray against the same detector for EntityIsInPortalHole(), bias is towards false positives
-	bool				TraceWorldBrushes(const Ray_t& ray, trace_t* pTrace) const;
-	bool				TraceWallTube(const Ray_t& ray, trace_t* pTrace) const;
-	bool				TraceWallBrushes(const Ray_t& ray, trace_t* pTrace) const;
-	bool				TraceTransformedWorldBrushes(const IEnginePortalServer* pRemoteCollisionEntity, const Ray_t& ray, trace_t* pTrace) const;
-	void				TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const; //traces against a specific portal's environment, does no *real* tracing
-	void				TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const;
-	int					GetStaticPropsCount() const;
+	void DetachFromLinked(void);
+	void UpdateLinkMatrix(IEnginePortalServer* pRemoteCollisionEntity);
+	bool EntityIsInPortalHole(IEngineObjectServer* pEntity) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
+	bool EntityHitBoxExtentIsInPortalHole(IEngineObjectServer* pBaseAnimating) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
+	bool RayIsInPortalHole(const Ray_t& ray) const; //traces a ray against the same detector for EntityIsInPortalHole(), bias is towards false positives
+	bool TraceWorldBrushes(const Ray_t& ray, trace_t* pTrace) const;
+	bool TraceWallTube(const Ray_t& ray, trace_t* pTrace) const;
+	bool TraceWallBrushes(const Ray_t& ray, trace_t* pTrace) const;
+	bool TraceTransformedWorldBrushes(const IEnginePortalServer* pRemoteCollisionEntity, const Ray_t& ray, trace_t* pTrace) const;
+	void TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall = true) const; //traces against a specific portal's environment, does no *real* tracing
+	void TraceEntity(IHandleEntity* pEntity, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr) const;
+	int GetStaticPropsCount() const;
 	const PS_SD_Static_World_StaticProps_ClippedProp_t* GetStaticProps(int index) const;
-	bool				StaticPropsCollisionExists() const;
+	bool StaticPropsCollisionExists() const;
 	//const Vector& GetOrigin() const;
 	//const QAngle& GetAngles() const;
 	const Vector& GetTransformedOrigin() const;
@@ -2096,49 +2137,49 @@ public:
 	IPhysicsObject* GetWallTubePhysicsObject() const;
 	IPhysicsObject* GetRemoteWallBrushesPhysicsObject() const;
 	IPhysicsEnvironment* GetPhysicsEnvironment();
-	void				CreatePhysicsEnvironment();
-	void				ClearPhysicsEnvironment();
-	void				CreatePolyhedrons(void);
-	void				ClearPolyhedrons(void);
-	void				CreateLocalCollision(void);
-	void				ClearLocalCollision(void);
-	void				CreateLocalPhysics(void);
-	void				CreateLinkedPhysics(IEnginePortalServer* pRemoteCollisionEntity);
-	void				ClearLocalPhysics(void);
-	void				ClearLinkedPhysics(void);
-	bool				CreatedPhysicsObject(const IPhysicsObject* pObject, PS_PhysicsObjectSourceType_t* pOut_SourceType = NULL) const; //true if the physics object was generated by this portal simulator
-	void				CreateHoleShapeCollideable();
-	void				ClearHoleShapeCollideable();
-	bool				OwnsEntity(const IServerEntity* pEntity) const;
-	bool				OwnsPhysicsForEntity(const IServerEntity* pEntity) const;
-	void				MarkAsOwned(IServerEntity* pEntity);
-	void				MarkAsReleased(IServerEntity* pEntity);
+	void CreatePhysicsEnvironment();
+	void ClearPhysicsEnvironment();
+	void CreatePolyhedrons(void);
+	void ClearPolyhedrons(void);
+	void CreateLocalCollision(void);
+	void ClearLocalCollision(void);
+	void CreateLocalPhysics(void);
+	void CreateLinkedPhysics(IEnginePortalServer* pRemoteCollisionEntity);
+	void ClearLocalPhysics(void);
+	void ClearLinkedPhysics(void);
+	bool CreatedPhysicsObject(const IPhysicsObject* pObject, PS_PhysicsObjectSourceType_t* pOut_SourceType = NULL) const; //true if the physics object was generated by this portal simulator
+	void CreateHoleShapeCollideable();
+	void ClearHoleShapeCollideable();
+	bool OwnsEntity(const IServerEntity* pEntity) const;
+	bool OwnsPhysicsForEntity(const IServerEntity* pEntity) const;
+	void MarkAsOwned(IServerEntity* pEntity);
+	void MarkAsReleased(IServerEntity* pEntity);
 	//these three really should be made internal and the public interface changed to a "watch this entity" setup
-	void				TakeOwnershipOfEntity(IServerEntity* pEntity); //general ownership, not necessarily physics ownership
-	void				ReleaseOwnershipOfEntity(IServerEntity* pEntity, bool bMovingToLinkedSimulator = false); //if bMovingToLinkedSimulator is true, the code skips some steps that are going to be repeated when the entity is added to the other simulator
-	void				ReleaseAllEntityOwnership(void); //go back to not owning any entities
+	void TakeOwnershipOfEntity(IServerEntity* pEntity); //general ownership, not necessarily physics ownership
+	void ReleaseOwnershipOfEntity(IServerEntity* pEntity, bool bMovingToLinkedSimulator = false); //if bMovingToLinkedSimulator is true, the code skips some steps that are going to be repeated when the entity is added to the other simulator
+	void ReleaseAllEntityOwnership(void); //go back to not owning any entities
 
-	void				TakePhysicsOwnership(IServerEntity* pEntity);
-	void				ReleasePhysicsOwnership(IServerEntity* pEntity, bool bContinuePhysicsCloning = true, bool bMovingToLinkedSimulator = false);
+	void TakePhysicsOwnership(IServerEntity* pEntity);
+	void ReleasePhysicsOwnership(IServerEntity* pEntity, bool bContinuePhysicsCloning = true, bool bMovingToLinkedSimulator = false);
 
-	int					GetMoveableOwnedEntities(IServerEntity** pEntsOut, int iEntOutLimit) const; //gets owned entities that aren't either world or static props. Excludes fake portal ents such as physics clones
+	int GetMoveableOwnedEntities(IServerEntity** pEntsOut, int iEntOutLimit) const; //gets owned entities that aren't either world or static props. Excludes fake portal ents such as physics clones
 
-	virtual void		BeforeMove();
-	virtual void        AfterMove();
+	virtual void BeforeMove();
+	virtual void AfterMove();
 
-	virtual void		BeforeLocalPhysicsClear();
-	virtual	void		AfterLocalPhysicsCreated();
-	virtual void		BeforeLinkedPhysicsClear();
-	virtual void		AfterLinkedPhysicsCreated();
+	virtual void BeforeLocalPhysicsClear();
+	virtual	void AfterLocalPhysicsCreated();
+	virtual void BeforeLinkedPhysicsClear();
+	virtual void AfterLinkedPhysicsCreated();
 
-	virtual void				AfterCollisionEntityCreated();
-	virtual void				BeforeCollisionEntityDestroy();
+	virtual void AfterCollisionEntityCreated();
+	virtual void BeforeCollisionEntityDestroy();
 
-	void				StartCloningEntity(IServerEntity* pEntity);
-	void				StopCloningEntity(IServerEntity* pEntity);
-	void				ClearLinkedEntities(void); //gets rid of transformed shadow clones
+	void StartCloningEntity(IServerEntity* pEntity);
+	void StopCloningEntity(IServerEntity* pEntity);
+	void ClearLinkedEntities(void); //gets rid of transformed shadow clones
 
-	bool				IsPortal() { return true; }
+	bool IsPortal() { return true; }
 	CEnginePortalInternal* AsEnginePortal() { return this; }
 	const CEnginePortalInternal* AsEnginePortal() const { return this; }
 	CEngineObjectInternal* AsEngineObject() { return this; }
@@ -2149,7 +2190,7 @@ public:
 	void SetActivated(bool bActivated) { m_bActivated = bActivated; }
 	bool IsPortal2() const { return m_bIsPortal2; }
 	void SetPortal2(bool bPortal2) { m_bIsPortal2 = bPortal2; }
-	void					UpdateCorners(void);			// Updates the four corners of this portal on spawn and placement
+	void UpdateCorners(void);			// Updates the four corners of this portal on spawn and placement
 	const Vector& GetPortalCorners(int iCorner) const { return m_vPortalCorners[iCorner]; }
 	unsigned int m_EntFlags[MAX_EDICTS]; //flags maintained for every entity in the world based on its index
 private:
@@ -2211,30 +2252,30 @@ public:
 	CEngineShadowCloneInternal(IServerEntityList* pServerEntityList, int iForceEdictIndex, int iSerialNum);
 	~CEngineShadowCloneInternal();
 
-	virtual void	VPhysicsDestroyObject(void);
-	virtual int		VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
+	virtual void VPhysicsDestroyObject(void);
+	virtual int VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
 
 	//what entity are we cloning?
-	void			SetClonedEntity(IServerEntity* pEntToClone);
-	IServerEntity*	GetClonedEntity(void);
-	void			SetCloneTransformationMatrix(const matrix3x4_t& matTransform);
-	void			SetOwnerEnvironment(IPhysicsEnvironment* pOwnerPhysEnvironment) { m_pOwnerPhysEnvironment = pOwnerPhysEnvironment; }
+	void SetClonedEntity(IServerEntity* pEntToClone);
+	IServerEntity* GetClonedEntity(void);
+	void SetCloneTransformationMatrix(const matrix3x4_t& matTransform);
+	void SetOwnerEnvironment(IPhysicsEnvironment* pOwnerPhysEnvironment) { m_pOwnerPhysEnvironment = pOwnerPhysEnvironment; }
 	IPhysicsEnvironment* GetOwnerEnvironment(void) const { return m_pOwnerPhysEnvironment; }
 
 	//is this clone occupying the exact same space as the object it's cloning?
-	bool		IsUntransformedClone(void) const { return m_bShadowTransformIsIdentity; };
-	void		SetInAssumedSyncState(bool bInAssumedSyncState) { m_bInAssumedSyncState = bInAssumedSyncState; }
-	bool		IsInAssumedSyncState(void) const { return m_bInAssumedSyncState; }
+	bool IsUntransformedClone(void) const { return m_bShadowTransformIsIdentity; };
+	void SetInAssumedSyncState(bool bInAssumedSyncState) { m_bInAssumedSyncState = bInAssumedSyncState; }
+	bool IsInAssumedSyncState(void) const { return m_bInAssumedSyncState; }
 
-	void			FullSyncClonedPhysicsObjects(bool bTeleport);
-	void			SyncEntity(bool bPullChanges);
+	void FullSyncClonedPhysicsObjects(bool bTeleport);
+	void SyncEntity(bool bPullChanges);
 	//syncs to the source entity in every way possible, assumed sync does some rudimentary tests to see if the object is in sync, and if so, skips the update
-	void			FullSync(bool bAllowAssumedSync = false);
+	void FullSync(bool bAllowAssumedSync = false);
 	//syncs just the physics objects, bPullChanges should be true when this clone should match it's source, false when it should force differences onto the source entity
-	void			PartialSync(bool bPullChanges);
+	void PartialSync(bool bPullChanges);
 	//given a physics object that is part of this clone, tells you which physics object in the source
 	IPhysicsObject* TranslatePhysicsToClonedEnt(const IPhysicsObject* pPhysics);
-	bool			IsShadowClone() { return true; }
+	bool IsShadowClone() { return true; }
 	CEngineShadowCloneInternal* AsEngineShadowClone() { return this; }
 	const CEngineShadowCloneInternal* AsEngineShadowClone() const { return this; }
 	CEngineObjectInternal* AsEngineObject() { return this; }
@@ -2326,7 +2367,7 @@ public:
 	// Shared code to compute the vehicle view position
 	void GetVehicleViewPosition(const char* pViewAttachment, float flPitchFactor, Vector* pAbsPosition, QAngle* pAbsAngles);
 
-	int				GetWheelCount() { return m_wheelCount; }
+	int GetWheelCount() { return m_wheelCount; }
 	IPhysicsObject* GetWheel(int iWheel) { return m_pWheels[iWheel]; }
 	const Vector& GetWheelPosition(int iWheel) { return m_wheelPosition[iWheel]; }
 	const QAngle GetWheelRotation(int iWheel) { return m_wheelRotation[iWheel]; }
@@ -2472,10 +2513,10 @@ public:
 
 	IServerEntity* GetStartPoint() { return m_hStartPoint; }
 	IServerEntity* GetEndPoint() { return m_hEndPoint.Get(); }
-	int				GetEndAttachment() { return m_iStartAttachment; };
+	int GetEndAttachment() { return m_iStartAttachment; };
 
-	void			SetStartPoint(IServerEntity* pStartPoint, int attachment = 0);
-	void			SetEndPoint(IServerEntity* pEndPoint, int attachment = 0);
+	void SetStartPoint(IServerEntity* pStartPoint, int attachment = 0);
+	void SetEndPoint(IServerEntity* pEndPoint, int attachment = 0);
 
 	int GetRopeFlags() { return m_RopeFlags; }
 	void SetRopeFlags(int RopeFlags) {
@@ -2488,40 +2529,40 @@ public:
 	void SetLockedPoints(int LockedPoints) { m_fLockedPoints = LockedPoints; }
 	void SetRopeLength(int RopeLength) { m_RopeLength = RopeLength; }
 
-	bool		SetupHangDistance(float flHangDist);
-	void		ActivateStartDirectionConstraints(bool bEnable);
-	void		ActivateEndDirectionConstraints(bool bEnable);
+	bool SetupHangDistance(float flHangDist);
+	void ActivateStartDirectionConstraints(bool bEnable);
+	void ActivateEndDirectionConstraints(bool bEnable);
 
 	int GetRopeMaterialModelIndex() { return m_iRopeMaterialModelIndex; }
 	void SetRopeMaterialModelIndex(int RopeMaterialModelIndex) { m_iRopeMaterialModelIndex = RopeMaterialModelIndex; }
-	void			EndpointsChanged();
+	void EndpointsChanged();
 	// Once-off length recalculation
-	void			RecalculateLength(void);
+	void RecalculateLength(void);
 	// These work just like the client-side versions.
-	bool			GetEndPointPos2(IServerEntity* pEnt, int iAttachment, Vector& v);
-	bool			GetEndPointPos(int iPt, Vector& v);
-	void			UpdateBBox(bool bForceRelink);
+	bool GetEndPointPos2(IServerEntity* pEnt, int iAttachment, Vector& v);
+	bool GetEndPointPos(int iPt, Vector& v);
+	void UpdateBBox(bool bForceRelink);
 	// This is normally called by Activate but if you create the rope at runtime,
 		// you must call it after you have setup its variables.
-	void			Init();
-	void			NotifyPositionChanged();
+	void Init();
+	void NotifyPositionChanged();
 	// Unless this is called during initialization, the caller should have done
 	// PrecacheModel on whatever material they specify in here.
-	const char*		GetMaterialName() { return m_strRopeMaterialModel.ToCStr(); }
-	void			SetMaterial(const char* pName);
-	void			SetScrollSpeed(float flScrollSpeed) { m_flScrollSpeed = flScrollSpeed; }
-	void			DetachPoint(int iPoint);
+	const char* GetMaterialName() { return m_strRopeMaterialModel.ToCStr(); }
+	void SetMaterial(const char* pName);
+	void SetScrollSpeed(float flScrollSpeed) { m_flScrollSpeed = flScrollSpeed; }
+	void DetachPoint(int iPoint);
 	// By default, ropes don't collide with the world. Call this to enable it.
-	void			EnableCollision();
+	void EnableCollision();
 	// Toggle wind.
-	void			EnableWind(bool bEnable);
-	void			SetConstrainBetweenEndpoints(bool bConstrainBetweenEndpoints) { m_bConstrainBetweenEndpoints = m_bConstrainBetweenEndpoints; }
+	void EnableWind(bool bEnable);
+	void SetConstrainBetweenEndpoints(bool bConstrainBetweenEndpoints) { m_bConstrainBetweenEndpoints = m_bConstrainBetweenEndpoints; }
 
 	bool IsRope() { return true; }
 	CEngineRopeInternal* AsEngineRope() { return this; }
 	const CEngineRopeInternal* AsEngineRope() const { return this; }
 private:
-	void			SetAttachmentPoint(CBaseHandle& hOutEnt, short& iOutAttachment, IServerEntity* pEnt, int iAttachment);
+	void SetAttachmentPoint(CBaseHandle& hOutEnt, short& iOutAttachment, IServerEntity* pEnt, int iAttachment);
 
 
 

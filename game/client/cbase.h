@@ -109,4 +109,35 @@ public:
 // Maximum size of entity list
 #define INVALID_CLIENTENTITY_HANDLE CBaseHandle( INVALID_EHANDLE_INDEX )
 
+//-----------------------------------------------------------------------------
+// Converts an IHandleEntity to an CBaseEntity
+//-----------------------------------------------------------------------------
+inline const CBaseEntity* EntityFromEntityHandle(const IHandleEntity* pConstHandleEntity)
+{
+	IHandleEntity* pHandleEntity = const_cast<IHandleEntity*>(pConstHandleEntity);
+
+#ifdef CLIENT_DLL
+	IClientUnknown* pUnk = (IClientUnknown*)pHandleEntity;
+	return (CBaseEntity*)pUnk->GetBaseEntity();
+#else
+	if (staticpropmgr->IsStaticProp(pHandleEntity))
+		return NULL;
+
+	return (CBaseEntity*)pHandleEntity;
+#endif
+}
+
+inline CBaseEntity* EntityFromEntityHandle(IHandleEntity* pHandleEntity)
+{
+#ifdef CLIENT_DLL
+	IClientUnknown* pUnk = (IClientUnknown*)pHandleEntity;
+	return (CBaseEntity*)pUnk->GetBaseEntity();
+#else
+	if (staticpropmgr->IsStaticProp(pHandleEntity))
+		return NULL;
+
+	return (CBaseEntity*)pHandleEntity;
+#endif
+}
+
 #endif // CBASE_H

@@ -20,7 +20,7 @@
 extern ConVar g_Language;
 extern ConVar sk_autoaim_mode;
 
-class C_World : public C_BaseEntity, public IClientGameRules
+class C_World : public C_BaseEntity, public IClientWorld
 {
 public:
 	DECLARE_CLASS( C_World, C_BaseEntity );
@@ -29,6 +29,7 @@ public:
 	C_World( void );
 	~C_World( void );
 	
+	virtual IClientWorld* AsHandleWorld() { return this; }
 	// Override the factory create/delete functions since the world is a singleton.
 	virtual bool Init( int entnum, int iSerialNum );
 	virtual void UpdateOnRemove();

@@ -62,36 +62,7 @@ bool PassServerEntityFilter( const IHandleEntity *pTouch, const IHandleEntity *p
 bool StandardFilterRules( IHandleEntity *pHandleEntity, int fContentsMask );
 
 
-//-----------------------------------------------------------------------------
-// Converts an IHandleEntity to an CBaseEntity
-//-----------------------------------------------------------------------------
-inline const CBaseEntity *EntityFromEntityHandle( const IHandleEntity *pConstHandleEntity )
-{
-	IHandleEntity *pHandleEntity = const_cast<IHandleEntity*>(pConstHandleEntity);
 
-#ifdef CLIENT_DLL
-	IClientUnknown *pUnk = (IClientUnknown*)pHandleEntity;
-	return (CBaseEntity*)pUnk->GetBaseEntity();
-#else
-	if ( staticpropmgr->IsStaticProp( pHandleEntity ) )
-		return NULL;
-
-	return (CBaseEntity*)pHandleEntity;
-#endif
-}
-
-inline CBaseEntity *EntityFromEntityHandle( IHandleEntity *pHandleEntity )
-{
-#ifdef CLIENT_DLL
-	IClientUnknown *pUnk = (IClientUnknown*)pHandleEntity;
-	return (CBaseEntity*)pUnk->GetBaseEntity();
-#else
-	if ( staticpropmgr->IsStaticProp( pHandleEntity ) )
-		return NULL;
-
-	return (CBaseEntity*)pHandleEntity;
-#endif
-}
 
 // helper
 void DebugDrawLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration );

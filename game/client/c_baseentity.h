@@ -734,10 +734,11 @@ public:
 	bool							IsInWorld(void) { return true; }
 
 	bool							IsWorld() const { return entindex() == 0; }
+	virtual IClientWorld*			AsHandleWorld() { return NULL; }
 	/////////////////
 
 	virtual bool					IsPlayer(void) const { return false; };
-	virtual IClientPlayer*			GetClientPlayer() { return NULL; }
+	virtual IClientPlayer*			AsHandlePlayer() { return NULL; }
 	virtual bool					IsBaseCombatCharacter(void) { return false; };
 	virtual C_BaseCombatCharacter* MyCombatCharacterPointer(void) { return NULL; }
 	virtual bool					IsNPC(void) const { return false; }
