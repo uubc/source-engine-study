@@ -985,7 +985,7 @@ void CBaseHudChat::MsgFunc_VoiceSubtitle( bf_read &msg )
 
 	const char *pszSubtitle = "";
 
-	IGameRules *pGameRules = GameRules();
+	IHandleWorld *pGameRules = GameRules();
 
 	CMultiplayWorld *pMultiRules = dynamic_cast<CMultiplayWorld* >( pGameRules );
 

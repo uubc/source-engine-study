@@ -47,7 +47,7 @@ static CViewVectors g_DefaultViewVectors(
 	Vector(0, 0, 14)			//VEC_DEAD_VIEWHEIGHT (m_vDeadViewHeight)
 );
 
-IClientGameRules* g_pGameRules = NULL;
+IClientWorld* g_pGameRules = NULL;
 
 //static C_World *g_pClientWorld;
 
@@ -96,9 +96,9 @@ C_World::C_World( void )
 C_World::~C_World( void )
 {
 	if (!g_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+		Error("m_pWorld not inited!\n");
 	}
-	g_pGameRules->LevelShutdownPostEntity();
+	//g_pGameRules->LevelShutdownPostEntity();
 	g_pGameRules = NULL;
 }
 

@@ -3038,15 +3038,15 @@ public:
 	void RemoveListenerEntity(IEntityListener<T>* pListener) {
 		BaseClass::RemoveListenerEntity(pListener);
 	}
-	void NotifyCreateEntity(T* pEnt) {
-		BaseClass::NotifyCreateEntity(pEnt);
-	}
+	//void NotifyCreateEntity(T* pEnt) {
+	//	BaseClass::NotifyCreateEntity(pEnt);
+	//}
 	void NotifySpawn(T* pEnt) {
 		BaseClass::NotifySpawn(pEnt);
 	}
-	void NotifyRemoveEntity(T* pEnt) {
-		BaseClass::NotifyRemoveEntity(pEnt);
-	}
+	//void NotifyRemoveEntity(T* pEnt) {
+	//	BaseClass::NotifyRemoveEntity(pEnt);
+	//}
 public:
 	CGlobalEntityList();
 
@@ -4007,8 +4007,8 @@ public:
 		return NULL;
 	}
 
-	IServerGameRules* GetGameRules() {
-		return m_pGameRules;
+	IServerWorld* GetWorld() {
+		return m_pWorld;
 	}
 
 protected:
@@ -4274,7 +4274,7 @@ private:
 	int		m_lastcheck;
 	float	m_lastchecktime;
 	bool	m_bClientPVSIsExpanded;
-	IServerGameRules* m_pGameRules = NULL;
+	IServerWorld* m_pWorld = NULL;
 };
 
 template<class T>
@@ -4378,20 +4378,20 @@ void CGlobalEntityList<T>::LevelInitPreEntity()
 	m_lastcheck = 1;
 	m_lastchecktime = -1;
 	m_bClientPVSIsExpanded = false;
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->LevelInitPreEntity();
+	m_pWorld->LevelInitPreEntity();
 }
 
 template<class T>
 void CGlobalEntityList<T>::LevelInitPostEntity()
 {
 	m_bPaused = false;
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->LevelInitPostEntity();
+	m_pWorld->LevelInitPostEntity();
 }
 
 // The level is shutdown in two parts
@@ -4401,10 +4401,10 @@ void CGlobalEntityList<T>::LevelShutdownPreEntity()
 	if (!m_pPhysenv)
 		return;
 	m_pPhysenv->SetQuickDelete(true);
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->LevelShutdownPreEntity();
+	m_pWorld->LevelShutdownPreEntity();
 }
 
 template<class T>
@@ -4649,10 +4649,10 @@ void CGlobalEntityList<T>::PhysFrame(float deltaTime)
 template<class T>
 void CGlobalEntityList<T>::FrameUpdatePreEntityThink()
 {
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->FrameUpdatePreEntityThink();
+	m_pWorld->FrameUpdatePreEntityThink();
 }
 
 template<class T>
@@ -4685,10 +4685,10 @@ void CGlobalEntityList<T>::FrameUpdatePostEntityThink()
 	else {
 		PhysFrame(interval);
 	}
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->FrameUpdatePostEntityThink();
+	m_pWorld->FrameUpdatePostEntityThink();
 }
 
 template<class T>
@@ -6269,21 +6269,17 @@ void CGlobalEntityList<T>::Clear(void)
 {
 	m_bClearingEntities = true;
 
-	// Add all remaining entities in the game to the delete list and call appropriate UpdateOnRemove
-	CBaseHandle hCur = BaseClass::FirstHandle();
-	while (hCur != BaseClass::InvalidHandle())
-	{
-		T* ent = GetBaseEntityFromHandle(hCur);
-		if (ent)
-		{
-			if (ent->entindex() == 0) {
-				int aaa = 0;
-			}
+	for (int i = 1; i < NUM_ENT_ENTRIES; i++) {
+
+		IServerEntity* pServerEntity = GetBaseEntity(i);
+		if (pServerEntity) {
 			MDLCACHE_CRITICAL_SECTION();
-			// Force UpdateOnRemove to be called
-			DestroyEntity(ent);
+			DestroyEntity(pServerEntity);
 		}
-		hCur = BaseClass::NextHandle(hCur);
+	}
+	IServerEntity* pServerEntity = GetBaseEntity(0);
+	if (pServerEntity) {
+		DestroyEntity(pServerEntity);
 	}
 
 	CleanupDeleteList();
@@ -7085,9 +7081,6 @@ void CGlobalEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 
 	// If it's a IServerEntity, notify the listeners.
 	IServerEntity* pBaseEnt = (IServerEntity*)pEnt;
-	//m_EngineObjectArray[i] = new CEngineObjectInternal();
-	m_EngineObjectArray[i]->Init(pBaseEnt);
-
 	if (pBaseEnt->IsNetworkable()) {
 		if (pBaseEnt->entindex() != -1)
 			m_iNumEdicts++;
@@ -7097,6 +7090,15 @@ void CGlobalEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 		if (pBaseEnt->entindex() > m_iHighestEdicts) {
 			m_iHighestEdicts = pBaseEnt->entindex();
 		}
+	}
+
+	//m_EngineObjectArray[i] = new CEngineObjectInternal();
+	m_EngineObjectArray[i]->Init(pBaseEnt);
+
+	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
+	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	{
+		m_entityListeners[i]->OnEntityCreated(pEnt);
 	}
 
 	BaseClass::OnAddEntity(pEnt, handle);
@@ -7120,14 +7122,20 @@ void CGlobalEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 		}
 	}
 #endif
-	int entnum = handle.GetEntryIndex();
-	m_EngineObjectArray[entnum]->PhysicsRemoveTouchedList();
-	m_EngineObjectArray[entnum]->PhysicsRemoveGroundList();
-	m_EngineObjectArray[entnum]->DestroyAllDataObjects();
-	delete m_EngineObjectArray[entnum];
-	m_EngineObjectArray[entnum] = NULL;
 
 	IServerEntity* pBaseEnt = (IServerEntity*)pEnt;
+
+	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
+	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	{
+		m_entityListeners[i]->OnEntityDeleted(pEnt);
+	}
+
+	if (pBaseEnt->IsWorld()) {
+		pBaseEnt->AsHandleWorld()->LevelShutdown();
+		pBaseEnt->AsHandleWorld()->LevelShutdownPostEntity();
+	}
+
 	if (pBaseEnt->IsNetworkable()) {
 		if (pBaseEnt->entindex() != -1)
 			m_iNumEdicts--;
@@ -7137,6 +7145,13 @@ void CGlobalEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 	}
 
 	m_iNumEnts--;
+
+	int entnum = handle.GetEntryIndex();
+	m_EngineObjectArray[entnum]->PhysicsRemoveTouchedList();
+	m_EngineObjectArray[entnum]->PhysicsRemoveGroundList();
+	m_EngineObjectArray[entnum]->DestroyAllDataObjects();
+	delete m_EngineObjectArray[entnum];
+	m_EngineObjectArray[entnum] = NULL;
 
 	BaseClass::OnRemoveEntity(pEnt, handle);
 }

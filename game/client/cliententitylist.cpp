@@ -208,10 +208,10 @@ int CCollisionEvent::ShouldCollide_2(IPhysicsObject* pObj0, IPhysicsObject* pObj
 		return 1;
 	}
 	// Obey collision group rules
-	Assert(g_EntityList.m_pGameRules);
-	if (g_EntityList.m_pGameRules)
+	Assert(g_EntityList.m_pWorld);
+	if (g_EntityList.m_pWorld)
 	{
-		if (!g_EntityList.m_pGameRules->ShouldCollide(pEntity0->GetEngineObject()->GetCollisionGroup(), pEntity1->GetEngineObject()->GetCollisionGroup()))
+		if (!g_EntityList.m_pWorld->ShouldCollide(pEntity0->GetEngineObject()->GetCollisionGroup(), pEntity1->GetEngineObject()->GetCollisionGroup()))
 			return 0;
 	}
 
@@ -9507,14 +9507,14 @@ C_EngineWorldInternal::C_EngineWorldInternal(IClientEntityList* pClientEntityLis
 
 C_EngineWorldInternal::~C_EngineWorldInternal() 
 {
-	g_EntityList.m_pGameRules = NULL;
+	g_EntityList.m_pWorld = NULL;
 }
 
 void C_EngineWorldInternal::Init(IClientEntity* pOuter)
 {
 	BaseClass::Init(pOuter);
-	g_EntityList.m_pGameRules = dynamic_cast<IClientGameRules*>(pOuter);
-	if (!g_EntityList.m_pGameRules) {
+	g_EntityList.m_pWorld = pOuter->AsHandleWorld();
+	if (!g_EntityList.m_pWorld) {
 		Error("C_World does implement IGameRiles!\n");
 	}
 }
@@ -9618,7 +9618,7 @@ void UTIL_TraceEntityThroughPortal(IClientEntity* pEntity, const Vector& vecAbsS
 	unsigned int mask, ITraceFilter* pFilter, trace_t* pTrace)
 {
 #ifdef CLIENT_DLL
-	Assert((g_EntityList.GetGameRules() == NULL) || g_EntityList.GetGameRules()->IsMultiplayer());
+	Assert((g_EntityList.GetWorld() == NULL) || g_EntityList.GetWorld()->IsMultiplayer());
 	Assert(pEntity->IsPlayer());
 
 	IEnginePortalClient* pPortal = NULL;
@@ -10254,7 +10254,7 @@ IterationRetval_t CPortalCollideableEnumerator::EnumElement(IHandleEntity* pHand
 void C_EnginePortalInternal::TraceRay(const Ray_t& ray, unsigned int fMask, ITraceFilter* pTraceFilter, trace_t* pTrace, bool bTraceHolyWall) const//traces against a specific portal's environment, does no *real* tracing
 {
 #ifdef CLIENT_DLL
-	Assert((g_EntityList.m_pGameRules == NULL) || g_EntityList.m_pGameRules->IsMultiplayer());
+	Assert((g_EntityList.m_pWorld == NULL) || g_EntityList.m_pWorld->IsMultiplayer());
 #endif
 	Assert(IsReadyToSimulate()); //a trace shouldn't make it down this far if the portal is incapable of changing the results of the trace
 

@@ -328,7 +328,7 @@ void CBaseEntity::UpdateOnRemove(void)
 	StopLoopingSounds();
 
 	// Notifies entity listeners, etc
-	EntityList()->NotifyRemoveEntity(this);
+	//EntityList()->NotifyRemoveEntity(this);
 
 	GetEngineObject()->AddEFlags(EFL_KILLME);
 	GetEngineObject()->AddFlag(FL_KILLME);
@@ -2649,7 +2649,7 @@ CBaseEntity * CBaseEntity::CreateNoSpawn( const char *szName, const Vector &vecO
 	pEntity->GetEngineObject()->SetLocalAngles( vecAngles );
 	pEntity->GetEngineObject()->SetOwnerEntity(pOwner ? pOwner->GetEngineObject() : NULL);
 
-	EntityList()->NotifyCreateEntity( pEntity );
+	//EntityList()->NotifyCreateEntity( pEntity );
 
 	return (CBaseEntity*)pEntity;
 }

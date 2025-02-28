@@ -109,8 +109,8 @@ typedef CHandle<CBaseEntity> EHANDLE;
 #include "util_shared.h"
 #include "util.h"
 
-extern IServerGameRules* g_pGameRules;
-inline IServerGameRules* GameRules() {
+extern IServerWorld* g_pGameRules;
+inline IServerWorld* GameRules() {
 	return g_pGameRules;
 }
 

@@ -145,7 +145,7 @@ public:
 			return false;
 		if (!pHandleEntity->ShouldCollide(m_collisionGroup, contentsMask))
 			return false;
-		if (!pHandleEntity->GetEntityList()->GetGameRules()->ShouldCollide(m_collisionGroup, pHandleEntity->GetEngineObject()->GetCollisionGroup()))
+		if (!pHandleEntity->GetEntityList()->GetWorld()->ShouldCollide(m_collisionGroup, pHandleEntity->GetEngineObject()->GetCollisionGroup()))
 			return false;
 		if (m_pExtraShouldHitCheckFunction &&
 			(!(m_pExtraShouldHitCheckFunction(pHandleEntity, contentsMask))))
@@ -248,7 +248,7 @@ public:
 			if (pHandleEntity->IsStaticProp())
 				return false;
 
-			if (pHandleEntity->GetEntityList()->GetGameRules()->ShouldHitAsNPC(pHandleEntity)) {
+			if (pHandleEntity->GetEntityList()->GetWorld()->ShouldHitAsNPC(pHandleEntity)) {
 				return true;
 			}
 
@@ -276,7 +276,7 @@ public:
 			if (pHandleEntity->IsStaticProp())
 				return false;
 
-			if (pHandleEntity->GetEntityList()->GetGameRules()->ShouldHitAsNPC(pHandleEntity)) {
+			if (pHandleEntity->GetEntityList()->GetWorld()->ShouldHitAsNPC(pHandleEntity)) {
 				return false;
 			}
 

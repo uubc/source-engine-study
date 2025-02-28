@@ -501,9 +501,9 @@ public:
 // Overridables.
 
 	// entity is about to be removed, notify the listeners
-	void NotifyCreateEntity(T* pEnt);
+	//void NotifyCreateEntity(T* pEnt);
 	void NotifySpawn(T* pEnt);
-	void NotifyRemoveEntity(T* pEnt);
+	//void NotifyRemoveEntity(T* pEnt);
 protected:
 	void ReserveSlot(int index);
 	bool IsReservedSlot(int index);
@@ -956,18 +956,18 @@ void CBaseEntityList<T>::RemoveListenerEntity(IEntityListener<T>* pListener)
 	m_entityListeners.FindAndRemove(pListener);
 }
 
-template<class T>
-void CBaseEntityList<T>::NotifyCreateEntity(T* pEnt)
-{
-	if (!pEnt)
-		return;
-
-	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
-	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
-	{
-		m_entityListeners[i]->OnEntityCreated(pEnt);
-	}
-}
+//template<class T>
+//void CBaseEntityList<T>::NotifyCreateEntity(T* pEnt)
+//{
+//	if (!pEnt)
+//		return;
+//
+//	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
+//	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+//	{
+//		m_entityListeners[i]->OnEntityCreated(pEnt);
+//	}
+//}
 
 template<class T>
 void CBaseEntityList<T>::NotifySpawn(T* pEnt)
@@ -985,29 +985,22 @@ void CBaseEntityList<T>::NotifySpawn(T* pEnt)
 // NOTE: This doesn't happen in OnRemoveEntity() specifically because 
 // listeners may want to reference the object as it's being deleted
 // OnRemoveEntity isn't called until the destructor and all data is invalid.
-template<class T>
-void CBaseEntityList<T>::NotifyRemoveEntity(T* pEnt)
-{
-	if (!pEnt)
-		return;
-
-	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
-	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
-	{
-		m_entityListeners[i]->OnEntityDeleted(pEnt);
-	}
-}
+//template<class T>
+//void CBaseEntityList<T>::NotifyRemoveEntity(T* pEnt)
+//{
+//	if (!pEnt)
+//		return;
+//
+//	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
+//	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+//	{
+//		m_entityListeners[i]->OnEntityDeleted(pEnt);
+//	}
+//}
 
 template<class T>
 void CBaseEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 {
-	// NOTE: Must be a CBaseEntity on server
-	Assert(pEnt);
-	//DevMsg(2,"Created %s\n", pBaseEnt->GetClassname() );
-	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
-	{
-		m_entityListeners[i]->OnEntityCreated(pEnt);
-	}
 }
 
 

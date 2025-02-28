@@ -60,8 +60,8 @@ typedef CHandle<C_BaseEntity> EHANDLE;
 #include <util_shared.h>
 #include "cdll_util.h"
 
-extern IClientGameRules* g_pGameRules;
-inline IClientGameRules* GameRules() {
+extern IClientWorld* g_pGameRules;
+inline IClientWorld* GameRules() {
 	return g_pGameRules;
 }
 

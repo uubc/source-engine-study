@@ -320,7 +320,52 @@ public:
 
 abstract_class IHandleWorld{
 public:
+	// Level init, shutdown
+	virtual void	LevelInitPreEntity() = 0;
+	virtual void	LevelInitPostEntity() = 0;
+	// The level is shutdown in two parts
+	virtual void	LevelShutdownPreEntity() = 0;
+	virtual void	LevelShutdownPostEntity() = 0;
+	// Damage Queries - these need to be implemented by the various subclasses (single-player, multi-player, etc).
+	// The queries represent queries against damage types and properties.
+	virtual bool	Damage_IsTimeBased(int iDmgType) = 0;			// Damage types that are time-based.
+	virtual bool	Damage_ShouldGibCorpse(int iDmgType) = 0;		// Damage types that gib the corpse.
+	virtual bool	Damage_ShowOnHUD(int iDmgType) = 0;			// Damage types that have client HUD art.
+	virtual bool	Damage_NoPhysicsForce(int iDmgType) = 0;		// Damage types that don't have to supply a physics force & position.
+	virtual bool	Damage_ShouldNotBleed(int iDmgType) = 0;		// Damage types that don't make the player bleed.
+	//Temp: These will go away once DamageTypes become enums.
+	virtual int		Damage_GetTimeBased(void) = 0;				// Actual bit-fields.
+	virtual int		Damage_GetShouldGibCorpse(void) = 0;
+	virtual int		Damage_GetShowOnHud(void) = 0;
+	virtual int		Damage_GetNoPhysicsForce(void) = 0;
+	virtual int		Damage_GetShouldNotBleed(void) = 0;
 
+// Ammo Definitions
+	//CAmmoDef* GetAmmoDef();
+
+
+	virtual bool ShouldCollide(int collisionGroup0, int collisionGroup1) = 0;
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) = 0;
+	virtual int DefaultFOV(void) = 0;
+	// Get the view vectors for this mod.
+	virtual const CViewVectors* GetViewVectors() const = 0;
+
+	virtual float GetDamageMultiplier(void) = 0;
+	// Functions to verify the single/multiplayer status of a game
+	virtual bool IsMultiplayer(void) = 0;// is this a multiplayer game? (either coop or deathmatch)
+	virtual const unsigned char* GetEncryptionKey() = 0;
+	virtual bool InRoundRestart(void) = 0;
+	//Allow thirdperson camera.
+	virtual bool AllowThirdPersonCamera(void) = 0;
+	virtual void ClientCommandKeyValues(int pEntity, KeyValues* pKeyValues) = 0;
+	// IsConnectedUserInfoChangeAllowed allows the clients to change
+	// cvars with the FCVAR_NOT_CONNECTED rule if it returns true
+	virtual const char* GetGameTypeName(void) = 0;
+	virtual int GetGameType(void) = 0;
+	virtual bool ShouldDrawHeadLabels() = 0;
+	virtual void ClientSpawned(int  pPlayer) = 0;
+	virtual void OnFileReceived(const char* fileName, unsigned int transferID) = 0;
+	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const = 0;
 };
 
 abstract_class IHandlePlayer{
@@ -426,7 +471,7 @@ abstract_class IEntityList
 public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
-	virtual IGameRules* GetGameRules() = 0;
+	virtual IHandleWorld* GetWorld() = 0;
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;
 };

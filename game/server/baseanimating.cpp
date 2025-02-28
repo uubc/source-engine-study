@@ -367,7 +367,7 @@ CBaseEntity* CBaseAnimating::CreateServerRagdoll(int forceBone, const CTakeDamag
 	pRagdoll->GetEngineObject()->SetLocalAngles(vec3_angle);
 	pRagdoll->GetEngineObject()->SetOwnerEntity(NULL);
 
-	EntityList()->NotifyCreateEntity(pRagdoll);
+	//EntityList()->NotifyCreateEntity(pRagdoll);
 
 	pRagdoll->CopyAnimationDataFrom(this);
 	pRagdoll->GetEngineObject()->SetOwnerEntity(this->GetEngineObject());

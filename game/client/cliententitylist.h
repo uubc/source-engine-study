@@ -3094,8 +3094,8 @@ public:
 	void AddListenerEntity( IClientEntityListener *pListener );
 	void RemoveListenerEntity( IClientEntityListener *pListener );
 
-	void NotifyCreateEntity( IClientEntity *pEnt );
-	void NotifyRemoveEntity( IClientEntity *pEnt );
+	//void NotifyCreateEntity( IClientEntity *pEnt );
+	//void NotifyRemoveEntity( IClientEntity *pEnt );
 
 	void AddDataAccessor(int type, IEntityDataInstantiator<T>* instantiator);
 	void RemoveDataAccessor(int type);
@@ -3334,8 +3334,8 @@ public:
 		::Rope_ResetCounters();
 	}
 
-	IClientGameRules* GetGameRules() {
-		return m_pGameRules;
+	IClientWorld* GetWorld() {
+		return m_pWorld;
 	}
 private:
 	void AddPVSNotifier(IClientUnknown* pUnknown);
@@ -3455,7 +3455,7 @@ private:
 	CUtlVector<C_EnginePortalInternal*> m_ActivePortals;
 	int m_nTouchDepth = 0;
 	CCallQueue m_PostTouchQueue;
-	IClientGameRules* m_pGameRules = NULL;
+	IClientWorld* m_pWorld = NULL;
 };
 
 template<class T>
@@ -4014,11 +4014,11 @@ void CClientEntityList<T>::LevelInitPreEntity()
 {
 	m_impactSounds.RemoveAll();
 	PrecachePhysicsSounds();
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
 	m_StaticCollisionPolyhedronCache.LevelInitPreEntity();
-	m_pGameRules->LevelInitPreEntity();
+	m_pWorld->LevelInitPreEntity();
 }
 
 #define DEFAULT_XBOX_CLIENT_VPHYSICS_TICK	0.025		// 25ms ticks on xbox ragdolls
@@ -4048,10 +4048,10 @@ void CClientEntityList<T>::LevelInitPostEntity()
 	m_PhysWorldObject = PhysCreateWorld_Shared(GetBaseEntity(0), modelinfo->GetVCollide(1), g_PhysDefaultObjectParams);
 
 	staticpropmgr->CreateVPhysicsRepresentations(m_pPhysenv, g_pSolidSetup, NULL);
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->LevelInitPostEntity();
+	m_pWorld->LevelInitPostEntity();
 }
 
 template<class T>
@@ -4070,10 +4070,10 @@ void CClientEntityList<T>::LevelShutdownPreEntity()
 		// don't try to wake them up
 		m_pPhysenv->SetQuickDelete(true);
 	}
-	if (!m_pGameRules) {
-		Error("m_pGameRules not inited!\n");
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-	m_pGameRules->LevelShutdownPreEntity();
+	m_pWorld->LevelShutdownPreEntity();
 }
 
 template<class T>
@@ -4100,28 +4100,16 @@ void CClientEntityList<T>::LevelShutdownPostEntity()
 template<class T>
 void CClientEntityList<T>::Release(void)
 {
-	// Free all the entities.
-	CBaseHandle iter = BaseClass::FirstHandle();
-	while (iter != BaseClass::InvalidHandle())
-	{
-		// Try to call release on anything we can.
-		IClientEntity* pNet = GetClientEntityFromHandle(iter);
-		if (pNet)
-		{
-			DestroyEntity(pNet);// ->Release();
+	for (int i = 1; i < NUM_ENT_ENTRIES; i++) {
+		
+		IClientEntity* pClientEntity = GetBaseEntity(i);
+		if (pClientEntity) {
+			DestroyEntity(pClientEntity);
 		}
-		else
-		{
-			// Try to call release on anything we can.
-			IClientThinkable* pThinkable = GetClientThinkableFromHandle(iter);
-			if (pThinkable)
-			{
-				pThinkable->Release();
-			}
-		}
-		//BaseClass::RemoveEntity(iter);
-
-		iter = BaseClass::FirstHandle();
+	}
+	IClientEntity* pClientEntity = GetBaseEntity(0);
+	if (pClientEntity) {
+		DestroyEntity(pClientEntity);
 	}
 
 	m_iNumServerEnts = 0;
@@ -4408,30 +4396,28 @@ void CClientEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 		//pCache->m_pNetworkable = (pEnt)->GetClientNetworkable();//(IClientUnknown*)
 	}
 
-	IClientUnknown* pUnknown = pEnt;//(IClientUnknown*)
-
-	// Store it in a special list for fast iteration if it's a IClientEntity.
-	IClientEntity* pBaseEntity = pUnknown->GetBaseEntity();
-	//m_EngineObjectArray[entnum] = new C_EngineObjectInternal();
-	m_EngineObjectArray[entnum]->Init(pBaseEntity);
-
-	// If this thing wants PVS notifications, hook it up.
-	AddPVSNotifier(pUnknown);
+	IClientEntity* pBaseEntity = (IClientEntity*)pEnt;//(IClientUnknown*)
 
 //	if (pBaseEntity)
 //	{
 		//pCache->m_BaseEntitiesIndex = m_BaseEntities.AddToTail(pBaseEntity);
 
-		if (pBaseEntity->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE)
-		{
-			m_iNumClientNonNetworkable++;
-		}
+	if (pBaseEntity->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE)
+	{
+		m_iNumClientNonNetworkable++;
+	}
 
-		//DevMsg(2,"Created %s\n", pBaseEnt->GetClassname() );
-		for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
-		{
-			m_entityListeners[i]->OnEntityCreated(pBaseEntity);
-		}
+	//m_EngineObjectArray[entnum] = new C_EngineObjectInternal();
+	m_EngineObjectArray[entnum]->Init(pBaseEntity);
+
+	// If this thing wants PVS notifications, hook it up.
+	AddPVSNotifier(pBaseEntity);
+
+	//DevMsg(2,"Created %s\n", pBaseEnt->GetClassname() );
+	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	{
+		m_entityListeners[i]->OnEntityCreated(pBaseEntity);
+	}
 	//}
 	//else
 	//{
@@ -4444,9 +4430,23 @@ void CClientEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 template<class T>
 void CClientEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 {
-	int entnum = handle.GetEntryIndex();
-	//EntityCacheInfo_t* pCache = &m_EntityCacheInfo[entnum];
+	IClientEntity* pBaseEntity = (IClientEntity*)pEnt;//(IClientUnknown*)
 
+	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
+	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	{
+		m_entityListeners[i]->OnEntityDeleted(pBaseEntity);
+	}
+
+	if (pBaseEntity->IsWorld()) {
+		//pBaseEntity->AsHandleWorld()->LevelShutdown();
+		pBaseEntity->AsHandleWorld()->LevelShutdownPostEntity();
+	}
+
+	// If this is a PVS notifier, remove it.
+	RemovePVSNotifier(pBaseEntity);
+
+	int entnum = handle.GetEntryIndex();
 	if (entnum >= 0 && entnum < MAX_EDICTS)
 	{
 		// This is a networkable ent. Clear out our cache info for it.
@@ -4459,26 +4459,9 @@ void CClientEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 		}
 	}
 
-
-	IClientUnknown* pUnknown = pEnt;//(IClientUnknown*)
-
-	// If this is a PVS notifier, remove it.
-	RemovePVSNotifier(pUnknown);
-
-	IClientEntity* pBaseEntity = pUnknown->GetBaseEntity();
-
-	if (pBaseEntity)
+	if (pBaseEntity->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE)
 	{
-		if (pBaseEntity->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE)
-		{
-			m_iNumClientNonNetworkable--;
-		}
-
-		//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
-		for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
-		{
-			m_entityListeners[i]->OnEntityDeleted(pBaseEntity);
-		}
+		m_iNumClientNonNetworkable--;
 	}
 
 	m_EngineObjectArray[entnum]->PhysicsRemoveTouchedList();
@@ -4486,10 +4469,7 @@ void CClientEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 	m_EngineObjectArray[entnum]->DestroyAllDataObjects();
 	delete m_EngineObjectArray[entnum];
 	m_EngineObjectArray[entnum] = NULL;
-	//if (pCache->m_BaseEntitiesIndex != m_BaseEntities.InvalidIndex())
-	//	m_BaseEntities.Remove(pCache->m_BaseEntitiesIndex);
-
-	//pCache->m_BaseEntitiesIndex = m_BaseEntities.InvalidIndex();
+	
 	BaseClass::OnRemoveEntity(pEnt, handle);
 }
 

@@ -386,7 +386,7 @@ void UTIL_Portal_TraceRay( const IEnginePortal *pPortal, const Ray_t &ray, unsig
 void UTIL_PortalLinked_TraceRay( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
 {
 #ifdef CLIENT_DLL
-	Assert( (EntityList()->GetGameRules() == NULL) || EntityList()->GetGameRules()->IsMultiplayer());
+	Assert( (EntityList()->GetWorld() == NULL) || EntityList()->GetWorld()->IsMultiplayer());
 #endif
 	// Transform the specified ray to the remote portal's space
 	Ray_t rayTransformed;

@@ -87,7 +87,7 @@ extern IServerEntity				*g_pLastSpawn;
 void InitBodyQue(void);
 extern void W_Precache(void);
 //extern void ActivityList_Free( void );
-IServerGameRules* g_pGameRules = NULL;
+IServerWorld* g_pGameRules = NULL;
 
 #define SF_DECAL_NOTINDEATHMATCH		2048
 
@@ -555,14 +555,14 @@ CWorld::~CWorld( )
 	mdlcache->EventList_Free();
 	UTIL_UnLoadActivityRemapFile();
 	mdlcache->ActivityList_Free();
-	if ( g_pGameRules )
-	{
-		g_pGameRules->LevelShutdown();
-		if (!g_pGameRules) {
-			Error("m_pGameRules not inited!\n");
-		}
-		g_pGameRules->LevelShutdownPostEntity();
-	}
+	//if ( g_pGameRules )
+	//{
+	//	g_pGameRules->LevelShutdown();
+	//	if (!g_pGameRules) {
+	//		Error("m_pWorld not inited!\n");
+	//	}
+	//	g_pGameRules->LevelShutdownPostEntity();
+	//}
 	g_WorldEntity = NULL;
 	g_pGameRules = NULL;
 }

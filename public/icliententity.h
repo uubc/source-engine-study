@@ -37,7 +37,6 @@ typedef unsigned int HTOOLHANDLE;
 class CUserCmd;
 class IEngineObjectClient;
 class IClientEntity;
-class IClientGameRules;
 struct fogparams_t;
 class IBoneSetup;
 class CPlayerLocalData;
@@ -847,9 +846,22 @@ public:
 	virtual IGrabControllerClient* GetGrabController() = 0;
 };
 
-class IClientWorld : public IHandleWorld, public IClientGameRules {
+class IClientWorld : public IHandleWorld {
 public:
-
+	virtual bool SwitchToNextBestWeapon(C_BaseCombatCharacter* pPlayer, C_BaseCombatWeapon* pCurrentWeapon) = 0; // Switch to the next best weapon
+	virtual C_BaseCombatWeapon* GetNextBestWeapon(C_BaseCombatCharacter* pPlayer, C_BaseCombatWeapon* pCurrentWeapon) = 0; // I can't use this weapon anymore, get me the next best one.
+	virtual bool IsBonusChallengeTimeBased(void) = 0;
+	virtual bool AllowMapParticleEffect(const char* pszParticleEffect) = 0;
+	virtual bool AllowWeatherParticles(void) = 0;
+	virtual bool AllowMapVisionFilterShaders(void) = 0;
+	virtual const char* TranslateEffectForVisionFilter(const char* pchEffectType, const char* pchEffectName) = 0;
+	virtual bool IsLocalPlayer(int nEntIndex) = 0;
+	virtual void ModifySentChat(char* pBuf, int iBufSize) = 0;
+	virtual bool ShouldWarnOfAbandonOnQuit() = 0;
+	// Damage rules for ammo types
+	virtual float GetAmmoDamage(C_BaseEntity* pAttacker, C_BaseEntity* pVictim, int nAmmoType) = 0;
+	virtual bool IsConnectedUserInfoChangeAllowed(C_BasePlayer* pPlayer) = 0;
+	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 };
 
 class IClientPlayer : public IHandlePlayer {
@@ -1215,7 +1227,7 @@ public:
 	virtual IRopeManager* RopeManager() = 0;
 	virtual void Rope_ResetCounters() = 0;
 
-	virtual IClientGameRules* GetGameRules() = 0;
+	virtual IClientWorld* GetWorld() = 0;
 };
 
 extern IClientEntityList* entitylist;

@@ -394,7 +394,7 @@ int CCollisionEvent::ShouldCollide_2(IPhysicsObject* pObj0, IPhysicsObject* pObj
 		!(solid0 == SOLID_VPHYSICS || solid0 == SOLID_BSP || movetype0 == MOVETYPE_VPHYSICS))
 		return 0;
 
-	if (!gEntList.m_pGameRules->ShouldCollide(pEntity0->GetEngineObject()->GetCollisionGroup(), pEntity1->GetEngineObject()->GetCollisionGroup()))
+	if (!gEntList.m_pWorld->ShouldCollide(pEntity0->GetEngineObject()->GetCollisionGroup(), pEntity1->GetEngineObject()->GetCollisionGroup()))
 		return 0;
 
 	// check contents
@@ -1559,7 +1559,7 @@ void CCollisionEvent::AddDamageEvent(IServerEntity* pEntity, const CTakeDamageIn
 	if (pEntity->GetEngineObject()->IsMarkedForDeletion())
 		return;
 
-	int iTimeBasedDamage = gEntList.m_pGameRules->Damage_GetTimeBased();
+	int iTimeBasedDamage = gEntList.m_pWorld->Damage_GetTimeBased();
 	if (!(info.GetDamageType() & (DMG_BURN | DMG_DROWN | iTimeBasedDamage | DMG_PREVENT_PHYSICS_FORCE)))
 	{
 		Assert(info.GetDamageForce() != vec3_origin && info.GetDamagePosition() != vec3_origin);
@@ -2569,7 +2569,7 @@ bool CGrabControllerInternal::UpdateObject(IServerEntity* pPlayer, float flError
 	}
 	AngleVectors(playerAngles, &forward, &right, &up);
 
-	if (gEntList.m_pGameRules->MegaPhyscannonActive())
+	if (gEntList.m_pWorld->MegaPhyscannonActive())
 	{
 		Vector los = (pEntity->WorldSpaceCenter() - pPlayer->Weapon_ShootPosition());
 		VectorNormalize(los);
@@ -10087,14 +10087,14 @@ CEngineWorldInternal::CEngineWorldInternal(IServerEntityList* pServerEntityList,
 
 CEngineWorldInternal::~CEngineWorldInternal() 
 {
-	gEntList.m_pGameRules = NULL;
+	gEntList.m_pWorld = NULL;
 }
 
 void CEngineWorldInternal::Init(IServerEntity* pOuter) 
 {
 	BaseClass::Init(pOuter);
-	gEntList.m_pGameRules = dynamic_cast<IServerGameRules*>(pOuter);
-	if (!gEntList.m_pGameRules) {
+	gEntList.m_pWorld = pOuter->AsHandleWorld();
+	if (!gEntList.m_pWorld) {
 		Error("CWorld does implement IGameRiles!\n");
 	}
 }
