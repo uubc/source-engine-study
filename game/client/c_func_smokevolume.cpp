@@ -201,7 +201,7 @@ static inline void WorldTraceLine( const Vector &start, const Vector &end, int c
 #if defined(PARTICLEPROTOTYPE_APP)
 	trace->fraction = 1;
 #else
-	UTIL_TraceLine(start, end, contentsMask, NULL, COLLISION_GROUP_NONE, trace);
+	UTIL_TraceLine(EntityList(), start, end, contentsMask, NULL, COLLISION_GROUP_NONE, trace);
 #endif
 }
 

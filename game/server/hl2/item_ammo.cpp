@@ -839,7 +839,7 @@ void CItem_AmmoCrate::Use( IServerEntity *pActivator, IServerEntity *pCaller, US
 		maxs = (maxs - GetEngineObject()->GetAbsOrigin()) * 0.2f;
 		mins.z = (GetEngineObject()->GetAbsOrigin().z - vOrigin.z );
 		
-		UTIL_TraceHull( vOrigin, vOrigin, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vOrigin, vOrigin, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.startsolid || tr.allsolid )
 			 return;

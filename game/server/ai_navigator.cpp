@@ -3129,7 +3129,7 @@ AI_NavPathProgress_t CAI_Navigator::ProgressFlyPath( const AI_ProgressFlyPathPar
 			if ( waypointDist <= tolerance )
 			{
 				trace_t tr;
-				AI_TraceLine( GetAbsOrigin(), GetPath()->GetCurWaypoint()->GetNext()->GetPos(), MASK_NPCSOLID, GetOuter(), COLLISION_GROUP_NONE, &tr );
+				AI_TraceLine(EntityList(), GetAbsOrigin(), GetPath()->GetCurWaypoint()->GetNext()->GetPos(), MASK_NPCSOLID, GetOuter(), COLLISION_GROUP_NONE, &tr );
 				if ( tr.fraction == 1.0f )
 				{
 					AdvancePath();	
@@ -3297,7 +3297,7 @@ bool CAI_Navigator::CanFitAtPosition( const Vector &vStartPos, unsigned int coll
 	Vector vEndPos	= vStartPos;
 	vEndPos.z += 0.01;
 	trace_t tr;
-	AI_TraceHull( vStartPos, vEndPos, 
+	AI_TraceHull(EntityList(), vStartPos, vEndPos,
 				  GetHullMins(), GetHullMaxs(), 
 				  collisionMask, 
 				  &traceFilter, 

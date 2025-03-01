@@ -1305,7 +1305,7 @@ bool CAI_FollowBehavior::ValidateFaceTarget( Vector *pFaceTarget )
 	testPoint += GetOuter()->EyePosition();
 
 	trace_t tr;
-	AI_TraceLine( GetOuter()->EyePosition(), testPoint, MASK_BLOCKLOS, m_hFollowTarget, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), GetOuter()->EyePosition(), testPoint, MASK_BLOCKLOS, m_hFollowTarget, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0 )
 	{

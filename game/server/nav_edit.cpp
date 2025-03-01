@@ -333,7 +333,7 @@ bool CNavMesh::FindActiveNavArea( void )
 
 	trace_t result;
 	CTraceFilterWalkableEntities filter( NULL, COLLISION_GROUP_NONE, WALK_THRU_EVERYTHING );
-	UTIL_TraceLine( from, to, (nav_solid_props.GetBool()) ? MASK_NPCSOLID : MASK_NPCSOLID_BRUSHONLY, &filter, &result );
+	UTIL_TraceLine(EntityList(), from, to, (nav_solid_props.GetBool()) ? MASK_NPCSOLID : MASK_NPCSOLID_BRUSHONLY, &filter, &result );
 
 	if (result.fraction != 1.0f)
 	{
@@ -518,7 +518,7 @@ bool CNavMesh::FindLadderCorners( Vector *corner1, Vector *corner2, Vector *corn
 bool CheckForClimbableSurface( const Vector &start, const Vector &end )
 {
 	trace_t result;
-	UTIL_TraceLine( start, end, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), start, end, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 
 	bool climbableSurface = false;
 	if (result.fraction != 1.0f)

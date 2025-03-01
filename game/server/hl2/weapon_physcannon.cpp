@@ -223,20 +223,20 @@ void UTIL_PhyscannonTraceLine( const Vector &vecAbsStart, const Vector &vecAbsEn
 	if ( hl2_episodic.GetBool() == false )
 	{
 		CTraceFilterNoOwnerTest filter( pTraceOwner, COLLISION_GROUP_NONE );
-		UTIL_TraceLine( vecAbsStart, vecAbsEnd, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
+		UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
 		return;
 	}
 
 	// First, trace against entities
 	CTraceFilterPhyscannon filter( pTraceOwner, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( vecAbsStart, vecAbsEnd, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
+	UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
 
 	// If we've hit something, test again to make sure no brushes block us
 	if ( pTrace->m_pEnt != NULL )
 	{
 		trace_t testTrace;
 		CTraceFilterOnlyBrushes brushFilter( COLLISION_GROUP_NONE );
-		UTIL_TraceLine( pTrace->startpos, pTrace->endpos, MASK_SHOT, &brushFilter, &testTrace );
+		UTIL_TraceLine(EntityList(), pTrace->startpos, pTrace->endpos, MASK_SHOT, &brushFilter, &testTrace );
 
 		// If we hit a brush, replace the trace with that result
 		if ( testTrace.fraction < 1.0f || testTrace.startsolid || testTrace.allsolid )
@@ -255,20 +255,20 @@ void UTIL_PhyscannonTraceHull( const Vector &vecAbsStart, const Vector &vecAbsEn
 	if ( hl2_episodic.GetBool() == false )
 	{
 		CTraceFilterNoOwnerTest filter( pTraceOwner, COLLISION_GROUP_NONE );
-		UTIL_TraceHull( vecAbsStart, vecAbsEnd, vecAbsMins, vecAbsMaxs, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
+		UTIL_TraceHull(EntityList(), vecAbsStart, vecAbsEnd, vecAbsMins, vecAbsMaxs, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
 		return;
 	}
 
 	// First, trace against entities
 	CTraceFilterPhyscannon filter( pTraceOwner, COLLISION_GROUP_NONE );
-	UTIL_TraceHull( vecAbsStart, vecAbsEnd, vecAbsMins, vecAbsMaxs, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
+	UTIL_TraceHull(EntityList(), vecAbsStart, vecAbsEnd, vecAbsMins, vecAbsMaxs, (MASK_SHOT|CONTENTS_GRATE), &filter, pTrace );
 
 	// If we've hit something, test again to make sure no brushes block us
 	if ( pTrace->m_pEnt != NULL )
 	{
 		trace_t testTrace;
 		CTraceFilterOnlyBrushes brushFilter( COLLISION_GROUP_NONE );
-		UTIL_TraceHull( pTrace->startpos, pTrace->endpos, vecAbsMins, vecAbsMaxs, MASK_SHOT, &brushFilter, &testTrace );
+		UTIL_TraceHull(EntityList(), pTrace->startpos, pTrace->endpos, vecAbsMins, vecAbsMaxs, MASK_SHOT, &brushFilter, &testTrace );
 
 		// If we hit a brush, replace the trace with that result
 		if ( testTrace.fraction < 1.0f || testTrace.startsolid || testTrace.allsolid )
@@ -2609,7 +2609,7 @@ void CWeaponPhysCannon::LaunchObject( const Vector &vecDir, float flForce )
 		int		iLength;
 		int		i;
 
-		UTIL_TraceLine( vecStart, vecStart + vecDir * flForce, MASK_SHOT, pObject, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecStart, vecStart + vecDir * flForce, MASK_SHOT, pObject, COLLISION_GROUP_NONE, &tr );
 		iLength = ( tr.startpos - tr.endpos ).Length();
 		vecSpot = vecStart + vecDir * PHYSCANNON_DANGER_SOUND_RADIUS;
 

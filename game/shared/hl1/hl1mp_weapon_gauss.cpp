@@ -456,7 +456,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 		nMaxHits--;
 
 		// ALERT( at_console, "." );
-		UTIL_TraceLine( vecSrc, vecDest, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecSrc, vecDest, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.allsolid )
 			break;
@@ -559,12 +559,12 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 				{
 					trace_t punch_tr;
 
-					UTIL_TraceLine( tr.endpos + vecDir * 8, vecDest, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &punch_tr);
+					UTIL_TraceLine(EntityList(), tr.endpos + vecDir * 8, vecDest, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &punch_tr);
 					if ( !punch_tr.allsolid )
 					{
 						trace_t exit_tr;
 						// trace backwards to find exit point
-						UTIL_TraceLine( punch_tr.endpos, tr.endpos, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &exit_tr);
+						UTIL_TraceLine(EntityList(), punch_tr.endpos, tr.endpos, MASK_SHOT, pIgnore, COLLISION_GROUP_NONE, &exit_tr);
 
 						float n = (exit_tr.endpos - tr.endpos).Length( );
 

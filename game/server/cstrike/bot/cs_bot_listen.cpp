@@ -128,7 +128,7 @@ bool CCSBot::CanSeeNoisePosition( void ) const
 {
 	trace_t result;
 	CTraceFilterNoNPCsOrPlayer traceFilter( this, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( EyePositionConst(), m_noisePosition + Vector( 0, 0, HalfHumanHeight ), MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), EyePositionConst(), m_noisePosition + Vector( 0, 0, HalfHumanHeight ), MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
 	if (result.fraction == 1.0f)
 	{
 		// we can see the source of the noise

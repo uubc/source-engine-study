@@ -367,7 +367,7 @@ public:
 		Vector vecForward = pPlayer->GetAutoaimVector( AUTOAIM_SCALE_DIRECT_ONLY );	
 
 		g_bTracingVsCommentaryNodes = true;
-		UTIL_TraceLine( vecSrc, vecSrc + vecForward * MAX_TRACE_LENGTH, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecForward * MAX_TRACE_LENGTH, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 		g_bTracingVsCommentaryNodes = false;
 
 		if ( !tr.m_pEnt )
@@ -1086,7 +1086,7 @@ void CPointCommentaryNode::TeleportTo( CBasePlayer *pPlayer )
 	}
 
 	trace_t trace;
-	UTIL_TraceHull( vecTarget, vecTarget + Vector( 0, 0, -500 ), pPlayer->GetEngineObject()->WorldAlignMins(), pPlayer->GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceHull(EntityList(), vecTarget, vecTarget + Vector( 0, 0, -500 ), pPlayer->GetEngineObject()->WorldAlignMins(), pPlayer->GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
 
 	pPlayer->Teleport( &trace.endpos, NULL, &vec3_origin );
 

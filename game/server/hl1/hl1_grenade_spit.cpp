@@ -108,7 +108,7 @@ void CGrenadeSpit::GrenadeSpitTouch( IServerEntity *pOther )
 
 		// make a splat on the wall
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		UTIL_DecalTrace(&tr, "BeerSplash" );
 
 		// make some flecks

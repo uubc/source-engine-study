@@ -351,7 +351,7 @@ END_PREDICTION_DATA()
 			Vector vecSpot = GetEngineObject()->GetAbsOrigin();
 			vecSpot[2] += 8;
 
-			UTIL_TraceLine( vecSpot, vecSpot + Vector ( 0, 0, -40 ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecSpot, vecSpot + Vector ( 0, 0, -40 ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 			Explode( &tr, DMG_BLAST );
 

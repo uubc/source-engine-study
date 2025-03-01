@@ -387,7 +387,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 			{
 				Vector vecDest = m_hDead->GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 38 );
 				trace_t trace;
-				UTIL_TraceHull( vecDest, vecDest, GetHullMins(), GetHullMaxs(),MASK_SOLID, m_hDead, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceHull(EntityList(), vecDest, vecDest, GetHullMins(), GetHullMaxs(),MASK_SOLID, m_hDead, COLLISION_GROUP_NONE, &trace );
 
 				if ( !trace.startsolid )
 				{
@@ -567,7 +567,7 @@ void CNPC_Vortigaunt::ArmBeam( int side )
 	{
 		vecAim = right * side * random->RandomFloat( 0, 1 ) + up * random->RandomFloat( -1, 1 );
 		trace_t tr1;
-		UTIL_TraceLine ( vecSrc, vecSrc + vecAim * 512, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr1);
+		UTIL_TraceLine (EntityList(), vecSrc, vecSrc + vecAim * 512, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr1);
 		if (flDist > tr1.fraction)
 		{
 			tr = tr1;
@@ -671,7 +671,7 @@ void CNPC_Vortigaunt::ZapBeam( int side )
 	vecAim = GetShootEnemyDir( vecSrc );
 	float deflection = 0.01;
 	vecAim = vecAim + side * right * random->RandomFloat( 0, deflection ) + up * random->RandomFloat( -deflection, deflection );
-	UTIL_TraceLine ( vecSrc, vecSrc + vecAim * 1024, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine (EntityList(), vecSrc, vecSrc + vecAim * 1024, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 	
 	m_pBeam[m_iBeams] = CBeam::BeamCreate( "sprites/lgtning.vmt", 5.0f );
 	if ( m_pBeam[m_iBeams] == NULL )

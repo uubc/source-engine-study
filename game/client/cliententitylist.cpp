@@ -7391,7 +7391,7 @@ void C_EngineObjectInternal::RagdollSolveSeparation(ragdoll_t& ragdoll, IHandleE
 					ConVarRef r_visualizetraces("r_visualizetraces");
 					if (r_visualizetraces.GetBool())
 					{
-						DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+						g_EntityList.GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
 					}
 					if (tr.DidHit())
 					{
@@ -9772,7 +9772,7 @@ void C_EngineWorldInternal::TraceLineFilterEntity(IEngineObjectClient* pEntity, 
 	unsigned int mask, int nCollisionGroup, trace_t* ptr)
 {
 	CTraceFilterEntity traceFilter(pEntity->GetOuter(), nCollisionGroup);
-	UTIL_TraceLine(vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
+	UTIL_TraceLine(&g_EntityList, vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
 }
 
 BEGIN_RECV_TABLE(C_EnginePlayerInternal, DT_EnginePlayer)
@@ -11788,7 +11788,7 @@ void C_EnginePortalInternal::CreateLocalCollision(void)
 		ConVarRef r_visualizetraces("r_visualizetraces");
 		if (r_visualizetraces.GetBool())
 		{
-			DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+			g_EntityList.GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
 		}
 
 		if (Trace.fraction != 1.0f)
@@ -13827,7 +13827,7 @@ void C_EngineRopeInternal::CPhysicsDelegate::ApplyConstraints(CSimplePhysics::CN
 				ConVarRef r_visualizetraces("r_visualizetraces");
 				if (r_visualizetraces.GetBool())
 				{
-					DebugDrawLine(ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f);
+					g_EntityList.GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f);
 				}
 
 				if (trace.fraction == 1)

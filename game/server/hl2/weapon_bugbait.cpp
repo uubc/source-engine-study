@@ -283,7 +283,7 @@ void CWeaponBugBait::ThrowGrenade( CBasePlayer *pPlayer )
 	{
 		// If the shot is clear to the player, give the missile a grace period
 		trace_t	tr;
-		UTIL_TraceLine( pPlayer->EyePosition(), pPlayer->EyePosition() + ( vForward * 128 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), pPlayer->EyePosition() + ( vForward * 128 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		
 		if ( tr.fraction == 1.0 )
 		{

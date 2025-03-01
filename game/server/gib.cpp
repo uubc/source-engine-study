@@ -528,7 +528,7 @@ void CGib::BounceGibTouch ( IServerEntity *pOther )
 		if ( g_Language.GetInt() != LANGUAGE_GERMAN && m_cBloodDecals > 0 && m_bloodColor != DONT_BLEED )
 		{
 			vecSpot = GetEngineObject()->GetAbsOrigin() + Vector ( 0 , 0 , 8 );//move up a bit, and trace down.
-			UTIL_TraceLine ( vecSpot, vecSpot + Vector ( 0, 0, -24 ),  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine (EntityList(), vecSpot, vecSpot + Vector ( 0, 0, -24 ),  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 
 			UTIL_BloodDecalTrace( &tr, m_bloodColor );
 
@@ -564,7 +564,7 @@ void CGib::StickyGibTouch ( IServerEntity *pOther )
 		return;
 	}
 
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 32,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 32,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 
 	UTIL_BloodDecalTrace( &tr, m_bloodColor );
 

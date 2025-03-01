@@ -623,7 +623,7 @@ void CPropCannon::LaunchProjectile( void )
 		}
 
 		trace_t pm;		
-		UTIL_TraceLine( vOldOrigin, vOrigin, MASK_SOLID, this, COLLISION_GROUP_NONE, &pm );
+		UTIL_TraceLine(EntityList(), vOldOrigin, vOrigin, MASK_SOLID, this, COLLISION_GROUP_NONE, &pm );
 
 		if ( pm.surface.flags & SURF_SKY || pm.allsolid == true ) 
 		{

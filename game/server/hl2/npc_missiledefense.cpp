@@ -158,7 +158,7 @@ void CNPC_MissileDefense::FireCannons( void )
 	// Check line of sight
 	// ----------------------------------------------
 	trace_t tr;
-	AI_TraceLine( GetEnemy()->EyePosition(), GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), GetEnemy()->EyePosition(), GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction < 1.0)
 	{
 		return;

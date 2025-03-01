@@ -17,6 +17,8 @@
 #include "mathlib/vector4d.h"
 #include "model_types.h"
 #include "ihandleentity.h"
+#include "tier1/convar.h"
+#include "gametrace.h"
 
 class Vector;
 struct Ray_t;
@@ -475,5 +477,82 @@ public:
 		return true; 
 	}
 };
+
+inline void UTIL_TraceLine(IEntityList* pEntityList, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask,
+	const IHandleEntity* ignore, int collisionGroup, trace_t* ptr)
+{
+	Ray_t ray;
+	ray.Init(vecAbsStart, vecAbsEnd);
+	CTraceFilterSimple traceFilter(ignore, collisionGroup);
+
+	pEntityList->GetEngineWorld()->TraceRay(ray, mask, &traceFilter, ptr);
+
+	ConVarRef r_visualizetraces("r_visualizetraces");
+	if (r_visualizetraces.GetBool())
+	{
+		pEntityList->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+	}
+}
+
+inline void UTIL_TraceLine(IEntityList* pEntityList, const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask,
+	ITraceFilter* pFilter, trace_t* ptr)
+{
+	Ray_t ray;
+	ray.Init(vecAbsStart, vecAbsEnd);
+
+	pEntityList->GetEngineWorld()->TraceRay(ray, mask, pFilter, ptr);
+
+	ConVarRef r_visualizetraces("r_visualizetraces");
+	if (r_visualizetraces.GetBool())
+	{
+		pEntityList->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+	}
+}
+
+inline void UTIL_TraceHull(IEntityList* pEntityList, const Vector& vecAbsStart, const Vector& vecAbsEnd, const Vector& hullMin,
+	const Vector& hullMax, unsigned int mask, const IHandleEntity* ignore,
+	int collisionGroup, trace_t* ptr)
+{
+	Ray_t ray;
+	ray.Init(vecAbsStart, vecAbsEnd, hullMin, hullMax);
+	CTraceFilterSimple traceFilter(ignore, collisionGroup);
+
+	pEntityList->GetEngineWorld()->TraceRay(ray, mask, &traceFilter, ptr);
+
+	ConVarRef r_visualizetraces("r_visualizetraces");
+	if (r_visualizetraces.GetBool())
+	{
+		pEntityList->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f);
+	}
+}
+
+inline void UTIL_TraceHull(IEntityList* pEntityList, const Vector& vecAbsStart, const Vector& vecAbsEnd, const Vector& hullMin,
+	const Vector& hullMax, unsigned int mask, ITraceFilter* pFilter, trace_t* ptr)
+{
+	Ray_t ray;
+	ray.Init(vecAbsStart, vecAbsEnd, hullMin, hullMax);
+
+	pEntityList->GetEngineWorld()->TraceRay(ray, mask, pFilter, ptr);
+
+	ConVarRef r_visualizetraces("r_visualizetraces");
+	if (r_visualizetraces.GetBool())
+	{
+		pEntityList->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f);
+	}
+}
+
+inline void UTIL_TraceRay(IEntityList* pEntityList, const Ray_t& ray, unsigned int mask,
+	const IHandleEntity* ignore, int collisionGroup, trace_t* ptr, ShouldHitFunc_t pExtraShouldHitCheckFn = NULL)
+{
+	CTraceFilterSimple traceFilter(ignore, collisionGroup, pExtraShouldHitCheckFn);
+
+	pEntityList->GetEngineWorld()->TraceRay(ray, mask, &traceFilter, ptr);
+
+	ConVarRef r_visualizetraces("r_visualizetraces");
+	if (r_visualizetraces.GetBool())
+	{
+		pEntityList->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+	}
+}
 
 #endif // ENGINE_IENGINETRACE_H

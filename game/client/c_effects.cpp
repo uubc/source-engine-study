@@ -332,7 +332,7 @@ inline bool CClient_Precipitation::SimulateRain( CPrecipitationParticle* pPartic
 				if ( RandomInt( 0, 100 ) < r_RainSplashPercentage.GetInt() )
 				{
 					trace_t trace;
-					UTIL_TraceLine(vOldPos, pParticle->m_Pos, MASK_WATER, NULL, COLLISION_GROUP_NONE, &trace);
+					UTIL_TraceLine(EntityList(), vOldPos, pParticle->m_Pos, MASK_WATER, NULL, COLLISION_GROUP_NONE, &trace);
 					if( trace.fraction < 1 )
 					{
 						m_Splashes.AddToTail( trace.endpos );
@@ -874,7 +874,7 @@ void CClient_Precipitation::CreateAshParticle( void )
 			Vector vTraceStart = pPlayer->EyePosition();
 			Vector vTraceEnd = pPlayer->EyePosition() + vForward * MAX_TRACE_LENGTH;
 
-			UTIL_TraceLine( vTraceStart, vTraceEnd, MASK_SHOT_HULL & (~CONTENTS_GRATE), pPlayer, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vTraceStart, vTraceEnd, MASK_SHOT_HULL & (~CONTENTS_GRATE), pPlayer, COLLISION_GROUP_NONE, &tr );
 
 			//debugoverlay->AddLineOverlay( vTraceStart, tr.endpos, 255, 0, 0, 0, 0.2 );
 
@@ -1077,7 +1077,7 @@ void CClient_Precipitation::EmitParticles( float fTimeDelta )
 			vPlayerHeight.z = vPlayerCenter.z;
 
 			trace_t trace;
-			UTIL_TraceLine( vPlayerHeight, vParticlePos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
+			UTIL_TraceLine(EntityList(), vPlayerHeight, vParticlePos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
 			if ( trace.fraction < 1 )
 			{
 				// If we hit a brush, then don't spawn the particle.

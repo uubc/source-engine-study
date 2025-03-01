@@ -115,7 +115,7 @@ inline CNavArea *findFirstAreaInDirection( const Vector *start, NavDirType dir, 
 		// make sure we dont look thru the wall
 		trace_t result;
 
-		UTIL_TraceHull( *start, pos, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), traceIgnore, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceHull(EntityList(), *start, pos, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), traceIgnore, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction < 1.0f)
 			break;
@@ -187,7 +187,7 @@ void CNavMesh::CreateLadder( const Vector& absMin, const Vector& absMax, float m
 		Vector from = ladder->m_bottom + Vector( 0.0f, GenerationStepSize, GenerationStepSize/2 );
 		Vector to = ladder->m_top + Vector( 0.0f, GenerationStepSize, -GenerationStepSize/2 );
 
-		UTIL_TraceLine( from, to, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), from, to, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction != 1.0f || result.startsolid)
 			ladder->SetDir( NORTH );
@@ -202,7 +202,7 @@ void CNavMesh::CreateLadder( const Vector& absMin, const Vector& absMax, float m
 		Vector from = ladder->m_bottom + Vector( GenerationStepSize, 0.0f, GenerationStepSize/2 );
 		Vector to = ladder->m_top + Vector( GenerationStepSize, 0.0f, -GenerationStepSize/2 );
 
-		UTIL_TraceLine( from, to, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), from, to, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction != 1.0f || result.startsolid)
 			ladder->SetDir( WEST );
@@ -228,7 +228,7 @@ void CNavMesh::CreateLadder( const Vector& absMin, const Vector& absMax, float m
 
 		out = on + ladder->GetNormal() * minLadderClearance;
 
-		UTIL_TraceLine( on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction == 1.0f && !result.startsolid)
 		{
@@ -245,7 +245,7 @@ void CNavMesh::CreateLadder( const Vector& absMin, const Vector& absMax, float m
 
 		out = on + ladder->GetNormal() * minLadderClearance;
 
-		UTIL_TraceLine( on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction == 1.0f && !result.startsolid)
 		{
@@ -322,7 +322,7 @@ void CNavMesh::CreateLadder( const Vector &top, const Vector &bottom, float widt
 
 		out = on + ladder->GetNormal() * minLadderClearance;
 
-		UTIL_TraceLine( on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction == 1.0f && !result.startsolid)
 		{
@@ -339,7 +339,7 @@ void CNavMesh::CreateLadder( const Vector &top, const Vector &bottom, float widt
 
 		out = on + ladder->GetNormal() * minLadderClearance;
 
-		UTIL_TraceLine( on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), on, out, GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction == 1.0f && !result.startsolid)
 		{
@@ -1299,7 +1299,7 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 	if ( abs( start.z - end.z ) > StepHeight )
 	{
 		// initialize the height delta
-		UTIL_TraceHull( start + traceOffset, start - traceOffset, hullMins, hullMaxs, MASK_NPCSOLID, &filter, &trace );
+		UTIL_TraceHull(EntityList(), start + traceOffset, start - traceOffset, hullMins, hullMaxs, MASK_NPCSOLID, &filter, &trace );
 		if ( trace.startsolid || trace.IsDispSurface() )
 		{
 			return STAIRS_NO;
@@ -1315,7 +1315,7 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 		{
 			pos = start + t * ( end - start );
 
-			UTIL_TraceHull( pos + traceOffset, pos - traceOffset, hullMins, hullMaxs, MASK_NPCSOLID, &filter, &trace );
+			UTIL_TraceHull(EntityList(), pos + traceOffset, pos - traceOffset, hullMins, hullMaxs, MASK_NPCSOLID, &filter, &trace );
 			if ( trace.startsolid || trace.IsDispSurface() )
 			{
 				return STAIRS_NO;
@@ -1632,7 +1632,7 @@ static bool testStitchConnection( CNavArea *source, CNavArea *target, const Vect
 			Vector end( pos );
 			start.z += height;
 			end.z += height;
-			UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, &tr );
+			UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, &tr );
 			if ( !tr.startsolid && tr.fraction == 1.0f )
 			{
 				if ( !StayOnFloor( &tr ) )
@@ -1645,7 +1645,7 @@ static bool testStitchConnection( CNavArea *source, CNavArea *target, const Vect
 
 				start = end = from;
 				end.z += height;
-				UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, &tr );
+				UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, &tr );
 				if ( tr.fraction < 1.0f )
 				{
 					break;
@@ -1753,14 +1753,14 @@ inline bool testJumpDown( const Vector *fromPos, const Vector *toPos )
 		from = *fromPos;
 		to.Init( fromPos->x, fromPos->y, fromPos->z + up );
 
-		UTIL_TraceHull( from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceHull(EntityList(), from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 		if (result.fraction <= 0.0f || result.startsolid)
 			continue;
 
 		from.Init( fromPos->x, fromPos->y, result.endpos.z - 0.5f );
 		to.Init( toPos->x, toPos->y, from.z );
 
-		UTIL_TraceHull( from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceHull(EntityList(), from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 		if (result.fraction != 1.0f || result.startsolid)
 			continue;
 
@@ -1774,7 +1774,7 @@ inline bool testJumpDown( const Vector *fromPos, const Vector *toPos )
 	// We've made it up and out, so see if we can drop down
 	from = to;
 	to.z = toPos->z + 2.0f;
-	UTIL_TraceHull( from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceHull(EntityList(), from, to, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 	if (result.fraction <= 0.0f || result.startsolid)
 		return false;
 
@@ -2699,6 +2699,7 @@ bool TestForValidCrouchArea( CNavNode *node )
 	Vector maxs( GenerationStepSize, GenerationStepSize, HumanCrouchHeight );
 
 	UTIL_TraceHull(
+		EntityList(),
 		start,
 		end,
 		mins,
@@ -4156,7 +4157,7 @@ inline CNavNode *LadderEndSearch( const Vector *pos, NavDirType mountDir )
 		// make sure this point is not on the other side of a wall
 		const float fudge = 4.0f;
 		trace_t result;
-		UTIL_TraceHull( center + Vector( 0, 0, fudge ), tryPos + Vector( 0, 0, fudge ), NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceHull(EntityList(), center + Vector( 0, 0, fudge ), tryPos + Vector( 0, 0, fudge ), NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), NULL, COLLISION_GROUP_NONE, &result );
 		if (result.fraction != 1.0f || result.startsolid)
 			continue;
 
@@ -4181,6 +4182,7 @@ bool CNavMesh::FindGroundForNode( Vector *pos, Vector *normal )
 	end.z -= DeathDrop;
 
 	UTIL_TraceHull(
+		EntityList(),
 		start,
 		end,
 		NavTraceMins,
@@ -4220,7 +4222,7 @@ bool StayOnFloor( trace_t *trace, float zLimit /* = DeathDrop */ )
 	end.z -= zLimit;
 
 	CTraceFilterWalkableEntities filter( NULL, COLLISION_GROUP_NONE, WALK_THRU_EVERYTHING );
-	UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
+	UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
 	DrawTrace( trace );
 
 	if ( trace->startsolid || trace->fraction >= 1.0f )
@@ -4243,7 +4245,7 @@ bool TraceAdjacentNode( int depth, const Vector& start, const Vector& end, trace
 	const float MinDistance = 1.0f;	// if we can't move at least this far, don't bother stepping up.
 
 	CTraceFilterWalkableEntities filter( NULL, COLLISION_GROUP_NONE, WALK_THRU_EVERYTHING );
-	UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
+	UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
 	DrawTrace( trace );
 
 	// If we started in the ground for some reason, bail
@@ -4272,7 +4274,7 @@ bool TraceAdjacentNode( int depth, const Vector& start, const Vector& end, trace
 	Vector testStart( trace->endpos );
 	Vector testEnd( testStart );
 	testEnd.z += StepHeight;
-	UTIL_TraceHull( testStart, testEnd, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
+	UTIL_TraceHull(EntityList(), testStart, testEnd, NavTraceMins, NavTraceMaxs, TheNavMesh->GetGenerationTraceMask(), &filter, trace );
 	DrawTrace( trace );
 
 	Vector forwardTestStart = trace->endpos;
@@ -4298,7 +4300,7 @@ static bool IsNodeOverlapped( const Vector& pos, const Vector& offset )
 		end.y += offset.y * GenerationStepSize;
 		trace_t trace;
 		CTraceFilterWalkableEntities filter( NULL, COLLISION_GROUP_NONE, WALK_THRU_EVERYTHING );
-		UTIL_TraceHull( start, end, mins, maxs, TheNavMesh->GetGenerationTraceMask(), &filter, &trace );
+		UTIL_TraceHull(EntityList(), start, end, mins, maxs, TheNavMesh->GetGenerationTraceMask(), &filter, &trace );
 		if ( trace.startsolid || trace.allsolid )
 		{
 			return true;
@@ -4311,7 +4313,7 @@ static bool IsNodeOverlapped( const Vector& pos, const Vector& offset )
 
 		start = trace.endpos;
 		end.z -= HalfHumanHeight * 2;
-		UTIL_TraceHull( start, end, mins, maxs, TheNavMesh->GetGenerationTraceMask(), &filter, &trace );
+		UTIL_TraceHull(EntityList(), start, end, mins, maxs, TheNavMesh->GetGenerationTraceMask(), &filter, &trace );
 		if ( trace.startsolid || trace.allsolid )
 		{
 			return true;
@@ -4464,7 +4466,7 @@ bool CNavMesh::SampleStep( void )
 						Vector end( pos );
 						start.z += height;
 						end.z += height;
-						UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
+						UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
 						if ( !tr.startsolid && tr.fraction == 1.0f )
 						{
 							if ( !StayOnFloor( &tr ) )
@@ -4477,7 +4479,7 @@ bool CNavMesh::SampleStep( void )
 
 							start = end = from;
 							end.z += height;
-							UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
+							UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
 							if ( tr.fraction < 1.0f )
 							{
 								break;
@@ -4496,7 +4498,7 @@ bool CNavMesh::SampleStep( void )
 							Assert( vecToObstacleStart.LengthSqr() <= Square( GenerationStepSize ) );
 							if ( vecToObstacleStart.LengthSqr() <= Square( GenerationStepSize ) )
 							{
-								UTIL_TraceHull( end, start, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
+								UTIL_TraceHull(EntityList(), end, start, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &tr );
 								if ( !tr.startsolid && tr.fraction < 1.0 )
 								{
 									// We hit something going the other direction.  There is some obstacle between the two nodes.
@@ -4575,13 +4577,13 @@ bool CNavMesh::SampleStep( void )
 					// is not 'solid'.
 					Vector start = to + Vector( 0, 0, 0 );
 					Vector end = start + Vector( 0, 0, nav_displacement_test.GetInt() );
-					UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &result );
+					UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &result );
 
 					if ( result.fraction > 0 )
 					{
 						end = start;
 						start = result.endpos;
-						UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &result );
+						UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, GetGenerationTraceMask(), &filter, &result );
 						if ( result.fraction < 1 )
 						{
 							// if we made it down to within StepHeight, maybe we're on a static prop
@@ -4672,7 +4674,7 @@ bool IsWalkableTraceLineClear( const Vector &from, const Vector &to, unsigned in
 	const int maxTries = 50;
 	for( int t=0; t<maxTries; ++t )
 	{
-		UTIL_TraceLine( useFrom, to, MASK_NPCSOLID, &traceFilter, &result );
+		UTIL_TraceLine(EntityList(), useFrom, to, MASK_NPCSOLID, &traceFilter, &result );
 
 		// if we hit a walkable entity, try again
 		if (result.fraction != 1.0f && IsEntityWalkable((CBaseEntity*)result.m_pEnt, flags ))

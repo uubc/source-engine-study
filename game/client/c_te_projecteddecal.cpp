@@ -125,7 +125,7 @@ void TE_ProjectDecal( IRecipientFilter& filter, float delay,
 	VectorMA( *pos, distance, fwd, endpos );
 
 	CTraceFilterHitAll traceFilter;
-	UTIL_TraceLine( *pos, endpos, MASK_ALL, &traceFilter, &tr );
+	UTIL_TraceLine(EntityList(), *pos, endpos, MASK_ALL, &traceFilter, &tr );
 
 	if ( tr.fraction == 1.0f )
 	{

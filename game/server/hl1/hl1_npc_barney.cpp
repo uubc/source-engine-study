@@ -248,7 +248,7 @@ bool CNPC_Barney::CheckRangeAttack1 ( float flDot, float flDist )
 		CBaseEntity *pEnemy = GetEnemy();
 		Vector shootTarget = ( (pEnemy->BodyTarget( shootOrigin ) - pEnemy->GetEngineObject()->GetAbsOrigin()) + GetEnemyLKP() );
 		
-		UTIL_TraceLine ( shootOrigin, shootTarget, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine (EntityList(), shootOrigin, shootTarget, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 		m_flCheckAttackTime = gpGlobals->curtime + 1;
 		if ( tr.fraction == 1.0 || ( tr.m_pEnt != NULL && tr.m_pEnt == pEnemy) )
 			m_fLastAttackCheck = TRUE;

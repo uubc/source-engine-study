@@ -142,7 +142,7 @@ CBaseEntity *CPortal_Player::FindUseEntity()
 	// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
 	int useableContents = MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_PLAYERCLIP;
 
-	UTIL_TraceLine( searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr );
 	// try the hit entity if there is one, or the ground entity if there isn't.
 	CBaseEntity *pNearest = NULL;
 	CBaseEntity *pObject = (CBaseEntity*)tr.m_pEnt;
@@ -195,7 +195,7 @@ CBaseEntity *CPortal_Player::FindUseEntity()
 		const float tangents[NUM_TANGENTS] = { 1, 0.57735026919f, 0.3639702342f, 0.267949192431f, 0.1763269807f, -0.1763269807f, -0.267949192431f };
 		Vector down = forward - tangents[count]*up;
 		VectorNormalize(down);
-		UTIL_TraceHull( searchCenter, searchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), searchCenter, searchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
 		pObject = (CBaseEntity*)tr.m_pEnt;
 		count++;
 	}
@@ -268,7 +268,7 @@ CBaseEntity *CPortal_Player::FindUseEntity()
 			// Since this has purely been a radius search to this point, we now
 			// make sure the object isn't behind glass or a grate.
 			trace_t trCheckOccluded;
-			UTIL_TraceLine( searchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
+			UTIL_TraceLine(EntityList(), searchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
 
 			if ( trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject )
 			{
@@ -284,7 +284,7 @@ CBaseEntity *CPortal_Player::FindUseEntity()
 		// Haven't found anything near the player to use, nor any NPC's at distance.
 		// Check to see if the player is trying to select an NPC through a rail, fence, or other 'see-though' volume.
 		trace_t trAllies;
-		UTIL_TraceLine( searchCenter, searchCenter + forward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &trAllies );
+		UTIL_TraceLine(EntityList(), searchCenter, searchCenter + forward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &trAllies );
 
 		if ( trAllies.m_pEnt && IsUseableEntity((CBaseEntity*)trAllies.m_pEnt, 0 ) && ((CBaseEntity*)trAllies.m_pEnt)->MyNPCPointer() && ((CBaseEntity*)trAllies.m_pEnt)->MyNPCPointer()->IsPlayerAlly( this ) )
 		{
@@ -363,7 +363,7 @@ CBaseEntity* CPortal_Player::FindUseEntityThroughPortal( void )
 		const float tangents[NUM_TANGENTS] = { 1, 0.57735026919f, 0.3639702342f, 0.267949192431f, 0.1763269807f, -0.1763269807f, -0.267949192431f };
 		Vector down = vTransformedForward - tangents[count]*vTransformedUp;
 		VectorNormalize(down);
-		UTIL_TraceHull( vTransformedSearchCenter, vTransformedSearchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vTransformedSearchCenter, vTransformedSearchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
 		pObject = (CBaseEntity*)tr.m_pEnt;
 		count++;
 	}
@@ -424,7 +424,7 @@ CBaseEntity* CPortal_Player::FindUseEntityThroughPortal( void )
 			// Since this has purely been a radius search to this point, we now
 			// make sure the object isn't behind glass or a grate.
 			trace_t trCheckOccluded;
-			UTIL_TraceLine( vTransformedSearchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
+			UTIL_TraceLine(EntityList(), vTransformedSearchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
 
 			if ( trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject )
 			{
@@ -440,7 +440,7 @@ CBaseEntity* CPortal_Player::FindUseEntityThroughPortal( void )
 		// Haven't found anything near the player to use, nor any NPC's at distance.
 		// Check to see if the player is trying to select an NPC through a rail, fence, or other 'see-though' volume.
 		trace_t trAllies;
-		UTIL_TraceLine( vTransformedSearchCenter, vTransformedSearchCenter + vTransformedForward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &trAllies );
+		UTIL_TraceLine(EntityList(), vTransformedSearchCenter, vTransformedSearchCenter + vTransformedForward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &trAllies );
 
 		if ( trAllies.m_pEnt && IsUseableEntity((CBaseEntity*)trAllies.m_pEnt, 0 ) && ((CBaseEntity*)trAllies.m_pEnt)->MyNPCPointer() && ((CBaseEntity*)trAllies.m_pEnt)->MyNPCPointer()->IsPlayerAlly( this ) )
 		{

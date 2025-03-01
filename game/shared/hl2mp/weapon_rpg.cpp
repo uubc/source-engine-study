@@ -398,7 +398,7 @@ void CMissile::Explode( void )
 	GetVectors( &forward, NULL, NULL );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 16, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 16, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	m_takedamage = DAMAGE_NO;
 	GetEngineObject()->SetSolid( SOLID_NONE );
@@ -1493,7 +1493,7 @@ void CWeaponRPG::PrimaryAttack( void )
 	// If the shot is clear to the player, give the missile a grace period
 	trace_t	tr;
 	Vector vecEye = pOwner->EyePosition();
-	UTIL_TraceLine( vecEye, vecEye + vForward * 128, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecEye, vecEye + vForward * 128, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction == 1.0 )
 	{
 		pMissile->SetGracePeriod( 0.3 );
@@ -1782,7 +1782,7 @@ void CWeaponRPG::UpdateLaserPosition( Vector vecMuzzlePos, Vector vecEndPos )
 	trace_t	tr;
 	
 	// Trace out for the endpoint
-	UTIL_TraceLine( vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), GetOwner(), COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), GetOwner(), COLLISION_GROUP_NONE, &tr );
 
 	// Move the laser sprite
 	if ( m_hLaserDot != NULL )
@@ -2034,7 +2034,7 @@ void CWeaponRPG::DrawEffects( void )
 	
 	// Get the beam's run
 	trace_t tr;
-	UTIL_TraceLine( vecAttachment, vecAttachment + ( vecDir * RPG_LASER_BEAM_LENGTH ), MASK_SHOT, GetOwner(), COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecAttachment, vecAttachment + ( vecDir * RPG_LASER_BEAM_LENGTH ), MASK_SHOT, GetOwner(), COLLISION_GROUP_NONE, &tr );
 	
 	InitBeam();
 
@@ -2276,7 +2276,7 @@ int CLaserDot::DrawModel( int flags )
 		}
 		
 		trace_t tr;
-		UTIL_TraceLine( vecAttachment, vecAttachment + ( vecDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecAttachment, vecAttachment + ( vecDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
 		
 		// Backup off the hit plane
 		endPos = tr.endpos + ( tr.plane.normal * 4.0f );

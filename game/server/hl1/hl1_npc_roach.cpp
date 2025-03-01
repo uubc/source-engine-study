@@ -435,7 +435,7 @@ void CNPC_Roach::Touch ( IServerEntity *pOther )
 	vecSpot = GetEngineObject()->GetAbsOrigin() + Vector ( 0 , 0 , 8 );//move up a bit, and trace down.
 	//UTIL_TraceLine ( vecSpot, vecSpot + Vector ( 0, 0, -24 ),  ignore_monsters, ENT(pev), & tr);
 
-	UTIL_TraceLine ( vecSpot, vecSpot + Vector ( 0, 0, -24 ), MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine (EntityList(), vecSpot, vecSpot + Vector ( 0, 0, -24 ), MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
 
 	// This isn't really blood.  So you don't have to screen it out based on violence levels (UTIL_ShouldShowBlood())
 	UTIL_DecalTrace( &tr, "YellowBlood" );

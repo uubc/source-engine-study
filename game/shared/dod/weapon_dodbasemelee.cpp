@@ -114,7 +114,7 @@ CBaseEntity *CWeaponDODBaseMelee::MeleeAttack( int iDamageAmount, int iDamageTyp
 	int iTraceMask = MASK_SOLID | CONTENTS_HITBOX | CONTENTS_DEBRIS;
 
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecEnd, iTraceMask, &filter, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, iTraceMask, &filter, &tr );
 
 	const float rayExtension = 40.0f;
 	UTIL_ClipTraceToPlayers( vecSrc, vecEnd + vForward * rayExtension, iTraceMask, &filter, &tr );
@@ -124,7 +124,7 @@ CBaseEntity *CWeaponDODBaseMelee::MeleeAttack( int iDamageAmount, int iDamageTyp
 		Vector head_hull_mins( -16, -16, -18 );
 		Vector head_hull_maxs( 16, 16, 18 );
 
-		UTIL_TraceHull( vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
+		UTIL_TraceHull(EntityList(), vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
 		if ( tr.fraction < 1.0 )
 		{
 			// Calculate the point of intersection of the line (or hull) and the object we hit

@@ -228,7 +228,7 @@ void NDebugOverlay::Text( const Vector &origin, const char *text, bool bViewChec
 	if (bViewCheck)
 	{
 		trace_t tr;
-		UTIL_TraceLine(player->GetEngineObject()->GetAbsOrigin(), origin, MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), player->GetEngineObject()->GetAbsOrigin(), origin, MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr);
 		
 		if ((tr.endpos - origin).Length() > 10)
 			return;
@@ -397,7 +397,7 @@ void NDebugOverlay::DrawGroundCrossHairOverlay( void )
 	pPlayer->EyeVectors( &vForward );
 
 	trace_t tr;
-	UTIL_TraceLine ( vSource, vSource + vForward * 2048, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine (EntityList(), vSource, vSource + vForward * 2048, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
 	float dotPr = DotProduct(Vector(0,0,1),tr.plane.normal);
 	if (tr.fraction != 1.0 &&  dotPr > 0.5)
 	{

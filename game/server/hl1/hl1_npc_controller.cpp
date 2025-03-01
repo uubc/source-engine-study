@@ -1129,7 +1129,7 @@ void CNPC_ControllerHeadBall::HuntThink( void  )
 	{
 		trace_t tr;
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEnemy()->WorldSpaceCenter(), MASK_ALL, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEnemy()->WorldSpaceCenter(), MASK_ALL, this, COLLISION_GROUP_NONE, &tr );
 
 		CBaseEntity *pEntity = (CBaseEntity*)tr.m_pEnt;
 		if (pEntity != NULL && pEntity->m_takedamage == DAMAGE_YES)

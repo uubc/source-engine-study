@@ -243,7 +243,7 @@ void CEnvExplosion::InputExplode( inputdata_t &inputdata )
 	GetEngineObject()->SetSolid( SOLID_NONE );// intangible
 
 	Vector vecSpot = GetEngineObject()->GetAbsOrigin() + Vector( 0 , 0 , 8 );
-	UTIL_TraceLine( vecSpot, vecSpot + Vector( 0, 0, -40 ), (MASK_SOLID_BRUSHONLY | MASK_WATER), this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot, vecSpot + Vector( 0, 0, -40 ), (MASK_SOLID_BRUSHONLY | MASK_WATER), this, COLLISION_GROUP_NONE, &tr );
 	
 	// Pull out of the wall a bit. We used to move the explosion origin itself, but that seems unnecessary, not to mention a
 	// little weird when you consider that it might be in hierarchy. Instead we just calculate a new virtual position at

@@ -541,7 +541,7 @@ void CNPC_Portal_FloorTurret::Shoot( const Vector &vecSrc, const Vector &vecDirT
 	trace_t tr;
 	GetEngineObject()->GetAttachment( m_iBarrelAttachments[ iBarrelIndex ], info.m_vecSrc, angBarrelDir );
 	Vector vecCenter = GetEngineObject()->GetAbsOrigin();
-	UTIL_TraceLine( vecCenter, info.m_vecSrc, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecCenter, info.m_vecSrc, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( !tr.m_pEnt || !tr.m_pEnt->IsWorld() )
 	{
 		FireBullets( info );
@@ -550,7 +550,7 @@ void CNPC_Portal_FloorTurret::Shoot( const Vector &vecSrc, const Vector &vecDirT
 	// Shoot out of the right barrel if there's nothing solid between the turret's center and the muzzle
 	GetEngineObject()->GetAttachment( m_iBarrelAttachments[ iBarrelIndex + 1 ], info.m_vecSrc, angBarrelDir );
 	vecCenter = GetEngineObject()->GetAbsOrigin();
-	UTIL_TraceLine( vecCenter, info.m_vecSrc, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecCenter, info.m_vecSrc, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( !tr.m_pEnt || !tr.m_pEnt->IsWorld() )
 	{
 		FireBullets( info );

@@ -1707,7 +1707,7 @@ bool CDODPlayer::DODWeaponDrop( CBaseCombatWeapon *pWeapon, bool bThrowForward )
 			// not exactly correct bounds, we haven't rotated them to match the attachment
 			pWeapon->GetEngineObject()->WorldSpaceSurroundingBounds( &mins, &maxs );
 
-			UTIL_TraceHull( WorldSpaceCenter(), origin, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceHull(EntityList(), WorldSpaceCenter(), origin, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 			
 			if ( tr.fraction < 1.0 )
 				origin = WorldSpaceCenter();
@@ -2292,7 +2292,7 @@ bool CDODPlayer::ClientCommand( const CCommand &args )
 		AngleVectors( EyeAngles(), &vecForward );
 
 		trace_t tr;
-		UTIL_TraceLine( EyePosition(), EyePosition() + vecForward * 1000, MASK_SOLID, NULL, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + vecForward * 1000, MASK_SOLID, NULL, &tr );
 
 		float flStunAmount = 100;
 		float flStunRadius = 100;
@@ -4117,7 +4117,7 @@ CBaseEntity *CDODPlayer::FindUseEntity()
 	// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
 	int useableContents = MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_PLAYERCLIP;
 
-	UTIL_TraceLine( searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr );
 
 	// try the hit entity if there is one, or the ground entity if there isn't.
 	CBaseEntity *pNearest = NULL;
@@ -4133,7 +4133,7 @@ CBaseEntity *CDODPlayer::FindUseEntity()
 		const float tangents[NUM_TANGENTS] = { 1, 0.57735026919f, 0.3639702342f, 0.267949192431f, 0.1763269807f, -0.1763269807f, -0.267949192431f };
 		Vector down = forward - tangents[count]*up;
 		VectorNormalize(down);
-		UTIL_TraceHull( searchCenter, searchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), searchCenter, searchCenter + down * 72, -Vector(16,16,16), Vector(16,16,16), useableContents, this, COLLISION_GROUP_NONE, &tr );
 		pObject = (CBaseEntity*)tr.m_pEnt;
 		count++;
 	}
@@ -4200,7 +4200,7 @@ CBaseEntity *CDODPlayer::FindUseEntity()
 			// Since this has purely been a radius search to this point, we now
 			// make sure the object isn't behind glass or a grate.
 			trace_t trCheckOccluded;
-			UTIL_TraceLine( searchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
+			UTIL_TraceLine(EntityList(), searchCenter, point, useableContents, this, COLLISION_GROUP_NONE, &trCheckOccluded );
 
 			if ( trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject )
 			{

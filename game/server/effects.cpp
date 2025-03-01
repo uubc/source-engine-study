@@ -963,7 +963,7 @@ void CTestEffect::Think( void )
 		Vector vecSrc = GetEngineObject()->GetAbsOrigin();
 		Vector vecDir = Vector( random->RandomFloat( -1.0, 1.0 ), random->RandomFloat( -1.0, 1.0 ),random->RandomFloat( -1.0, 1.0 ) );
 		VectorNormalize( vecDir );
-		UTIL_TraceLine( vecSrc, vecSrc + vecDir * 128, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir * 128, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 
 		pbeam->PointsInit( vecSrc, tr.endpos );
 		// pbeam->SetColor( 80, 100, 255 );
@@ -1182,7 +1182,7 @@ void CBlood::InputEmitBlood( inputdata_t &inputdata )
 		Vector start = BloodPosition( inputdata.pActivator );
 		trace_t tr;
 
-		UTIL_TraceLine( start, start + forward * BloodAmount() * 2, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), start, start + forward * BloodAmount() * 2, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0 )
 		{
 			UTIL_BloodDecalTrace( &tr, Color() );
@@ -1982,7 +1982,7 @@ void CEnvSplash::InputSplash( inputdata_t &inputdata )
 		// Trace down and find the water's surface. This is designed for making
 		// splashes on the surface of water that can change water level.
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 4096 ), (MASK_WATER|MASK_SOLID_BRUSHONLY), this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 4096 ), (MASK_WATER|MASK_SOLID_BRUSHONLY), this, COLLISION_GROUP_NONE, &tr );
 		data.m_vOrigin = tr.endpos;
 
 		if ( tr.contents & CONTENTS_SLIME )
@@ -2001,7 +2001,7 @@ void CEnvSplash::InputSplash( inputdata_t &inputdata )
 		float depth = 0.0f;
 
 		trace_t tr;
-		UTIL_TraceLine( data.m_vOrigin, data.m_vOrigin - Vector( 0, 0, 4096 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), data.m_vOrigin, data.m_vOrigin - Vector( 0, 0, 4096 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		depth = fabs( tr.startpos.z - tr.endpos.z );
 
@@ -2220,7 +2220,7 @@ void CEnvGunfire::ShootThink()
 	{
 		trace_t tr;
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.fraction != 1.0 )
 		{

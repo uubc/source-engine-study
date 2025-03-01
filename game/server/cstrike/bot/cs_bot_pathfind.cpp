@@ -29,7 +29,7 @@ static bool FindDescendingLadderApproachPoint( const CNavLadder *ladder, const C
 	*pos = ladder->m_top - ladder->GetNormal() * 2.0f * HalfHumanWidth;
 
 	trace_t result;
-	UTIL_TraceLine( ladder->m_top, *pos, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), ladder->m_top, *pos, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 	if (result.fraction < 1.0f)
 	{
 		*pos = ladder->m_top + ladder->GetNormal() * 2.0f * HalfHumanWidth;
@@ -246,7 +246,7 @@ void CCSBot::ComputeLadderEndpoint( bool isAscending )
 		to = m_pathLadder->m_bottom;
 	}
 
-	UTIL_TraceLine( from, m_pathLadder->m_bottom, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), from, m_pathLadder->m_bottom, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 
 	if (result.fraction == 1.0f)
 		m_pathLadderEnd = to.z;

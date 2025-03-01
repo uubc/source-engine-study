@@ -198,7 +198,7 @@ bool CEnvSoundscape::InRangeOfPlayer( CBasePlayer *pTarget )
 	{
 		trace_t tr;
 
-		UTIL_TraceLine( vecSpot1, vecSpot2, MASK_SOLID_BRUSHONLY|MASK_WATER, pTarget, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecSpot1, vecSpot2, MASK_SOLID_BRUSHONLY|MASK_WATER, pTarget, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction == 1 && !tr.startsolid )
 		{
@@ -274,7 +274,7 @@ void CEnvSoundscape::UpdateForPlayer( ss_update_t &update )
 			trace_t tr;
 
 			update.traceCount++;
-			UTIL_TraceLine( target, update.playerPosition, MASK_SOLID_BRUSHONLY|MASK_WATER, update.pPlayer, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), target, update.playerPosition, MASK_SOLID_BRUSHONLY|MASK_WATER, update.pPlayer, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction == 1 && !tr.startsolid )
 			{
 				update.bInRange = true;
@@ -288,7 +288,7 @@ void CEnvSoundscape::UpdateForPlayer( ss_update_t &update )
 			trace_t tr;
 
 			update.traceCount++;
-			UTIL_TraceLine( target, update.playerPosition, MASK_SOLID_BRUSHONLY|MASK_WATER, update.pPlayer, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), target, update.playerPosition, MASK_SOLID_BRUSHONLY|MASK_WATER, update.pPlayer, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction == 1 && !tr.startsolid )
 			{

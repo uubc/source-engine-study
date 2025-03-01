@@ -178,7 +178,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward );
 		VectorNormalize ( vForward );
 		
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
 
 		if ( tr2.fraction != 1.0f )
 		{
@@ -499,7 +499,7 @@ void CWeaponCrossbow::FireBolt( void )
         Vector vecEnd = vecSrc + ( vecAiming * MAX_TRACE_LENGTH );
         
         trace_t trace;
-        UTIL_TraceLine( vecSrc, vecEnd, MASK_SHOT, GetOwner(), COLLISION_GROUP_NONE, &trace );
+        UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SHOT, GetOwner(), COLLISION_GROUP_NONE, &trace );
         pBolt->GetEngineObject()->SetAbsOrigin( trace.endpos );
 
         // We hit someone

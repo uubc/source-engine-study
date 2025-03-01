@@ -365,7 +365,7 @@ void C_Portal_Player::UpdateIDTarget()
 	Vector vecStart, vecEnd;
 	VectorMA(g_pViewRender->MainViewOrigin(), 1500, g_pViewRender->MainViewForward(), vecEnd );
 	VectorMA(g_pViewRender->MainViewOrigin(), 10, g_pViewRender->MainViewForward(), vecStart );
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( !tr.startsolid && tr.DidHitNonWorldEntity() )
 	{
@@ -932,7 +932,7 @@ void C_Portal_Player::AddEntity( void )
 			AngleVectors( eyeAngles, &vForward );
 
 			trace_t tr;
-			UTIL_TraceLine( vecOrigin, vecOrigin + (vForward * 200), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin + (vForward * 200), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		}
 	}
 }
@@ -1429,7 +1429,7 @@ void C_Portal_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNe
 
 		trace_t trace; // clip against world
 		EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-		UTIL_TraceHull( origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceHull(EntityList(), origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
 		EntityList()->PopEnableAbsRecomputations();
 
 		if (trace.fraction < 1.0)

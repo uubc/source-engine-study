@@ -118,7 +118,7 @@ void CAI_MoveProbe::TraceLine( const Vector &vecStart, const Vector &vecEnd, uns
 
 	CTraceFilterNav traceFilter( const_cast<CAI_BaseNPC *>(GetOuter()), m_bIgnoreTransientEntities, GetOuter(), collisionGroup );
 
-	AI_TraceLine( vecStart, vecEnd, mask, &traceFilter, pResult );
+	AI_TraceLine(EntityList(), vecStart, vecEnd, mask, &traceFilter, pResult );
 
 #ifdef _DEBUG
 	// Just to make sure; I'm not sure that this is always the case but it should be
@@ -175,7 +175,7 @@ void CAI_MoveProbe::TraceHull(
 
 	ConVarRef r_visualizetraces("r_visualizetraces");
 	if ( r_visualizetraces.GetBool() )
-		DebugDrawLine( pResult->startpos, pResult->endpos, 255, 255, 0, true, -1.0f );
+		EntityList()->GetWorld()->DebugDrawLine(pResult->startpos, pResult->endpos, 255, 255, 0, true, -1.0f);
 
 	//NDebugOverlay::SweptBox( vecStart, vecEnd, hullMin, hullMax, vec3_angle, 255, 255, 0, 0, 10 );
 	// Just to make sure; I'm not sure that this is always the case but it should be

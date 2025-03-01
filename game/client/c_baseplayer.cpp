@@ -694,7 +694,7 @@ surfacedata_t* C_BasePlayer::GetGroundSurface()
 	ray.Init( start, end, GetPlayerMins(), GetPlayerMaxs() );
 
 	trace_t	trace;
-	UTIL_TraceRay( ray, MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+	UTIL_TraceRay(EntityList(), ray, MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 	if ( trace.fraction == 1.0f )
 		return NULL;	// no ground
@@ -1531,7 +1531,7 @@ void C_BasePlayer::CalcChaseCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 	trace_t trace;
 	CTraceFilterNoNPCsOrPlayer filter( target, COLLISION_GROUP_NONE );
 	EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-	UTIL_TraceHull( origin, viewpoint, WALL_MIN, WALL_MAX, MASK_SOLID, &filter, &trace );
+	UTIL_TraceHull(EntityList(), origin, viewpoint, WALL_MIN, WALL_MAX, MASK_SOLID, &filter, &trace );
 	EntityList()->PopEnableAbsRecomputations();
 
 	if (trace.fraction < 1.0)
@@ -1629,7 +1629,7 @@ void C_BasePlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, floa
 	// Now trace out from the target, so that we're put in front of any walls
 	trace_t trace;
 	EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-	UTIL_TraceHull( vecCamTarget, vecTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceHull(EntityList(), vecCamTarget, vecTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
 	EntityList()->PopEnableAbsRecomputations();
 	if (trace.fraction < 1.0)
 	{
@@ -1641,7 +1641,7 @@ void C_BasePlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, floa
 		// To stop all close in views looking up at character's chins, move the view up.
 		vecTargetPos.z += fabs(vecCamTarget.z - vecTargetPos.z) * 0.85;
 		EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-		UTIL_TraceHull( vecCamTarget, vecTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceHull(EntityList(), vecCamTarget, vecTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
 		EntityList()->PopEnableAbsRecomputations();
 		vecTargetPos = trace.endpos;
 	}
@@ -1772,7 +1772,7 @@ void C_BasePlayer::CalcDeathCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 
 	trace_t trace; // clip against world
 	EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-	UTIL_TraceHull( origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceHull(EntityList(), origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
 	EntityList()->PopEnableAbsRecomputations();
 
 	if (trace.fraction < 1.0)

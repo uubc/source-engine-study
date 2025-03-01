@@ -128,7 +128,7 @@ void CWeaponTripMine::PrimaryAttack( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + vecAiming * 64, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecAiming * 64, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0 )
 	{
@@ -390,7 +390,7 @@ void CTripmineGrenade::PowerupThink( void  )
 		IEngineObjectServer *pOldOwner = GetEngineObject()->GetOwnerEntity();
 
 		// don't explode if the player is standing in front of the laser
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 32, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 32, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.m_pEnt && pOldOwner &&
 			( tr.m_pEnt == pOldOwner->GetServerEntity() ) && pOldOwner->IsPlayer() )
@@ -403,7 +403,7 @@ void CTripmineGrenade::PowerupThink( void  )
 		// find out what we've been stuck on		
 		GetEngineObject()->SetOwnerEntity( NULL );
 		
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 32, MASK_SHOT, pOldOwner ? pOldOwner->GetServerEntity() : NULL, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 32, MASK_SHOT, pOldOwner ? pOldOwner->GetServerEntity() : NULL, COLLISION_GROUP_NONE, &tr);
 
 		if ( tr.startsolid )
 		{
@@ -485,7 +485,7 @@ void CTripmineGrenade::MakeBeam( void )
 {
 	trace_t tr;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	m_flBeamLength = tr.fraction;
 
@@ -511,7 +511,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 	trace_t tr;
 
 	// NOT MASK_SHOT because we want only simple hit boxes
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	// ALERT( at_console, "%f : %f\n", tr.flFraction, m_flBeamLength );
 
@@ -524,7 +524,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 		Vector forward;
 		GetVectors( &forward, NULL, NULL );
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - forward * 12.0f, MASK_SOLID, this, COLLISION_GROUP_NONE, &stuckOnTrace );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - forward * 12.0f, MASK_SOLID, this, COLLISION_GROUP_NONE, &stuckOnTrace );
 
 		if ( stuckOnTrace.m_pEnt )
 		{
@@ -594,7 +594,7 @@ void CTripmineGrenade::DelayDeathThink( void )
 {
 	KillBeam();
 	trace_t tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 64,  MASK_SOLID, this, COLLISION_GROUP_NONE, & tr);
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 64,  MASK_SOLID, this, COLLISION_GROUP_NONE, & tr);
 
 	Explode( &tr, DMG_BLAST );
 }

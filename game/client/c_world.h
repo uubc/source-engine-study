@@ -131,7 +131,7 @@ public:
 	virtual void OnFileReceived(const char* fileName, unsigned int transferID) { return; }
 
 	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const { return false; }
-
+	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration);
 public:
 	enum
 	{

@@ -72,9 +72,9 @@ void CFuncLadder::Spawn()
 
 #if !defined( CLIENT_DLL )
 	trace_t bottomtrace, toptrace;
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull(EntityList(), m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &bottomtrace );
-	UTIL_TraceHull( m_vecPlayerMountPositionTop, m_vecPlayerMountPositionTop, 
+	UTIL_TraceHull(EntityList(), m_vecPlayerMountPositionTop, m_vecPlayerMountPositionTop,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &toptrace );
 
 	if ( bottomtrace.startsolid || toptrace.startsolid )
@@ -223,7 +223,7 @@ void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 	Vector playerMaxs = VEC_HULL_MAX;
 
 	trace_t result;
-	UTIL_TraceHull( m_vecPlayerMountPositionTop + Vector( 0, 0, 4 ), m_vecPlayerMountPositionTop, 
+	UTIL_TraceHull(EntityList(), m_vecPlayerMountPositionTop + Vector( 0, 0, 4 ), m_vecPlayerMountPositionTop,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &result );
 
 	if ( !result.startsolid )
@@ -231,7 +231,7 @@ void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 		m_vecPlayerMountPositionTop = result.endpos;
 	}
 
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom + Vector( 0, 0, 4 ), m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull(EntityList(), m_vecPlayerMountPositionBottom + Vector( 0, 0, 4 ), m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &result );
 
 	if ( !result.startsolid )
@@ -265,7 +265,7 @@ void CFuncLadder::DrawDebugGeometryOverlays()
 	NDebugOverlay::EntityBounds(this, 200, 180, 63, 63, 0);
 
 	trace_t bottomtrace;
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull(EntityList(), m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &bottomtrace );
 
 	int c = m_Dismounts.Count();

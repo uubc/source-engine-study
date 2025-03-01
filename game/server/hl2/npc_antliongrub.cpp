@@ -433,7 +433,7 @@ inline bool CAntlionGrub::ProbeSurface( const Vector &vecTestPos, const Vector &
 {
 	// Trace down to find a surface
 	trace_t tr;
-	UTIL_TraceLine( vecTestPos, vecTestPos + (vecDir*256.0f), MASK_NPCSOLID&(~CONTENTS_MONSTER), this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecTestPos, vecTestPos + (vecDir*256.0f), MASK_NPCSOLID&(~CONTENTS_MONSTER), this, COLLISION_GROUP_NONE, &tr );
 
 	if ( vecResult )
 	{
@@ -748,7 +748,7 @@ void CAntlionGrub::MakeSquashDecals( const Vector &vecOrigin )
 		vecStart.y = vecOrigin.y + random->RandomFloat( -16.0f, 16.0f );
 		vecStart.z = vecOrigin.z + 4;
 
-		UTIL_TraceLine( vecStart, vecStart + ( vecTraceDir * (5*12) ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecStart, vecStart + ( vecTraceDir * (5*12) ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction != 1.0 )
 		{

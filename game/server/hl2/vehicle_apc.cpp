@@ -617,14 +617,14 @@ void CPropAPC::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData )
 	leftAngles[YAW] += 20;
 	VehicleAngleVectors( leftAngles, &vecLeftDir, NULL, NULL );
 	vecSpot = vecStart + vecLeftDir * 400;
-	UTIL_TraceLine( vecStart, vecSpot, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecSpot, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, 400, 0.1, this );
 
 	QAngle rightAngles = vehicleAngles;
 	rightAngles[YAW] -= 20;
 	VehicleAngleVectors( rightAngles, &vecRightDir, NULL, NULL );
 	vecSpot = vecStart + vecRightDir * 400;
-	UTIL_TraceLine( vecStart, vecSpot, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecSpot, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, 400, 0.1, this);
 
 	m_flDangerSoundTime = gpGlobals->curtime + 0.3;

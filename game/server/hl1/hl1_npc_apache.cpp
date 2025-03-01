@@ -572,11 +572,11 @@ void CNPC_Apache::AimRocketGun( void )
 	VectorNormalize ( vecEst );
 
 	trace_t tr1;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr1);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr1);
 
 //	NDebugOverlay::Line(GetAbsOrigin(), tr1.endpos, 255,255,0, false, 0.1);
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vTargetDir * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr1);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vTargetDir * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr1);
 
 //	NDebugOverlay::Line(GetAbsOrigin(), tr1.endpos, 0,255,0, false, 0.1);
 
@@ -603,7 +603,7 @@ void CNPC_Apache::AimRocketGun( void )
 				{
 					trace_t tr;
 					
-					UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
+					UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
 
 			//		NDebugOverlay::Line(GetAbsOrigin(), tr.endpos, 255,0,255, false, 5);
 
@@ -616,7 +616,7 @@ void CNPC_Apache::AimRocketGun( void )
 			{
 				trace_t tr;
 				
-				UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
+				UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecEst * 4096, MASK_ALL, this, COLLISION_GROUP_NONE, &tr);
 				// just fire when close
 				if ((tr.endpos - m_vecTargetPosition).Length() < 512)
 					FireRocket( );

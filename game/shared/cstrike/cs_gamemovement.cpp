@@ -394,7 +394,7 @@ void CCSGameMovement::PlayerMove()
 		trace_t trace;
 		Ray_t ray;
 		ray.Init( start, end, vHullMin, vHullMax );
-		UTIL_TraceRay( ray, PlayerSolidMask(), mv->m_nPlayerHandle, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+		UTIL_TraceRay(EntityList(), ray, PlayerSolidMask(), mv->m_nPlayerHandle, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 		if ( trace.fraction < 1.0f )
 		{
@@ -843,7 +843,7 @@ bool CCSGameMovement::CanUnduck()
 		newOrigin += -0.5f * ( hullSizeNormal - hullSizeCrouch );
 	}
 
-	UTIL_TraceHull( mv->GetAbsOrigin(), newOrigin, VEC_HULL_MIN_SCALED( player ), VEC_HULL_MAX_SCALED( player ), PlayerSolidMask(), player, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+	UTIL_TraceHull(EntityList(), mv->GetAbsOrigin(), newOrigin, VEC_HULL_MIN_SCALED( player ), VEC_HULL_MAX_SCALED( player ), PlayerSolidMask(), player, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 	if ( trace.startsolid || ( trace.fraction != 1.0f ) )
 		return false;	
@@ -1016,7 +1016,7 @@ void CCSGameMovement::Duck( void )
 			groundCheck = newOrigin;
 			groundCheck.z -= player->GetStepSize();
 
-			UTIL_TraceHull( newOrigin, groundCheck, VEC_HULL_MIN_SCALED( player ), VEC_HULL_MAX_SCALED( player ), PlayerSolidMask(), player, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+			UTIL_TraceHull(EntityList(), newOrigin, groundCheck, VEC_HULL_MIN_SCALED( player ), VEC_HULL_MAX_SCALED( player ), PlayerSolidMask(), player, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 			if ( trace.startsolid || trace.fraction == 1.0f )
 				return; // Can't even stand up, or there's no ground underneath us
@@ -1142,6 +1142,6 @@ void  CCSGameMovement::TryTouchGround( const Vector& start, const Vector& end, c
 
 	ShouldHitFunc_t pStandingTestCallback = sv_enableboost.GetBool() ? NULL : CheckForStandable;
 
-	UTIL_TraceRay( ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm,  pStandingTestCallback );
+	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm,  pStandingTestCallback );
 
 }

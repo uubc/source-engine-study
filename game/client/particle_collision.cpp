@@ -89,7 +89,7 @@ void CBaseSimpleCollision::TraceLine( const Vector &start, const Vector &end, tr
 		//If we need an exact trace, test again on a successful hit
 		if ( ( coarse == false ) && ( pTrace->fraction < 1.0f ) )
 		{
-			UTIL_TraceLine( start, end, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, pTrace );
+			UTIL_TraceLine(EntityList(), start, end, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, pTrace );
 		}
 
 		#if	__DEBUG_PARTICLE_COLLISION_OVERLAY
@@ -164,7 +164,7 @@ void CBaseSimpleCollision::TestForPlane( const Vector &start, const Vector &dir,
 		testEnd[2] -= flGravIncr * (0.5f*(dStepTime*i)*(dStepTime*i) );
 
 		//Trace the line
-		UTIL_TraceLine( testStart, testEnd, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), testStart, testEnd, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 		//See if we found one
 		if ( tr.fraction != 1.0f )
@@ -316,7 +316,7 @@ bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *
 		{
 			#if	__DEBUG_PARTICLE_COLLISION_RETEST
 			//Retest the collision with a true trace line to avoid errant collisions
-			UTIL_TraceLine( origin, testPosition, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, pTrace );
+			UTIL_TraceLine(EntityList(), origin, testPosition, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, pTrace );
 			#endif	//__DEBUG_RETEST_COLLISION
 
 			//Did we hit anything?

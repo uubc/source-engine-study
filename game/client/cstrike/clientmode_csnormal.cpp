@@ -867,7 +867,7 @@ void UpdateClassImageEntity(
 	// find a spot inside the world for the dlight's origin, or it won't illuminate the model
 	Vector testPos( origin.x - 100, origin.y, origin.z + 100 );
 	trace_t tr;
-	UTIL_TraceLine( origin, testPos, MASK_OPAQUE, pLocalPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), origin, testPos, MASK_OPAQUE, pLocalPlayer, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction == 1.0f )
 	{
 		lightOrigin = tr.endpos;
@@ -878,7 +878,7 @@ void UpdateClassImageEntity(
 		lightOrigin = tr.endpos + Vector( 1, 0, -1 );	// pull out from the solid
 		Vector start = lightOrigin;
 		Vector end = lightOrigin + Vector( 100, 0, -100 );
-		UTIL_TraceLine( start, end, MASK_OPAQUE, pLocalPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), start, end, MASK_OPAQUE, pLocalPlayer, COLLISION_GROUP_NONE, &tr );
 		origin = tr.endpos;
 	}
 

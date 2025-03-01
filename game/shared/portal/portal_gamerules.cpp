@@ -74,7 +74,7 @@ void CC_Create_PortalWeightBox( void )
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine(pPlayer->EyePosition(),
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_SOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0 )
@@ -117,7 +117,7 @@ void CC_Create_PortalMetalSphere( void )
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine(pPlayer->EyePosition(),
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_SOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0 )

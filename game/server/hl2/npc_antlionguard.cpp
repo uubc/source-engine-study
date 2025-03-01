@@ -2823,7 +2823,7 @@ bool CNPC_AntlionGuard::EnemyIsRightInFrontOfMe( CBaseEntity **pEntity )
 		{
 			// He's in front of me, and close. Make sure he's not behind a wall.
 			trace_t tr;
-			UTIL_TraceLine( WorldSpaceCenter(), GetEnemy()->EyePosition(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), WorldSpaceCenter(), GetEnemy()->EyePosition(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 			if ( tr.m_pEnt == GetEnemy() )
 			{
 				*pEntity = (CBaseEntity*)tr.m_pEnt;
@@ -3336,7 +3336,7 @@ void CNPC_AntlionGuard::SummonAntlions( void )
 
 		// Make sure it's clear, and make sure we hit something
 		trace_t	tr;
-		UTIL_TraceHull( vecSpawn, vecSpawn - Vector(0,0,128), NAI_Hull::Mins( HULL_MEDIUM ), NAI_Hull::Maxs( HULL_MEDIUM ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vecSpawn, vecSpawn - Vector(0,0,128), NAI_Hull::Mins( HULL_MEDIUM ), NAI_Hull::Maxs( HULL_MEDIUM ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &tr );
 		if ( tr.startsolid || tr.allsolid || tr.fraction == 1.0 )
 		{
 			if ( g_debug_antlionguard.GetInt() == 2 )
@@ -3359,7 +3359,7 @@ void CNPC_AntlionGuard::SummonAntlions( void )
 
 		// Make sure the guard can see it
 		trace_t	tr_vis;
-		UTIL_TraceLine( WorldSpaceCenter(), tr.endpos, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr_vis );
+		UTIL_TraceLine(EntityList(), WorldSpaceCenter(), tr.endpos, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr_vis );
 		if ( tr_vis.fraction != 1.0 )
 		{
 			if ( g_debug_antlionguard.GetInt() == 2 )
@@ -3970,11 +3970,11 @@ inline bool CNPC_AntlionGuard::CanStandAtPoint( const Vector &vecPos, Vector *pO
 
 	// Start high and try to go lower, looking for the ground between here and there
 	// We do this first because it's more likely to succeed in the typical guard arenas (with open terrain)
-	UTIL_TraceHull( vecStart, vecEnd, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), vecStart, vecEnd, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.startsolid && !tr.allsolid )
 	{
 		// We started in solid but didn't end up there, see if we can stand where we ended up
-		UTIL_TraceHull( tr.endpos, tr.endpos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), tr.endpos, tr.endpos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 		
 		// Must not be in solid
 		bTraceCleared = ( !tr.allsolid && !tr.startsolid );
@@ -4186,7 +4186,7 @@ CBaseEntity *CNPC_AntlionGuard::FindPhysicsObjectTarget( const PhysicsObjectCrit
 
 		// Check for a (roughly) clear trajectory path from the object to target
 		trace_t	tr;
-		UTIL_TraceLine( vecObjCenter, criteria.pTarget->BodyTarget( vecObjCenter ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecObjCenter, criteria.pTarget->BodyTarget( vecObjCenter ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 		
 		// See how close to our target we got (we still look good hurling things that won't necessarily hit)
 		if ( ( tr.endpos - criteria.pTarget->WorldSpaceCenter() ).LengthSqr() > Square(criteria.flNearRadius) )

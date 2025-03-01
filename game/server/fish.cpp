@@ -297,14 +297,14 @@ float CFish::Avoid( void )
 	float leftDanger = 0.0f;
 
 	// slightly right of forward
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_avoidRange * (m_forward + sideOffset * m_perp), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_avoidRange * (m_forward + sideOffset * m_perp), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 	if (result.fraction < 1.0f)
 	{
 		rightDanger = 1.0f - result.fraction;
 	}
 
 	// slightly left of forward
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_avoidRange * (m_forward - sideOffset * m_perp), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_avoidRange * (m_forward - sideOffset * m_perp), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 	if (result.fraction < 1.0f)
 	{
 		// steer away
@@ -713,7 +713,7 @@ void CFishPool::Update( void )
 				if (!m_fishes[j]->IsAlive())
 					continue;
 
-				UTIL_TraceLine( m_fishes[i]->GetEngineObject()->GetAbsOrigin(), m_fishes[j]->GetEngineObject()->GetAbsOrigin(), MASK_PLAYERSOLID, m_fishes[i], COLLISION_GROUP_NONE, &result );
+				UTIL_TraceLine(EntityList(), m_fishes[i]->GetEngineObject()->GetAbsOrigin(), m_fishes[j]->GetEngineObject()->GetAbsOrigin(), MASK_PLAYERSOLID, m_fishes[i], COLLISION_GROUP_NONE, &result );
 				if (result.fraction >= 1.0f)
 				{
 					// the fish can see each other

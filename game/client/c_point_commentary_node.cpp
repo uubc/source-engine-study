@@ -347,7 +347,7 @@ bool IsNodeUnderCrosshair( C_BasePlayer *pPlayer )
 	AngleVectors( pPlayer->EyeAngles(), &vecForward );
 
 	g_bTracingVsCommentaryNodes = true;
-	UTIL_TraceLine( vecSrc, vecSrc + vecForward * MAX_TRACE_LENGTH, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecForward * MAX_TRACE_LENGTH, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 	g_bTracingVsCommentaryNodes = false;
 
 	if ( !tr.m_pEnt )

@@ -366,7 +366,7 @@ void CAPCController::TrackTarget( void )
 		return;
 	}
 
-	UTIL_TraceLine( barrelEnd, worldTargetPosition, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), barrelEnd, worldTargetPosition, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
 
 	lineOfSight = FALSE;
 	// No line of sight, don't track

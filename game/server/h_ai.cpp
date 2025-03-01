@@ -44,7 +44,7 @@ bool FBoxVisible( CBaseEntity *pLooker, CBaseEntity *pTarget, Vector &vecTargetO
 		vecTarget.y += random->RandomFloat( pTarget->GetEngineObject()->WorldAlignMins().y + flSize, pTarget->GetEngineObject()->WorldAlignMaxs().y - flSize);
 		vecTarget.z += random->RandomFloat( pTarget->GetEngineObject()->WorldAlignMins().z + flSize, pTarget->GetEngineObject()->WorldAlignMaxs().z - flSize);
 
-		UTIL_TraceLine(vecLookerOrigin, vecTarget, MASK_BLOCKLOS, pLooker, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTarget, MASK_BLOCKLOS, pLooker, COLLISION_GROUP_NONE, &tr);
 		
 		if (tr.fraction == 1.0)
 		{
@@ -105,7 +105,7 @@ Vector VecCheckToss( CBaseEntity *pEntity, ITraceFilter *pFilter, Vector vecSpot
 	// UNDONE: normalize any Z position differences between spot1 and spot2 so that triangle is always RIGHT
 	// get a rough idea of how high it can be thrown
 	vecMidPoint = vecSpot1 + (vecSpot2 - vecSpot1) * 0.5;
-	UTIL_TraceLine(vecMidPoint, vecMidPoint + Vector(0,0,TOSS_HEIGHT_MAX), MASK_SOLID_BRUSHONLY, pFilter, &tr);
+	UTIL_TraceLine(EntityList(), vecMidPoint, vecMidPoint + Vector(0,0,TOSS_HEIGHT_MAX), MASK_SOLID_BRUSHONLY, pFilter, &tr);
 	vecMidPoint = tr.endpos;
 
 	if( tr.fraction != 1.0 )
@@ -157,7 +157,7 @@ Vector VecCheckToss( CBaseEntity *pEntity, ITraceFilter *pFilter, Vector vecSpot
 	vecApex.z = vecMidPoint.z;
 
 	// JAY: Repro behavior from HL1 -- toss check went through gratings
-	UTIL_TraceLine(vecSpot1, vecApex, (MASK_SOLID&(~CONTENTS_GRATE)), pFilter, &tr);
+	UTIL_TraceLine(EntityList(), vecSpot1, vecApex, (MASK_SOLID&(~CONTENTS_GRATE)), pFilter, &tr);
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -165,7 +165,7 @@ Vector VecCheckToss( CBaseEntity *pEntity, ITraceFilter *pFilter, Vector vecSpot
 	}
 
 	// UNDONE: either ignore NPCs or change it to not care if we hit our enemy
-	UTIL_TraceLine(vecSpot2, vecApex, (MASK_SOLID_BRUSHONLY&(~CONTENTS_GRATE)), pFilter, &tr); 
+	UTIL_TraceLine(EntityList(), vecSpot2, vecApex, (MASK_SOLID_BRUSHONLY&(~CONTENTS_GRATE)), pFilter, &tr);
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -175,7 +175,7 @@ Vector VecCheckToss( CBaseEntity *pEntity, ITraceFilter *pFilter, Vector vecSpot
 	if ( vecMins && vecMaxs )
 	{
 		// Check to ensure the entity's hull can travel the first half of the grenade throw
-		UTIL_TraceHull( vecSpot1, vecApex, *vecMins, *vecMaxs, (MASK_SOLID&(~CONTENTS_GRATE)), pFilter, &tr);		
+		UTIL_TraceHull(EntityList(), vecSpot1, vecApex, *vecMins, *vecMaxs, (MASK_SOLID&(~CONTENTS_GRATE)), pFilter, &tr);
 		if ( tr.fraction < 1.0 )
 			return vec3_origin;
 	}
@@ -229,7 +229,7 @@ Vector VecCheckThrow ( CBaseEntity *pEdict, const Vector &vecSpot1, Vector vecSp
 
 	
 	trace_t tr;
-	UTIL_TraceLine(vecSpot1, vecApex, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), vecSpot1, vecApex, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -239,7 +239,7 @@ Vector VecCheckThrow ( CBaseEntity *pEdict, const Vector &vecSpot1, Vector vecSp
 
 	//NDebugOverlay::Line( vecSpot1, vecApex, 0, 255, 0, true, 5.0 );
 
-	UTIL_TraceLine(vecSpot2, vecApex, MASK_SOLID_BRUSHONLY, pEdict, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), vecSpot2, vecApex, MASK_SOLID_BRUSHONLY, pEdict, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -252,7 +252,7 @@ Vector VecCheckThrow ( CBaseEntity *pEdict, const Vector &vecSpot1, Vector vecSp
 	if ( vecMins && vecMaxs )
 	{
 		// Check to ensure the entity's hull can travel the first half of the grenade throw
-		UTIL_TraceHull( vecSpot1, vecApex, *vecMins, *vecMaxs, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr);		
+		UTIL_TraceHull(EntityList(), vecSpot1, vecApex, *vecMins, *vecMaxs, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr);
 		if ( tr.fraction < 1.0 )
 		{
 			//NDebugOverlay::SweptBox( vecSpot1, tr.endpos, *vecMins, *vecMaxs, vec3_angle, 255, 0, 0, 64, 5.0 );

@@ -422,7 +422,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	if (pPlayerPortal)
 		UTIL_Portal_TraceRay(pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
 	else
-		UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
+		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
 	{
@@ -439,7 +439,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	if( pPlayerPortal )
 		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
 	else
-		UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
+		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
 	{
@@ -456,7 +456,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	if( pPlayerPortal )
 		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
 	else
-		UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
+		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
 	{
@@ -473,7 +473,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	if( pPlayerPortal )
 		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
 	else
-		UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
+		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
 	{

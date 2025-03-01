@@ -300,14 +300,14 @@ END_NETWORK_TABLE()
 		// Find our water surface by tracing up till we're out of the water
 		trace_t tr;
 		Vector vecTrace( 0, 0, MAX_WATER_SURFACE_DISTANCE );
-		UTIL_TraceLine( centerPoint, centerPoint + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), centerPoint, centerPoint + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 
 		// If we didn't start in water, we're above it
 		if ( tr.startsolid == false )
 		{
 			// Look downward to find the surface
 			vecTrace.Init( 0, 0, -MAX_WATER_SURFACE_DISTANCE );
-			UTIL_TraceLine( centerPoint, centerPoint + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), centerPoint, centerPoint + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 
 			// If we hit it, setup the explosion
 			if ( tr.fraction < 1.0f )

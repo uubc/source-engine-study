@@ -315,7 +315,7 @@ void CWeaponEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	Vector vecDest	= vecOrigSrc + (vecDir * MAX_TRACE_LENGTH);
 
 	trace_t	tr;
-	UTIL_TraceLine( vecOrigSrc, vecDest, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecOrigSrc, vecDest, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.allsolid )
 		return;

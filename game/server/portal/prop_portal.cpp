@@ -1303,7 +1303,7 @@ void CProp_Portal::Touch( IServerEntity *pOther )
 
 					trace_t tr;
 
-					UTIL_TraceLine( vOrigin, vOrigin - vForward * PORTAL_HALF_DEPTH, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceLine(EntityList(), vOrigin, vOrigin - vForward * PORTAL_HALF_DEPTH, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 					// Something went wrong
 					if ( tr.fraction == 1.0f && !tr.startsolid )
@@ -2028,7 +2028,7 @@ void CProp_Portal::InputSetActivatedState( inputdata_t &inputdata )
 		CTraceFilterTranslateClones traceFilterPortalShot( &baseFilter );
 
 		trace_t tr;
-		UTIL_TraceLine( vOrigin + vForward, vOrigin + vForward * -8.0f, MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
+		UTIL_TraceLine(EntityList(), vOrigin + vForward, vOrigin + vForward * -8.0f, MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
 
 		QAngle qAngles;
 		VectorAngles( tr.plane.normal, vUp, qAngles );

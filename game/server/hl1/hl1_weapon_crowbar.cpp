@@ -229,7 +229,7 @@ Activity CWeaponCrowbar::ChooseIntersectionPointAndActivity( trace_t &hitTrace, 
 	Vector vecSrc = hitTrace.startpos;
 
 	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc)*2);
-	UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
+	UTIL_TraceLine(EntityList(), vecSrc, vecHullEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
 	if ( tmpTrace.fraction == 1.0 )
 	{
 		for ( i = 0; i < 2; i++ )
@@ -242,7 +242,7 @@ Activity CWeaponCrowbar::ChooseIntersectionPointAndActivity( trace_t &hitTrace, 
 					vecEnd.y = vecHullEnd.y + minmaxs[j][1];
 					vecEnd.z = vecHullEnd.z + minmaxs[k][2];
 
-					UTIL_TraceLine( vecSrc, vecEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
+					UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
 					if ( tmpTrace.fraction < 1.0 )
 					{
 						float thisDistance = (tmpTrace.endpos - vecSrc).Length();
@@ -333,7 +333,7 @@ void CWeaponCrowbar::Swing( void )
 
 	Vector swingEnd = swingStart + forward * CROWBAR_RANGE;
 
-	UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &m_traceHit );
+	UTIL_TraceLine(EntityList(), swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &m_traceHit );
 	m_nHitActivity = ACT_VM_HITCENTER;
 
 	if ( m_traceHit.fraction == 1.0 )
@@ -343,7 +343,7 @@ void CWeaponCrowbar::Swing( void )
 		// Back off by hull "radius"
 		swingEnd -= forward * bludgeonHullRadius;
 
-		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &m_traceHit );
+		UTIL_TraceHull(EntityList(), swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &m_traceHit );
 		if ( m_traceHit.fraction < 1.0 )
 		{
 			m_nHitActivity = ChooseIntersectionPointAndActivity( m_traceHit, g_bludgeonMins, g_bludgeonMaxs, pOwner );

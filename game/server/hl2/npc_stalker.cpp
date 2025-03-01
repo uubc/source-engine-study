@@ -491,7 +491,7 @@ void CNPC_Stalker::UpdateAttackBeam( void )
 			}
 
 			trace_t tr;
-			AI_TraceLine( vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+			AI_TraceLine(EntityList(), vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 			// ---------------------------------------------
 			//  If beam not long enough, stop attacking
 			// ---------------------------------------------
@@ -910,7 +910,7 @@ void CNPC_Stalker::StartAttackBeam( void )
 	{
 		Vector vecSrc = LaserStartPosition(GetEngineObject()->GetAbsOrigin());
 		trace_t tr;
-		AI_TraceLine ( vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+		AI_TraceLine (EntityList(), vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 		if ( tr.fraction >= 1.0 )
 		{
 			// too far
@@ -1035,7 +1035,7 @@ void CNPC_Stalker::DrawAttackBeam(void)
 	// ---------------------------------------------
 	Vector vecSrc = LaserStartPosition(GetEngineObject()->GetAbsOrigin());
 	trace_t tr;
-	AI_TraceLine( vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), vecSrc, vecSrc + m_vLaserDir * MAX_STALKER_FIRE_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 	CalcBeamPosition();
 
@@ -1192,7 +1192,7 @@ bool CNPC_Stalker::InnateWeaponLOSCondition( const Vector &ownerPos, const Vecto
 	// Base class version assumes innate weapon position is at eye level
 	Vector barrelPos = LaserStartPosition(ownerPos);
 	trace_t tr;
-	AI_TraceLine( barrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), barrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 	if ( tr.fraction == 1.0 )
 	{

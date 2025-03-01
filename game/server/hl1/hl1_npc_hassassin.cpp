@@ -226,7 +226,7 @@ int CNPC_HAssassin::MeleeAttack1Conditions ( float flDot, float flDist )
 
 		Vector vecDest = GetEngineObject()->GetAbsOrigin() + Vector( random->RandomFloat( -64, 64), random->RandomFloat( -64, 64 ), 160 );
 
-		UTIL_TraceHull(GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 36 ), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 36 ), vecMin, vecMax, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 36 ), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 36 ), vecMin, vecMax, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		//NDebugOverlay::Box( GetAbsOrigin() + Vector( 0, 0, 36 ), vecMin, vecMax, 0,0, 255, 0, 2.0 );
 
@@ -263,7 +263,7 @@ int CNPC_HAssassin::RangeAttack1Conditions ( float flDot, float flDist )
 		Vector vecSrc = GetEngineObject()->GetAbsOrigin() + m_HackedGunPos;
 
 		// verify that a bullet fired from the gun will hit the enemy before the world.
-		UTIL_TraceLine( vecSrc, GetEnemy()->BodyTarget(vecSrc), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecSrc, GetEnemy()->BodyTarget(vecSrc), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 
 		if ( tr.fraction == 1.0 || tr.m_pEnt == GetEnemy() )
 		{

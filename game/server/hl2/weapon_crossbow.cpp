@@ -282,7 +282,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward );
 		VectorNormalize ( vForward );
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_BLOCKLOS, pOther, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_BLOCKLOS, pOther, COLLISION_GROUP_NONE, &tr2 );
 
 		if ( tr2.fraction != 1.0f )
 		{
@@ -668,7 +668,7 @@ void CWeaponCrossbow::FireBolt( void )
 	if( FStrEq(STRING(gpGlobals->mapname), "ep2_outland_10") )
 	{
 		trace_t tr;
-		UTIL_TraceLine( vecSrc, vecSrc + vecAiming * 24.0f, MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecAiming * 24.0f, MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.m_pEnt != NULL && ((CBaseEntity*)tr.m_pEnt)->Classify() == CLASS_PLAYER_ALLY_VITAL )
 		{

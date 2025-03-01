@@ -162,7 +162,7 @@ CScriptedTarget* CScriptedTarget::NextScriptedTarget(void)
 			//  Make sure there is a LOS between these two targets
 			// ----------------------------------------------------
 			trace_t tr;
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), pNextTarget->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), pNextTarget->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 			if (tr.fraction != 1.0)
 			{
 				Warning( "WARNING: Scripted Target from (%s) to (%s) is occluded!\n",GetDebugName(),pNextTarget->GetDebugName() );

@@ -167,7 +167,7 @@ void CDecal::TriggerDecal ( IServerEntity *pActivator, IServerEntity *pCaller, U
 	trace_t		trace;
 	int			entityIndex;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() - Vector(5,5,5), GetEngineObject()->GetAbsOrigin() + Vector(5,5,5), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() - Vector(5,5,5), GetEngineObject()->GetAbsOrigin() + Vector(5,5,5), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
 
 	entityIndex = trace.m_pEnt ? trace.m_pEnt->entindex() : 0;
 
@@ -232,7 +232,7 @@ void CDecal::StaticDecal( void )
 	int entityIndex, modelIndex = 0;
 
 	Vector position = GetEngineObject()->GetAbsOrigin();
-	UTIL_TraceLine( position - Vector(5,5,5), position + Vector(5,5,5),  MASK_SOLID, &traceFilter, &trace );
+	UTIL_TraceLine(EntityList(), position - Vector(5,5,5), position + Vector(5,5,5),  MASK_SOLID, &traceFilter, &trace );
 
 	bool canDraw = true;
 
@@ -1040,7 +1040,7 @@ void CWorld::RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrcIn, f
 
 		// Check that the explosion can 'see' this entity.
 		vecSpot = pEntity->BodyTarget(vecSrc, false);
-		UTIL_TraceLine(vecSrc, vecSpot, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecSrc, vecSpot, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
 
 		if (old_radius_damage.GetBool())
 		{
@@ -1072,11 +1072,11 @@ void CWorld::RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrcIn, f
 						VectorNormalize(vecDeflect);
 
 						// Trace along the surface that intercepted the blast...
-						UTIL_TraceLine(tr.endpos, tr.endpos + vecDeflect * ROBUST_RADIUS_PROBE_DIST, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
+						UTIL_TraceLine(EntityList(), tr.endpos, tr.endpos + vecDeflect * ROBUST_RADIUS_PROBE_DIST, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
 						//NDebugOverlay::Line( tr.startpos, tr.endpos, 255, 255, 0, false, 10 );
 
 						// ...to see if there's a nearby edge that the explosion would 'spill over' if the blast were fully simulated.
-						UTIL_TraceLine(tr.endpos, vecSpot, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
+						UTIL_TraceLine(EntityList(), tr.endpos, vecSpot, MASK_RADIUS_DAMAGE, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
 						//NDebugOverlay::Line( tr.startpos, tr.endpos, 255, 0, 0, false, 10 );
 
 						if (tr.fraction != 1.0 && tr.DidHitWorld())
@@ -1102,7 +1102,7 @@ void CWorld::RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrcIn, f
 					CBaseEntity* pBlockingEntity = (CBaseEntity*)tr.m_pEnt;
 					//Msg( "%s may be blocked by %s...", pEntity->GetClassname(), pBlockingEntity->GetClassname() );
 
-					UTIL_TraceLine(vecSrc, vecSpot, CONTENTS_SOLID, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
+					UTIL_TraceLine(EntityList(), vecSrc, vecSpot, CONTENTS_SOLID, info.GetInflictor(), COLLISION_GROUP_NONE, &tr);
 
 					if (tr.fraction != 1.0)
 					{
@@ -1549,4 +1549,12 @@ void CWorld::ClientSettingsChanged(CBasePlayer* pPlayer)
 CTacticalMissionManager* CWorld::TacticalMissionManagerFactory(void)
 {
 	return new CTacticalMissionManager;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Add an overlay line with padding on the start and end
+//-----------------------------------------------------------------------------
+void CWorld::DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration)
+{
+	NDebugOverlay::Line(vecAbsStart + Vector(0, 0, 0.1), vecAbsEnd + Vector(0, 0, 0.1), r, g, b, test, duration);
 }

@@ -548,7 +548,7 @@ bool CDODBipodWeapon::TestDeployAngle( CDODPlayer *pPlayer, float *flDeployedHei
 	else
 		filter = &undeployedFilter;
 
-	UTIL_TraceHull( vecForwardStart,
+	UTIL_TraceHull(EntityList(), vecForwardStart,
 		vecForwardStart + forward * ( flForwardTraceDist - 2 * vecDeployTraceBoxSize[0] ),
 		-vecDeployTraceBoxSize,
 		vecDeployTraceBoxSize,
@@ -603,7 +603,7 @@ bool CDODBipodWeapon::TestDeployAngle( CDODPlayer *pPlayer, float *flDeployedHei
 
 	while( maxAttempts > 0 )
 	{
-		UTIL_TraceHull( vecDownTraceStart,
+		UTIL_TraceHull(EntityList(), vecDownTraceStart,
 			vecDownTraceStart + Vector(0,0,iTraceHeight),	// trace forward one box width
 			-vecDeployTraceBoxSize,
 			vecDeployTraceBoxSize,

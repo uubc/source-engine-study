@@ -728,7 +728,7 @@ void CHunterFlechette::FlechetteTouch( IServerEntity *pOther )
 		VectorNormalize ( vForward );
 
 		trace_t	tr2;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_BLOCKLOS, pOther, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_BLOCKLOS, pOther, COLLISION_GROUP_NONE, &tr2 );
 
 		if ( tr2.fraction != 1.0f )
 		{
@@ -2577,7 +2577,7 @@ void CNPC_Hunter::GatherIndoorOutdoorConditions()
 	// whether we're indoors or out.
 	trace_t tr;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 40.0f * 12.0f ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 40.0f * 12.0f ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if( tr.fraction < 1.0f )
 	{
 		SetCondition( COND_HUNTER_IS_INDOORS );
@@ -3610,7 +3610,7 @@ void CNPC_Hunter::StartTask( const Task_t *pTask )
 				
 				// Try to find the ground at the sidestep position.
 				trace_t tr;
-				UTIL_TraceLine( vecPos, vecPos + Vector( 0, 0, -128 ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecPos, vecPos + Vector( 0, 0, -128 ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &tr );
 				if ( tr.fraction < 1.0f )
 				{
 					//NDebugOverlay::Line( vecPos, tr.endpos, 0, 255, 0, true, 10 ); 
@@ -3986,7 +3986,7 @@ bool CNPC_Hunter::EnemyIsRightInFrontOfMe( CBaseEntity **pEntity )
 		{
 			// He's in front of me, and close. Make sure he's not behind a wall.
 			trace_t tr;
-			UTIL_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), GetHullMins() * 0.5, GetHullMaxs() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceHull(EntityList(), WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), GetHullMins() * 0.5, GetHullMaxs() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 			if ( tr.m_pEnt == GetEnemy() )
 			{
 				*pEntity = (CBaseEntity*)tr.m_pEnt;
@@ -4456,7 +4456,7 @@ void CNPC_Hunter::HandleAnimEvent( animevent_t *pEvent )
 			vecTraceDir.z += random->RandomFloat( -0.1, 0.1 );
 
 			trace_t tr;
-			AI_TraceLine( vecOrigin, vecOrigin + ( vecTraceDir * 192.0f ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine(EntityList(), vecOrigin, vecOrigin + ( vecTraceDir * 192.0f ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction != 1.0 )
 			{
 				UTIL_BloodDecalTrace( &tr, BLOOD_COLOR_RED );
@@ -4867,14 +4867,14 @@ bool CNPC_Hunter::CanPlantHere( const Vector &vecPos )
 	bool bResult = false;
 
 	trace_t tr;
-	UTIL_TraceHull( vecPos, vecPos, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), vecPos, vecPos, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.startsolid )
 	{
 		// Try again, tracing down from above.
 		Vector vecStart = vecPos;
 		vecStart.z += hunter_plant_adjust_z.GetInt();
 		
-		UTIL_TraceHull( vecStart, vecPos, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vecStart, vecPos, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 	}
 	
 	if ( tr.startsolid )
@@ -4906,7 +4906,7 @@ int CNPC_Hunter::MeleeAttack1ConditionsVsEnemyInVehicle( CBaseCombatCharacter *p
 	Vector vecDelta = (pEnemy->WorldSpaceCenter() - WorldSpaceCenter());
 	VectorNormalize( vecDelta );
 	trace_t	tr;
-	AI_TraceHull( WorldSpaceCenter(), WorldSpaceCenter() + (vecDelta * 64), -Vector(8,8,8), Vector(8,8,8), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + (vecDelta * 64), -Vector(8,8,8), Vector(8,8,8), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction != 1.0 && tr.m_pEnt == pEnemy->GetVehicleEntity() )
 	{
 		// We're near the vehicle. Are we facing it?
@@ -4997,7 +4997,7 @@ int CNPC_Hunter::MeleeAttack1Conditions ( float flDot, float flDist )
 	GetVectors( &forward, NULL, NULL );
 
 	trace_t	tr;
-	AI_TraceHull( WorldSpaceCenter(), WorldSpaceCenter() + forward * HUNTER_MELEE_REACH, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + forward * HUNTER_MELEE_REACH, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction == 1.0 || !tr.m_pEnt )
 	{
@@ -5136,14 +5136,14 @@ bool CNPC_Hunter::WeaponLOSCondition(const Vector &ownerPos, const Vector &targe
 
 	trace_t tr;
 	Vector vFrom = ownerPos + GetViewOffset();
-	AI_TraceLine( vFrom, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vFrom, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( ( pTargetEnt && tr.m_pEnt == pTargetEnt) || tr.fraction == 1.0 || CanShootThrough( tr, targetPos ) )
 	{
 		static Vector vMins( -2.0, -2.0, -2.0 );
 		static Vector vMaxs( -vMins);
 		// Hit the enemy, or hit nothing (traced all the way to a nonsolid enemy like a bullseye)
-		AI_TraceHull( vFrom - Vector( 0, 0, 18 ), targetPos, vMins, vMaxs, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+		AI_TraceHull(EntityList(), vFrom - Vector( 0, 0, 18 ), targetPos, vMins, vMaxs, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 		if ( ( pTargetEnt && tr.m_pEnt == pTargetEnt) || tr.fraction == 1.0 || CanShootThrough( tr, targetPos ) )
 		{
@@ -5180,7 +5180,7 @@ CBaseEntity *CNPC_Hunter::MeleeAttack( float flDist, int iDamage, QAngle &qaView
 	if ( GetEnemy() )
 	{
 		trace_t	tr;
-		AI_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction < 1.0f )
 			return NULL;
@@ -5391,7 +5391,7 @@ bool CNPC_Hunter::CanShootThrough( const trace_t &tr, const Vector &vecTarget )
 
 	// Would a trace ignoring this entity continue to the target?
 	trace_t continuedTrace;
-	AI_TraceLine( tr.endpos, vecTarget, MASK_SHOT, tr.m_pEnt, COLLISION_GROUP_NONE, &continuedTrace );
+	AI_TraceLine(EntityList(), tr.endpos, vecTarget, MASK_SHOT, tr.m_pEnt, COLLISION_GROUP_NONE, &continuedTrace );
 
 	if ( continuedTrace.fraction != 1.0 )
 	{
@@ -6074,7 +6074,7 @@ bool CNPC_Hunter::IsJumpLegal(const Vector &startPos, const Vector &apex, const 
 	float MAX_JUMP_DROP		= 384.0f;
 
 	trace_t tr;	
-	UTIL_TraceHull( startPos, startPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), startPos, startPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.startsolid )
 	{
 		// Trying to start a jump in solid! Consider checking for this in CAI_MoveProbe::JumpMoveLimit.

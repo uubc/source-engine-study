@@ -993,7 +993,7 @@ void CNPC_BigMomma::LayHeadcrab( void )
 	}
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,100), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,100), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 	UTIL_DecalTrace( &tr, "MommaBlob" );
 
 	CPASAttenuationFilter filter( this );
@@ -1069,10 +1069,10 @@ Vector VecCheckSplatToss( CBaseEntity *pEnt, const Vector &vecSpot1, Vector vecS
 
 	// calculate the midpoint and apex of the 'triangle'
 	vecMidPoint = vecSpot1 + (vecSpot2 - vecSpot1) * 0.5;
-	UTIL_TraceLine(vecMidPoint, vecMidPoint + Vector(0,0,maxHeight), MASK_SOLID_BRUSHONLY, pEnt, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecMidPoint, vecMidPoint + Vector(0,0,maxHeight), MASK_SOLID_BRUSHONLY, pEnt, COLLISION_GROUP_NONE, &tr );
 	vecApex = tr.endpos;
 	
-	UTIL_TraceLine(vecSpot1, vecApex, MASK_SOLID, pEnt, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot1, vecApex, MASK_SOLID, pEnt, COLLISION_GROUP_NONE, &tr );
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -1259,7 +1259,7 @@ void CBMortar::Touch( IServerEntity *pOther )
 	if ( pOther->IsBSPModel() )
 	{
 		// make a splat on the wall
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		UTIL_DecalTrace( &tr, "MommaBlob" );
 	}
 	else

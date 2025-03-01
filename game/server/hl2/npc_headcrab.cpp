@@ -421,7 +421,7 @@ bool CBaseHeadcrab::IsFirmlyOnGround()
 		return false;
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, HEADCRAB_MAX_LEDGE_HEIGHT ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, HEADCRAB_MAX_LEDGE_HEIGHT ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 	return tr.fraction != 1.0;
 }
 
@@ -882,7 +882,7 @@ void CBaseHeadcrab::RunTask( const Task_t *pTask )
 
 				//Figure out where the headcrab is going to be in quarter of a second.
 				vecPrPos = GetEngineObject()->GetAbsOrigin() + (GetEngineObject()->GetAbsVelocity() * 0.25f );
-				UTIL_TraceHull( vecPrPos, vecPrPos, GetHullMins(), GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceHull(EntityList(), vecPrPos, vecPrPos, GetHullMins(), GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 				
 				if ( tr.startsolid == true || GetEngineObject()->GetFlags() & FL_ONGROUND )
 				{
@@ -1026,7 +1026,7 @@ void CBaseHeadcrab::GatherConditions( void )
 	{
 		// See if there's enough room for our hull to fit here. If so, unhide.
 		trace_t tr;
-		AI_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(),GetHullMins(), GetHullMaxs(), MASK_SHOT, this, GetEngineObject()->GetCollisionGroup(), &tr );
+		AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(),GetHullMins(), GetHullMaxs(), MASK_SHOT, this, GetEngineObject()->GetCollisionGroup(), &tr );
 		if ( tr.fraction == 1.0 )
 		{
 			SetCondition( COND_PROVOKED );
@@ -1397,7 +1397,7 @@ void CBaseHeadcrab::StartTask( const Task_t *pTask )
 	case TASK_HEADCRAB_CEILING_POSITION:
 		{
 			trace_t tr;
-			UTIL_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 512 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 512 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 			// GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 			GetEngineObject()->AddFlag(FL_FLY);
@@ -1628,7 +1628,7 @@ int CBaseHeadcrab::RangeAttack1Conditions( float flDot, float flDist )
 		bool bEnemyIsBullseye = ( dynamic_cast<CNPC_Bullseye *>(pEnemy) != NULL );
 
 		trace_t tr;
-		AI_TraceLine( EyePosition(), pEnemy->EyePosition(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceLine(EntityList(), EyePosition(), pEnemy->EyePosition(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.m_pEnt != GetEnemy() )
 		{
@@ -1649,7 +1649,7 @@ int CBaseHeadcrab::RangeAttack1Conditions( float flDot, float flDist )
 			vEndHullTrace *= 8.0;
 			vEndHullTrace += GetEngineObject()->GetAbsOrigin();
 
-			AI_TraceHull( vStartHullTrace, vEndHullTrace,GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+			AI_TraceHull(EntityList(), vStartHullTrace, vEndHullTrace,GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 			if ( tr.m_pEnt != NULL && tr.m_pEnt != GetEnemy() )
 			{
@@ -1695,7 +1695,7 @@ void CBaseHeadcrab::Touch( IServerEntity *pOther )
 			trace_t tr;
 			Vector vecDir = GetEngineObject()->GetAbsVelocity();
 			VectorNormalize(vecDir);
-			AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir * 100,
+			AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir * 100,
 				MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr); 
 			float dotPr = DotProduct(vecDir,tr.plane.normal);
 			if ((tr.fraction						!= 1.0) && 
@@ -1809,7 +1809,7 @@ void CBaseHeadcrab::Event_Killed( const CTakeDamageInfo &info )
 	if ( info.GetDamageType() & (DMG_GENERIC | DMG_PREVENT_PHYSICS_FORCE) )
 	{
 		trace_t	tr;
-		AI_TraceLine(GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		UTIL_DecalTrace( &tr, "YellowBlood" );
 	}
@@ -2221,7 +2221,7 @@ bool CBaseHeadcrab::ValidBurrowPoint( const Vector &point )
 {
 	trace_t	tr;
 
-	AI_TraceHull( point, point+Vector(0,0,1), GetHullMins(), GetHullMaxs(), 
+	AI_TraceHull(EntityList(), point, point+Vector(0,0,1), GetHullMins(), GetHullMaxs(),
 		MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 	// See if we were able to get there
@@ -2399,7 +2399,7 @@ void CBaseHeadcrab::InputDropFromCeiling( inputdata_t &inputdata )
 void CBaseHeadcrab::CreateDust( bool placeDecal )
 {
 	trace_t	tr;
-	AI_TraceLine(GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{
@@ -2930,7 +2930,7 @@ void CFastHeadcrab::StartTask( const Task_t *pTask )
 
 			// This could be a problem. Since I'm adjusting the headcrab's gravity for flight, this check actually
 			// checks farther ahead than the crab will actually jump. (sjb)
-			AI_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir,GetHullMins(), GetHullMaxs(), MASK_SHOT, this, GetEngineObject()->GetCollisionGroup(), &tr );
+			AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecDir,GetHullMins(), GetHullMaxs(), MASK_SHOT, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 			//NDebugOverlay::Line( tr.startpos, tr.endpos, 0, 255, 0, false, 1.0 );
 

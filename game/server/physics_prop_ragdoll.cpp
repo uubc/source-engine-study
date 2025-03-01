@@ -516,7 +516,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 		pObj->GetPosition( &vecPos, NULL );
  
 		trace_t tr;
-		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		switch( random->RandomInt( 1, 3 ) )
 		{
@@ -543,7 +543,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 		pObj->GetPosition( &vecPos, NULL );
  
 		trace_t tr;
-		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		UTIL_BloodDecalTrace( &tr, bAlienBloodSplat ? BLOOD_COLOR_GREEN : BLOOD_COLOR_RED );
 	}

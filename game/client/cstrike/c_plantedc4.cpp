@@ -153,13 +153,13 @@ void C_PlantedC4::ClientThink( void )
 				{
 					// trace from the player to the water
 					trace_t waterTrace;
-					UTIL_TraceLine( eyes, vPos, (CONTENTS_WATER|CONTENTS_SLIME), player, COLLISION_GROUP_NONE, &waterTrace );
+					UTIL_TraceLine(EntityList(), eyes, vPos, (CONTENTS_WATER|CONTENTS_SLIME), player, COLLISION_GROUP_NONE, &waterTrace );
 
 					if( waterTrace.allsolid != 1 )
 					{
 						// now trace from the C4 to the edge of the water (in case there was something solid in the water)
 						trace_t solidTrace;
-						UTIL_TraceLine( vPos, waterTrace.endpos, MASK_SOLID, this, COLLISION_GROUP_NONE, &solidTrace );
+						UTIL_TraceLine(EntityList(), vPos, waterTrace.endpos, MASK_SOLID, this, COLLISION_GROUP_NONE, &solidTrace );
 
 						if( solidTrace.allsolid != 1 )
 						{

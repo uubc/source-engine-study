@@ -127,7 +127,7 @@ bool Path::ComputePathDetails( INextBot *bot, const Vector &start )
 					
 					trace_t result;
 					NextBotTraceFilterIgnoreActors filter( bot->GetEntity(), COLLISION_GROUP_NONE );
-					UTIL_TraceHull( pos, lowerPos,
+					UTIL_TraceHull(EntityList(), pos, lowerPos,
 									Vector( -halfWidth, -halfWidth, stepHeight ), Vector( halfWidth, halfWidth, hullHeight ), 
 									bot->GetBodyInterface()->GetSolidMask(), &filter, &result );
 					

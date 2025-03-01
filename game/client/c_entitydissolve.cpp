@@ -216,7 +216,7 @@ void C_EntityDissolve::BuildTeslaEffect( mstudiobbox_t *pHitBox, const matrix3x4
 			vecForward = RandomVector( -1, 1 );
 		}
 
-		UTIL_TraceLine( vecOrigin, vecOrigin + (vecForward * 192), MASK_SHOT, pEntity, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin + (vecForward * 192), MASK_SHOT, pEntity, COLLISION_GROUP_NONE, &tr );
 	} while ( tr.fraction >= 1.0 && iTries < 3 );
 
 	Vector vecEnd = tr.endpos - (vecForward * 8);

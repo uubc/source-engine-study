@@ -320,7 +320,7 @@ inline void UTIL_TraceLineIgnoreTwoEntities( const Vector& vecAbsStart, const Ve
 	ConVarRef r_visualizetraces("r_visualizetraces");
 	if( r_visualizetraces.GetBool() )
 	{
-		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
+		EntityList()->GetWorld()->DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
 	}
 }
 
@@ -525,7 +525,7 @@ void CCSPlayer::FireBullet(
 			if ( enginetrace->GetPointContents( tr.endpos ) & (CONTENTS_WATER|CONTENTS_SLIME) )
 			{
 				trace_t waterTrace;
-				UTIL_TraceLine( vecSrc, tr.endpos, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &waterTrace );
+				UTIL_TraceLine(EntityList(), vecSrc, tr.endpos, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &waterTrace );
 
 				if( waterTrace.allsolid != 1 )
 				{
@@ -608,12 +608,12 @@ void CCSPlayer::FireBullet(
 
 		// find exact penetration exit
 		trace_t exitTr;
-		UTIL_TraceLine( penetrationEnd, tr.endpos, CS_MASK_SHOOT|CONTENTS_HITBOX, NULL, &exitTr );
+		UTIL_TraceLine(EntityList(), penetrationEnd, tr.endpos, CS_MASK_SHOOT|CONTENTS_HITBOX, NULL, &exitTr );
 
 		if( exitTr.m_pEnt != tr.m_pEnt && exitTr.m_pEnt != NULL )
 		{
 			// something was blocking, trace again
-			UTIL_TraceLine( penetrationEnd, tr.endpos, CS_MASK_SHOOT|CONTENTS_HITBOX, exitTr.m_pEnt, COLLISION_GROUP_NONE, &exitTr );
+			UTIL_TraceLine(EntityList(), penetrationEnd, tr.endpos, CS_MASK_SHOOT|CONTENTS_HITBOX, exitTr.m_pEnt, COLLISION_GROUP_NONE, &exitTr );
 		}
 
 		// get material at exit point

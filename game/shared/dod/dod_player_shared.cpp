@@ -168,7 +168,7 @@ static bool TraceToExit( const Vector &start,
 		//int contents = UTIL_PointContents( end );
 
 		trace_t tr;
-		UTIL_TraceLine( end, end, MASK_SOLID | CONTENTS_HITBOX, NULL, &tr );
+		UTIL_TraceLine(EntityList(), end, end, MASK_SOLID | CONTENTS_HITBOX, NULL, &tr );
 
 		//if ( (UTIL_PointContents ( end ) & MASK_SOLID) == 0 )
 
@@ -219,7 +219,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 
 		// skip the shooter always
 		CTraceFilterSkipTwoEntities ignoreShooterAndPrevious( this, pPreviousHit, iCollisionGroup );
-		UTIL_TraceLine( vecSrc, vecEnd, iTraceMask, &ignoreShooterAndPrevious, &tr );
+		UTIL_TraceLine(EntityList(), vecSrc, vecEnd, iTraceMask, &ignoreShooterAndPrevious, &tr );
 
 		const float rayExtension = 40.0f;
 		UTIL_ClipTraceToPlayers( vecSrc, vecEnd + info.m_vecDirShooting * rayExtension, iTraceMask, &ignoreShooterAndPrevious, &tr );
@@ -257,7 +257,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 					trace_t newTr;
 
 					// re-fire the trace
-					UTIL_TraceLine( vecSrc, vecEnd, iTraceMask, &ignoreShooterAndPrevious, &newTr );
+					UTIL_TraceLine(EntityList(), vecSrc, vecEnd, iTraceMask, &ignoreShooterAndPrevious, &newTr );
 
 					// if we hit the same player in the chest
 					if ( tr.m_pEnt == newTr.m_pEnt )
@@ -310,7 +310,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 		if ( enginetrace->GetPointContents( tr.endpos ) & (CONTENTS_WATER|CONTENTS_SLIME) )
 		{	
 			trace_t waterTrace;
-			UTIL_TraceLine( vecSrc, tr.endpos, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), this, iCollisionGroup, &waterTrace );
+			UTIL_TraceLine(EntityList(), vecSrc, tr.endpos, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), this, iCollisionGroup, &waterTrace );
 			
 			if( waterTrace.allsolid != 1 )
 			{
@@ -392,7 +392,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 
 		// find exact penetration exit
 		CTraceFilterSimple ignoreShooter( this, iCollisionGroup );
-		UTIL_TraceLine( penetrationEnd, tr.endpos, iTraceMask, &ignoreShooter, &reverseTr );
+		UTIL_TraceLine(EntityList(), penetrationEnd, tr.endpos, iTraceMask, &ignoreShooter, &reverseTr );
 
 		// Now we can apply the damage, after we have traced the entity
 		// so it doesn't break or die before we have a change to test against it
@@ -405,7 +405,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 		{
 			// something was blocking, trace again
 			CTraceFilterSkipTwoEntities ignoreShooterAndBlocker( this, reverseTr.m_pEnt, iCollisionGroup );
-			UTIL_TraceLine( penetrationEnd, tr.endpos, iTraceMask, &ignoreShooterAndBlocker, &reverseTr );
+			UTIL_TraceLine(EntityList(), penetrationEnd, tr.endpos, iTraceMask, &ignoreShooterAndBlocker, &reverseTr );
 		}
 
 		if ( sv_showimpacts.GetBool() )

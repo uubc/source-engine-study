@@ -1034,7 +1034,7 @@ void CNPC_SecurityCamera::InputRagdoll( inputdata_t &inputdata )
 	GetVectors( &vForward, NULL, NULL );
 
 	trace_t tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin() + 10.0f * vForward, GetEngineObject()->GetAbsOrigin() -60.0f * vForward, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin() + 10.0f * vForward, GetEngineObject()->GetAbsOrigin() -60.0f * vForward, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.m_pEnt )
 		UTIL_DecalTrace( &tr, "SecurityCamera.Detachment" );
 

@@ -127,7 +127,7 @@ void NWCEdit::CreateAINode( CBasePlayer *pPlayer )
 
 		// Make sure we can see the node
 		trace_t tr;
-		UTIL_TraceLine(pPlayer->EyePosition(), vNewNodePos, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), vNewNodePos, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 		if (tr.fraction == 1.0)
 		{
 			bPositionValid = true;
@@ -141,7 +141,7 @@ void NWCEdit::CreateAINode( CBasePlayer *pPlayer )
 		Vector	startTrace	= pPlayer->EyePosition();
 		Vector	endTrace	= pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH;
 		trace_t	tr;
-		UTIL_TraceLine(startTrace,endTrace,MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), startTrace,endTrace,MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0)
 		{
 			// Raise the end position up off the floor, place the node and drop him down
@@ -186,7 +186,7 @@ void NWCEdit::CreateAINode( CBasePlayer *pPlayer )
 		Vector vUpBit = testHull->GetEngineObject()->GetAbsOrigin();
 		vUpBit.z += 1;
 		trace_t tr;
-		UTIL_TraceHull( testHull->GetEngineObject()->GetAbsOrigin(), vUpBit, NAI_Hull::Mins(hullType),
+		UTIL_TraceHull(EntityList(), testHull->GetEngineObject()->GetAbsOrigin(), vUpBit, NAI_Hull::Mins(hullType),
 			NAI_Hull::Maxs(hullType), MASK_NPCSOLID, testHull, COLLISION_GROUP_NONE, &tr );
 		if (tr.startsolid || tr.fraction != 1.0)
 		{
@@ -749,7 +749,7 @@ CON_COMMAND( hammer_update_entity, "Updates the entity's position/angles when in
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine(pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
 			MASK_SHOT_HULL|CONTENTS_GRATE|CONTENTS_DEBRIS, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.DidHit() && !tr.DidHitWorld() )

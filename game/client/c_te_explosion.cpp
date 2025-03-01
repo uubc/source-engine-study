@@ -66,7 +66,7 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 			continue;
 
 		trace_t	tr;
-		UTIL_TraceLine( m_vecOrigin, position, MASK_SHOT_HULL, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), m_vecOrigin, position, MASK_SHOT_HULL, NULL, COLLISION_GROUP_NONE, &tr );
 
 		// debugoverlay->AddLineOverlay( m_vecOrigin, position, 0,255,0, true, 18.0 );
 

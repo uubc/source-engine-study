@@ -345,7 +345,7 @@ void CNPC_Crow::InputFlyAway( inputdata_t &inputdata )
 		if ( pEnt )
 		{
 			trace_t tr;
-			AI_TraceLine ( EyePosition(), pEnt->GetEngineObject()->GetAbsOrigin(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine (EntityList(), EyePosition(), pEnt->GetEngineObject()->GetAbsOrigin(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction != 1.0f )
 				 return;
@@ -649,7 +649,7 @@ bool CNPC_Crow::Probe( const Vector &vecMoveDir, float flSpeed, Vector &vecDefle
 	// Look 1/2 second ahead.
 	//
 	trace_t tr;
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecMoveDir * flSpeed, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, HL2COLLISION_GROUP_CROW, &tr );
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecMoveDir * flSpeed, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, HL2COLLISION_GROUP_CROW, &tr );
 	if ( tr.fraction < 1.0f )
 	{
 		//
@@ -1004,7 +1004,7 @@ void CNPC_Crow::RunTask( const Task_t *pTask )
 				// We've hopped off of something! See if we're going to fall very far.
 				//
 				trace_t tr;
-				AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -32 ), MASK_SOLID, this, HL2COLLISION_GROUP_CROW, &tr );
+				AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -32 ), MASK_SOLID, this, HL2COLLISION_GROUP_CROW, &tr );
 				if ( tr.fraction == 1.0f )
 				{
 					//

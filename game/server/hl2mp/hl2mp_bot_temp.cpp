@@ -273,7 +273,7 @@ void Bot_Think( CHL2MP_Player *pBot )
 
 				vecEnd = vecSrc + forward * 10;
 
-				UTIL_TraceHull( vecSrc, vecEnd, VEC_HULL_MIN_SCALED( pBot ), VEC_HULL_MAX_SCALED( pBot ), 
+				UTIL_TraceHull(EntityList(), vecSrc, vecEnd, VEC_HULL_MIN_SCALED( pBot ), VEC_HULL_MAX_SCALED( pBot ),
 					MASK_PLAYERSOLID, pBot, COLLISION_GROUP_NONE, &trace );
 
 				if ( trace.fraction == 1.0 )

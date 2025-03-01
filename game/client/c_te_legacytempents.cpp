@@ -420,7 +420,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 					collisionGroup = GetEngineObject()->GetCollisionGroup();
 				}
 
-				UTIL_TraceLine(vPrevOrigin, GetEngineObject()->GetLocalOrigin(), MASK_SOLID, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetClientEntity() : NULL, collisionGroup, & trace);
+				UTIL_TraceLine(EntityList(), vPrevOrigin, GetEngineObject()->GetLocalOrigin(), MASK_SOLID, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetClientEntity() : NULL, collisionGroup, & trace);
 
 				if ( (flags & FTENT_COLLIDEPROPS) && trace.m_pEnt )
 				{
@@ -447,7 +447,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 		else if ( flags & FTENT_COLLIDEWORLD )
 		{
 			CTraceFilterWorldOnly traceFilter;
-			UTIL_TraceLine( m_vecPrevLocalOrigin, GetEngineObject()->GetLocalOrigin(), MASK_SOLID, &traceFilter, &trace );
+			UTIL_TraceLine(EntityList(), m_vecPrevLocalOrigin, GetEngineObject()->GetLocalOrigin(), MASK_SOLID, &traceFilter, &trace );
 			if ( trace.fraction != 1 )
 			{
 				traceFraction = trace.fraction;

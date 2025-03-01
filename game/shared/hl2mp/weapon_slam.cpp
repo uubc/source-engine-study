@@ -368,7 +368,7 @@ void CWeapon_SLAM::TripmineAttach( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
 	
 	if (tr.fraction < 1.0)
 	{
@@ -419,7 +419,7 @@ void CWeapon_SLAM::StartTripmineAttach( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 	
 	if (tr.fraction < 1.0)
 	{
@@ -570,7 +570,7 @@ void CWeapon_SLAM::SatchelAttach( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
 	
 	if (tr.fraction < 1.0)
 	{
@@ -616,7 +616,7 @@ void CWeapon_SLAM::StartSatchelAttach( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + (vecAiming * 128), MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
 	
 	if (tr.fraction < 1.0)
 	{
@@ -735,7 +735,7 @@ bool CWeapon_SLAM::CanAttachSLAM( void )
 	trace_t tr;
 
 	Vector	vecEnd = vecSrc + (vecAiming * 42);
-	UTIL_TraceLine( vecSrc, vecEnd, MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr );
 	
 	if (tr.fraction < 1.0)
 	{

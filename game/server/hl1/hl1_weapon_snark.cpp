@@ -106,7 +106,7 @@ void CWeaponSnark::PrimaryAttack( void )
 	Vector vecStart	= pPlayer->WorldSpaceCenter() + (vecForward * 20);
 	Vector vecEnd	= vecStart + (vecForward * 44);
 	trace_t tr;
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.allsolid || tr.startsolid || tr.fraction <= 0.25 )
 		return;
 

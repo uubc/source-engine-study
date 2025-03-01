@@ -806,7 +806,7 @@ float GlowSightDistance( const Vector &glowOrigin, bool bShouldTrace )
 		
 		CTraceFilterGlow filter(NULL, COLLISION_GROUP_NONE);
 		trace_t tr;
-		UTIL_TraceLine(g_pViewRender->CurrentViewOrigin(), end, traceFlags, &filter, &tr );
+		UTIL_TraceLine(EntityList(), g_pViewRender->CurrentViewOrigin(), end, traceFlags, &filter, &tr );
 		if ( tr.fraction != 1.0f )
 			return -1;
 	}

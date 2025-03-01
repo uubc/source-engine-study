@@ -329,7 +329,7 @@ void CWeaponIFMSteadyCam::LockCamera()
 	VectorMA( vTraceStart, 10000.0f, vTraceDir, vTraceEnd);
 
 	trace_t tr;
-	UTIL_TraceLine( vTraceStart, vTraceEnd, MASK_ALL, GetPlayerOwner(), COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vTraceStart, vTraceEnd, MASK_ALL, GetPlayerOwner(), COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction == 1.0f )
 	{
 		m_bIsLocked = false;

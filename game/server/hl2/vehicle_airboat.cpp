@@ -1098,7 +1098,7 @@ void CPropAirboat::ComputeAimPoint( Vector *pVecAimPoint )
 	Vector vecEndPos;
 	VectorMA( m_hPlayer->EyePosition(), MAX_TRACE_LENGTH, vecEyeDirection, vecEndPos );
 	trace_t	trace;
-	UTIL_TraceLine( m_hPlayer->EyePosition(), vecEndPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), m_hPlayer->EyePosition(), vecEndPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
 	*pVecAimPoint = trace.endpos;
 }
 
@@ -1135,7 +1135,7 @@ void CPropAirboat::Think(void)
 	vecMaxs.z = 0.1f;
 
 	trace_t	tr;
-	UTIL_TraceHull( startPos, endPos, vecMins, vecMaxs, (CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), startPos, endPos, vecMins, vecMaxs, (CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr );
 
 	// If we hit something, then save off the info
 	if ( tr.fraction != 1.0f )

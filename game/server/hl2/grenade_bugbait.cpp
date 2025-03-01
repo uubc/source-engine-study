@@ -178,7 +178,7 @@ void CGrenadeBugBait::BugBaitTouch( IServerEntity *pOther )
 
 	VectorNormalize( traceDir );
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + traceDir * 64, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + traceDir * 64, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{
@@ -232,7 +232,7 @@ bool CGrenadeBugBait::ActivateBugbaitTargets( CBaseEntity *pOwner, Vector vecOri
 					if ( pCombine != NULL )
 					{
 						trace_t tr;
-						UTIL_TraceLine( vecOrigin, pCombine->EyePosition(), MASK_ALL, pOwner, COLLISION_GROUP_NONE, &tr);
+						UTIL_TraceLine(EntityList(), vecOrigin, pCombine->EyePosition(), MASK_ALL, pOwner, COLLISION_GROUP_NONE, &tr);
 
 						if ( tr.fraction == 1.0 || tr.m_pEnt == pCombine )
 						{

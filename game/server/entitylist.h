@@ -3221,7 +3221,7 @@ public:
 			ConVarRef r_visualizetraces("r_visualizetraces");
 			if (r_visualizetraces.GetBool())
 			{
-				DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+				GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
 			}
 			if (tr.fraction != 1.0 && tr.DidHitNonWorldEntity())
 			{

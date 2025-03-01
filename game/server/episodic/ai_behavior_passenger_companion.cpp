@@ -205,7 +205,7 @@ void CAI_PassengerBehaviorCompanion::GatherVehicleCollisionConditions( const Vec
 		CTraceFilterNoNPCsOrPlayer filter( m_hVehicle, COLLISION_GROUP_NONE ); // We don't care about NPCs or the player (certainly if they're in the vehicle!)
 
 		trace_t	tr;
-		UTIL_TraceHull( m_hVehicle->GetEngineObject()->GetAbsOrigin(), m_hVehicle->GetEngineObject()->GetAbsOrigin() + ( vForward * distance ), mins, maxs, MASK_SOLID, &filter, &tr );
+		UTIL_TraceHull(EntityList(), m_hVehicle->GetEngineObject()->GetAbsOrigin(), m_hVehicle->GetEngineObject()->GetAbsOrigin() + ( vForward * distance ), mins, maxs, MASK_SOLID, &filter, &tr );
 		
 		bool bWarnCollision = true;
 		if ( tr.DidHit() )

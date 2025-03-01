@@ -2145,7 +2145,7 @@ Vector CNPC_Citizen::GetActualShootPosition( const Vector &shootOrigin )
 				// Add some random height to it
 				vecTest.z += RandomFloat( -512, 512 );
 				trace_t tr;
-				AI_TraceLine( shootOrigin, vecTest, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+				AI_TraceLine(EntityList(), shootOrigin, vecTest, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 				// If we can see the point, it's a clear shot
 				if ( tr.fraction == 1.0 && tr.m_pEnt != GetEnemy() )

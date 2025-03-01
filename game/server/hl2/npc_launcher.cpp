@@ -350,7 +350,7 @@ bool CNPC_Launcher::IsValidEnemy( CBaseEntity *pTarget )
 	// Use position above actual barral based on vertical launch speed
 	Vector vStartPos = GetEngineObject()->GetAbsOrigin() + Vector(0,0,0.2*m_flLaunchSpeed);
 	Vector vEndPos	 = pTarget->GetEngineObject()->GetAbsOrigin();
-	AI_TraceLine( vStartPos, vEndPos, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vStartPos, vEndPos, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
 
 	if (tr.fraction == 1.0)
 	{

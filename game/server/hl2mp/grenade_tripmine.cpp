@@ -156,7 +156,7 @@ void CTripmineGrenade::MakeBeam( void )
 {
 	trace_t tr;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	m_flBeamLength = tr.fraction;
 
@@ -172,7 +172,7 @@ void CTripmineGrenade::MakeBeam( void )
 	if (pBCC)
 	{
 		GetEngineObject()->SetOwnerEntity( pBCC->GetEngineObject() );
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		m_flBeamLength = tr.fraction;
 		GetEngineObject()->SetOwnerEntity( NULL );
 		
@@ -217,7 +217,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 	trace_t tr;
 
 	// NOT MASK_SHOT because we want only simple hit boxes
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	// ALERT( at_console, "%f : %f\n", tr.flFraction, m_flBeamLength );
 
@@ -287,7 +287,7 @@ void CTripmineGrenade::DelayDeathThink( void )
 {
 	KillBeam();
 	trace_t tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 64,  MASK_SOLID, this, COLLISION_GROUP_NONE, & tr);
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsOrigin() - m_vecDir * 64,  MASK_SOLID, this, COLLISION_GROUP_NONE, & tr);
 	UTIL_ScreenShake(GetEngineObject()->GetAbsOrigin(), 25.0, 150.0, 1.0, 750, SHAKE_START );
 
 	ExplosionCreate(GetEngineObject()->GetAbsOrigin() + m_vecDir * 8, GetEngineObject()->GetAbsAngles(), m_hOwner, GetDamage(), GetDamageRadius(),

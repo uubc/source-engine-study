@@ -36,7 +36,7 @@ static void Physics_TraceHull( C_BaseEntity* pBaseEntity, const Vector &vecStart
 	else
 #endif
 	{
-		UTIL_TraceHull( vecStart, vecEnd, hullMin, hullMax, mask, 
+		UTIL_TraceHull(EntityList(), vecStart, vecEnd, hullMin, hullMax, mask,
 			pBaseEntity, pBaseEntity->GetEngineObject()->GetCollisionGroup(), ptr );
 	}
 }

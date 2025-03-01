@@ -23,7 +23,7 @@ CON_COMMAND_F( simple_bot_add, "Add a simple bot.", FCVAR_CHEAT )
 	player->EyeVectors( &forward );
 
 	trace_t result;
-	UTIL_TraceLine( player->EyePosition(), player->EyePosition() + 999999.9f * forward, MASK_BLOCKLOS_AND_NPCS|CONTENTS_IGNORE_NODRAW_OPAQUE, player, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), player->EyePosition(), player->EyePosition() + 999999.9f * forward, MASK_BLOCKLOS_AND_NPCS|CONTENTS_IGNORE_NODRAW_OPAQUE, player, COLLISION_GROUP_NONE, &result );
 	if ( !result.DidHit() )
 	{
 		return;

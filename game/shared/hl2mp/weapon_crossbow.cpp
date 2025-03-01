@@ -252,7 +252,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward );
 		VectorNormalize ( vForward );
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
 
 		if ( tr2.fraction != 1.0f )
 		{

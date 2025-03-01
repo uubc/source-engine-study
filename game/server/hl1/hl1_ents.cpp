@@ -749,7 +749,7 @@ void CFuncMortarField::InputTrigger( inputdata_t &inputdata )
 		vecSpot.y += random->RandomFloat( -m_flSpread, m_flSpread );
 
 		trace_t tr;
-		UTIL_TraceLine( vecSpot, vecSpot + Vector( 0, 0, -1 ) * MAX_TRACE_LENGTH, MASK_SOLID_BRUSHONLY, this,  COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecSpot, vecSpot + Vector( 0, 0, -1 ) * MAX_TRACE_LENGTH, MASK_SOLID_BRUSHONLY, this,  COLLISION_GROUP_NONE, &tr );
 
 		CBaseEntity *pMortar = Create( "monster_mortar", tr.endpos, QAngle( 0, 0, 0 ), (CBaseEntity*)inputdata.pActivator );
 		pMortar->GetEngineObject()->SetNextThink( gpGlobals->curtime + t );
@@ -813,7 +813,7 @@ void CMortar::MortarExplode( void )
 	UTIL_Beam( vecStart, vecEnd, m_spriteTexture, 0, 0, 0, 0.5, 4.0, 4.0, 100, 0, 255, 160, 100, 128, 0 );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 1024 ), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_ALL, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 1024 ), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_ALL, this, COLLISION_GROUP_NONE, &tr );
 
 
 	Explode( &tr, DMG_BLAST | DMG_MISSILEDEFENSE );
@@ -1510,7 +1510,7 @@ void CHL1Gib::BounceGibTouch ( IServerEntity *pOther )
 		if ( m_cBloodDecals > 0 && m_bloodColor != DONT_BLEED )
 		{
 			vecSpot = GetEngineObject()->GetAbsOrigin() + Vector ( 0 , 0 , 8 );//move up a bit, and trace down.
-			UTIL_TraceLine ( vecSpot, vecSpot + Vector ( 0, 0, -24 ),  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine (EntityList(), vecSpot, vecSpot + Vector ( 0, 0, -24 ),  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 
 			UTIL_BloodDecalTrace( &tr, m_bloodColor );
 
@@ -1546,7 +1546,7 @@ void CHL1Gib::StickyGibTouch ( IServerEntity *pOther )
 		return;
 	}
 
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 32,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 32,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	UTIL_BloodDecalTrace( &tr, m_bloodColor );
 

@@ -195,7 +195,7 @@ void GetColorForSurface( trace_t *trace, Vector *color );
 void C_TEAntlionDust::GetDustColor( Vector &color )
 {
 	trace_t	tr;
-	UTIL_TraceLine( m_vecOrigin+Vector(0,0,1), m_vecOrigin+Vector(0,0,-32), 
+	UTIL_TraceLine(EntityList(), m_vecOrigin+Vector(0,0,1), m_vecOrigin+Vector(0,0,-32),
 		MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )

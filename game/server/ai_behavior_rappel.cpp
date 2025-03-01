@@ -138,7 +138,7 @@ void CAI_RappelBehavior::SetDescentSpeed()
 	// Trace to the floor and see how close we're getting. Slow down if we're close.
 	// STOP if there's an NPC under us.
 	trace_t tr;
-	AI_TraceLine( GetOuter()->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 8192 ), MASK_SHOT, GetOuter(), COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), GetOuter()->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 8192 ), MASK_SHOT, GetOuter(), COLLISION_GROUP_NONE, &tr );
 
 	float flDist = fabs( GetOuter()->GetEngineObject()->GetAbsOrigin().z - tr.endpos.z );
 

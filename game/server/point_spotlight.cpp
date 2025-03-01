@@ -333,7 +333,7 @@ void CPointSpotlight::SpotlightCreate(void)
 	AngleVectors(GetEngineObject()->GetAbsAngles(), &m_vSpotlightDir );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vSpotlightDir * m_flSpotlightMaxLength, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vSpotlightDir * m_flSpotlightMaxLength, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 
 	m_hSpotlightTarget = (CSpotlightEnd*)EntityList()->CreateEntityByName( "spotlight_end" );
 	m_hSpotlightTarget->Spawn();
@@ -382,7 +382,7 @@ Vector CPointSpotlight::SpotlightCurrentPos(void)
 
 	//	Get beam end point.  Only collide with solid objects, not npcs
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + (m_vSpotlightDir * 2 * m_flSpotlightMaxLength), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + (m_vSpotlightDir * 2 * m_flSpotlightMaxLength), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	return tr.endpos;
 }
 

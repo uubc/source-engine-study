@@ -2101,7 +2101,7 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 			Vector vecBBoxMax = CRATE_BBOX_MAX;
 			vecBBoxMax.z = 5;
 			Vector pEndPoint = vecBottom + Vector(0, 0, -1) * ( flAltitude - 12 );
-			AI_TraceHull( vecBottom, pEndPoint, vecBBoxMin, vecBBoxMax, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceHull(EntityList(), vecBottom, pEndPoint, vecBBoxMin, vecBBoxMax, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction < 1.0f )
 			{
@@ -2407,7 +2407,7 @@ void CNPC_CombineDropship::SpawnTroop( void )
 	// Make sure there are no NPCs on the spot
 	trace_t tr;
 	CTraceFilterOnlyNPCsAndPlayer filter( this, COLLISION_GROUP_NONE );
-	AI_TraceHull( vecDeployEndPoint, vecDeployEndPoint, vecNPCMins, vecNPCMaxs, MASK_SOLID, &filter, &tr );
+	AI_TraceHull(EntityList(), vecDeployEndPoint, vecDeployEndPoint, vecNPCMins, vecNPCMaxs, MASK_SOLID, &filter, &tr );
 	if ( tr.m_pEnt )
 	{
 		if ( g_debug_dropship.GetInt() == 2 )
@@ -2493,7 +2493,7 @@ Vector CNPC_CombineDropship::GetDropoffFinishPosition( Vector vecOrigin, CAI_Bas
 	}
 
 	trace_t tr;
-	AI_TraceHull( vecOrigin + Vector(0,0,32), vecOrigin, vecMins, vecMaxs, MASK_SOLID, pNPC, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), vecOrigin + Vector(0,0,32), vecOrigin, vecMins, vecMaxs, MASK_SOLID, pNPC, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction < 1.0 )
 	{
 		if ( g_debug_dropship.GetInt() == 1 )
@@ -2502,7 +2502,7 @@ Vector CNPC_CombineDropship::GetDropoffFinishPosition( Vector vecOrigin, CAI_Bas
 		}
 
 		// Try and find the ground
-		AI_TraceHull( vecOrigin + Vector(0,0,32), vecOrigin, vecMins, vecMaxs, MASK_SOLID, pNPC, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), vecOrigin + Vector(0,0,32), vecOrigin, vecMins, vecMaxs, MASK_SOLID, pNPC, COLLISION_GROUP_NONE, &tr );
 		if ( !tr.startsolid )
 			return (tr.endpos + Vector(0,0,1));
 	}

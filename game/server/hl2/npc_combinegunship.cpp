@@ -853,7 +853,7 @@ Vector CNPC_CombineGunship::GetGroundAttackHitPosition( void )
 
 	GetEngineObject()->GetAttachment( "BellyGun", vecShootPos, &vecShootDir, NULL, NULL );
 
-	AI_TraceLine( vecShootPos, vecShootPos + Vector( 0, 0, -MAX_TRACE_LENGTH ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vecShootPos, vecShootPos + Vector( 0, 0, -MAX_TRACE_LENGTH ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( m_hGroundAttackTarget )
 	{
@@ -964,7 +964,7 @@ void CNPC_CombineGunship::ManageWarningBeam( void )
 	trace_t	tr;
 	CTraceFilterSkipTwoEntities filter( m_hGroundAttackTarget, this, COLLISION_GROUP_NONE );
 
-	UTIL_TraceLine( vecSrc, m_vecHitPos, MASK_SOLID, &filter, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, m_vecHitPos, MASK_SOLID, &filter, &tr );
 
 	int iPunch = 0;
 
@@ -1000,7 +1000,7 @@ void CNPC_CombineGunship::ManageWarningBeam( void )
 
 			Vector vStartPunch = tr.endpos + vDir * 1;
 
-			UTIL_TraceLine( vStartPunch, m_vecHitPos, MASK_SOLID, &filter, &tr );
+			UTIL_TraceLine(EntityList(), vStartPunch, m_vecHitPos, MASK_SOLID, &filter, &tr );
 
 			if ( tr.startsolid )
 			{
@@ -1008,10 +1008,10 @@ void CNPC_CombineGunship::ManageWarningBeam( void )
 
 				Vector vEndPunch = vStartPunch + vDir * ( flLength * tr.fractionleftsolid );
 
-				UTIL_TraceLine( vEndPunch, m_vecHitPos, MASK_SOLID, &filter, &tr );
+				UTIL_TraceLine(EntityList(), vEndPunch, m_vecHitPos, MASK_SOLID, &filter, &tr );
 
 				trace_t tr2;
-				UTIL_TraceLine( vEndPunch, vEndPunch - vDir * 2, MASK_SOLID, &filter, &tr2 );
+				UTIL_TraceLine(EntityList(), vEndPunch, vEndPunch - vDir * 2, MASK_SOLID, &filter, &tr2 );
 
 				if ( (m_flGroundAttackTime - gpGlobals->curtime) <= 2.0f )
 				{
@@ -1070,7 +1070,7 @@ void CNPC_CombineGunship::DoBellyBlastDamage( trace_t &tr, Vector vMins, Vector 
 		pEntity->TakeDamage( info );
 
 		trace_t	groundTrace;
-		UTIL_TraceLine( pEntity->GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &groundTrace );
+		UTIL_TraceLine(EntityList(), pEntity->GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &groundTrace );
 
 		if ( tr.fraction < 1.0f )
 		{
@@ -1115,7 +1115,7 @@ void CNPC_CombineGunship::DoGroundAttackExplosion( void )
 	Vector impactPoint = vecSrc + ( Vector( 0, 0, -1 ) * MAX_TRACE_LENGTH );
 
 	trace_t	tr;
-	UTIL_TraceLine( vecSrc, impactPoint, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, impactPoint, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	UTIL_DecalTrace( &tr, "Scorch" );
 
 	if ( hl2_episodic.GetBool() == true )
@@ -1961,7 +1961,7 @@ bool CNPC_CombineGunship::FindNearestGunshipCrash( void )
 		if( flDist < flNearest )
 		{
 			trace_t tr;
-			UTIL_TraceLine( WorldSpaceCenter(), pEnt->WorldSpaceCenter(), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), WorldSpaceCenter(), pEnt->WorldSpaceCenter(), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 			if( tr.fraction == 1.0 )
 			{
 				pNearest = pCrashTarget;

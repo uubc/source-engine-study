@@ -259,7 +259,7 @@ bool CEnvEntityMaker::HasRoomToSpawn()
 
 	// Check to see if there's enough room to spawn
 	trace_t tr;
-	UTIL_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), m_vecEntityMins, m_vecEntityMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), m_vecEntityMins, m_vecEntityMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.m_pEnt || tr.startsolid )
 	{
 		// Store off our blocker to check later

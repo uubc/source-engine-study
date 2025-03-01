@@ -232,7 +232,7 @@ void C_Hairball::ClientThink()
 				VectorNormalize( vDir );
 
 				trace_t trace;
-				UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vDir * 10000, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vDir * 10000, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
 
 				if ( trace.fraction != 1.0 )
 				{
@@ -254,7 +254,7 @@ void C_Hairball::ClientThink()
 		Vector vEnd = GetEngineObject()->GetAbsOrigin() + m_vMoveDir * gpGlobals->frametime;
 
 		trace_t trace;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), vEnd, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), vEnd, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
 
 		if ( trace.fraction < 1 )
 		{

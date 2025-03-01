@@ -274,7 +274,7 @@ void CNPC_Bullseye::DecalTrace( trace_t *pOldTrace, char const *decalName )
 	Vector vEndTrace	= pOldTrace->endpos + (MAX_TRACE_LENGTH * vTraceDir);
 
 	trace_t pNewTrace;
-	AI_TraceLine(vStartTrace, vEndTrace, MASK_SHOT, this, COLLISION_GROUP_NONE, &pNewTrace);
+	AI_TraceLine(EntityList(), vStartTrace, vEndTrace, MASK_SHOT, this, COLLISION_GROUP_NONE, &pNewTrace);
 
 	CBroadcastRecipientFilter filter;
 	te->Decal( filter, 0.0, &pNewTrace.endpos, &pNewTrace.startpos,
@@ -295,7 +295,7 @@ void CNPC_Bullseye::ImpactTrace( trace_t *pTrace, int iDamageType, const char *p
 	Vector vEndTrace	= pTrace->endpos + (MAX_TRACE_LENGTH * vTraceDir);
 
 	trace_t pNewTrace;
-	AI_TraceLine(vStartTrace, vEndTrace, MASK_SHOT, this, COLLISION_GROUP_NONE, &pNewTrace);
+	AI_TraceLine(EntityList(), vStartTrace, vEndTrace, MASK_SHOT, this, COLLISION_GROUP_NONE, &pNewTrace);
 
 	CBaseEntity	*pEntity = (CBaseEntity*)pNewTrace.m_pEnt;
 

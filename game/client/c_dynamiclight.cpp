@@ -192,7 +192,7 @@ void C_DynamicLight::ClientThink(void)
 
 		trace_t		pm;
 		EntityList()->PushEnableAbsRecomputations( false );	 // HACK don't recompute positions while doing RayTrace
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), end, MASK_NPCWORLDSTATIC, NULL, COLLISION_GROUP_NONE, &pm );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), end, MASK_NPCWORLDSTATIC, NULL, COLLISION_GROUP_NONE, &pm );
 		EntityList()->PopEnableAbsRecomputations();
 		VectorCopy( pm.endpos, m_pSpotlightEnd->origin );
 		

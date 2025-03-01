@@ -219,7 +219,7 @@ void CPropEnergyBall::VPhysicsCollision( int index, gamevcollisionevent_t *pEven
 	if ( !bIsEnteringPortalAndLockingAxisForward )
 	{
 		trace_t		tr;
-		UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*preVelocity, MASK_SHOT,
+		UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*preVelocity, MASK_SHOT,
 			this, COLLISION_GROUP_NONE, &tr);
 
 		// Only place decals and draw effects if we hit something valid

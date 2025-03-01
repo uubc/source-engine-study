@@ -145,7 +145,7 @@ int C_TestTraceline::DrawModel( int flags )
 	AngleVectors (GetEngineObject()->GetAbsAngles(), &forward, &right, &up);
 	endpos = GetEngineObject()->GetAbsOrigin() + forward * MAX_TRACE_LENGTH;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), endpos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), endpos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 	CMatRenderContextPtr pRenderContext( materials );
 	IMesh* pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, m_pWireframe );

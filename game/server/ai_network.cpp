@@ -289,7 +289,7 @@ int	CAI_Network::NearestNodeToPoint( CAI_BaseNPC *pNPC, const Vector &vecOrigin,
 								m_pAInode[cachedNode]->GetOrigin();
 
 			CTraceFilterNav traceFilter( pNPC, true, pNPC, COLLISION_GROUP_NONE );
-			AI_TraceLine ( vecOrigin, vTestLoc, MASK_NPCSOLID_BRUSHONLY, &traceFilter, &tr );
+			AI_TraceLine (EntityList(), vecOrigin, vTestLoc, MASK_NPCSOLID_BRUSHONLY, &traceFilter, &tr );
 
 			if ( tr.fraction != 1.0 )
 				cachedNode = NO_NODE;
@@ -353,7 +353,7 @@ int	CAI_Network::NearestNodeToPoint( CAI_BaseNPC *pNPC, const Vector &vecOrigin,
 			Vector vecVisOrigin = vecOrigin + Vector(0,0,1);
 
 			CTraceFilterNav traceFilter( pNPC, true, pNPC, COLLISION_GROUP_NONE );
-			AI_TraceLine ( vecVisOrigin, vTestLoc, MASK_NPCSOLID_BRUSHONLY, &traceFilter, &tr );
+			AI_TraceLine (EntityList(), vecVisOrigin, vTestLoc, MASK_NPCSOLID_BRUSHONLY, &traceFilter, &tr );
 
 			if ( tr.fraction != 1.0 )
 				continue;

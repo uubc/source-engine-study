@@ -342,7 +342,7 @@ CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
 
 	pPlayer->EyeVectors( &forward );
 	Vector start = pPlayer->EyePosition();
-	UTIL_TraceLine(start, start + forward * MAX_COORD_RANGE, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), start, start + forward * MAX_COORD_RANGE, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.DidHit() )
 	{
@@ -366,7 +366,7 @@ CON_COMMAND_F( cast_hull, "Tests hull collision detection", FCVAR_CHEAT )
 	extents.Init(16,16,16);
 	pPlayer->EyeVectors( &forward );
 	Vector start = pPlayer->EyePosition();
-	UTIL_TraceHull(start, start + forward * MAX_COORD_RANGE, -extents, extents, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), start, start + forward * MAX_COORD_RANGE, -extents, extents, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 	if ( tr.DidHit() )
 	{
 		DevMsg(1, "Hit %s\nposition %.2f, %.2f, %.2f\nangles %.2f, %.2f, %.2f\n", tr.m_pEnt->GetClassname(),
@@ -915,7 +915,7 @@ void CC_Player_TestDispatchEffect( const CCommand &args )
 	trace_t tr;
 	Vector vecSrc = pPlayer->EyePosition();
 	Vector vecEnd = vecSrc + (vecForward * flDistance);
-	UTIL_TraceLine( vecSrc, vecEnd, MASK_ALL, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_ALL, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 	// Fill out the generic data
 	CEffectData data;

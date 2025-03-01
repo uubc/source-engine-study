@@ -790,7 +790,7 @@ void CNPC_CScanner::SetInspectTargetToHint(CAI_Hint *pHint, float fInspectDurati
 	Vector vHintEnd	= vHintOrigin + (vHintDir * 512);
 	
 	trace_t tr;
-	AI_TraceLine ( vHintOrigin, vHintEnd, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine (EntityList(), vHintOrigin, vHintEnd, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr);
 	
 	if ( g_debug_cscanner.GetBool() )
 	{
@@ -1260,7 +1260,7 @@ void CNPC_CScanner::GatherConditions( void )
 				if ( UTIL_AngleDiff(GetEngineObject()->GetAbsAngles().y, VecToYaw( InspectTargetPosition() - GetEngineObject()->GetAbsOrigin() ) ) < 4.0f )
 				{
 					trace_t tr;
-					AI_TraceLine (GetEngineObject()->GetAbsOrigin(), InspectTargetPosition(), MASK_BLOCKLOS, GetTarget(), COLLISION_GROUP_NONE, &tr);
+					AI_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), InspectTargetPosition(), MASK_BLOCKLOS, GetTarget(), COLLISION_GROUP_NONE, &tr);
 					
 					if ( tr.fraction == 1.0f )
 					{
@@ -1587,7 +1587,7 @@ void CNPC_CScanner::SpotlightCreate(void)
 	}
 
 	trace_t tr;
-	AI_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vSpotlightDir * 2024, MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vSpotlightDir * 2024, MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr );
 
 	m_hSpotlightTarget = (CSpotlightEnd*)EntityList()->CreateEntityByName( "spotlight_end" );
 	m_hSpotlightTarget->Spawn();
@@ -1732,7 +1732,7 @@ Vector CNPC_CScanner::SpotlightCurrentPos(void)
 	// ---------------------------------------------
 	trace_t tr;
 	Vector vTraceEnd = GetEngineObject()->GetAbsOrigin() + (m_vSpotlightDir * 2 * m_flSpotlightMaxLength);
-	AI_TraceLine (GetEngineObject()->GetAbsOrigin(), vTraceEnd, MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), vTraceEnd, MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr);
 
 	return (tr.endpos);
 }
@@ -1983,7 +1983,7 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 	{
 		// Make sure nothing in the way
 		trace_t tr;
-		AI_TraceLine (GetEngineObject()->GetAbsOrigin(), pTarget->EyePosition(), MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), pTarget->EyePosition(), MASK_OPAQUE, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.startsolid == false && tr.fraction == 1.0)
 		{
@@ -2348,7 +2348,7 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 		if ( pMoveTarget || HaveInspectTarget() )
 		{
 			trace_t tr;
-			AI_TraceHull(GetEngineObject()->GetAbsOrigin(), vMoveTargetPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), vMoveTargetPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 			float fTargetDist = (1.0f-tr.fraction)*(GetEngineObject()->GetAbsOrigin() - vMoveTargetPos).Length();
 			

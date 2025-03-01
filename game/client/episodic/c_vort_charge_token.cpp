@@ -442,7 +442,7 @@ void DispelCallback( const CEffectData &data )
 	Vector endPos = data.m_vOrigin + Vector(0,0,-64);
 
 	trace_t tr;
-	UTIL_TraceLine( startPos, endPos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), startPos, endPos, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{

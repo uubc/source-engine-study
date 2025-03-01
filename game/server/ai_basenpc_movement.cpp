@@ -47,7 +47,7 @@ void CAI_BaseNPC::ForceSelectedGo(CBaseEntity *pPlayer, const Vector &targetPos,
 			vUpBit.z += 1;
 
 			trace_t tr;
-			AI_TraceHull( chasePosition, vUpBit, npc->GetHullMins(), 
+			AI_TraceHull(EntityList(), chasePosition, vUpBit, npc->GetHullMins(),
 				npc->GetHullMaxs(), MASK_NPCSOLID, npc, COLLISION_GROUP_NONE, &tr );
 			if (tr.startsolid || tr.fraction != 1.0 )
 			{

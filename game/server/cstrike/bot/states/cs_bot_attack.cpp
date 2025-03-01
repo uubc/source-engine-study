@@ -93,7 +93,7 @@ void AttackState::OnEnter( CCSBot *me )
 						origin.z -= 20.0f;
 					}
 
-					UTIL_TraceLine( origin, enemy->EyePosition(), MASK_PLAYERSOLID, me, COLLISION_GROUP_NONE, &result );
+					UTIL_TraceLine(EntityList(), origin, enemy->EyePosition(), MASK_PLAYERSOLID, me, COLLISION_GROUP_NONE, &result );
 
 					if (result.fraction == 1.0f)
 					{

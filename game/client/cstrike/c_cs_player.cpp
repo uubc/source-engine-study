@@ -1486,7 +1486,7 @@ void C_CSPlayer::UpdateIDTarget()
 	Vector vecStart, vecEnd;
 	VectorMA(g_pViewRender->MainViewOrigin(), 2500, g_pViewRender->MainViewForward(), vecEnd );
 	VectorMA(g_pViewRender->MainViewOrigin(), 10, g_pViewRender->MainViewForward(), vecStart );
-	UTIL_TraceLine( vecStart, vecEnd, MASK_VISIBLE_AND_NPCS, GetLocalOrInEyeCSPlayer(), COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_VISIBLE_AND_NPCS, GetLocalOrInEyeCSPlayer(), COLLISION_GROUP_NONE, &tr );
 	if ( !tr.startsolid && !tr.DidHitNonWorldEntity() )
 	{
 		CTraceFilterSimple filter( GetLocalOrInEyeCSPlayer(), COLLISION_GROUP_NONE );
@@ -2152,7 +2152,7 @@ void C_CSPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 			//trace up from foot position to the water surface
 			trace_t tr;
 			Vector vecTrace(0,0,1024);
-			UTIL_TraceLine( origin, origin + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), origin, origin + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fractionleftsolid )
 			{
 				data.m_vOrigin = origin + (vecTrace * tr.fractionleftsolid);
@@ -2181,7 +2181,7 @@ void C_CSPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 			//trace up from foot position to the water surface
 			trace_t tr;
 			Vector vecTrace(0,0,1024);
-			UTIL_TraceLine( origin, origin + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), origin, origin + vecTrace, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fractionleftsolid )
 			{
 				data.m_vOrigin = origin + (vecTrace * tr.fractionleftsolid);
@@ -2246,7 +2246,7 @@ void C_CSPlayer::Simulate( void )
 			GetEngineObject()->GetAttachment( iAttachment, vecOrigin, dummy );
 
 			trace_t tr;
-			UTIL_TraceLine( vecOrigin, vecOrigin + (vForward * 200), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin + (vForward * 200), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 			if( !m_pFlashlightBeam )
 			{
@@ -2511,7 +2511,7 @@ void C_CSPlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float&
 	// Now trace out from the target, so that we're put in front of any walls
 	trace_t trace;
 	EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-	UTIL_TraceHull( vLookAt, vTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceHull(EntityList(), vLookAt, vTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
 	EntityList()->PopEnableAbsRecomputations();
 	if ( trace.fraction < 1.0 )
 	{
@@ -2522,7 +2522,7 @@ void C_CSPlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float&
 		// To stop all close in views looking up at character's chins, move the view up.
 		vTargetPos.z += fabs(vLookAt.z - vTargetPos.z) * 0.85;
 		EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-		UTIL_TraceHull( vLookAt, vTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceHull(EntityList(), vLookAt, vTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
 		EntityList()->PopEnableAbsRecomputations();
 		vTargetPos = trace.endpos;
 	}

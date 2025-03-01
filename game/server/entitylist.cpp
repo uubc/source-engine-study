@@ -8902,7 +8902,7 @@ void CEngineObjectInternal::RagdollSolveSeparation(ragdoll_t& ragdoll, IHandleEn
 					ConVarRef r_visualizetraces("r_visualizetraces");
 					if (r_visualizetraces.GetBool())
 					{
-						DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+						gEntList.GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
 					}
 					if (tr.DidHit())
 					{
@@ -10354,7 +10354,7 @@ void CEngineWorldInternal::TraceLineFilterEntity(IEngineObjectServer* pEntity, c
 	unsigned int mask, int nCollisionGroup, trace_t* ptr)
 {
 	CTraceFilterEntity traceFilter(pEntity->GetOuter(), nCollisionGroup);
-	UTIL_TraceLine(vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
+	UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
 }
 
 BEGIN_SEND_TABLE(CEnginePlayerInternal, DT_EnginePlayer)
@@ -12729,7 +12729,7 @@ void CEnginePortalInternal::CreateLocalCollision(void)
 		ConVarRef r_visualizetraces("r_visualizetraces");
 		if (r_visualizetraces.GetBool())
 		{
-			DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+			gEntList.GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
 		}
 
 		if (Trace.fraction != 1.0f)

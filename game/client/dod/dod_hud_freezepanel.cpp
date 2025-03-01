@@ -364,7 +364,7 @@ CDODFreezePanelCallout *CDODFreezePanel::TestAndAddCallout( Vector &origin, Vect
 					{
 						// Verify that we have LOS to the gib
 						trace_t	tr;
-						UTIL_TraceLine( origin, g_pViewRender->MainViewOrigin(), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
+						UTIL_TraceLine(EntityList(), origin, g_pViewRender->MainViewOrigin(), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
 						bClear = ( tr.fraction >= 1.0f );
 					}
 

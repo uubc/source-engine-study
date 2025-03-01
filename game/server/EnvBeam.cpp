@@ -462,7 +462,7 @@ void CEnvBeam::Strike( void )
 	if ( m_flDamage > 0 )
 	{
 		trace_t tr;
-		UTIL_TraceLine( pStart->GetEngineObject()->GetAbsOrigin(), pEnd->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), pStart->GetEngineObject()->GetAbsOrigin(), pEnd->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 		BeamDamageInstant( &tr, m_flDamage );
 	}
 	
@@ -558,7 +558,7 @@ void CEnvBeam::UpdateThink( void )
 	if ( ( m_flDamage > 0 ) && ( gpGlobals->curtime >= m_flFireTime + 0.1 ) )
 	{
 		trace_t tr;
-		UTIL_TraceLine( GetAbsStartPos(), GetAbsEndPos(), MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetAbsStartPos(), GetAbsEndPos(), MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 		BeamDamage( &tr );
 		// BeamDamage calls RelinkBeam, so no need to call it again.
 	}
@@ -640,7 +640,7 @@ void CEnvBeam::RandomArea( void )
 		Vector vecDir1 = Vector( random->RandomFloat( -1.0, 1.0 ), random->RandomFloat( -1.0, 1.0 ),random->RandomFloat( -1.0, 1.0 ) );
 		VectorNormalize( vecDir1 );
 		trace_t	tr1;
-		UTIL_TraceLine( vecSrc, vecSrc + vecDir1 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir1 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
 
 		if (tr1.fraction == 1.0)
 			continue;
@@ -651,7 +651,7 @@ void CEnvBeam::RandomArea( void )
 		} while (DotProduct(vecDir1, vecDir2 ) > 0);
 		VectorNormalize( vecDir2 );
 		trace_t	tr2;
-		UTIL_TraceLine( vecSrc, vecSrc + vecDir2 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir2 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
 
 		if (tr2.fraction == 1.0)
 			continue;
@@ -659,7 +659,7 @@ void CEnvBeam::RandomArea( void )
 		if ((tr1.endpos - tr2.endpos).Length() < m_radius * 0.1)
 			continue;
 
-		UTIL_TraceLine( tr1.endpos, tr2.endpos, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine(EntityList(), tr1.endpos, tr2.endpos, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
 
 		if (tr2.fraction != 1.0)
 			continue;
@@ -684,7 +684,7 @@ void CEnvBeam::RandomPoint( const Vector &vecSrc )
 		Vector vecDir1 = Vector( random->RandomFloat( -1.0, 1.0 ), random->RandomFloat( -1.0, 1.0 ),random->RandomFloat( -1.0, 1.0 ) );
 		VectorNormalize( vecDir1 );
 		trace_t	tr1;
-		UTIL_TraceLine( vecSrc, vecSrc + vecDir1 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
+		UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir1 * m_radius, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
 
 		if ((tr1.endpos - vecSrc).Length() < m_radius * 0.1)
 			continue;

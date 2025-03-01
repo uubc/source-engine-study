@@ -282,7 +282,7 @@ void CEnvHeadcrabCanister::Spawn( void )
 			vecForward *= -1.0f;
 
 			trace_t trace;
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecForward * 10000, MASK_NPCWORLDSTATIC,
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecForward * 10000, MASK_NPCWORLDSTATIC,
 				this, COLLISION_GROUP_NONE, &trace );
 
 			m_vecImpactPosition = trace.endpos;
@@ -358,7 +358,7 @@ void CEnvHeadcrabCanister::ComputeWorldEntryPoint( Vector *pStartPosition, QAngl
 	// since it'll be buried in the ground oftentimes)
 	trace_t tr;
 	CTraceFilterWorldOnly filter;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + vecForward * 100, GetEngineObject()->GetAbsOrigin() + vecForward * 10000,
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + vecForward * 100, GetEngineObject()->GetAbsOrigin() + vecForward * 10000,
 		CONTENTS_SOLID, &filter, &tr );
 
 	*pStartPosition = tr.endpos;

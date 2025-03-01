@@ -214,7 +214,7 @@ void C_ParticleFire::Update(float fTimeDelta)
 			{
 				// Make the first emitter.
 				trace_t trace;
-				UTIL_TraceLine(m_vOrigin, m_vOrigin+m_vDirection*1000, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace);
+				UTIL_TraceLine(EntityList(), m_vOrigin, m_vOrigin+m_vDirection*1000, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace);
 				if(trace.fraction < 1)
 				{
 					pEmitter = &m_Emitters[m_nEmitters];

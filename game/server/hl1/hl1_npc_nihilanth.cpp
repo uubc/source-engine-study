@@ -868,7 +868,7 @@ void CNPC_Nihilanth::MakeFriend( Vector vecStart )
 					trace_t tr;
 					Vector vNodeOrigin = pNode->GetOrigin();
 
-					UTIL_TraceHull( vNodeOrigin + Vector( 0, 0, 32 ), vNodeOrigin + Vector( 0, 0, 32 ), Vector(-40,-40,   0),	Vector(40, 40, 100), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceHull(EntityList(), vNodeOrigin + Vector( 0, 0, 32 ), vNodeOrigin + Vector( 0, 0, 32 ), Vector(-40,-40,   0),	Vector(40, 40, 100), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 					if ( tr.startsolid == 0 )
 						 m_hFriend[i] = Create("monster_alien_controller", vNodeOrigin, GetEngineObject()->GetAbsAngles() );
@@ -884,7 +884,7 @@ void CNPC_Nihilanth::MakeFriend( Vector vecStart )
 					trace_t tr;
 					Vector vNodeOrigin = pNode->GetOrigin();
 
-					UTIL_TraceHull( vNodeOrigin + Vector( 0, 0, 36 ), vNodeOrigin + Vector( 0, 0, 36 ), Vector( -15, -15, 0),	Vector( 20, 15, 72 ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceHull(EntityList(), vNodeOrigin + Vector( 0, 0, 36 ), vNodeOrigin + Vector( 0, 0, 36 ), Vector( -15, -15, 0),	Vector( 20, 15, 72 ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 					
 					if (tr.startsolid == 0)
 						m_hFriend[i] = Create("monster_alien_slave", vNodeOrigin, GetEngineObject()->GetAbsAngles() );
@@ -1093,7 +1093,7 @@ void CNPC_Nihilanth::DyingThink( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + vecDir * 4096, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir * 4096, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	CBeam *pBeam = CBeam::BeamCreate( "sprites/laserbeam.vmt", 16 );
 
@@ -1481,7 +1481,7 @@ void CNihilanthHVR::ZapThink( void  )
 	{
 		trace_t tr;
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEnemy()->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEnemy()->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		CBaseEntity *pEntity = (CBaseEntity*)tr.m_pEnt;
 

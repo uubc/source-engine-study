@@ -1445,7 +1445,7 @@ IEnginePortal* UTIL_Portal_TraceRay_Beam(IEntityList* pEntityList, const Ray_t& 
 {
 	// Do a regular trace
 	trace_t tr;
-	UTIL_TraceLine(ray.m_Start, ray.m_Start + ray.m_Delta, fMask, pTraceFilter, &tr);
+	UTIL_TraceLine(EntityList(), ray.m_Start, ray.m_Start + ray.m_Delta, fMask, pTraceFilter, &tr);
 	float fMustBeCloserThan = tr.fraction + 0.0001f;
 
 	IEnginePortal* pIntersectedPortal = UTIL_Portal_FirstAlongRay(pEntityList, ray, fMustBeCloserThan);

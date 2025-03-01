@@ -3640,7 +3640,7 @@ bool IsHidingSpotInCover( const Vector &spot )
 
 	// if we are crouched underneath something, that counts as good cover
 	to = from + Vector( 0, 0, 20.0f );
-	UTIL_TraceLine( from, to, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), from, to, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 	if (result.fraction != 1.0f)
 		return true;
 
@@ -3651,7 +3651,7 @@ bool IsHidingSpotInCover( const Vector &spot )
 	{
 		to = from + Vector( coverRange * (float)cos(angle), coverRange * (float)sin(angle), HalfHumanHeight );
 
-		UTIL_TraceLine( from, to, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), from, to, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 
 		// if traceline hit something, it hit "cover"
 		if (result.fraction != 1.0f)
@@ -3894,7 +3894,7 @@ void ClassifySniperSpot( HidingSpot *spot )
 				walkable.z = area->GetZ( walkable ) + HalfHumanHeight;
 				
 				// check line of sight
-				UTIL_TraceLine( eye, walkable, CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_PLAYERCLIP, NULL, COLLISION_GROUP_NONE, &result );
+				UTIL_TraceLine(EntityList(), eye, walkable, CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_PLAYERCLIP, NULL, COLLISION_GROUP_NONE, &result );
 
 				if (result.fraction == 1.0f && !result.startsolid)
 				{
@@ -4065,7 +4065,7 @@ void CNavArea::AddSpotEncounters( const CNavArea *from, NavDirType fromDir, cons
 
 			// check if we have LOS
 			// BOTPORT: ignore glass here
-			UTIL_TraceLine( eye, Vector( spotPos.x, spotPos.y, spotPos.z + HalfHumanHeight ), MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
+			UTIL_TraceLine(EntityList(), eye, Vector( spotPos.x, spotPos.y, spotPos.z + HalfHumanHeight ), MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
 			if (result.fraction != 1.0f)
 				continue;
 
@@ -4859,6 +4859,7 @@ void CNavArea::UpdateBlocked( bool force, int teamID )
 	{
 	VPROF( "CNavArea::UpdateBlocked-Trace" );
 	UTIL_TraceHull(
+		EntityList(),
 		origin,
 		origin,
 		bounds.lo,
@@ -4962,6 +4963,7 @@ void CNavArea::CheckFloor( CBaseEntity *ignore )
 	// See if spot is valid
 	trace_t tr;
 	UTIL_TraceHull(
+		EntityList(),
 		origin,
 		origin,
 		mins,
@@ -5367,7 +5369,7 @@ CNavArea::VisibilityType CNavArea::ComputeVisibility( const CNavArea *area, bool
 	trace_t tr;
 	CTraceFilterNoNPCsOrPlayer traceFilter( NULL, COLLISION_GROUP_NONE );
 
-	UTIL_TraceHull( vThisCenter, vTarget, vTraceMins, vTraceMaxs, MASK_NAV_VISION, &traceFilter, &tr );
+	UTIL_TraceHull(EntityList(), vThisCenter, vTarget, vTraceMins, vTraceMaxs, MASK_NAV_VISION, &traceFilter, &tr );
 
 	if ( tr.fraction == 1.0 ||  ( tr.endpos.x > vOtherMins.x && tr.endpos.x < vOtherMaxs.x && tr.endpos.y > vOtherMins.y && tr.endpos.y < vOtherMaxs.y ) )
 	{
@@ -5638,7 +5640,7 @@ bool CNavArea::IsEntirelyVisible( const Vector &eye, CBaseEntity *ignore ) const
 	const float offset = 0.75f * HumanHeight;
 
 	// check center
-	UTIL_TraceLine( eye, GetCenter() + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), eye, GetCenter() + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
 	if (result.fraction < 1.0f)
 	{
 		return false;
@@ -5647,7 +5649,7 @@ bool CNavArea::IsEntirelyVisible( const Vector &eye, CBaseEntity *ignore ) const
 	for( int c=0; c<NUM_CORNERS; ++c )
 	{
 		corner = GetCorner( (NavCornerType)c );
-		UTIL_TraceLine( eye, corner + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
+		UTIL_TraceLine(EntityList(), eye, corner + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
 		if (result.fraction < 1.0f)
 		{
 			return false;
@@ -5671,7 +5673,7 @@ bool CNavArea::IsPartiallyVisible( const Vector &eye, CBaseEntity *ignore ) cons
 	const float offset = 0.75f * HumanHeight;
 
 	// check center
-	UTIL_TraceLine( eye, GetCenter() + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), eye, GetCenter() + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
 	if (result.fraction >= 1.0f)
 	{
 		return true;
@@ -5693,7 +5695,7 @@ bool CNavArea::IsPartiallyVisible( const Vector &eye, CBaseEntity *ignore ) cons
 			continue;
 		}
 
-		UTIL_TraceLine( eye, corner + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
+		UTIL_TraceLine(EntityList(), eye, corner + Vector( 0, 0, offset ), MASK_NAV_VISION, &traceFilter, &result );
 		if (result.fraction >= 1.0f)
 		{
 			return true;

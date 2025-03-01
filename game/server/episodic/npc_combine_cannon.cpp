@@ -463,7 +463,7 @@ void CNPC_Combine_Cannon::UpdateAncillaryBeams( float flConvergencePerc, const V
 		VectorNormalize( vecFinal );
 
 		// Trace a line down that vector to find where we'll eventually stop our line
-		UTIL_TraceLine( vecOrigin, vecOrigin + ( vecFinal * LINE_LENGTH ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin + ( vecFinal * LINE_LENGTH ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		// Move the beam to that position
 		m_pAncillaryBeams[i]->SetBrightness( 255.0f * flConvergencePerc );
@@ -517,7 +517,7 @@ void CNPC_Combine_Cannon::PaintTarget( const Vector &vecTarget, float flPaintTim
 
 	// Find where our center is
 	trace_t tr;
-	UTIL_TraceLine( vecStart, vecStart + vecCurrentDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecStart + vecCurrentDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	m_vecPaintCursor = tr.endpos;
 
 	// Update our beam position
@@ -709,7 +709,7 @@ bool CNPC_Combine_Cannon::VerifyShot( CBaseEntity *pTarget )
 	trace_t tr;
 
 	Vector vecTarget = DesiredBodyTarget( pTarget );
-	UTIL_TraceLine( GetBulletOrigin(), vecTarget, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetBulletOrigin(), vecTarget, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction != 1.0 )
 	{
@@ -718,7 +718,7 @@ bool CNPC_Combine_Cannon::VerifyShot( CBaseEntity *pTarget )
 			// if the target is the player, do another trace to see if we can shoot his eyeposition. This should help 
 			// improve sniper responsiveness in cases where the player is hiding his chest from the sniper with his 
 			// head in full view.
-			UTIL_TraceLine( GetBulletOrigin(), pTarget->EyePosition(), MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetBulletOrigin(), pTarget->EyePosition(), MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
 
 			if( tr.fraction == 1.0 )
 			{
@@ -1182,7 +1182,7 @@ bool CNPC_Combine_Cannon::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEn
 	AngleVectors( pEntity->GetEngineObject()->GetLocalAngles(), NULL, &vecRight, NULL );
 
 	vecEye = vecRight * CANNON_EYE_DIST - vecVerticalOffset;
-	UTIL_TraceLine( EyePosition(), pEntity->EyePosition() + vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), EyePosition(), pEntity->EyePosition() + vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 #if 0
 	NDebugOverlay::Line(EyePosition(), tr.endpos, 0,255,0, true, 0.1);
@@ -1199,7 +1199,7 @@ bool CNPC_Combine_Cannon::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEn
 	if( !fCheckFailed )
 	{
 		vecEye = -vecRight * CANNON_EYE_DIST - vecVerticalOffset;
-		UTIL_TraceLine( EyePosition(), pEntity->EyePosition() + vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), pEntity->EyePosition() + vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 #if 0
 		NDebugOverlay::Line(EyePosition(), tr.endpos, 0,255,0, true, 0.1);
@@ -1229,7 +1229,7 @@ bool CNPC_Combine_Cannon::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEn
 	if( (pPlayer->GetEngineObject()->GetFlags() & FL_DUCKING) && pPlayer->MuzzleFlashTime() > gpGlobals->curtime )
 	{
 		vecEye = pPlayer->EyePosition() + Vector( 0, 0, 32 );
-		UTIL_TraceLine( EyePosition(), vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), vecEye, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.fraction != 1.0 )
 		{

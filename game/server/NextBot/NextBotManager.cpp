@@ -224,7 +224,7 @@ void CC_WarpSelectedHere( const CCommand &args )
 	me->EyeVectors( &forward );
 
 	trace_t result;
-	UTIL_TraceLine( me->EyePosition(), me->EyePosition() + 999999.9f * forward, MASK_BLOCKLOS_AND_NPCS|CONTENTS_IGNORE_NODRAW_OPAQUE, me, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), me->EyePosition(), me->EyePosition() + 999999.9f * forward, MASK_BLOCKLOS_AND_NPCS|CONTENTS_IGNORE_NODRAW_OPAQUE, me, COLLISION_GROUP_NONE, &result );
 	if ( result.DidHit() )
 	{
 		Vector spot = result.endpos + Vector( 0, 0, 10.0f );

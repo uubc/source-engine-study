@@ -1288,7 +1288,7 @@ bool CAI_Hint::HintMatchesCriteria( CAI_BaseNPC *pNPC, const CHintCriteria &hint
 					trace_t tr;
 					Vector vHintPos;
 					GetPosition(pNPC,&vHintPos);
-					AI_TraceLine ( pNPC->EyePosition(), vHintPos + pNPC->GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pNPC, COLLISION_GROUP_NONE, &tr );
+					AI_TraceLine (EntityList(), pNPC->EyePosition(), vHintPos + pNPC->GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pNPC, COLLISION_GROUP_NONE, &tr );
 					if ( tr.fraction != 1.0f )
 					{
 						REPORTFAILURE( "Node isn't visible to NPC." );
@@ -1311,7 +1311,7 @@ bool CAI_Hint::HintMatchesCriteria( CAI_BaseNPC *pNPC, const CHintCriteria &hint
 		{
 			trace_t tr;
 			// Can my bounding box fit there?
-			AI_TraceHull (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), pNPC->GetEngineObject()->WorldAlignMins(), pNPC->GetEngineObject()->WorldAlignMaxs(),
+			AI_TraceHull (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), pNPC->GetEngineObject()->WorldAlignMins(), pNPC->GetEngineObject()->WorldAlignMaxs(),
 				MASK_SOLID, pNPC, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction != 1.0 )
@@ -1382,7 +1382,7 @@ bool CAI_Hint::HintMatchesCriteria( CAI_BaseNPC *pNPC, const CHintCriteria &hint
 				if ( fDotPr > 0 )
 				{
 					trace_t tr;
-					UTIL_TraceLine( pPlayer->EyePosition(), GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+					UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 					
 					if ( tr.fraction == 1.0 )
 					{

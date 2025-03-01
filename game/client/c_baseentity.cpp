@@ -2681,7 +2681,7 @@ CON_COMMAND_F( dlight_debug, "Creates a dlight in front of the player", FCVAR_CH
 	player->EyeVectors( &forward );
 	Vector end = start + forward * MAX_TRACE_LENGTH;
 	trace_t tr;
-	UTIL_TraceLine( start, end, MASK_SHOT_HULL & (~CONTENTS_GRATE), player, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), start, end, MASK_SHOT_HULL & (~CONTENTS_GRATE), player, COLLISION_GROUP_NONE, &tr );
 	el->origin = tr.endpos - forward * 12.0f;
 	el->radius = 200; 
 	el->decay = el->radius / 5.0f;
@@ -3046,7 +3046,7 @@ CBaseEntity *FindEntityInFrontOfLocalPlayer()
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine( pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,	MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,	MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0 && tr.DidHitNonWorldEntity() )
 		{
 			return (C_BaseEntity*)tr.m_pEnt;

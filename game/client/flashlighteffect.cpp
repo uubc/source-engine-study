@@ -181,7 +181,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	if ( !bPlayerOnLadder ) 
 	{
 		trace_t pmOriginTrace;
-		UTIL_TraceHull( vecPos, vOrigin, Vector(-4, -4, -4), Vector(4, 4, 4), MASK_SOLID & ~(CONTENTS_HITBOX), &traceFilter, &pmOriginTrace );
+		UTIL_TraceHull(EntityList(), vecPos, vOrigin, Vector(-4, -4, -4), Vector(4, 4, 4), MASK_SOLID & ~(CONTENTS_HITBOX), &traceFilter, &pmOriginTrace );
 
 		if ( pmOriginTrace.DidHit() )
 		{
@@ -221,7 +221,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	AssertFloatEquals( DotProduct( vRight, vUp  ), 0.0f, 1e-3 );
 
 	trace_t pmDirectionTrace;
-	UTIL_TraceHull( vOrigin, vTarget, Vector( -4, -4, -4 ), Vector( 4, 4, 4 ), iMask, &traceFilter, &pmDirectionTrace );
+	UTIL_TraceHull(EntityList(), vOrigin, vTarget, Vector( -4, -4, -4 ), Vector( 4, 4, 4 ), iMask, &traceFilter, &pmDirectionTrace );
 
 	if ( r_flashlightvisualizetrace.GetBool() == true )
 	{
@@ -240,7 +240,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 		if ( !bPlayerOnLadder )
 		{
 			trace_t pmBackTrace;
-			UTIL_TraceHull( vOrigin, vOrigin - vDir*(flPullBackDist-flEpsilon), Vector( -4, -4, -4 ), Vector( 4, 4, 4 ), iMask, &traceFilter, &pmBackTrace );
+			UTIL_TraceHull(EntityList(), vOrigin, vOrigin - vDir*(flPullBackDist-flEpsilon), Vector( -4, -4, -4 ), Vector( 4, 4, 4 ), iMask, &traceFilter, &pmBackTrace );
 			if( pmBackTrace.DidHit() )
 			{
 				// We have an intersection behind us as well, so limit our m_flDistMod
@@ -389,7 +389,7 @@ void CFlashlightEffect::UpdateLightOld(const Vector &vecPos, const Vector &vecDi
 	// Trace a line outward, skipping the player model and the view model.
 	trace_t pm;
 	CTraceFilterSkipPlayerAndViewModel traceFilter;
-	UTIL_TraceLine( vecPos, end, MASK_ALL, &traceFilter, &pm );
+	UTIL_TraceLine(EntityList(), vecPos, end, MASK_ALL, &traceFilter, &pm );
 	VectorCopy( pm.endpos, m_pPointLight->origin );
 	
 	float falloff = pm.fraction * nDistance;

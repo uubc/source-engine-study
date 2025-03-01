@@ -289,7 +289,7 @@ bool CBaseCombatWeapon::WeaponLOSCondition( const Vector &ownerPos, const Vector
 	// Use the custom LOS trace filter
 	CWeaponLOSFilter traceFilter( m_hOwner.Get(), npcOwner->GetEnemy(), COLLISION_GROUP_BREAKABLE_GLASS );
 	trace_t tr;
-	UTIL_TraceLine( barrelPos, targetPos, MASK_SHOT, &traceFilter, &tr );
+	UTIL_TraceLine(EntityList(), barrelPos, targetPos, MASK_SHOT, &traceFilter, &tr );
 
 	// See if we completed the trace without interruption
 	if ( tr.fraction == 1.0 )

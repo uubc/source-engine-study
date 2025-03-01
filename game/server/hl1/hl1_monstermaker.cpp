@@ -86,7 +86,7 @@ bool CNPCMaker::CanMakeNPC( void )
 		// set altitude. Now that I'm activated, any breakables, etc should be out from under me. 
 		trace_t tr;
 
-		UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector ( 0, 0, 2048 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector ( 0, 0, 2048 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 		m_flGround = tr.endpos.z;
 	}
 

@@ -39,7 +39,7 @@ float PercentageOfFlashForPlayer(CBaseEntity *player, Vector flashPos, CBaseEnti
 	vecRight.NormalizeInPlace();
 	vecUp.NormalizeInPlace();
 
-	UTIL_TraceLine( flashPos, pos,
+	UTIL_TraceLine(EntityList(), flashPos, pos,
 		(CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_DEBRIS|CONTENTS_MONSTER),
 		pevInflictor, COLLISION_GROUP_NONE, &tr );
 

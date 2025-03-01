@@ -1310,7 +1310,7 @@ Vector CNPC_MetroPolice::StitchAimTarget( const Vector &posSrc, bool bNoisy )
 		trace_t	trace;
 		GetEnemy()->GetEngineObject()->NormalizedToWorldSpace( Vector( 0.5f, 0.5f, 1.0f ), &vecBodyTarget );
 		float flHeight = GetEnemy()->GetEngineObject()->WorldAlignSize().z;
-		UTIL_TraceLine( vecBodyTarget, vecBodyTarget + Vector( 0, 0, -flHeight -80 ), 
+		UTIL_TraceLine(EntityList(), vecBodyTarget, vecBodyTarget + Vector( 0, 0, -flHeight -80 ),
 			(MASK_SOLID_BRUSHONLY | MASK_WATER), NULL, COLLISION_GROUP_NONE, &trace );
 		return trace.endpos;
 	}
@@ -1815,7 +1815,7 @@ void CNPC_MetroPolice::AimBurstAtEnemy( float flReactionTime )
 	
 	// Trace down a bit to hit the ground if we're above the ground...
 	trace_t	trace;
-	UTIL_TraceLine( vecStitchStart, vecStitchStart + Vector( 0, 0, -512 ), (MASK_SOLID_BRUSHONLY | MASK_WATER), NULL, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), vecStitchStart, vecStitchStart + Vector( 0, 0, -512 ), (MASK_SOLID_BRUSHONLY | MASK_WATER), NULL, COLLISION_GROUP_NONE, &trace );
 	m_vecBurstTargetPos = trace.endpos;
 	VectorSubtract( vecStitchEnd, m_vecBurstTargetPos, m_vecBurstDelta );
 
@@ -2344,7 +2344,7 @@ Vector CNPC_MetroPolice::GetActualShootTrajectory( const Vector &shootOrigin )
 			// Now raytrace against only the world + (good for cops on bridges)
 			trace_t tr;
 			CTraceFilterWorldOnly traceFilter;
-			UTIL_TraceLine( Weapon_ShootPosition(), m_vecBurstTargetPos, MASK_SOLID, &traceFilter, &tr );
+			UTIL_TraceLine(EntityList(), Weapon_ShootPosition(), m_vecBurstTargetPos, MASK_SOLID, &traceFilter, &tr );
 			if ( tr.fraction == 1.0f )
 			{
 				m_nBurstMode = BURST_LOCKED_ON;
@@ -3724,7 +3724,7 @@ int CNPC_MetroPolice::SelectMoveToLedgeSchedule()
 
 		trace_t tr;
 		CTraceFilterWorldOnly traceFilter;
-		UTIL_TraceLine( Weapon_ShootPosition(), Weapon_ShootPosition() + vecDelta, MASK_SOLID, &traceFilter, &tr );
+		UTIL_TraceLine(EntityList(), Weapon_ShootPosition(), Weapon_ShootPosition() + vecDelta, MASK_SOLID, &traceFilter, &tr );
 
 		if (tr.endpos.z >= GetEngineObject()->GetAbsOrigin().z - 25.0f )
 			return SCHED_METROPOLICE_ESTABLISH_STITCH_LINE_OF_FIRE;

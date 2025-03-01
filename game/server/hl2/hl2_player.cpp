@@ -613,14 +613,14 @@ void CHL2_Player::PreThink(void)
 
 			trace_t tr;
 
-			UTIL_TraceHull( WorldSpaceCenter() - Vector( 0, 0, 16 ), vecCheckDir, NAI_Hull::Mins(HULL_TINY_CENTERED),NAI_Hull::Maxs(HULL_TINY_CENTERED), MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER, &tr );
+			UTIL_TraceHull(EntityList(), WorldSpaceCenter() - Vector( 0, 0, 16 ), vecCheckDir, NAI_Hull::Mins(HULL_TINY_CENTERED),NAI_Hull::Maxs(HULL_TINY_CENTERED), MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER, &tr );
 			
 			//NDebugOverlay::Line( tr.startpos, tr.endpos, 0,255,0, true, 10 );
 
 			if( tr.fraction == 1.0 && !tr.startsolid )
 			{
 				// Now trace down!
-				UTIL_TraceLine( vecCheckDir, vecCheckDir - Vector( 0, 0, 64 ), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecCheckDir, vecCheckDir - Vector( 0, 0, 64 ), MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 				//NDebugOverlay::Line( tr.startpos, tr.endpos, 0,255,0, true, 10 );
 
@@ -771,7 +771,7 @@ void CHL2_Player::PreThink(void)
 			{
 				trace_t trainTrace;
 				// Maybe this is on the other side of a level transition
-				UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
+				UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
 					MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trainTrace );
 
 				if ( trainTrace.fraction != 1.0 && trainTrace.m_pEnt )
@@ -1393,7 +1393,7 @@ bool CHL2_Player::CommanderFindGoal( commandgoal_t *pGoal )
 	// MASK_SHOT on purpose! So that you don't hit the invisible hulls of the NPCs.
 	CTraceFilterSkipTwoEntities filter(this, GetActiveWeapon() ? GetActiveWeapon()->PhysCannonGetHeldEntity() : NULL, COLLISION_GROUP_INTERACTIVE_DEBRIS);
 
-	UTIL_TraceLine( EyePosition(), EyePosition() + forward * MAX_COORD_RANGE, MASK_SHOT, &filter, &tr );
+	UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + forward * MAX_COORD_RANGE, MASK_SHOT, &filter, &tr );
 
 	if( !tr.DidHitWorld() )
 	{
@@ -1437,7 +1437,7 @@ bool CHL2_Player::CommanderFindGoal( commandgoal_t *pGoal )
 		// target location for a bounding box.
 		// Now trace down. 
 		//UTIL_TraceLine( vecTarget, vecTarget - Vector( 0, 0, 8192 ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
-		UTIL_TraceHull( vecTarget + tr.plane.normal * 24,
+		UTIL_TraceHull(EntityList(), vecTarget + tr.plane.normal * 24,
 						vecTarget - Vector( 0, 0, 8192 ),
 						mins,
 						maxs,
@@ -1743,7 +1743,7 @@ void CHL2_Player::CheatImpulseCommands( int iImpulse )
 	{
 		// Rangefinder
 		trace_t tr;
-		UTIL_TraceLine( EyePosition(), EyePosition() + EyeDirection3D() * MAX_COORD_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + EyeDirection3D() * MAX_COORD_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.fraction != 1.0 )
 		{
@@ -3000,7 +3000,7 @@ void CHL2_Player::UpdateWeaponPosture( void )
 
 		const float CHECK_FRIENDLY_RANGE = 50 * 12;
 		trace_t	tr;
-		UTIL_TraceLine( EyePosition(), EyePosition() + vecAim * CHECK_FRIENDLY_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + vecAim * CHECK_FRIENDLY_RANGE, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		CBaseEntity *aimTarget = (CBaseEntity*)tr.m_pEnt;
 

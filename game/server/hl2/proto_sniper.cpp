@@ -824,7 +824,7 @@ void CProtoSniper::PaintTarget( const Vector &vecTarget, float flPaintTime )
 
 	trace_t tr;
 
-	UTIL_TraceLine( vecStart, vecStart + vecCurrentDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecStart + vecCurrentDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	m_pBeam->SetStartPos( tr.endpos );
 	m_pBeam->RelinkBeam();
@@ -1702,7 +1702,7 @@ bool CProtoSniper::FindDecoyObject( void )
 		
 		// Right now, tracing with MASK_BLOCKLOS and checking the fraction as well as the object the trace
 		// has hit makes it possible for the decoy behavior to shoot through glass. 
-		UTIL_TraceLine( vecBulletOrigin, vecDecoyTarget + vecDirToDecoy * 32, 
+		UTIL_TraceLine(EntityList(), vecBulletOrigin, vecDecoyTarget + vecDirToDecoy * 32,
 			MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr);
 
 		if( tr.m_pEnt == pProspect || tr.fraction == 1.0 )
@@ -1752,7 +1752,7 @@ bool CProtoSniper::VerifyShot( CBaseEntity *pTarget )
 	trace_t tr;
 
 	Vector vecTarget = DesiredBodyTarget( pTarget );
-	UTIL_TraceLine( GetBulletOrigin(), vecTarget, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetBulletOrigin(), vecTarget, MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction != 1.0 )
 	{
@@ -1761,7 +1761,7 @@ bool CProtoSniper::VerifyShot( CBaseEntity *pTarget )
 			// if the target is the player, do another trace to see if we can shoot his eyeposition. This should help 
 			// improve sniper responsiveness in cases where the player is hiding his chest from the sniper with his 
 			// head in full view.
-			UTIL_TraceLine( GetBulletOrigin(), pTarget->EyePosition(), MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetBulletOrigin(), pTarget->EyePosition(), MASK_SHOT, pTarget, COLLISION_GROUP_NONE, &tr );
 
 			if( tr.fraction == 1.0 )
 			{
@@ -2722,7 +2722,7 @@ bool CProtoSniper::FindFrustratedShot( float flNoise )
 		if( GetEnemy()->FVisible( vecSpot ) || i == MAX_TRIES - 1 )
 		{
 			trace_t tr;
-			AI_TraceLine(vecSrc, vecSrc + vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+			AI_TraceLine(EntityList(), vecSrc, vecSrc + vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 			if( !GetEnemy()->FVisible( tr.endpos ) )
 			{
@@ -2798,7 +2798,7 @@ bool CProtoSniper::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **
 	AngleVectors( pEntity->GetEngineObject()->GetLocalAngles(), NULL, &vecRight, NULL );
 
 	vecEye = vecRight * SNIPER_EYE_DIST - vecVerticalOffset;
-	UTIL_TraceLine( EyePosition(), pEntity->EyePosition() + vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), EyePosition(), pEntity->EyePosition() + vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
 
 #if 0
 	NDebugOverlay::Line(EyePosition(), tr.endpos, 0,255,0, true, 0.1);
@@ -2815,7 +2815,7 @@ bool CProtoSniper::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **
 	if( !fCheckFailed )
 	{
 		vecEye = -vecRight * SNIPER_EYE_DIST - vecVerticalOffset;
-		UTIL_TraceLine( EyePosition(), pEntity->EyePosition() + vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), pEntity->EyePosition() + vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
 
 #if 0
 		NDebugOverlay::Line(EyePosition(), tr.endpos, 0,255,0, true, 0.1);
@@ -2845,7 +2845,7 @@ bool CProtoSniper::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **
 	if( (pPlayer->GetEngineObject()->GetFlags() & FL_DUCKING) && pPlayer->MuzzleFlashTime() > gpGlobals->curtime )
 	{
 		vecEye = pPlayer->EyePosition() + Vector( 0, 0, 32 );
-		UTIL_TraceLine( EyePosition(), vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), EyePosition(), vecEye, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
 
 		if( tr.fraction != 1.0 )
 		{
@@ -3245,7 +3245,7 @@ void CSniperBullet::BulletThink( void )
 	//Msg(".");
 
 	trace_t tr;
-	AI_TraceLine( vecStart, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vecStart, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction != 1.0 )
 	{
@@ -3290,7 +3290,7 @@ void CSniperBullet::BulletThink( void )
 					GetEngineObject()->SetAbsOrigin( vecCursor );
 
 					// Fire another tracer.
-					AI_TraceLine( vecCursor, vecCursor + m_vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+					AI_TraceLine(EntityList(), vecCursor, vecCursor + m_vecDir * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 					UTIL_Tracer( vecCursor, tr.endpos, 0, TRACER_DONT_USE_ATTACHMENT, m_Speed, true, "StriderTracer" );
 					return;
 				}
@@ -3363,7 +3363,7 @@ bool CSniperBullet::Start( const Vector &vecOrigin, const Vector &vecTarget, CBa
 	// Start the tracer here, and tell it to end at the end of the last trace
 	// the trace comes from the loop above that does penetration.
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 8192, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + m_vecDir * 8192, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	UTIL_Tracer( vecOrigin, tr.endpos, 0, TRACER_DONT_USE_ATTACHMENT, m_Speed, true, "StriderTracer" );
 
 	float flElapsedTime = ( (tr.startpos - tr.endpos).Length() / m_Speed );

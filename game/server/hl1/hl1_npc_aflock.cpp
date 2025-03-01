@@ -515,11 +515,11 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 	if ( !m_fTurning)// something in the way and boid is not already turning to avoid
 	{
 		// measure clearance on left and right to pick the best dir to turn
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vRight * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vRight * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 		vecDist = (tr.endpos - GetEngineObject()->GetAbsOrigin());
 		flRightSide = vecDist.Length();
 
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - vRight * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - vRight * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 		vecDist = (tr.endpos - GetEngineObject()->GetAbsOrigin());
 		flLeftSide = vecDist.Length();
 
@@ -566,7 +566,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 	GetEngineObject()->SetAbsVelocity( vForward * m_flSpeed );
 	
 	// check and make sure we aren't about to plow into the ground, don't let it happen
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - vUp * 16, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - vUp * 16, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction != 1.0 && GetEngineObject()->GetAbsVelocity().z < 0 )
 	{
 		Vector vecVel = GetEngineObject()->GetAbsVelocity();
@@ -618,7 +618,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 	fBlocked = FALSE;// assume the way ahead is clear
 
 	// check for obstacle ahead
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	
 	if (tr.fraction != 1.0)
 	{
@@ -627,7 +627,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 	}
 
 	// extra wide checks
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + vRight * 12, GetEngineObject()->GetAbsOrigin() + vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + vRight * 12, GetEngineObject()->GetAbsOrigin() + vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	
 	if (tr.fraction != 1.0)
 	{
@@ -635,7 +635,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 		fBlocked = TRUE;
 	}
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() - vRight * 12, GetEngineObject()->GetAbsOrigin() - vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() - vRight * 12, GetEngineObject()->GetAbsOrigin() - vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	
 	if (tr.fraction != 1.0)
 	{

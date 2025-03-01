@@ -2305,7 +2305,7 @@ bool CBaseEntity::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **p
 	trace_t tr;
 	if ( !IsXbox() && ai_LOS_mode.GetBool() )
 	{
-		UTIL_TraceLine(vecLookerOrigin, vecTargetOrigin, traceMask, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTargetOrigin, traceMask, this, COLLISION_GROUP_NONE, &tr);
 	}
 	else
 	{
@@ -2323,7 +2323,7 @@ bool CBaseEntity::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **p
 
 		// Use the custom LOS trace filter
 		CTraceFilterLOS traceFilter( this, COLLISION_GROUP_NONE, pEntity );
-		UTIL_TraceLine( vecLookerOrigin, vecTargetOrigin, traceMask, &traceFilter, &tr );
+		UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTargetOrigin, traceMask, &traceFilter, &tr );
 	}
 	
 	if (tr.fraction != 1.0 || tr.startsolid )
@@ -2374,7 +2374,7 @@ bool CBaseEntity::FVisible( const Vector &vecTarget, int traceMask, CBaseEntity 
 
 	if ( ai_LOS_mode.GetBool() )
 	{
-		UTIL_TraceLine( vecLookerOrigin, vecTarget, traceMask, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTarget, traceMask, this, COLLISION_GROUP_NONE, &tr);
 	}
 	else
 	{
@@ -2393,7 +2393,7 @@ bool CBaseEntity::FVisible( const Vector &vecTarget, int traceMask, CBaseEntity 
 
 		// Use the custom LOS trace filter
 		CTraceFilterLOS traceFilter( this, COLLISION_GROUP_NONE );
-		UTIL_TraceLine( vecLookerOrigin, vecTarget, traceMask, &traceFilter, &tr );
+		UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTarget, traceMask, &traceFilter, &tr );
 	}
 
 	if (tr.fraction != 1.0)
@@ -6527,7 +6527,7 @@ void CC_Ent_Create( const CCommand& args )
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine(pPlayer->EyePosition(),
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_SOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0 )
@@ -6581,7 +6581,7 @@ bool CC_GetCommandEnt( const CCommand& args, IServerEntity **ent, Vector *vecTar
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		UTIL_TraceLine(pPlayer->EyePosition(),
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_NPCSOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 

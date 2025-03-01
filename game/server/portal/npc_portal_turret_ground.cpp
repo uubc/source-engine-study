@@ -159,7 +159,7 @@ void CNPC_Portal_GroundTurret::Shoot()
 		trace_t tr;
 		CTraceFilterSkipTwoEntities traceFilter( this, info.m_pAdditionalIgnoreEnt, COLLISION_GROUP_NONE );
 		Vector vecEnd = info.m_vecSrc + vecDir * info.m_flDistance;
-		AI_TraceLine( info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr );
+		AI_TraceLine(EntityList(), info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr );
 
 		if ( tr.m_pEnt && !tr.m_pEnt->IsPlayer() && ( vecDir * info.m_flDistance * tr.fraction ).Length() < 16.0f )
 		{

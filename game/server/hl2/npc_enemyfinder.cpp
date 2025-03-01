@@ -267,7 +267,7 @@ bool CNPC_EnemyFinder::FVisible( CBaseEntity *pTarget, int traceMask, CBaseEntit
 	}
 
 	CTraceFilterSkipTwoEntities traceFilter( pTarget, pVehicle, COLLISION_GROUP_NONE );
-	AI_TraceLine( vStartPos, vEndPos, MASK_SHOT, &traceFilter, &tr );
+	AI_TraceLine(EntityList(), vStartPos, vEndPos, MASK_SHOT, &traceFilter, &tr );
 	if ( ppBlocker )
 	{
 		*ppBlocker = (CBaseEntity*)tr.m_pEnt;

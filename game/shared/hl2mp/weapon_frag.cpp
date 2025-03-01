@@ -396,7 +396,7 @@ void CWeaponFrag::CheckThrowPosition( CBasePlayer *pPlayer, const Vector &vecEye
 {
 	trace_t tr;
 
-	UTIL_TraceHull( vecEye, vecSrc, -Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2), Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2), 
+	UTIL_TraceHull(EntityList(), vecEye, vecSrc, -Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2), Vector(GRENADE_RADIUS+2,GRENADE_RADIUS+2,GRENADE_RADIUS+2),
 		pPlayer->PhysicsSolidMaskForEntity(), pPlayer, pPlayer->GetEngineObject()->GetCollisionGroup(), &tr );
 	
 	if ( tr.DidHit() )
@@ -514,7 +514,7 @@ void CWeaponFrag::RollGrenade( CBasePlayer *pPlayer )
 	vecFacing.z = 0;
 	VectorNormalize( vecFacing );
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecSrc - Vector(0,0,16), MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc - Vector(0,0,16), MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction != 1.0 )
 	{
 		// compute forward vec parallel to floor plane and roll grenade along that

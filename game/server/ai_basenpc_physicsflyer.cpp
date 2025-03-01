@@ -147,7 +147,7 @@ Vector CAI_BasePhysicsFlyingBot::VelocityToAvoidObstacles(float flInterval)
 	// Try to remain above the ground.
 	// --------------------------------
 	float flMinGroundDist = MinGroundDist();
-	AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0, 0, -flMinGroundDist),
+	AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0, 0, -flMinGroundDist),
 		MASK_NPCSOLID_BRUSHONLY|CONTENTS_WATER, this, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction < 1)
 	{

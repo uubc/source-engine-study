@@ -1093,7 +1093,7 @@ void CNPC_Manhack::MaintainGroundHeight( void )
 	const float minGroundHeight = 52.0f;
 
 	trace_t	tr;
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(),
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(),
 		GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, minGroundHeight ),
 		GetHullMins(), 
 		GetHullMaxs(), 
@@ -1388,7 +1388,7 @@ void CNPC_Manhack::Splash( const Vector &vecSplashPos )
 	{
 		// We're leaving the water so we have to reverify what it was
 		trace_t	tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), (CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), (CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr );
 
 		// Re-validate this
 		if ( !(tr.contents&(CONTENTS_WATER|CONTENTS_SLIME)) )
@@ -1670,7 +1670,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 			// For decals and sparks we must trace a line in the direction of the surface norm
 			// that we hit.
 			trace_t	decalTrace;
-			AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - (tr.plane.normal * 24),MASK_SOLID, this, COLLISION_GROUP_NONE, &decalTrace );
+			AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - (tr.plane.normal * 24),MASK_SOLID, this, COLLISION_GROUP_NONE, &decalTrace );
 
 			if ( decalTrace.fraction != 1.0 )
 			{
@@ -1758,7 +1758,7 @@ void CNPC_Manhack::CheckCollisions(float flInterval)
 	trace_t			tr;
 	CBaseEntity*	pHitEntity = NULL;
 	
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(),
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(),
 					vecCheckPos, 
 					GetHullMins(), 
 					GetHullMaxs(),
@@ -2811,7 +2811,7 @@ void CNPC_Manhack::StartTask( const Task_t *pTask )
 	case TASK_MANHACK_MOVEAT_SAVEPOSITION:
 		{
 			trace_t tr;
-			AI_TraceLine(GetEngineObject()->GetAbsOrigin(), m_vSavePosition, MASK_NPCWORLDSTATIC, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), m_vSavePosition, MASK_NPCWORLDSTATIC, this, COLLISION_GROUP_NONE, &tr );
 			if (tr.DidHitWorld())
 			{
 				TaskFail( FAIL_NO_ROUTE );

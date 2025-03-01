@@ -1069,7 +1069,7 @@ void CPrediction::SetIdealPitch ( C_BasePlayer *player, const Vector& origin, co
 
 		bottom[2] -= 160;
 
-		UTIL_TraceLine( top, bottom, MASK_SOLID, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &tr );
+		UTIL_TraceLine(EntityList(), top, bottom, MASK_SOLID, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &tr );
 
 		// looking at a wall, leave ideal the way it was
 		if ( tr.allsolid )

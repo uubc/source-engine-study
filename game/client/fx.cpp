@@ -1075,7 +1075,7 @@ void FX_Tesla( const CTeslaInfo &teslaInfo )
 			}
 			VectorNormalize( vecForward );
 
-			UTIL_TraceLine( teslaInfo.m_vPos, teslaInfo.m_vPos + (vecForward * teslaInfo.m_flRadius), MASK_SHOT, pEntity, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), teslaInfo.m_vPos, teslaInfo.m_vPos + (vecForward * teslaInfo.m_flRadius), MASK_SHOT, pEntity, COLLISION_GROUP_NONE, &tr );
 		} while ( tr.fraction >= 1.0 && iTries < 3 );
 
 		Vector vecEnd = tr.endpos - (vecForward * 8);
@@ -1198,7 +1198,7 @@ void FX_BuildTeslaHitbox(
 	randomDir = RandomVector( -1.0f, 1.0f );
 	VectorNormalize( randomDir );
 
-	UTIL_TraceLine( pEntity->WorldSpaceCenter(), pEntity->WorldSpaceCenter() + ( randomDir * 100 ), MASK_SOLID_BRUSHONLY, pEntity, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), pEntity->WorldSpaceCenter(), pEntity->WorldSpaceCenter() + ( randomDir * 100 ), MASK_SOLID_BRUSHONLY, pEntity, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{

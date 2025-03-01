@@ -1660,7 +1660,7 @@ void CPropJeepEpisodic::InputOutsideTransition( inputdata_t &inputdata )
 		vecTeleportPos.z += ( vecMaxs.z - vecMins.z );
 
 		trace_t	tr;
-		UTIL_TraceHull( vecTeleportPos, vecTeleportPos - Vector( 0, 0, 128 ), vecMins, vecMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vecTeleportPos, vecTeleportPos - Vector( 0, 0, 128 ), vecMins, vecMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		if ( tr.startsolid == false && tr.allsolid == false && tr.fraction < 1.0f )
 		{
 			// Store this off

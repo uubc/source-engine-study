@@ -242,7 +242,7 @@ void CEnvLaser::StrikeThink( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), vecFireAt, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), vecFireAt, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 	FireAtPoint( tr );
 	GetEngineObject()->SetNextThink( gpGlobals->curtime );
 }

@@ -79,7 +79,7 @@ void CBaseGrenadeConcussion::ExplodeConcussion( IServerEntity *pOther )
 	Vector velDir = GetEngineObject()->GetAbsVelocity();
 	VectorNormalize( velDir );
 	vecSpot = GetEngineObject()->GetAbsOrigin() - velDir * 32;
-	UTIL_TraceLine( vecSpot, vecSpot + velDir * 64, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot, vecSpot + velDir * 64, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	Explode( &tr, DMG_BLAST );
 }

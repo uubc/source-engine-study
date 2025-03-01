@@ -228,7 +228,7 @@ bool CDarknessLightSourcesSystem::IsEntityVisibleToTarget( CBaseEntity *pLooker,
 
 			// Check LOS from the light to the target
 			CTraceFilterSkipTwoEntities filter( pTarget, pLooker, COLLISION_GROUP_NONE );
-			AI_TraceLine( pTarget->WorldSpaceCenter(), pLightSource->GetEngineObject()->GetAbsOrigin(), MASK_BLOCKLOS, &filter, &tr );
+			AI_TraceLine(EntityList(), pTarget->WorldSpaceCenter(), pLightSource->GetEngineObject()->GetAbsOrigin(), MASK_BLOCKLOS, &filter, &tr );
 			if ( tr.fraction == 1.0 )
 			{
 				if ( bDebug )
@@ -282,7 +282,7 @@ bool CDarknessLightSourcesSystem::IsEntityVisibleToTarget( CBaseEntity *pLooker,
 
 					// We've got the point of intersection. See if we can see it.
 					CTraceFilterSkipTwoEntities filter( pTarget, pLooker, COLLISION_GROUP_NONE );
-					AI_TraceLine( pLooker->EyePosition(), vecSpherePoint, MASK_SOLID_BRUSHONLY, &filter, &tr );
+					AI_TraceLine(EntityList(), pLooker->EyePosition(), vecSpherePoint, MASK_SOLID_BRUSHONLY, &filter, &tr );
 
 					if ( bDebug )
 					{
@@ -329,7 +329,7 @@ bool CDarknessLightSourcesSystem::AreThereLightSourcesWithinRadius( CBaseEntity 
 		if ( flDistanceSqr < flRadiusSqr )
 		{
 			trace_t tr;
-			AI_TraceLine( pLooker->EyePosition(), pLightSource->GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, pLooker, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine(EntityList(), pLooker->EyePosition(), pLightSource->GetEngineObject()->GetAbsOrigin(), MASK_SOLID_BRUSHONLY, pLooker, COLLISION_GROUP_NONE, &tr );
 
 			if ( g_debug_darkness.GetBool() )
 			{

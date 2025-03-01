@@ -1273,7 +1273,7 @@ void CBreakableSurface::VPhysicsCollision( int index, gamevcollisionevent_t *pEv
 				pEvent->pInternalData->GetContactPoint( damagePos );
 
 				trace_t tr;
-				UTIL_TraceLine ( damagePos - normal, damagePos + normal, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine (EntityList(), damagePos - normal, damagePos + normal, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 				// Only place decals and draw effects if we hit something valid
 				if ( tr.m_pEnt && tr.m_pEnt == this )

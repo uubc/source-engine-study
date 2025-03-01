@@ -301,7 +301,7 @@ realcheck:
 	start[1] = stop[1] = (mins[1] + maxs[1])*0.5;
 	stop[2] = start[2] - 2*flStepSize;
 	
-	UTIL_TraceLine( start, stop, mask, pTraceFilter, &trace );
+	UTIL_TraceLine(EntityList(), start, stop, mask, pTraceFilter, &trace );
 
 	if (trace.fraction == 1.0)
 		return false;
@@ -315,7 +315,7 @@ realcheck:
 			start[0] = stop[0] = x ? maxs[0] : mins[0];
 			start[1] = stop[1] = y ? maxs[1] : mins[1];
 			
-			UTIL_TraceLine( start, stop, mask, pTraceFilter, &trace );
+			UTIL_TraceLine(EntityList(), start, stop, mask, pTraceFilter, &trace );
 			
 			if (trace.fraction != 1.0 && trace.endpos[2] > bottom)
 				bottom = trace.endpos[2];
@@ -2380,7 +2380,7 @@ CON_COMMAND_F(surfaceprop, "Reports the surface properties at the cursor", FCVAR
 	trace_t tr;
 	Vector forward;
 	pPlayer->EyeVectors(&forward);
-	UTIL_TraceLine(pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
+	UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
 		MASK_SHOT_HULL | CONTENTS_GRATE | CONTENTS_DEBRIS, pPlayer, COLLISION_GROUP_NONE, &tr);
 
 	if (tr.DidHit())
@@ -2492,7 +2492,7 @@ void PhysicsCommand(const CCommand& args, void (*func)(IServerEntity* pEntity))
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors(&forward);
-		UTIL_TraceLine(pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
+		UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), pPlayer->EyePosition() + forward * MAX_COORD_RANGE,
 			MASK_SHOT_HULL | CONTENTS_GRATE | CONTENTS_DEBRIS, pPlayer, COLLISION_GROUP_NONE, &tr);
 
 		if (tr.DidHit())
@@ -2772,7 +2772,7 @@ void CC_KDTreeTest( const CCommand &args )
 			trace_t trace;
 			for ( int iTest = 0; iTest < NUM_KDTREE_TESTS; ++iTest )
 			{
-				UTIL_TraceLine( vecStart, vecTargets[iTest], MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceLine(EntityList(), vecStart, vecTargets[iTest], MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
 			}
 			break;
 		}
@@ -2783,7 +2783,7 @@ void CC_KDTreeTest( const CCommand &args )
 			trace_t trace;
 			for ( int iTest = 0; iTest < NUM_KDTREE_TESTS; ++iTest )
 			{
-				UTIL_TraceHull( vecStart, vecTargets[iTest], VEC_HULL_MIN_SCALED( pPlayer ), VEC_HULL_MAX_SCALED( pPlayer ), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceHull(EntityList(), vecStart, vecTargets[iTest], VEC_HULL_MIN_SCALED( pPlayer ), VEC_HULL_MAX_SCALED( pPlayer ), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
 			}
 			break;
 		}
@@ -3058,7 +3058,7 @@ void CC_CollisionTest( const CCommand &args )
 			trace_t tr;
 			for ( i = 0; i < NUM_COLLISION_TESTS; i++ )
 			{
-				UTIL_TraceHull( start, targets[i], -size[1], size[1], nMask, NULL, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceHull(EntityList(), start, targets[i], -size[1], size[1], nMask, NULL, COLLISION_GROUP_NONE, &tr );
 			}
 		}
 		else
@@ -3073,7 +3073,7 @@ void CC_CollisionTest( const CCommand &args )
 					partition->RenderLeafsForRayTraceStart( 10.0f );
 				}
 
-				UTIL_TraceLine( start, targets[i], nMask, NULL, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), start, targets[i], nMask, NULL, COLLISION_GROUP_NONE, &tr );
 
 				if ( i == 0 )
 				{

@@ -600,7 +600,7 @@ void CNPC_GroundTurret::ProjectBeam( const Vector &vecStart, const Vector &vecDi
 		return;
 
 	trace_t tr;
-	AI_TraceLine( vecStart, vecStart + vecDir * m_flSensingDist, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vecStart, vecStart + vecDir * m_flSensingDist, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	
 	pBeam->SetStartPos( tr.endpos );
 	pBeam->SetEndPos( tr.startpos );

@@ -144,7 +144,7 @@ void CParticleSystemQuery::TraceLine( const Vector& vecAbsStart,
 	if ( bDoTrace )
 	{
 		trace_t tempTrace;
-		UTIL_TraceLine( vecAbsStart, vecAbsEnd, mask, ignore, collisionGroup, &tempTrace );
+		UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, mask, ignore, collisionGroup, &tempTrace );
 		memcpy( ptr, &tempTrace, sizeof ( CBaseTrace ) );
 	}
 	else

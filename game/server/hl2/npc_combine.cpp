@@ -2885,7 +2885,7 @@ bool CNPC_Combine::CheckCanThrowGrenade( const Vector &vecTarget )
 	{
 		// Have to try a high toss. Do I have enough room?
 		trace_t tr;
-		AI_TraceLine( EyePosition(), EyePosition() + Vector( 0, 0, 64 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceLine(EntityList(), EyePosition(), EyePosition() + Vector( 0, 0, 64 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		if( tr.fraction != 1.0 )
 		{
 			return false;
@@ -2964,7 +2964,7 @@ bool CNPC_Combine::CanAltFireEnemy( bool bUseFreeKnowledge )
 	}
 
 	// Trace a hull about the size of the combine ball.
-	UTIL_TraceHull( vShootPosition, vecTarget, mins, maxs, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), vShootPosition, vecTarget, mins, maxs, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	float flLength = (vShootPosition - vecTarget).Length();
 
@@ -3049,7 +3049,7 @@ int CNPC_Combine::MeleeAttack1Conditions ( float flDot, float flDist )
 	vecSrc = WorldSpaceCenter();
 	vecEnd = GetEnemy()->WorldSpaceCenter();
 
-	AI_TraceLine(vecSrc, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 	if( tr.m_pEnt != GetEnemy() )
 	{
 		return COND_NONE;

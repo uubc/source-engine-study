@@ -258,7 +258,7 @@ void CRpgRocket::SeekThink( void )
 //		if ( pDot->IsActive() )
 		if ( pDot->IsOn() )
 		{
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), pDot->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), pDot->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction >= 0.90 )
 			{
 				vecDir = pDot->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin();
@@ -549,7 +549,7 @@ int CLaserDot::DrawModel( int flags )
 		}
 		
 		trace_t tr;
-		UTIL_TraceLine( vecAttachment, vecAttachment + ( vecDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecAttachment, vecAttachment + ( vecDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
 		
 		// Backup off the hit plane
 		endPos = tr.endpos + ( tr.plane.normal * 4.0f );
@@ -1029,7 +1029,7 @@ void CWeaponRPG::UpdateSpot( void )
 	Vector	endPos = muzzlePos + ( forward * MAX_TRACE_LENGTH );
 
 	// Trace out for the endpoint
-	UTIL_TraceLine( muzzlePos, endPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), muzzlePos, endPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	// Move the laser sprite
 	Vector	laserPos = tr.endpos + ( tr.plane.normal * 2.0f );

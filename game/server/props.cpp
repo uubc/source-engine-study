@@ -492,7 +492,7 @@ void CBreakableProp::HandleFirstCollisionInteractions( int index, gamevcollision
 		VectorNormalize(vecVelocity);
 
 		trace_t tr;
-		UTIL_TraceLine( vecPos, vecPos + (vecVelocity * 64), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecPos, vecPos + (vecVelocity * 64), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.m_pEnt )
 		{
@@ -608,7 +608,7 @@ void CPhysicsProp::HandleAnyCollisionInteractions( int index, gamevcollisioneven
 
 			// Find the bone for the hitbox we hit
 			trace_t tr;
-			UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[index] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecPos, vecPos + pEvent->preVelocity[index] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 			Vector vecImpalePos = tr.endpos;
 			int iBone = -1;
 			if ( tr.hitbox )
@@ -3160,7 +3160,7 @@ int CPhysicsProp::OnTakeDamage( const CTakeDamageInfo &info )
 				}
 
 				trace_t tr;
-				UTIL_TraceLine( WorldSpaceCenter(), WorldSpaceCenter() + vel, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + vel, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 				CSoundEnt::InsertSound( SOUND_DANGER, tr.endpos, dangerRadius, 1.0, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 			}
 		}
@@ -5850,7 +5850,7 @@ void CPhysicsPropRespawnable::Event_Killed( const CTakeDamageInfo &info )
 void CPhysicsPropRespawnable::Materialize( void )
 {
 	trace_t tr;
-	UTIL_TraceHull( m_vOriginalSpawnOrigin, m_vOriginalSpawnOrigin, m_vOriginalMins, m_vOriginalMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), m_vOriginalSpawnOrigin, m_vOriginalSpawnOrigin, m_vOriginalMins, m_vOriginalMaxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.startsolid || tr.allsolid )
 	{
@@ -5878,7 +5878,7 @@ void CC_Prop_Dynamic_Create( const CCommand &args )
 	pPlayer->EyeVectors( &forward );
 
 	trace_t tr;
-	UTIL_TraceLine( pPlayer->EyePosition(),
+	UTIL_TraceLine(EntityList(), pPlayer->EyePosition(),
 		pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH, MASK_NPCSOLID, 
 		pPlayer, COLLISION_GROUP_NONE, &tr );
 
@@ -5990,7 +5990,7 @@ CPhysicsProp* CreatePhysicsProp( const char *pModelName, const Vector &vTraceSta
 	Vector vecSweepMins = pStudioHdr->hull_min();
 	Vector vecSweepMaxs = pStudioHdr->hull_max();
 	trace_t tr;
-	UTIL_TraceHull( vTraceStart, vTraceEnd,
+	UTIL_TraceHull(EntityList(), vTraceStart, vTraceEnd,
 		vecSweepMins, vecSweepMaxs, MASK_NPCSOLID, pTraceIgnore, COLLISION_GROUP_NONE, &tr );
 		    
 	// No hit? We're done.

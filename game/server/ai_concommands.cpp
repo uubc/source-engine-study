@@ -416,7 +416,7 @@ void CC_NPC_Create( const CCommand &args )
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
-		AI_TraceLine(pPlayer->EyePosition(),
+		AI_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_NPCSOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction != 1.0)
@@ -438,7 +438,7 @@ void CC_NPC_Create( const CCommand &args )
 			Vector	vUpBit = baseNPC->GetEngineObject()->GetAbsOrigin();
 			vUpBit.z += 1;
 
-			AI_TraceHull( baseNPC->GetEngineObject()->GetAbsOrigin(), vUpBit, baseNPC->GetHullMins(), baseNPC->GetHullMaxs(),
+			AI_TraceHull(EntityList(), baseNPC->GetEngineObject()->GetAbsOrigin(), vUpBit, baseNPC->GetHullMins(), baseNPC->GetHullMaxs(),
 				MASK_NPCSOLID, baseNPC, COLLISION_GROUP_NONE, &tr );
 			if ( tr.startsolid || (tr.fraction < 1.0) )
 			{
@@ -482,7 +482,7 @@ void CC_NPC_Create_Aimed( const CCommand &args )
 		VectorAngles( forward, angles );
 		angles.x = 0; 
 		angles.z = 0;
-		AI_TraceLine( pPlayer->EyePosition(),
+		AI_TraceLine(EntityList(), pPlayer->EyePosition(),
 			pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_NPCSOLID, 
 			pPlayer, COLLISION_GROUP_NONE, &tr );
 
@@ -505,7 +505,7 @@ void CC_NPC_Create_Aimed( const CCommand &args )
 			Vector	vUpBit = baseNPC->GetEngineObject()->GetAbsOrigin();
 			vUpBit.z += 1;
 
-			AI_TraceHull( baseNPC->GetEngineObject()->GetAbsOrigin(), vUpBit, baseNPC->GetHullMins(), baseNPC->GetHullMaxs(),
+			AI_TraceHull(EntityList(), baseNPC->GetEngineObject()->GetAbsOrigin(), vUpBit, baseNPC->GetHullMins(), baseNPC->GetHullMaxs(),
 				MASK_NPCSOLID, baseNPC, COLLISION_GROUP_NONE, &tr );
 			if ( tr.startsolid || (tr.fraction < 1.0) )
 			{
@@ -633,7 +633,7 @@ void CC_NPC_Teleport( void )
 	trace_t tr;
 	Vector forward;
 	pPlayer->EyeVectors( &forward );
-	AI_TraceLine(pPlayer->EyePosition(),
+	AI_TraceLine(EntityList(), pPlayer->EyePosition(),
 		pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_NPCSOLID, 
 		pPlayer, COLLISION_GROUP_NONE, &tr );
 
@@ -665,7 +665,7 @@ void CC_NPC_Go( void )
 	trace_t tr;
 	Vector forward;
 	pPlayer->EyeVectors( &forward );
-	AI_TraceLine(pPlayer->EyePosition(),
+	AI_TraceLine(EntityList(), pPlayer->EyePosition(),
 		pPlayer->EyePosition() + forward * MAX_TRACE_LENGTH,MASK_NPCSOLID, 
 		pPlayer, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction != 1.0)
@@ -868,7 +868,7 @@ CON_COMMAND( ai_test_los, "Test AI LOS from the player's POV" )
 	trace_t tr;
 	// Use the custom LOS trace filter
 	CTraceFilterLOS traceFilter(EntityList()->GetLocalPlayer(), COLLISION_GROUP_NONE );
-	UTIL_TraceLine(EntityList()->GetLocalPlayer()->EyePosition(), EntityList()->GetLocalPlayer()->EyePosition() + ToBasePlayer(EntityList()->GetLocalPlayer())->EyeDirection3D() * MAX_COORD_RANGE, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &tr );
+	UTIL_TraceLine(EntityList(), EntityList()->GetLocalPlayer()->EyePosition(), EntityList()->GetLocalPlayer()->EyePosition() + ToBasePlayer(EntityList()->GetLocalPlayer())->EyeDirection3D() * MAX_COORD_RANGE, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &tr );
 	NDebugOverlay::Line(EntityList()->GetLocalPlayer()->EyePosition(), tr.endpos, 127, 127, 127, true, 5 );
 	NDebugOverlay::Cross3D( tr.endpos, 24, 255, 255, 255, true, 5 );
 }

@@ -923,7 +923,7 @@ void CFuncTank::TrackTarget( void )
 			return;
 		}
 
-		UTIL_TraceLine( barrelEnd, worldTargetPosition, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), barrelEnd, worldTargetPosition, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		if (GetEngineObject()->GetSpawnFlags() & SF_TANK_AIM_AT_POS)
 		{
@@ -1027,7 +1027,7 @@ void CFuncTank::TrackTarget( void )
 		if (GetEngineObject()->GetSpawnFlags() & SF_TANK_LINEOFSIGHT )
 		{
 			float length = (m_maxRange > 0) ? m_maxRange : MAX_TRACE_LENGTH;
-			UTIL_TraceLine( barrelEnd, barrelEnd + forward * length, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), barrelEnd, barrelEnd + forward * length, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.m_pEnt == pTarget )
 				fire = TRUE;
@@ -1137,7 +1137,7 @@ void CFuncTank::TankTrace( const Vector &vecStart, const Vector &vecForward, con
 	Vector vecEnd;
 	
 	vecEnd = vecStart + vecDir * MAX_TRACE_LENGTH;
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 }
 
 	

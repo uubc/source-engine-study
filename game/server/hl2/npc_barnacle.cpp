@@ -1244,7 +1244,7 @@ void CNPC_Barnacle::LiftPrey( void )
 
 	// Drop the prey if it's been obscured by something
 	trace_t tr;
-	AI_TraceLine( WorldSpaceCenter(), pVictim->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), WorldSpaceCenter(), pVictim->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 	bool bEnemyIsNPC = IsEnemyAnNPC() && !IsEnemyARagdoll();
 	if ( ( bEnemyIsNPC && !pVictim->IsAlive() ) || (tr.fraction < 1.0 && tr.m_pEnt != pVictim && tr.m_pEnt != m_hRagdoll) )
 	{
@@ -1469,10 +1469,10 @@ void CNPC_Barnacle::AttachTongueToTarget( CBaseEntity *pTouchEnt, Vector vecGrab
 
 		CTraceFilterSkipTwoEntities traceFilter( this, pTouchEnt, COLLISION_GROUP_NONE );
 		trace_t placementTrace;
-		UTIL_TraceHull( origin, origin, pTouchEnt->GetEngineObject()->WorldAlignMins(), pTouchEnt->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, &traceFilter, &placementTrace );
+		UTIL_TraceHull(EntityList(), origin, origin, pTouchEnt->GetEngineObject()->WorldAlignMins(), pTouchEnt->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, &traceFilter, &placementTrace );
 		if ( placementTrace.startsolid )
 		{
-			UTIL_TraceHull( origin + Vector(0, 0, 24), origin, pTouchEnt->GetEngineObject()->WorldAlignMins(), pTouchEnt->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, &traceFilter, &placementTrace );
+			UTIL_TraceHull(EntityList(), origin + Vector(0, 0, 24), origin, pTouchEnt->GetEngineObject()->WorldAlignMins(), pTouchEnt->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, &traceFilter, &placementTrace );
 			if ( !placementTrace.startsolid )
 			{
 				pTouchEnt->GetEngineObject()->SetAbsOrigin( placementTrace.endpos );
@@ -2152,7 +2152,7 @@ void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
 
 	// Put blood on the ground if near enough
 	trace_t bloodTrace;
-	AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &bloodTrace);
+	AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &bloodTrace);
 	
 	if ( bloodTrace.fraction < 1.0f )
 	{
@@ -2202,7 +2202,7 @@ void CNPC_Barnacle::WaitTillDead ( void )
 	float goalAltitude = BARNACLE_DEAD_TONGUE_ALTITUDE;
 
 	trace_t tr;
-	AI_TraceLine( m_vecRoot.Get(), m_vecRoot.Get() - Vector( 0, 0, 256 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), m_vecRoot.Get(), m_vecRoot.Get() - Vector( 0, 0, 256 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0 )
 	{
@@ -2530,7 +2530,7 @@ CBaseEntity *CNPC_Barnacle::TongueTouchEnt ( float *pflLength )
 
 	// trace once to hit architecture and see if the tongue needs to change position.
 	CBarnacleTongueFilter tongueFilter( m_hLastSpitEnemy, this, COLLISION_GROUP_NONE );
-	AI_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector ( 0 , 0 , 2048 ),
+	AI_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector ( 0 , 0 , 2048 ),
 		iMask, &tongueFilter, &tr );
 	
 	length = fabs(GetEngineObject()->GetAbsOrigin().z - tr.endpos.z );

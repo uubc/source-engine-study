@@ -373,19 +373,19 @@ float CWeaponPortalgun::TraceFirePortal( bool bPortal2, const Vector &vTraceStar
 				vFinalPosition = pPortal->m_vDelayedPosition;
 				qFinalAngles = pPortal->m_qDelayedAngles;
 
-				UTIL_TraceLine( vTraceStart - vDirection * 16.0f, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
+				UTIL_TraceLine(EntityList(), vTraceStart - vDirection * 16.0f, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
 
 				return PORTAL_ANALOG_SUCCESS_NEAR;
 			}
 
-			UTIL_TraceLine( vTraceStart - vDirection * 16.0f, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
+			UTIL_TraceLine(EntityList(), vTraceStart - vDirection * 16.0f, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
 
 			return PORTAL_ANALOG_SUCCESS_OVERLAP_LINKED;
 		}
 	}
 
 	// Trace to see where the portal hit
-	UTIL_TraceLine( vTraceStart, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
+	UTIL_TraceLine(EntityList(), vTraceStart, vTraceStart + (vDirection * m_fMaxRange1), MASK_SHOT_PORTAL, &traceFilterPortalShot, &tr );
 
 	if ( !tr.DidHit() || tr.startsolid )
 	{

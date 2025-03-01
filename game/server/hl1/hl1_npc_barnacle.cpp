@@ -471,7 +471,7 @@ CBaseEntity *CNPC_Barnacle::TongueTouchEnt ( float *pflLength )
 	origin.z -= 1.f;
 
 	// trace once to hit architecture and see if the tongue needs to change position.
-	UTIL_TraceLine ( origin, origin - Vector ( 0 , 0 , 2048 ), 
+	UTIL_TraceLine (EntityList(), origin, origin - Vector ( 0 , 0 , 2048 ),
 		MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	length = fabs(GetEngineObject()->GetAbsOrigin().z - tr.endpos.z );

@@ -296,14 +296,14 @@ void CBaseGrenade::Detonate( void )
 	SetThink( NULL );
 
 	vecSpot = GetEngineObject()->GetAbsOrigin() + Vector ( 0 , 0 , 8 );
-	UTIL_TraceLine ( vecSpot, vecSpot + Vector ( 0, 0, -32 ), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, & tr);
+	UTIL_TraceLine (EntityList(), vecSpot, vecSpot + Vector ( 0, 0, -32 ), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, & tr);
 
 	if( tr.startsolid )
 	{
 		// Since we blindly moved the explosion origin vertically, we may have inadvertently moved the explosion into a solid,
 		// in which case nothing is going to be harmed by the grenade's explosion because all subsequent traces will startsolid.
 		// If this is the case, we do the downward trace again from the actual origin of the grenade. (sjb) 3/8/2007  (for ep2_outland_09)
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -32), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -32), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
 	}
 
 	Explode( &tr, DMG_BLAST );
@@ -331,7 +331,7 @@ void CBaseGrenade::ExplodeTouch( IServerEntity *pOther )
 	Vector velDir = GetEngineObject()->GetAbsVelocity();
 	VectorNormalize( velDir );
 	vecSpot = GetEngineObject()->GetAbsOrigin() - velDir * 32;
-	UTIL_TraceLine( vecSpot, vecSpot + velDir * 64, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot, vecSpot + velDir * 64, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	Explode( &tr, DMG_BLAST );
 }

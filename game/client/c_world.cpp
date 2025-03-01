@@ -19,6 +19,7 @@
 #include "ammodef.h"
 #include "iachievementmgr.h"
 #include "usermessages.h"
+#include "engine/ivdebugoverlay.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -429,4 +430,9 @@ float C_World::GetAmmoDamage(CBaseEntity* pAttacker, CBaseEntity* pVictim, int n
 	}
 
 	return flDamage;
+}
+
+void C_World::DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration)
+{
+	debugoverlay->AddLineOverlay(vecAbsStart + Vector(0, 0, 0.1), vecAbsEnd + Vector(0, 0, 0.1), r, g, b, test, duration);
 }

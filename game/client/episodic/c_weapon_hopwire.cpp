@@ -197,7 +197,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 			trace_t	tr;
 
-			UTIL_TraceLine( GetRenderOrigin(), GetRenderOrigin()+(Vector(0, 0, -1024)), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetRenderOrigin(), GetRenderOrigin()+(Vector(0, 0, -1024)), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 			offset = ( RandomVector( -4.0f, 4.0f ) + tr.endpos ) + ( forward * 512.0f );
 

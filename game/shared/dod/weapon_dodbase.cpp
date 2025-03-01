@@ -119,7 +119,7 @@ void FindHullIntersection( const Vector &vecSrc, trace_t &tr, const Vector &mins
 	distance = 1e6f;
 
 	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc)*2);
-	UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SOLID, &filter, &tmpTrace );
+	UTIL_TraceLine(EntityList(), vecSrc, vecHullEnd, MASK_SOLID, &filter, &tmpTrace );
 	if ( tmpTrace.fraction < 1.0 )
 	{
 		tr = tmpTrace;
@@ -136,7 +136,7 @@ void FindHullIntersection( const Vector &vecSrc, trace_t &tr, const Vector &mins
 				vecEnd.y = vecHullEnd.y + minmaxs[j][1];
 				vecEnd.z = vecHullEnd.z + minmaxs[k][2];
 
-				UTIL_TraceLine( vecSrc, vecEnd, MASK_SOLID, &filter, &tmpTrace );
+				UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SOLID, &filter, &tmpTrace );
 				if ( tmpTrace.fraction < 1.0 )
 				{
 					float thisDistance = (tmpTrace.endpos - vecSrc).Length();
@@ -931,7 +931,7 @@ CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, fl
 	int iTraceMask = MASK_SOLID | CONTENTS_HITBOX | CONTENTS_DEBRIS;
 
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecEnd, iTraceMask, &filter, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, iTraceMask, &filter, &tr );
 
 	const float rayExtension = 40.0f;
 	UTIL_ClipTraceToPlayers( vecSrc, vecEnd + vForward * rayExtension, iTraceMask, &filter, &tr );
@@ -942,7 +942,7 @@ CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, fl
 		Vector head_hull_mins( -16, -16, -18 );
 		Vector head_hull_maxs( 16, 16, 18 );
 
-		UTIL_TraceHull( vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
+		UTIL_TraceHull(EntityList(), vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
 		if ( tr.fraction < 1.0 )
 		{
 			// Calculate the point of intersection of the line (or hull) and the object we hit
@@ -1038,7 +1038,7 @@ void CWeaponDODBase::Smack()
 	int iTraceMask = MASK_SOLID | CONTENTS_HITBOX | CONTENTS_DEBRIS;
 
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecEnd, iTraceMask, &filter, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, iTraceMask, &filter, &tr );
 
 	const float rayExtension = 40.0f;
 	UTIL_ClipTraceToPlayers( vecSrc, vecEnd + vForward * rayExtension, iTraceMask, &filter, &tr );
@@ -1048,7 +1048,7 @@ void CWeaponDODBase::Smack()
 		Vector head_hull_mins( -16, -16, -18 );
 		Vector head_hull_maxs( 16, 16, 18 );
 
-		UTIL_TraceHull( vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
+		UTIL_TraceHull(EntityList(), vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, &filter, &tr );
 		if ( tr.fraction < 1.0 )
 		{
 			// Calculate the point of intersection of the line (or hull) and the object we hit

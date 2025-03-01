@@ -373,7 +373,7 @@ bool UTIL_IsVisibleToTeam( const Vector &spot, int team )
 			continue;
 
 		trace_t result;
-		UTIL_TraceLine( player->EyePosition(), spot, CONTENTS_SOLID, player, COLLISION_GROUP_NONE, &result );
+		UTIL_TraceLine(EntityList(), player->EyePosition(), spot, CONTENTS_SOLID, player, COLLISION_GROUP_NONE, &result );
 
 		if (result.fraction == 1.0f)
 			return true;

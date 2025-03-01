@@ -486,7 +486,7 @@ void HideState::OnUpdate( CCSBot *me )
 			float outAngleRange = 0.0f;
 			for( float angle = 0.0f; angle < 360.0f; angle += 45.0f )
 			{
-				UTIL_TraceLine( me->EyePosition(), me->EyePosition() + 1000.0f * Vector( BotCOS(angle), BotSIN(angle), 0.0f ), MASK_PLAYERSOLID, me, COLLISION_GROUP_NONE, &result );
+				UTIL_TraceLine(EntityList(), me->EyePosition(), me->EyePosition() + 1000.0f * Vector( BotCOS(angle), BotSIN(angle), 0.0f ), MASK_PLAYERSOLID, me, COLLISION_GROUP_NONE, &result );
 
 				if (result.fraction > outAngleRange)
 				{

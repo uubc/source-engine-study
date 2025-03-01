@@ -107,7 +107,7 @@ void CAI_Spotlight::ComputeEndpoint( const Vector &vecStartPoint, Vector *pEndPo
 {
 	// Create the endpoint
 	trace_t tr;
-	AI_TraceLine( vecStartPoint, vecStartPoint + m_vSpotlightDir * 2 * m_flSpotlightMaxLength, MASK_OPAQUE, GetOuter(), COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vecStartPoint, vecStartPoint + m_vSpotlightDir * 2 * m_flSpotlightMaxLength, MASK_OPAQUE, GetOuter(), COLLISION_GROUP_NONE, &tr );
 	*pEndPoint = tr.endpos;
 }
 

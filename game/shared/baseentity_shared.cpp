@@ -1080,7 +1080,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				pShootThroughPortal = NULL;
 			}
 #else
-			AI_TraceHull( info.m_vecSrc, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
+			AI_TraceHull(EntityList(), info.m_vecSrc, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
 #endif //#ifdef PORTAL
 		}
 		else
@@ -1105,7 +1105,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				AI_TraceLine(info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
 			}
 #else
-			AI_TraceLine(info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
+			AI_TraceLine(EntityList(), info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
 #endif //#ifdef PORTAL
 		}
 
@@ -1399,7 +1399,7 @@ bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info,
 	trace_t	waterTrace;
 
 	// Trace again with water enabled
-	AI_TraceLine( info.m_vecSrc, vecEnd, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), pTraceFilter, &waterTrace );
+	AI_TraceLine(EntityList(), info.m_vecSrc, vecEnd, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), pTraceFilter, &waterTrace );
 	
 	// See if this is the point we entered
 	if ( ( enginetrace->GetPointContents( waterTrace.endpos - Vector(0,0,0.1f) ) & (CONTENTS_WATER|CONTENTS_SLIME) ) == 0 )
@@ -1661,7 +1661,7 @@ void CBaseEntity::TraceBleed( float flDamage, const Vector &vecDir, trace_t *ptr
 		vecTraceDir.z += random->RandomFloat( -flNoise, flNoise );
 
 		// Don't bleed on grates.
-		AI_TraceLine( ptr->endpos, ptr->endpos + vecTraceDir * -flTraceDist, MASK_SOLID_BRUSHONLY & ~CONTENTS_GRATE, this, COLLISION_GROUP_NONE, &Bloodtr);
+		AI_TraceLine(EntityList(), ptr->endpos, ptr->endpos + vecTraceDir * -flTraceDist, MASK_SOLID_BRUSHONLY & ~CONTENTS_GRATE, this, COLLISION_GROUP_NONE, &Bloodtr);
 
 		if ( Bloodtr.fraction != 1.0 )
 		{
@@ -1862,7 +1862,7 @@ bool CBaseEntity::FindClosestPassableSpace(const Vector& vIndecisivePush, unsign
 		entRay.m_Start = ptEntityCenter;
 		entRay.m_Delta = ptEntityOriginalCenter - ptEntityCenter;
 
-		UTIL_TraceRay(entRay, fMask, this, iEntityCollisionGroup, &traces[0]);
+		UTIL_TraceRay(EntityList(), entRay, fMask, this, iEntityCollisionGroup, &traces[0]);
 		if (traces[0].startsolid == false)
 		{
 			Vector vNewPos = traces[0].endpos + (this->GetEngineObject()->GetAbsOrigin() - ptEntityOriginalCenter);
@@ -1899,7 +1899,7 @@ bool CBaseEntity::FindClosestPassableSpace(const Vector& vIndecisivePush, unsign
 				else
 				{
 					testRay.m_Start = ptExtents[counter];
-					UTIL_TraceRay(testRay, fMask, this, iEntityCollisionGroup, &traces[0]);
+					UTIL_TraceRay(EntityList(), testRay, fMask, this, iEntityCollisionGroup, &traces[0]);
 				}
 
 				if (bExtentInvalid[counter2])
@@ -1908,7 +1908,7 @@ bool CBaseEntity::FindClosestPassableSpace(const Vector& vIndecisivePush, unsign
 				{
 					testRay.m_Start = ptExtents[counter2];
 					testRay.m_Delta = -testRay.m_Delta;
-					UTIL_TraceRay(testRay, fMask, this, iEntityCollisionGroup, &traces[1]);
+					UTIL_TraceRay(EntityList(), testRay, fMask, this, iEntityCollisionGroup, &traces[1]);
 				}
 
 				float fDistance = testRay.m_Delta.Length();

@@ -283,7 +283,7 @@ bool CNavNode::TestForCrouchArea( NavCornerType cornerNum, const Vector& mins, c
 	Vector start( m_pos );
 	Vector end( start );
 	end.z += JumpCrouchHeight;
-	UTIL_TraceHull( start, end, NavTraceMins, NavTraceMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
+	UTIL_TraceHull(EntityList(), start, end, NavTraceMins, NavTraceMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
 
 	float maxHeight = tr.endpos.z - start.z;
 
@@ -295,14 +295,14 @@ bool CNavNode::TestForCrouchArea( NavCornerType cornerNum, const Vector& mins, c
 		start.z += height;
 
 		realMaxs.z = HumanCrouchHeight;
-		UTIL_TraceHull( start, start, mins, realMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
+		UTIL_TraceHull(EntityList(), start, start, mins, realMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
 		if ( !tr.startsolid )
 		{
 			*groundHeightAboveNode = start.z - m_pos.z;
 
 			// We found a crouch-sized space.  See if we can stand up.
 			realMaxs.z = HumanHeight;
-			UTIL_TraceHull( start, start, mins, realMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
+			UTIL_TraceHull(EntityList(), start, start, mins, realMaxs, MASK_NPCSOLID_BRUSHONLY, &filter, &tr );
 			if ( !tr.startsolid )
 			{
 				// We found a crouch-sized space.  See if we can stand up.

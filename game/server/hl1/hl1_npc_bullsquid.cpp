@@ -234,7 +234,7 @@ void CSquidSpit::Touch ( IServerEntity *pOther )
 	if ( !pOther->GetTakeDamage() )
 	{
 		// make a splat on the wall
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 10, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		UTIL_DecalTrace(&tr, "BeerSplash" );
 
 		// make some flecks
@@ -906,7 +906,7 @@ bool CNPC_Bullsquid::FVisible ( Vector vecOrigin )
 	Vector		vecLookerOrigin;
 	
 	vecLookerOrigin = EyePosition();//look through the caller's 'eyes'
-	UTIL_TraceLine(vecLookerOrigin, vecOrigin, MASK_BLOCKLOS, this/*pentIgnore*/, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), vecLookerOrigin, vecOrigin, MASK_BLOCKLOS, this/*pentIgnore*/, COLLISION_GROUP_NONE, &tr);
 	
 	if ( tr.fraction != 1.0 )
 		 return false; // Line of sight is not established

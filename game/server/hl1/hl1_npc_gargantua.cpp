@@ -110,7 +110,7 @@ static void MoveToGround( Vector *position, CBaseEntity *ignore, const Vector &m
 	// Find point on floor where enemy would stand at chasePosition
 	Vector floor = *position;
 	floor.z -= 1024;
-	UTIL_TraceHull( *position, floor, mins, maxs, MASK_NPCSOLID, ignore, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), *position, floor, mins, maxs, MASK_NPCSOLID, ignore, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction < 1 )
 	{
 		position->z = tr.endpos.z;
@@ -209,7 +209,7 @@ void CStomp::Think( void )
 	vecStart.z += 30;
 	Vector vecEnd = vecStart + (m_vecMoveDir * m_flSpeed * gpGlobals->frametime);
 
-	UTIL_TraceHull( vecStart, vecEnd, Vector(-32, -32, -32), Vector(32, 32, 32), MASK_SOLID, m_pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), vecStart, vecEnd, Vector(-32, -32, -32), Vector(32, 32, 32), MASK_SOLID, m_pOwner, COLLISION_GROUP_NONE, &tr );
 //	NDebugOverlay::Line( vecStart, vecEnd, 0, 255, 0, false, 10.0f );
 	
 	if ( tr.m_pEnt )
@@ -238,7 +238,7 @@ void CStomp::Think( void )
 			CSprite *pSprite = CSprite::SpriteCreate( GARG_STOMP_SPRITE_NAME, GetEngineObject()->GetAbsOrigin(), TRUE );
 			if ( pSprite )
 			{
-				UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,500), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,500), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 				pSprite->GetEngineObject()->SetAbsOrigin( tr.endpos );
 //				pSprite->pev->velocity = Vector(RandomFloat(-200,200),RandomFloat(-200,200),175);
 				pSprite->GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.3 );
@@ -738,7 +738,7 @@ void CNPC_Gargantua::FlameCreate( void )
 			Vector vecEnd = ( vForward * GARG_FLAME_LENGTH) + posGun;
 			//UTIL_TraceLine( posGun, vecEnd, dont_ignore_monsters, edict(), &trace );
 
-			UTIL_TraceLine ( posGun, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace);
+			UTIL_TraceLine (EntityList(), posGun, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace);
 //			NDebugOverlay::Line( posGun, vecEnd, 255, 255, 255, false, 10.0f );
 
 			m_pFlame[i]->PointEntInit( trace.endpos, this );
@@ -804,7 +804,7 @@ void CNPC_Gargantua::FlameUpdate( void )
 			GetEngineObject()->GetAttachment( i + 2, vecStart, angleGun );
 			Vector vecEnd = vecStart + ( vForward * GARG_FLAME_LENGTH); //  - offset[i] * gpGlobals->v_right;
 			
-			UTIL_TraceLine ( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace);
+			UTIL_TraceLine (EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace);
 
 			m_pFlame[i]->SetStartPos( trace.endpos );
 			m_pFlame[i+2]->SetStartPos( (vecStart * 0.6) + (trace.endpos * 0.4) );
@@ -868,7 +868,7 @@ void CNPC_Gargantua::FlameDamage( Vector vecStart, Vector vecEnd, CBaseEntity *p
 			
 			Vector vecSrc = vecMid + dist * vecAim;
 
-			UTIL_TraceLine ( vecStart, vecSpot, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine (EntityList(), vecStart, vecSpot, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 //			NDebugOverlay::Line( vecStart, vecSpot, 0, 255, 0, false, 10.0f );
 
 			if ( tr.fraction == 1.0 || tr.m_pEnt == pEntity )
@@ -971,7 +971,7 @@ void CNPC_Gargantua::StompAttack( void )
 	VectorNormalize( vecAim );
 	Vector vecEnd = (vecAim * 1024) + vecStart;
 
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
 //	NDebugOverlay::Line( vecStart, vecEnd, 255, 0, 0, false, 10.0f );
 
 	CStomp::StompCreate( vecStart, trace.endpos, 0, this );
@@ -979,7 +979,7 @@ void CNPC_Gargantua::StompAttack( void )
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Garg.StompSound" );
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,20), MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,20), MASK_SOLID, this, COLLISION_GROUP_NONE, &trace );
 	if ( trace.fraction < 1.0 )
 	{
 		UTIL_DecalTrace( &trace, "SmallScorch" );

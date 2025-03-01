@@ -85,7 +85,7 @@ void CTEDecal::Test( const Vector& current_origin, const QAngle& current_angles 
 
 	trace_t tr;
 
-	UTIL_TraceLine( m_vecOrigin, vecEnd, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), m_vecOrigin, vecEnd, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 	m_vecOrigin = tr.endpos;
 

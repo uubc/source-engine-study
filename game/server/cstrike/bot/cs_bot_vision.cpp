@@ -344,7 +344,7 @@ bool CCSBot::IsVisible( const Vector &pos, bool testFOV, const CBaseEntity *igno
 	// Must include CONTENTS_MONSTER to pick up all non-brush objects like barrels
 	trace_t result;
 	CTraceFilterNoNPCsOrPlayer traceFilter( ignore, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( EyePositionConst(), pos, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), EyePositionConst(), pos, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
 	if (result.fraction != 1.0f)
 		return false;
 
@@ -923,7 +923,7 @@ bool CCSBot::BendLineOfSight( const Vector &eye, const Vector &target, Vector *b
 	// if we can directly see the point, use it
 	trace_t result;
 	CTraceFilterNoNPCsOrPlayer traceFilter( this, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( eye, target, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), eye, target, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
 	if (result.fraction == 1.0f && !result.startsolid)
 	{
 		// can directly see point, no bending needed
@@ -975,7 +975,7 @@ bool CCSBot::BendLineOfSight( const Vector &eye, const Vector &target, Vector *b
 			Vector rotPoint( eye.x + length * dx, eye.y + length * dy, target.z );
 
 			// check LOS to find length to test along ray
-			UTIL_TraceLine( eye, rotPoint, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
+			UTIL_TraceLine(EntityList(), eye, rotPoint, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
 
 			// if this ray started in an obstacle, skip it
 			if (result.startsolid)
@@ -1004,7 +1004,7 @@ bool CCSBot::BendLineOfSight( const Vector &eye, const Vector &target, Vector *b
 				Vector bendPoint = eye + bendLength * ray;
 
 				// check if we can see approach point from this bend point
-				UTIL_TraceLine( bendPoint, target, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
+				UTIL_TraceLine(EntityList(), bendPoint, target, MASK_VISIBLE_AND_NPCS, &traceFilter, &result );
 
 				if (doDebug && cv_bot_debug.GetBool() && IsLocalPlayerWatchingMe())
 				{

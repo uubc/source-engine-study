@@ -1621,7 +1621,7 @@ void CCSPlayer::UpdateMouseoverHints()
 
 	int useableContents = MASK_NPCSOLID_BRUSHONLY | MASK_VISIBLE_AND_NPCS;
 
-	UTIL_TraceLine( searchStart, searchEnd, useableContents, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), searchStart, searchEnd, useableContents, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction != 1.0f )
 	{
@@ -8050,7 +8050,7 @@ CBaseEntity* CCSPlayer::GetNearestSurfaceBelow(float maxTrace)
 	Vector maxExtent = this->m_Local.m_bDucked  ? VEC_DUCK_HULL_MAX_SCALED( this ) : VEC_HULL_MAX_SCALED( this );
 
 	ray.Init( traceStart, traceEnd, minExtent, maxExtent );
-	UTIL_TraceRay( ray, MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+	UTIL_TraceRay(EntityList(), ray, MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 	return (CBaseEntity*)trace.m_pEnt;
 }

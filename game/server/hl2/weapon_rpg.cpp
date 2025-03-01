@@ -374,7 +374,7 @@ void CMissile::Explode( void )
 	GetVectors( &forward, NULL, NULL );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 16, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 16, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	m_takedamage = DAMAGE_NO;
 	GetEngineObject()->SetSolid( SOLID_NONE );
@@ -717,7 +717,7 @@ void CMissile::SeekThink( void )
 	if ( m_bCreateDangerSounds == true )
 	{
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		CSoundEnt::InsertSound( SOUND_DANGER, tr.endpos, 100, 0.2, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 	}
@@ -1543,7 +1543,7 @@ void CWeaponRPG::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 			{
 				// check to see if it's relativly free
 				trace_t tr;
-				AI_TraceHull( altLaunchPoint, altLaunchPoint + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
+				AI_TraceHull(EntityList(), altLaunchPoint, altLaunchPoint + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
 
 				if( tr.fraction == 1.0)
 				{
@@ -1641,7 +1641,7 @@ void CWeaponRPG::PrimaryAttack( void )
 	// If the shot is clear to the player, give the missile a grace period
 	trace_t	tr;
 	Vector vecEye = pOwner->EyePosition();
-	UTIL_TraceLine( vecEye, vecEye + vForward * 128, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecEye, vecEye + vForward * 128, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction == 1.0 )
 	{
 		m_hMissile->SetGracePeriod( 0.3 );
@@ -1970,7 +1970,7 @@ void CWeaponRPG::UpdateLaserPosition( Vector vecMuzzlePos, Vector vecEndPos )
 	UTIL_Portal_TraceRay(EntityList(), rayLaser, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
 	g_bBulletPortalTrace = false;
 #else
-	UTIL_TraceLine( vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
 #endif
 
 	// Move the laser sprite
@@ -2063,7 +2063,7 @@ bool CWeaponRPG::WeaponLOSCondition( const Vector &ownerPos, const Vector &targe
 			Vector vecShootDir = npcOwner->GetActualShootTrajectory( vecMuzzle );
 
 			// Make sure I have a good 10 feet of wide clearance in front, or I'll blow my teeth out.
-			AI_TraceHull( vecMuzzle, vecMuzzle + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
+			AI_TraceHull(EntityList(), vecMuzzle, vecMuzzle + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
 
 			if( tr.fraction != 1.0f )
 				bResult = false;
@@ -2113,7 +2113,7 @@ int CWeaponRPG::WeaponRangeAttack1Condition( float flDot, float flDist )
 		Vector vecShootDir = pOwner->GetActualShootTrajectory( vecMuzzle );
 
 		// Make sure I have a good 10 feet of wide clearance in front, or I'll blow my teeth out.
-		AI_TraceHull( vecMuzzle, vecMuzzle + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
+		AI_TraceHull(EntityList(), vecMuzzle, vecMuzzle + vecShootDir * (10.0f*12.0f), Vector( -24, -24, -24 ), Vector( 24, 24, 24 ), MASK_NPCSOLID, NULL, &tr );
 
 		if( tr.fraction != 1.0 )
 		{

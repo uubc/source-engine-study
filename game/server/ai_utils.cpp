@@ -403,7 +403,7 @@ void CAI_FreePass::Update( )
 		if ( timePlayerLastSeen == AI_INVALID_TIME || gpGlobals->curtime - timePlayerLastSeen > .15 ) // If didn't see the player last think
 		{
 			trace_t tr;
-			UTIL_TraceLine( pTarget->EyePosition(), GetOuter()->EyePosition(), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), pTarget->EyePosition(), GetOuter()->EyePosition(), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction != 1.0 && tr.m_pEnt != pTarget )
 			{
 				float dist = (tr.endpos - tr.startpos).Length() * tr.fraction;
@@ -493,7 +493,7 @@ bool CAI_FreePass::ShouldAllowFVisible(bool bBaseResult )
 			Vector vecRight( -vToTarget.y, vToTarget.x, 0.0f );
 			trace_t	tr;
 
-			UTIL_TraceLine( GetOuter()->EyePosition(), pTarget->EyePosition() + (vecRight * m_Params.peekEyeDist - Vector( 0, 0, m_Params.peekEyeDistZ )), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetOuter()->EyePosition(), pTarget->EyePosition() + (vecRight * m_Params.peekEyeDist - Vector( 0, 0, m_Params.peekEyeDistZ )), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction != 1.0 && tr.m_pEnt != pTarget )
 			{
 				if ( free_pass_peek_debug.GetBool() )
@@ -503,7 +503,7 @@ bool CAI_FreePass::ShouldAllowFVisible(bool bBaseResult )
 			
 			if ( bIsVisible )
 			{
-				UTIL_TraceLine( GetOuter()->EyePosition(), pTarget->EyePosition() + (-vecRight * m_Params.peekEyeDist - Vector( 0, 0, m_Params.peekEyeDistZ )), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), GetOuter()->EyePosition(), pTarget->EyePosition() + (-vecRight * m_Params.peekEyeDist - Vector( 0, 0, m_Params.peekEyeDistZ )), MASK_BLOCKLOS, GetOuter(), COLLISION_GROUP_NONE, &tr );
 				if ( tr.fraction != 1.0 && tr.m_pEnt != pTarget )
 				{
 					if ( free_pass_peek_debug.GetBool() )

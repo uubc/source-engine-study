@@ -521,7 +521,7 @@ void CPropJeep::AimGunAt( Vector *endPos, float flInterval )
 	AngleVectors( vecMuzzleAng, &vecMuzzleDir );
 
 	trace_t	tr;
-	UTIL_TraceLine( vecMuzzle, vecMuzzle + (vecMuzzleDir * MAX_TRACE_LENGTH), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecMuzzle, vecMuzzle + (vecMuzzleDir * MAX_TRACE_LENGTH), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		// see if we hit something, if so, adjust endPos to hit location
 	if ( tr.fraction < 1.0 )
@@ -814,7 +814,7 @@ void CPropJeep::Think(void)
 		// Trace out from the player's eye point.
 		Vector	vecEndPos = vecEyePos + ( vecEyeDir * MAX_TRACE_LENGTH );
 		trace_t	trace;
-		UTIL_TraceLine( vecEyePos, vecEndPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceLine(EntityList(), vecEyePos, vecEndPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
 
 		// See if we hit something, if so, adjust end position to hit location.
 		if ( trace.fraction < 1.0 )
@@ -1145,7 +1145,7 @@ void CPropJeep::Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE
 
 	trace_t tr;
 	Vector vecStart = pPlayer->EyePosition();
-	UTIL_TraceLine( vecStart, vecStart + vecForward * 1024, MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_HITBOX, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecStart + vecForward * 1024, MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_HITBOX, pPlayer, COLLISION_GROUP_NONE, &tr );
 	
 	if ( tr.m_pEnt == this && tr.hitgroup == JEEP_AMMOCRATE_HITGROUP )
 	{
@@ -1552,7 +1552,7 @@ int CJeepFourWheelServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, b
 		Vector vecMove = Vector(0,0,64);
 		Vector vecStart = vehicleExitOrigin + vecMove;
 		Vector vecEnd = vehicleExitOrigin - vecMove;
-  		UTIL_TraceHull( vecStart, vecEnd, VEC_HULL_MIN, VEC_HULL_MAX, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+  		UTIL_TraceHull(EntityList(), vecStart, vecEnd, VEC_HULL_MIN, VEC_HULL_MAX, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 
 		Assert( !tr.startsolid && tr.fraction < 1.0 );
 		m_vecCurrentExitEndPoint = vecStart + ((vecEnd - vecStart) * tr.fraction);

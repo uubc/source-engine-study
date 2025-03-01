@@ -620,7 +620,7 @@ void CNPC_Antlion::Event_Killed( const CTakeDamageInfo &info )
 	if ( pAttacker && pAttacker->GetServerVehicle() && ShouldGib( info ) == true )
 	{
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 64 ), pAttacker->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 64 ), pAttacker->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		UTIL_DecalTrace( &tr, "Antlion.Splat" );
 
 		SpawnBlood(GetEngineObject()->GetAbsOrigin(), g_vecAttackDir, BloodColor(), info.GetDamage() );
@@ -752,7 +752,7 @@ bool CNPC_Antlion::GetGroundPosition( const Vector &testPos, Vector &result )
 {
 	// Trace up to clear the ground
 	trace_t	tr;
-	AI_TraceHull( testPos, testPos + Vector( 0, 0, 64 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), testPos, testPos + Vector( 0, 0, 64 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	// If we're stuck in solid, this can't be valid
 	if ( tr.allsolid )
@@ -771,7 +771,7 @@ bool CNPC_Antlion::GetGroundPosition( const Vector &testPos, Vector &result )
 	}
 
 	// Trace down to find the ground
-	AI_TraceHull( tr.endpos, tr.endpos - Vector( 0, 0, 128 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), tr.endpos, tr.endpos - Vector( 0, 0, 128 ), NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( g_debug_antlion.GetInt() == 3 )
 	{
@@ -950,7 +950,7 @@ Vector VecCheckThrowTolerance( CBaseEntity *pEdict, const Vector &vecSpot1, Vect
 
 
 	trace_t tr;
-	UTIL_TraceLine( vecSpot1, vecApex, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot1, vecApex, MASK_SOLID, pEdict, COLLISION_GROUP_NONE, &tr );
 	if (tr.fraction != 1.0)
 	{
 		// fail!
@@ -967,7 +967,7 @@ Vector VecCheckThrowTolerance( CBaseEntity *pEdict, const Vector &vecSpot1, Vect
 		NDebugOverlay::Line( vecSpot1, vecApex, 0, 255, 0, true, 5.0 );
 	}
 
-	UTIL_TraceLine( vecApex, vecSpot2, MASK_SOLID_BRUSHONLY, pEdict, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecApex, vecSpot2, MASK_SOLID_BRUSHONLY, pEdict, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction != 1.0 )
 	{
 		bool bFail = true;
@@ -1580,7 +1580,7 @@ void CNPC_Antlion::StartTask( const Task_t *pTask )
 			{
 				trace_t trace;
 				CTraceFilterAntlion traceFilter( this );
-				AI_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->WorldAlignMins(), GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, &traceFilter, &trace );
+				AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->WorldAlignMins(), GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, &traceFilter, &trace );
 
 				if ( trace.m_pEnt )
 				{
@@ -2044,7 +2044,7 @@ bool CNPC_Antlion::IsJumpLegal( const Vector &startPos, const Vector &apex, cons
 	if (GetEngineObject()->HasSpawnFlags( SF_ANTLION_USE_GROUNDCHECKS ) && g_test_new_antlion_jump.GetBool() == true )
 	{
 		trace_t	tr;
-		AI_TraceHull( endPos, endPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), endPos, endPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 		
 		if ( tr.m_pEnt )
 		{
@@ -2084,28 +2084,28 @@ bool CNPC_Antlion::IsFirmlyOnGround( void )
 	
 	Vector vOrigin = GetEngineObject()->GetAbsOrigin() + Vector( GetHullMins().x, GetHullMins().y, 0 );
 //	NDebugOverlay::Line( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), 255, 0, 0, true, 5 );
-	UTIL_TraceLine( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+	UTIL_TraceLine(EntityList(), vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 	if ( tr.fraction != 1.0f )
 		 return true;
 	
 	vOrigin = GetEngineObject()->GetAbsOrigin() - Vector( GetHullMins().x, GetHullMins().y, 0 );
 //	NDebugOverlay::Line( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), 255, 0, 0, true, 5 );
-	UTIL_TraceLine( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+	UTIL_TraceLine(EntityList(), vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 	if ( tr.fraction != 1.0f )
 		 return true;
 
 	vOrigin = GetEngineObject()->GetAbsOrigin() + Vector( GetHullMins().x, -GetHullMins().y, 0 );
 //	NDebugOverlay::Line( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), 255, 0, 0, true, 5 );
-	UTIL_TraceLine( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+	UTIL_TraceLine(EntityList(), vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 	if ( tr.fraction != 1.0f )
 		 return true;
 
 	vOrigin = GetEngineObject()->GetAbsOrigin() + Vector( -GetHullMins().x, GetHullMins().y, 0 );
 //	NDebugOverlay::Line( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), 255, 0, 0, true, 5 );
-	UTIL_TraceLine( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
+	UTIL_TraceLine(EntityList(), vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), MASK_NPCSOLID, this, GetEngineObject()->GetCollisionGroup(), &tr );
 
 	if ( tr.fraction != 1.0f )
 		 return true;
@@ -3014,7 +3014,7 @@ int CNPC_Antlion::MeleeAttack1Conditions( float flDot, float flDist )
 		return COND_NOT_FACING_ATTACK;
 
 	trace_t	tr;
-	AI_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	// If the hit entity isn't our target and we don't hate it, don't hit it
 	if ( tr.m_pEnt != GetEnemy() && tr.fraction < 1.0f && IRelationType((CBaseEntity*)tr.m_pEnt ) != D_HT )
@@ -3092,7 +3092,7 @@ int CNPC_Antlion::MeleeAttack2Conditions( float flDot, float flDist )
 	}
 
 	trace_t	tr;
-	AI_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 		return 0;
@@ -3306,7 +3306,7 @@ bool CNPC_Antlion::ValidBurrowPoint( const Vector &point )
 	trace_t	tr;
 
 	CTraceFilterSimpleNPCExclude filter( this, COLLISION_GROUP_NONE );
-	AI_TraceHull( point, point+Vector(0,0,1), GetHullMins(), GetHullMaxs(), 
+	AI_TraceHull(EntityList(), point, point+Vector(0,0,1), GetHullMins(), GetHullMaxs(),
 		MASK_NPCSOLID, &filter, &tr );
 
 	//See if we were able to get there
@@ -3461,7 +3461,7 @@ bool CNPC_Antlion::CheckLanding( void )
 	} 
 	
 	// Look below
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(), testPos, NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), testPos, NAI_Hull::Mins( GetHullType() ), NAI_Hull::Maxs( GetHullType() ), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	//See if we're about to contact, or have already contacted the ground
 	if ( ( tr.fraction != 1.0f ) || (GetEngineObject()->GetFlags() & FL_ONGROUND ) )
@@ -3633,7 +3633,7 @@ void CNPC_Antlion::InputBurrowAway( inputdata_t &inputdata )
 void CNPC_Antlion::CreateDust( bool placeDecal )
 {
 	trace_t	tr;
-	AI_TraceLine(GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY | CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin()+Vector(0,0,1), GetEngineObject()->GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY | CONTENTS_PLAYERCLIP | CONTENTS_MONSTERCLIP, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{

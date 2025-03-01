@@ -1322,7 +1322,7 @@ void CWeaponPhysCannon::PrimaryAttack( void )
 
 	CTraceFilterNoOwnerTest filter( pOwner, COLLISION_GROUP_NONE );
 	trace_t tr;
-	UTIL_TraceHull( start, end, -Vector(8,8,8), Vector(8,8,8), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
+	UTIL_TraceHull(EntityList(), start, end, -Vector(8,8,8), Vector(8,8,8), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
 	bool bValid = true;
 	CBaseEntity *pEntity = (CBaseEntity*)tr.m_pEnt;
 	if ( tr.fraction == 1 || !tr.m_pEnt || tr.m_pEnt->GetEngineObject()->IsEFlagSet( EFL_NO_PHYSCANNON_INTERACTION ) )
@@ -1337,7 +1337,7 @@ void CWeaponPhysCannon::PrimaryAttack( void )
 	// If the entity we've hit is invalid, try a traceline instead
 	if ( !bValid )
 	{
-		UTIL_TraceLine( start, end, MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
+		UTIL_TraceLine(EntityList(), start, end, MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
 		if ( tr.fraction == 1 || !tr.m_pEnt || tr.m_pEnt->GetEngineObject()->IsEFlagSet( EFL_NO_PHYSCANNON_INTERACTION ) )
 		{
 			// Play dry-fire sequence
@@ -1553,12 +1553,12 @@ CWeaponPhysCannon::FindObjectResult_t CWeaponPhysCannon::FindObject( void )
 	// Try to find an object by looking straight ahead
 	trace_t tr;
 	CTraceFilterNoOwnerTest filter( pPlayer, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( start, end, MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
+	UTIL_TraceLine(EntityList(), start, end, MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
 	
 	// Try again with a hull trace
 	if ( ( tr.fraction == 1.0 ) || ( tr.m_pEnt == NULL ) || (tr.m_pEnt->IsWorld() ) )
 	{
-		UTIL_TraceHull( start, end, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
+		UTIL_TraceHull(EntityList(), start, end, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
 	}
 
 	CBaseEntity *pEntity = tr.m_pEnt ? (CBaseEntity*)tr.m_pEnt->GetEngineObject()->GetRootMoveParent()->GetHandleEntity() : NULL;
@@ -1679,7 +1679,7 @@ CBaseEntity *CWeaponPhysCannon::FindObjectInCone( const Vector &vecOrigin, const
 		// Make sure it isn't occluded!
 		trace_t tr;
 		CTraceFilterNoOwnerTest filter( GetOwner(), COLLISION_GROUP_NONE );
-		UTIL_TraceLine( vecOrigin, list[ i ]->WorldSpaceCenter(), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
+		UTIL_TraceLine(EntityList(), vecOrigin, list[ i ]->WorldSpaceCenter(), MASK_SHOT|CONTENTS_GRATE, &filter, &tr );
 		if( tr.m_pEnt == list[ i ] )
 		{
 			flNearestDist = flDist;
@@ -1906,7 +1906,7 @@ void CWeaponPhysCannon::CheckForTarget( void )
 	VectorMA( startPos, TraceLength(), aimDir, endPos );
 
 	trace_t	tr;
-	UTIL_TraceHull( startPos, endPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT|CONTENTS_GRATE, pOwner, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), startPos, endPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT|CONTENTS_GRATE, pOwner, COLLISION_GROUP_NONE, &tr );
 
 	if ( ( tr.fraction != 1.0f ) && ( tr.m_pEnt != NULL ) )
 	{
@@ -2597,7 +2597,7 @@ void CWeaponPhysCannon::DoEffectLaunch( Vector *pos )
 			pOwner->EyeVectors( &shotDir );
 
 			trace_t	tr;
-			UTIL_TraceLine( endPos, endPos + ( shotDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), endPos, endPos + ( shotDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
 			
 			endPos = tr.endpos;
 			shotDir = endPos - pOwner->Weapon_ShootPosition();

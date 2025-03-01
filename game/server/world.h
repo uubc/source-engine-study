@@ -332,6 +332,7 @@ public:
 
 	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const { return false; }
 	virtual bool	MegaPhyscannonActive(void) { return false; }
+	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration);
 private:
 	DECLARE_DATADESC();
 

@@ -251,7 +251,7 @@ void CGrenadeFrag::VPhysicsUpdate( IPhysicsObject *pPhysics )
 #if 0
 	UTIL_TraceHull( start, start + vel * gpGlobals->frametime, GetEngineObject()->OBBMins(), GetEngineObject()->OBBMaxs(), CONTENTS_HITBOX|CONTENTS_MONSTER|CONTENTS_SOLID, &filter, &tr );
 #else
-	UTIL_TraceLine( start, start + vel * gpGlobals->frametime, CONTENTS_HITBOX|CONTENTS_MONSTER|CONTENTS_SOLID, &filter, &tr );
+	UTIL_TraceLine(EntityList(), start, start + vel * gpGlobals->frametime, CONTENTS_HITBOX|CONTENTS_MONSTER|CONTENTS_SOLID, &filter, &tr );
 #endif
 	if ( tr.startsolid )
 	{

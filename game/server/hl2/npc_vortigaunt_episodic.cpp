@@ -886,12 +886,12 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 				{
 					trace_t tr;
 					CTraceFilterSkipTwoEntities traceFilter( GetTarget(), this, COLLISION_GROUP_NONE );
-					AI_TraceLine( vecSpawnOrigin, vecSpawnOrigin, MASK_SHOT, &traceFilter, &tr );
+					AI_TraceLine(EntityList(), vecSpawnOrigin, vecSpawnOrigin, MASK_SHOT, &traceFilter, &tr );
 
 					if ( tr.fraction == 1.0 && !tr.m_pEnt )
 					{
 						// Make sure it can fit there
-						AI_TraceHull( vecSpawnOrigin, vecSpawnOrigin, -Vector(16,16,16), Vector(16,16,48), MASK_SHOT, &traceFilter, &tr );
+						AI_TraceHull(EntityList(), vecSpawnOrigin, vecSpawnOrigin, -Vector(16,16,16), Vector(16,16,48), MASK_SHOT, &traceFilter, &tr );
 						if ( tr.fraction == 1.0 && !tr.m_pEnt )
 							break;
 					}
@@ -1937,7 +1937,7 @@ void CNPC_Vortigaunt::ArmBeam( int beamType, int nHand )
 	{
 		Vector vecAim = forward * random->RandomFloat( -1, 1 ) + right * side * random->RandomFloat( 0, 1 ) + up * random->RandomFloat( -1, 1 );
 		trace_t tr1;
-		AI_TraceLine ( vecSrc, vecSrc + vecAim * (10*12), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr1);
+		AI_TraceLine (EntityList(), vecSrc, vecSrc + vecAim * (10*12), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr1);
 		
 		// Don't hit the sky
 		if ( tr1.surface.flags & SURF_SKY )
@@ -2138,7 +2138,7 @@ void CNPC_Vortigaunt::ZapBeam( int nHand )
 				Vector vOrigin;
 				m_ragdoll->list[0].pObject->GetPosition( &vOrigin, 0 );
 
-				AI_TraceLine( vecSrc, vOrigin, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+				AI_TraceLine(EntityList(), vecSrc, vOrigin, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 			}
 
 			CRagdollBoogie::Create( pTest, 200, gpGlobals->curtime, 1.0f );
@@ -2146,7 +2146,7 @@ void CNPC_Vortigaunt::ZapBeam( int nHand )
 	}
 	else
 	{
-		AI_TraceLine( vecSrc, vecSrc + ( vecAim * InnateRange1MaxRange() ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+		AI_TraceLine(EntityList(), vecSrc, vecSrc + ( vecAim * InnateRange1MaxRange() ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 	}
 
 	if ( g_debug_vortigaunt_aim.GetBool() )
@@ -2398,7 +2398,7 @@ bool CNPC_Vortigaunt::HealGestureHasLOS( void )
 	// Trace to our target, skipping ourselves and the target
 	trace_t tr;
 	CTraceFilterSkipTwoEntities filter( this, pTargetEnt, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( vecHandPos, pTargetEnt->WorldSpaceCenter(), MASK_SHOT, &filter, &tr );
+	UTIL_TraceLine(EntityList(), vecHandPos, pTargetEnt->WorldSpaceCenter(), MASK_SHOT, &filter, &tr );
 
 	// Must be clear
 	if ( tr.fraction < 1.0f || tr.startsolid || tr.allsolid )
@@ -2569,7 +2569,7 @@ void CNPC_Vortigaunt::DispelAntlions( const Vector &vecOrigin, float flRadius, b
 		if ( pAntlion->IsWorker() == false )
 		{
 			// Attempt to trace a line to hit the target
-			UTIL_TraceLine( vecOrigin, pAntlion->BodyTarget( vecOrigin ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecOrigin, pAntlion->BodyTarget( vecOrigin ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 			if ( tr.fraction < 1.0f && tr.m_pEnt != pAntlion )
 				continue;
 
@@ -3217,14 +3217,14 @@ Vector CVortigauntChargeToken::GetSteerVector( const Vector &vecForward )
 	filterSkip.AddEntityToIgnore( m_hTarget );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecProbe, MASK_SHOT, &filterSkip, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecProbe, MASK_SHOT, &filterSkip, &tr );
 	vecSteer -= vecRight * 100.0f * ( 1.0f - tr.fraction );
 
 	// Try left
 	vecProbe = vecForward - vecRight;
 	vecProbe *= flSpeed;
 
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecProbe, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + vecProbe, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	vecSteer += vecRight * 100.0f * ( 1.0f - tr.fraction );
 
 	return vecSteer;

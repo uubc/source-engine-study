@@ -806,10 +806,10 @@ void CNPC_Tentacle::Cycle( void )
 				trace_t tr1, tr2;
 
 				vecSrc = GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MyHeight() - 4);
-				UTIL_TraceLine( vecSrc, vecSrc + v_forward * 512, MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
+				UTIL_TraceLine(EntityList(), vecSrc, vecSrc + v_forward * 512, MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr1 );
 
 				vecSrc = GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MyHeight() + 8);
-				UTIL_TraceLine( vecSrc, vecSrc + v_forward * 512, MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
+				UTIL_TraceLine(EntityList(), vecSrc, vecSrc + v_forward * 512, MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr2 );
 
 				// ALERT( at_console, "%f %f\n", tr1.flFraction * 512, tr2.flFraction * 512 );
 

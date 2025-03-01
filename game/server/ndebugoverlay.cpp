@@ -78,7 +78,7 @@ void UTIL_AddDebugLine(const Vector &startPos, const Vector &endPos, bool noDept
 	if (testLOS)
 	{
 		trace_t tr;
-		UTIL_TraceLine ( debugLine->origin, debugLine->dest, MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine (EntityList(), debugLine->origin, debugLine->dest, MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
 		if (tr.startsolid || tr.fraction < 1.0)
 		{
 			debugLine->r = 255;
@@ -103,7 +103,7 @@ float GetLongFloorZ(const Vector &origin)
 	// After the routing is done, push them back down.
 	//
 	trace_t	tr;
-	UTIL_TraceLine ( origin,
+	UTIL_TraceLine (EntityList(), origin,
 					 origin - Vector ( 0, 0, 2048 ),
 					 MASK_NPCSOLID_BRUSHONLY,
 					 NULL,
@@ -112,7 +112,7 @@ float GetLongFloorZ(const Vector &origin)
 
 	// This trace is ONLY used if we hit an entity flagged with FL_WORLDBRUSH
 	trace_t	trEnt;
-	UTIL_TraceLine ( origin,
+	UTIL_TraceLine (EntityList(), origin,
 					 origin - Vector ( 0, 0, 2048 ),
 					 MASK_NPCSOLID,
 					 NULL,
@@ -176,24 +176,24 @@ void UTIL_DrawPositioningOverlay( float flCrossDistance )
 	// Make sure we can see the target pos
 	trace_t tr;
 	Vector	endPos;
-	UTIL_TraceLine(pPlayer->EyePosition(), topPos, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), pPlayer->EyePosition(), topPos, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction == 1.0)
 	{
 		Vector rightTrace = topPos + pRight*400;
 		float  traceLen	  = (topPos - rightTrace).Length();
-		UTIL_TraceLine(topPos, rightTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), topPos, rightTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 		endPos = topPos+(pRight*traceLen*tr.fraction);
 		NDebugOverlay::DrawTickMarkedLine(topPos, endPos, 24.0, 5, 255,0,0,false,0);
 
 		Vector leftTrace	= topPos - pRight*400;
 		traceLen			= (topPos - leftTrace).Length();
-		UTIL_TraceLine(topPos, leftTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), topPos, leftTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 		endPos				= topPos-(pRight*traceLen*tr.fraction);
 		NDebugOverlay::DrawTickMarkedLine(topPos, endPos, 24.0, 5, 255,0,0,false,0);
 
 		Vector upTrace		= topPos + Vector(0,0,1)*400;
 		traceLen			= (topPos - upTrace).Length();
-		UTIL_TraceLine(topPos, upTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), topPos, upTrace, MASK_NPCSOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr);
 		endPos				= topPos+(Vector(0,0,1)*traceLen*tr.fraction);
 		NDebugOverlay::DrawTickMarkedLine(bottomPos, endPos, 24.0, 5, 255,0,0,false,0);
 
@@ -235,13 +235,7 @@ void UTIL_DrawOverlayLines(void)
 	}
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Add an overlay line with padding on the start and end
-//-----------------------------------------------------------------------------
-void DebugDrawLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration )
-{
-	NDebugOverlay::Line( vecAbsStart + Vector( 0,0,0.1), vecAbsEnd + Vector( 0,0,0.1), r,g,b, test, duration );
-}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Allow all debug overlays to be cleared at once

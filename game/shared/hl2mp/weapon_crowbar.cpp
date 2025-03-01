@@ -123,7 +123,7 @@ void CWeaponCrowbar::HandleAnimEventMeleeHit( animevent_t *pEvent, CBaseCombatCh
 
 		// Fake a trace impact, so the effects work out like a player's crowbaw
 		trace_t traceHit;
-		UTIL_TraceLine( pOperator->Weapon_ShootPosition(), pHurt->GetEngineObject()->GetAbsOrigin(), MASK_SHOT_HULL, pOperator, COLLISION_GROUP_NONE, &traceHit );
+		UTIL_TraceLine(EntityList(), pOperator->Weapon_ShootPosition(), pHurt->GetEngineObject()->GetAbsOrigin(), MASK_SHOT_HULL, pOperator, COLLISION_GROUP_NONE, &traceHit );
 		ImpactEffect( traceHit );
 	}
 	else

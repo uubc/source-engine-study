@@ -87,7 +87,7 @@ void CGrenadePathfollower::GrenadeTouch( IServerEntity *pOther )
 	// If I hit the sky, don't explode
 	// ----------------------------------
 	trace_t tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity(),  MASK_SOLID_BRUSHONLY,
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity(),  MASK_SOLID_BRUSHONLY,
 		this, COLLISION_GROUP_NONE, &tr);
 
 	if (tr.surface.flags & SURF_SKY)
@@ -133,7 +133,7 @@ void CGrenadePathfollower::Detonate(void)
 	Vector vecForward = GetEngineObject()->GetAbsVelocity();
 	VectorNormalize(vecForward);
 	trace_t		tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*vecForward,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, & tr);
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*vecForward,  MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, & tr);
 
 	UTIL_DecalTrace( &tr, "Scorch" );
 

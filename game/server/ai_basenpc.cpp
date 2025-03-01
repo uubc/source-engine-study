@@ -1493,7 +1493,7 @@ void CBaseEntity::HandleShotImpactingGlass( const FireBulletsInfo_t &info,
 	trace_t	penetrationTrace;
 
 	// Re-trace as if the bullet had passed right through
-	UTIL_TraceLine( testPos, tr.endpos, MASK_SHOT, pTraceFilter, &penetrationTrace );
+	UTIL_TraceLine(EntityList(), testPos, tr.endpos, MASK_SHOT, pTraceFilter, &penetrationTrace );
 
 	// See if we found the surface again
 	if ( penetrationTrace.startsolid || tr.fraction == 0.0f || penetrationTrace.fraction == 1.0f )
@@ -1586,7 +1586,7 @@ void CAI_BaseNPC::MakeDamageBloodDecal ( int cCount, float flNoise, trace_t *ptr
 		vecTraceDir.y += random->RandomFloat( -flNoise, flNoise );
 		vecTraceDir.z += random->RandomFloat( -flNoise, flNoise );
 
-		AI_TraceLine( ptr->endpos, ptr->endpos + vecTraceDir * 172, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &Bloodtr);
+		AI_TraceLine(EntityList(), ptr->endpos, ptr->endpos + vecTraceDir * 172, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &Bloodtr);
 
 		if ( Bloodtr.fraction != 1.0 )
 		{
@@ -2254,7 +2254,7 @@ void CAI_BaseNPC::TryRestoreHull(void)
 		Vector	vUpBit = GetEngineObject()->GetAbsOrigin();
 		vUpBit.z += 1;
 
-		AI_TraceHull(GetEngineObject()->GetAbsOrigin(), vUpBit, GetHullMins(),
+		AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), vUpBit, GetHullMins(),
 			GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		if ( !tr.startsolid && (tr.fraction == 1.0) )
 		{
@@ -5347,7 +5347,7 @@ bool CAI_BaseNPC::InnateWeaponLOSCondition( const Vector &ownerPos, const Vector
 	// Base class version assumes innate weapon position is at eye level
 	Vector barrelPos		= ownerPos + GetViewOffset();
 	trace_t tr;
-	AI_TraceLine( barrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), barrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 	if ( tr.fraction == 1.0 )
 	{
@@ -6506,7 +6506,7 @@ float CAI_BaseNPC::ThrowLimit(	const Vector &vecStart,
 		}
 
 		trace_t tr;
-		AI_TraceHull( vecFrom, nextPos, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), vecFrom, nextPos, mins, maxs, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		if (tr.startsolid || tr.fraction < 1.0)
 		{
@@ -9577,7 +9577,7 @@ void CAI_BaseNPC::CollectShotStats( const Vector &vecShootOrigin, const Vector &
 			Vector vecEnd = vecShootOrigin + shotDir * 8192;
 
 			trace_t tr;
-			AI_TraceLine( vecShootOrigin, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+			AI_TraceLine(EntityList(), vecShootOrigin, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 			if( tr.m_pEnt && tr.m_pEnt == GetEnemy() )
 			{
@@ -9819,7 +9819,7 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 		Vector vecEnd = shootOrigin + shotDir * 8192;
 		trace_t tr;
 
-		AI_TraceLine(shootOrigin, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+		AI_TraceLine(EntityList(), shootOrigin, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 		if( tr.fraction != 1.0 && tr.m_pEnt && tr.m_pEnt->GetTakeDamage() != DAMAGE_NO )
 		{
@@ -10077,13 +10077,13 @@ bool CAI_BaseNPC::BBoxFlat ( void )
 	vecPoint.y = GetEngineObject()->GetAbsOrigin().y + flYSize;
 	vecPoint.z = GetEngineObject()->GetAbsOrigin().z;
 
-	AI_TraceLine ( vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine (EntityList(), vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	flLength = (vecPoint - tr.endpos).Length();
 
 	vecPoint.x = GetEngineObject()->GetAbsOrigin().x - flXSize;
 	vecPoint.y = GetEngineObject()->GetAbsOrigin().y - flYSize;
 
-	AI_TraceLine ( vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine (EntityList(), vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	flLength2 = (vecPoint - tr.endpos).Length();
 	if ( flLength2 > flLength )
 	{
@@ -10093,7 +10093,7 @@ bool CAI_BaseNPC::BBoxFlat ( void )
 
 	vecPoint.x = GetEngineObject()->GetAbsOrigin().x - flXSize;
 	vecPoint.y = GetEngineObject()->GetAbsOrigin().y + flYSize;
-	AI_TraceLine ( vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine (EntityList(), vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	flLength2 = (vecPoint - tr.endpos).Length();
 	if ( flLength2 > flLength )
 	{
@@ -10103,7 +10103,7 @@ bool CAI_BaseNPC::BBoxFlat ( void )
 
 	vecPoint.x = GetEngineObject()->GetAbsOrigin().x + flXSize;
 	vecPoint.y = GetEngineObject()->GetAbsOrigin().y - flYSize;
-	AI_TraceLine ( vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine (EntityList(), vecPoint, vecPoint - Vector ( 0, 0, 100 ), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	flLength2 = (vecPoint - tr.endpos).Length();
 	if ( flLength2 > flLength )
 	{
@@ -12055,13 +12055,13 @@ bool CAI_BaseNPC::FindSpotForNPCInRadius( Vector *pResult, const Vector &vStartP
 
 		trace_t tr;
 
-		UTIL_TraceLine( vecTest, vecTest - Vector( 0, 0, 8192 ), MASK_SHOT, pNPC, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecTest, vecTest - Vector( 0, 0, 8192 ), MASK_SHOT, pNPC, COLLISION_GROUP_NONE, &tr );
 		if( tr.fraction == 1.0 )
 		{
 			continue;
 		}
 
-		UTIL_TraceHull( tr.endpos,
+		UTIL_TraceHull(EntityList(), tr.endpos,
 						tr.endpos + Vector( 0, 0, 10 ),
 						pNPC->GetHullMins(),
 						pNPC->GetHullMaxs(),
@@ -12943,7 +12943,7 @@ void AI_TraceLOS( const Vector& vecAbsStart, const Vector& vecAbsEnd, CBaseEntit
 	if ( ai_LOS_mode.GetBool() )
 	{
 		// Don't use LOS tracefilter
-		UTIL_TraceLine( vecAbsStart, vecAbsEnd, MASK_BLOCKLOS, pLooker, COLLISION_GROUP_NONE, ptr );
+		UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, MASK_BLOCKLOS, pLooker, COLLISION_GROUP_NONE, ptr );
 		return;
 	}
 
@@ -12951,7 +12951,7 @@ void AI_TraceLOS( const Vector& vecAbsStart, const Vector& vecAbsEnd, CBaseEntit
 	CTraceFilterLOS traceFilter( pLooker, COLLISION_GROUP_NONE );
 	if ( !pFilter )
 		pFilter = &traceFilter;
-	AI_TraceLine( vecAbsStart, vecAbsEnd, MASK_BLOCKLOS_AND_NPCS, pFilter, ptr );
+	AI_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, MASK_BLOCKLOS_AND_NPCS, pFilter, ptr );
 }
 
 void CAI_BaseNPC::InputSetSpeedModifierRadius( inputdata_t &inputdata )
@@ -13675,7 +13675,7 @@ bool CanNPCsTradePlaces( CAI_BaseNPC *pNPC1, CAI_BaseNPC *pNPC2, bool bDebug )
 
 	if ( bTest1At2 )
 	{
-		AI_TraceHull( pNPC2->GetEngineObject()->GetAbsOrigin(), pNPC2->GetEngineObject()->GetAbsOrigin(), pNPC1->GetHullMins(), pNPC1->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
+		AI_TraceHull(EntityList(), pNPC2->GetEngineObject()->GetAbsOrigin(), pNPC2->GetEngineObject()->GetAbsOrigin(), pNPC1->GetHullMins(), pNPC1->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
 		if ( tr.startsolid )
 		{
 			if ( bDebug )
@@ -13688,7 +13688,7 @@ bool CanNPCsTradePlaces( CAI_BaseNPC *pNPC1, CAI_BaseNPC *pNPC2, bool bDebug )
 
 	if ( bTest2At1 )
 	{
-		AI_TraceHull( pNPC1->GetEngineObject()->GetAbsOrigin(), pNPC1->GetEngineObject()->GetAbsOrigin(), pNPC2->GetHullMins(), pNPC2->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
+		AI_TraceHull(EntityList(), pNPC1->GetEngineObject()->GetAbsOrigin(), pNPC1->GetEngineObject()->GetAbsOrigin(), pNPC2->GetHullMins(), pNPC2->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
 		if ( tr.startsolid )
 		{
 			if ( bDebug )
@@ -13791,7 +13791,7 @@ bool CAI_BaseNPC::InteractionCouldStart( CAI_BaseNPC *pOtherNPC, ScriptedNPCInte
 	// This isn't a very good method of checking, but it's cheap and rules out the problems we're seeing so far.
 	// If we start getting interactions that start a fair distance apart, we're going to need to do more work here.
  	trace_t tr;
-	AI_TraceLine( EyePosition(), pOtherNPC->EyePosition(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), EyePosition(), pOtherNPC->EyePosition(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr);
 	if ( tr.fraction != 1.0 && tr.m_pEnt != pOtherNPC )
 	{
 		if ( bDebug )
@@ -13812,7 +13812,7 @@ bool CAI_BaseNPC::InteractionCouldStart( CAI_BaseNPC *pOtherNPC, ScriptedNPCInte
 	Vector vecMyKnee, vecOtherKnee;
 	GetEngineObject()->NormalizedToWorldSpace( Vector(0,0,0.25f), &vecMyKnee );
 	pOtherNPC->GetEngineObject()->NormalizedToWorldSpace( Vector(0,0,0.25f), &vecOtherKnee );
-	AI_TraceLine( vecMyKnee, vecOtherKnee, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), vecMyKnee, vecOtherKnee, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr);
 	if ( tr.fraction != 1.0 && tr.m_pEnt != pOtherNPC )
 	{
 		if ( bDebug )
@@ -13833,7 +13833,7 @@ bool CAI_BaseNPC::InteractionCouldStart( CAI_BaseNPC *pOtherNPC, ScriptedNPCInte
 	// This solves problems with NPCs who are a few units or so above the 
 	// interaction point, and would sink into the ground when playing the anim.
 	CTraceFilterSkipTwoEntities traceFilter( pOtherNPC, this, COLLISION_GROUP_NONE );
-	AI_TraceHull( vecOrigin, vecOrigin, pOtherNPC->GetHullMins(), pOtherNPC->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
+	AI_TraceHull(EntityList(), vecOrigin, vecOrigin, pOtherNPC->GetHullMins(), pOtherNPC->GetHullMaxs(), MASK_SOLID, &traceFilter, &tr );
 	if ( tr.startsolid )
 	{
 		if ( bDebug )

@@ -1049,7 +1049,7 @@ void CNPC_Strider::GatherConditions()
 		if( strider_show_cannonlos.GetBool() )
 		{
 			trace_t tr;
-			UTIL_TraceLine( CannonPosition(), GetCannonTarget()->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), CannonPosition(), GetCannonTarget()->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 			NDebugOverlay::Line( tr.startpos, tr.endpos, 0, 255, 0, false, 0.1 );
 
 			if( tr.fraction != 1.0 )
@@ -1186,7 +1186,7 @@ void CNPC_Strider::GatherHeightConditions( const Vector &vTestPos, CBaseEntity *
 				GetEngineObject()->GetAttachment( "minigun", muzzlePos );
 				
 				trace_t tr;
-				AI_TraceLine( muzzlePos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+				AI_TraceLine(EntityList(), muzzlePos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 				if ( ( tr.m_pEnt != pEntity) && tr.fraction != 1.0 && !CanShootThrough( tr, targetPos ) )
 				{
@@ -2643,7 +2643,7 @@ bool CNPC_Strider::WeaponLOSCondition(const Vector &ownerPos, const Vector &targ
 	}
 
 	trace_t tr;
-	AI_TraceLine( ownerPos + vRootOffset, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+	AI_TraceLine(EntityList(), ownerPos + vRootOffset, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
 	// Hit the enemy, or hit nothing (traced all the way to a nonsolid enemy like a bullseye)
 	if ( ( pTargetEnt && tr.m_pEnt == pTargetEnt) || tr.fraction == 1.0 || CanShootThrough( tr, targetPos ) )
@@ -2668,7 +2668,7 @@ bool CNPC_Strider::WeaponLOSCondition(const Vector &ownerPos, const Vector &targ
 
 		VectorTransform( vBarrelOffset, losTestToWorld, vBarrelPos );
 
-		AI_TraceLine( vBarrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+		AI_TraceLine(EntityList(), vBarrelPos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 		if ( ( pTargetEnt && tr.m_pEnt == pTargetEnt) || tr.fraction == 1.0 || CanShootThrough( tr, targetPos ) )
 		{
 			if ( strider_show_weapon_los_condition.GetBool() )
@@ -2810,7 +2810,7 @@ void CNPC_Strider::DoImpactEffect( trace_t &tr, int nDamageType )
 
 		if( UTIL_PointContents( vecReTrace ) == CONTENTS_EMPTY )
 		{
-			AI_TraceLine( vecReTrace, vecReTrace - vecDir * 24, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &retrace );
+			AI_TraceLine(EntityList(), vecReTrace, vecReTrace - vecDir * 24, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &retrace );
 
 			BaseClass::DoImpactEffect( retrace, nDamageType );
 		}
@@ -2842,7 +2842,7 @@ bool CNPC_Strider::CanShootThrough( const trace_t &tr, const Vector &vecTarget )
 
 	// Would a trace ignoring this entity continue to the target?
 	trace_t continuedTrace;
-	AI_TraceLine( tr.endpos, vecTarget, MASK_SHOT, tr.m_pEnt, COLLISION_GROUP_NONE, &continuedTrace );
+	AI_TraceLine(EntityList(), tr.endpos, vecTarget, MASK_SHOT, tr.m_pEnt, COLLISION_GROUP_NONE, &continuedTrace );
 
 	if( continuedTrace.fraction != 1.0 )
 	{
@@ -4153,7 +4153,7 @@ void CNPC_Strider::FireCannon()
 	vecShootDir = m_hCannonTarget->WorldSpaceCenter() - vecShootPos;
 	float flDist = VectorNormalize( vecShootDir );
 
-	AI_TraceLine( vecShootPos, vecShootPos + vecShootDir * flDist, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), vecShootPos, vecShootPos + vecShootDir * flDist, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	m_blastHit = tr.endpos;
 	m_blastHit += tr.plane.normal * 16;
 	m_blastNormal = tr.plane.normal;
@@ -4467,7 +4467,7 @@ void CNPC_Strider::StompHit( int followerBoneIndex )
 void CNPC_Strider::FootFX( const Vector &origin )
 {
 	trace_t tr;
-	AI_TraceLine( origin + Vector(0, 0, 48), origin - Vector(0,0,100), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), origin + Vector(0, 0, 48), origin - Vector(0,0,100), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	float yaw = random->RandomInt(0,120);
 	
 	if ( UTIL_PointContents( tr.endpos + Vector( 0, 0, 1 ) ) & MASK_WATER )
@@ -4530,7 +4530,7 @@ static void MoveToGround( Vector *position, CBaseEntity *ignore, const Vector &m
 	// Find point on floor where enemy would stand at chasePosition
 	Vector floor = *position;
 	floor.z -= 1024;
-	AI_TraceHull( *position, floor, mins, maxs, MASK_NPCSOLID_BRUSHONLY, ignore, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), *position, floor, mins, maxs, MASK_NPCSOLID_BRUSHONLY, ignore, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction < 1 )
 	{
 		position->z = tr.endpos.z;

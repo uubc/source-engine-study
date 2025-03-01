@@ -380,7 +380,7 @@ void CNPC_Osprey::DeployThink( void )
 	AngleVectors(GetEngineObject()->GetAbsAngles(), &vecForward, &vecRight, &vecUp );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -4096.0), MASK_SOLID_BRUSHONLY, this,COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -4096.0), MASK_SOLID_BRUSHONLY, this,COLLISION_GROUP_NONE, &tr);
 	CSoundEnt::InsertSound ( SOUND_DANGER, tr.endpos, 400, 0.3 );
 
 	vecSrc = GetEngineObject()->GetAbsOrigin() + vecForward *  32 + vecRight *  100 + vecUp * -96;
@@ -445,7 +445,7 @@ CAI_BaseNPC *CNPC_Osprey::MakeGrunt( Vector vecSrc )
 	CAI_BaseNPC *pGrunt;
 
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecSrc + Vector( 0, 0, -4096.0), MASK_NPCSOLID,  this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + Vector( 0, 0, -4096.0), MASK_NPCSOLID,  this, COLLISION_GROUP_NONE, &tr);
 	
 	if ( tr.m_pEnt && tr.m_pEnt->GetEngineObject()->GetSolid() != SOLID_BSP)
 		return NULL;

@@ -609,7 +609,7 @@ int	CHalfLife1World::Damage_GetShowOnHud( void )
 				vecSpot = pEntity->BodyTarget( vecSrc );
 
 				CTraceFilterHitAllExcept traceFilter( info.GetInflictor() );
-  				UTIL_TraceLine( vecSrc, vecSpot, CONTENTS_SOLID, &traceFilter, &tr );
+  				UTIL_TraceLine(EntityList(), vecSrc, vecSpot, CONTENTS_SOLID, &traceFilter, &tr );
 				
 				if ( tr.fraction == 1.0 || tr.m_pEnt == pEntity )
 				{// the explosion can 'see' this entity, so hurt them!

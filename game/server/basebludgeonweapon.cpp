@@ -192,7 +192,7 @@ Activity CBaseHLBludgeonWeapon::ChooseIntersectionPointAndActivity( trace_t &hit
 	Vector vecSrc = hitTrace.startpos;
 
 	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc)*2);
-	UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
+	UTIL_TraceLine(EntityList(), vecSrc, vecHullEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
 	if ( tmpTrace.fraction == 1.0 )
 	{
 		for ( i = 0; i < 2; i++ )
@@ -205,7 +205,7 @@ Activity CBaseHLBludgeonWeapon::ChooseIntersectionPointAndActivity( trace_t &hit
 					vecEnd.y = vecHullEnd.y + minmaxs[j][1];
 					vecEnd.z = vecHullEnd.z + minmaxs[k][2];
 
-					UTIL_TraceLine( vecSrc, vecEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
+					UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
 					if ( tmpTrace.fraction < 1.0 )
 					{
 						float thisDistance = (tmpTrace.endpos - vecSrc).Length();
@@ -247,7 +247,7 @@ bool CBaseHLBludgeonWeapon::ImpactWater( const Vector &start, const Vector &end 
 
 	trace_t	waterTrace;
 
-	UTIL_TraceLine( start, end, (CONTENTS_WATER|CONTENTS_SLIME), GetOwner(), COLLISION_GROUP_NONE, &waterTrace );
+	UTIL_TraceLine(EntityList(), start, end, (CONTENTS_WATER|CONTENTS_SLIME), GetOwner(), COLLISION_GROUP_NONE, &waterTrace );
 
 	if ( waterTrace.fraction < 1.0f )
 	{
@@ -305,7 +305,7 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 	forward = pOwner->GetAutoaimVector( AUTOAIM_SCALE_DEFAULT, GetRange() );
 
 	Vector swingEnd = swingStart + forward * GetRange();
-	UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+	UTIL_TraceLine(EntityList(), swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
 	Activity nHitActivity = ACT_VM_HITCENTER;
 
 	// Like bullets, bludgeon traces have to trace against triggers.
@@ -321,7 +321,7 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 		// Back off by hull "radius"
 		swingEnd -= forward * bludgeonHullRadius;
 
-		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+		UTIL_TraceHull(EntityList(), swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
 		if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
 		{
 			Vector vecToTarget = traceHit.m_pEnt->GetEngineObject()->GetAbsOrigin() - swingStart;

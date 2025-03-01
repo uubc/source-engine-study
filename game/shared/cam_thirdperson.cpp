@@ -165,7 +165,7 @@ void CThirdPersonManager::PositionCamera( CBasePlayer *pPlayer, QAngle angles )
 
 		// use our previously #defined hull to collision trace
 		CTraceFilterSimple traceFilter( pPlayer, COLLISION_GROUP_NONE );
-		UTIL_TraceHull( endPos, vecCamOffset, CAM_HULL_MIN, CAM_HULL_MAX, MASK_SOLID & ~CONTENTS_MONSTER, &traceFilter, &trace );
+		UTIL_TraceHull(EntityList(), endPos, vecCamOffset, CAM_HULL_MIN, CAM_HULL_MAX, MASK_SOLID & ~CONTENTS_MONSTER, &traceFilter, &trace );
 		
 		if ( trace.fraction != m_flTargetFraction )
 		{
@@ -188,7 +188,7 @@ void CThirdPersonManager::PositionCamera( CBasePlayer *pPlayer, QAngle angles )
 		{
 			m_vecCameraOffset[ DIST ] *= trace.fraction;
 
-			UTIL_TraceHull( endPos, endPos + (camForward * - GetDesiredCameraOffset()[DIST_FORWARD]), CAM_HULL_MIN, CAM_HULL_MAX, MASK_SOLID & ~CONTENTS_MONSTER, &traceFilter, &trace );
+			UTIL_TraceHull(EntityList(), endPos, endPos + (camForward * - GetDesiredCameraOffset()[DIST_FORWARD]), CAM_HULL_MIN, CAM_HULL_MAX, MASK_SOLID & ~CONTENTS_MONSTER, &traceFilter, &trace );
 
 			if ( trace.fraction != 1.0f )
 			{

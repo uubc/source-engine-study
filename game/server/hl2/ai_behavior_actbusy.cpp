@@ -596,7 +596,7 @@ bool CAI_ActBusyBehavior::FValidateHintType( CAI_Hint *pHint )
 
 	// Check for clearance
 	trace_t tr;
-	AI_TraceHull( pHint->GetEngineObject()->GetAbsOrigin(), pHint->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->WorldAlignMins(), GetOuter()->GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, GetOuter(), COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), pHint->GetEngineObject()->GetAbsOrigin(), pHint->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->WorldAlignMins(), GetOuter()->GetEngineObject()->WorldAlignMaxs(), MASK_SOLID, GetOuter(), COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction == 1.0 )
 		return true;
 
@@ -2094,7 +2094,7 @@ void CAI_ActBusyBehavior::RunTask( const Task_t *pTask )
 				// Trace my normal hull over this spot to see if I'm able to stand up right now.
 				trace_t tr;
 				CTraceFilterOnlyNPCsAndPlayer filter( GetOuter(), COLLISION_GROUP_NONE );
-				UTIL_TraceHull( GetOuter()->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->GetAbsOrigin(), NAI_Hull::Mins( HULL_HUMAN ), NAI_Hull::Maxs( HULL_HUMAN ), MASK_NPCSOLID, &filter, &tr );
+				UTIL_TraceHull(EntityList(), GetOuter()->GetEngineObject()->GetAbsOrigin(), GetOuter()->GetEngineObject()->GetAbsOrigin(), NAI_Hull::Mins( HULL_HUMAN ), NAI_Hull::Maxs( HULL_HUMAN ), MASK_NPCSOLID, &filter, &tr );
 
 				if( tr.startsolid )
 				{

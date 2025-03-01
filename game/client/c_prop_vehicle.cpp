@@ -264,7 +264,7 @@ void C_PropVehicleDriveable::DrawHudElements( )
 				Vector vecEnd = vecStart + vecDirection * MAX_TRACE_LENGTH;
 
 				trace_t tr;
-				UTIL_TraceLine( vecStart, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 				Vector screen;
 				screen.Init();

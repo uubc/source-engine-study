@@ -579,7 +579,7 @@ int CNPC_BaseZombie::MeleeAttack1Conditions ( float flDot, float flDist )
 
 	trace_t	tr;
 	CTraceFilterNav traceFilter( this, false, this, COLLISION_GROUP_NONE );
-	AI_TraceHull( WorldSpaceCenter(), WorldSpaceCenter() + forward * GetClawAttackRange(), vecMins, vecMaxs, MASK_NPCSOLID, &traceFilter, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + forward * GetClawAttackRange(), vecMins, vecMaxs, MASK_NPCSOLID, &traceFilter, &tr );
 
 	if( tr.fraction == 1.0 || !tr.m_pEnt )
 	{
@@ -1292,7 +1292,7 @@ CBaseEntity *CNPC_BaseZombie::ClawAttack( float flDist, int iDamage, QAngle &qaV
 	if ( GetEnemy() )
 	{
 		trace_t	tr;
-		AI_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction < 1.0f )
 			return NULL;
@@ -1428,7 +1428,7 @@ void CNPC_BaseZombie::PoundSound()
 
 	GetVectors( &forward, NULL, NULL );
 
-	AI_TraceLine( EyePosition(), EyePosition() + forward * 128, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), EyePosition(), EyePosition() + forward * 128, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction == 1.0 )
 	{
@@ -2386,7 +2386,7 @@ bool CNPC_BaseZombie::HeadcrabFits( CBaseAnimating *pCrab )
 	}
 
 	trace_t tr;
-	AI_TraceHull(	vecSpawnLoc,
+	AI_TraceHull(EntityList(), vecSpawnLoc,
 					vecSpawnLoc - Vector( 0, 0, 1 ), 
 					NAI_Hull::Mins(HULL_TINY) * CRAB_HULL_EXPAND,
 					NAI_Hull::Maxs(HULL_TINY) * CRAB_HULL_EXPAND,

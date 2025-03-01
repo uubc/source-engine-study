@@ -275,7 +275,7 @@ void FX_FireBullets(
 	
 	{
 		trace_t tr;		
-		UTIL_TraceLine( vOrigin, vOrigin + vecDirShooting * MAX_COORD_RANGE, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vOrigin, vOrigin + vecDirShooting * MAX_COORD_RANGE, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 		// if this is a local player, start at attachment on view model
 		// else start on attachment on weapon model

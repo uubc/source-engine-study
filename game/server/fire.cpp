@@ -295,7 +295,7 @@ bool FireSystem_IsFireInWall( Vector &position, fireType_e type )
 		return false;
 
 	trace_t tr;
-	UTIL_TraceHull( position, position+Vector(0,0,0.1), FIRE_MINS,FIRE_MAXS,MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), position, position+Vector(0,0,0.1), FIRE_MINS,FIRE_MAXS,MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 	if (tr.fraction != 1.0 || tr.startsolid)
 	{
 		//NDebugOverlay::Box(position,FIRE_MINS,FIRE_MAXS,255,0,0,50,10);
@@ -328,7 +328,7 @@ bool FireSystem_CanAddFire( Vector *position, float separationRadius, fireType_e
 		startpos[2] += 1;
 		endpos[2] -= FIRE_MAX_GROUND_OFFSET;
 
-		UTIL_TraceLine( startpos, endpos, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), startpos, endpos, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 
 		//See if we're floating too high 
 		if ( ( tr.allsolid ) || ( tr.startsolid) || ( tr.fraction == 1.0f ) )
@@ -708,7 +708,7 @@ void CFire::StartFire( void )
 	}
 	else
 	{
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_FIRE_SOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_FIRE_SOLID, this, COLLISION_GROUP_NONE, &tr );
 		vFirePos = tr.endpos;
 	}
 
@@ -1039,7 +1039,7 @@ void CFire::Update( float simTime )
 			{
 				// Make sure can actually see entity (don't damage through walls)
 				trace_t tr;
-				UTIL_TraceLine( this->WorldSpaceCenter(), pOther->WorldSpaceCenter(), MASK_FIRE_SOLID, pOther, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), this->WorldSpaceCenter(), pOther->WorldSpaceCenter(), MASK_FIRE_SOLID, pOther, COLLISION_GROUP_NONE, &tr );
 
 				if (tr.fraction == 1.0 && !tr.startsolid)
 				{

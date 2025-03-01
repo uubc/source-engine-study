@@ -697,7 +697,7 @@ bool CCSBot::FindGrenadeTossPathTarget( Vector *pos )
 
 	// check +X
 	check = visibleSpot + Vector( 999.9f, 0, 0 );
-	UTIL_TraceLine( visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	if (result.fraction < 1.0f)
 	{
@@ -710,7 +710,7 @@ bool CCSBot::FindGrenadeTossPathTarget( Vector *pos )
 
 	// check -X
 	check = visibleSpot + Vector( -999.9f, 0, 0 );
-	UTIL_TraceLine( visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	if (result.fraction < 1.0f)
 	{
@@ -723,7 +723,7 @@ bool CCSBot::FindGrenadeTossPathTarget( Vector *pos )
 
 	// check +Y
 	check = visibleSpot + Vector( 0, 999.9f, 0 );
-	UTIL_TraceLine( visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	if (result.fraction < 1.0f)
 	{
@@ -736,7 +736,7 @@ bool CCSBot::FindGrenadeTossPathTarget( Vector *pos )
 
 	// check -Y
 	check = visibleSpot + Vector( 0, -999.9f, 0 );
-	UTIL_TraceLine( visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), visibleSpot, check, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	if (result.fraction < 1.0f)
 	{
@@ -1313,7 +1313,7 @@ bool CCSBot::IsFriendInLineOfFire( void )
 
 	// trace the bullet's path
 	trace_t result;
-	UTIL_TraceLine( EyePosition(), EyePosition() + 10000.0f * aimDir, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + 10000.0f * aimDir, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	if (result.DidHitNonWorldEntity())
 	{
@@ -1344,7 +1344,7 @@ float CCSBot::ComputeWeaponSightRange( void )
 
 	// trace the bullet's path
 	trace_t result;
-	UTIL_TraceLine( EyePosition(), EyePosition() + 10000.0f * aimDir, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), EyePosition(), EyePosition() + 10000.0f * aimDir, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &result );
 
 	return (EyePosition() - result.endpos).Length();
 }

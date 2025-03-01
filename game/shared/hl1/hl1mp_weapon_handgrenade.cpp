@@ -177,7 +177,7 @@ void CHandGrenade::BounceTouch( IServerEntity *pOther )
 
 	// HACKHACK - On ground isn't always set, so look for ground underneath
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,10), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector(0,0,10), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0 )
 	{

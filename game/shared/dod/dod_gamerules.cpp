@@ -956,7 +956,7 @@ static CDODViewVectors g_DODViewVectors(
 		float retval = 0.0;
 		trace_t tr;
 
-		UTIL_TraceLine(vecSrc, vecEnd, MASK_SHOT, pEntityToIgnore, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SHOT, pEntityToIgnore, COLLISION_GROUP_NONE, &tr);
 
 		Assert( pTarget );
 
@@ -972,7 +972,7 @@ static CDODViewVectors g_DODViewVectors(
 			CBaseEntity *blockingEntity = (CBaseEntity*)tr.m_pEnt;
 
 			// check to see if this part of the player is visible if entities are ignored.
-			UTIL_TraceLine(vecSrc, vecEnd, CONTENTS_SOLID, NULL, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(EntityList(), vecSrc, vecEnd, CONTENTS_SOLID, NULL, COLLISION_GROUP_NONE, &tr);
 
 			if (tr.fraction == 1.0)
 			{
@@ -1680,7 +1680,7 @@ static CDODViewVectors g_DODViewVectors(
 		const Vector &vMaxs )
 	{
 		trace_t trace;
-		UTIL_TraceHull( vPos, vPos + Vector( 0, 0, -500 ), vMins, vMaxs, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceHull(EntityList(), vPos, vPos + Vector( 0, 0, -500 ), vMins, vMaxs, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &trace );
 		return trace.endpos;
 	}
 
@@ -2046,7 +2046,7 @@ static CDODViewVectors g_DODViewVectors(
 						// Ensure that there is a clear line of sight from the spawnpoint entity to the actual spawn point.
 						// (Useful for keeping things from spawning behind walls near a spawn point)
 						trace_t tr;
-						UTIL_TraceLine( vOrigin, vBase, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &tr );
+						UTIL_TraceLine(EntityList(), vOrigin, vBase, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &tr );
 
 						if ( tr.fraction != 1.0 )
 						{

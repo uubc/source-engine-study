@@ -1117,7 +1117,7 @@ int CFastZombie::RangeAttack1Conditions( float flDot, float flDist )
 	// only check half the distance. (the first part of the jump)
 	vecDirToEnemy = vecDirToEnemy * 0.5;
 
-	AI_TraceHull( WorldSpaceCenter(), WorldSpaceCenter() + vecDirToEnemy, vecHullMin, vecHullMax, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + vecDirToEnemy, vecHullMin, vecHullMax, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction != 1.0 )
 	{

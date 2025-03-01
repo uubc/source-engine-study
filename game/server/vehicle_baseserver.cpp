@@ -569,7 +569,7 @@ bool CBaseServerVehicle::CheckExitPoint( float yaw, int distance, Vector *pEndPo
   	*pEndPoint = vecStart + vecDir * distance;
   
   	trace_t tr;
-  	UTIL_TraceHull( vecStart, *pEndPoint, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
+  	UTIL_TraceHull(EntityList(), vecStart, *pEndPoint, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0 )
 		return false;
@@ -594,7 +594,7 @@ bool CBaseServerVehicle::GetPassengerExitPoint( int nRole, Vector *pExitPoint, Q
 		{
 			// Make sure it's clear
 			trace_t tr;
-			UTIL_TraceHull( vehicleExitOrigin + Vector(0, 0, 12), vehicleExitOrigin, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceHull(EntityList(), vehicleExitOrigin + Vector(0, 0, 12), vehicleExitOrigin, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
 			if ( !tr.startsolid )
 			{
 				*pAngles = vehicleExitAngles;
@@ -629,7 +629,7 @@ bool CBaseServerVehicle::GetPassengerExitPoint( int nRole, Vector *pExitPoint, Q
 
 	// Make sure it's clear
 	trace_t tr;
-	UTIL_TraceHull(this->GetEngineObject()->WorldSpaceCenter(), *pExitPoint, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), this->GetEngineObject()->WorldSpaceCenter(), *pExitPoint, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
 	if ( !tr.startsolid )
 	{
 		return true;
@@ -1336,7 +1336,7 @@ int CBaseServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, bool &bAll
 		// Starting at the exit point, trace a flat plane down until we hit ground
 		// NOTE: The hull has no vertical span because we want to test the lateral constraints against the ground, not height (yet)
 		trace_t tr;
-		UTIL_TraceHull( vecStart, vecEnd, VEC_HULL_MIN, Vector( VEC_HULL_MAX.x, VEC_HULL_MAX.y, VEC_HULL_MIN.z ), MASK_PLAYERSOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vecStart, vecEnd, VEC_HULL_MIN, Vector( VEC_HULL_MAX.x, VEC_HULL_MAX.y, VEC_HULL_MIN.z ), MASK_PLAYERSOLID, NULL, COLLISION_GROUP_NONE, &tr );
 		
 		if ( g_debug_vehicleexit.GetBool() )
 		{
@@ -1346,7 +1346,7 @@ int CBaseServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, bool &bAll
 		if ( tr.fraction < 1.0f )
 		{
 			// If we hit the ground, try to now "stand up" at that point to see if we'll fit
-			UTIL_TraceHull( tr.endpos, tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, NULL, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceHull(EntityList(), tr.endpos, tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, NULL, COLLISION_GROUP_NONE, &tr );
 			
 			// See if we're unable to stand at this space
 			if ( tr.startsolid )
@@ -1376,7 +1376,7 @@ int CBaseServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, bool &bAll
 		Vector vecExitEndPoint = tr.endpos;
 
 		// Make sure we can trace to the center of the exit point
-		UTIL_TraceLine( vecViewOrigin, vecExitEndPoint, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecViewOrigin, vecExitEndPoint, MASK_PLAYERSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction != 1.0 )
 		{
@@ -1551,7 +1551,7 @@ void CBaseServerVehicle::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove
 	GetDrivableVehicle()->ProcessMovement( pPlayer, pMoveData );
 
 	trace_t	tr;
-	UTIL_TraceLine( pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_PLAYERSOLID, GetVehicleEnt(), COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_PLAYERSOLID, GetVehicleEnt(), COLLISION_GROUP_NONE, &tr );
 
 	// If our gamematerial has changed, tell any player surface triggers that are watching
 	const surfacedata_t *pSurfaceProp = EntityList()->PhysGetProps()->GetSurfaceData( tr.surface.surfaceProps );

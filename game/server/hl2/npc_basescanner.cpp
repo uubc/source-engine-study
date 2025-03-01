@@ -714,7 +714,7 @@ void CNPC_BaseScanner::AttackDivebombCollide(float flInterval)
 	Vector			checkPos = GetEngineObject()->GetAbsOrigin() + (GetCurrentVelocity() * flInterval);
 	trace_t			tr;
 	CBaseEntity*	pHitEntity = NULL;
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(), checkPos, GetHullMins(), GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), checkPos, GetHullMins(), GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	if (tr.m_pEnt)
 	{
@@ -774,7 +774,7 @@ void CNPC_BaseScanner::AttackDivebombCollide(float flInterval)
 			// that we hit.
 			checkPos = GetEngineObject()->GetAbsOrigin() - (tr.plane.normal * 24);
 
-			AI_TraceLine(GetEngineObject()->GetAbsOrigin(), checkPos,MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), checkPos,MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 			if (tr.fraction != 1.0)
 			{
 				g_pEffects->Sparks( tr.endpos );
@@ -1071,7 +1071,7 @@ bool CNPC_BaseScanner::OverrideMove( float flInterval )
 		if ( pMoveTarget )
 		{
 			trace_t tr;
-			AI_TraceHull(GetEngineObject()->GetAbsOrigin(), vMoveTargetPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), vMoveTargetPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 			float fTargetDist = (1.0f-tr.fraction)*(GetEngineObject()->GetAbsOrigin() - vMoveTargetPos).Length();
 
@@ -1153,7 +1153,7 @@ Vector CNPC_BaseScanner::IdealGoalForMovement( const Vector &goalPos, const Vect
 
 	// Trace down and make sure we can fit here
 	trace_t	tr;
-	AI_TraceHull( vIdealPos, vIdealPos - Vector( 0, 0, MinGroundDist() ), GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), vIdealPos, vIdealPos - Vector( 0, 0, MinGroundDist() ), GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	// Move up otherwise
 	if ( tr.fraction < 1.0f )

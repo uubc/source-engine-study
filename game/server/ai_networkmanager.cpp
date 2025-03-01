@@ -1251,7 +1251,7 @@ CAI_Node *CAI_NetworkEditTools::FindAINodeNearestFacing( const Vector &origin, c
 				{
 					// Make sure I have a line of sight to it
 					trace_t tr;
-					AI_TraceLine ( origin, aiNet->GetNode(node)->GetPosition(m_iHullDrawNum), 
+					AI_TraceLine (EntityList(), origin, aiNet->GetNode(node)->GetPosition(m_iHullDrawNum),
 						MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
 					if ( tr.fraction == 1.0 )
 					{
@@ -1345,7 +1345,7 @@ CAI_Link *CAI_NetworkEditTools::FindAILinkNearestFacing( const Vector &vOrigin, 
 					{
 						// Make sure I have a line of sight to it
 						trace_t tr;
-						AI_TraceLine ( vOrigin, vIntersection, MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
+						AI_TraceLine (EntityList(), vOrigin, vIntersection, MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
 						if ( tr.fraction == 1.0 )
 						{
  							bestDot	= lookDot;
@@ -1598,7 +1598,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 			pPlayer->EyeVectors( &vForward );
 
 			trace_t tr;
-			AI_TraceLine ( vSource, vSource + vForward * 2048, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+			AI_TraceLine (EntityList(), vSource, vSource + vForward * 2048, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
 
 			float dotPr = DotProduct(Vector(0,0,1),tr.plane.normal);
 			if (tr.fraction != 1.0 &&  dotPr > 0.5)
@@ -2415,7 +2415,7 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 	// ----------------
 	trace_t trace;
 	Vector posOnLadder		= pNode->GetPosition(HULL_SMALL_CENTERED);
-	AI_TraceHull( posOnLadder, posOnLadder + Vector( 0, 0, -37 ), 
+	AI_TraceHull(EntityList(), posOnLadder, posOnLadder + Vector( 0, 0, -37 ),
 		NAI_Hull::Mins(HULL_SMALL_CENTERED), NAI_Hull::Maxs(HULL_SMALL_CENTERED), 
 		MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
 
@@ -2460,7 +2460,7 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 		// ----------------
 		//  Check outward
 		// ----------------
-		AI_TraceLine ( posOnLadder,
+		AI_TraceLine (EntityList(), posOnLadder,
 						 origin,
 						 MASK_NPCSOLID_BRUSHONLY,
 						 NULL,
@@ -2546,7 +2546,7 @@ void CAI_NetworkBuilder::InitGroundNodePosition(CAI_Network *pNetwork, CAI_Node 
 		// shift up so bottom of box is at center of node
 		origin.z -= mins.z;
 
-		AI_TraceHull( origin, origin + Vector( 0, 0, -384 ), mins, maxs, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), origin, origin + Vector( 0, 0, -384 ), mins, maxs, MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 		if ( !tr.startsolid )
 			pNode->m_flVOffset[hull] = tr.endpos.z - pNode->GetOrigin().z + 0.1;
@@ -2693,7 +2693,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		// ------------------
 		//  Bottom to bottom
 		// ------------------
-		AI_TraceLine ( srcPos, destPos,MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
+		AI_TraceLine (EntityList(), srcPos, destPos,MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 		if (!tr.startsolid && tr.fraction == 1.0)
 		{
 			isVisible = true;
@@ -2704,7 +2704,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		// ------------------
 		if (!isVisible)
 		{
-			AI_TraceLine ( srcPos + Vector( 0, 0, 70 ),destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine (EntityList(), srcPos + Vector( 0, 0, 70 ),destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{	
 				isVisible = true;
@@ -2716,7 +2716,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		// ------------------
 		if (!isVisible)
 		{
-			AI_TraceLine ( srcPos + Vector( 0, 0, 70 ),destPos,MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine (EntityList(), srcPos + Vector( 0, 0, 70 ),destPos,MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{	
 				isVisible = true;
@@ -2728,7 +2728,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		// ------------------
 		if (!isVisible)
 		{
-			AI_TraceLine ( srcPos,destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine (EntityList(), srcPos,destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{	
 				isVisible = true;
@@ -3006,7 +3006,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 		// Air nodes only connect to other air nodes and nothing else
 		if (pSrcNode->m_eNodeType == NODE_AIR && pDestNode->GetType() == NODE_AIR)
 		{
-			AI_TraceHull( pSrcNode->GetOrigin(), pDestNode->GetOrigin(), NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
+			AI_TraceHull(EntityList(), pSrcNode->GetOrigin(), pDestNode->GetOrigin(), NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{
 				result |= bits_CAP_MOVE_FLY;
@@ -3029,7 +3029,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 		// If a code genereted climb dismount node the two origins will be the same
 		if (pSrcNode->GetOrigin() == pDestNode->GetOrigin())
 		{
-			AI_TraceHull( srcPos, destPos, 
+			AI_TraceHull(EntityList(), srcPos, destPos,
 							NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), 
 							MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
@@ -3047,7 +3047,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 				return 0;
 			}
 
-			AI_TraceHull( srcPos, destPos, NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
+			AI_TraceHull(EntityList(), srcPos, destPos, NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{
 				result |= bits_CAP_MOVE_CLIMB;

@@ -1056,7 +1056,7 @@ void CWeaponStriderBuster::BusterDetachThink()
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1200), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1200), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if( fabs(tr.startpos.z - tr.endpos.z) < 240.0f )
 	{

@@ -170,7 +170,7 @@ void CGlowOverlay::UpdateSkyGlowObstruction( float zFar, bool bCacheFullSceneSta
 	}
 	// Trace a ray at the object.
 	trace_t trace;
-	UTIL_TraceLine(g_pViewRender->CurrentViewOrigin(), g_pViewRender->CurrentViewOrigin() + (m_vDirection*MAX_TRACE_LENGTH),
+	UTIL_TraceLine(EntityList(), g_pViewRender->CurrentViewOrigin(), g_pViewRender->CurrentViewOrigin() + (m_vDirection*MAX_TRACE_LENGTH),
 		CONTENTS_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
 	
 	// back the trace with a pixel query to occlude with models
@@ -232,7 +232,7 @@ void CGlowOverlay::UpdateGlowObstruction( const Vector &vToGlow, bool bCacheFull
 	{
 		// Trace a ray at the object.
 		trace_t trace;
-		UTIL_TraceLine(g_pViewRender->CurrentViewOrigin(), g_pViewRender->CurrentViewOrigin() + (vToGlow*MAX_TRACE_LENGTH),
+		UTIL_TraceLine(EntityList(), g_pViewRender->CurrentViewOrigin(), g_pViewRender->CurrentViewOrigin() + (vToGlow*MAX_TRACE_LENGTH),
 			CONTENTS_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
 		
 		bFade = (trace.fraction < 1 && !(trace.surface.flags & SURF_SKY));

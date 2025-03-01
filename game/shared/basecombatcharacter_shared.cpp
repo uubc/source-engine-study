@@ -525,7 +525,7 @@ bool CBaseCombatCharacter::ComputeLOS( const Vector &vecEyePosition, const Vecto
 	// We simply can't see because the world is in the way.
 	trace_t result;
 	CTraceFilterNoCombatCharacters traceFilter( NULL, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( vecEyePosition, vecTarget, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE | CONTENTS_MONSTER, &traceFilter, &result );
+	UTIL_TraceLine(EntityList(), vecEyePosition, vecTarget, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE | CONTENTS_MONSTER, &traceFilter, &result );
 	return ( result.fraction == 1.0f );
 }
 
@@ -692,7 +692,7 @@ bool CBaseCombatCharacter::IsLineOfSightClear( const Vector &pos, LineOfSightChe
 #else
 		trace_t trace;
 		CTraceFilterNoCombatCharacters traceFilter( entityToIgnore, COLLISION_GROUP_NONE );
-		UTIL_TraceLine(const_cast<CBaseCombatCharacter*>(this)->EyePosition(), pos, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE | CONTENTS_MONSTER, &traceFilter, &trace );
+		UTIL_TraceLine(EntityList(), const_cast<CBaseCombatCharacter*>(this)->EyePosition(), pos, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE | CONTENTS_MONSTER, &traceFilter, &trace );
 
 		return trace.fraction == 1.0f;
 #endif
@@ -701,7 +701,7 @@ bool CBaseCombatCharacter::IsLineOfSightClear( const Vector &pos, LineOfSightChe
 	{
 		trace_t trace;
 		CTraceFilterSkipTwoEntities traceFilter( this, entityToIgnore, COLLISION_GROUP_NONE );
-		UTIL_TraceLine(const_cast<CBaseCombatCharacter*>(this)->EyePosition(), pos, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE, &traceFilter, &trace );
+		UTIL_TraceLine(EntityList(), const_cast<CBaseCombatCharacter*>(this)->EyePosition(), pos, MASK_OPAQUE | CONTENTS_IGNORE_NODRAW_OPAQUE, &traceFilter, &trace );
 
 		return trace.fraction == 1.0f;
 	}

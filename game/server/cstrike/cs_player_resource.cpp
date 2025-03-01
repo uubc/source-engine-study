@@ -90,7 +90,7 @@ public:
 		{
 			trace_t tr;
 			CTraceFilterSkipTwoEntities filter( player, m_targetEntity, COLLISION_GROUP_DEBRIS );
-			UTIL_TraceLine( eye, m_target,
+			UTIL_TraceLine(EntityList(), eye, m_target,
 				(CONTENTS_OPAQUE|CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_DEBRIS), &filter, &tr );
 
 			if( tr.fraction == 1.0f )

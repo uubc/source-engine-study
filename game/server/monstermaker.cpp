@@ -144,7 +144,7 @@ void CBaseNPCMaker::Spawn( void )
 bool CBaseNPCMaker::HumanHullFits( const Vector &vecLocation )
 {
 	trace_t tr;
-	UTIL_TraceHull( vecLocation,
+	UTIL_TraceHull(EntityList(), vecLocation,
 					vecLocation + Vector( 0, 0, 1 ),
 					NAI_Hull::Mins(HULL_HUMAN),
 					NAI_Hull::Maxs(HULL_HUMAN),
@@ -202,7 +202,7 @@ bool CBaseNPCMaker::CanMakeNPC( bool bIgnoreSolidEntities )
 					// Since the outer method doesn't work well around striders on account of their huge bounding box.
 					// Find the ground under me and see if a human hull would fit there.
 					trace_t tr;
-					UTIL_TraceHull(GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 2 ),
+					UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 2 ),
 									GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 8192 ),
 									NAI_Hull::Mins(HULL_HUMAN),
 									NAI_Hull::Maxs(HULL_HUMAN),
@@ -495,7 +495,7 @@ void CBaseNPCMaker::ChildPostSpawn( CAI_BaseNPC *pChild )
 	while ( bFound )
 	{
 		trace_t tr;
-		UTIL_TraceHull( pChild->GetEngineObject()->GetAbsOrigin(), pChild->GetEngineObject()->GetAbsOrigin(), pChild->GetEngineObject()->WorldAlignMins(), pChild->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, pChild, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), pChild->GetEngineObject()->GetAbsOrigin(), pChild->GetEngineObject()->GetAbsOrigin(), pChild->GetEngineObject()->WorldAlignMins(), pChild->GetEngineObject()->WorldAlignMaxs(), MASK_NPCSOLID, pChild, COLLISION_GROUP_NONE, &tr );
 		//NDebugOverlay::Box( pChild->GetAbsOrigin(), pChild->WorldAlignMins(), pChild->WorldAlignMaxs(), 0, 255, 0, 32, 5.0 );
 		if ( tr.fraction != 1.0 && tr.m_pEnt )
 		{
@@ -939,14 +939,14 @@ bool CTemplateNPCMaker::PlaceNPCInLine( CAI_BaseNPC *pNPC )
 	vecLine *= -1;
 
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 8192 ), MASK_SHOT, pNPC, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 8192 ), MASK_SHOT, pNPC, COLLISION_GROUP_NONE, &tr );
 	vecPlace = tr.endpos;
 	float flStepSize = pNPC->GetHullWidth();
 
 	// Try 10 times to place this npc.
 	for( int i = 0 ; i < 10 ; i++ )
 	{
-		UTIL_TraceHull( vecPlace,
+		UTIL_TraceHull(EntityList(), vecPlace,
 						vecPlace + Vector( 0, 0, 10 ),
 						pNPC->GetHullMins(),
 						pNPC->GetHullMaxs(),

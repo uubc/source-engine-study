@@ -199,7 +199,7 @@ bool C_BaseHLPlayer::TestMove( const Vector &pos, float fVertDist, float radius,
 	trace_t trDown;
 	float flHit1, flHit2;
 	
-	UTIL_TraceHull(GetEngineObject()->GetAbsOrigin(), pos, GetPlayerMins(), GetPlayerMaxs(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trOver );
+	UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), pos, GetPlayerMins(), GetPlayerMaxs(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trOver );
 	if ( trOver.fraction < 1.0f )
 	{
 		// check if the endpos intersects with the direction the object is travelling.  if it doesn't, this is a good direction to move.
@@ -211,11 +211,11 @@ bool C_BaseHLPlayer::TestMove( const Vector &pos, float fVertDist, float radius,
 			// our first trace failed, so see if we can go farther if we step up.
 
 			// trace up to see if we have enough room.
-			UTIL_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, m_Local.m_flStepSize ),
+			UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, m_Local.m_flStepSize ),
 				GetPlayerMins(), GetPlayerMaxs(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trUp );
 
 			// do a trace from the stepped up height
-			UTIL_TraceHull( trUp.endpos, pos + Vector( 0, 0, trUp.endpos.z - trUp.startpos.z ), 
+			UTIL_TraceHull(EntityList(), trUp.endpos, pos + Vector( 0, 0, trUp.endpos.z - trUp.startpos.z ),
 				GetPlayerMins(), GetPlayerMaxs(), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trOver );
 
 			if ( trOver.fraction < 1.0f )
@@ -231,7 +231,7 @@ bool C_BaseHLPlayer::TestMove( const Vector &pos, float fVertDist, float radius,
 	}
 
 	// trace down to see if this position is on the ground
-	UTIL_TraceLine( trOver.endpos, trOver.endpos - Vector( 0, 0, fVertDist ), 
+	UTIL_TraceLine(EntityList(), trOver.endpos, trOver.endpos - Vector( 0, 0, fVertDist ),
 		MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trDown );
 
 	if ( trDown.fraction == 1.0f ) 

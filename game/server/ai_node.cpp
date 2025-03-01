@@ -137,7 +137,7 @@ float GetFloorZ(const Vector &origin, float fMaxDrop)
 	// After the routing is done, push them back down.
 	//
 	trace_t	tr;
-	AI_TraceLine ( origin,
+	AI_TraceLine (EntityList(), origin,
 					 origin - Vector ( 0, 0, fMaxDrop ),
 					 MASK_NPCSOLID_BRUSHONLY,
 					 NULL,
@@ -146,7 +146,7 @@ float GetFloorZ(const Vector &origin, float fMaxDrop)
 
 	// This trace is ONLY used if we hit an entity flagged with FL_WORLDBRUSH
 	trace_t	trEnt;
-	AI_TraceLine ( origin,
+	AI_TraceLine (EntityList(), origin,
 					 origin - Vector ( 0, 0, fMaxDrop ),
 					 MASK_NPCSOLID,
 					 NULL,

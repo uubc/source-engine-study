@@ -1026,7 +1026,7 @@ void CHLTVDirector::AnalyzeCameras()
 
 			// check visibility
 			trace_t tr;
-			UTIL_TraceLine( vCamPos, pPlayer->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr  );
+			UTIL_TraceLine(EntityList(), vCamPos, pPlayer->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr  );
 
 			if ( tr.fraction < 1.0 )
 				continue;	// not visible for camera
@@ -1140,7 +1140,7 @@ void CHLTVDirector::AnalyzePlayers()
 
 			// check visibility
 			trace_t tr;
-			UTIL_TraceLine( vCamPos, pOtherPlayer->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, pOtherPlayer, COLLISION_GROUP_NONE, &tr  );
+			UTIL_TraceLine(EntityList(), vCamPos, pOtherPlayer->GetEngineObject()->GetAbsOrigin(), MASK_SOLID, pOtherPlayer, COLLISION_GROUP_NONE, &tr  );
 
 			if ( tr.fraction < 1.0 )
 				continue;	// not visible for camera

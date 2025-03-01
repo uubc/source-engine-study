@@ -947,7 +947,7 @@ bool CHostage::IsOnGround( void ) const
 bool CHostage::IsVisible( const Vector &pos, bool testFOV ) const
 {
 	trace_t result;
-	UTIL_TraceLine(const_cast<CHostage*>(this)->EyePosition(), pos, CONTENTS_SOLID, this, COLLISION_GROUP_NONE, &result );
+	UTIL_TraceLine(EntityList(), const_cast<CHostage*>(this)->EyePosition(), pos, CONTENTS_SOLID, this, COLLISION_GROUP_NONE, &result );
 	return (result.fraction >= 1.0f);
 }
 

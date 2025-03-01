@@ -217,7 +217,7 @@ void CGrenadeAR2::Detonate(void)
 	Vector vecForward = GetEngineObject()->GetAbsVelocity();
 	VectorNormalize(vecForward);
 	trace_t		tr;
-	UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*vecForward, MASK_SHOT,
+	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + 60*vecForward, MASK_SHOT,
 		this, COLLISION_GROUP_NONE, &tr);
 
 

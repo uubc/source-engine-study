@@ -1008,7 +1008,7 @@ Activity CBaseCombatCharacter::GetDeathActivity ( void )
 	if ( deathActivity == ACT_DIEFORWARD )
 	{
 			// make sure there's room to fall forward
-			UTIL_TraceHull ( vecSrc, vecSrc + forward * 64, Vector(-16,-16,-18), 
+			UTIL_TraceHull (EntityList(), vecSrc, vecSrc + forward * 64, Vector(-16,-16,-18),
 				Vector(16,16,18), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction != 1.0 )
@@ -1020,7 +1020,7 @@ Activity CBaseCombatCharacter::GetDeathActivity ( void )
 	if ( deathActivity == ACT_DIEBACKWARD )
 	{
 			// make sure there's room to fall backward
-			UTIL_TraceHull ( vecSrc, vecSrc - forward * 64, Vector(-16,-16,-18), 
+			UTIL_TraceHull (EntityList(), vecSrc, vecSrc - forward * 64, Vector(-16,-16,-18),
 				Vector(16,16,18), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction != 1.0 )
@@ -1774,7 +1774,7 @@ void CBaseCombatCharacter::ThrowDirForWeaponStrip( CBaseCombatWeapon *pWeapon, c
 			int i;
 			for( i = 0 ; i < 4 ; i++ )
 			{
-				UTIL_TraceLine( vecOrigin, vecOrigin + vecTest[ i ] * 48.0f, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin + vecTest[ i ] * 48.0f, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 				if ( !tr.startsolid && tr.fraction == 1.0f )
 				{
@@ -1819,7 +1819,7 @@ void CBaseCombatCharacter::DropWeaponForWeaponStrip( CBaseCombatWeapon *pWeapon,
 	VectorMA( vecOrigin, flDiameter, vecThrow, vecOffsetOrigin );
 
 	trace_t	tr;
-	UTIL_TraceLine( vecOrigin, vecOffsetOrigin, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecOrigin, vecOffsetOrigin, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 		
 	if ( tr.startsolid || tr.allsolid || ( tr.fraction < 1.0f && tr.m_pEnt != pWeapon ) )
 	{

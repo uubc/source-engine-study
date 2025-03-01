@@ -234,7 +234,7 @@ void C_PlasmaBeamNode::ClientThink(void)
 	
 	trace_t trace;
 	Vector vEndTrace = GetEngineObject()->GetAbsOrigin() + (0.3* GetEngineObject()->GetAbsVelocity());
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), vEndTrace, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), vEndTrace, MASK_SHOT, NULL, COLLISION_GROUP_NONE, &trace );
 	if ( trace.fraction != 1.0f || trace.startsolid)
 	{
 		m_bSprayOn = false;

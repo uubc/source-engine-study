@@ -550,7 +550,7 @@ inline void CDODGameMovement::TracePlayerBBoxWithStep( const Vector &vStart, con
 
 	Ray_t ray;
 	ray.Init( vStart, vEnd, vHullMin, vHullMax );
-	UTIL_TraceRay( ray, fMask, mv->m_nPlayerHandle, collisionGroup, &trace );
+	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &trace );
 }
 
 // Taken from TF2 to prevent bouncing down slopes

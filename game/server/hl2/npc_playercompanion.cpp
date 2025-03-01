@@ -700,7 +700,7 @@ int CNPC_PlayerCompanion::SelectSchedule()
 		Vector	vUp = GetEngineObject()->GetAbsOrigin();
 		vUp.z += .25;
 
-		AI_TraceHull(GetEngineObject()->GetAbsOrigin(), vUp, GetHullMins(),
+		AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), vUp, GetHullMins(),
 			GetHullMaxs(), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.startsolid )
@@ -2103,7 +2103,7 @@ bool CNPC_PlayerCompanion::IsAllowedToAim()
 bool CNPC_PlayerCompanion::HasAimLOS( CBaseEntity *pAimTarget )
 {
 	trace_t tr;
-	UTIL_TraceLine( Weapon_ShootPosition(), pAimTarget->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), Weapon_ShootPosition(), pAimTarget->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.fraction < 0.5 || (tr.m_pEnt && (tr.m_pEnt->IsNPC()|| tr.m_pEnt->IsPlayer())) )
 	{
@@ -2909,7 +2909,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 				Vector vMins, vMaxs;
 				if ( FireSystem_GetFireDamageDimensions( pEntity, &vMins, &vMaxs ) )
 				{
-					UTIL_TraceLine( WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_FIRE_SOLID, pEntity, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceLine(EntityList(), WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_FIRE_SOLID, pEntity, COLLISION_GROUP_NONE, &tr );
 					if (tr.fraction == 1.0 && !tr.startsolid)
 					{
 						GetLocalNavigator()->AddObstacle( pEntity->GetEngineObject()->GetAbsOrigin(), ( ( vMaxs.x - vMins.x ) * 1.414 * 0.5 ) + 6.0, AIMST_AVOID_DANGER );
@@ -2919,7 +2919,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 #ifdef HL2_EPISODIC			
 			else if ( pEntity->GetEngineObject()->GetClassname() == iszNPCTurretFloor)
 			{
-				UTIL_TraceLine( WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
 				if (tr.fraction == 1.0 && !tr.startsolid)
 				{
 					float radius = 1.4 * pEntity->GetEngineObject()->BoundingRadius2D();
@@ -2934,7 +2934,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 				{
 					// If I'm not in the flame, prevent me from getting close to it.
 					// If I AM in the flame, avoid placing an obstacle until the flame frightens me away from itself.
-					UTIL_TraceLine( WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceLine(EntityList(), WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
 					if (tr.fraction == 1.0 && !tr.startsolid)
 					{
 						GetLocalNavigator()->AddObstacle( pEntity->WorldSpaceCenter(), COMPANION_EPISODIC_AVOID_ENTITY_FLAME_RADIUS, AIMST_AVOID_OBJECT );
@@ -2947,7 +2947,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 				CBounceBomb *pBomb = static_cast<CBounceBomb *>(pEntity);
 				if ( pBomb && !pBomb->IsPlayerPlaced() && pBomb->IsAwake() )
 				{
-					UTIL_TraceLine( WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
+					UTIL_TraceLine(EntityList(), WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
 					if (tr.fraction == 1.0 && !tr.startsolid)
 					{
 						GetLocalNavigator()->AddObstacle( pEntity->GetEngineObject()->GetAbsOrigin(), BOUNCEBOMB_DETONATE_RADIUS * .8, AIMST_AVOID_DANGER );

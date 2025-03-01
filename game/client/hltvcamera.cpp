@@ -218,7 +218,7 @@ void C_HLTVCamera::CalcChaseCamView( Vector& eyeOrigin, QAngle& eyeAngles, float
 	// clip against walls
   	trace_t trace;
 	EntityList()->PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-	UTIL_TraceHull( targetOrigin1, cameraOrigin, WALL_MIN, WALL_MAX, MASK_SOLID, target1, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceHull(EntityList(), targetOrigin1, cameraOrigin, WALL_MIN, WALL_MAX, MASK_SOLID, target1, COLLISION_GROUP_NONE, &trace );
 	EntityList()->PopEnableAbsRecomputations();
 
   	float dist = VectorLength( trace.endpos -  targetOrigin1 );

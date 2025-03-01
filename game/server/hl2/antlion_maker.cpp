@@ -856,7 +856,7 @@ bool CAntlionTemplateMaker::FindPositionOnVehicle( Vector &origin, float radius,
 bool CAntlionTemplateMaker::ValidateSpawnPosition( Vector &vOrigin, CBaseEntity *pTarget )
 {
 	trace_t	tr;
-	UTIL_TraceLine( vOrigin, vOrigin - Vector( 0, 0, 1024 ), MASK_BLOCKLOS | CONTENTS_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vOrigin, vOrigin - Vector( 0, 0, 1024 ), MASK_BLOCKLOS | CONTENTS_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 
 	if ( g_debug_antlionmaker.GetInt() == 1 )
 		 NDebugOverlay::Line( vOrigin, tr.endpos, 0, 255, 0, false, 5 );
@@ -887,7 +887,7 @@ bool CAntlionTemplateMaker::ValidateSpawnPosition( Vector &vOrigin, CBaseEntity 
 			 return false;
 	
 		trace_t trCheck;
-		UTIL_TraceHull( tr.endpos, tr.endpos + Vector(0,0,5), NAI_Hull::Mins( HULL_MEDIUM ), NAI_Hull::Maxs( HULL_MEDIUM ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &trCheck );
+		UTIL_TraceHull(EntityList(), tr.endpos, tr.endpos + Vector(0,0,5), NAI_Hull::Mins( HULL_MEDIUM ), NAI_Hull::Maxs( HULL_MEDIUM ), MASK_NPCSOLID, NULL, COLLISION_GROUP_NONE, &trCheck );
 
 		if ( trCheck.DidHit() == false )
 		{
@@ -910,7 +910,7 @@ bool CAntlionTemplateMaker::ValidateSpawnPosition( Vector &vOrigin, CBaseEntity 
 					
 					Vector vVerifyOrigin = pPlayer->GetEngineObject()->GetAbsOrigin() + pPlayer->GetViewOffset();
 					float flZOffset = NAI_Hull::Maxs( HULL_MEDIUM ).z;
-					UTIL_TraceLine( vVerifyOrigin, tr.endpos + Vector( 0, 0, flZOffset ), MASK_BLOCKLOS | CONTENTS_WATER, &traceFilter, &trVerify );
+					UTIL_TraceLine(EntityList(), vVerifyOrigin, tr.endpos + Vector( 0, 0, flZOffset ), MASK_BLOCKLOS | CONTENTS_WATER, &traceFilter, &trVerify );
 
 					if ( trVerify.fraction != 1.0f )
 					{

@@ -150,7 +150,7 @@ public:
 
 			trace_t result;
 			unsigned int mask = MASK_BLOCKLOS_AND_NPCS|CONTENTS_IGNORE_NODRAW_OPAQUE | CONTENTS_GRATE | CONTENTS_WINDOW;
-			UTIL_TraceLine( player->EyePosition(), player->EyePosition() + 999999.9f * forward, mask, player, COLLISION_GROUP_NONE, &result );
+			UTIL_TraceLine(EntityList(), player->EyePosition(), player->EyePosition() + 999999.9f * forward, mask, player, COLLISION_GROUP_NONE, &result );
 			if ( result.DidHit() )
 			{
 				NDebugOverlay::Cross3D( result.endpos, 5, 0, 255, 0, true, 10.0f );

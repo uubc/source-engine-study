@@ -1708,7 +1708,7 @@ void CBaseEntity::PhysicsStepRecheckGround()
 			}
 			else
 			{
-				UTIL_TraceLine( point, point, mask, this, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceLine(EntityList(), point, point, mask, this, COLLISION_GROUP_NONE, &trace );
 			}
 
 			if ( trace.startsolid )

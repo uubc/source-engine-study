@@ -193,7 +193,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 		if ( bUseOffset )
 		{
 			trace_t tr;
-			UTIL_TraceLine( vecStart, vecEnd, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SHOT, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 			Vector screen;
 			screen.Init();

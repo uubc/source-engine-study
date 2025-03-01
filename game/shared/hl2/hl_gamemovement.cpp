@@ -87,6 +87,7 @@ CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 	// See if spot is valid
 	trace_t tr;
 	UTIL_TraceHull(
+		EntityList(),
 		org, 
 		org, 
 		mins,
@@ -105,6 +106,7 @@ CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 		// See if spot is valid
 		trace_t tr;
 		UTIL_TraceHull(
+			EntityList(),
 			org2, 
 			org2, 
 			mins,
@@ -335,7 +337,7 @@ void CHL2GameMovement::Findladder( float maxdist, CFuncLadder **ppLadder, Vector
 		// Need to trace to see if it's clear
 		trace_t tr;
 
-		UTIL_TraceLine( mv->GetAbsOrigin(), closest, 
+		UTIL_TraceLine(EntityList(), mv->GetAbsOrigin(), closest,
 			MASK_PLAYERSOLID,
 			player,
 			COLLISION_GROUP_NONE,
@@ -348,7 +350,7 @@ void CHL2GameMovement::Findladder( float maxdist, CFuncLadder **ppLadder, Vector
 			// Try a trace stepped up from the ground a bit, in case there's something at ground level blocking us.
 			float sizez = GetPlayerMaxs().z - GetPlayerMins().z;
 
-			UTIL_TraceLine( mv->GetAbsOrigin() + Vector( 0, 0, sizez * 0.5f ), closest, 
+			UTIL_TraceLine(EntityList(), mv->GetAbsOrigin() + Vector( 0, 0, sizez * 0.5f ), closest,
 				MASK_PLAYERSOLID,
 				player,
 				COLLISION_GROUP_NONE,
@@ -445,6 +447,7 @@ bool CHL2GameMovement::ExitLadderViaDismountNode( CFuncLadder *ladder, bool stri
 
 		trace_t tr;
 		UTIL_TraceHull(
+			EntityList(),
 			org, 
 			org, 
 			GetPlayerMins( ( player->GetEngineObject()->GetFlags() & FL_DUCKING ) ? true : false ),

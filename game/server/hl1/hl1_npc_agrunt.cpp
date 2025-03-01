@@ -635,7 +635,7 @@ int CNPC_AlienGrunt::RangeAttack1Conditions ( float flDot, float flDist )
 		// verify that a shot fired from the gun will hit the enemy before the world.
 		// !!!LATER - we may wish to do something different for projectile weapons as opposed to instant-hit
 		GetEngineObject()->GetAttachment( "0", vecArmPos, angArmDir );
-		UTIL_TraceLine( vecArmPos, GetEnemy()->BodyTarget( vecArmPos ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), vecArmPos, GetEnemy()->BodyTarget( vecArmPos ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 		
 		if ( tr.fraction == 1.0 || tr.m_pEnt == GetEnemy() )
 		{
@@ -715,7 +715,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 			GetEngineObject()->SetAbsAngles( angTmp );
 			AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward, &vRight, NULL );
 
-			UTIL_TraceLine( WorldSpaceCenter() + vForward * 128, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(EntityList(), WorldSpaceCenter() + vForward * 128, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 			if ( tr.fraction == 1.0 )
 			{
 				GetMotor()->SetIdealYawToTargetAndUpdate (GetEngineObject()->GetAbsOrigin() + vRight * 128 );
@@ -725,7 +725,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 			
 			if ( !fSkip )
 			{
-				UTIL_TraceLine( WorldSpaceCenter() - vForward * 128, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+				UTIL_TraceLine(EntityList(), WorldSpaceCenter() - vForward * 128, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 				if ( tr.fraction == 1.0 )
 				{
 					GetMotor()->SetIdealYawToTargetAndUpdate (GetEngineObject()->GetAbsOrigin() - vRight * 128 );
@@ -736,7 +736,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 			
 			if ( !fSkip )
 			{
-				UTIL_TraceLine( WorldSpaceCenter() + vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+				UTIL_TraceLine(EntityList(), WorldSpaceCenter() + vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 				if ( tr.fraction == 1.0 )
 				{
 					GetMotor()->SetIdealYawToTargetAndUpdate (GetEngineObject()->GetAbsOrigin() + vRight * 256 );
@@ -747,7 +747,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 			
 			if ( !fSkip )
 			{
-				UTIL_TraceLine( WorldSpaceCenter() - vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
+				UTIL_TraceLine(EntityList(), WorldSpaceCenter() - vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 				if ( tr.fraction == 1.0 )
 				{
 					GetMotor()->SetIdealYawToTargetAndUpdate (GetEngineObject()->GetAbsOrigin() - vRight * 256 );

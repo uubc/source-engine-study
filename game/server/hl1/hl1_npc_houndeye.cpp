@@ -166,7 +166,7 @@ int CNPC_Houndeye::RangeAttack1Conditions ( float flDot, float flDist )
 	// I'm not allowed to attack if standing in another hound eye 
 	// (note houndeyes allowed to interpenetrate)
 	trace_t tr;
-	UTIL_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,0.1),
+	UTIL_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,0.1),
 					GetHullMins(), GetHullMaxs(),
 					MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 	if (tr.startsolid)
@@ -1015,7 +1015,7 @@ int CNPC_Houndeye::SquadRecruit( int searchRadius, int maxMembers )
 					!pRecruit->m_SquadName )
 				{
 					trace_t tr;
-					UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + GetViewOffset(), pRecruit->GetEngineObject()->GetAbsOrigin() + GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pRecruit, COLLISION_GROUP_NONE, &tr );// try to hit recruit with a traceline.
+					UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + GetViewOffset(), pRecruit->GetEngineObject()->GetAbsOrigin() + GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pRecruit, COLLISION_GROUP_NONE, &tr );// try to hit recruit with a traceline.
 
 					if ( tr.fraction == 1.0 )
 					{

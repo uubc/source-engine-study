@@ -1227,7 +1227,7 @@ void CFuncTank::ControllerPostFrame( void )
 		Vector start = WorldBarrelPosition();
 		Vector dir = forward;
 		
-		UTIL_TraceHull( start, start + forward * 8192, -Vector(8,8,8), Vector(8,8,8), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), start, start + forward * 8192, -Vector(8,8,8), Vector(8,8,8), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		
 		if( tr.m_pEnt && tr.m_pEnt->GetTakeDamage() != DAMAGE_NO && (tr.m_pEnt->GetEngineObject()->GetFlags() & FL_AIMTARGET) )
 		{
@@ -1773,7 +1773,7 @@ void CFuncTank::CalcPlayerCrosshairTarget( Vector *pVecTarget )
 	}
 	
 	// Make sure to start the trace outside of the player's bbox!
-	UTIL_TraceLine( vecStart + vecDir * 24, vecStart + vecDir * 8192, MASK_BLOCKLOS_AND_NPCS, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart + vecDir * 24, vecStart + vecDir * 8192, MASK_BLOCKLOS_AND_NPCS, this, COLLISION_GROUP_NONE, &tr );
 
 	*pVecTarget = tr.endpos;
 }
@@ -1818,7 +1818,7 @@ void CFuncTank::CalcNPCEnemyTarget( Vector *pVecTarget )
 			AngleVectors( angCenter, &vecForward );
 			trace_t tr;
 			Vector vecBarrel = GetEngineObject()->GetAbsOrigin() + m_barrelPos;
-			UTIL_TraceLine( vecBarrel, vecBarrel + vecForward * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), vecBarrel, vecBarrel + vecForward * 8192, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 			*pVecTarget = tr.endpos;
 		}
 	}
@@ -2103,7 +2103,7 @@ void CFuncTank::AimFuncTankAtTarget( void )
 
 		if (GetEngineObject()->GetSpawnFlags() & SF_TANK_LINEOFSIGHT)
 		{
-			AI_TraceLine( barrelEnd, pTarget->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+			AI_TraceLine(EntityList(), barrelEnd, pTarget->WorldSpaceCenter(), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 			if ( tr.fraction == 1.0f || (tr.m_pEnt && tr.m_pEnt == pTarget) )
 			{
@@ -2357,7 +2357,7 @@ void CFuncTank::TankTrace( const Vector &vecStart, const Vector &vecForward, con
 	Vector vecEnd;
 	
 	vecEnd = vecStart + vecDir * MAX_TRACE_LENGTH;
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 }
 
 	
@@ -2483,7 +2483,7 @@ bool CFuncTank::HasLOSTo( CBaseEntity *pEntity )
 	CTraceFilterSkipTwoEntities traceFilter( this, GetEngineObject()->GetMoveParent()?GetEngineObject()->GetMoveParent()->GetOuter() : NULL, COLLISION_GROUP_NONE);
 
 	// UNDONE: Should this hit BLOCKLOS brushes?
-	AI_TraceLine( vecBarrelEnd, vecTarget, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &tr );
+	AI_TraceLine(EntityList(), vecBarrelEnd, vecTarget, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &tr );
 	
 	CBaseEntity	*pHitEntity = (CBaseEntity*)tr.m_pEnt;
 	
@@ -3393,7 +3393,7 @@ void CMortarShell::FixUpImpactPoint( const Vector &initialPos, const Vector &ini
 	vecStartOffset = initialPos + ( initialNormal * 1.0f );
 
 	trace_t	tr;
-	UTIL_TraceLine( vecStartOffset, vecStartOffset - Vector( 0, 0, 256 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStartOffset, vecStartOffset - Vector( 0, 0, 256 ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{
@@ -3432,7 +3432,7 @@ CMortarShell *CMortarShell::Create( const Vector &vecStart, const Vector &vecTar
 
 	// Place the mortar shell at the target location so that it can make the sound and explode.
 	trace_t	tr;
-	UTIL_TraceLine( vecTarget, vecTarget + ( vecShotDir * 128.0f ), MASK_SOLID_BRUSHONLY, pShell, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecTarget, vecTarget + ( vecShotDir * 128.0f ), MASK_SOLID_BRUSHONLY, pShell, COLLISION_GROUP_NONE, &tr );
 
 	Vector	targetPos, targetNormal;
 	pShell->FixUpImpactPoint( tr.endpos, tr.plane.normal, &targetPos, &targetNormal );
@@ -3468,7 +3468,7 @@ CMortarShell *CMortarShell::Create( const Vector &vecStart, const Vector &vecTar
 	pShell->m_pBeamEffect[1]->SetEndWidth( 8.0f );
 
 	trace_t	skyTrace;
-	UTIL_TraceLine( targetPos, targetPos + Vector( vecEndSkew[0], vecEndSkew[1], MORTAR_BLAST_HEIGHT ), MASK_SOLID_BRUSHONLY, pShell, COLLISION_GROUP_NONE, &skyTrace );
+	UTIL_TraceLine(EntityList(), targetPos, targetPos + Vector( vecEndSkew[0], vecEndSkew[1], MORTAR_BLAST_HEIGHT ), MASK_SOLID_BRUSHONLY, pShell, COLLISION_GROUP_NONE, &skyTrace );
 
 	// We must touch the sky to make this beam
 	if ( skyTrace.fraction <= 1.0f && skyTrace.surface.flags & SURF_SKY )
@@ -3721,7 +3721,7 @@ void CMortarShell::Impact( void )
 	float flRadius = MORTAR_BLAST_RADIUS;
 
 	trace_t	tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 128 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 128 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	UTIL_DecalTrace( &tr, "Scorch" );
 
@@ -4040,13 +4040,13 @@ void CFuncTankMortar::Fire( int bulletCount, const Vector &barrelEnd, const Vect
 	vecSpot.z = GetEngineObject()->GetAbsOrigin().z;
 	
 	// Trace up to find the fake 'apex' of the shell. The skybox or 1024 units, whichever comes first. 
-	UTIL_TraceLine( vecSpot, vecSpot + Vector(0, 0, 1024), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot, vecSpot + Vector(0, 0, 1024), MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 	vecSpot = tr.endpos;
 
 	//NDebugOverlay::Line( tr.startpos, tr.endpos, 0,255,0, false, 5 );
 
 	// Now trace from apex to target
-	UTIL_TraceLine( vecSpot, vecProjectedPosition, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSpot, vecProjectedPosition, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
 
 	if( mortar_visualize.GetBool() )
 	{
@@ -4298,7 +4298,7 @@ void CFuncTankCombineCannon::UpdateBeamThink()
 	Vector vecAim;
 	AngleVectors(GetEngineObject()->GetAbsAngles(), &vecAim, NULL, NULL );
 
-	AI_TraceLine( vecBarrel, vecBarrel + vecAim * COMBINE_CANNON_BEAM_MAX_DIST, MASK_SHOT, this, COLLISION_GROUP_NONE, &trBeam );
+	AI_TraceLine(EntityList(), vecBarrel, vecBarrel + vecAim * COMBINE_CANNON_BEAM_MAX_DIST, MASK_SHOT, this, COLLISION_GROUP_NONE, &trBeam );
 
 	m_hBeam->SetStartPos( trBeam.startpos );
 	m_hBeam->SetEndPos( trBeam.endpos );
@@ -4371,8 +4371,8 @@ void CFuncTankCombineCannon::FuncTankPostThink()
 				// Trace to the point. If an opaque trace doesn't reach the point, that means the beam hit
 				// something closer, (including a blockLOS), so try again.
 				CTraceFilterSkipTwoEntities traceFilter( this, GetEngineObject()->GetMoveParent()? GetEngineObject()->GetMoveParent()->GetOuter() : NULL, COLLISION_GROUP_NONE);
-				AI_TraceLine( vecBarrelEnd, vecTest, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &trLOS );
-				AI_TraceLine( vecBarrelEnd, vecTest, MASK_SHOT, &traceFilter, &trShoot );
+				AI_TraceLine(EntityList(), vecBarrelEnd, vecTest, MASK_BLOCKLOS_AND_NPCS, &traceFilter, &trLOS );
+				AI_TraceLine(EntityList(), vecBarrelEnd, vecTest, MASK_SHOT, &traceFilter, &trShoot );
 
 				if( trLOS.fraction < trShoot.fraction )
 				{

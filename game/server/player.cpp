@@ -2694,7 +2694,7 @@ bool CBasePlayer::SetObserverTarget(IServerEntity *target)
 		ray.Init( start, end, VEC_DUCK_HULL_MIN	, VEC_DUCK_HULL_MAX );
 
 		trace_t	tr;
-		UTIL_TraceRay( ray, MASK_PLAYERSOLID, target, COLLISION_GROUP_PLAYER_MOVEMENT, &tr );
+		UTIL_TraceRay(EntityList(), ray, MASK_PLAYERSOLID, target, COLLISION_GROUP_PLAYER_MOVEMENT, &tr );
 
 		JumptoPosition( tr.endpos, target->EyeAngles() );
 	}
@@ -3814,7 +3814,7 @@ void CBasePlayer::HandleFuncTrain(void)
 		{
 			trace_t trainTrace;
 			// Maybe this is on the other side of a level transition
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
 				MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trainTrace );
 
 			if ( trainTrace.fraction != 1.0 && trainTrace.m_pEnt )
@@ -4478,7 +4478,7 @@ void FixPlayerCrouchStuck( CBasePlayer *pPlayer )
 	Vector org = pPlayer->GetEngineObject()->GetAbsOrigin();;
 	for ( i = 0; i < 18; i++ )
 	{
-		UTIL_TraceHull( pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin(),
+		UTIL_TraceHull(EntityList(), pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin(),
 			VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX, MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 		if ( trace.startsolid )
 		{
@@ -4494,7 +4494,7 @@ void FixPlayerCrouchStuck( CBasePlayer *pPlayer )
 
 	for ( i = 0; i < 18; i++ )
 	{
-		UTIL_TraceHull( pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin(),
+		UTIL_TraceHull(EntityList(), pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin(),
 			VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX, MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 		if ( trace.startsolid )
 		{
@@ -5623,7 +5623,7 @@ void CSprayCan::Think( void )
 		trace_t	tr;	
 
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &forward );
-		UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 128,
+		UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 128,
 			MASK_SOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, & tr);
 
 		UTIL_PlayerDecalTrace( &tr, playernum );
@@ -5662,7 +5662,7 @@ void CBloodSplat::Think( void )
 
 		Vector forward;
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &forward );
-		UTIL_TraceLine (GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 128,
+		UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 128,
 			MASK_SOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, & tr);
 
 		UTIL_BloodDecalTrace( &tr, BLOOD_COLOR_RED );
@@ -5723,7 +5723,7 @@ CBaseEntity *FindEntityClassForward( CBasePlayer *pMe, char *classname )
 
 	Vector forward;
 	pMe->EyeVectors( &forward );
-	UTIL_TraceLine(pMe->EyePosition(),
+	UTIL_TraceLine(EntityList(), pMe->EyePosition(),
 		pMe->EyePosition() + forward * MAX_COORD_RANGE,
 		MASK_SOLID, pMe, COLLISION_GROUP_NONE, &tr );
 	if ( tr.fraction != 1.0 && tr.DidHitNonWorldEntity() )
@@ -5871,7 +5871,7 @@ void CBasePlayer::ImpulseCommands( )
 		{
 			Vector forward;
 			EyeVectors( &forward );
-			UTIL_TraceLine ( EyePosition(), 
+			UTIL_TraceLine (EntityList(), EyePosition(),
 				EyePosition() + forward * 128, 
 				MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, & tr);
 		}
@@ -6182,7 +6182,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 			Vector forward;
 			EyeVectors( &forward );
 			Vector end = start + forward * 1024;
-			UTIL_TraceLine( start, end, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), start, end, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 			
 
 			const char *pTextureName = tr.surface.name;
@@ -6229,7 +6229,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		{
 			Vector forward;
 			EyeVectors( &forward );
-			UTIL_TraceLine ( EyePosition(), 
+			UTIL_TraceLine (EntityList(), EyePosition(),
 				EyePosition() + forward * 128, 
 				MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, & tr);
 
@@ -7020,7 +7020,7 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, autoaim_params_t &params 
 
 	CTraceFilterSkipTwoEntities traceFilter( this, pIgnore, COLLISION_GROUP_NONE );
 
-	UTIL_TraceLine( vecSrc, vecSrc + bestdir * MAX_COORD_FLOAT, MASK_SHOT, &traceFilter, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + bestdir * MAX_COORD_FLOAT, MASK_SHOT, &traceFilter, &tr );
 
 	CBaseEntity *pEntHit = (CBaseEntity*)tr.m_pEnt;
 
@@ -7147,7 +7147,7 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, autoaim_params_t &params 
 				continue;
 			}
 
-			UTIL_TraceLine( vecSrc, center, MASK_SHOT, &traceFilter, &tr );
+			UTIL_TraceLine(EntityList(), vecSrc, center, MASK_SHOT, &traceFilter, &tr );
 
 			if (tr.fraction != 1.0 && tr.m_pEnt != pEntity )
 			{
@@ -8446,7 +8446,7 @@ CBaseEntity *CBasePlayer::DoubleCheckUseNPC( CBaseEntity *pNPC, const Vector &ve
 {
 	trace_t tr;
 
-	UTIL_TraceLine( vecSrc, vecSrc + vecDir * 1024, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecSrc + vecDir * 1024, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	if( tr.m_pEnt != NULL && ((CBaseEntity*)tr.m_pEnt)->MyNPCPointer() && tr.m_pEnt != pNPC )
 	{

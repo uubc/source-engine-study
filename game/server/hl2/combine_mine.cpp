@@ -480,7 +480,7 @@ void CBounceBomb::BounceThink()
 
 		// Figure out how much headroom the mine has, and hop to within a few inches of that.
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MINE_MAX_JUMP_HEIGHT ), MASK_SHOT, this, COLLISION_GROUP_INTERACTIVE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MINE_MAX_JUMP_HEIGHT ), MASK_SHOT, this, COLLISION_GROUP_INTERACTIVE, &tr );
 
 		float height;
 
@@ -550,7 +550,7 @@ void CBounceBomb::CavernBounceThink()
 
 		// Figure out how much headroom the mine has, and hop to within a few inches of that.
 		trace_t tr;
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MINE_MAX_JUMP_HEIGHT ), MASK_SHOT, this, COLLISION_GROUP_INTERACTIVE, &tr );
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, MINE_MAX_JUMP_HEIGHT ), MASK_SHOT, this, COLLISION_GROUP_INTERACTIVE, &tr );
 
 		float height;
 
@@ -652,7 +652,7 @@ void CBounceBomb::SettleThink()
 		{
 			// If i'm not resting on the world, jump randomly.
 			trace_t tr;
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_SHOT|CONTENTS_GRATE, this, COLLISION_GROUP_NONE, &tr );
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 1024 ), MASK_SHOT|CONTENTS_GRATE, this, COLLISION_GROUP_NONE, &tr );
 
 			bool bHop = false;
 			if( tr.m_pEnt )

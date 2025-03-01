@@ -395,7 +395,7 @@ enum
 		}
 
 		trace_t tr;
-		UTIL_TraceLine( eyes, vecSrc, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), eyes, vecSrc, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
 		
 		// don't go into the ground
 		if( tr.fraction < 1.0 ) 

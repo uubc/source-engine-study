@@ -100,7 +100,7 @@ void CWaterBullet::Touch( IServerEntity *pOther )
 	Vector	vecEnd = GetEngineObject()->GetAbsOrigin() + ( vecDir * speed );
 
 	trace_t	tr;
-	UTIL_TraceLine( vecStart, vecEnd, MASK_SHOT, NULL, &tr );
+	UTIL_TraceLine(EntityList(), vecStart, vecEnd, MASK_SHOT, NULL, &tr );
 	UTIL_ImpactTrace( &tr, DMG_BULLET );
 
 	EntityList()->DestroyEntity( this );

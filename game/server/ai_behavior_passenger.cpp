@@ -463,7 +463,7 @@ bool CAI_PassengerBehavior::FindGroundAtPosition( const Vector &in, float flUpDe
 	CTraceFilterVehicleTransition ignoreFilter( m_hVehicle, GetOuter(), COLLISION_GROUP_NONE );
 
 	trace_t tr;
-	UTIL_TraceHull( startPos, endPos, hullMin, hullMax, MASK_NPCSOLID, &ignoreFilter, &tr );
+	UTIL_TraceHull(EntityList(), startPos, endPos, hullMin, hullMax, MASK_NPCSOLID, &ignoreFilter, &tr );
 
 	// Must not have ended up in solid space
 	if ( tr.allsolid )
@@ -612,7 +612,7 @@ bool CAI_PassengerBehavior::IsValidTransitionPoint( const Vector &vecStartPos, c
 
 	trace_t tr;
 	CTraceFilterVehicleTransition skipFilter( GetOuter(), m_hVehicle, COLLISION_GROUP_NONE );
-	UTIL_TraceHull( vecStartPos, vecEndPos, vecHullMins, vecHullMaxs, MASK_NPCSOLID, &skipFilter, &tr );
+	UTIL_TraceHull(EntityList(), vecStartPos, vecEndPos, vecHullMins, vecHullMaxs, MASK_NPCSOLID, &skipFilter, &tr );
 
 	// If we're blocked, we can't get out there
 	if ( tr.fraction < 1.0f || tr.allsolid )

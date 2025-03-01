@@ -455,7 +455,7 @@ void CDODBaseGrenade::VPhysicsUpdate( IPhysicsObject *pPhysics )
 	CTraceFilterCollisionGroupDelta filter( this, GetEngineObject()->GetCollisionGroup(), COLLISION_GROUP_NONE );
 	trace_t tr;
 
-	UTIL_TraceLine( start, start + vel * gpGlobals->frametime, CONTENTS_HITBOX|CONTENTS_MONSTER|CONTENTS_SOLID, &filter, &tr );
+	UTIL_TraceLine(EntityList(), start, start + vel * gpGlobals->frametime, CONTENTS_HITBOX|CONTENTS_MONSTER|CONTENTS_SOLID, &filter, &tr );
 
 	bool bHitTeammate = false;
 

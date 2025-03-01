@@ -366,6 +366,7 @@ public:
 	virtual void ClientSpawned(int  pPlayer) = 0;
 	virtual void OnFileReceived(const char* fileName, unsigned int transferID) = 0;
 	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const = 0;
+	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration) = 0;
 };
 
 abstract_class IHandlePlayer{
@@ -471,6 +472,7 @@ abstract_class IEntityList
 public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
+	virtual IEngineWorld* GetEngineWorld() = 0;
 	virtual IHandleWorld* GetWorld() = 0;
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;

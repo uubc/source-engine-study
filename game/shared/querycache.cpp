@@ -284,7 +284,7 @@ void QueryCacheEntry_t::IssueQuery( void )
 							   m_QueryParams.m_pTraceFilterFunction );
 	trace_t result;
 	s_nNumCacheMisses++;
-	UTIL_TraceLine( m_QueryParams.m_Points[0], m_QueryParams.m_Points[1],
+	UTIL_TraceLine(EntityList(), m_QueryParams.m_Points[0], m_QueryParams.m_Points[1],
 					m_QueryParams.m_nTraceMask, &filter, &result );
 	m_bResult = ! ( result.DidHit() );
 	m_flLastUpdateTime = gpGlobals->curtime;

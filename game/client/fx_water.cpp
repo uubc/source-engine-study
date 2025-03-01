@@ -90,7 +90,7 @@ void FX_WaterRipple( const Vector &origin, float scale, Vector *pColor, float fl
 	Vector startPos = origin + Vector(0,0,8);
 	Vector endPos = origin + Vector(0,0,-64);
 
-	UTIL_TraceLine( startPos, endPos, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), startPos, endPos, MASK_WATER, NULL, COLLISION_GROUP_NONE, &tr );
 	
 	if ( tr.fraction < 1.0f )
 	{

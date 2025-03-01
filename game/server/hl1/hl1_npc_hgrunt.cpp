@@ -506,7 +506,7 @@ int CNPC_HGrunt::SquadRecruit( int searchRadius, int maxMembers )
 					!pRecruit->m_SquadName )
 				{
 					trace_t tr;
-					UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + GetViewOffset(), pRecruit->GetEngineObject()->GetAbsOrigin() + GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pRecruit, COLLISION_GROUP_NONE, &tr );// try to hit recruit with a traceline.
+					UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + GetViewOffset(), pRecruit->GetEngineObject()->GetAbsOrigin() + GetViewOffset(), MASK_NPCSOLID_BRUSHONLY, pRecruit, COLLISION_GROUP_NONE, &tr );// try to hit recruit with a traceline.
 
 					if ( tr.fraction == 1.0 )
 					{
@@ -631,7 +631,7 @@ int CNPC_HGrunt::RangeAttack1Conditions ( float flDot, float flDist )
 
 		//NDebugOverlay::Line( GetAbsOrigin() + GetViewOffset(), GetEnemy()->BodyTarget(GetAbsOrigin() + GetViewOffset()), 255, 0, 0, false, 0.1 );
 		// verify that a bullet fired from the gun will hit the enemy before the world.
-		UTIL_TraceLine(GetEngineObject()->GetAbsOrigin() + GetViewOffset(), GetEnemy()->BodyTarget(GetEngineObject()->GetAbsOrigin() + GetViewOffset()), MASK_SHOT, this/*pentIgnore*/, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin() + GetViewOffset(), GetEnemy()->BodyTarget(GetEngineObject()->GetAbsOrigin() + GetViewOffset()), MASK_SHOT, this/*pentIgnore*/, COLLISION_GROUP_NONE, &tr);
 
 		if ( tr.fraction == 1.0 || tr.m_pEnt == GetEnemy() )
 		{
@@ -1006,7 +1006,7 @@ CBaseEntity *CNPC_HGrunt::Kick( void )
 	vecStart.z += GetEngineObject()->WorldAlignSize().z * 0.5;
 	Vector vecEnd = vecStart + (forward * 70);
 
-	UTIL_TraceHull( vecStart, vecEnd, Vector(-16,-16,-18), Vector(16,16,18), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceHull(EntityList(), vecStart, vecEnd, Vector(-16,-16,-18), Vector(16,16,18), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
 	
 	if ( tr.m_pEnt )
 	{
@@ -1894,7 +1894,7 @@ void CNPC_HGruntRepel::Precache( void )
 void CNPC_HGruntRepel::RepelUse ( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value )
 {
 	trace_t tr;
-	UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -4096.0), MASK_NPCSOLID, this,COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, -4096.0), MASK_NPCSOLID, this,COLLISION_GROUP_NONE, &tr);
 	
 	CBaseEntity *pEntity = Create( "monster_human_grunt", GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles() );
 	CAI_BaseNPC *pGrunt = pEntity->MyNPCPointer( );

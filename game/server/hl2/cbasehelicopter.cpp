@@ -522,7 +522,7 @@ void CBaseHelicopter::DoRotorPhysicsPush( const Vector &vecRotorOrigin, float fl
 	trace_t tr;
 
 	// First, trace down and find out where the was is hitting the ground
-	UTIL_TraceLine( vecRotorOrigin, vecRotorOrigin+Vector(0,0,-flAltitude), (MASK_SOLID_BRUSHONLY|CONTENTS_WATER), NULL, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecRotorOrigin, vecRotorOrigin+Vector(0,0,-flAltitude), (MASK_SOLID_BRUSHONLY|CONTENTS_WATER), NULL, COLLISION_GROUP_NONE, &tr );
 	// Always raise the physics origin a bit
 	Vector vecPhysicsOrigin = tr.endpos + Vector(0,0,64);
 
@@ -615,7 +615,7 @@ void CBaseHelicopter::DoRotorPhysicsPush( const Vector &vecRotorOrigin, float fl
 			// Try to cast to the helicopter; if we can't, then we can't be hit.
 			if ( pEntity->GetServerVehicle() )
 			{
-				UTIL_TraceLine( vecSpot, vecPhysicsOrigin, MASK_SOLID_BRUSHONLY, pEntity, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecSpot, vecPhysicsOrigin, MASK_SOLID_BRUSHONLY, pEntity, COLLISION_GROUP_NONE, &tr );
 				if ( tr.fraction != 1.0f )
 					continue;
 			}

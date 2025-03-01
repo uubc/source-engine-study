@@ -724,7 +724,7 @@ IPhysicsGameTrace *physgametrace = &g_PhysGameTrace;
 void CPhysicsGameTrace::VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace_t *pTrace )
 {
 	IHandleEntity *pBaseEntity = static_cast<IHandleEntity*>( pVehicle );
-	UTIL_TraceRay( ray, MASK_SOLID, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
+	UTIL_TraceRay(EntityList(), ray, MASK_SOLID, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
 }
 
 //-----------------------------------------------------------------------------
@@ -733,7 +733,7 @@ void CPhysicsGameTrace::VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace
 void CPhysicsGameTrace::VehicleTraceRayWithWater( const Ray_t &ray, void *pVehicle, trace_t *pTrace )
 {
 	IHandleEntity *pBaseEntity = static_cast<IHandleEntity*>( pVehicle );
-	UTIL_TraceRay( ray, MASK_SOLID|MASK_WATER, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
+	UTIL_TraceRay(EntityList(), ray, MASK_SOLID|MASK_WATER, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
 }
 
 //-----------------------------------------------------------------------------

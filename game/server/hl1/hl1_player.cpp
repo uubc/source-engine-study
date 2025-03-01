@@ -211,7 +211,7 @@ void CHL1_Player::PreThink(void)
 			{
 				trace_t trainTrace;
 				// Maybe this is on the other side of a level transition
-				UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
+				UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0,0,-38),
 					MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trainTrace );
 
 				if ( trainTrace.fraction != 1.0 && trainTrace.m_pEnt )

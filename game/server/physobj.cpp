@@ -971,7 +971,7 @@ void CPhysExplosion::Explode( IServerEntity *pActivator, IServerEntity *pCaller 
 					}
 
 					trace_t tr;
-					UTIL_TraceLine( vecStartPos, 
+					UTIL_TraceLine(EntityList(), vecStartPos,
 						pEntity->BodyTarget( vecStartPos, false ), 
 						MASK_SOLID_BRUSHONLY, 
 						this, 
@@ -1167,13 +1167,13 @@ void CPhysImpact::InputImpact( inputdata_t &inputdata )
 	Vector	end		= start + ( dir * dist );
 
 	//Trace out
-	UTIL_TraceLine( start, end, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
+	UTIL_TraceLine(EntityList(), start, end, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
 	if ( trace.startsolid )
 	{
 		// ep1_citadel_04 has a phys_impact just behind another entity, so if we startsolid then
 		// bump out just a little and retry the trace
 		Vector startOffset = start +  ( dir * 0.1 );
-		UTIL_TraceLine( startOffset , end, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
+		UTIL_TraceLine(EntityList(), startOffset , end, MASK_SHOT, this, COLLISION_GROUP_NONE, &trace );
 	}
 
 	if( debug_physimpact.GetBool() )
@@ -1773,7 +1773,7 @@ void CPhysMagnet::DoMagnetSuck( CBaseEntity *pOther )
 		{
 			// Do we have line of sight to it?
 			trace_t tr;
-			UTIL_TraceLine(GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, 0, &tr );
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsOrigin(), MASK_SHOT, this, 0, &tr );
 			if ( tr.fraction == 1.0 || tr.m_pEnt == pEntity )
 			{
 				// Pull it towards the magnet
@@ -2101,7 +2101,7 @@ void CPointPush::PushThink( void )
 			}
 
 			trace_t tr;
-			UTIL_TraceLine( vecStartPos, 
+			UTIL_TraceLine(EntityList(), vecStartPos,
 							pEnts[i]->BodyTarget( vecStartPos, false ), 
 							MASK_SOLID_BRUSHONLY, 
 							this, 

@@ -232,7 +232,7 @@ void CBlobElement::ModifyVelocityForSurface( float flInterval, float flSpeed )
 
 	Vector vecWishedGoal = vecStart + (GetEngineObject()->GetAbsVelocity() * flInterval);
 
-	UTIL_TraceLine( vecStart + up, vecWishedGoal + up, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecStart + up, vecWishedGoal + up, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 	//NDebugOverlay::Line( tr.startpos, tr.endpos, 255, 0, 0, false, 0.1f );
 
@@ -240,7 +240,7 @@ void CBlobElement::ModifyVelocityForSurface( float flInterval, float flSpeed )
 
 	if( tr.fraction == 1.0f )
 	{
-		UTIL_TraceLine( vecWishedGoal + up, vecWishedGoal - (up * 2.0f), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecWishedGoal + up, vecWishedGoal - (up * 2.0f), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 		//NDebugOverlay::Line( tr.startpos, tr.endpos, 255, 255, 0, false, 0.1f );
 		tr.endpos.z += MOVE_HEIGHT_EPSILON;
 	}
@@ -787,7 +787,7 @@ void CNPC_Blob::DoBlobBatchedAI( int iStart, int iEnd )
 				trace_t tr;
 				Vector vecOrigin = pThisElement->GetEngineObject()->GetAbsOrigin();
 
-				UTIL_TraceLine( vecOrigin, vecOrigin - Vector( 0, 0, 16), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+				UTIL_TraceLine(EntityList(), vecOrigin, vecOrigin - Vector( 0, 0, 16), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 				if( tr.fraction < 1.0f )
 				{
@@ -1329,7 +1329,7 @@ void CNPC_Blob::InitializeElements()
 		}
 
 		trace_t tr;
-		UTIL_TraceLine( vecDest, vecDest + Vector (0, 0, MIN_COORD_FLOAT), MASK_SHOT, pElement, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(EntityList(), vecDest, vecDest + Vector (0, 0, MIN_COORD_FLOAT), MASK_SHOT, pElement, COLLISION_GROUP_NONE, &tr );
 
 		pElement->GetEngineObject()->SetAbsOrigin( tr.endpos + Vector( 0, 0, 1 ) );
 

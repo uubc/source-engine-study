@@ -786,7 +786,7 @@ bool CNPC_Ichthyosaur::SteerAvoidObstacles(Vector &Steer, const Vector &Velocity
 	float	speed = VectorNormalize( dir );
 
 	//Look ahead one second and avoid whatever is in our way.
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + (dir*speed), GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + (dir*speed), GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	Vector	forward;
 
@@ -852,7 +852,7 @@ bool CNPC_Ichthyosaur::SteerAvoidObstacles(Vector &Steer, const Vector &Velocity
 	}
 
 	//Try to remain 8 feet above the ground.
-	AI_TraceLine(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0, 0, -ICH_HEIGHT_PREFERENCE), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + Vector(0, 0, -ICH_HEIGHT_PREFERENCE), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 	if ( tr.fraction < 1.0f )
 	{
@@ -948,7 +948,7 @@ void CNPC_Ichthyosaur::MoveFlyExecute( CBaseEntity *pTargetEnt, const Vector &ve
 		trace_t	tr;
 		Vector	goalPos = GetEnemy()->GetEngineObject()->GetAbsOrigin() + ( GetEnemy()->GetSmoothedVelocity() * 0.5f );
 
-		AI_TraceHull(GetEngineObject()->GetAbsOrigin(), goalPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, GetEnemy(), COLLISION_GROUP_NONE, &tr );
+		AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), goalPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, GetEnemy(), COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction == 1.0f )
 		{
@@ -1148,7 +1148,7 @@ bool CNPC_Ichthyosaur::Beached( void )
 
 	testPos = GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, ICH_DEPTH_PREFERENCE );
 	
-	AI_TraceHull(GetEngineObject()->GetAbsOrigin(), testPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), GetEngineObject()->GetAbsOrigin(), testPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
 
 	return ( tr.fraction < 1.0f );
 }

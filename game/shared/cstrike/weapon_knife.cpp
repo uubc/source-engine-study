@@ -181,7 +181,7 @@ void FindHullIntersection( const Vector &vecSrc, trace_t &tr, const Vector &mins
 	distance = 1e6f;
 
 	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc)*2);
-	UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &tmpTrace );
+	UTIL_TraceLine(EntityList(), vecSrc, vecHullEnd, MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &tmpTrace );
 	if ( tmpTrace.fraction < 1.0 )
 	{
 		tr = tmpTrace;
@@ -198,7 +198,7 @@ void FindHullIntersection( const Vector &vecSrc, trace_t &tr, const Vector &mins
 				vecEnd.y = vecHullEnd.y + minmaxs[j][1];
 				vecEnd.z = vecHullEnd.z + minmaxs[k][2];
 
-				UTIL_TraceLine( vecSrc, vecEnd, MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &tmpTrace );
+				UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SOLID, pEntity, COLLISION_GROUP_NONE, &tmpTrace );
 				if ( tmpTrace.fraction < 1.0 )
 				{
 					float thisDistance = (tmpTrace.endpos - vecSrc).Length();
@@ -343,7 +343,7 @@ bool CKnife::SwingOrStab( bool bStab )
 	Vector vecEnd	= vecSrc + vForward * fRange;
 
 	trace_t tr;
-	UTIL_TraceLine( vecSrc, vecEnd, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+	UTIL_TraceLine(EntityList(), vecSrc, vecEnd, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 
 	//check for hitting glass - TODO - fix this hackiness, doesn't always line up with what FindHullIntersection returns
 #ifndef CLIENT_DLL
@@ -353,7 +353,7 @@ bool CKnife::SwingOrStab( bool bStab )
 
 	if ( tr.fraction >= 1.0 )
 	{
-		UTIL_TraceHull( vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceHull(EntityList(), vecSrc, vecEnd, head_hull_mins, head_hull_maxs, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction < 1.0 )
 		{
 			// Calculate the point of intersection of the line (or hull) and the object we hit

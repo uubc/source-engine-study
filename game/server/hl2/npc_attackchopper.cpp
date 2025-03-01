@@ -1686,7 +1686,7 @@ IServerEntity *CNPC_AttackHelicopter::FindTrackBlocker( const Vector &vecViewPoi
 	CTraceFilterChopper chopperFilter( this, COLLISION_GROUP_NONE );
 
 	trace_t	tr;
-	AI_TraceHull( vecViewPoint, vecTargetPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT, &chopperFilter, &tr );
+	AI_TraceHull(EntityList(), vecViewPoint, vecTargetPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT, &chopperFilter, &tr );
 
 	if ( tr.fraction != 1.0f )
 	{
@@ -1719,7 +1719,7 @@ bool CNPC_AttackHelicopter::FVisible( CBaseEntity *pEntity, int traceMask, CBase
 	CTraceFilterChopper chopperFilter( this, COLLISION_GROUP_NONE );
 
 	trace_t tr;
-	UTIL_TraceLine(vecLookerOrigin, vecTargetOrigin, traceMask, &chopperFilter, &tr);
+	UTIL_TraceLine(EntityList(), vecLookerOrigin, vecTargetOrigin, traceMask, &chopperFilter, &tr);
 	
 	if (tr.fraction != 1.0)
 	{

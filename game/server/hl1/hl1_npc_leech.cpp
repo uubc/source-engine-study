@@ -209,7 +209,7 @@ void CNPC_Leech::DeadThink( void )
 		trace_t tr;
 
 		// Look 0.5 seconds ahead
-		UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), GetEngineObject()->GetLocalOrigin() + GetEngineObject()->GetAbsVelocity() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), GetEngineObject()->GetLocalOrigin() + GetEngineObject()->GetAbsVelocity() * 0.5, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 		if (tr.fraction != 1.0)
 		{
 			Vector vVelocity = GetEngineObject()->GetAbsVelocity();
@@ -349,7 +349,7 @@ void CNPC_Leech::RecalculateWaterlevel( void )
 
 	trace_t tr;
 
-	UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 	
 	if ( tr.fraction != 1.0 )
 		m_bottom = tr.endpos.z + 1;
@@ -489,11 +489,11 @@ void CNPC_Leech::SwimThink( void )
 			Vector vecTest;
 			// measure clearance on left and right to pick the best dir to turn
 			vecTest = GetEngineObject()->GetLocalOrigin() + ( vRight * LEECH_SIZEX) + ( vForward * LEECH_CHECK_DIST);
-			UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 			flRightSide = tr.fraction;
 
 			vecTest = GetEngineObject()->GetLocalOrigin() + ( vRight * -LEECH_SIZEX) + ( vForward * LEECH_CHECK_DIST);
-			UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 			
 			flLeftSide = tr.fraction;
 
@@ -530,7 +530,7 @@ float CNPC_Leech::ObstacleDistance( CBaseEntity *pTarget )
 
 	// check for obstacle ahead
 	vecTest = GetEngineObject()->GetLocalOrigin() + vForward * LEECH_CHECK_DIST;
-	UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 
 	if ( tr.startsolid )
 	{
@@ -554,13 +554,13 @@ float CNPC_Leech::ObstacleDistance( CBaseEntity *pTarget )
 	{
 		// extra wide checks
 		vecTest = GetEngineObject()->GetLocalOrigin() + vRight * LEECH_SIZEX * 2 + vForward * LEECH_CHECK_DIST;
-		UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 
 		if (tr.fraction != 1.0)
 			return tr.fraction;
 
 		vecTest = GetEngineObject()->GetLocalOrigin() - vRight * LEECH_SIZEX * 2 + vForward * LEECH_CHECK_DIST;
-		UTIL_TraceLine(GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(EntityList(), GetEngineObject()->GetLocalOrigin(), vecTest, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 		if (tr.fraction != 1.0)
 			return tr.fraction;
 

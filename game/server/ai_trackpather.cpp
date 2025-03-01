@@ -232,7 +232,7 @@ inline CPathTrack *CAI_TrackPather::AdjustForMovementDirection( CPathTrack *pPat
 IServerEntity *CAI_TrackPather::FindTrackBlocker( const Vector &vecViewPoint, const Vector &vecTargetPos )
 {
 	trace_t	tr;
-	AI_TraceHull( vecViewPoint, vecTargetPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+	AI_TraceHull(EntityList(), vecViewPoint, vecTargetPos, -Vector(4,4,4), Vector(4,4,4), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 	return (tr.fraction != 1.0f) ? (IServerEntity*)tr.m_pEnt : NULL;
 }
 

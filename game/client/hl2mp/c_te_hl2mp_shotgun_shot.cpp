@@ -89,11 +89,11 @@ void C_TEHL2MPFireBullets::CreateEffects( void )
 					if( m_iShots > 1 && iShot % 2 )
 					{
 						// Half of the shotgun pellets are hulls that make it easier to hit targets with the shotgun.
-						UTIL_TraceHull( m_vecOrigin, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
+						UTIL_TraceHull(EntityList(), m_vecOrigin, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
 					}
 					else
 					{
-						UTIL_TraceLine( m_vecOrigin, vecEnd, MASK_SHOT, &traceFilter, &tr);
+						UTIL_TraceLine(EntityList(), m_vecOrigin, vecEnd, MASK_SHOT, &traceFilter, &tr);
 					}
 
 					if ( m_bDoTracers )
