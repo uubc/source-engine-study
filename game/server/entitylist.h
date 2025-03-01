@@ -7096,9 +7096,9 @@ void CGlobalEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 	m_EngineObjectArray[i]->Init(pBaseEnt);
 
 	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
-	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	for (int i = BaseClass::m_entityListeners.Count() - 1; i >= 0; i--)
 	{
-		m_entityListeners[i]->OnEntityCreated(pEnt);
+		BaseClass::m_entityListeners[i]->OnEntityCreated(pEnt);
 	}
 
 	BaseClass::OnAddEntity(pEnt, handle);
@@ -7126,9 +7126,9 @@ void CGlobalEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 	IServerEntity* pBaseEnt = (IServerEntity*)pEnt;
 
 	//DevMsg(2,"Deleted %s\n", pBaseEnt->GetClassname() );
-	for (int i = m_entityListeners.Count() - 1; i >= 0; i--)
+	for (int i = BaseClass::m_entityListeners.Count() - 1; i >= 0; i--)
 	{
-		m_entityListeners[i]->OnEntityDeleted(pEnt);
+		BaseClass::m_entityListeners[i]->OnEntityDeleted(pEnt);
 	}
 
 	if (pBaseEnt->IsWorld()) {
