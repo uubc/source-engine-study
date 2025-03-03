@@ -40,6 +40,7 @@ extern IMDLCache* mdlcache;
 extern IEngineTrace* enginetrace;
 extern IStaticPropMgrServer* staticpropmgr;
 extern ISpatialPartition* partition;
+extern IDataCache* datacache;
 extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger, IEngineObjectServer* pEntity);
 extern ISaveRestoreBlockHandler* GetPhysSaveRestoreBlockHandler();
 extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
