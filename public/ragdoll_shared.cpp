@@ -11,7 +11,7 @@
 extern IVModelInfoClient* modelinfo;
 #endif // CLIENT_DLL
 #ifdef GAME_DLL
-extern IVModelInfo* modelinfo = NULL;
+extern IVModelInfo* modelinfo;
 #endif // GAME_DLL
 
 
