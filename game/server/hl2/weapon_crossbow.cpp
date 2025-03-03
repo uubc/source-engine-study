@@ -385,7 +385,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 			}
 			
 			// Shoot some sparks
-			if ( UTIL_PointContents(GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
+			if ( UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
 			{
 				g_pEffects->Sparks(GetEngineObject()->GetAbsOrigin() );
 			}

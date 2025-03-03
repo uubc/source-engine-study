@@ -238,11 +238,11 @@ bool CBaseHLBludgeonWeapon::ImpactWater( const Vector &start, const Vector &end 
 	//		 right now anyway...
 	
 	// We must start outside the water
-	if ( UTIL_PointContents( start ) & (CONTENTS_WATER|CONTENTS_SLIME))
+	if ( UTIL_PointContents(EntityList(), start ) & (CONTENTS_WATER|CONTENTS_SLIME))
 		return false;
 
 	// We must end inside of water
-	if ( !(UTIL_PointContents( end ) & (CONTENTS_WATER|CONTENTS_SLIME)))
+	if ( !(UTIL_PointContents(EntityList(), end ) & (CONTENTS_WATER|CONTENTS_SLIME)))
 		return false;
 
 	trace_t	waterTrace;

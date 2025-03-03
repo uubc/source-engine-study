@@ -7,6 +7,14 @@
 //#include "cbase.h"
 #include "ragdoll_shared.h"
 
+#ifdef CLIENT_DLL
+extern IVModelInfoClient* modelinfo;
+#endif // CLIENT_DLL
+#ifdef GAME_DLL
+extern IVModelInfo* modelinfo = NULL;
+#endif // GAME_DLL
+
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 

@@ -1149,7 +1149,7 @@ void CC4::PrimaryAttack()
 	}
 
 	m_flNextPrimaryAttack = gpGlobals->curtime + 0.3;
-	SetWeaponIdleTime( gpGlobals->curtime + SharedRandomFloat("C4IdleTime", 10, 15 ) );
+	SetWeaponIdleTime( gpGlobals->curtime + EntityList()->SharedRandomFloat("C4IdleTime", 10, 15 ) );
 }
 
 void CC4::WeaponIdle()

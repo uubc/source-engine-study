@@ -175,11 +175,11 @@ void CWeaponXM1014::PrimaryAttack()
 
 	if ( pPlayer->GetEngineObject()->GetFlags() & FL_ONGROUND )
 	{
-		angle.x -= SharedRandomInt( "XM1014PunchAngleGround", 3, 5 );
+		angle.x -= EntityList()->SharedRandomInt( "XM1014PunchAngleGround", 3, 5 );
 	}
 	else
 	{
-		angle.x -= SharedRandomInt( "XM1014PunchAngleAir", 7, 10 );
+		angle.x -= EntityList()->SharedRandomInt( "XM1014PunchAngleAir", 7, 10 );
 	}
 
 	pPlayer->SetPunchAngle( angle );

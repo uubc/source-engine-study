@@ -1031,7 +1031,7 @@ void CWeaponPhysCannon::PrimaryFireEffect( void )
 	if ( pOwner == NULL )
 		return;
 
-	pOwner->ViewPunch( QAngle(-6, SharedRandomInt( "physcannonfire", -2,2) ,0) );
+	pOwner->ViewPunch( QAngle(-6, EntityList()->SharedRandomInt( "physcannonfire", -2,2) ,0) );
 	
 #ifndef CLIENT_DLL
 	color32 white = { 245, 245, 255, 32 };

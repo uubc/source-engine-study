@@ -555,4 +555,9 @@ inline void UTIL_TraceRay(IEntityList* pEntityList, const Ray_t& ray, unsigned i
 	}
 }
 
+inline int UTIL_PointContents(IEntityList* pEntityList, const Vector& vec)
+{
+	return pEntityList->GetEngineWorld()->GetPointContents(vec);
+}
+
 #endif // ENGINE_IENGINETRACE_H

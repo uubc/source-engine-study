@@ -229,7 +229,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 			DispatchEffect( "BoltImpact", data );
 		}
 
-		if (  UTIL_PointContents(GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
+		if (  UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
 		{
 			g_pEffects->Sparks(GetEngineObject()->GetAbsOrigin() );
 		}
@@ -245,7 +245,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 void CCrossbowBolt::ExplodeThink( void )
 {
-    //    int iContents = UTIL_PointContents( pev->origin );
+    //    int iContents = UTIL_PointContents(EntityList(), pev->origin );
 	CTakeDamageInfo	dmgInfo(this, GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetHandleEntity() : NULL, sk_plr_dmg_xbow_bolt_npc.GetFloat() * g_pGameRules->GetDamageMultiplier(), DMG_BLAST);
 
     ::RadiusDamage( dmgInfo, GetEngineObject()->GetAbsOrigin(), 128, CLASS_NONE, NULL );

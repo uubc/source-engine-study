@@ -1026,7 +1026,7 @@ ConVar cl_autohelp(
 		else
 			falloff = 1.0;
 
-		int bInWater = (UTIL_PointContents ( vecSrc ) & MASK_WATER) ? true : false;
+		int bInWater = (UTIL_PointContents (EntityList(), vecSrc ) & MASK_WATER) ? true : false;
 		
 		vecSrc.z += 1;// in case grenade is lying on the ground
 

@@ -91,8 +91,8 @@ void CWeaponCrowbar::AddViewKick( void )
 
 	QAngle punchAng;
 
-	punchAng.x = SharedRandomFloat( "crowbarpax", 1.0f, 2.0f );
-	punchAng.y = SharedRandomFloat( "crowbarpay", -2.0f, -1.0f );
+	punchAng.x = EntityList()->SharedRandomFloat( "crowbarpax", 1.0f, 2.0f );
+	punchAng.y = EntityList()->SharedRandomFloat( "crowbarpay", -2.0f, -1.0f );
 	punchAng.z = 0.0f;
 	
 	pPlayer->ViewPunch( punchAng ); 
@@ -168,7 +168,7 @@ int CWeaponCrowbar::WeaponMeleeAttack1Condition( float flDot, float flDist )
 
 	// Project where the enemy will be in a little while
 	float dt = sk_crowbar_lead_time.GetFloat();
-	dt += SharedRandomFloat( "crowbarmelee1", -0.3f, 0.2f );
+	dt += EntityList()->SharedRandomFloat( "crowbarmelee1", -0.3f, 0.2f );
 	if ( dt < 0.0f )
 		dt = 0.0f;
 

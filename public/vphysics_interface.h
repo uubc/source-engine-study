@@ -856,6 +856,25 @@ public:
 
 };
 
+// Convenience routine
+// ORs gameFlags with the physics object's current game flags
+inline unsigned short PhysSetGameFlags(IPhysicsObject* pPhys, unsigned short gameFlags)
+{
+	unsigned short flags = pPhys->GetGameFlags();
+	flags |= gameFlags;
+	pPhys->SetGameFlags(flags);
+
+	return flags;
+}
+// mask off gameFlags
+inline unsigned short PhysClearGameFlags(IPhysicsObject* pPhys, unsigned short gameFlags)
+{
+	unsigned short flags = pPhys->GetGameFlags();
+	flags &= ~gameFlags;
+	pPhys->SetGameFlags(flags);
+
+	return flags;
+}
 
 abstract_class IPhysicsSpring
 {

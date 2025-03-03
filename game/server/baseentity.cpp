@@ -2361,7 +2361,7 @@ bool CBaseEntity::FVisible( const Vector &vecTarget, int traceMask, CBaseEntity 
 	
 	// don't look through water
 	// FIXME: only block LOS through opaque water
-	bool inWater = ( UTIL_PointContents( vecTarget ) & (CONTENTS_SLIME|CONTENTS_WATER) ) ? true : false;
+	bool inWater = ( UTIL_PointContents(EntityList(), vecTarget ) & (CONTENTS_SLIME|CONTENTS_WATER) ) ? true : false;
 
 	// Don't allow it if we're straddling two areas
 	if ( ( m_nWaterLevel == 3 && !inWater ) || ( m_nWaterLevel != 3 && inWater ) )

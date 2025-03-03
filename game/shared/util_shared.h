@@ -42,29 +42,13 @@ typedef CGameTrace trace_t;
 #define LANGUAGE_FRENCH					2
 #define LANGUAGE_BRITISH				3
 
-//-----------------------------------------------------------------------------
-// Shared random number generators for shared/predicted code:
-// whenever generating random numbers in shared/predicted code, these functions
-// have to be used. Each call should specify a unique "sharedname" string that
-// seeds the random number generator. In loops make sure the "additionalSeed"
-// is increased with the loop counter, otherwise it will always return the
-// same random number
-//-----------------------------------------------------------------------------
-float	SharedRandomFloat( const char *sharedname, float flMinVal, float flMaxVal, int additionalSeed = 0 );
-int		SharedRandomInt( const char *sharedname, int iMinVal, int iMaxVal, int additionalSeed = 0 );
-Vector	SharedRandomVector( const char *sharedname, float minVal, float maxVal, int additionalSeed = 0 );
-QAngle	SharedRandomAngle( const char *sharedname, float minVal, float maxVal, int additionalSeed = 0 );
+
 
 
 void UTIL_Portal_NDebugOverlay(const Vector& ptPortalCenter, const QAngle& qPortalAngles, int r, int g, int b, int a, bool noDepthTest, float duration);
 void UTIL_Portal_NDebugOverlay(const IEnginePortal* pPortal, int r, int g, int b, int a, bool noDepthTest, float duration);
 
 void UTIL_Portal_Trace_Filter(class CTraceFilterSimpleClassnameList* traceFilterPortalShot);
-
-inline int UTIL_PointContents( const Vector &vec )
-{
-	return enginetrace->GetPointContents( vec );
-}
 
 // Sweeps against a particular model, using collision rules 
 void UTIL_TraceModel( const Vector &vecStart, const Vector &vecEnd, const Vector &hullMin, 
@@ -314,26 +298,6 @@ char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *p
 
 int UTIL_StringFieldToInt( const char *szValue, const char **pValueStrings, int iNumStrings );
 
-// Convenience routine
-// ORs gameFlags with the physics object's current game flags
-inline unsigned short PhysSetGameFlags(IPhysicsObject* pPhys, unsigned short gameFlags)
-{
-	unsigned short flags = pPhys->GetGameFlags();
-	flags |= gameFlags;
-	pPhys->SetGameFlags(flags);
-
-	return flags;
-}
-// mask off gameFlags
-inline unsigned short PhysClearGameFlags(IPhysicsObject* pPhys, unsigned short gameFlags)
-{
-	unsigned short flags = pPhys->GetGameFlags();
-	flags &= ~gameFlags;
-	pPhys->SetGameFlags(flags);
-
-	return flags;
-}
-
 void PhysDisableObjectCollisions(IPhysicsObject* pObject0, IPhysicsObject* pObject1);
 void PhysDisableEntityCollisions(IPhysicsObject* pObject0, IPhysicsObject* pObject1);
 void PhysDisableEntityCollisions(IHandleEntity* pEntity0, IHandleEntity* pEntity1);
@@ -344,8 +308,8 @@ bool PhysEntityCollisionsAreDisabled(IHandleEntity* pEntity0, IHandleEntity* pEn
 
 // Compute an output velocity based on sliding along the current contact points 
 // in the closest direction toward inputVelocity.
-void PhysComputeSlideDirection(IPhysicsObject* pPhysics, const Vector& inputVelocity, const AngularImpulse& inputAngularVelocity,
-	Vector* pOutputVelocity, Vector* pOutputAngularVelocity, float minMass);
+//void PhysComputeSlideDirection(IPhysicsObject* pPhysics, const Vector& inputVelocity, const AngularImpulse& inputAngularVelocity,
+//	Vector* pOutputVelocity, Vector* pOutputAngularVelocity, float minMass);
 
 // Manages ragdolls fading for the low violence versions
 class CRagdollLowViolenceManager

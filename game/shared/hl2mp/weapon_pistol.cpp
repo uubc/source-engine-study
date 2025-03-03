@@ -330,8 +330,8 @@ void CWeaponPistol::AddViewKick( void )
 
 	QAngle	viewPunch;
 
-	viewPunch.x = SharedRandomFloat( "pistolpax", 0.25f, 0.5f );
-	viewPunch.y = SharedRandomFloat( "pistolpay", -.6f, .6f );
+	viewPunch.x = EntityList()->SharedRandomFloat( "pistolpax", 0.25f, 0.5f );
+	viewPunch.y = EntityList()->SharedRandomFloat( "pistolpay", -.6f, .6f );
 	viewPunch.z = 0.0f;
 
 	//Add it to the view punch

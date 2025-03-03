@@ -165,12 +165,12 @@ static bool TraceToExit( const Vector &start,
 		// point contents fails to return proper contents inside a func_detail brush, eg the dod_flash 
 		// stairs
 
-		//int contents = UTIL_PointContents( end );
+		//int contents = UTIL_PointContents(EntityList(), end );
 
 		trace_t tr;
 		UTIL_TraceLine(EntityList(), end, end, MASK_SOLID | CONTENTS_HITBOX, NULL, &tr );
 
-		//if ( (UTIL_PointContents ( end ) & MASK_SOLID) == 0 )
+		//if ( (UTIL_PointContents (EntityList(), end ) & MASK_SOLID) == 0 )
 
 		if ( !tr.startsolid )
 		{

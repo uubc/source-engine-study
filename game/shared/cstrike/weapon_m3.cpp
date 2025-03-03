@@ -167,11 +167,11 @@ void CWeaponM3::PrimaryAttack()
 
 	if ( pPlayer->GetEngineObject()->GetFlags() & FL_ONGROUND )
 	{
-		angle.x -= SharedRandomInt( "M3PunchAngleGround", 4, 6 );
+		angle.x -= EntityList()->SharedRandomInt( "M3PunchAngleGround", 4, 6 );
 	}
 	else
 	{
-		angle.x -= SharedRandomInt( "M3PunchAngleAir", 8, 11 );
+		angle.x -= EntityList()->SharedRandomInt( "M3PunchAngleAir", 8, 11 );
 	}
 
 	pPlayer->SetPunchAngle( angle );

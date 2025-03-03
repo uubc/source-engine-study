@@ -352,7 +352,7 @@ void CEnvExplosion::InputExplode( inputdata_t &inputdata )
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.3 );
 
 	// Only do these effects if we're not submerged
-	if ( UTIL_PointContents(GetEngineObject()->GetAbsOrigin() ) & CONTENTS_WATER )
+	if ( UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) & CONTENTS_WATER )
 	{
 		// draw sparks
 		if ( !(GetEngineObject()->GetSpawnFlags() & SF_ENVEXPLOSION_NOSPARKS))

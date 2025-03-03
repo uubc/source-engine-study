@@ -123,7 +123,7 @@ void RadiusFlash(
 	static float	flRadius = 1500;
 	float			falloff = flDamage / flRadius;
 
-	bool bInWater = (UTIL_PointContents( vecSrc ) == CONTENTS_WATER);
+	bool bInWater = (UTIL_PointContents(EntityList(), vecSrc ) == CONTENTS_WATER);
 
 	// iterate on all entities in the vicinity.
 	while ((pEntity = EntityList()->FindEntityInSphere( pEntity, vecSrc, flRadius )) != NULL)

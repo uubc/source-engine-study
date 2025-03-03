@@ -31,76 +31,7 @@
 
 extern ConVar g_Language;
 
-//-----------------------------------------------------------------------------
-// Purpose: Helper function get get determinisitc random values for shared/prediction code
-// Input  : seedvalue - 
-//			*module - 
-//			line - 
-// Output : static int
-//-----------------------------------------------------------------------------
-static int SeedFileLineHash( int seedvalue, const char *sharedname, int additionalSeed )
-{
-	CRC32_t retval;
 
-	CRC32_Init( &retval );
-
-	CRC32_ProcessBuffer( &retval, (void *)&seedvalue, sizeof( int ) );
-	CRC32_ProcessBuffer( &retval, (void *)&additionalSeed, sizeof( int ) );
-	CRC32_ProcessBuffer( &retval, (void *)sharedname, Q_strlen( sharedname ) );
-	
-	CRC32_Final( &retval );
-
-	return (int)( retval );
-}
-
-float SharedRandomFloat( const char *sharedname, float flMinVal, float flMaxVal, int additionalSeed /*=0*/ )
-{
-	Assert(EntityList()->GetPredictionRandomSeed() != -1 );
-
-	int seed = SeedFileLineHash(EntityList()->GetPredictionRandomSeed(), sharedname, additionalSeed );
-	RandomSeed( seed );
-	return RandomFloat( flMinVal, flMaxVal );
-}
-
-int SharedRandomInt( const char *sharedname, int iMinVal, int iMaxVal, int additionalSeed /*=0*/ )
-{
-	Assert(EntityList()->GetPredictionRandomSeed() != -1 );
-
-	int seed = SeedFileLineHash(EntityList()->GetPredictionRandomSeed(), sharedname, additionalSeed );
-	RandomSeed( seed );
-	return RandomInt( iMinVal, iMaxVal );
-}
-
-Vector SharedRandomVector( const char *sharedname, float minVal, float maxVal, int additionalSeed /*=0*/ )
-{
-	Assert(EntityList()->GetPredictionRandomSeed() != -1 );
-
-	int seed = SeedFileLineHash(EntityList()->GetPredictionRandomSeed(), sharedname, additionalSeed );
-	RandomSeed( seed );
-	// HACK:  Can't call RandomVector/Angle because it uses rand() not vstlib Random*() functions!
-	// Get a random vector.
-	Vector random;
-	random.x = RandomFloat( minVal, maxVal );
-	random.y = RandomFloat( minVal, maxVal );
-	random.z = RandomFloat( minVal, maxVal );
-	return random;
-}
-
-QAngle SharedRandomAngle( const char *sharedname, float minVal, float maxVal, int additionalSeed /*=0*/ )
-{
-	Assert(EntityList()->GetPredictionRandomSeed() != -1 );
-
-	int seed = SeedFileLineHash(EntityList()->GetPredictionRandomSeed(), sharedname, additionalSeed );
-	RandomSeed( seed );
-
-	// HACK:  Can't call RandomVector/Angle because it uses rand() not vstlib Random*() functions!
-	// Get a random vector.
-	Vector random;
-	random.x = RandomFloat( minVal, maxVal );
-	random.y = RandomFloat( minVal, maxVal );
-	random.z = RandomFloat( minVal, maxVal );
-	return QAngle( random.x, random.y, random.z );
-}
 
 
 
@@ -675,71 +606,7 @@ bool PhysEntityCollisionsAreDisabled(IHandleEntity* pEntity0, IHandleEntity* pEn
 	return EntityList()->PhysGetEntityCollisionHash()->IsObjectPairInHash(pEntity0, pEntity1);
 }
 
-void PhysComputeSlideDirection(IPhysicsObject* pPhysics, const Vector& inputVelocity, const AngularImpulse& inputAngularVelocity,
-	Vector* pOutputVelocity, Vector* pOutputAngularVelocity, float minMass)
-{
-	Vector velocity = inputVelocity;
-	AngularImpulse angVel = inputAngularVelocity;
-	Vector pos;
 
-	IPhysicsFrictionSnapshot* pSnapshot = pPhysics->CreateFrictionSnapshot();
-	while (pSnapshot->IsValid())
-	{
-		IPhysicsObject* pOther = pSnapshot->GetObject(1);
-		if (!pOther->IsMoveable() || pOther->GetMass() > minMass)
-		{
-			Vector normal;
-			pSnapshot->GetSurfaceNormal(normal);
-
-			// BUGBUG: Figure out the correct rotation clipping equation
-			if (pOutputAngularVelocity)
-			{
-				angVel = normal * DotProduct(angVel, normal);
-#if 0
-				pSnapshot->GetContactPoint(point);
-				Vector point, dummy;
-				AngularImpulse angularClip, clip2;
-
-				pPhysics->CalculateVelocityOffset(normal, point, dummy, angularClip);
-				VectorNormalize(angularClip);
-				float proj = DotProduct(angVel, angularClip);
-				if (proj > 0)
-				{
-					angVel -= angularClip * proj;
-				}
-				CrossProduct(angularClip, normal, clip2);
-				proj = DotProduct(angVel, clip2);
-				if (proj > 0)
-				{
-					angVel -= clip2 * proj;
-				}
-				//NDebugOverlay::Line( point, point - normal * 20, 255, 0, 0, true, 0.1 );
-#endif
-			}
-
-			// Determine how far along plane to slide based on incoming direction.
-			// NOTE: Normal points away from this object
-			float proj = DotProduct(velocity, normal);
-			if (proj > 0.0f)
-			{
-				velocity -= normal * proj;
-			}
-		}
-		pSnapshot->NextFrictionData();
-	}
-	pPhysics->DestroyFrictionSnapshot(pSnapshot);
-
-	//NDebugOverlay::Line( pos, pos + unitVel * 20, 0, 0, 255, true, 0.1 );
-
-	if (pOutputVelocity)
-	{
-		*pOutputVelocity = velocity;
-	}
-	if (pOutputAngularVelocity)
-	{
-		*pOutputAngularVelocity = angVel;
-	}
-}
 
 extern ConVar hl2_episodic;
 

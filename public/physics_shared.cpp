@@ -5,6 +5,12 @@
 //=============================================================================//
 //#include "cbase.h"
 #include "ragdoll_shared.h"
+#ifdef CLIENT_DLL
+#include "cdll_client_int.h"
+#endif
+#ifdef GAME_DLL
+#include "enginecallback.h"
+#endif // GAME_DLL
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -741,7 +747,7 @@ void CPhysicsGameTrace::VehicleTraceRayWithWater( const Ray_t &ray, void *pVehic
 //-----------------------------------------------------------------------------
 bool CPhysicsGameTrace::VehiclePointInWater( const Vector &vecPoint )
 {
-	return ( ( UTIL_PointContents( vecPoint ) & MASK_WATER ) != 0 );
+	return ( ( UTIL_PointContents(EntityList(), vecPoint ) & MASK_WATER ) != 0 );
 }
 
 

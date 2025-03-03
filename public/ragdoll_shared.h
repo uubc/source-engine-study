@@ -27,6 +27,7 @@ class IStudioHdr;
 #include "tier1/mempool.h"
 #include "tier1/memstack.h"
 #include "tier1/utlpriorityqueue.h"
+#include "tier1/KeyValues.h"
 #ifdef _WIN32
 #include "typeinfo"
 // BUGBUG: typeinfo stomps some of the warning settings (in yvals.h)
@@ -53,6 +54,7 @@ class IStudioHdr;
 #include "vphysics/player_controller.h"
 #include "vphysics/constraints.h"
 #include "vphysics/collision_set.h"
+#include "vphysics/friction.h"
 #include "datacache/idatacache.h"
 #include "datacache/imdlcache.h"
 #include "bone_setup.h"
@@ -79,13 +81,15 @@ class IStudioHdr;
 #include "gamerules.h"
 #include "entitylist_base.h"
 #include "sequence_Transitioner.h"
+#include "engine/ivmodelinfo.h"
+#include "engine/IStaticPropMgr.h"
 
 #include "takedamageinfo.h"
 #include "IEffects.h"
 #include "sharedInterface.h"
+#include "shareddefs.h"
 #include "soundenvelope.h"
 #include "collisionproperty.h"
-#include "util_shared.h"
 #include "portal_util_shared.h"
 #include "predictioncopy.h"
 #include "ai_activity.h"

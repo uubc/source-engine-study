@@ -255,7 +255,7 @@ void C_TEExplosion::PostDataUpdate( DataUpdateType_t updateType )
 	AffectRagdolls();
 
 	// Filter out a water explosion
-	if ( UTIL_PointContents( m_vecOrigin ) & CONTENTS_WATER )
+	if ( UTIL_PointContents(EntityList(), m_vecOrigin ) & CONTENTS_WATER )
 	{
 		WaterExplosionEffect().Create( m_vecOrigin, m_nMagnitude, m_fScale, m_nFlags );
 		return;

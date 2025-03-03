@@ -2595,7 +2595,7 @@ void CAI_NetworkBuilder::InitNodePosition(CAI_Network *pNetwork, CAI_Node *pNode
 		return;
 	}
 	/*	// If under water, not that the node is in water	<<TODO>>  when we get water
-	else if ( UTIL_PointContents(GetOrigin()) & MASK_WATER )
+	else if ( UTIL_PointContents(EntityList(), GetOrigin()) & MASK_WATER )
 	{
 		m_eNodeType |= NODE_WATER;
 	}

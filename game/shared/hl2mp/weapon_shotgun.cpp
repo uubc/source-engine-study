@@ -324,7 +324,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 	pPlayer->FireBullets( info );
 	
 	QAngle punch;
-	punch.Init( SharedRandomFloat( "shotgunpax", -2, -1 ), SharedRandomFloat( "shotgunpay", -2, 2 ), 0 );
+	punch.Init(EntityList()->SharedRandomFloat( "shotgunpax", -2, -1 ), EntityList()->SharedRandomFloat( "shotgunpay", -2, 2 ), 0 );
 	pPlayer->ViewPunch( punch );
 
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
@@ -374,7 +374,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets( info );
-	pPlayer->ViewPunch( QAngle(SharedRandomFloat( "shotgunsax", -5, 5 ),0,0) );
+	pPlayer->ViewPunch( QAngle(EntityList()->SharedRandomFloat( "shotgunsax", -5, 5 ),0,0) );
 
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{

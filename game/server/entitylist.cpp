@@ -8779,7 +8779,7 @@ bool IsInPrediction()
 int SharedRandomSelect(int iMinVal, int iMaxVal, int additionalSeed) {
 	if (gEntList.GetPredictionPlayer() != NULL)
 	{
-		return SharedRandomInt("SelectWeightedSequence", iMinVal, iMaxVal, additionalSeed);
+		return gEntList.SharedRandomInt("SelectWeightedSequence", iMinVal, iMaxVal, additionalSeed);
 	}
 	else
 	{

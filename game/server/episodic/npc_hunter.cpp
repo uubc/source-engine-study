@@ -658,7 +658,7 @@ void CHunterFlechette::StickTo( CBaseEntity *pOther, trace_t &tr )
 		UTIL_ImpactTrace( &tr, DMG_BULLET );
 		
 		// Shoot some sparks
-		if ( UTIL_PointContents(GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
+		if ( UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)
 		{
 			g_pEffects->Sparks(GetEngineObject()->GetAbsOrigin() );
 		}

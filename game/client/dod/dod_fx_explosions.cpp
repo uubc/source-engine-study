@@ -40,7 +40,7 @@ void DODExplosionCallback( const Vector &vecOrigin, const Vector &vecNormal )
 
 	// Explosions.
 
-	if ( UTIL_PointContents( vecOrigin ) & CONTENTS_WATER )
+	if ( UTIL_PointContents(EntityList(), vecOrigin ) & CONTENTS_WATER )
 	{
 		WaterExplosionEffect().Create( vecOrigin, 1 /*m_nMagnitude*/, 1 /*m_fScale*/, 0 /*m_nFlags*/ );
 		return;

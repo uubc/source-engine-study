@@ -49,7 +49,7 @@ void CHL1BaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 	}
 
 	Vector vecAbsOrigin = GetEngineObject()->GetAbsOrigin();
-	int contents = UTIL_PointContents ( vecAbsOrigin );
+	int contents = UTIL_PointContents (EntityList(), vecAbsOrigin );
 
 	if ( pTrace->fraction != 1.0 )
 	{

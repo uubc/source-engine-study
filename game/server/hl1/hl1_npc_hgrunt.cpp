@@ -1036,7 +1036,7 @@ void CNPC_HGrunt::Event_Killed( const CTakeDamageInfo &info )
 	GetEngineObject()->SetBodygroup( GUN_GROUP, GUN_NONE );
 
 	// If the gun would drop into a wall, spawn it at our origin
-	if( UTIL_PointContents( vecGunPos ) & CONTENTS_SOLID )
+	if( UTIL_PointContents(EntityList(), vecGunPos ) & CONTENTS_SOLID )
 	{
 		vecGunPos = GetEngineObject()->GetAbsOrigin();
 	}

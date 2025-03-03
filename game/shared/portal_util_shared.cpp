@@ -17,7 +17,7 @@
 #include "entitylist_base.h"
 #include "baseentity_shared.h"
 #include "gamerules.h"
-#include "util_shared.h"
+//#include "util_shared.h"
 #include "portal_util_shared.h"
 
 bool g_bAllowForcePortalTrace = false;

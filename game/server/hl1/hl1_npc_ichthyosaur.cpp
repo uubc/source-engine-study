@@ -915,8 +915,8 @@ Vector CNPC_Ichthyosaur::DoProbe( const Vector &Probe )
 
 bool CNPC_Ichthyosaur::ProbeZ( const Vector &position, const Vector &probe, float *pFraction)
 {
-	int iPositionContents = UTIL_PointContents( position );
-	int iProbeContents = UTIL_PointContents( position );
+	int iPositionContents = UTIL_PointContents(EntityList(), position );
+	int iProbeContents = UTIL_PointContents(EntityList(), position );
 
 	if( !(iPositionContents & MASK_WATER) )
 	{
@@ -942,7 +942,7 @@ bool CNPC_Ichthyosaur::ProbeZ( const Vector &position, const Vector &probe, floa
 	{
 		float midProbeLength = minProbeLength + diff/2.0;
 		Vector midProbeVec = midProbeLength * ProbeUnit;
-		if (UTIL_PointContents(position+midProbeVec) == iPositionContents)
+		if (UTIL_PointContents(EntityList(), position+midProbeVec) == iPositionContents)
 		{
 			minProbeLength = midProbeLength;
 		}

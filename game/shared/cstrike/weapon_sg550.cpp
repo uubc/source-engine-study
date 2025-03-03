@@ -187,8 +187,8 @@ void CWeaponSG550::PrimaryAttack()
 		return;
 
 	QAngle angle = pPlayer->GetPunchAngle();
-	angle.x -= SharedRandomFloat("SG550PunchAngleX", 0.75, 1.25 ) + ( angle.x / 4 );
-	angle.y += SharedRandomFloat("SG550PunchAngleY", -0.75, 0.75 );
+	angle.x -= EntityList()->SharedRandomFloat("SG550PunchAngleX", 0.75, 1.25 ) + ( angle.x / 4 );
+	angle.y += EntityList()->SharedRandomFloat("SG550PunchAngleY", -0.75, 0.75 );
 	pPlayer->SetPunchAngle( angle );
 }
 

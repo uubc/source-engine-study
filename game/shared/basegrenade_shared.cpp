@@ -127,7 +127,7 @@ void CBaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 	}
 
 	Vector vecAbsOrigin = GetEngineObject()->GetAbsOrigin();
-	int contents = UTIL_PointContents ( vecAbsOrigin );
+	int contents = UTIL_PointContents (EntityList(), vecAbsOrigin );
 
 #if defined( TF_DLL )
 	// Since this code only runs on the server, make sure it shows the tempents it creates.
@@ -222,7 +222,7 @@ void CBaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 void CBaseGrenade::Smoke( void )
 {
 	Vector vecAbsOrigin = GetEngineObject()->GetAbsOrigin();
-	if ( UTIL_PointContents ( vecAbsOrigin ) & MASK_WATER )
+	if ( UTIL_PointContents (EntityList(), vecAbsOrigin ) & MASK_WATER )
 	{
 		UTIL_Bubbles( vecAbsOrigin - Vector( 64, 64, 64 ), vecAbsOrigin + Vector( 64, 64, 64 ), 100 );
 	}

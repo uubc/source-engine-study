@@ -1924,7 +1924,7 @@ void CWeaponCSBase::OnLand( float fVelocity )
 
 	QAngle angle = pPlayer->GetPunchAngle();
 	float fVKick = RAD2DEG(asinf(fPenalty)) * 0.4f;
-	float fHKick = SharedRandomFloat("LandPunchAngleYaw", -1.0f, +1.0f) * fVKick * 0.1f;
+	float fHKick = EntityList()->SharedRandomFloat("LandPunchAngleYaw", -1.0f, +1.0f) * fVKick * 0.1f;
 
 	angle.x += fVKick;	// pitch
 	angle.y += fHKick;	// yaw

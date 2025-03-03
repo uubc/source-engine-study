@@ -1973,7 +1973,7 @@ void CEnvSplash::InputSplash( inputdata_t &inputdata )
 
 	if(GetEngineObject()->HasSpawnFlags( SF_ENVSPLASH_FINDWATERSURFACE ) )
 	{
-		if( UTIL_PointContents(GetEngineObject()->GetAbsOrigin()) & MASK_WATER )
+		if( UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin()) & MASK_WATER )
 		{
 			// No splash if I'm supposed to find the surface of the water, but I'm underwater.
 			return;

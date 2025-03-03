@@ -43,6 +43,7 @@ void cc_cl_interp_all_changed(IConVar* pConVar, const char* pOldString, float fl
 static ConVar  cl_interp_all("cl_interp_all", "0", 0, "Disable interpolation list optimizations.", 0, 0, 0, 0, cc_cl_interp_all_changed);
 extern ConVar	cl_showerror;
 extern ConVar think_limit;
+extern IStaticPropMgrClient* staticpropmgr;
 
 // Create interface
 CClientEntityList<IClientEntity> g_EntityList;
@@ -7899,7 +7900,7 @@ bool IsInPrediction()
 int SharedRandomSelect(int iMinVal, int iMaxVal, int additionalSeed) {
 	if (g_EntityList.GetPredictionPlayer() != NULL)
 	{
-		return SharedRandomInt("SelectWeightedSequence", iMinVal, iMaxVal, additionalSeed);
+		return g_EntityList.SharedRandomInt("SelectWeightedSequence", iMinVal, iMaxVal, additionalSeed);
 	}
 	else
 	{

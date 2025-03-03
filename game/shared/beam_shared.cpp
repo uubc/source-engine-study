@@ -10,7 +10,7 @@
 #include "decals.h"
 #include "model_types.h"
 #include "IEffects.h"
-#include "util_shared.h"
+//#include "util_shared.h"
 
 #if !defined( CLIENT_DLL )
 #include "ndebugoverlay.h"

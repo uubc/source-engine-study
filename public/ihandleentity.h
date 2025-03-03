@@ -476,6 +476,18 @@ public:
 	virtual IHandleWorld* GetWorld() = 0;
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;
+	//-----------------------------------------------------------------------------
+// Shared random number generators for shared/predicted code:
+// whenever generating random numbers in shared/predicted code, these functions
+// have to be used. Each call should specify a unique "sharedname" string that
+// seeds the random number generator. In loops make sure the "additionalSeed"
+// is increased with the loop counter, otherwise it will always return the
+// same random number
+//-----------------------------------------------------------------------------
+	virtual float SharedRandomFloat(const char* sharedname, float flMinVal, float flMaxVal, int additionalSeed = 0) = 0;
+	virtual int SharedRandomInt(const char* sharedname, int iMinVal, int iMaxVal, int additionalSeed = 0) = 0;
+	virtual Vector SharedRandomVector(const char* sharedname, float minVal, float maxVal, int additionalSeed = 0) = 0;
+	virtual QAngle SharedRandomAngle(const char* sharedname, float minVal, float maxVal, int additionalSeed = 0) = 0;
 };
 
 abstract_class IEntityMapData

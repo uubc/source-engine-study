@@ -253,7 +253,7 @@ void CGrenadeBeam::GrenadeBeamTouch( IServerEntity *pOther )
 	// --------------------------------------
 	//  Smoke or bubbles effect
 	// --------------------------------------
-	if (UTIL_PointContents (GetEngineObject()->GetAbsOrigin() ) & MASK_WATER)
+	if (UTIL_PointContents (EntityList(), GetEngineObject()->GetAbsOrigin() ) & MASK_WATER)
 	{
 		UTIL_Bubbles(GetEngineObject()->GetAbsOrigin()-Vector(3,3,3), GetEngineObject()->GetAbsOrigin()+Vector(3,3,3),10);
 	}

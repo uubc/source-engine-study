@@ -32,10 +32,18 @@ typedef CHandle<IServerEntity> ENTHANDLE;
 #define MAX_ENTITY_BYTE_COUNT	(NUM_ENT_ENTRIES >> 3)
 #define DEBUG_TRANSITIONS_VERBOSE	2
 
+extern CGlobalVars* gpGlobals;
 extern IVEngineServer* engine;
+extern IVDebugOverlay* debugoverlay;
+extern IVModelInfo* modelinfo;
+extern IMDLCache* mdlcache;
+extern IEngineTrace* enginetrace;
+extern IStaticPropMgrServer* staticpropmgr;
+extern ISpatialPartition* partition;
 extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger, IEngineObjectServer* pEntity);
 extern ISaveRestoreBlockHandler* GetPhysSaveRestoreBlockHandler();
 extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
+extern IServerGameDLL* serverGameDLL;
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return serverGameDLL->AllocPooledString(pStr);
 }
@@ -4009,6 +4017,77 @@ public:
 
 	IServerWorld* GetWorld() {
 		return m_pWorld;
+	}
+
+	//-----------------------------------------------------------------------------
+// Purpose: Helper function get get determinisitc random values for shared/prediction code
+// Input  : seedvalue - 
+//			*module - 
+//			line - 
+// Output : static int
+//-----------------------------------------------------------------------------
+	static int SeedFileLineHash(int seedvalue, const char* sharedname, int additionalSeed)
+	{
+		CRC32_t retval;
+
+		CRC32_Init(&retval);
+
+		CRC32_ProcessBuffer(&retval, (void*)&seedvalue, sizeof(int));
+		CRC32_ProcessBuffer(&retval, (void*)&additionalSeed, sizeof(int));
+		CRC32_ProcessBuffer(&retval, (void*)sharedname, Q_strlen(sharedname));
+
+		CRC32_Final(&retval);
+
+		return (int)(retval);
+	}
+
+	float SharedRandomFloat(const char* sharedname, float flMinVal, float flMaxVal, int additionalSeed /*=0*/)
+	{
+		Assert(GetPredictionRandomSeed() != -1);
+
+		int seed = SeedFileLineHash(GetPredictionRandomSeed(), sharedname, additionalSeed);
+		RandomSeed(seed);
+		return RandomFloat(flMinVal, flMaxVal);
+	}
+
+	int SharedRandomInt(const char* sharedname, int iMinVal, int iMaxVal, int additionalSeed /*=0*/)
+	{
+		Assert(GetPredictionRandomSeed() != -1);
+
+		int seed = SeedFileLineHash(GetPredictionRandomSeed(), sharedname, additionalSeed);
+		RandomSeed(seed);
+		return RandomInt(iMinVal, iMaxVal);
+	}
+
+	Vector SharedRandomVector(const char* sharedname, float minVal, float maxVal, int additionalSeed /*=0*/)
+	{
+		Assert(GetPredictionRandomSeed() != -1);
+
+		int seed = SeedFileLineHash(GetPredictionRandomSeed(), sharedname, additionalSeed);
+		RandomSeed(seed);
+		// HACK:  Can't call RandomVector/Angle because it uses rand() not vstlib Random*() functions!
+		// Get a random vector.
+		Vector random;
+		random.x = RandomFloat(minVal, maxVal);
+		random.y = RandomFloat(minVal, maxVal);
+		random.z = RandomFloat(minVal, maxVal);
+		return random;
+	}
+
+	QAngle SharedRandomAngle(const char* sharedname, float minVal, float maxVal, int additionalSeed /*=0*/)
+	{
+		Assert(GetPredictionRandomSeed() != -1);
+
+		int seed = SeedFileLineHash(GetPredictionRandomSeed(), sharedname, additionalSeed);
+		RandomSeed(seed);
+
+		// HACK:  Can't call RandomVector/Angle because it uses rand() not vstlib Random*() functions!
+		// Get a random vector.
+		Vector random;
+		random.x = RandomFloat(minVal, maxVal);
+		random.y = RandomFloat(minVal, maxVal);
+		random.z = RandomFloat(minVal, maxVal);
+		return QAngle(random.x, random.y, random.z);
 	}
 
 protected:

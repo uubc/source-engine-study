@@ -1979,7 +1979,7 @@ void CNPC_Manhack::MoveExecute_Alive(float flInterval)
 
 	if( m_flWaterSuspendTime > gpGlobals->curtime )
 	{ 
-		if( UTIL_PointContents(GetEngineObject()->GetAbsOrigin() ) & (CONTENTS_WATER|CONTENTS_SLIME) )
+		if( UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) & (CONTENTS_WATER|CONTENTS_SLIME) )
 		{
 			// Ooops, we're submerged somehow. Move upwards until our origin is out of the water.
 			m_vCurrentVelocity.z = 20.0;

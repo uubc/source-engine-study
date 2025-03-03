@@ -300,7 +300,7 @@ static bool TraceToExit(Vector &start, Vector &dir, Vector &end, float flStepSiz
 
 		end = start + flDistance *dir;
 
-		if ( (UTIL_PointContents ( end ) & MASK_SOLID) == 0 )
+		if ( (UTIL_PointContents (EntityList(), end ) & MASK_SOLID) == 0 )
 		{
 			// found first free point
 			return true;
@@ -732,7 +732,7 @@ void CCSPlayer::KickBack( float up_base, float lateral_base, float up_modifier, 
 			angle.y = -1 * lateral_max;
 	}
 
-	if ( !SharedRandomInt( "KickBack", 0, direction_change ) )
+	if ( !EntityList()->SharedRandomInt( "KickBack", 0, direction_change ) )
 		m_iDirection = 1 - m_iDirection;
 
 	SetPunchAngle( angle );
