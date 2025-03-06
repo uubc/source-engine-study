@@ -23,7 +23,7 @@
 #ifdef CLIENT_DLL
 #include "icliententity.h"
 #endif // CLIENT_DLL
-#ifdef CAME_DLL
+#ifdef GAME_DLL
 #include "iserverentity.h"
 #endif // CAME_DLL
 
