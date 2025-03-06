@@ -120,8 +120,8 @@ public:
 
 	int				PlayScriptedSentence( const char *pszSentence, float delay, float volume, soundlevel_t soundlevel, bool bConcurrent, CBaseEntity *pListener );
 	virtual void 	FollowerUse( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
-	void			Event_Killed( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	bool CreateBehaviors()
 	{

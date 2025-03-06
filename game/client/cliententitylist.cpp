@@ -1031,7 +1031,7 @@ static void ComputePlayerMatrix(C_BasePlayer* pPlayer, matrix3x4_t& out)
 //-----------------------------------------------------------------------------
 bool C_GrabControllerInternal::UpdateObject(IClientEntity* pPlayer, float flError)
 {
-	IClientEntity* pPenetratedEntity = m_PenetratedEntity.Get();
+	IClientEntity* pPenetratedEntity = entitylist->GetBaseEntityFromHandle(m_PenetratedEntity);
 	if (pPenetratedEntity)
 	{
 		//FindClosestPassableSpace( pPenetratedEntity, Vector( 0.0f, 0.0f, 1.0f ) );
@@ -1876,7 +1876,7 @@ IMotionEvent::simresult_e C_GrabControllerInternal::Simulate(IPhysicsMotionContr
 
 float C_GrabControllerInternal::GetSavedMass(IPhysicsObject* pObject)
 {
-	IClientEntity* pHeld = m_attachedEntity;
+	IClientEntity* pHeld = entitylist->GetBaseEntityFromHandle(m_attachedEntity);
 	if (pHeld)
 	{
 		if (pObject->GetGameData() == (void*)pHeld)
@@ -1895,7 +1895,7 @@ float C_GrabControllerInternal::GetSavedMass(IPhysicsObject* pObject)
 
 void C_GrabControllerInternal::GetSavedParamsForCarriedPhysObject(IPhysicsObject* pObject, float* pSavedMassOut, float* pSavedRotationalDampingOut)
 {
-	IClientEntity* pHeld = m_attachedEntity;
+	IClientEntity* pHeld = entitylist->GetBaseEntityFromHandle(m_attachedEntity);
 	if (pHeld)
 	{
 		if (pObject->GetGameData() == (void*)pHeld)
@@ -2059,10 +2059,10 @@ END_DATADESC()
 //-----------------------------------------------------------------------------
 void RecvProxy_IntToMoveParent(const CRecvProxyData* pData, void* pStruct, void* pOut)
 {
-	CHandle<IClientEntity>* pHandle = (CHandle<IClientEntity>*)pOut;
+	CBaseHandle* pHandle = (CBaseHandle*)pOut;
 	RecvProxy_IntToEHandle(pData, pStruct, (CBaseHandle*)pHandle);
 	C_EngineObjectInternal* pEntity = (C_EngineObjectInternal*)pStruct;
-	IClientEntity* pMoveParent = pHandle->Get();
+	IClientEntity* pMoveParent = entitylist->GetBaseEntityFromHandle(*pHandle);
 	if (pMoveParent&& pMoveParent->entindex()==1) {
 		int aaa = 0;
 	}
@@ -5223,10 +5223,10 @@ void C_EngineObjectInternal::PhysicsRemoveGroundList()
 
 void C_EngineObjectInternal::SetGroundEntity(IEngineObjectClient* ground)
 {
-	if ((m_hGroundEntity.Get() ? m_hGroundEntity.Get()->GetEngineObject() : NULL) == ground)
+	if ((entitylist->GetBaseEntityFromHandle(m_hGroundEntity) ? entitylist->GetBaseEntityFromHandle(m_hGroundEntity)->GetEngineObject() : NULL) == ground)
 		return;
 
-	IClientEntity* oldGround = m_hGroundEntity.Get();
+	IClientEntity* oldGround = entitylist->GetBaseEntityFromHandle(m_hGroundEntity);
 	m_hGroundEntity = ground ? ground->GetOuter() : NULL;
 
 	// Just starting to touch
@@ -5260,7 +5260,7 @@ void C_EngineObjectInternal::SetGroundEntity(IEngineObjectClient* ground)
 
 C_EngineObjectInternal* C_EngineObjectInternal::GetGroundEntity(void)
 {
-	return m_hGroundEntity.Get() ? (C_EngineObjectInternal*)m_hGroundEntity.Get()->GetEngineObject() : NULL;
+	return entitylist->GetBaseEntityFromHandle(m_hGroundEntity) ? (C_EngineObjectInternal*)entitylist->GetBaseEntityFromHandle(m_hGroundEntity)->GetEngineObject() : NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -9494,7 +9494,7 @@ void C_EngineObjectInternal::SetOwnerEntity(IEngineObjectClient* pOwner)
 
 void C_EngineObjectInternal::SetEffectEntity(IEngineObjectClient* pEffectEnt)
 {
-	if (m_hEffectEntity.Get() != (pEffectEnt ? pEffectEnt->GetClientEntity() : NULL))
+	if (entitylist->GetBaseEntityFromHandle(m_hEffectEntity) != (pEffectEnt ? pEffectEnt->GetClientEntity() : NULL))
 	{
 		m_hEffectEntity = (pEffectEnt ? pEffectEnt->GetClientEntity() : NULL);
 	}
@@ -10159,7 +10159,7 @@ bool C_EnginePortalInternal::TraceTransformedWorldBrushes(const IEnginePortalCli
 class CPortalCollideableEnumerator : public IPartitionEnumerator
 {
 private:
-	ENTHANDLE m_hTestPortal; //the associated portal that we only want objects in front of
+	CBaseHandle m_hTestPortal; //the associated portal that we only want objects in front of
 	Vector m_vPlaneNormal; //portal plane normal
 	float m_fPlaneDist; //plane equation distance
 	Vector m_ptForward1000; //a point exactly 1000 units from the portal center along its forward vector
@@ -10190,9 +10190,9 @@ CPortalCollideableEnumerator::CPortalCollideableEnumerator(const C_EnginePortalI
 
 IterationRetval_t CPortalCollideableEnumerator::EnumElement(IHandleEntity* pHandleEntity)
 {
-	ENTHANDLE hEnt = pHandleEntity->GetRefEHandle();
+	CBaseHandle hEnt = pHandleEntity->GetRefEHandle();
 
-	IClientEntity* pEnt = hEnt.Get();
+	IClientEntity* pEnt = entitylist->GetBaseEntityFromHandle(hEnt);
 	if (pEnt == NULL) //I really never thought this would be necessary
 		return ITERATION_CONTINUE;
 
@@ -13345,8 +13345,8 @@ bool C_EngineRopeInternal::GetEndPointPos(int iPt, Vector& vPos, QAngle& vAngle)
 	// By caching the results here, we avoid doing this a bunch of times per frame.
 	if (m_bEndPointAttachmentPositionsDirty)
 	{
-		CalculateEndPointAttachment(m_hStartPoint, m_iStartAttachment, m_vCachedEndPointAttachmentPos[0], m_vCachedEndPointAttachmentAngle[0]);
-		CalculateEndPointAttachment(m_hEndPoint, m_iEndAttachment, m_vCachedEndPointAttachmentPos[1], m_vCachedEndPointAttachmentAngle[1]);
+		CalculateEndPointAttachment(entitylist->GetBaseEntityFromHandle(m_hStartPoint), m_iStartAttachment, m_vCachedEndPointAttachmentPos[0], m_vCachedEndPointAttachmentAngle[0]);
+		CalculateEndPointAttachment(entitylist->GetBaseEntityFromHandle(m_hEndPoint), m_iEndAttachment, m_vCachedEndPointAttachmentPos[1], m_vCachedEndPointAttachmentAngle[1]);
 		m_bEndPointAttachmentPositionsDirty = false;
 	}
 
@@ -13552,8 +13552,8 @@ void C_EngineRopeInternal::SetSlack(int slack)
 
 void C_EngineRopeInternal::SetupHangDistance(float flHangDist)
 {
-	IClientEntity* pEnt1 = m_hStartPoint;
-	IClientEntity* pEnt2 = m_hEndPoint;
+	IClientEntity* pEnt1 = entitylist->GetBaseEntityFromHandle(m_hStartPoint);
+	IClientEntity* pEnt2 = entitylist->GetBaseEntityFromHandle(m_hEndPoint);
 	if (!pEnt1 || !pEnt2)
 		return;
 
@@ -13589,13 +13589,13 @@ void C_EngineRopeInternal::SetEndEntity(IClientEntity* pEnt)
 
 IClientEntity* C_EngineRopeInternal::GetStartEntity() const
 {
-	return m_hStartPoint;
+	return entitylist->GetBaseEntityFromHandle(m_hStartPoint);
 }
 
 
 IClientEntity* C_EngineRopeInternal::GetEndEntity() const
 {
-	return m_hEndPoint;
+	return entitylist->GetBaseEntityFromHandle(m_hEndPoint);
 }
 
 IMaterial* C_EngineRopeInternal::GetSolidMaterial(void)
@@ -13627,8 +13627,8 @@ bool C_EngineRopeInternal::GetEndPointAttachment(int iPt, Vector& vPos, QAngle& 
 	// By caching the results here, we avoid doing this a bunch of times per frame.
 	if (m_bEndPointAttachmentPositionsDirty || m_bEndPointAttachmentAnglesDirty)
 	{
-		CalculateEndPointAttachment(m_hStartPoint, m_iStartAttachment, m_vCachedEndPointAttachmentPos[0], m_vCachedEndPointAttachmentAngle[0]);
-		CalculateEndPointAttachment(m_hEndPoint, m_iEndAttachment, m_vCachedEndPointAttachmentPos[1], m_vCachedEndPointAttachmentAngle[1]);
+		CalculateEndPointAttachment(entitylist->GetBaseEntityFromHandle(m_hStartPoint), m_iStartAttachment, m_vCachedEndPointAttachmentPos[0], m_vCachedEndPointAttachmentAngle[0]);
+		CalculateEndPointAttachment(entitylist->GetBaseEntityFromHandle(m_hEndPoint), m_iEndAttachment, m_vCachedEndPointAttachmentPos[1], m_vCachedEndPointAttachmentAngle[1]);
 		m_bEndPointAttachmentPositionsDirty = false;
 		m_bEndPointAttachmentAnglesDirty = false;
 	}
@@ -14178,7 +14178,7 @@ bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll)
 
 struct watcher_t
 {
-	ENTHANDLE				hWatcher;
+	CBaseHandle			hWatcher;
 	IWatcherCallback* pWatcherCallback;
 };
 
@@ -14202,7 +14202,7 @@ int C_WatcherList::GetCallbackObjects(IWatcherCallback** pList, int listMax)
 	{
 		next = g_WatcherList.Next(node);
 		watcher_t* pNode = &g_WatcherList.Element(node);
-		if (pNode->hWatcher.Get())
+		if (entitylist->GetBaseEntityFromHandle(pNode->hWatcher))
 		{
 			pList[index] = pNode->pWatcherCallback;
 			index++;
@@ -14227,7 +14227,7 @@ unsigned short C_WatcherList::Find(IHandleEntity* pEntity)
 	{
 		next = g_WatcherList.Next(node);
 		watcher_t* pNode = &g_WatcherList.Element(node);
-		if (pNode->hWatcher.Get() == pEntity)
+		if (entitylist->GetBaseEntityFromHandle(pNode->hWatcher) == pEntity)
 		{
 			return node;
 		}

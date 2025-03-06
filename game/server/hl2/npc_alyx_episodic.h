@@ -42,8 +42,8 @@ public:
 	bool	ShouldPlayerAvoid( void );
 	void	AnalyzeGunfireSound( CSound *pSound );
 	bool	IsValidEnemy( CBaseEntity *pEnemy );
-	void	Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	void	Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 	void	EnemyIgnited( CAI_BaseNPC *pVictim );
 	void	CombineBallSocketed( int iNumBounces );
 	void	AimGun( void );
@@ -95,9 +95,9 @@ public:
 	float	LengthOfLastCombat( void ) const;
 	// bool	IsNavigationUrgent();
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	bool	CanBeHitByMeleeAttack( IServerEntity *pAttacker );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	bool	FCanCheckAttacks();
 	float	GetAttackDamageScale( IHandleEntity *pVictim );
 
@@ -115,8 +115,8 @@ public:
 	float	GetReadinessDecay() { return 60.0f; }
 	virtual bool	IsAllowedToAim();
 
-	virtual void	PainSound( const CTakeDamageInfo &info );
-    virtual void	DeathSound( const CTakeDamageInfo &info );
+	virtual void	PainSound( const ITakeDamageInfo&info );
+    virtual void	DeathSound( const ITakeDamageInfo&info );
 
 	// Hacking and object interaction
 	void	SearchForInteractTargets();

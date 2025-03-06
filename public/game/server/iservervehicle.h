@@ -21,7 +21,7 @@ class CBasePlayer;
 class CBaseCombatCharacter;
 class CNPC_VehicleDriver;
 enum VehicleSeatQuery_e;
-class CTakeDamageInfo;
+class ITakeDamageInfo;
 
 struct vbs_sound_update_t
 {
@@ -63,7 +63,7 @@ public:
 
 	// Can a given passenger take damage?
 	virtual bool			IsPassengerDamagable( int nRole  = VEHICLE_ROLE_DRIVER ) = 0;
-	virtual bool			PassengerShouldReceiveDamage( CTakeDamageInfo &info ) = 0;
+	virtual bool			PassengerShouldReceiveDamage( ITakeDamageInfo &info ) = 0;
 
 	// Is the vehicle upright?
 	virtual bool			IsVehicleUpright( void ) = 0;
@@ -85,7 +85,7 @@ public:
 	virtual void			HandleEntryExitFinish( bool bExitAnimOn, bool bResetAnim ) = 0;
 
 	virtual int			ClassifyPassenger( CBaseCombatCharacter *pPassenger, int defaultClassification ) = 0;
-	virtual float			PassengerDamageModifier( const CTakeDamageInfo &info ) = 0;
+	virtual float			PassengerDamageModifier( const ITakeDamageInfo &info ) = 0;
 
 	// Get me the parameters for this vehicle
 	virtual const vehicleparams_t	*GetVehicleParams( void ) = 0;
@@ -168,7 +168,7 @@ public:
 	virtual bool			AllowMidairExit( CBaseCombatCharacter *pPassenger, int nRole ) = 0;
 	virtual string_t		GetVehicleScriptName() = 0;
 
-	//virtual bool			PassengerShouldReceiveDamage( CTakeDamageInfo &info ) = 0;
+	//virtual bool			PassengerShouldReceiveDamage( ITakeDamageInfo &info ) = 0;
 };
 
 #endif // IVEHICLE_H

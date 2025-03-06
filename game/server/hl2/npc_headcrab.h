@@ -38,11 +38,11 @@ public:
 	bool	HasHeadroom();
 	void	LeapTouch ( IServerEntity *pOther );
 	virtual void TouchDamage( CBaseEntity *pOther );
-	bool	CorpseGib( const CTakeDamageInfo &info );
+	bool	CorpseGib( const ITakeDamageInfo&info );
 	void	Touch( IServerEntity *pOther );
 	Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true );
 	float	GetAutoAimRadius();
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void	Ignite( float flFlameLifetime, bool bNPCOnly = true, float flSize = 0.0f, bool bCalledByLevelDesigner = false );
 
 	float	MaxYawSpeed( void );
@@ -51,9 +51,9 @@ public:
 	Class_T Classify( void );
 	void	HandleAnimEvent( animevent_t *pEvent );
 	int		RangeAttack1Conditions ( float flDot, float flDist );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void	ClampRagdollForce( const Vector &vecForceIn, Vector *vecForceOut );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 	void	BuildScheduleTestBits( void );
 	bool	FValidateHintType( CAI_Hint *pHint );
 
@@ -118,7 +118,7 @@ protected:
 	void InputStartHangingFromCeiling( inputdata_t &inputdata );
 	void InputDropFromCeiling( inputdata_t &inputdata );
 
-	int CalcDamageInfo( CTakeDamageInfo *pInfo );
+	int CalcDamageInfo(ITakeDamageInfo*pInfo );
 	void CreateDust( bool placeDecal = true );
 
 	// Eliminates roll + pitch potentially in the headcrab at canister jump time
@@ -169,8 +169,8 @@ public:
 	Activity NPC_TranslateActivity( Activity eNewActivity );
 
 	void	BiteSound( void );
-	void	PainSound( const CTakeDamageInfo &info );
-	void	DeathSound( const CTakeDamageInfo &info );
+	void	PainSound( const ITakeDamageInfo&info );
+	void	DeathSound( const ITakeDamageInfo&info );
 	void	IdleSound( void );
 	void	AlertSound( void );
 	void	AttackSound( void );
@@ -208,8 +208,8 @@ public:
 	Vector	m_vecJumpVel;
 
 	void	BiteSound( void );
-	void	PainSound( const CTakeDamageInfo &info );
-	void	DeathSound( const CTakeDamageInfo &info );
+	void	PainSound( const ITakeDamageInfo&info );
+	void	DeathSound( const ITakeDamageInfo&info );
 	void	IdleSound( void );
 	void	AlertSound( void );
 	void	AttackSound( void );
@@ -260,10 +260,10 @@ public:
 
 	virtual int	GetSoundInterests( void ) { return (BaseClass::GetSoundInterests() | SOUND_DANGER | SOUND_BULLET_IMPACT); }
 
-	bool IsHeavyDamage( const CTakeDamageInfo &info );
+	bool IsHeavyDamage( const ITakeDamageInfo&info );
 
-	virtual void PainSound( const CTakeDamageInfo &info );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual void IdleSound( void );
 	virtual void AlertSound( void );
 	virtual void ImpactSound( void );

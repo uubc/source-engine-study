@@ -105,7 +105,7 @@ public:
 	virtual void OnMapLoaded( void );						// when the server has changed maps
 	virtual void OnRoundRestart( void );					// when the scenario restarts
 	virtual void OnBeginChangeLevel( void );				// when the server is about to change maps
-	virtual void OnKilled( CBaseCombatCharacter *victim, const CTakeDamageInfo &info );	// when an actor is killed
+	virtual void OnKilled( CBaseCombatCharacter *victim, const ITakeDamageInfo&info );	// when an actor is killed
 	virtual void OnSound( CBaseEntity *source, const Vector &pos, KeyValues *keys );				// when an entity emits a sound
 	virtual void OnSpokeConcept( CBaseCombatCharacter *who, AIConcept_t concept, AI_Response *response );	// when an Actor speaks a concept
 	virtual void OnWeaponFired( CBaseCombatCharacter *whoFired, CBaseCombatWeapon *weapon );		// when someone fires a weapon

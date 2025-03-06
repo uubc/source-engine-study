@@ -220,7 +220,7 @@ static float DamageForce( const Vector &size, float damage )
 //			bitsDamageType - 
 // Output : int
 //-----------------------------------------------------------------------------
-int CNPC_Zombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Zombie::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -241,7 +241,7 @@ int CNPC_Zombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	return BaseClass::OnTakeDamage_Alive( info );
 }
 
-void CNPC_Zombie::PainSound( const CTakeDamageInfo &info )
+void CNPC_Zombie::PainSound( const ITakeDamageInfo&info )
 {
 	if ( random->RandomInt(0,5) < 2)
 	{

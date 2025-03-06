@@ -203,7 +203,7 @@ void CNPC_GroundTurret::PostNPCInit()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CNPC_GroundTurret::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_GroundTurret::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( !info.GetInflictor() )
 	{
@@ -230,7 +230,7 @@ int CNPC_GroundTurret::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_GroundTurret::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_GroundTurret::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -300,7 +300,7 @@ void CNPC_GroundTurret::DeathEffects()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_GroundTurret::DeathSound( const CTakeDamageInfo &info )
+void CNPC_GroundTurret::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_FloorTurret.Die";
 	CPASAttenuationFilter filter(this, soundname);

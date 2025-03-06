@@ -746,7 +746,7 @@ void CNPC_Crow::Takeoff( const Vector &vGoal )
 	}
 }
 
-void CNPC_Crow::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Crow::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo	newInfo = info;
 
@@ -1077,7 +1077,7 @@ void CNPC_Crow::RunTask( const Task_t *pTask )
 // Purpose: Override to do crow specific gibs.
 // Output : Returns true to gib, false to not gib.
 //-----------------------------------------------------------------------------
-bool CNPC_Crow::CorpseGib( const CTakeDamageInfo &info )
+bool CNPC_Crow::CorpseGib( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_Crow.Gib";
 	CPASAttenuationFilter filter(this, soundname);
@@ -1146,7 +1146,7 @@ Activity CNPC_Crow::GetHintActivity( short sHintType, Activity HintsActivity )
 //			flDamage - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-int CNPC_Crow::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Crow::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// TODO: spew a feather or two
 	return BaseClass::OnTakeDamage_Alive( info );
@@ -1341,7 +1341,7 @@ void CNPC_Crow::AlertSound( void )
 }
 
 
-void CNPC_Crow::PainSound( const CTakeDamageInfo &info )
+void CNPC_Crow::PainSound( const ITakeDamageInfo&info )
 {
 	if ( m_iBirdType != BIRDTYPE_CROW )
 		 return;
@@ -1358,7 +1358,7 @@ void CNPC_Crow::PainSound( const CTakeDamageInfo &info )
 }
 
 
-void CNPC_Crow::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Crow::DeathSound( const ITakeDamageInfo&info )
 {
 	if ( m_iBirdType != BIRDTYPE_CROW )
 		 return;

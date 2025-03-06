@@ -63,9 +63,9 @@ public:
 	virtual void	Activate( void );
 	virtual bool	CreateVPhysics( void );
 	virtual void	UpdateOnRemove( void );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 	virtual void	PlayerPenetratingVPhysics( void );
-	virtual int		VPhysicsTakeDamage( const CTakeDamageInfo &info );
+	virtual int		VPhysicsTakeDamage( const ITakeDamageInfo&info );
 	virtual bool	CanBecomeServerRagdoll( void ) { return false; }
 
 #ifdef HL2_EPISODIC

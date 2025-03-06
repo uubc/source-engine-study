@@ -80,7 +80,7 @@ public:
 	virtual void	OnRestore( void );
 	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 	virtual void	UpdateOnRemove( void );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 	virtual bool	ShouldPuntUseLaunchForces( PhysGunForce_t reason ) { return ( reason == PHYSGUN_FORCE_LAUNCHED ); }
 	virtual QAngle	PreferredCarryAngles( void ) { return m_CarryAngles; }
 	virtual bool	HasPreferredCarryAnglesForPlayer( IServerEntity *pPlayer ) { return true; }
@@ -704,7 +704,7 @@ void CWeaponStriderBuster::Detonate( void )
 // Purpose: Intercept damage and decide whether or not we want to trigger
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CWeaponStriderBuster::OnTakeDamage( const CTakeDamageInfo &info )
+int CWeaponStriderBuster::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// If we're attached, any damage from the player makes us trigger
 	CBaseEntity *pInflictor = (CBaseEntity*)info.GetInflictor();

@@ -221,9 +221,9 @@ public:
 
 	//------------------------------------------------------------------------
 	// Event hooks into NextBot system 
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual int OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual int OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual void HandleAnimEvent( animevent_t *event );
 	virtual void OnNavAreaChanged( CNavArea *enteredArea, CNavArea *leftArea );	// invoked (by UpdateLastKnownArea) when we enter a new nav area (or it is reset to NULL)
 	virtual void Touch( IServerEntity *other );
@@ -844,7 +844,7 @@ inline bool NextBotPlayer< PlayerType >::IsAbleToAutoCenterOnLadders( void ) con
 
 //----------------------------------------------------------------------------------------------------------
 template < typename PlayerType >
-inline int NextBotPlayer< PlayerType >::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+inline int NextBotPlayer< PlayerType >::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_BURN )
 	{
@@ -865,7 +865,7 @@ inline int NextBotPlayer< PlayerType >::OnTakeDamage_Alive( const CTakeDamageInf
 
 //----------------------------------------------------------------------------------------------------------
 template < typename PlayerType >
-inline int NextBotPlayer< PlayerType >::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+inline int NextBotPlayer< PlayerType >::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_BURN )
 	{
@@ -886,7 +886,7 @@ inline int NextBotPlayer< PlayerType >::OnTakeDamage_Dying( const CTakeDamageInf
 
 //----------------------------------------------------------------------------------------------------------
 template < typename PlayerType >
-inline void NextBotPlayer< PlayerType >::Event_Killed( const CTakeDamageInfo &info )
+inline void NextBotPlayer< PlayerType >::Event_Killed( const ITakeDamageInfo&info )
 {
 	// propagate event to my components
 	OnKilled( info );

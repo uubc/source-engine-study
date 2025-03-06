@@ -999,7 +999,7 @@ void CBaseHeadcrab::LeapTouch( IServerEntity *pOther )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CBaseHeadcrab::CalcDamageInfo( CTakeDamageInfo *pInfo )
+int CBaseHeadcrab::CalcDamageInfo(ITakeDamageInfo*pInfo )
 {
 	pInfo->Set( this, this, sk_headcrab_melee_dmg.GetFloat(), DMG_SLASH );
 	CalculateMeleeDamageForce( pInfo, GetEngineObject()->GetAbsVelocity(), GetEngineObject()->GetAbsOrigin() );
@@ -1666,7 +1666,7 @@ int CBaseHeadcrab::RangeAttack1Conditions( float flDot, float flDist )
 // Purpose: Override to do headcrab specific gibs
 // Output :
 //------------------------------------------------------------------------------
-bool CBaseHeadcrab::CorpseGib( const CTakeDamageInfo &info )
+bool CBaseHeadcrab::CorpseGib( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_HeadCrab.Gib";
 	CPASAttenuationFilter filter(this, soundname);
@@ -1721,7 +1721,7 @@ void CBaseHeadcrab::Touch( IServerEntity *pOther )
 //			bitsDamageType - 
 // Output : 
 //-----------------------------------------------------------------------------
-int CBaseHeadcrab::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CBaseHeadcrab::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -1802,7 +1802,7 @@ void CBaseHeadcrab::ClampRagdollForce( const Vector &vecForceIn, Vector *vecForc
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CBaseHeadcrab::Event_Killed( const CTakeDamageInfo &info )
+void CBaseHeadcrab::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Create a little decal underneath the headcrab
 	// This type of damage combination happens from dynamic scripted sequences
@@ -2037,7 +2037,7 @@ int CBaseHeadcrab::SelectFailSchedule( int failedSchedule, int failedTask, AI_Ta
 //			&vecDir - 
 //			*ptr - 
 //-----------------------------------------------------------------------------
-void CBaseHeadcrab::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBaseHeadcrab::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo	newInfo = info;
 
@@ -2513,7 +2513,7 @@ void CHeadcrab::AlertSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHeadcrab::PainSound( const CTakeDamageInfo &info )
+void CHeadcrab::PainSound( const ITakeDamageInfo&info )
 {
 	if( IsOnFire() && random->RandomInt( 0, HEADCRAB_BURN_SOUND_FREQUENCY ) > 0 )
 	{
@@ -2536,7 +2536,7 @@ void CHeadcrab::PainSound( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHeadcrab::DeathSound( const CTakeDamageInfo &info )
+void CHeadcrab::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_HeadCrab.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -2687,7 +2687,7 @@ void CFastHeadcrab::AlertSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CFastHeadcrab::PainSound( const CTakeDamageInfo &info )
+void CFastHeadcrab::PainSound( const ITakeDamageInfo&info )
 {
 	if( IsOnFire() && random->RandomInt( 0, HEADCRAB_BURN_SOUND_FREQUENCY ) > 0 )
 	{
@@ -2708,7 +2708,7 @@ void CFastHeadcrab::PainSound( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CFastHeadcrab::DeathSound( const CTakeDamageInfo &info )
+void CFastHeadcrab::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_FastHeadcrab.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -3684,7 +3684,7 @@ void CBlackHeadcrab::HandleAnimEvent( animevent_t *pEvent )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CBlackHeadcrab::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CBlackHeadcrab::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	if ( !HasMemory(bits_MEMORY_FLINCHED) && info.GetDamage() > 1.0f )
 	{
@@ -3748,7 +3748,7 @@ void CBlackHeadcrab::AlertSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBlackHeadcrab::PainSound( const CTakeDamageInfo &info )
+void CBlackHeadcrab::PainSound( const ITakeDamageInfo&info )
 {
 	if( IsOnFire() && random->RandomInt( 0, HEADCRAB_BURN_SOUND_FREQUENCY ) > 0 )
 	{
@@ -3771,7 +3771,7 @@ void CBlackHeadcrab::PainSound( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBlackHeadcrab::DeathSound( const CTakeDamageInfo &info )
+void CBlackHeadcrab::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_BlackHeadcrab.Die";
 	CPASAttenuationFilter filter(this, soundname);

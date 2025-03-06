@@ -152,7 +152,7 @@ typedef CUtlVector< SCSSWeaponData* > CSSWeaponData;
 
 struct SCSSDeathData : public BaseStatData
 {
-	SCSSDeathData( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	SCSSDeathData( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		m_bUseGlobalData = false;
 
@@ -235,20 +235,20 @@ public:
 	virtual void Event_LevelInit( void );
 	virtual void Event_LevelShutdown( float flElapsed );
 	virtual void Event_ShotFired( CBasePlayer *pPlayer, CBaseCombatWeapon* pWeapon );
-	virtual void Event_ShotHit( CBasePlayer *pPlayer, const CTakeDamageInfo &info );
-	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info );
-	virtual void Event_PlayerKilled_PreWeaponDrop( CBasePlayer *pPlayer, const CTakeDamageInfo &info );
+	virtual void Event_ShotHit( CBasePlayer *pPlayer, const ITakeDamageInfo&info );
+	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info );
+	virtual void Event_PlayerKilled_PreWeaponDrop( CBasePlayer *pPlayer, const ITakeDamageInfo&info );
 	void UpdatePlayerRoundStats(int winner);
 	virtual void Event_PlayerConnected( CBasePlayer *pPlayer );
 	virtual void Event_PlayerDisconnected( CBasePlayer *pPlayer );
 	virtual void Event_WindowShattered( CBasePlayer *pPlayer );
-	virtual void Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const ITakeDamageInfo&info );
 			
 
 	// CSS specific events
     void Event_BombPlanted( CCSPlayer *pPlayer );
     void Event_BombDefused( CCSPlayer *pPlayer );
-	void Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDamageInfo &info );
+	void Event_PlayerDamage( CBasePlayer *pBasePlayer, const ITakeDamageInfo&info );
 	void Event_BombExploded( CCSPlayer *pPlayer );
 	void Event_MoneyEarned( CCSPlayer *pPlayer, int moneyEarned );
 	void Event_MoneySpent( CCSPlayer *pPlayer, int moneySpent, const char *pItemName );
@@ -280,7 +280,7 @@ public:
  	void						IncrementTeamStat( int iTeamIndex, int iStatIndex, int iAmount );
 	void                        CalcDominationAndRevenge( CCSPlayer *pAttacker, CCSPlayer *pVictim, int *piDeathFlags );
     void                        CalculateOverkill( CCSPlayer* pAttacker, CCSPlayer* pVictim );
-	void						PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	void						PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
 	void						IncrementStat( CCSPlayer* pPlayer, CSStatType_t statId, int iValue, bool bPlayerOnly = false );
 	// Steamworks Gamestats 

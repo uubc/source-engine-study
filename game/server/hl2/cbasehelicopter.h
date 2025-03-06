@@ -81,7 +81,7 @@ public:
 	void Precache( void );
 	virtual void UpdateOnRemove();
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void StopLoopingSounds();
 
 	int  BloodColor( void ) { return DONT_BLEED; }
@@ -116,7 +116,7 @@ public:
 	virtual void ApplySidewaysDrag( const Vector &vecRight );
 	virtual void ApplyGeneralDrag( void );
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	virtual bool FireGun( void );
 

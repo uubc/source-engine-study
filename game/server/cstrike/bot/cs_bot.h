@@ -838,10 +838,10 @@ public:
 	//
 
 	/// invoked when injured by something (EXTEND) - returns the amount of damage inflicted
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 	/// invoked when killed (EXTEND)
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 
 	virtual bool BumpWeapon( CBaseCombatWeapon *pWeapon );		///< invoked when in contact with a CWeaponBox
 

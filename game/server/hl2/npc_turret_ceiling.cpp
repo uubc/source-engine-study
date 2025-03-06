@@ -115,7 +115,7 @@ public:
 	
 	float	MaxYawSpeed( void );
 
-	int		OnTakeDamage( const CTakeDamageInfo &inputInfo );
+	int		OnTakeDamage( const ITakeDamageInfo&inputInfo );
 
 	virtual bool CanBeAnEnemyOf( CBaseEntity *pEnemy );
 
@@ -333,7 +333,7 @@ void CNPC_CeilingTurret::Spawn( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CNPC_CeilingTurret::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CNPC_CeilingTurret::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	if ( !m_takedamage )
 		return 0;

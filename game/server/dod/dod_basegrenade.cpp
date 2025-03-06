@@ -325,7 +325,7 @@ void CDODBaseGrenade::Use( IServerEntity *pActivator, IServerEntity *pCaller, US
 	}
 }
 
-int CDODBaseGrenade::OnTakeDamage( const CTakeDamageInfo &info )
+int CDODBaseGrenade::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if( info.GetDamageType() & DMG_BULLET )
 	{

@@ -142,9 +142,9 @@ public:
 	// No range attacks
 	int RangeAttack1Conditions ( float flDot, float flDist ) { return( 0 ); }
 	
-	virtual float GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info );
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual float GetHitgroupDamageMultiplier( int iHitGroup, const ITakeDamageInfo&info );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	virtual float	GetReactionDelay( CBaseEntity *pEnemy ) { return 0.0; }
 
 	virtual int SelectSchedule ( void );
@@ -160,24 +160,24 @@ public:
 	void GatherConditions( void );
 	void PrescheduleThink( void );
 
-	virtual void Event_Killed( const CTakeDamageInfo &info );
-	virtual bool BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
+	virtual bool BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector );
 	void StopLoopingSounds();
 	virtual void OnScheduleChange( void );
 
 	virtual void PoundSound();
 
 	// Custom damage/death 
-	bool ShouldIgnite( const CTakeDamageInfo &info );
+	bool ShouldIgnite( const ITakeDamageInfo&info );
 	bool ShouldIgniteZombieGib( void );
-	virtual bool IsChopped( const CTakeDamageInfo &info );
-	virtual bool IsSquashed( const CTakeDamageInfo &info ) { return false; }
-	virtual void DieChopped( const CTakeDamageInfo &info );
+	virtual bool IsChopped( const ITakeDamageInfo&info );
+	virtual bool IsSquashed( const ITakeDamageInfo&info ) { return false; }
+	virtual void DieChopped( const ITakeDamageInfo&info );
 	virtual void Ignite( float flFlameLifetime, bool bNPCOnly = true, float flSize = 0.0f, bool bCalledByLevelDesigner = false );
 	void CopyRenderColorTo( CBaseEntity *pOther );
 
-	virtual bool ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold );
-	virtual HeadcrabRelease_t ShouldReleaseHeadcrab( const CTakeDamageInfo &info, float flDamageThreshold );
+	virtual bool ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold );
+	virtual HeadcrabRelease_t ShouldReleaseHeadcrab( const ITakeDamageInfo&info, float flDamageThreshold );
 
 	// Headcrab releasing/breaking apart
 	void RemoveHead( void );
@@ -205,7 +205,7 @@ public:
 
 	// Sounds & sound envelope
 	virtual bool ShouldPlayFootstepMoan( void );
-	virtual void PainSound( const CTakeDamageInfo &info ) = 0;
+	virtual void PainSound( const ITakeDamageInfo&info ) = 0;
 	virtual void AlertSound( void ) = 0;
 	virtual void IdleSound( void ) = 0;
 	virtual void AttackSound( void ) = 0;

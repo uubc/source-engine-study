@@ -55,8 +55,8 @@ public:
 	void HandleAnimEvent( animevent_t *pEvent );
 	Activity NPC_TranslateActivity( Activity eNewActivity );
 
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 	
 	WeaponProficiency_t CalcWeaponProficiency( CBaseCombatWeapon *pWeapon );
 	Vector GetActualShootPosition( const Vector &shootOrigin );
@@ -69,7 +69,7 @@ public:
 
 	void GatherConditions();
 
-	bool PassesDamageFilter( const CTakeDamageInfo &info );
+	bool PassesDamageFilter( const ITakeDamageInfo&info );
 	void OnKilledNPC( CBaseCombatCharacter *pKilled );
 
 	bool IsJumpLegal( const Vector &startPos, const Vector &apex, const Vector &endPos ) const;
@@ -287,14 +287,14 @@ void CNPC_Monk::Spawn()
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CNPC_Monk::PainSound( const CTakeDamageInfo &info )
+void CNPC_Monk::PainSound( const ITakeDamageInfo&info )
 {
 	SpeakIfAllowed( TLK_WOUND );
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CNPC_Monk::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Monk::DeathSound( const ITakeDamageInfo&info )
 {
 	// Sentences don't play on dead NPCs
 	SentenceStop();
@@ -633,7 +633,7 @@ void CNPC_Monk::GatherConditions()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_Monk::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CNPC_Monk::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	if ( ((IServerEntity*)info.GetAttacker())->ClassMatches( "npc_headcrab_black" ) || ((IServerEntity*)info.GetAttacker())->ClassMatches( "npc_headcrab_poison" ) )
 		return false;

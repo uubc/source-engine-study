@@ -223,11 +223,11 @@ public:
 	void UploadLevelStats( void );
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
-	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
-	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore, bool bIgnoreWorld = false );
-	void RadiusStun( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius );
+	virtual void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
+	virtual void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore, bool bIgnoreWorld = false );
+	void RadiusStun( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius );
 	virtual void Think();
-	virtual void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 	virtual void ClientDisconnected( int pClient );
 	virtual float FlPlayerFallDamage( CBasePlayer *pPlayer );
 
@@ -244,7 +244,7 @@ public:
 	bool IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer );
 	virtual void PlayerSpawn( CBasePlayer *pPlayer );
 
-	int DODPointsForKill( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	int DODPointsForKill( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
 	//Round state machine
 	void State_Transition( DODRoundState newState );
@@ -324,7 +324,7 @@ public:
 	void CopyGamePlayLogic( const CDODGamePlayRules otherGamePlay );
 
 
-	void DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	void DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
 	virtual bool CanHavePlayerItem( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon );
 
@@ -380,7 +380,7 @@ private:
 	bool CheckTimeLimit( void );
 	bool CheckWinLimit( void );
 
-	void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld );
+	void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld );
 	float GetExplosionDamageAdjustment(Vector & vecSrc, Vector & vecEnd, CBaseEntity *pTarget, CBaseEntity *pEntityToIgnore); // returns multiplier between 0.0 and 1.0 that is the percentage of any damage done from vecSrc to vecEnd that actually makes it.
 	float GetAmountOfEntityVisible(Vector & src, CBaseEntity *pTarget, CBaseEntity *pEntityToIgnore); // returns a value from 0 to 1 that is the percentage of player visible from src.
 

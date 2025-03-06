@@ -2484,7 +2484,7 @@ void CNPC_MetroPolice::AlertSound( void )
 // Purpose: 
 //
 //-----------------------------------------------------------------------------
-void CNPC_MetroPolice::DeathSound( const CTakeDamageInfo &info )
+void CNPC_MetroPolice::DeathSound( const ITakeDamageInfo&info )
 {
 	if ( IsOnFire() )
 		return;
@@ -2633,7 +2633,7 @@ void CNPC_MetroPolice::IdleSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_MetroPolice::PainSound( const CTakeDamageInfo &info )
+void CNPC_MetroPolice::PainSound( const ITakeDamageInfo&info )
 {
 	if ( gpGlobals->curtime < m_flNextPainSoundTime )
 		return;
@@ -3087,7 +3087,7 @@ void CNPC_MetroPolice::ReleaseManhack( void )
 //-----------------------------------------------------------------------------
 // 
 //-----------------------------------------------------------------------------
-void CNPC_MetroPolice::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_MetroPolice::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Release the manhack if we're in the middle of deploying him
 	if ( m_hManhack && m_hManhack->IsAlive() )
@@ -3804,7 +3804,7 @@ int CNPC_MetroPolice::SelectAirboatCombatSchedule()
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_MetroPolice::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_MetroPolice::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	// Metropolice considers bullet fire heavy damage
 	if ( info.GetDamageType() & DMG_BULLET )
@@ -3816,7 +3816,7 @@ bool CNPC_MetroPolice::IsHeavyDamage( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // TraceAttack
 //-----------------------------------------------------------------------------
-void CNPC_MetroPolice::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_MetroPolice::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// This is needed so we can keep track of the direction of the shot
 	// because we're going to use it to choose the flinch animation
@@ -4859,7 +4859,7 @@ void CNPC_MetroPolice::RunTask( const Task_t *pTask )
 //			bitsDamageType - 
 // Output : int
 //-----------------------------------------------------------------------------
-int CNPC_MetroPolice::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_MetroPolice::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 

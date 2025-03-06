@@ -597,7 +597,7 @@ bool CNPC_Antlion::CanBecomeRagdoll()
 // Purpose: 
 // Input  : *pVictim - 
 //-----------------------------------------------------------------------------
-void CNPC_Antlion::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Antlion::Event_Killed( const ITakeDamageInfo&info )
 {
 	//Turn off wings
 	SetWings( false );
@@ -2672,7 +2672,7 @@ void CNPC_Antlion::Ignite ( float flFlameLifetime, bool bNPCOnly, float flSize, 
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_Antlion::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Antlion::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo newInfo = info;
 
@@ -2770,7 +2770,7 @@ inline bool CNPC_Antlion::IsFlipped( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Antlion::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Antlion::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo newInfo = info;
 
@@ -2871,7 +2871,7 @@ void CNPC_Antlion::IdleSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Antlion::PainSound( const CTakeDamageInfo &info )
+void CNPC_Antlion::PainSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_Antlion.Pain";
 	CPASAttenuationFilter filter(this, soundname);
@@ -3937,7 +3937,7 @@ void CNPC_Antlion::PrescheduleThink( void )
 //			bitsDamageType - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Antlion::IsLightDamage( const CTakeDamageInfo &info )
+bool CNPC_Antlion::IsLightDamage( const ITakeDamageInfo&info )
 {
 	if ( ( random->RandomInt( 0, 1 ) ) && ( info.GetDamage() > 3 ) )
 		return true;
@@ -4095,7 +4095,7 @@ void CNPC_Antlion::GatherEnemyConditions( CBaseEntity *pEnemy )
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Antlion::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Antlion::ShouldGib( const ITakeDamageInfo&info )
 {
 	// If we're being hoisted, we only want to gib when the barnacle hurts us with his bite!
 	if (GetEngineObject()->IsEFlagSet( EFL_IS_BEING_LIFTED_BY_BARNACLE ) )
@@ -4127,7 +4127,7 @@ bool CNPC_Antlion::ShouldGib( const CTakeDamageInfo &info )
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Antlion::CorpseGib( const CTakeDamageInfo &info )
+bool CNPC_Antlion::CorpseGib( const ITakeDamageInfo&info )
 {
 #ifdef HL2_EPISODIC
 
@@ -4581,7 +4581,7 @@ void CNPC_Antlion::DoPoisonBurst()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CNPC_Antlion::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_Antlion::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	if ( hl2_episodic.GetBool() && IsWorker() )
 	{

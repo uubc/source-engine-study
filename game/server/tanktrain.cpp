@@ -44,8 +44,8 @@ public:
 	void Spawn( void );
 
 	// Filter out damage messages that don't contain blast damage (impervious to other forms of attack)
-	int	OnTakeDamage( const CTakeDamageInfo &info );
-	void Event_Killed( const CTakeDamageInfo &info );
+	int	OnTakeDamage( const ITakeDamageInfo&info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void Blocked( IServerEntity *pOther )
 	{
 		// FIxme, set speed to zero?
@@ -74,7 +74,7 @@ void CFuncTankTrain::Spawn( void )
 }
 
 // Filter out damage messages that don't contain blast damage (impervious to other forms of attack)
-int	CFuncTankTrain::OnTakeDamage( const CTakeDamageInfo &info )
+int	CFuncTankTrain::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( ! (info.GetDamageType() & DMG_BLAST) )
 		return 0;
@@ -90,7 +90,7 @@ int	CFuncTankTrain::OnTakeDamage( const CTakeDamageInfo &info )
 //			flDamage - The damage that the killing blow inflicted.
 //			bitsDamageType - Bitfield of damage types that were inflicted.
 //-----------------------------------------------------------------------------
-void CFuncTankTrain::Event_Killed( const CTakeDamageInfo &info )
+void CFuncTankTrain::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_takedamage = DAMAGE_NO;
 	m_lifeState = LIFE_DEAD;

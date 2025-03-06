@@ -443,7 +443,7 @@ void CBoneFollower::Touch( IServerEntity *pOther )
 //-----------------------------------------------------------------------------
 // Purpose: Pass on trace attack calls to the entity we're following
 //-----------------------------------------------------------------------------
-void CBoneFollower::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBoneFollower::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	IEngineObjectServer *pOwner = GetEngineObject()->GetOwnerEntity();
 	if ( pOwner )

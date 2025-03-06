@@ -48,7 +48,7 @@ public:
 
 	void StartTask( const Task_t *pTask );
 	void RunTask( const Task_t *pTask );
-	int	 OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	int	 OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 	void TraceAttack( CBaseEntity *pAttacker, float flDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType);
 
 	virtual int PlayScriptedSentence( const char *pszSentence, float duration, float volume, soundlevel_t soundlevel, bool bConcurrent, CBaseEntity *pListener );
@@ -200,7 +200,7 @@ void CNPC_GMan::RunTask( const Task_t *pTask )
 //=========================================================
 // Override all damage
 //=========================================================
-int CNPC_GMan::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_GMan::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	m_iHealth = m_iMaxHealth / 2; // always trigger the 50% damage aitrigger
 

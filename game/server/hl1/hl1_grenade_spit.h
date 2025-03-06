@@ -34,7 +34,7 @@ public:
 	void		Precache( void );
 	void		SpitThink( void );
 	void 		GrenadeSpitTouch( IServerEntity *pOther );
-	void		Event_Killed( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
 	void		SetSpitSize(int nSize);
 
 	int			m_nSquidSpitSprite;

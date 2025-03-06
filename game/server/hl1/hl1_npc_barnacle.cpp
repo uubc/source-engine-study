@@ -139,7 +139,7 @@ void CNPC_Barnacle::Spawn()
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Barnacle::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int	CNPC_Barnacle::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 	if ( info.GetDamageType() & DMG_CLUB )
@@ -394,7 +394,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Barnacle::Event_Killed( const ITakeDamageInfo&info )
 {
 	GetEngineObject()->AddSolidFlags( FSOLID_NOT_SOLID );
 	m_takedamage		= DAMAGE_NO;

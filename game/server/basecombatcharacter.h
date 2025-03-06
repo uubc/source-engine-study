@@ -130,7 +130,7 @@ public:
 	virtual const impactdamagetable_t	&GetPhysicsImpactDamageTable( void );
 
 	int					TakeHealth( float flHealth, int bitsDamageType );
-	void				CauseDeath( const CTakeDamageInfo &info );
+	void				CauseDeath( const ITakeDamageInfo&info );
 
 	virtual	bool		FVisible ( CBaseEntity *pEntity, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL ); // true iff the parameter can be seen by me.
 	virtual bool		FVisible( const Vector &vecTarget, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL )	{ return BaseClass::FVisible( vecTarget, traceMask, ppBlocker ); }
@@ -251,12 +251,12 @@ public:
 	// Damage
 	// -----------------------
 	// Don't override this for characters, override the per-life-state versions below
-	virtual int				OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int				OnTakeDamage( const ITakeDamageInfo&info );
 
 	// Override these to control how your character takes damage in different states
-	virtual int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual int				OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	virtual int				OnTakeDamage_Dead( const CTakeDamageInfo &info );
+	virtual int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual int				OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	virtual int				OnTakeDamage_Dead( const ITakeDamageInfo&info );
 
 	virtual float			GetAliveDuration( void ) const;			// return time we have been alive (only valid when alive)
 
@@ -266,25 +266,25 @@ public:
 	virtual float			GetTimeSinceLastInjury( int team = TEAM_ANY ) const;		// return time since we were hurt by a member of the given team
 
 
-	virtual void			OnPlayerKilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info ) {}
+	virtual void			OnPlayerKilledOther( CBaseEntity *pVictim, const ITakeDamageInfo&info ) {}
 
 		// utility function to calc damage force
-	Vector					CalcDamageForceVector( const CTakeDamageInfo &info );
+	Vector					CalcDamageForceVector( const ITakeDamageInfo&info );
 
 	virtual int				BloodColor();
 	virtual Activity		GetDeathActivity( void );
 
-	virtual bool			CorpseGib( const CTakeDamageInfo &info );
+	virtual bool			CorpseGib( const ITakeDamageInfo&info );
 	virtual void			CorpseFade( void );	// Called instead of GibNPC() when gibs are disabled
 	virtual bool			HasHumanGibs( void );
 	virtual bool			HasAlienGibs( void );
-	virtual bool			ShouldGib( const CTakeDamageInfo &info ) { return false; }	// Always ragdoll, unless specified by the leaf class
+	virtual bool			ShouldGib( const ITakeDamageInfo&info ) { return false; }	// Always ragdoll, unless specified by the leaf class
 
 	float GetDamageAccumulator() { return m_flDamageAccumulator; }
 	int	  GetDamageCount( void ) { return m_iDamageCount; }	// # of times NPC has been damaged.  used for tracking 1-shot kills.
 
 	// Character killed (only fired once)
-	virtual void			Event_Killed( const CTakeDamageInfo &info );
+	virtual void			Event_Killed( const ITakeDamageInfo&info );
 
 	// Killed a character
 	void InputKilledNPC( inputdata_t &inputdata );
@@ -293,13 +293,13 @@ public:
 	// Exactly one of these happens immediately after killed (gibbed may happen later when the corpse gibs)
 	// Character gibbed or faded out (violence controls) (only fired once)
 	// returns true if gibs were spawned
-	virtual bool			Event_Gibbed( const CTakeDamageInfo &info );
+	virtual bool			Event_Gibbed( const ITakeDamageInfo&info );
 	// Character entered the dying state without being gibbed (only fired once)
-	virtual void			Event_Dying( const CTakeDamageInfo &info );
+	virtual void			Event_Dying( const ITakeDamageInfo&info );
 	virtual void			Event_Dying();
 	// character died and should become a ragdoll now
 	// return true if converted to a ragdoll, false to use AI death
-	virtual bool			BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector );
+	virtual bool			BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector );
 	virtual void			FixupBurningServerRagdoll( CBaseEntity *pRagdoll );
 
 	virtual bool			BecomeRagdollBoogie( CBaseEntity *pKiller, const Vector &forceVector, float duration, int flags );
@@ -581,7 +581,7 @@ inline void	CBaseCombatCharacter::PowerupThink( int iPowerup )						{ return; }
 
 EXTERN_SEND_TABLE(DT_BaseCombatCharacter);
 
-void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
+void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
 
 //-----------------------------------------------------------------------------
 // Purpose: 

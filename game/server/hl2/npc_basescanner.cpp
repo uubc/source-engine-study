@@ -386,7 +386,7 @@ void CNPC_BaseScanner::StartTask( const Task_t *pTask )
 //------------------------------------------------------------------------------
 // Purpose: Override to split in two when attacked
 //------------------------------------------------------------------------------
-int CNPC_BaseScanner::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_BaseScanner::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Start smoking when we're nearly dead
 	if ( m_iHealth < ( m_iMaxHealth - ( m_iMaxHealth / 4 ) ) )
@@ -400,7 +400,7 @@ int CNPC_BaseScanner::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 // Purpose: Override to split in two when attacked
 //------------------------------------------------------------------------------
-int CNPC_BaseScanner::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int CNPC_BaseScanner::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	// do the damage
 	m_iHealth -= info.GetDamage();
@@ -417,7 +417,7 @@ int CNPC_BaseScanner::OnTakeDamage_Dying( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CNPC_BaseScanner::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_BaseScanner::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamageType() & DMG_BULLET)
 	{
@@ -666,7 +666,7 @@ void CNPC_BaseScanner::StopLoopingSounds(void)
 //			flDamage - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-void CNPC_BaseScanner::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_BaseScanner::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Copy off the takedamage info that killed me, since we're not going to call
 	// up into the base class's Event_Killed() until we gib. (gibbing is ultimate death)
@@ -1614,7 +1614,7 @@ void CNPC_BaseScanner::AlertSound(void)
 //------------------------------------------------------------------------------
 // Purpose:
 //------------------------------------------------------------------------------
-void CNPC_BaseScanner::DeathSound( const CTakeDamageInfo &info )
+void CNPC_BaseScanner::DeathSound( const ITakeDamageInfo&info )
 {
 	ScannerEmitSound( "Die" );
 }
@@ -1654,7 +1654,7 @@ void CNPC_BaseScanner::IdleSound(void)
 //-----------------------------------------------------------------------------
 // Purpose: Plays a sound when hurt.
 //-----------------------------------------------------------------------------
-void CNPC_BaseScanner::PainSound( const CTakeDamageInfo &info )
+void CNPC_BaseScanner::PainSound( const ITakeDamageInfo&info )
 {
 	ScannerEmitSound( "Pain" );
 }

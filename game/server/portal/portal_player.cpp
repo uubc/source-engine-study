@@ -1719,7 +1719,7 @@ void CPortal_Player::Jump( void )
 	BaseClass::Jump();
 }
 
-void CPortal_Player::Event_Killed( const CTakeDamageInfo &info )
+void CPortal_Player::Event_Killed( const ITakeDamageInfo&info )
 {
 	//update damage info with our accumulated physics force
 	CTakeDamageInfo subinfo = info;
@@ -1775,7 +1775,7 @@ void CPortal_Player::Event_Killed( const CTakeDamageInfo &info )
 	}
 }
 
-int CPortal_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CPortal_Player::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo inputInfoCopy( inputInfo );
 
@@ -1857,7 +1857,7 @@ int CPortal_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	return ret;
 }
 
-int CPortal_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CPortal_Player::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// set damage type sustained
 	m_bitsDamageType |= info.GetDamageType();

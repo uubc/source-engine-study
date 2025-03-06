@@ -291,7 +291,7 @@ bool CSingleplayWorld::Damage_ShouldNotBleed( int iDmgType )
 
 	//=========================================================
 	//=========================================================
-	bool CSingleplayWorld::AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info )
+	bool CSingleplayWorld::AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info )
 	{
 		return true;
 	}
@@ -345,14 +345,14 @@ bool CSingleplayWorld::Damage_ShouldNotBleed( int iDmgType )
 	//=========================================================
 	// PlayerKilled - someone/something killed this player
 	//=========================================================
-	void CSingleplayWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CSingleplayWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 	}
 
 	//=========================================================
 	// Deathnotice
 	//=========================================================
-	void CSingleplayWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CSingleplayWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 	}
 

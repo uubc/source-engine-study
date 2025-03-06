@@ -46,7 +46,7 @@ public:
 	virtual float		MaxYawSpeed( void );
 	virtual Vector		EyePosition( void );
 	virtual void		UpdateOnRemove( void );
-	virtual int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	virtual bool		QuerySeeEntity( CBaseEntity *pEntity, bool bOnlyHateOrFearIfNPC = false );
 	virtual void		StartTask( const Task_t *pTask );
 	virtual void		RunTask( const Task_t *pTask );
@@ -648,7 +648,7 @@ Vector CNPC_Combine_Cannon::GetBulletOrigin( void )
 //-----------------------------------------------------------------------------
 // Purpose: Nothing kills the cannon but entity I/O
 //-----------------------------------------------------------------------------
-int CNPC_Combine_Cannon::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Combine_Cannon::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// We are invulnerable to normal attacks for the moment
 	return 0;

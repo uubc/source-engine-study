@@ -30,8 +30,6 @@
 
 //extern IVEngineClient* engine;
 
-typedef CHandle<IClientEntity> ENTHANDLE;
-
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return clientdll->AllocPooledString(pStr);
 }
@@ -85,7 +83,7 @@ public:
 	QAngle TransformAnglesToPlayerSpace(const QAngle& anglesIn, IClientEntity* pPlayer);
 	QAngle TransformAnglesFromPlayerSpace(const QAngle& anglesIn, IClientEntity* pPlayer);
 
-	IClientEntity* GetAttached() { return (IClientEntity*)m_attachedEntity; }
+	IClientEntity* GetAttached() { return entitylist->GetBaseEntityFromHandle(m_attachedEntity); }
 	const QAngle& GetAttachedAnglesPlayerSpace() { return m_attachedAnglesPlayerSpace; }
 	void SetAttachedAnglesPlayerSpace(const QAngle& attachedAnglesPlayerSpace) { m_attachedAnglesPlayerSpace = attachedAnglesPlayerSpace; }
 	const Vector& GetAttachedPositionObjectSpace() { return m_attachedPositionObjectSpace; }
@@ -116,7 +114,7 @@ private:
 	float			m_flLoadWeight;
 	float			m_savedRotDamping[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 	float			m_savedMass[VPHYSICS_MAX_OBJECT_LIST_COUNT];
-	ENTHANDLE		m_attachedEntity;
+	CBaseHandle		m_attachedEntity;
 	QAngle			m_vecPreferredCarryAngles;
 	bool			m_bHasPreferredCarryAngles;
 	float			m_flDistanceOffset;
@@ -132,7 +130,7 @@ private:
 	bool			m_bAllowObjectOverhead; // Can the player hold this object directly overhead? (Default is NO)
 #endif // !CLIENT_DLL
 	//set when a held entity is penetrating another through a portal. Needed for special fixes
-	ENTHANDLE			m_PenetratedEntity;
+	CBaseHandle			m_PenetratedEntity;
 	int				m_frameCount;
 };
 
@@ -1332,7 +1330,7 @@ protected:
 	Vector							m_vecNetworkOrigin = Vector(0, 0, 0);
 	QAngle							m_angNetworkAngles = QAngle(0, 0, 0);
 	// The moveparent received from networking data
-	CHandle<IClientEntity>			m_hNetworkMoveParent = NULL;
+	CBaseHandle						m_hNetworkMoveParent = NULL;
 	unsigned char					m_iParentAttachment; // 0 if we're relative to the parent's absorigin and absangles.
 	unsigned char					m_iOldParentAttachment;
 
@@ -1344,7 +1342,7 @@ protected:
 	int								touchStamp;
 	int								m_fDataObjectTypes;
 
-	ENTHANDLE							m_hGroundEntity;
+	CBaseHandle							m_hGroundEntity;
 	float							m_flGroundChangeTime;
 
 	string_t						m_ModelName;
@@ -1548,8 +1546,8 @@ protected:
 	// Interpolation says don't draw yet
 	bool							m_bReadyToDraw;
 	// The owner!
-	ENTHANDLE					m_hOwnerEntity;
-	ENTHANDLE					m_hEffectEntity;
+	CBaseHandle					m_hOwnerEntity;
+	CBaseHandle					m_hEffectEntity;
 	C_GrabControllerInternal		m_grabController;
 };
 
@@ -1648,7 +1646,7 @@ inline const QAngle& C_EngineObjectInternal::GetNetworkAngles() const
 }
 
 inline IEngineObjectClient* C_EngineObjectInternal::GetNetworkMoveParent() {
-	return m_hNetworkMoveParent.Get()? m_hNetworkMoveParent.Get()->GetEngineObject():NULL;
+	return entitylist->GetBaseEntityFromHandle(m_hNetworkMoveParent) ? entitylist->GetBaseEntityFromHandle(m_hNetworkMoveParent)->GetEngineObject() : NULL;
 }
 
 inline unsigned char C_EngineObjectInternal::GetParentAttachment() const
@@ -2393,12 +2391,12 @@ inline void C_EngineObjectInternal::SetRenderColorA(byte a)
 
 inline C_EngineObjectInternal* C_EngineObjectInternal::GetOwnerEntity() const
 {
-	return m_hOwnerEntity.Get() ? (C_EngineObjectInternal*)m_hOwnerEntity.Get()->GetEngineObject() : NULL;
+	return entitylist->GetBaseEntityFromHandle(m_hOwnerEntity) ? (C_EngineObjectInternal*)entitylist->GetBaseEntityFromHandle(m_hOwnerEntity)->GetEngineObject() : NULL;
 }
 
 inline C_EngineObjectInternal* C_EngineObjectInternal::GetEffectEntity() const
 {
-	return m_hEffectEntity.Get() ? (C_EngineObjectInternal*)m_hEffectEntity.Get()->GetEngineObject() : NULL;
+	return entitylist->GetBaseEntityFromHandle(m_hEffectEntity) ? (C_EngineObjectInternal*)entitylist->GetBaseEntityFromHandle(m_hEffectEntity)->GetEngineObject() : NULL;
 }
 
 class C_EngineWorldInternal : public C_EngineObjectInternal, public IEngineWorldClient {
@@ -2464,8 +2462,8 @@ public:
 	DECLARE_CLIENTCLASS();
 	C_EnginePlayerInternal(IClientEntityList* pClientEntityList, int iForceEdictIndex, int iSerialNum);
 	~C_EnginePlayerInternal();
-	IEnginePortalClient* GetPortalEnvironment() { return m_hPortalEnvironment ? m_hPortalEnvironment->GetEnginePortal() : NULL; }
-	IEnginePortalClient* GetHeldObjectPortal(void) { return m_pHeldObjectPortal ? m_pHeldObjectPortal->GetEnginePortal() : NULL; }
+	IEnginePortalClient* GetPortalEnvironment() { return entitylist->GetBaseEntityFromHandle(m_hPortalEnvironment) ? entitylist->GetBaseEntityFromHandle(m_hPortalEnvironment)->GetEnginePortal() : NULL; }
+	IEnginePortalClient* GetHeldObjectPortal(void) { return entitylist->GetBaseEntityFromHandle(m_pHeldObjectPortal) ? entitylist->GetBaseEntityFromHandle(m_pHeldObjectPortal)->GetEnginePortal() : NULL; }
 	void ToggleHeldObjectOnOppositeSideOfPortal(void) { m_bHeldObjectOnOppositeSideOfPortal = !m_bHeldObjectOnOppositeSideOfPortal; }
 	void SetHeldObjectOnOppositeSideOfPortal(bool p_bHeldObjectOnOppositeSideOfPortal) { m_bHeldObjectOnOppositeSideOfPortal = p_bHeldObjectOnOppositeSideOfPortal; }
 	bool IsHeldObjectOnOppositeSideOfPortal(void) { return m_bHeldObjectOnOppositeSideOfPortal; }
@@ -2473,8 +2471,8 @@ public:
 	C_EnginePlayerInternal* AsEnginePlayer() { return this; }
 	const C_EnginePlayerInternal* AsEnginePlayer() const { return this; }
 private:
-	ENTHANDLE	m_hPortalEnvironment; //a portal whose environment the player is currently in, should be invalid most of the time
-	ENTHANDLE m_pHeldObjectPortal;
+	CBaseHandle	m_hPortalEnvironment; //a portal whose environment the player is currently in, should be invalid most of the time
+	CBaseHandle m_pHeldObjectPortal;
 	bool  m_bHeldObjectOnOppositeSideOfPortal;
 
 };
@@ -2495,8 +2493,8 @@ public:
 	bool IsActivedAndLinked(void) const;
 	void MoveTo(const Vector& ptCenter, const QAngle& angles);
 	void AttachTo(IEnginePortalClient* pLinkedPortal);
-	C_EnginePortalInternal* GetLinkedPortal() { return m_hLinkedPortal.Get() ? (C_EnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
-	const C_EnginePortalInternal* GetLinkedPortal() const { return m_hLinkedPortal.Get() ? (const C_EnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
+	C_EnginePortalInternal* GetLinkedPortal() { return entitylist->GetBaseEntityFromHandle(m_hLinkedPortal) ? (C_EnginePortalInternal*)entitylist->GetBaseEntityFromHandle(m_hLinkedPortal)->GetEnginePortal() : NULL; }
+	const C_EnginePortalInternal* GetLinkedPortal() const { return entitylist->GetBaseEntityFromHandle(m_hLinkedPortal) ? (const C_EnginePortalInternal*)entitylist->GetBaseEntityFromHandle(m_hLinkedPortal)->GetEnginePortal() : NULL; }
 	void DetachFromLinked(void);
 	void UpdateLinkMatrix(IEnginePortalClient* pRemoteCollisionEntity);
 	bool EntityIsInPortalHole(IEngineObjectClient* pEntity) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
@@ -2556,7 +2554,7 @@ private:
 	//IPhysicsEnvironment* pPhysicsEnvironment = NULL;
 	bool				m_bActivated; //a portal can exist and not be active
 	bool				m_bIsPortal2; //For teleportation, this doesn't matter, but for drawing and moving, it matters
-	ENTHANDLE			m_hLinkedPortal;
+	CBaseHandle			m_hLinkedPortal;
 	bool				m_bSimulateVPhysics;
 	bool				m_bLocalDataIsReady; //this side of the portal is properly setup, no guarantees as to linkage to another portal
 	PS_InternalData_t m_InternalData;
@@ -2717,8 +2715,8 @@ private:
 	Vector			m_LightValues[ROPE_MAX_SEGMENTS]; // light info when the rope is created.
 	bool			m_bEndPointAttachmentPositionsDirty : 1;
 	bool			m_bEndPointAttachmentAnglesDirty : 1;
-	ENTHANDLE		m_hStartPoint;		// StartPoint/EndPoint are entities
-	ENTHANDLE		m_hEndPoint;
+	CBaseHandle		m_hStartPoint;		// StartPoint/EndPoint are entities
+	CBaseHandle		m_hEndPoint;
 	short			m_iStartAttachment;	// StartAttachment/EndAttachment are attachment points.
 	short			m_iEndAttachment;
 	bool							m_bApplyWind;
@@ -3505,8 +3503,8 @@ private:
 	CUtlLinkedList<C_EngineObjectInternal*, unsigned short> m_InterpolationList;
 	CUtlLinkedList<C_EngineObjectInternal*, unsigned short> m_TeleportList;
 
-	CUtlLinkedList< ENTHANDLE > m_LRU;
-	CUtlLinkedList< ENTHANDLE > m_LRUImportantRagdolls;
+	CUtlLinkedList< CBaseHandle > m_LRU;
+	CUtlLinkedList< CBaseHandle > m_LRUImportantRagdolls;
 
 	int m_iMaxRagdolls;
 	int m_iSimulatedRagdollCount;
@@ -3752,7 +3750,7 @@ bool CClientEntityList<T>::DoRestoreEntity(T* pEntity, IRestore* pRestore)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
-	ENTHANDLE hEntity;
+	CBaseHandle hEntity;
 
 	hEntity = pEntity;
 
@@ -5140,13 +5138,13 @@ void CClientEntityList<T>::MoveToTopOfLRU(IClientEntity* pRagdoll, bool bImporta
 {
 	if (bImportant)
 	{
-		m_LRUImportantRagdolls.AddToTail(pRagdoll);
+		m_LRUImportantRagdolls.AddToTail(pRagdoll->GetRefEHandle());
 
 		if (m_LRUImportantRagdolls.Count() > g_ragdoll_important_maxcount.GetInt())
 		{
 			int iIndex = m_LRUImportantRagdolls.Head();
 
-			IClientEntity* pRagdoll = m_LRUImportantRagdolls[iIndex].Get();
+			IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRUImportantRagdolls[iIndex]);
 
 			if (pRagdoll)
 			{
@@ -5159,14 +5157,14 @@ void CClientEntityList<T>::MoveToTopOfLRU(IClientEntity* pRagdoll, bool bImporta
 	}
 	for (int i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = m_LRU.Next(i))
 	{
-		if (m_LRU[i].Get() == pRagdoll)
+		if (entitylist->GetBaseEntityFromHandle(m_LRU[i]) == pRagdoll)
 		{
 			m_LRU.Remove(i);
 			break;
 		}
 	}
 
-	m_LRU.AddToTail(pRagdoll);
+	m_LRU.AddToTail(pRagdoll->GetRefEHandle());
 }
 
 extern ConVar g_ragdoll_maxcount;
@@ -5203,7 +5201,7 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 	for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 	{
 		next = m_LRU.Next(i);
-		IClientEntity* pRagdoll = m_LRU[i].Get();
+		IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRU[i]);
 		if (pRagdoll)
 		{
 			m_iRagdollCount++;
@@ -5215,9 +5213,9 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 			if (m_LRU.Count() > iMaxRagdollCount)
 			{
 				//Found one, we're done.
-				if (ShouldRemoveThisRagdoll(m_LRU[i]) == true)
+				if (ShouldRemoveThisRagdoll(entitylist->GetBaseEntityFromHandle(m_LRU[i])) == true)
 				{
-					m_LRU[i]->SUB_Remove();
+					entitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_Remove();
 					m_LRU.Remove(i);
 					return;
 				}
@@ -5245,7 +5243,7 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 
 		for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 		{
-			IClientEntity* pRagdoll = m_LRU[i].Get();
+			IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 			next = m_LRU.Next(i);
 			IPhysicsObject* pObject = pRagdoll->GetEngineObject()->VPhysicsGetObject();
@@ -5270,7 +5268,7 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 			}
 		}
 
-		m_LRU[furthestOne]->SUB_Remove();
+		entitylist->GetBaseEntityFromHandle(m_LRU[furthestOne])->SUB_Remove();
 
 	}
 	else // fall back on old-style pick the oldest one algorithm
@@ -5282,14 +5280,14 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 
 			next = m_LRU.Next(i);
 
-			IClientEntity* pRagdoll = m_LRU[i].Get();
+			IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 			//Just ignore it until we're done burning/dissolving.
 			IPhysicsObject* pObject = pRagdoll->GetEngineObject()->VPhysicsGetObject();
 			if (pRagdoll && (pRagdoll->GetEngineObject()->GetEffectEntity() || (pObject && !pObject->IsAsleep())))
 				continue;
 
-			m_LRU[i]->SUB_Remove();
+			entitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_Remove();
 			m_LRU.Remove(i);
 		}
 	}
@@ -5321,7 +5319,7 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 	for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 	{
 		next = m_LRU.Next(i);
-		IClientEntity* pRagdoll = m_LRU[i].Get();
+		IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRU[i]);
 		if (pRagdoll)
 		{
 			m_iRagdollCount++;
@@ -5333,9 +5331,9 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 			if (m_LRU.Count() > iMaxRagdollCount)
 			{
 				//Found one, we're done.
-				if (ShouldRemoveThisRagdoll(m_LRU[i]) == true)
+				if (ShouldRemoveThisRagdoll(entitylist->GetBaseEntityFromHandle(m_LRU[i])) == true)
 				{
-					m_LRU[i]->SUB_Remove();
+					entitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_Remove();
 					m_LRU.Remove(i);
 					return;
 				}
@@ -5360,13 +5358,13 @@ void CClientEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 
 		next = m_LRU.Next(i);
 
-		IClientEntity* pRagdoll = m_LRU[i].Get();
+		IClientEntity* pRagdoll = entitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 		//Just ignore it until we're done burning/dissolving.
 		if (pRagdoll && pRagdoll->GetEngineObject()->GetEffectEntity())
 			continue;
 
-		m_LRU[i]->SUB_Remove();
+		entitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_Remove();
 		m_LRU.Remove(i);
 	}
 }

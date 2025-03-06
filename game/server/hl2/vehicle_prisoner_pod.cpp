@@ -97,8 +97,8 @@ public:
 	virtual void	DrawDebugGeometryOverlays( void );
 
 	virtual Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	void			PlayerControlInit( CBasePlayer *pPlayer );
 	void			PlayerControlShutdown( void );
@@ -128,7 +128,7 @@ public:
 // IDrivableVehicle
 public:
 
-	virtual bool PassengerShouldReceiveDamage( CTakeDamageInfo &info ) 
+	virtual bool PassengerShouldReceiveDamage( ITakeDamageInfo &info ) 
 	{ 
 		if ( info.GetDamageType() & DMG_VEHICLE )
 			return true;
@@ -255,7 +255,7 @@ void CPropVehiclePrisonerPod::Spawn( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropVehiclePrisonerPod::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPropVehiclePrisonerPod::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( ptr->hitbox == VEHICLE_HITBOX_DRIVER )
 	{
@@ -270,7 +270,7 @@ void CPropVehiclePrisonerPod::TraceAttack( const CTakeDamageInfo &info, const Ve
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropVehiclePrisonerPod::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CPropVehiclePrisonerPod::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	// Do scaled up physics damage to the pod
 	CTakeDamageInfo info = inputInfo;

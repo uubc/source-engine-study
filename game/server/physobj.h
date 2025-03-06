@@ -57,7 +57,7 @@ public:
 
 	virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
 	virtual void VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
-	int		OnTakeDamage( const CTakeDamageInfo &info );
+	int		OnTakeDamage( const ITakeDamageInfo&info );
 	void		 EnableMotion( void );
 
 	bool CanBePickedUpByPhyscannon();

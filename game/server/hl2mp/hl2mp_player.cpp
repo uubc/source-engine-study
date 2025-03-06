@@ -1279,7 +1279,7 @@ void CHL2MP_Player::DetonateTripmines( void )
 	g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
 }
 
-void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
+void CHL2MP_Player::Event_Killed( const ITakeDamageInfo&info )
 {
 	//update damage info with our accumulated physics force
 	CTakeDamageInfo subinfo = info;
@@ -1325,7 +1325,7 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	StopZooming();
 }
 
-int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CHL2MP_Player::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	//return here if the player is in the respawn grace period vs. slams.
 	if ( gpGlobals->curtime < m_flSlamProtectTime &&  (inputInfo.GetDamageType() == DMG_BLAST ) )
@@ -1338,7 +1338,7 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	return BaseClass::OnTakeDamage( inputInfo );
 }
 
-void CHL2MP_Player::DeathSound( const CTakeDamageInfo &info )
+void CHL2MP_Player::DeathSound( const ITakeDamageInfo&info )
 {
 	if ( m_hRagdoll && m_hRagdoll->IsDissolving() )
 		 return;

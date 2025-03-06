@@ -1208,7 +1208,7 @@ bool CNPC_Combine::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Combine::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Combine::Event_Killed( const ITakeDamageInfo&info )
 {
 	// if I was killed before I could finish throwing my grenade, drop
 	// a grenade item that the player can retrieve.
@@ -2616,7 +2616,7 @@ void CNPC_Combine::SpeakSentence( int sentenceType )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Combine::PainSound ( const CTakeDamageInfo &damageinfo )
+void CNPC_Combine::PainSound ( const ITakeDamageInfo&damageinfo )
 {
 	// NOTE: The response system deals with this at the moment
 	if (GetEngineObject()->GetFlags() & FL_DISSOLVING )

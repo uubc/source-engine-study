@@ -753,7 +753,7 @@ int CAI_ActBusyBehavior::CountEnemiesInSafeZone()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int	CAI_ActBusyBehavior::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CAI_ActBusyBehavior::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( IsCombatActBusy() && info.GetAttacker() && IsInSafeZone((CBaseEntity*)info.GetAttacker() ) )
 	{

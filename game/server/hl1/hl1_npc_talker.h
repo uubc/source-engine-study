@@ -54,16 +54,16 @@ public:
 	void	RunTask( const Task_t *pTask );
 	int		SelectSchedule ( void );
 	bool	HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt);
-	bool	ShouldGib( const CTakeDamageInfo &info );
+	bool	ShouldGib( const ITakeDamageInfo&info );
 
 	int		TranslateSchedule( int scheduleType );
 	void	IdleHeadTurn( CBaseEntity *pTarget, float flDuration = 0.0, float flImportance = 1.0f );
 	void    SetHeadDirection( const Vector &vTargetPos, float flInterval);
-	bool	CorpseGib( const CTakeDamageInfo &info );
+	bool	CorpseGib( const ITakeDamageInfo&info );
 
 	Disposition_t IRelationType( CBaseEntity *pTarget );
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	void			StartFollowing( CBaseEntity *pLeader );
 	void			StopFollowing( void );

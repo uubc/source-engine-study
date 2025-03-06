@@ -115,8 +115,8 @@ public:
 	void			DampenForwardMotion( Vector &vecVehicleEyePos, QAngle &vecVehicleEyeAngles, float flFrameTime );
 	void			DampenUpMotion( Vector &vecVehicleEyePos, QAngle &vecVehicleEyeAngles, float flFrameTime );
 
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	void VPhysicsUpdate( IPhysicsObject *pPhysics );
 
@@ -143,7 +143,7 @@ public:
 	virtual void DoImpactEffect( trace_t &tr, int nDamageType );
 	
 	// Airboat passengers do not directly receive damage from blasts or radiation damage
-	virtual bool PassengerShouldReceiveDamage( CTakeDamageInfo &info ) 
+	virtual bool PassengerShouldReceiveDamage( ITakeDamageInfo &info ) 
 	{ 
 		if ( info.GetDamageType() & DMG_VEHICLE )
 			return true;
@@ -846,7 +846,7 @@ Vector CPropAirboat::GetSmoothedVelocity( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropAirboat::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPropAirboat::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 	if ( ptr->hitbox != VEHICLE_HITBOX_DRIVER )
@@ -901,7 +901,7 @@ void CPropAirboat::DoImpactEffect( trace_t &tr, int nDamageType )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropAirboat::OnTakeDamage( const CTakeDamageInfo &info )
+int CPropAirboat::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// Do scaled up physics damage to the airboat
 	CTakeDamageInfo physDmg = info;

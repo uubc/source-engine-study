@@ -20,7 +20,7 @@ public:
 
 	void GenericCyclerSpawn(char *szModel, Vector vecMin, Vector vecMax);
 	virtual int	ObjectCaps( void ) { return (BaseClass::ObjectCaps() | FCAP_IMPULSE_USE); }
-	int OnTakeDamage( const CTakeDamageInfo &info );
+	int OnTakeDamage( const ITakeDamageInfo&info );
 	void Spawn( void );
 	void Precache( void );
 	void Think( void );

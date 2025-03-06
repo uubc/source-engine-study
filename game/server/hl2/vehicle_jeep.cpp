@@ -265,7 +265,7 @@ void CPropJeep::DoImpactEffect( trace_t &tr, int nDamageType )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropJeep::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPropJeep::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 	if ( ptr->hitbox != VEHICLE_HITBOX_DRIVER )
@@ -282,7 +282,7 @@ void CPropJeep::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vec
 //-----------------------------------------------------------------------------
 // Purpose: Modifies the passenger's damage taken through us
 //-----------------------------------------------------------------------------
-float CPropJeep::PassengerDamageModifier( const CTakeDamageInfo &info )
+float CPropJeep::PassengerDamageModifier( const ITakeDamageInfo &info )
 {
 	if ( info.GetInflictor() && FClassnameIs((CBaseEntity*)info.GetInflictor(), "hunter_flechette" ) )
 		return 0.1f;
@@ -293,7 +293,7 @@ float CPropJeep::PassengerDamageModifier( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropJeep::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CPropJeep::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	//Do scaled up physics damage to the car
 	CTakeDamageInfo info = inputInfo;

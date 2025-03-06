@@ -1095,7 +1095,7 @@ void CAI_PlayerAlly::OnKilledNPC( CBaseCombatCharacter *pKilled )
 }
 
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CAI_PlayerAlly::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	const char *pszHitLocCriterion = NULL;
 
@@ -1122,7 +1122,7 @@ void CAI_PlayerAlly::TraceAttack( const CTakeDamageInfo &info, const Vector &vec
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CAI_PlayerAlly::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CAI_PlayerAlly::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo subInfo = info;
 	// Vital allies never take more than 25% of their health in a single hit (except for physics damage)
@@ -1168,7 +1168,7 @@ int CAI_PlayerAlly::TakeHealth( float flHealth, int bitsDamageType )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::Event_Killed( const CTakeDamageInfo &info )
+void CAI_PlayerAlly::Event_Killed( const ITakeDamageInfo&info )
 {
 	// notify the player
 	if ( IsInPlayerSquad() )
@@ -1208,7 +1208,7 @@ bool CAI_PlayerAlly::CreateVPhysics()
 }
 
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::PainSound( const CTakeDamageInfo &info )
+void CAI_PlayerAlly::PainSound( const ITakeDamageInfo&info )
 {
 	SpeakIfAllowed( TLK_WOUND );
 }

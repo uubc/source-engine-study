@@ -378,7 +378,7 @@ void C_Portal_Player::UpdateIDTarget()
 	}
 }
 
-void C_Portal_Player::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void C_Portal_Player::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr )
 {
 	Vector vecOrigin = ptr->endpos - vecDir * 4;
 

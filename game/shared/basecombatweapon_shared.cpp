@@ -2473,7 +2473,7 @@ CDmgAccumulator::~CDmgAccumulator()
 //-----------------------------------------------------------------------------
 // Collect trace attacks for weapons that fire multiple bullets per attack that also penetrate
 //-----------------------------------------------------------------------------
-void CDmgAccumulator::AccumulateMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity )
+void CDmgAccumulator::AccumulateMultiDamage( const ITakeDamageInfo&info, CBaseEntity *pEntity )
 {
 	if ( !pEntity )
 		return;

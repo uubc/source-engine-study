@@ -216,7 +216,7 @@ public:
 
 public:
 
-	virtual void	OnPlayerKilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void	OnPlayerKilledOther( CBaseEntity *pVictim, const ITakeDamageInfo&info );
 
 	//---------------------------------
 	//---------------------------------
@@ -273,7 +273,7 @@ public:
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
-	int 			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int 			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void 			OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CBaseEntity *pAttacker );
 
 	//---------------------------------

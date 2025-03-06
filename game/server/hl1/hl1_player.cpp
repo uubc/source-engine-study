@@ -563,7 +563,7 @@ void CHL1_Player::Spawn(void)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL1_Player::Event_Killed( const CTakeDamageInfo &info )
+void CHL1_Player::Event_Killed( const ITakeDamageInfo&info )
 {
 	StopPullingObject();
 	BaseClass::Event_Killed(info);
@@ -756,7 +756,7 @@ void CHL1_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs,
 #define ARMOR_BONUS  0.5	// Each Point of Armor is work 1/x points of health
 
 
-int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int	CHL1_Player::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	// have suit diagnose the problem - ie: report damage type
 	int bitsDamage = inputInfo.GetDamageType();
@@ -1020,7 +1020,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 }
 
 
-int CHL1_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CHL1_Player::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	int nRet;
 	int nSavedHealth = m_iHealth;

@@ -118,7 +118,7 @@ void CGrenadeSpit::SetSpitSize( int nSize )
 	}
 }
 
-void CGrenadeSpit::Event_Killed( const CTakeDamageInfo &info )
+void CGrenadeSpit::Event_Killed( const ITakeDamageInfo&info )
 {
 	Detonate( );
 }

@@ -14,24 +14,64 @@
 
 #include "networkvar.h" // todo: change this when DECLARE_CLASS is moved into a better location.
 
-// Used to initialize m_flBaseDamage to something that we know pretty much for sure
-// hasn't been modified by a user. 
-#define BASEDAMAGE_NOT_SPECIFIED	FLT_MAX
+
 
 class IHandleEntity;
 
 
-class CTakeDamageInfo
+class CTakeDamageInfo : public ITakeDamageInfo
 {
 public:
 	DECLARE_CLASS_NOBASE( CTakeDamageInfo );
 
-					CTakeDamageInfo();
-					CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
-					CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, IHandleEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
-					CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
-					CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, IHandleEntity *pWeapon, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
+	CTakeDamageInfo();
+	CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
+	CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, IHandleEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
+	CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
+	CTakeDamageInfo( IHandleEntity *pInflictor, IHandleEntity *pAttacker, IHandleEntity *pWeapon, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
 	
+	CTakeDamageInfo(const ITakeDamageInfo& info)
+	{
+		m_vecDamageForce = info.GetDamageForce();
+		m_vecDamagePosition = info.GetDamagePosition();
+		m_vecReportedPosition = info.GetReportedPosition();
+		m_hInflictor = info.GetInflictor();
+		m_hAttacker = info.GetAttacker();
+		m_hWeapon = info.GetWeapon();
+		m_flDamage = info.GetDamage();
+		m_flMaxDamage = info.GetMaxDamage();
+		m_flBaseDamage = info.GetBaseDamage();
+		m_bitsDamageType = info.GetDamageType();
+		m_iDamageCustom = info.GetDamageCustom();
+		m_iDamageStats = info.GetDamageStats();
+		m_iAmmoType = info.GetAmmoType();
+		m_iDamagedOtherPlayers = info.GetDamagedOtherPlayers();
+		m_iPlayerPenetrationCount = info.GetPlayerPenetrationCount();
+		m_flDamageBonus = info.GetDamageBonus();
+		m_bForceFriendlyFire = info.IsForceFriendlyFire();
+	}
+
+	CTakeDamageInfo& operator =(const ITakeDamageInfo& info)
+	{
+		m_vecDamageForce = info.GetDamageForce();
+		m_vecDamagePosition = info.GetDamagePosition();
+		m_vecReportedPosition = info.GetReportedPosition();
+		m_hInflictor = info.GetInflictor();
+		m_hAttacker = info.GetAttacker();
+		m_hWeapon = info.GetWeapon();
+		m_flDamage = info.GetDamage();
+		m_flMaxDamage = info.GetMaxDamage();
+		m_flBaseDamage = info.GetBaseDamage();
+		m_bitsDamageType = info.GetDamageType();
+		m_iDamageCustom = info.GetDamageCustom();
+		m_iDamageStats = info.GetDamageStats();
+		m_iAmmoType = info.GetAmmoType();
+		m_iDamagedOtherPlayers = info.GetDamagedOtherPlayers();
+		m_iPlayerPenetrationCount = info.GetPlayerPenetrationCount();
+		m_flDamageBonus = info.GetDamageBonus();
+		m_bForceFriendlyFire = info.IsForceFriendlyFire();
+		return *this;
+	}
 
 	// Inflictor is the weapon or rocket (or player) that is dealing the damage.
 	IHandleEntity*	GetInflictor() const;
@@ -156,16 +196,16 @@ extern CMultiDamage g_MultiDamage;
 // Multidamage accessors
 void ClearMultiDamage( void );
 void ApplyMultiDamage( void );
-void AddMultiDamage( const CTakeDamageInfo &info, IHandleEntity *pEntity );
+void AddMultiDamage( const ITakeDamageInfo&info, IHandleEntity *pEntity );
 
 //-----------------------------------------------------------------------------
 // Purpose: Utility functions for physics damage force calculation 
 //-----------------------------------------------------------------------------
 float ImpulseScale( float flTargetMass, float flDesiredSpeed );
-void CalculateExplosiveDamageForce( CTakeDamageInfo *info, const Vector &vecDir, const Vector &vecForceOrigin, float flScale = 1.0 );
-void CalculateBulletDamageForce( CTakeDamageInfo *info, int iBulletType, const Vector &vecBulletDir, const Vector &vecForceOrigin, float flScale = 1.0 );
-void CalculateMeleeDamageForce( CTakeDamageInfo *info, const Vector &vecMeleeDir, const Vector &vecForceOrigin, float flScale = 1.0 );
-void GuessDamageForce( CTakeDamageInfo *info, const Vector &vecForceDir, const Vector &vecForceOrigin, float flScale = 1.0 );
+void CalculateExplosiveDamageForce(ITakeDamageInfo*info, const Vector &vecDir, const Vector &vecForceOrigin, float flScale = 1.0 );
+void CalculateBulletDamageForce(ITakeDamageInfo*info, int iBulletType, const Vector &vecBulletDir, const Vector &vecForceOrigin, float flScale = 1.0 );
+void CalculateMeleeDamageForce(ITakeDamageInfo*info, const Vector &vecMeleeDir, const Vector &vecForceOrigin, float flScale = 1.0 );
+void GuessDamageForce(ITakeDamageInfo*info, const Vector &vecForceDir, const Vector &vecForceOrigin, float flScale = 1.0 );
 
 
 // -------------------------------------------------------------------------------------------------- //

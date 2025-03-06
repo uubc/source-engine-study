@@ -49,7 +49,7 @@ public:
 	virtual bool	AllowBlockedExit( CBaseCombatCharacter *pPassenger, int nRole );
 	
 	// Passengers take no damage except what we pass them
-	virtual bool	PassengerShouldReceiveDamage( CTakeDamageInfo &info ) 
+	virtual bool	PassengerShouldReceiveDamage( ITakeDamageInfo &info ) 
 	{ 
 		if ( GetServerVehicle() && GetServerVehicle()->IsPassengerExiting() )
 			return false;

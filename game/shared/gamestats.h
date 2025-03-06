@@ -200,11 +200,11 @@ public:
 #endif
 
 #ifdef GAME_DLL
-	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info );	
+	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info );
 	virtual void Event_PlayerConnected( CBasePlayer *pBasePlayer );
 	virtual void Event_PlayerDisconnected( CBasePlayer *pBasePlayer );
-	virtual void Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDamageInfo &info );
-	virtual void Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void Event_PlayerDamage( CBasePlayer *pBasePlayer, const ITakeDamageInfo&info );
+	virtual void Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const ITakeDamageInfo&info );
 	virtual void Event_PlayerSuicide( CBasePlayer* pPlayer ) {}
 	virtual void Event_Credits();
 	virtual void Event_Commentary();
@@ -212,7 +212,7 @@ public:
 	virtual void Event_Punted( CBaseEntity *pObject );
 	virtual void Event_PlayerTraveled( CBasePlayer *pBasePlayer, float distanceInInches, bool bInVehicle, bool bSprinting );
 	virtual void Event_WeaponFired( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName );
-	virtual void Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const CTakeDamageInfo &info );
+	virtual void Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const ITakeDamageInfo&info );
 	virtual void Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle );
 	virtual void Event_PreSaveGameLoaded( char const *pSaveName, bool bInGame );
 	virtual void Event_PlayerEnteredGodMode( CBasePlayer *pBasePlayer );

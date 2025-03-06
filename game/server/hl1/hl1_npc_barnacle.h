@@ -43,8 +43,8 @@ public:
 	void			HandleAnimEvent( animevent_t *pEvent );
 	void			BarnacleThink ( void );
 	void			WaitTillDead ( void );
-	void			Event_Killed( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	DECLARE_DATADESC();
 

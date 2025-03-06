@@ -1355,7 +1355,7 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 
    	//-----------------------------------------------------------------------------
   	//-----------------------------------------------------------------------------
- 	bool CHalfLife2World::AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info )
+ 	bool CHalfLife2World::AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info )
   	{
 #ifndef CLIENT_DLL
 	if( (info.GetDamageType() & DMG_CRUSH) && info.GetInflictor() && pVictim->MyNPCPointer() )
@@ -1564,7 +1564,7 @@ bool CHalfLife2World::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 #ifndef CLIENT_DLL
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CHalfLife2World::AdjustPlayerDamageTaken( CTakeDamageInfo *pInfo )
+void CHalfLife2World::AdjustPlayerDamageTaken(ITakeDamageInfo*pInfo )
 {
 	if( pInfo->GetDamageType() & (DMG_DROWN|DMG_CRUSH|DMG_FALL|DMG_POISON|DMG_SNIPER) )
 	{

@@ -29,7 +29,7 @@ class Vector;
 class QAngle;
 class IServerEntity;
 class CBaseAnimating;
-class CTakeDamageInfo;
+class ITakeDamageInfo;
 class ITempEntsSystem;
 class IEntityFactoryDictionary;
 class CBaseTempEntity;
@@ -216,8 +216,8 @@ public:
 
 	virtual void ClearMultiDamage( void ) = 0;
 	virtual void ApplyMultiDamage( void ) = 0;
-	virtual void AddMultiDamage( const CTakeDamageInfo &pTakeDamageInfo, IServerEntity *pEntity ) = 0;
-	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore ) = 0;
+	virtual void AddMultiDamage( const ITakeDamageInfo &pTakeDamageInfo, IServerEntity *pEntity ) = 0;
+	virtual void RadiusDamage( const ITakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore ) = 0;
 
 	virtual ITempEntsSystem *GetTempEntsSystem( void ) = 0;
 	virtual CBaseTempEntity *GetTempEntList( void ) = 0;

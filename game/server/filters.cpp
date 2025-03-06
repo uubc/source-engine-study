@@ -45,14 +45,14 @@ bool CBaseFilter::PassesFilter( CBaseEntity *pCaller, CBaseEntity *pEntity )
 }
 
 
-bool CBaseFilter::PassesDamageFilter(const CTakeDamageInfo &info)
+bool CBaseFilter::PassesDamageFilter(const ITakeDamageInfo&info)
 {
 	bool baseResult = PassesDamageFilterImpl(info);
 	return (m_bNegated) ? !baseResult : baseResult;
 }
 
 
-bool CBaseFilter::PassesDamageFilterImpl( const CTakeDamageInfo &info )
+bool CBaseFilter::PassesDamageFilterImpl( const ITakeDamageInfo&info )
 {
 	return PassesFilterImpl( NULL, (CBaseEntity*)info.GetAttacker() );
 }
@@ -96,7 +96,7 @@ class CFilterMultiple : public CBaseFilter
 	EHANDLE		m_hFilter[MAX_FILTERS];
 
 	bool PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity );
-	bool PassesDamageFilterImpl(const CTakeDamageInfo &info);
+	bool PassesDamageFilterImpl(const ITakeDamageInfo&info);
 	void Activate(void);
 };
 
@@ -197,7 +197,7 @@ bool CFilterMultiple::PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEnti
 // Purpose: Returns true if the entity passes our filter, false if not.
 // Input  : pEntity - Entity to test.
 //-----------------------------------------------------------------------------
-bool CFilterMultiple::PassesDamageFilterImpl(const CTakeDamageInfo &info)
+bool CFilterMultiple::PassesDamageFilterImpl(const ITakeDamageInfo&info)
 {
 	// Test against each filter
 	if (m_nFilterType == FILTER_AND)
@@ -369,7 +369,7 @@ protected:
 	 	return true;
 	}
 
-	bool PassesDamageFilterImpl(const CTakeDamageInfo &info)
+	bool PassesDamageFilterImpl(const ITakeDamageInfo&info)
 	{
 	 	return info.GetDamageType() == m_iDamageType;
 	}
@@ -402,7 +402,7 @@ class CFilterEnemy : public CBaseFilter
 public:
 
 	virtual bool PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity );
-	virtual bool PassesDamageFilterImpl( const CTakeDamageInfo &info );
+	virtual bool PassesDamageFilterImpl( const ITakeDamageInfo&info );
 
 private:
 
@@ -451,7 +451,7 @@ bool CFilterEnemy::PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CFilterEnemy::PassesDamageFilterImpl( const CTakeDamageInfo &info )
+bool CFilterEnemy::PassesDamageFilterImpl( const ITakeDamageInfo&info )
 {
 	// NOTE: This function has no meaning to this implementation of the filter class!
 	Assert( 0 );

@@ -81,8 +81,8 @@ public:
 	virtual bool ClientCommand( const CCommand &args );
 	virtual void CreateViewModel( int viewmodelindex = 0 );
 	//virtual bool BecomeRagdollOnClient( const Vector &force );
-	virtual int	OnTakeDamage( const CTakeDamageInfo &inputInfo );
-	virtual int	OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int	OnTakeDamage( const ITakeDamageInfo&inputInfo );
+	virtual int	OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	virtual bool WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits ) const;
 	virtual void FireBullets ( const FireBulletsInfo_t &info );
 	virtual bool Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex = 0);
@@ -95,7 +95,7 @@ public:
 
 	//virtual bool StartReplayMode( float fDelay, float fDuration, int iEntity  );
 	//virtual void StopReplayMode();
- 	virtual void Event_Killed( const CTakeDamageInfo &info );
+ 	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual void Jump( void );
 
 	bool UseFoundEntity( CBaseEntity *pUseEntity );

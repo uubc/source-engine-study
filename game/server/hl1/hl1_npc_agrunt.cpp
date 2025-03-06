@@ -110,8 +110,8 @@ public:
 	void HandleAnimEvent( animevent_t *pEvent );
 
 	void AlertSound( void );
-	void DeathSound( const CTakeDamageInfo &info );
-	void PainSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
+	void PainSound( const ITakeDamageInfo&info );
 	void AttackSound( void );
 
 	bool ShouldSpeak( void );
@@ -130,7 +130,7 @@ public:
 	int TranslateSchedule( int scheduleType ); //GetScheduleOfType
 	int SelectSchedule( void ); // GetSchedule
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int		IRelationPriority( CBaseEntity *pTarget );
 /*
 	int IRelationship( CBaseEntity *pTarget );
@@ -456,7 +456,7 @@ void CNPC_AlienGrunt::HandleAnimEvent( animevent_t *pEvent )
 //=========================================================
 // DieSound
 //=========================================================
-void CNPC_AlienGrunt::DeathSound( const CTakeDamageInfo &info )
+void CNPC_AlienGrunt::DeathSound( const ITakeDamageInfo&info )
 {
 	StopTalking();
 
@@ -489,7 +489,7 @@ void CNPC_AlienGrunt::AttackSound( void )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_AlienGrunt::PainSound( const CTakeDamageInfo &info )
+void CNPC_AlienGrunt::PainSound( const ITakeDamageInfo&info )
 {
 	if ( m_flNextPainTime > gpGlobals->curtime )
 	{
@@ -899,7 +899,7 @@ int CNPC_AlienGrunt::TranslateSchedule( int scheduleType )
 	return BaseClass::TranslateSchedule( scheduleType );
 }
 
-void CNPC_AlienGrunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_AlienGrunt::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo ainfo = info;
 	

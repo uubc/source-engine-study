@@ -81,10 +81,10 @@ public:
 
 	Class_T	Classify( void ) { return CLASS_INSECT; };
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 
-	bool ShouldGib(	const CTakeDamageInfo &info );
+	bool ShouldGib(	const ITakeDamageInfo&info );
 
 	
 /*	// Base entity functions
@@ -131,7 +131,7 @@ BEGIN_DATADESC( CNPC_Leech )
 END_DATADESC()
 
 
-bool CNPC_Leech::ShouldGib(	const CTakeDamageInfo &info )
+bool CNPC_Leech::ShouldGib(	const ITakeDamageInfo&info )
 {
 	return false;
 }
@@ -676,7 +676,7 @@ void CNPC_Leech::UpdateMotion( void )
 
 }
 
-void CNPC_Leech::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Leech::Event_Killed( const ITakeDamageInfo&info )
 {
 	Vector			vecSplatDir;
 	trace_t			tr;

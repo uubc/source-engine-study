@@ -56,8 +56,8 @@ public:
 	virtual void	DriveVehicle( float flFrameTime, CUserCmd *ucmd, int iButtonsDown, int iButtonsReleased );
 	virtual void	ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData );
 	virtual int		ClassifyPassenger( CBaseCombatCharacter *pPassenger, int defaultClassification );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
-	virtual float	PassengerDamageModifier( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
+	virtual float	PassengerDamageModifier( const ITakeDamageInfo &info );
 
 	// Weaponry
 	const Vector	&GetPrimaryGunOrigin( void );
@@ -98,7 +98,7 @@ private:
 	// Pow!
 	void ExplodeAndThrowChunk( const Vector &vecExplosionPos );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	// Purpose: 
 	void GetRocketShootPosition( Vector *pPosition );

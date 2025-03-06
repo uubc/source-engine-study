@@ -240,9 +240,9 @@ public:
 	virtual int		SelectFailSchedule( int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode );
 
 	virtual int		TranslateSchedule( int scheduleType );
-	virtual int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual void	DeathSound( const CTakeDamageInfo &info );
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual void	DeathSound( const ITakeDamageInfo&info );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
 	virtual int		SelectSchedule( void );
 
 	virtual float GetAutoAimRadius() { return 36.0f; }
@@ -254,7 +254,7 @@ public:
 	virtual void	UpdateEfficiency( bool bInPVS )	{ SetEfficiency( ( GetSleepState() != AISS_AWAKE ) ? AIE_DORMANT : AIE_NORMAL ); SetMoveEfficiency( AIME_NORMAL ); }
 	virtual void	PrescheduleThink( void );
 	virtual void	GatherConditions( void );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	virtual void	StartTask( const Task_t *pTask );
 	virtual void	RunTask( const Task_t *pTask );
 	virtual void	StopLoopingSounds();
@@ -272,8 +272,8 @@ public:
 	void	InputEnablePreferPhysicsAttack( inputdata_t &inputdata );
 	void	InputDisablePreferPhysicsAttack( inputdata_t &inputdata );
 
-	virtual bool	IsLightDamage( const CTakeDamageInfo &info );
-	virtual bool	IsHeavyDamage( const CTakeDamageInfo &info );
+	virtual bool	IsLightDamage( const ITakeDamageInfo&info );
+	virtual bool	IsHeavyDamage( const ITakeDamageInfo&info );
 	virtual bool	OverrideMoveFacing( const AILocalMoveGoal_t &move, float flInterval );
 	//virtual bool	BecomeRagdollOnClient( const Vector &force );
 	virtual void UpdateOnRemove( void );
@@ -2262,7 +2262,7 @@ void CNPC_AntlionGuard::SetHeavyDamageAnim( const Vector &vecSource )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CNPC_AntlionGuard::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_AntlionGuard::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo dInfo = info;
 
@@ -2435,7 +2435,7 @@ int CNPC_AntlionGuard::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 //			*ptr - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-void CNPC_AntlionGuard::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_AntlionGuard::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -4480,7 +4480,7 @@ void CNPC_AntlionGuard::InputDisableBark( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_AntlionGuard::DeathSound( const CTakeDamageInfo &info )
+void CNPC_AntlionGuard::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_AntlionGuard.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -4497,7 +4497,7 @@ void CNPC_AntlionGuard::DeathSound( const CTakeDamageInfo &info )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-void CNPC_AntlionGuard::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_AntlionGuard::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -4640,7 +4640,7 @@ bool CNPC_AntlionGuard::OverrideMoveFacing( const AILocalMoveGoal_t &move, float
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_AntlionGuard::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_AntlionGuard::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	// Struck by blast
 	if ( info.GetDamageType() & DMG_BLAST )
@@ -4682,7 +4682,7 @@ bool CNPC_AntlionGuard::IsHeavyDamage( const CTakeDamageInfo &info )
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_AntlionGuard::IsLightDamage( const CTakeDamageInfo &info )
+bool CNPC_AntlionGuard::IsLightDamage( const ITakeDamageInfo&info )
 {
 	return false;
 }

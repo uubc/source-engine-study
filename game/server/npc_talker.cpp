@@ -296,7 +296,7 @@ Activity CNPCSimpleTalker::NPC_TranslateActivity( Activity eNewActivity )
 }
 
 
-void CNPCSimpleTalker::Event_Killed( const CTakeDamageInfo &info )
+void CNPCSimpleTalker::Event_Killed( const ITakeDamageInfo&info )
 {
 	AlertFriends((CBaseEntity*)info.GetAttacker() );
 	if ( info.GetAttacker()->GetEngineObject()->GetFlags() & FL_CLIENT )
@@ -786,7 +786,7 @@ void CNPCSimpleTalker::SetAnswerQuestion( CNPCSimpleTalker *pSpeaker )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CNPCSimpleTalker::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPCSimpleTalker::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo subInfo = info;
 

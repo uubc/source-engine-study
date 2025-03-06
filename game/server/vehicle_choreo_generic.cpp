@@ -127,8 +127,8 @@ public:
 	virtual void	DrawDebugGeometryOverlays( void );
 
 	virtual Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	void			PlayerControlInit( CBasePlayer *pPlayer );
 	void			PlayerControlShutdown( void );
@@ -165,7 +165,7 @@ public:
 	bool ShouldIgnoreParent( void ) { return m_bIgnoreMoveParent; }
 
 	// Tuned to match HL2s definition, but this should probably return false in all cases
-	virtual bool	PassengerShouldReceiveDamage( CTakeDamageInfo &info ) { return (info.GetDamageType() & (DMG_BLAST|DMG_RADIATION)) == 0; }
+	virtual bool	PassengerShouldReceiveDamage( ITakeDamageInfo &info ) { return (info.GetDamageType() & (DMG_BLAST|DMG_RADIATION)) == 0; }
 
 	CNetworkHandle( CBasePlayer, m_hPlayer );
 
@@ -344,7 +344,7 @@ void CPropVehicleChoreoGeneric::Spawn( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropVehicleChoreoGeneric::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CPropVehicleChoreoGeneric::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr )
 {
 	if ( ptr->hitbox == VEHICLE_HITBOX_DRIVER )
 	{
@@ -359,7 +359,7 @@ void CPropVehicleChoreoGeneric::TraceAttack( const CTakeDamageInfo &info, const 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropVehicleChoreoGeneric::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CPropVehicleChoreoGeneric::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 	info.ScaleDamage( 25 );

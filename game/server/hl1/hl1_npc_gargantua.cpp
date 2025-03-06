@@ -598,7 +598,7 @@ void CNPC_Gargantua::StartTask( const Task_t *pTask )
 	}
 }
 
-bool CNPC_Gargantua::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Gargantua::ShouldGib( const ITakeDamageInfo&info )
 {
 	return false;
 }
@@ -1009,7 +1009,7 @@ void CNPC_Gargantua::DeathEffect( void )
 
 }
 
-void CNPC_Gargantua::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Gargantua::Event_Killed( const ITakeDamageInfo&info )
 {
 	EyeOff();
 	EntityList()->DestroyEntity( m_pEyeGlow );
@@ -1018,7 +1018,7 @@ void CNPC_Gargantua::Event_Killed( const CTakeDamageInfo &info )
 	m_takedamage = DAMAGE_NO;
 }
 
-void CNPC_Gargantua::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Gargantua::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo subInfo = info;
 
@@ -1060,7 +1060,7 @@ void CNPC_Gargantua::TraceAttack( const CTakeDamageInfo &info, const Vector &vec
 	BaseClass::TraceAttack( subInfo, vecDir, ptr, pAccumulator );
 }
 
-int CNPC_Gargantua::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Gargantua::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( GetState() == NPC_STATE_SCRIPT )
 	{

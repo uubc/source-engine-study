@@ -63,13 +63,13 @@ public:
 
 	void Touch ( IServerEntity *pOther );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	int		GetSoundInterests ( void );
 
 	void Eat( float flFullDuration );
 	bool ShouldEat( void );
 
-	bool ShouldGib( const CTakeDamageInfo &info ) { return false; }
+	bool ShouldGib( const ITakeDamageInfo&info ) { return false; }
 
 	float	m_flLastLightLevel;
 	float	m_flNextSmellTime;
@@ -444,7 +444,7 @@ void CNPC_Roach::Touch ( IServerEntity *pOther )
 	TakeDamage( CTakeDamageInfo(pOther, pOther, m_iHealth, DMG_GENERIC ) );
 }
 
-void CNPC_Roach::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Roach::Event_Killed( const ITakeDamageInfo&info )
 {
 	GetEngineObject()->RemoveSolidFlags( FSOLID_NOT_SOLID );
 	

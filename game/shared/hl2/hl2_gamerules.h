@@ -68,7 +68,7 @@ private:
 	virtual bool			ShouldBurningPropsEmitLight();
 public:
 
-	bool AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info );
+	bool AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info );
 
 	bool	NPC_ShouldDropGrenade( CBasePlayer *pRecipient );
 	bool	NPC_ShouldDropHealth( CBasePlayer *pRecipient );
@@ -83,7 +83,7 @@ private:
 	float	m_flLastHealthDropTime;
 	float	m_flLastGrenadeDropTime;
 
-	void AdjustPlayerDamageTaken( CTakeDamageInfo *pInfo );
+	void AdjustPlayerDamageTaken(ITakeDamageInfo*pInfo );
 	float AdjustPlayerDamageInflicted( float damage );
 
 	int						DefaultFOV( void ) { return 75; }

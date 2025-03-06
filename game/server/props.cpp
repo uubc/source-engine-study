@@ -88,7 +88,7 @@ ConVar sv_turbophysics( "sv_turbophysics", "0", FCVAR_REPLICATED, "Turns on turb
 // Purpose: Breakable objects take different levels of damage based upon the damage type.
 //			This isn't contained by CBaseProp, because func_breakables use it as well.
 //-----------------------------------------------------------------------------
-float GetBreakableDamage( const CTakeDamageInfo &inputInfo, IBreakableWithPropData *pProp )
+float GetBreakableDamage( const ITakeDamageInfo&inputInfo, IBreakableWithPropData *pProp )
 {
 	float flDamage = inputInfo.GetDamage();
 	int iDmgType = inputInfo.GetDamageType();
@@ -986,10 +986,10 @@ void CBreakableProp::BreakablePropTouch( IServerEntity *pOther )
 		{
 			// Make sure we can take damage
 			m_takedamage = DAMAGE_YES;
-			OnTakeDamage( CTakeDamageInfo((CBaseEntity*)pOther, (CBaseEntity*)pOther, flDamage, DMG_CRUSH ) );
+			OnTakeDamage( CTakeDamageInfo( pOther, pOther, flDamage, DMG_CRUSH ) );
 
 			// do a little damage to player if we broke glass or computer
-			CTakeDamageInfo info((CBaseEntity*)pOther, (CBaseEntity*)pOther, flDamage/4, DMG_SLASH );
+			CTakeDamageInfo info(pOther, pOther, flDamage/4, DMG_SLASH );
 			CalculateMeleeDamageForce( &info, (pOther->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin()), GetEngineObject()->GetAbsOrigin() );
 			pOther->TakeDamage( info );
 		}
@@ -1038,7 +1038,7 @@ void CBreakableProp::BreakablePropTouch( IServerEntity *pOther )
 // and then break the children who spawn afterward ?
 // Explosions should use entities in box before they start to do damage.  Make sure nothing traverses the list
 // in a way that would hose this.
-int CBreakableProp::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CBreakableProp::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -1172,7 +1172,7 @@ int CBreakableProp::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBreakableProp::Event_Killed( const CTakeDamageInfo &info )
+void CBreakableProp::Event_Killed( const ITakeDamageInfo&info )
 {
 	IPhysicsObject *pPhysics = GetEngineObject()->VPhysicsGetObject();
 	if ( pPhysics && !pPhysics->IsMoveable() )
@@ -1610,7 +1610,7 @@ IPhysicsObject *CBreakableProp::GetRootPhysicsObjectForBreak()
 	return GetEngineObject()->VPhysicsGetObject();
 }
 
-void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
+void CBreakableProp::Break( CBaseEntity *pBreaker, const ITakeDamageInfo&info )
 {
 	const char *pModelName = STRING(GetEngineObject()->GetModelName() );
 	if ( pModelName && Q_stristr( pModelName, "crate" ) )
@@ -3124,7 +3124,7 @@ void CPhysicsProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPhysicsProp::OnTakeDamage( const CTakeDamageInfo &info )
+int CPhysicsProp::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// note: if motion is disabled, OnTakeDamage can't apply physics force
 	int ret = BaseClass::OnTakeDamage( info );
@@ -5764,7 +5764,7 @@ public:
 	CPhysicsPropRespawnable();
 
 	virtual void Spawn( void );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 
 	void	Materialize( void );
 
@@ -5813,7 +5813,7 @@ void CPhysicsPropRespawnable::Spawn( void )
 	GetEngineObject()->SetOwnerEntity( NULL );
 }
 
-void CPhysicsPropRespawnable::Event_Killed( const CTakeDamageInfo &info )
+void CPhysicsPropRespawnable::Event_Killed( const ITakeDamageInfo&info )
 {
 	IPhysicsObject *pPhysics = GetEngineObject()->VPhysicsGetObject();
 	if ( pPhysics && !pPhysics->IsMoveable() )

@@ -76,10 +76,10 @@ public:
 	Class_T			Classify( void ) { return(CLASS_SCANNER); }
 	virtual float	GetAutoAimRadius();
 
-	void			Event_Killed( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void			Event_Killed( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void			Gib(void);
 
 	void			OnStateChange( NPC_STATE eOldState, NPC_STATE eNewState );
@@ -97,9 +97,9 @@ public:
 
 	bool			ShouldPlayIdleSound( void );
 	void			IdleSound( void );
-	void			DeathSound( const CTakeDamageInfo &info );
+	void			DeathSound( const ITakeDamageInfo&info );
 	void			AlertSound( void );
-	void			PainSound( const CTakeDamageInfo &info );
+	void			PainSound( const ITakeDamageInfo&info );
 	virtual char	*GetScannerSoundPrefix( void ) { return ""; }
 	void			ScannerEmitSound( const char *pszSoundName );
 

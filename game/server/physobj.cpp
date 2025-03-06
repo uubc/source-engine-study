@@ -796,7 +796,7 @@ void CPhysBox::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPhysBox::OnTakeDamage( const CTakeDamageInfo &info )
+int CPhysBox::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if (GetEngineObject()->IsMarkedForDeletion() )
 		return 0;

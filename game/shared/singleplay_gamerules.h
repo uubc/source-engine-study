@@ -81,7 +81,7 @@ public:
 
 // Client damage rules
 	virtual float FlPlayerFallDamage( CBasePlayer *pPlayer );
-	virtual bool AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info );
+	virtual bool AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info );
 	
 // Client spawn/respawn control
 	virtual void PlayerSpawn( CBasePlayer *pPlayer );
@@ -93,8 +93,8 @@ public:
 
 // Client kills/scoring
 	virtual int IPointsForKill( CBasePlayer *pAttacker, CBasePlayer *pKilled );
-	virtual void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
-	virtual void DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
+	virtual void DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
 // Weapon spawn/respawn control
 	virtual int WeaponShouldRespawn( CBaseCombatWeapon *pWeapon );

@@ -25,13 +25,13 @@ public:
 	void Spawn( void );
 	void Precache( void );
 
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	
 	void WarningThink( void );
 	void PowerupThink( void );
 	void BeamBreakThink( void );
 	void DelayDeathThink( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	void MakeBeam( void );
 	void KillBeam( void );

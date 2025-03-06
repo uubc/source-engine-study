@@ -253,7 +253,7 @@ void CPropCrane::InitCraneSpeeds( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropCrane::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPropCrane::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( ptr->hitbox == VEHICLE_HITBOX_DRIVER )
 	{
@@ -267,7 +267,7 @@ void CPropCrane::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir,
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropCrane::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CPropCrane::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	//Do scaled up physics damage to the car
 	CTakeDamageInfo info = inputInfo;

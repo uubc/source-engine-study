@@ -72,7 +72,7 @@ public:
 
 	virtual void		BounceSound( void );
 	virtual int			BloodColor( void ) { return DONT_BLEED; }
-	virtual void		Event_Killed( const CTakeDamageInfo &info );
+	virtual void		Event_Killed( const ITakeDamageInfo&info );
 
 	virtual float		GetShakeAmplitude( void ) { return 25.0; }
 	virtual float		GetShakeRadius( void ) { return 750.0; }

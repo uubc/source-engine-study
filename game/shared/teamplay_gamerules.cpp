@@ -299,7 +299,7 @@ void CTeamplayWorld::ClientSettingsChanged( CBasePlayer *pPlayer )
 //=========================================================
 // Deathnotice. 
 //=========================================================
-void CTeamplayWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CTeamplayWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 	if ( m_DisableDeathMessages )
 		return;
@@ -332,7 +332,7 @@ void CTeamplayWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &i
 
 //=========================================================
 //=========================================================
-void CTeamplayWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CTeamplayWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 	if ( !m_DisableDeathPenalty )
 	{
@@ -350,7 +350,7 @@ bool CTeamplayWorld::IsTeamplay( void )
 	return true;
 }
 
-bool CTeamplayWorld::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const CTakeDamageInfo &info )
+bool CTeamplayWorld::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const ITakeDamageInfo &info )
 {
 	if ( pAttacker && PlayerRelationship( pPlayer, pAttacker ) == GR_TEAMMATE && !info.IsForceFriendlyFire() )
 	{

@@ -2229,7 +2229,7 @@ public:
 	CFlexCycler() { m_iszSentence = NULL_STRING; m_sentence = 0; }
 	void GenericCyclerSpawn(char *szModel, Vector vecMin, Vector vecMax);
 	virtual int	ObjectCaps( void ) { return (BaseClass::ObjectCaps() | FCAP_IMPULSE_USE); }
-	int OnTakeDamage( const CTakeDamageInfo &info );
+	int OnTakeDamage( const ITakeDamageInfo&info );
 	void Spawn( void );
 	void Think( void );
 
@@ -2396,7 +2396,7 @@ float predef_flexcontroller_values[7][30] = {
 //-----------------------------------------------------------------------------
 // Purpose: Changes sequences when shot
 //-----------------------------------------------------------------------------
-int CFlexCycler::OnTakeDamage( const CTakeDamageInfo &info )
+int CFlexCycler::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	int nSequence = GetEngineObject()->GetSequence() + 1;
 	if (!GetEngineObject()->IsValidSequence( nSequence ))

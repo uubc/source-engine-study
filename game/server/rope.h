@@ -68,7 +68,7 @@ public:
 	virtual int		ObjectCaps( void ) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 	virtual void	Activate();
 	virtual void	Precache();
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 	virtual bool	KeyValue( const char *szKeyName, const char *szValue );
 
 	void			PropagateForce(IServerEntity *pActivator, IServerEntity *pCaller, CBaseEntity *pFirstLink, float x, float y, float z);

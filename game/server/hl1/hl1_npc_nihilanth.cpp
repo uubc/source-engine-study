@@ -60,12 +60,12 @@ public:
 	void TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	*/
 
-	int	OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	bool ShouldGib( const CTakeDamageInfo &info ) { return false; }
+	int	OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	bool ShouldGib( const ITakeDamageInfo&info ) { return false; }
 
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 	
 	void StartupThink( void );
 	void NullThink( void );
@@ -352,7 +352,7 @@ void CNPC_Nihilanth::Precache( void )
 
 }
 
-void CNPC_Nihilanth::PainSound( const CTakeDamageInfo &info )
+void CNPC_Nihilanth::PainSound( const ITakeDamageInfo&info )
 {
 	if (m_flNextPainSound > gpGlobals->curtime)
 		return;
@@ -371,13 +371,13 @@ void CNPC_Nihilanth::PainSound( const CTakeDamageInfo &info )
 	}
 }	
 
-void CNPC_Nihilanth::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Nihilanth::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Nihilanth.Die" );
 }
 
-int	CNPC_Nihilanth::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CNPC_Nihilanth::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if ( info.GetInflictor() == this )
 		 return 0;
@@ -406,7 +406,7 @@ int	CNPC_Nihilanth::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	return 0;
 }
 
-void CNPC_Nihilanth::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Nihilanth::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if (m_irritation == 3)
 		m_irritation = 2;

@@ -327,7 +327,7 @@ void CBreakableSurface::SurfaceTouch( IServerEntity *pOther )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-int CBreakableSurface::OnTakeDamage( const CTakeDamageInfo &info )
+int CBreakableSurface::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( !m_bIsBroken && info.GetDamageType() == DMG_CRUSH )
 	{
@@ -359,7 +359,7 @@ int CBreakableSurface::OnTakeDamage( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 // Purpose: Accepts damage and breaks if health drops below zero.
 //------------------------------------------------------------------------------
-void CBreakableSurface::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBreakableSurface::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
     //=============================================================================
     // HPE_BEGIN:

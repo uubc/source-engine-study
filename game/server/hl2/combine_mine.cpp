@@ -718,7 +718,7 @@ void CBounceBomb::SettleThink()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CBounceBomb::OnTakeDamage( const CTakeDamageInfo &info )
+int CBounceBomb::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if( m_pConstraint || !GetEngineObject()->VPhysicsGetObject())
 	{

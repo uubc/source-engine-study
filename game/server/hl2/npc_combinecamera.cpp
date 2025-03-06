@@ -136,7 +136,7 @@ public:
 	
 	float MaxYawSpeed();
 
-	int OnTakeDamage(const CTakeDamageInfo &inputInfo);
+	int OnTakeDamage(const ITakeDamageInfo&inputInfo);
 
 	Class_T Classify() { return (m_bEnabled) ? CLASS_MILITARY : CLASS_NONE; }
 	
@@ -390,7 +390,7 @@ CBaseEntity *CNPC_CombineCamera::GetTarget()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CNPC_CombineCamera::OnTakeDamage(const CTakeDamageInfo &inputInfo)
+int CNPC_CombineCamera::OnTakeDamage(const ITakeDamageInfo&inputInfo)
 {
 	if (!m_takedamage)
 		return 0;

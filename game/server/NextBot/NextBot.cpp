@@ -358,7 +358,7 @@ void NextBotCombatCharacter::Ignite( float flFlameLifetime, CBaseEntity *pAttack
 
 
 //----------------------------------------------------------------------------------------------------------
-int NextBotCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int NextBotCombatCharacter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// track our last attacker
 	if ( info.GetAttacker() && ((CBaseEntity*)info.GetAttacker())->MyCombatCharacterPointer() )
@@ -374,7 +374,7 @@ int NextBotCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 
 //----------------------------------------------------------------------------------------------------------
-int NextBotCombatCharacter::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int NextBotCombatCharacter::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	// track our last attacker	
 	if (((CBaseEntity*)info.GetAttacker())->MyCombatCharacterPointer() )
@@ -393,7 +393,7 @@ int NextBotCombatCharacter::OnTakeDamage_Dying( const CTakeDamageInfo &info )
  * Can't use CBaseCombatCharacter's Event_Killed because it will immediately ragdoll us
  */
 static int g_DeathStartEvent = 0;
-void NextBotCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
+void NextBotCombatCharacter::Event_Killed( const ITakeDamageInfo&info )
 {
 	// track our last attacker
 	if ( info.GetAttacker() && ((CBaseEntity*)info.GetAttacker())->MyCombatCharacterPointer() )
@@ -441,7 +441,7 @@ void NextBotCombatCharacter::PerformCustomPhysics( Vector *pNewPosition, Vector 
 
 
 //----------------------------------------------------------------------------------------------------------
-bool NextBotCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector )
+bool NextBotCombatCharacter::BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector )
 {
 	// See if there's a ragdoll magnet that should influence our force.
 	Vector adjustedForceVector = forceVector;

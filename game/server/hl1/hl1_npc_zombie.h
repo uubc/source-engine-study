@@ -35,7 +35,7 @@ public:
 
 	float m_flNextFlinch;
 
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSound( void );
@@ -43,7 +43,7 @@ public:
 	// No range attacks
 	BOOL CheckRangeAttack1 ( float flDot, float flDist ) { return FALSE; }
 	BOOL CheckRangeAttack2 ( float flDot, float flDist ) { return FALSE; }
-	int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	void RemoveIgnoredConditions ( void );
 	int MeleeAttack1Conditions ( float flDot, float flDist );

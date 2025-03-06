@@ -399,7 +399,7 @@ void CAI_BaseNPC::ClearAllSchedules(void)
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-bool CAI_BaseNPC::Event_Gibbed( const CTakeDamageInfo &info )
+bool CAI_BaseNPC::Event_Gibbed( const ITakeDamageInfo&info )
 {
 	bool gibbed = CorpseGib( info );
 
@@ -544,7 +544,7 @@ void CAI_BaseNPC::CleanupOnDeath( CBaseEntity *pCulprit, bool bFireDeathOutput )
 		DevMsg( "Unexpected double-death-cleanup\n" );
 }
 
-void CAI_BaseNPC::SelectDeathPose( const CTakeDamageInfo &info )
+void CAI_BaseNPC::SelectDeathPose( const ITakeDamageInfo&info )
 {
 	if ( !GetEngineObject()->GetModelPtr() || (info.GetDamageType() & DMG_PREVENT_PHYSICS_FORCE) )
 		return;
@@ -571,7 +571,7 @@ void CAI_BaseNPC::SelectDeathPose( const CTakeDamageInfo &info )
 // Purpose:
 // Input  :
 //-----------------------------------------------------------------------------
-void CAI_BaseNPC::Event_Killed( const CTakeDamageInfo &info )
+void CAI_BaseNPC::Event_Killed( const ITakeDamageInfo&info )
 {
 	if (IsCurSchedule(SCHED_NPC_FREEZE))
 	{
@@ -657,7 +657,7 @@ void CAI_BaseNPC::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bo
 
 ConVar	ai_block_damage( "ai_block_damage","0" );
 
-bool CAI_BaseNPC::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CAI_BaseNPC::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	if ( ai_block_damage.GetBool() )
 		return false;
@@ -703,7 +703,7 @@ bool CAI_BaseNPC::PassesDamageFilter( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int CAI_BaseNPC::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CAI_BaseNPC::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	Forget( bits_MEMORY_INCOVER );
 
@@ -899,7 +899,7 @@ int CAI_BaseNPC::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 // OnTakeDamage_Dying - takedamage function called when a npc's
 // corpse is damaged.
 //=========================================================
-int CAI_BaseNPC::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int CAI_BaseNPC::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_PLASMA )
 	{
@@ -920,7 +920,7 @@ int CAI_BaseNPC::OnTakeDamage_Dying( const CTakeDamageInfo &info )
 // OnTakeDamage_Dead - takedamage function called when a npc's
 // corpse is damaged.
 //=========================================================
-int CAI_BaseNPC::OnTakeDamage_Dead( const CTakeDamageInfo &info )
+int CAI_BaseNPC::OnTakeDamage_Dead( const ITakeDamageInfo&info )
 {
 	Vector			vecDir;
 
@@ -1019,24 +1019,24 @@ void CAI_BaseNPC::OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CBaseEntity
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CAI_BaseNPC::IsLightDamage( const CTakeDamageInfo &info )
+bool CAI_BaseNPC::IsLightDamage( const ITakeDamageInfo&info )
 {
 	// ALL nonzero damage is light damage! Mask off COND_LIGHT_DAMAGE if you want to ignore light damage.
 	return ( info.GetDamage() >  0 );
 }
 
-bool CAI_BaseNPC::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CAI_BaseNPC::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	return ( info.GetDamage() >  20 );
 }
 
-void CAI_BaseNPC::DoRadiusDamage( const CTakeDamageInfo &info, int iClassIgnore, CBaseEntity *pEntityIgnore )
+void CAI_BaseNPC::DoRadiusDamage( const ITakeDamageInfo&info, int iClassIgnore, CBaseEntity *pEntityIgnore )
 {
 	RadiusDamage( info, GetEngineObject()->GetAbsOrigin(), info.GetDamage() * 2.5, iClassIgnore, pEntityIgnore );
 }
 
 
-void CAI_BaseNPC::DoRadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, int iClassIgnore, CBaseEntity *pEntityIgnore )
+void CAI_BaseNPC::DoRadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, int iClassIgnore, CBaseEntity *pEntityIgnore )
 {
 	RadiusDamage( info, vecSrc, info.GetDamage() * 2.5, iClassIgnore, pEntityIgnore );
 }
@@ -1087,7 +1087,7 @@ void CAI_BaseNPC::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCu
 // that individual NPC's can have more or less resistance
 // to damage done to certain hitgroups.
 //---------------------------------------------------------
-float CAI_BaseNPC::GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info )
+float CAI_BaseNPC::GetHitgroupDamageMultiplier( int iHitGroup, const ITakeDamageInfo&info )
 {
 	switch( iHitGroup )
 	{
@@ -1119,7 +1119,7 @@ float CAI_BaseNPC::GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamage
 //=========================================================
 // TraceAttack
 //=========================================================
-void CAI_BaseNPC::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CAI_BaseNPC::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	m_fNoDamageDecal = false;
 	if ( m_takedamage == DAMAGE_NO )
@@ -1390,7 +1390,7 @@ private:
 	CTakeDamageInfo m_info;
 };
 
-void CBaseEntity::TraceAttackToTriggers( const CTakeDamageInfo &info, const Vector& start, const Vector& end, const Vector& dir )
+void CBaseEntity::TraceAttackToTriggers( const ITakeDamageInfo&info, const Vector& start, const Vector& end, const Vector& dir )
 {
 	Ray_t ray;
 	ray.Init( start, end );

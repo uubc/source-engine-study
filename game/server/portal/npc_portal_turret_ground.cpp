@@ -30,7 +30,7 @@ public:
 	virtual void	Shoot();
 	virtual void	Scan();
 
-	virtual int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 };
 
@@ -264,7 +264,7 @@ void CNPC_Portal_GroundTurret::Scan( void )
 	ProjectBeam( vecEye, forward, 1, 30, 0.3 );
 }
 
-int CNPC_Portal_GroundTurret::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Portal_GroundTurret::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Taking damage from myself, make sure it's fatal.
 	CTakeDamageInfo infoCopy = info;

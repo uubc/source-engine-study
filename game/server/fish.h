@@ -36,7 +36,7 @@ public:
 	
 	virtual void Spawn( void );
 
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual void Touch( IServerEntity *other );			///< in contact with "other"
 
 	void Update( float deltaT );						///< invoked each server tick

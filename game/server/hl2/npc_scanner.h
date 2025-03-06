@@ -34,7 +34,7 @@ public:
 	CNPC_CScanner();
 
 	int				GetSoundInterests( void ) { return (SOUND_WORLD|SOUND_COMBAT|SOUND_PLAYER|SOUND_DANGER); }
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	bool			FValidateHintType(CAI_Hint *pHint);
 
@@ -71,7 +71,7 @@ public:
 
 	void			InspectTarget( inputdata_t &inputdata, ScannerFlyMode_t eFlyMode );
 
-	void			Event_Killed( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
 
 	char			*GetEngineSound( void );
 

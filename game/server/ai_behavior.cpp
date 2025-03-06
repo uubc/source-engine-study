@@ -342,7 +342,7 @@ bool CAI_BehaviorBase::ShouldPlayerAvoid( void )
 
 //-------------------------------------
 
-int CAI_BehaviorBase::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CAI_BehaviorBase::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	Assert( m_pBackBridge != NULL );
 	

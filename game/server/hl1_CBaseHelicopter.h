@@ -44,7 +44,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void StopLoopingSounds();
 
 	int  BloodColor( void ) { return DONT_BLEED; }
@@ -83,8 +83,8 @@ public:
 	virtual void ApplyGeneralDrag( void );
 
 
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	virtual bool FireGun( void );
 

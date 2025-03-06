@@ -138,7 +138,7 @@ public:
 
 #ifdef GAME_DLL
 	virtual void Start( void ) { m_bActive = true; }
-	virtual void AccumulateMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity );
+	virtual void AccumulateMultiDamage( const ITakeDamageInfo&info, CBaseEntity *pEntity );
 	virtual void Process( void );
 
 private:

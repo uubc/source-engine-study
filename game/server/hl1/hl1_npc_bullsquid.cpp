@@ -351,7 +351,7 @@ void CNPC_Bullsquid::IdleSound( void )
 //=========================================================
 // PainSound 
 //=========================================================
-void CNPC_Bullsquid::PainSound( const CTakeDamageInfo &info )
+void CNPC_Bullsquid::PainSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Bullsquid.Pain" );
@@ -369,7 +369,7 @@ void CNPC_Bullsquid::AlertSound( void )
 //=========================================================
 // DeathSound
 //=========================================================
-void CNPC_Bullsquid::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Bullsquid::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Bullsquid.Die" );
@@ -639,7 +639,7 @@ Disposition_t CNPC_Bullsquid::IRelationType( CBaseEntity *pTarget )
 // TakeDamage - overridden for bullsquid so we can keep track
 // of how much time has passed since it was last injured
 //=========================================================
-int CNPC_Bullsquid::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Bullsquid::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 
 #if 0 //Fix later.

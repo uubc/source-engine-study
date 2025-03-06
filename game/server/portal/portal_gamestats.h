@@ -106,7 +106,7 @@ public:
 
 	virtual void Event_LevelInit( void );
 	virtual void Event_MapChange( const char *szOldMapName, const char *szNewMapName );
-	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info );
+	virtual void Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info );
 	void Event_PortalPlacement( const Vector &ptPlayerFiredFrom, const Vector &ptAttemptedPosition, char iSuccessCode );
 	void Event_PlayerJump( const Vector &ptStartPosition, const Vector &vStartVelocity );
 	void Event_PlayerUsed( const Vector &ptTraceStart, const Vector &vTraceDelta, CBaseEntity *pUsedEntity );

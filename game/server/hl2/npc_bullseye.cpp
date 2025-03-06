@@ -224,7 +224,7 @@ void CNPC_Bullseye::Activate( void )
 //------------------------------------------------------------------------------
 // Purpose : Override so doesn't fall to ground when killed
 //------------------------------------------------------------------------------
-void CNPC_Bullseye::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Bullseye::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -377,7 +377,7 @@ bool CNPC_Bullseye::CanBeAnEnemyOf( CBaseEntity *pEnemy )
 // Input  : fDamage - amount of damage
 //			bitsDamageType - damage type
 //-----------------------------------------------------------------------------
-bool CNPC_Bullseye::IsLightDamage( const CTakeDamageInfo &info )
+bool CNPC_Bullseye::IsLightDamage( const ITakeDamageInfo&info )
 {
 	return ( info.GetDamage() > 0 );
 }
@@ -391,7 +391,7 @@ bool CNPC_Bullseye::IsLightDamage( const CTakeDamageInfo &info )
 //			*ptr - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-void CNPC_Bullseye::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Bullseye::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	//If specified, we must be the enemy of the target
 	if (GetEngineObject()->GetSpawnFlags() & SF_BULLSEYE_ENEMYDAMAGEONLY)
@@ -423,7 +423,7 @@ void CNPC_Bullseye::TraceAttack( const CTakeDamageInfo &info, const Vector &vecD
 //			bitsDamageType - 
 // Output : int
 //-----------------------------------------------------------------------------
-int CNPC_Bullseye::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_Bullseye::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	GetEngineObject()->SetNextThink( gpGlobals->curtime );
 

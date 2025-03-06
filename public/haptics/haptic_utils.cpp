@@ -288,14 +288,14 @@ void UpdateAvatarEffect(void)
 
 
 #ifndef CLIENT_DLL
-void HapticsDamage(CBasePlayer* pPlayer, const CTakeDamageInfo &info)
+void HapticsDamage(CBasePlayer* pPlayer, const ITakeDamageInfo &info)
 {
 #if !defined(TF_DLL) && !defined(CSTRIKE_DLL)
 	if(!pPlayer->HasHaptics())
 		return;// do not send to non haptic users.
 
 	Vector DamageDirection(0,0,0);
-	CBaseEntity *eInflictor = (CBaseEntity*)info.GetInflictor();
+	IServerEntity *eInflictor = (IServerEntity*)info.GetInflictor();
 	// Pat: nuero toxix crash fix
 	if(!eInflictor) {
 		return;

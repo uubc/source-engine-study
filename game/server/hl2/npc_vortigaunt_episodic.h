@@ -66,7 +66,7 @@ public:
 	virtual int		MeleeAttack1Conditions( float flDot, float flDist );	// Dispel
 	virtual float	InnateRange1MinRange( void ) { return 0.0f; }
 	virtual float	InnateRange1MaxRange( void ) { return sk_vortigaunt_zap_range.GetFloat()*12; }
-	virtual int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	virtual bool	FInViewCone( IServerEntity *pEntity );
 	virtual bool	ShouldMoveAndShoot( void );
 
@@ -80,7 +80,7 @@ public:
 	virtual Activity	NPC_TranslateActivity( Activity eNewActivity );
 
 	virtual void	UpdateOnRemove( void );
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
 	virtual	void	GatherConditions( void );
 	virtual void	RunTask( const Task_t *pTask );
 	virtual void	StartTask( const Task_t *pTask );
@@ -97,10 +97,10 @@ public:
 	virtual bool	IsValidEnemy( CBaseEntity *pEnemy );
 	bool			IsLeading( void ) { return ( GetRunningBehavior() == &m_LeadBehavior && m_LeadBehavior.HasGoal() ); }
 
-	void			DeathSound( const CTakeDamageInfo &info );
-	void			PainSound( const CTakeDamageInfo &info );
+	void			DeathSound( const ITakeDamageInfo&info );
+	void			PainSound( const ITakeDamageInfo&info );
 	
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	virtual void	SpeakSentence( int sentType );
 
 	virtual int		IRelationPriority( CBaseEntity *pTarget );

@@ -97,8 +97,8 @@ public:
 	virtual const char *GetHeadcrabClassname( void );
 	virtual const char *GetHeadcrabModel( void );
 
-	virtual void PainSound( const CTakeDamageInfo &info );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual void AlertSound( void );
 	virtual void IdleSound( void );
 	virtual void AttackSound( void );
@@ -108,12 +108,12 @@ public:
 	virtual void FootscuffSound( bool fRightFoot );
 	virtual void MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize );
 
-	virtual void Event_Killed( const CTakeDamageInfo &info );
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	virtual void RunTask( const Task_t *pTask );
 	virtual int  MeleeAttack1Conditions ( float flDot, float flDist );
 
-	virtual bool ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold );
+	virtual bool ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold );
 
 	virtual void OnScheduleChange ( void );
 	virtual bool CanRunAScriptedNPCInteraction( bool bForced );
@@ -476,7 +476,7 @@ void CNPC_Zombine::DropGrenade( Vector vDir )
 	m_hGrenade = NULL;
 }
 
-void CNPC_Zombine::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Zombine::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -507,7 +507,7 @@ bool CNPC_Zombine::HandleInteraction( int interactionType, void *data, CBaseComb
 	return BaseClass::HandleInteraction( interactionType, data, sourceEnt );
 }
 
-void CNPC_Zombine::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Zombine::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 
@@ -812,7 +812,7 @@ void CNPC_Zombine::FootstepSound( bool fRightFoot )
 //-----------------------------------------------------------------------------
 // Purpose: Overloaded so that explosions don't split the zombine in twain.
 //-----------------------------------------------------------------------------
-bool CNPC_Zombine::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold )
+bool CNPC_Zombine::ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	return false;
 }
@@ -884,7 +884,7 @@ void CNPC_Zombine::AttackMissSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Zombine::PainSound( const CTakeDamageInfo &info )
+void CNPC_Zombine::PainSound( const ITakeDamageInfo&info )
 {
 	// We're constantly taking damage when we are on fire. Don't make all those noises!
 	if ( IsOnFire() )
@@ -905,7 +905,7 @@ void CNPC_Zombine::PainSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Zombine::DeathSound( const CTakeDamageInfo &info ) 
+void CNPC_Zombine::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "Zombine.Die";
 	CPASAttenuationFilter filter(this, soundname);

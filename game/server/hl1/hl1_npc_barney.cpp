@@ -332,7 +332,7 @@ void CNPC_Barney::BarneyFirePistol ( void )
 	m_cAmmoLoaded--;// take away a bullet!
 }
 
-int CNPC_Barney::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Barney::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	// make sure friends talk about it if player hurts talkmonsters...
 	int ret = BaseClass::OnTakeDamage_Alive( inputInfo );
@@ -374,7 +374,7 @@ int CNPC_Barney::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Barney::PainSound( const CTakeDamageInfo &info )
+void CNPC_Barney::PainSound( const ITakeDamageInfo&info )
 {
 	if (gpGlobals->curtime < m_flPainTime)
 		return;
@@ -397,7 +397,7 @@ void CNPC_Barney::PainSound( const CTakeDamageInfo &info )
 //=========================================================
 // DeathSound 
 //=========================================================
-void CNPC_Barney::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Barney::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 
@@ -412,7 +412,7 @@ void CNPC_Barney::DeathSound( const CTakeDamageInfo &info )
 	}
 }
 
-void CNPC_Barney::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Barney::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -443,7 +443,7 @@ void CNPC_Barney::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 }
 
-void CNPC_Barney::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Barney::Event_Killed( const ITakeDamageInfo&info )
 {
 	if (GetEngineObject()->GetBody() < BARNEY_BODY_GUNGONE )
 	{
@@ -765,7 +765,7 @@ bool CNPC_Barney::CanBecomeRagdoll( void )
 	return BaseClass::CanBecomeRagdoll();
 }
 
-bool CNPC_Barney::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Barney::ShouldGib( const ITakeDamageInfo&info )
 {
 	if ( UTIL_IsLowViolence() )
 	{

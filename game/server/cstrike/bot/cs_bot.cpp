@@ -100,7 +100,7 @@ bool CCSBot::Jump( bool mustJump )
  * Invoked when injured by something
  * NOTE: We dont want to directly call Attack() here, or the bots will have super-human reaction times when injured
  */
-int CCSBot::OnTakeDamage( const CTakeDamageInfo &info )
+int CCSBot::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	CBaseEntity *attacker = (CBaseEntity*)info.GetInflictor();
 
@@ -162,7 +162,7 @@ int CCSBot::OnTakeDamage( const CTakeDamageInfo &info )
 /**
  * Invoked when killed
  */
-void CCSBot::Event_Killed( const CTakeDamageInfo &info )
+void CCSBot::Event_Killed( const ITakeDamageInfo&info )
 { 
 //	PrintIfWatched( "Killed( attacker = %s )\n", STRING(pevAttacker->netname) );
 

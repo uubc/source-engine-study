@@ -72,7 +72,7 @@ public:
 
 	int		SelectSchedule( void );
 	int		MeleeAttack1Conditions( float flDot, float flDist );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	int		TranslateSchedule( int type );
 
 	void	Precache( void );
@@ -1236,7 +1236,7 @@ void CNPC_Ichthyosaur::PrescheduleThink( void )
 //			flDamage - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-int	CNPC_Ichthyosaur::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CNPC_Ichthyosaur::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	//Release the player if he's struck us while being held
 	if ( m_flHoldTime > gpGlobals->curtime )

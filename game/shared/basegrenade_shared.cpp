@@ -241,7 +241,7 @@ void CBaseGrenade::Smoke( void )
 	GetEngineObject()->SetNextThink( gpGlobals->curtime );
 }
 
-void CBaseGrenade::Event_Killed( const CTakeDamageInfo &info )
+void CBaseGrenade::Event_Killed( const ITakeDamageInfo&info )
 {
 	Detonate( );
 }

@@ -629,14 +629,14 @@ ConVarRef suitcharger( "sk_suitcharger" );
 
 	//=========================================================
 	//=========================================================
-	bool CMultiplayWorld::AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info )
+	bool CMultiplayWorld::AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info )
 	{
 		return true;
 	}
 
 	//=========================================================
 	//=========================================================
-	bool CMultiplayWorld::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const CTakeDamageInfo &info )
+	bool CMultiplayWorld::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const ITakeDamageInfo &info )
 	{
 		return true;
 	}
@@ -744,7 +744,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 	//=========================================================
 	// PlayerKilled - someone/something killed this player
 	//=========================================================
-	void CMultiplayWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CMultiplayWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		DeathNotice( pVictim, info );
 
@@ -795,7 +795,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 	//=========================================================
 	// Deathnotice. 
 	//=========================================================
-	void CMultiplayWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CMultiplayWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		// Work out what killed the player, and send a message to all clients about it
 		const char *killer_weapon_name = "world";		// by default, the player is killed by the world

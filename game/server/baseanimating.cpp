@@ -348,7 +348,7 @@ CRagdollProp* CBaseAnimating::CreateRagdollProp()
 	return pRagdoll;
 }
 
-CBaseEntity* CBaseAnimating::CreateServerRagdoll(int forceBone, const CTakeDamageInfo& info, int collisionGroup, bool bUseLRURetirement)
+CBaseEntity* CBaseAnimating::CreateServerRagdoll(int forceBone, const ITakeDamageInfo& info, int collisionGroup, bool bUseLRURetirement)
 {
 	if (info.GetDamageType() & (DMG_VEHICLE | DMG_CRUSH))
 	{

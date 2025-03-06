@@ -2582,7 +2582,7 @@ void CBaseServerVehicle::ReloadScript()
 //-----------------------------------------------------------------------------
 // Purpose: Passes this call down into the server vehicle where the tests are done
 //-----------------------------------------------------------------------------
-bool CBaseServerVehicle::PassengerShouldReceiveDamage( CTakeDamageInfo &info )
+bool CBaseServerVehicle::PassengerShouldReceiveDamage( ITakeDamageInfo &info )
 { 
 	//if ( GetDrivableVehicle() )
 	//	return GetDrivableVehicle()->PassengerShouldReceiveDamage( info );

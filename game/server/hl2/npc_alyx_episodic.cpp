@@ -962,7 +962,7 @@ bool CNPC_Alyx::IsValidEnemy( CBaseEntity *pEnemy )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Alyx::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Alyx::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Destroy our EMP tool since it won't follow us onto the ragdoll anyway
 	if ( m_hEmpTool != NULL )
@@ -975,7 +975,7 @@ void CNPC_Alyx::Event_Killed( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Alyx::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CNPC_Alyx::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	// comment on killing npc's
 	if ( pVictim->IsNPC() )
@@ -2249,7 +2249,7 @@ void CNPC_Alyx::OnStateChange( NPC_STATE OldState, NPC_STATE NewState )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CNPC_Alyx::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Alyx::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 
@@ -2273,7 +2273,7 @@ bool CNPC_Alyx::CanBeHitByMeleeAttack( IServerEntity *pAttacker )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_Alyx::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Alyx::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	//!!!HACKHACK - EP1 - Stop alyx taking all physics damage to prevent her dying
 	// in freak accidents resembling spontaneous stress damage death (which are now impossible)
@@ -2446,7 +2446,7 @@ bool CNPC_Alyx::IsAllowedToAim()
 
 
 //-----------------------------------------------------------------------------
-void CNPC_Alyx::PainSound( const CTakeDamageInfo &info )
+void CNPC_Alyx::PainSound( const ITakeDamageInfo&info )
 {
 	// Alex has specific sounds for when attacked in the dark
 	if ( !HasCondition( COND_ALYX_IN_DARK ) )
@@ -2460,7 +2460,7 @@ void CNPC_Alyx::PainSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 
-void CNPC_Alyx::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Alyx::DeathSound( const ITakeDamageInfo&info )
 {
 	// Sentences don't play on dead NPCs
 	SentenceStop();

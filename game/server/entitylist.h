@@ -24,8 +24,6 @@
 #include "ServerNetworkProperty.h"
 #include "variant_t.h"
 
-typedef CHandle<IServerEntity> ENTHANDLE;
-
 //class IServerEntity;
 // We can only ever move 512 entities across a transition
 #define MAX_ENTITY 512
@@ -152,7 +150,7 @@ public:
 	QAngle TransformAnglesToPlayerSpace(const QAngle& anglesIn, IServerEntity* pPlayer);
 	QAngle TransformAnglesFromPlayerSpace(const QAngle& anglesIn, IServerEntity* pPlayer);
 
-	IServerEntity* GetAttached() { return (IServerEntity*)m_attachedEntity; }
+	IServerEntity* GetAttached() { return serverEntitylist->GetBaseEntityFromHandle(m_attachedEntity); }
 	const QAngle& GetAttachedAnglesPlayerSpace() { return m_attachedAnglesPlayerSpace; }
 	void SetAttachedAnglesPlayerSpace(const QAngle& attachedAnglesPlayerSpace) { m_attachedAnglesPlayerSpace = attachedAnglesPlayerSpace; }
 	const Vector& GetAttachedPositionObjectSpace() { return m_attachedPositionObjectSpace; }
@@ -183,7 +181,7 @@ private:
 	float			m_flLoadWeight;
 	float			m_savedRotDamping[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 	float			m_savedMass[VPHYSICS_MAX_OBJECT_LIST_COUNT];
-	ENTHANDLE		m_attachedEntity;
+	CBaseHandle		m_attachedEntity;
 	QAngle			m_vecPreferredCarryAngles;
 	bool			m_bHasPreferredCarryAngles;
 	float			m_flDistanceOffset;
@@ -199,7 +197,7 @@ private:
 	bool			m_bAllowObjectOverhead; // Can the player hold this object directly overhead? (Default is NO)
 
 	//set when a held entity is penetrating another through a portal. Needed for special fixes
-	ENTHANDLE		m_PenetratedEntity;
+	CBaseHandle		m_PenetratedEntity;
 	int				m_frameCount;
 };
 
@@ -2291,10 +2289,10 @@ public:
 	const CEngineObjectInternal* AsEngineObject() const { return this; }
 	CEngineShadowCloneInternal* GetNext() { return m_pNext; }
 
-	static CEngineShadowCloneInternal* CreateShadowClone(IPhysicsEnvironment* pInPhysicsEnvironment, ENTHANDLE hEntToClone, const char* szDebugMarker, const matrix3x4_t* pTransformationMatrix = NULL);
+	static CEngineShadowCloneInternal* CreateShadowClone(IPhysicsEnvironment* pInPhysicsEnvironment, CBaseHandle hEntToClone, const char* szDebugMarker, const matrix3x4_t* pTransformationMatrix = NULL);
 	static void ReleaseShadowClone(CEngineShadowCloneInternal* pShadowClone);
 private:
-	ENTHANDLE			m_hClonedEntity; //the entity we're supposed to be cloning the physics of
+	CBaseHandle			m_hClonedEntity; //the entity we're supposed to be cloning the physics of
 	VMatrix			m_matrixShadowTransform; //all cloned coordinates and angles will be run through this matrix before being applied
 	VMatrix			m_matrixShadowTransform_Inverse;
 
@@ -2663,7 +2661,7 @@ extern bool ShouldRemoveThisRagdoll(IServerEntity* pRagdoll);
 //-----------------------------------------------------------------------------
 struct entitem_t
 {
-	ENTHANDLE hEnt;
+	CBaseHandle hEnt;
 	struct entitem_t* pNext;
 
 	// uses pool memory
@@ -2770,11 +2768,384 @@ struct vehiclescript_t
 	vehiclesounds_t sounds;
 };
 
+class CEngineTakeDamageInfo : public ITakeDamageInfo
+{
+public:
+
+	CEngineTakeDamageInfo()
+	{
+		Init(NULL, NULL, NULL, vec3_origin, vec3_origin, vec3_origin, 0, 0, 0);
+	}
+	CEngineTakeDamageInfo(IHandleEntity* pInflictor, IHandleEntity* pAttacker, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector* reportedPosition = NULL)
+	{
+		Set(pInflictor, pAttacker, damageForce, damagePosition, flDamage, bitsDamageType, iKillType, reportedPosition);
+	}
+	CEngineTakeDamageInfo(const ITakeDamageInfo& info)
+	{
+		m_vecDamageForce = info.GetDamageForce();
+		m_vecDamagePosition = info.GetDamagePosition();
+		m_vecReportedPosition = info.GetReportedPosition();
+		m_hInflictor = info.GetInflictor();
+		m_hAttacker = info.GetAttacker();
+		m_hWeapon = info.GetWeapon();
+		m_flDamage = info.GetDamage();
+		m_flMaxDamage = info.GetMaxDamage();
+		m_flBaseDamage = info.GetBaseDamage();
+		m_bitsDamageType = info.GetDamageType();
+		m_iDamageCustom = info.GetDamageCustom();
+		m_iDamageStats = info.GetDamageStats();
+		m_iAmmoType = info.GetAmmoType();
+		m_iDamagedOtherPlayers = info.GetDamagedOtherPlayers();
+		m_iPlayerPenetrationCount = info.GetPlayerPenetrationCount();
+		m_flDamageBonus = info.GetDamageBonus();
+		m_bForceFriendlyFire = info.IsForceFriendlyFire();
+	}
+
+	CEngineTakeDamageInfo& operator =(const ITakeDamageInfo& info)
+	{
+		m_vecDamageForce = info.GetDamageForce();
+		m_vecDamagePosition = info.GetDamagePosition();
+		m_vecReportedPosition = info.GetReportedPosition();
+		m_hInflictor = info.GetInflictor();
+		m_hAttacker = info.GetAttacker();
+		m_hWeapon = info.GetWeapon();
+		m_flDamage = info.GetDamage();
+		m_flMaxDamage = info.GetMaxDamage();
+		m_flBaseDamage = info.GetBaseDamage();
+		m_bitsDamageType = info.GetDamageType();
+		m_iDamageCustom = info.GetDamageCustom();
+		m_iDamageStats = info.GetDamageStats();
+		m_iAmmoType = info.GetAmmoType();
+		m_iDamagedOtherPlayers = info.GetDamagedOtherPlayers();
+		m_iPlayerPenetrationCount = info.GetPlayerPenetrationCount();
+		m_flDamageBonus = info.GetDamageBonus();
+		m_bForceFriendlyFire = info.IsForceFriendlyFire();
+		return *this;
+	}
+
+	void Init(IHandleEntity* pInflictor, IHandleEntity* pAttacker, IHandleEntity* pWeapon, const Vector& damageForce, const Vector& damagePosition, const Vector& reportedPosition, float flDamage, int bitsDamageType, int iCustomDamage)
+	{
+		m_hInflictor = pInflictor;
+		if (pAttacker)
+		{
+			m_hAttacker = pAttacker;
+		}
+		else
+		{
+			m_hAttacker = pInflictor;
+		}
+
+		m_hWeapon = pWeapon;
+
+		m_flDamage = flDamage;
+
+		m_flBaseDamage = BASEDAMAGE_NOT_SPECIFIED;
+
+		m_bitsDamageType = bitsDamageType;
+		m_iDamageCustom = iCustomDamage;
+
+		m_flMaxDamage = flDamage;
+		m_vecDamageForce = damageForce;
+		m_vecDamagePosition = damagePosition;
+		m_vecReportedPosition = reportedPosition;
+		m_iAmmoType = -1;
+		m_iDamagedOtherPlayers = 0;
+		m_iPlayerPenetrationCount = 0;
+		m_flDamageBonus = 0.f;
+		m_bForceFriendlyFire = false;
+	}
+
+	void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, float flDamage, int bitsDamageType, int iKillType = 0)
+	{
+		Init(pInflictor, pAttacker, NULL, vec3_origin, vec3_origin, vec3_origin, flDamage, bitsDamageType, iKillType);
+	}
+
+	void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, IHandleEntity* pWeapon, float flDamage, int bitsDamageType, int iKillType = 0)
+	{
+		Init(pInflictor, pAttacker, pWeapon, vec3_origin, vec3_origin, vec3_origin, flDamage, bitsDamageType, iKillType);
+	}
+
+	void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector* reportedPosition = NULL)
+	{
+		Set(pInflictor, pAttacker, NULL, damageForce, damagePosition, flDamage, bitsDamageType, iKillType, reportedPosition);
+	}
+
+	void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, IHandleEntity* pWeapon, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector* reportedPosition = NULL)
+	{
+		Vector vecReported = vec3_origin;
+		if (reportedPosition)
+		{
+			vecReported = *reportedPosition;
+		}
+		Init(pInflictor, pAttacker, pWeapon, damageForce, damagePosition, vecReported, flDamage, bitsDamageType, iKillType);
+	}
+
+	// Inflictor is the weapon or rocket (or player) that is dealing the damage.
+	IHandleEntity* GetInflictor() const;
+	void			SetInflictor(IHandleEntity* pInflictor);
+
+	// Weapon is the weapon that did the attack.
+	// For hitscan weapons, it'll be the same as the inflictor. For projectile weapons, the projectile 
+	// is the inflictor, and this contains the weapon that created the projectile.
+	IHandleEntity* GetWeapon() const;
+	void			SetWeapon(IHandleEntity* pWeapon);
+
+	// Attacker is the character who originated the attack (like a player or an AI).
+	IHandleEntity* GetAttacker() const;
+	void			SetAttacker(IHandleEntity* pAttacker);
+
+	float			GetDamage() const;
+	void			SetDamage(float flDamage);
+	float			GetMaxDamage() const;
+	void			SetMaxDamage(float flMaxDamage);
+	void			ScaleDamage(float flScaleAmount);
+	void			AddDamage(float flAddAmount);
+	void			SubtractDamage(float flSubtractAmount);
+	float			GetDamageBonus() const;
+	void			SetDamageBonus(float flBonus);
+
+	float			GetBaseDamage() const;
+	bool			BaseDamageIsValid() const;
+
+	Vector			GetDamageForce() const;
+	void			SetDamageForce(const Vector& damageForce);
+	void			ScaleDamageForce(float flScaleAmount);
+
+	Vector			GetDamagePosition() const;
+	void			SetDamagePosition(const Vector& damagePosition);
+
+	Vector			GetReportedPosition() const;
+	void			SetReportedPosition(const Vector& reportedPosition);
+
+	int				GetDamageType() const;
+	void			SetDamageType(int bitsDamageType);
+	void			AddDamageType(int bitsDamageType);
+	int				GetDamageCustom(void) const;
+	void			SetDamageCustom(int iDamageCustom);
+	int				GetDamageStats(void) const;
+	void			SetDamageStats(int iDamageStats);
+	void			SetForceFriendlyFire(bool bValue) { m_bForceFriendlyFire = bValue; }
+	bool			IsForceFriendlyFire(void) const { return m_bForceFriendlyFire; }
+
+	int				GetAmmoType() const;
+	void			SetAmmoType(int iAmmoType);
+	const char* GetAmmoName() const {
+		Error("not support\n");
+	}
+
+	int				GetPlayerPenetrationCount() const { return m_iPlayerPenetrationCount; }
+	void			SetPlayerPenetrationCount(int iPlayerPenetrationCount) { m_iPlayerPenetrationCount = iPlayerPenetrationCount; }
+
+	int				GetDamagedOtherPlayers() const { return m_iDamagedOtherPlayers; }
+	void			SetDamagedOtherPlayers(int iVal) { m_iDamagedOtherPlayers = iVal; }
+
+private:
+
+	Vector			m_vecDamageForce;
+	Vector			m_vecDamagePosition;
+	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
+	CBaseHandle		m_hInflictor;
+	CBaseHandle		m_hAttacker;
+	CBaseHandle		m_hWeapon;
+	float			m_flDamage;
+	float			m_flMaxDamage;
+	float			m_flBaseDamage;			// The damage amount before skill leve adjustments are made. Used to get uniform damage forces.
+	int				m_bitsDamageType;
+	int				m_iDamageCustom;
+	int				m_iDamageStats;
+	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
+	int				m_iDamagedOtherPlayers;
+	int				m_iPlayerPenetrationCount;
+	float			m_flDamageBonus;		// Anything that increases damage (crit) - store the delta
+	bool			m_bForceFriendlyFire;	// Ideally this would be a dmg type, but we can't add more
+};
+
+// -------------------------------------------------------------------------------------------------- //
+// Inlines.
+// -------------------------------------------------------------------------------------------------- //
+
+inline IHandleEntity* CEngineTakeDamageInfo::GetInflictor() const
+{
+	return serverEntitylist->GetBaseEntityFromHandle(m_hInflictor);
+}
+
+
+inline void CEngineTakeDamageInfo::SetInflictor(IHandleEntity* pInflictor)
+{
+	m_hInflictor = pInflictor;
+}
+
+
+inline IHandleEntity* CEngineTakeDamageInfo::GetAttacker() const
+{
+	return serverEntitylist->GetBaseEntityFromHandle(m_hAttacker);
+}
+
+
+inline void CEngineTakeDamageInfo::SetAttacker(IHandleEntity* pAttacker)
+{
+	m_hAttacker = pAttacker;
+}
+
+inline IHandleEntity* CEngineTakeDamageInfo::GetWeapon() const
+{
+	return serverEntitylist->GetBaseEntityFromHandle(m_hWeapon);
+}
+
+
+inline void CEngineTakeDamageInfo::SetWeapon(IHandleEntity* pWeapon)
+{
+	m_hWeapon = pWeapon;
+}
+
+
+inline float CEngineTakeDamageInfo::GetDamage() const
+{
+	return m_flDamage;
+}
+
+inline void CEngineTakeDamageInfo::SetDamage(float flDamage)
+{
+	m_flDamage = flDamage;
+}
+
+inline float CEngineTakeDamageInfo::GetMaxDamage() const
+{
+	return m_flMaxDamage;
+}
+
+inline void CEngineTakeDamageInfo::SetMaxDamage(float flMaxDamage)
+{
+	m_flMaxDamage = flMaxDamage;
+}
+
+inline void CEngineTakeDamageInfo::ScaleDamage(float flScaleAmount)
+{
+	m_flDamage *= flScaleAmount;
+}
+
+inline void CEngineTakeDamageInfo::AddDamage(float flAddAmount)
+{
+	m_flDamage += flAddAmount;
+}
+
+inline void CEngineTakeDamageInfo::SubtractDamage(float flSubtractAmount)
+{
+	m_flDamage -= flSubtractAmount;
+}
+
+inline float CEngineTakeDamageInfo::GetDamageBonus() const
+{
+	return m_flDamageBonus;
+}
+
+inline void CEngineTakeDamageInfo::SetDamageBonus(float flBonus)
+{
+	m_flDamageBonus = flBonus;
+}
+
+inline float CEngineTakeDamageInfo::GetBaseDamage() const
+{
+	if (BaseDamageIsValid())
+		return m_flBaseDamage;
+
+	// No one ever specified a base damage, so just return damage.
+	return m_flDamage;
+}
+
+inline bool CEngineTakeDamageInfo::BaseDamageIsValid() const
+{
+	return (m_flBaseDamage != BASEDAMAGE_NOT_SPECIFIED);
+}
+
+inline Vector CEngineTakeDamageInfo::GetDamageForce() const
+{
+	return m_vecDamageForce;
+}
+
+inline void CEngineTakeDamageInfo::SetDamageForce(const Vector& damageForce)
+{
+	m_vecDamageForce = damageForce;
+}
+
+inline void	CEngineTakeDamageInfo::ScaleDamageForce(float flScaleAmount)
+{
+	m_vecDamageForce *= flScaleAmount;
+}
+
+inline Vector CEngineTakeDamageInfo::GetDamagePosition() const
+{
+	return m_vecDamagePosition;
+}
+
+
+inline void CEngineTakeDamageInfo::SetDamagePosition(const Vector& damagePosition)
+{
+	m_vecDamagePosition = damagePosition;
+}
+
+inline Vector CEngineTakeDamageInfo::GetReportedPosition() const
+{
+	return m_vecReportedPosition;
+}
+
+
+inline void CEngineTakeDamageInfo::SetReportedPosition(const Vector& reportedPosition)
+{
+	m_vecReportedPosition = reportedPosition;
+}
+
+
+inline void CEngineTakeDamageInfo::SetDamageType(int bitsDamageType)
+{
+	m_bitsDamageType = bitsDamageType;
+}
+
+inline int CEngineTakeDamageInfo::GetDamageType() const
+{
+	return m_bitsDamageType;
+}
+
+inline void	CEngineTakeDamageInfo::AddDamageType(int bitsDamageType)
+{
+	m_bitsDamageType |= bitsDamageType;
+}
+
+inline int CEngineTakeDamageInfo::GetDamageCustom() const
+{
+	return m_iDamageCustom;
+}
+
+inline void CEngineTakeDamageInfo::SetDamageCustom(int iDamageCustom)
+{
+	m_iDamageCustom = iDamageCustom;
+}
+
+inline int CEngineTakeDamageInfo::GetDamageStats() const
+{
+	return m_iDamageCustom;
+}
+
+inline void CEngineTakeDamageInfo::SetDamageStats(int iDamageCustom)
+{
+	m_iDamageCustom = iDamageCustom;
+}
+
+inline int CEngineTakeDamageInfo::GetAmmoType() const
+{
+	return m_iAmmoType;
+}
+
+inline void CEngineTakeDamageInfo::SetAmmoType(int iAmmoType)
+{
+	m_iAmmoType = iAmmoType;
+}
+
 struct damageevent_t
 {
 	IServerEntity* pEntity;
 	IPhysicsObject* pInflictorPhysics;
-	CTakeDamageInfo	info;
+	CEngineTakeDamageInfo info;
 	bool			bRestoreVelocity;
 };
 
@@ -2799,8 +3170,8 @@ enum
 
 struct penetrateevent_t
 {
-	ENTHANDLE			hEntity0;
-	ENTHANDLE			hEntity1;
+	CBaseHandle			hEntity0;
+	CBaseHandle			hEntity1;
 	float			startTime;
 	float			timeStamp;
 	int				collisionState;
@@ -2829,7 +3200,7 @@ public:
 
 	bool GetTriggerEvent(triggerevent_t* pEvent, IServerEntity* pTriggerEntity);
 	void BufferTouchEvents(bool enable) { m_bBufferTouchEvents = enable; }
-	virtual void AddDamageEvent(IServerEntity* pEntity, const CTakeDamageInfo& info, IPhysicsObject* pInflictorPhysics, bool bRestoreVelocity, const Vector& savedVel, const AngularImpulse& savedAngVel);
+	virtual void AddDamageEvent(IServerEntity* pEntity, const ITakeDamageInfo& info, IPhysicsObject* pInflictorPhysics, bool bRestoreVelocity, const Vector& savedVel, const AngularImpulse& savedAngVel);
 	void AddImpulseEvent(IPhysicsObject* pPhysicsObject, const Vector& vecCenterForce, const AngularImpulse& vecCenterTorque);
 	void AddSetVelocityEvent(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity);
 	void AddRemoveObject(IServerEntity* pRemove);
@@ -2935,7 +3306,7 @@ public:
 
 	virtual void PostSimulationFrame(void);
 	void PortalPostSimulationFrame(void);
-	void AddDamageEvent(IServerEntity* pEntity, const CTakeDamageInfo& info, IPhysicsObject* pInflictorPhysics, bool bRestoreVelocity, const Vector& savedVel, const AngularImpulse& savedAngVel);
+	void AddDamageEvent(IServerEntity* pEntity, const ITakeDamageInfo& info, IPhysicsObject* pInflictorPhysics, bool bRestoreVelocity, const Vector& savedVel, const AngularImpulse& savedAngVel);
 };
 
 class CPhysConstraintEvents : public IPhysicsConstraintEvent
@@ -3546,14 +3917,14 @@ public:
 		}
 	}
 
-	void PhysCallbackDamage(IServerEntity* pEntity, const CTakeDamageInfo& info, gamevcollisionevent_t& event, int hurtIndex)
+	void PhysCallbackDamage(IServerEntity* pEntity, const ITakeDamageInfo& info, gamevcollisionevent_t& event, int hurtIndex)
 	{
 		Assert(m_pPhysenv->IsInSimulation());
 		int otherIndex = !hurtIndex;
 		m_Collisions.AddDamageEvent(pEntity, info, event.pObjects[otherIndex], true, event.preVelocity[otherIndex], event.preAngularVelocity[otherIndex]);
 	}
 
-	void PhysCallbackDamage(IServerEntity* pEntity, const CTakeDamageInfo& info)
+	void PhysCallbackDamage(IServerEntity* pEntity, const ITakeDamageInfo& info)
 	{
 		if (PhysIsInCallback())
 		{
@@ -4307,8 +4678,8 @@ private:
 	int	m_nPredictionRandomSeed = -1;
 	IEngineObject* m_pPredictionPlayer = NULL;
 
-	CUtlLinkedList< ENTHANDLE > m_LRU;
-	CUtlLinkedList< ENTHANDLE > m_LRUImportantRagdolls;
+	CUtlLinkedList< CBaseHandle > m_LRU;
+	CUtlLinkedList< CBaseHandle > m_LRUImportantRagdolls;
 
 	int m_iMaxRagdolls;
 	int m_iSimulatedRagdollCount;
@@ -4689,7 +5060,7 @@ void CGlobalEntityList<T>::PhysFrame(float deltaTime)
 
 	for (pItem = m_pShadowEntities->m_pItemList; pItem; pItem = pItem->pNext)
 	{
-		IServerEntity* pEntity = pItem->hEnt.Get();
+		IServerEntity* pEntity = serverEntitylist->GetBaseEntityFromHandle(pItem->hEnt);
 		if (!pEntity)
 		{
 			Msg("Dangling pointer to physics entity!!!\n");
@@ -5134,7 +5505,7 @@ bool CGlobalEntityList<T>::DoRestoreEntity(T* pEntity, IRestore* pRestore)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
-	ENTHANDLE hEntity;
+	CBaseHandle hEntity;
 
 	hEntity = pEntity;
 
@@ -5206,7 +5577,7 @@ template<class T>
 int CGlobalEntityList<T>::RestoreGlobalEntity(T* pEntity, IRestore* pRestore, entitytable_t* pEntInfo)
 {
 	Vector oldOffset;
-	ENTHANDLE hEntitySafeHandle;
+	CBaseHandle hEntitySafeHandle;
 	hEntitySafeHandle = pEntity;
 	CGameSaveRestoreInfo* pSaveData = pRestore->GetGameSaveRestoreInfo();
 	oldOffset.Init();
@@ -5964,7 +6335,7 @@ int CGlobalEntityList<T>::DispatchSpawn(IServerEntity* pEntity)
 		MDLCACHE_CRITICAL_SECTION();
 
 		// keep a smart pointer that will now if the object gets deleted
-		CHandle<IServerEntity> pEntSafe;
+		CBaseHandle pEntSafe;
 		pEntSafe = pEntity;
 
 		// Initialize these or entities who don't link to the world won't have anything in here
@@ -7320,13 +7691,13 @@ void CGlobalEntityList<T>::MoveToTopOfLRU(IServerEntity* pRagdoll, bool bImporta
 {
 	if (bImportant)
 	{
-		m_LRUImportantRagdolls.AddToTail(pRagdoll);
+		m_LRUImportantRagdolls.AddToTail(pRagdoll->GetRefEHandle());
 
 		if (m_LRUImportantRagdolls.Count() > g_ragdoll_important_maxcount.GetInt())
 		{
 			int iIndex = m_LRUImportantRagdolls.Head();
 
-			IServerEntity* pRagdoll = m_LRUImportantRagdolls[iIndex].Get();
+			IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRUImportantRagdolls[iIndex]);
 
 			if (pRagdoll)
 			{
@@ -7339,14 +7710,14 @@ void CGlobalEntityList<T>::MoveToTopOfLRU(IServerEntity* pRagdoll, bool bImporta
 	}
 	for (int i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = m_LRU.Next(i))
 	{
-		if (m_LRU[i].Get() == pRagdoll)
+		if (serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]) == pRagdoll)
 		{
 			m_LRU.Remove(i);
 			break;
 		}
 	}
 
-	m_LRU.AddToTail(pRagdoll);
+	m_LRU.AddToTail(pRagdoll->GetRefEHandle());
 }
 
 extern ConVar g_ragdoll_maxcount;
@@ -7383,7 +7754,7 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 	for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 	{
 		next = m_LRU.Next(i);
-		IServerEntity* pRagdoll = m_LRU[i].Get();
+		IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]);
 		if (pRagdoll)
 		{
 			m_iRagdollCount++;
@@ -7395,9 +7766,9 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 			if (m_LRU.Count() > iMaxRagdollCount)
 			{
 				//Found one, we're done.
-				if (ShouldRemoveThisRagdoll(m_LRU[i]) == true)
+				if (ShouldRemoveThisRagdoll(serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])) == true)
 				{
-					m_LRU[i]->SUB_StartFadeOut(0);
+					serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_StartFadeOut(0);
 					m_LRU.Remove(i);
 					return;
 				}
@@ -7426,7 +7797,7 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 
 		for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 		{
-			IServerEntity* pRagdoll = m_LRU[i].Get();
+			IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 			next = m_LRU.Next(i);
 			IPhysicsObject* pObject = pRagdoll->GetEngineObject()->VPhysicsGetObject();
@@ -7451,7 +7822,7 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 			}
 		}
 
-		m_LRU[furthestOne]->SUB_StartFadeOut(0);
+		serverEntitylist->GetBaseEntityFromHandle(m_LRU[furthestOne])->SUB_StartFadeOut(0);
 
 	}
 	else // fall back on old-style pick the oldest one algorithm
@@ -7463,14 +7834,14 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // EPISODIC VERSION
 
 			next = m_LRU.Next(i);
 
-			IServerEntity* pRagdoll = m_LRU[i].Get();
+			IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 			//Just ignore it until we're done burning/dissolving.
 			IPhysicsObject* pObject = pRagdoll->GetEngineObject()->VPhysicsGetObject();
 			if (pRagdoll && (pRagdoll->GetEngineObject()->GetEffectEntity() || (pObject && !pObject->IsAsleep())))
 				continue;
 
-			m_LRU[i]->SUB_StartFadeOut(0);
+			serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_StartFadeOut(0);
 			m_LRU.Remove(i);
 		}
 	}
@@ -7502,7 +7873,7 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 	for (i = m_LRU.Head(); i < m_LRU.InvalidIndex(); i = next)
 	{
 		next = m_LRU.Next(i);
-		IServerEntity* pRagdoll = m_LRU[i].Get();
+		IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]);
 		if (pRagdoll)
 		{
 			m_iRagdollCount++;
@@ -7514,9 +7885,9 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 			if (m_LRU.Count() > iMaxRagdollCount)
 			{
 				//Found one, we're done.
-				if (ShouldRemoveThisRagdoll(m_LRU[i]) == true)
+				if (ShouldRemoveThisRagdoll(serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])) == true)
 				{
-					m_LRU[i]->SUB_StartFadeOut(0);
+					serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_StartFadeOut(0);
 					m_LRU.Remove(i);
 					return;
 				}
@@ -7541,13 +7912,13 @@ void CGlobalEntityList<T>::UpdateRagdolls(float frametime) // Non-episodic versi
 
 		next = m_LRU.Next(i);
 
-		IServerEntity* pRagdoll = m_LRU[i].Get();
+		IServerEntity* pRagdoll = serverEntitylist->GetBaseEntityFromHandle(m_LRU[i]);
 
 		//Just ignore it until we're done burning/dissolving.
 		if (pRagdoll && pRagdoll->GetEngineObject()->GetEffectEntity())
 			continue;
 
-		m_LRU[i]->SUB_StartFadeOut(0);
+		serverEntitylist->GetBaseEntityFromHandle(m_LRU[i])->SUB_StartFadeOut(0);
 		m_LRU.Remove(i);
 	}
 }

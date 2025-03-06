@@ -241,7 +241,7 @@ Activity CNPC_Alyx::NPC_TranslateActivity( Activity activity )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-void CNPC_Alyx::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Alyx::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 
@@ -251,7 +251,7 @@ void CNPC_Alyx::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 //-----------------------------------------------------------------------------
 
-void CNPC_Alyx::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Alyx::DeathSound( const ITakeDamageInfo&info )
 {
 	// Sentences don't play on dead NPCs
 	SentenceStop();

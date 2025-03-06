@@ -93,7 +93,7 @@ int	CPhysicsShadowClone::ObjectCaps( void )
 }
 
 //damage relays to source entity
-bool CPhysicsShadowClone::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CPhysicsShadowClone::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	IServerEntity *pClonedEntity = GetEngineShadowClone()->GetClonedEntity();
 
@@ -113,7 +113,7 @@ bool CPhysicsShadowClone::CanBeHitByMeleeAttack( IServerEntity *pAttacker )
 		return BaseClass::CanBeHitByMeleeAttack( pAttacker );
 }
 
-int CPhysicsShadowClone::OnTakeDamage( const CTakeDamageInfo &info )
+int CPhysicsShadowClone::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	IServerEntity *pClonedEntity = GetEngineShadowClone()->GetClonedEntity();
 
@@ -133,7 +133,7 @@ int CPhysicsShadowClone::TakeHealth( float flHealth, int bitsDamageType )
 		return BaseClass::TakeHealth( flHealth, bitsDamageType );
 }
 
-void CPhysicsShadowClone::Event_Killed( const CTakeDamageInfo &info )
+void CPhysicsShadowClone::Event_Killed( const ITakeDamageInfo&info )
 {
 	IServerEntity *pClonedEntity = GetEngineShadowClone()->GetClonedEntity();
 

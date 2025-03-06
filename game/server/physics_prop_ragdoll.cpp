@@ -620,7 +620,7 @@ void CRagdollProp::SetDamageEntity( CBaseEntity *pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int	CRagdollProp::OnTakeDamage( const CTakeDamageInfo &info )
+int	CRagdollProp::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// If we have a damage entity, we want to pass damage to it. Add the
 	// Never Ragdoll flag, on the assumption that if the entity dies, we'll
@@ -638,7 +638,7 @@ int	CRagdollProp::OnTakeDamage( const CTakeDamageInfo &info )
 
 
 
-void CRagdollProp::TraceAttack( const CTakeDamageInfo &info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CRagdollProp::TraceAttack( const ITakeDamageInfo&info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( ptr->physicsbone >= 0 && ptr->physicsbone < GetEngineObject()->RagdollBoneCount() )
 	{

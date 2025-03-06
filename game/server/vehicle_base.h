@@ -178,8 +178,8 @@ public:
 	virtual void	VehicleAngleVectors( const QAngle &angles, Vector *pForward, Vector *pRight, Vector *pUp );
 	virtual void	Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 	virtual void	Think( void );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual void	Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void	Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
 
 	// Vehicle handling
 	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
@@ -224,7 +224,7 @@ public:
 	virtual void		ExitVehicle( int nRole );
 	virtual string_t	GetVehicleScriptName() { return m_vehicleScript; }
 	
-	//virtual bool		PassengerShouldReceiveDamage( CTakeDamageInfo &info ) { return true; }
+	//virtual bool		PassengerShouldReceiveDamage( ITakeDamageInfo &info ) { return true; }
 
 	// If this is a vehicle, returns the vehicle interface
 	virtual IServerVehicle *GetServerVehicle() { return this; }

@@ -36,12 +36,12 @@ public:
 	bool    CheckRangeAttack1 ( float flDot, float flDist );
 	void    BarneyFirePistol ( void );
 	
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	Event_Killed( const ITakeDamageInfo&info );
 
-	void    PainSound( const CTakeDamageInfo &info );
-	void	DeathSound( const CTakeDamageInfo &info );
+	void    PainSound( const ITakeDamageInfo&info );
+	void	DeathSound( const ITakeDamageInfo&info );
 
 	void	HandleAnimEvent( animevent_t *pEvent );
 	int		TranslateSchedule( int scheduleType );
@@ -50,7 +50,7 @@ public:
 	void	DeclineFollowing( void );
 
 	bool	CanBecomeRagdoll( void );
-	bool	ShouldGib( const CTakeDamageInfo &info );
+	bool	ShouldGib( const ITakeDamageInfo&info );
 
 	int		RangeAttack1Conditions( float flDot, float flDist );
 

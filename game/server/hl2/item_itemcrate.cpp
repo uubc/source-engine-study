@@ -32,7 +32,7 @@ public:
 
 	virtual int	ObjectCaps() { return BaseClass::ObjectCaps() | FCAP_WCEDIT_POSITION; };
 
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	void InputKill( inputdata_t &data );
 
@@ -147,7 +147,7 @@ void CItem_ItemCrate::InputKill( inputdata_t &data )
 //-----------------------------------------------------------------------------
 // Item crates blow up immediately
 //-----------------------------------------------------------------------------
-int CItem_ItemCrate::OnTakeDamage( const CTakeDamageInfo &info )
+int CItem_ItemCrate::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_AIRBOAT )
 	{

@@ -80,8 +80,8 @@ public:
 	Class_T			Classify ( void );
 	virtual void	ComputeWorldSpaceSurroundingBox( Vector *pVecWorldMins, Vector *pVecWorldMaxs );
 	virtual void	HandleAnimEvent( animevent_t *pEvent );
-	void			Event_Killed( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void			PlayerHasIlluminatedNPC( CBasePlayer *pPlayer, float flDot );
 
 	// The tongue's vphysics updated

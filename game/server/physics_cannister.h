@@ -67,7 +67,7 @@ public:
 
 	bool TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 	int ObjectCaps() 
 	{ 
@@ -92,7 +92,7 @@ public:
 	// Don't treat as a live target
 	virtual bool IsAlive( void ) { return false; }
 
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	void	ShutdownJet( void );
 	void	BeginShutdownThink( void );

@@ -631,7 +631,7 @@ public:
 	void	InputKill( inputdata_t &data );
 	void	CrateThink( void );
 	
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 protected:
 
@@ -865,7 +865,7 @@ void CItem_AmmoCrate::Use( IServerEntity *pActivator, IServerEntity *pCaller, US
 //-----------------------------------------------------------------------------
 // Purpose: allows the crate to open up when hit by a crowbar
 //-----------------------------------------------------------------------------
-int CItem_AmmoCrate::OnTakeDamage( const CTakeDamageInfo &info )
+int CItem_AmmoCrate::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// if it's the player hitting us with a crowbar, open up
 	CBasePlayer *player = ToBasePlayer((IServerEntity*)info.GetAttacker());

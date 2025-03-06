@@ -10,7 +10,6 @@
 #pragma once
 #endif
 
-#include "ehandle.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
 class IPhysics;

@@ -38,7 +38,7 @@ public:
 	int  Classify ( void );
 	void HandleAnimEvent( MonsterEvent_t *pEvent );
 
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo &info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSnd( void );

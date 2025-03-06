@@ -120,7 +120,7 @@ void CNPC_CombineS::Precache()
 }
 
 
-void CNPC_CombineS::DeathSound( const CTakeDamageInfo &info )
+void CNPC_CombineS::DeathSound( const ITakeDamageInfo&info )
 {
 	// NOTE: The response system deals with this at the moment
 	if (GetEngineObject()->GetFlags() & FL_DISSOLVING )
@@ -203,7 +203,7 @@ int CNPC_CombineS::SelectSchedule ( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-float CNPC_CombineS::GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info )
+float CNPC_CombineS::GetHitgroupDamageMultiplier( int iHitGroup, const ITakeDamageInfo&info )
 {
 	switch( iHitGroup )
 	{
@@ -278,7 +278,7 @@ void CNPC_CombineS::OnListened()
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-void CNPC_CombineS::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_CombineS::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Don't bother if we've been told not to, or the player has a megaphyscannon
 	if ( combine_spawn_health.GetBool() == false || PlayerHasMegaPhysCannon() )
@@ -367,7 +367,7 @@ void CNPC_CombineS::Event_Killed( const CTakeDamageInfo &info )
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_CombineS::IsLightDamage( const CTakeDamageInfo &info )
+bool CNPC_CombineS::IsLightDamage( const ITakeDamageInfo&info )
 {
 	return BaseClass::IsLightDamage( info );
 }
@@ -377,7 +377,7 @@ bool CNPC_CombineS::IsLightDamage( const CTakeDamageInfo &info )
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_CombineS::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_CombineS::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	// Combine considers AR2 fire to be heavy damage
 	if ( info.GetAmmoType() == GetAmmoDef()->Index("AR2") )

@@ -533,7 +533,7 @@ void NextBotManager::OnBeginChangeLevel( void )
 class NextBotKilledNotifyScan
 {
 public:
-	NextBotKilledNotifyScan( CBaseCombatCharacter *victim, const CTakeDamageInfo &info )
+	NextBotKilledNotifyScan( CBaseCombatCharacter *victim, const ITakeDamageInfo&info )
 	{
 		m_victim = victim;
 		m_info = info;
@@ -557,7 +557,7 @@ public:
 /**
  * When an actor is killed.  Propagate to all NextBots.
  */
-void NextBotManager::OnKilled( CBaseCombatCharacter *victim, const CTakeDamageInfo &info )
+void NextBotManager::OnKilled( CBaseCombatCharacter *victim, const ITakeDamageInfo&info )
 {
 	NextBotKilledNotifyScan notify( victim, info );
 	TheNextBots().ForEachBot( notify );

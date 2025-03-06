@@ -28,7 +28,7 @@ void GetRagdollCurSequenceWithDeathPose( C_BaseAnimating *entity, matrix3x4_t *c
 #else // !CLIENT_DLL
 
 /// Calculates death pose activity and frame
-void SelectDeathPoseActivityAndFrame( CBaseAnimating *entity, const CTakeDamageInfo &info, int hitgroup, Activity& activity, int& frame );
+void SelectDeathPoseActivityAndFrame( CBaseAnimating *entity, const ITakeDamageInfo&info, int hitgroup, Activity& activity, int& frame );
 
 #endif // !CLIENT_DLL
 

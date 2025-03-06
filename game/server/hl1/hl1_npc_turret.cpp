@@ -61,10 +61,10 @@ public:
 	virtual void Precache(void);
 	void EXPORT TurretUse( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 	
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	Class_T Classify( void );
 
@@ -90,9 +90,9 @@ public:
 	void InputActivate( inputdata_t &inputdata );
 	void InputDeactivate( inputdata_t &inputdata );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	virtual bool ShouldFadeOnDeath( void ) { return false; }
-	bool ShouldGib( const CTakeDamageInfo &info ) { return false; }
+	bool ShouldGib( const ITakeDamageInfo&info ) { return false; }
 
 	// other functions
 	void SetTurretAnim(TURRET_ANIM anim);
@@ -265,7 +265,7 @@ Class_T CNPC_BaseTurret::Classify( void )
 //=========================================================
 // TraceAttack - being attacked
 //=========================================================
-void CNPC_BaseTurret::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_BaseTurret::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo ainfo = info;
 
@@ -292,7 +292,7 @@ void CNPC_BaseTurret::TraceAttack( const CTakeDamageInfo &info, const Vector &ve
 //=========================================================
 // TakeDamage - take damage. 
 //=========================================================
-int CNPC_BaseTurret::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_BaseTurret::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	if ( m_takedamage == DAMAGE_NO )
 		return 0;
@@ -331,7 +331,7 @@ int CNPC_BaseTurret::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	return 1;
 }
 
-int CNPC_BaseTurret::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_BaseTurret::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	int retVal = 0;
 
@@ -1130,7 +1130,7 @@ void CNPC_BaseTurret::EyeOff(void)
 	}
 }
 
-void CNPC_BaseTurret::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_BaseTurret::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -1364,8 +1364,8 @@ public:
 
 	// other functions
 	void Shoot(Vector &vecSrc, Vector &vecDirToEnemy);
-	int OnTakeDamage_Alive(const CTakeDamageInfo &info);
-	void Event_Killed( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive(const ITakeDamageInfo&info);
+	void Event_Killed( const ITakeDamageInfo&info );
 	void SentryTouch( IServerEntity *pOther );
 
 	DECLARE_DATADESC();
@@ -1436,7 +1436,7 @@ void CNPC_Sentry::Shoot(Vector &vecSrc, Vector &vecDirToEnemy)
 	DoMuzzleFlash();
 }
 
-int CNPC_Sentry::OnTakeDamage_Alive(const CTakeDamageInfo &info)
+int CNPC_Sentry::OnTakeDamage_Alive(const ITakeDamageInfo&info)
 {
 	if ( m_takedamage == DAMAGE_NO )
 		return 0;
@@ -1468,7 +1468,7 @@ int CNPC_Sentry::OnTakeDamage_Alive(const CTakeDamageInfo &info)
 	return 1;
 }
 
-void CNPC_Sentry::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Sentry::Event_Killed( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Sentry.Die" );

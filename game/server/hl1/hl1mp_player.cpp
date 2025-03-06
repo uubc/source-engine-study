@@ -201,7 +201,7 @@ void CHL1MP_Player::DetonateSatchelCharges( void )
 	}
 }
 
-void CHL1MP_Player::Event_Killed( const CTakeDamageInfo &info )
+void CHL1MP_Player::Event_Killed( const ITakeDamageInfo&info )
 {
 	DoAnimationEvent( PLAYERANIMEVENT_DIE );
 //    SetNumAnimOverlays( 0 );

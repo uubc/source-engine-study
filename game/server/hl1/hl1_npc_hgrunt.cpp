@@ -820,7 +820,7 @@ int CNPC_HGrunt::GetSoundInterests( void )
 //=========================================================
 // TraceAttack - make sure we're not taking it in the helmet
 //=========================================================
-void CNPC_HGrunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_HGrunt::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -847,7 +847,7 @@ void CNPC_HGrunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 // needs to forget that he is in cover if he's hurt. (Obviously
 // not in a safe place anymore).
 //=========================================================
-int CNPC_HGrunt::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_HGrunt::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	Forget( bits_MEMORY_INCOVER );
 
@@ -1025,7 +1025,7 @@ Vector CNPC_HGrunt::Weapon_ShootPosition( void )
 		return GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 48 );
 }
 
-void CNPC_HGrunt::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_HGrunt::Event_Killed( const ITakeDamageInfo&info )
 {
 	Vector	vecGunPos;
 	QAngle	vecGunAngles;
@@ -1344,7 +1344,7 @@ void CNPC_HGrunt::RunTask( const Task_t *pTask )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_HGrunt::PainSound( const CTakeDamageInfo &info )
+void CNPC_HGrunt::PainSound( const ITakeDamageInfo&info )
 {
 	if ( gpGlobals->curtime > m_flNextPainTime )
 	{
@@ -1358,7 +1358,7 @@ void CNPC_HGrunt::PainSound( const CTakeDamageInfo &info )
 //=========================================================
 // DeathSound 
 //=========================================================
-void CNPC_HGrunt::DeathSound( const CTakeDamageInfo &info )
+void CNPC_HGrunt::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this, ATTN_IDLE );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "HGrunt.Die" );

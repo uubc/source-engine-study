@@ -82,7 +82,7 @@ public:
 	void SpreadFlock2( void );
 	void MakeSound( void );
 	void FlockFollowerThink( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void FallHack( void );
 	//void Poop ( void ); Adrian - wtf?!
 
@@ -809,7 +809,7 @@ void CNPC_FlockingFlyer::FlockFollowerThink( void )
 
 //=========================================================
 //=========================================================
-void CNPC_FlockingFlyer::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_FlockingFlyer::Event_Killed( const ITakeDamageInfo&info )
 {
 	CNPC_FlockingFlyer *pSquad;
 	

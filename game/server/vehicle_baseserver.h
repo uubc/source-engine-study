@@ -125,7 +125,7 @@ public:
 	virtual void			SetPassenger( int nRole, CBaseCombatCharacter *pPassenger );
 	virtual bool			IsPassengerVisible( int nRole = VEHICLE_ROLE_DRIVER ) { return false; }
 	virtual bool			IsPassengerDamagable( int nRole  = VEHICLE_ROLE_DRIVER ) { return true; }
-	virtual bool			PassengerShouldReceiveDamage( CTakeDamageInfo &info );
+	virtual bool			PassengerShouldReceiveDamage( ITakeDamageInfo &info );
 
 	virtual bool			IsVehicleUpright( void ) { return true; }
 	virtual bool			IsPassengerEntering( void ) { Assert( 0 ); return false; }
@@ -137,7 +137,7 @@ public:
 	virtual void			GetPassengerSeatPoint( int nRole, Vector *pPoint, QAngle *pAngles );
 	virtual bool			GetPassengerExitPoint( int nRole, Vector *pPoint, QAngle *pAngles );
 	virtual int				ClassifyPassenger( CBaseCombatCharacter *pPassenger, int defaultClassification ) { return defaultClassification; }
-	virtual float			PassengerDamageModifier( const CTakeDamageInfo &info ) { return 1.0; }
+	virtual float			PassengerDamageModifier( const ITakeDamageInfo &info ) { return 1.0; }
 	virtual const vehicleparams_t	*GetVehicleParams( void ) { return NULL; }
 	virtual bool			IsVehicleBodyInWater( void ) { return false; }
 	virtual IPhysicsVehicleController *GetVehicleController() { return NULL; }

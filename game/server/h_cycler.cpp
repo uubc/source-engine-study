@@ -162,7 +162,7 @@ void CCycler::Use ( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE 
 //-----------------------------------------------------------------------------
 // Purpose: Changes sequences when hurt.
 //-----------------------------------------------------------------------------
-int CCycler::OnTakeDamage( const CTakeDamageInfo &info )
+int CCycler::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if (m_animate)
 	{

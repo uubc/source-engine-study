@@ -69,7 +69,7 @@ public:
 	void UpdateOnRemove();
 	void MoveDone();
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 	void Blocked( IServerEntity *pOther );
 	bool KeyValue( const char *szKeyName, const char *szValue );

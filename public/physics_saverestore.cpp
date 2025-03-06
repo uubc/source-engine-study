@@ -7,6 +7,7 @@
 
 #ifdef GAME_DLL
 #include "entitylist.h"
+#include "enginecallback.h"
 #endif // GAME_DLL
 #ifdef CLIENT_DLL
 #include "cliententitylist.h"

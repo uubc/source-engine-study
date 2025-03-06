@@ -332,12 +332,12 @@ public:
 	virtual void			PreThink( void );
 	virtual void			PostThink( void );
 	virtual int				TakeHealth( float flHealth, int bitsDamageType );
-	virtual void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	bool					ShouldTakeDamageInCommentaryMode( const CTakeDamageInfo &inputInfo );
-	virtual int				OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	bool					ShouldTakeDamageInCommentaryMode( const ITakeDamageInfo&inputInfo );
+	virtual int				OnTakeDamage( const ITakeDamageInfo&info );
 	virtual void			DamageEffect(float flDamage, int fDamageType);
 
-	virtual void			OnDamagedByExplosion( const CTakeDamageInfo &info );
+	virtual void			OnDamagedByExplosion( const ITakeDamageInfo&info );
 
 	void					PauseBonusProgress( bool bPause = true );
 	void					SetBonusProgress( int iBonusProgress );
@@ -361,12 +361,12 @@ public:
 	virtual bool			ShouldFadeOnDeath( void ) { return FALSE; }
 	
 	virtual const impactdamagetable_t &GetPhysicsImpactDamageTable();
-	virtual int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual void			Event_Killed( const CTakeDamageInfo &info );
+	virtual int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual void			Event_Killed( const ITakeDamageInfo&info );
 	// Notifier that I've killed some other entity. (called from Victim's Event_Killed).
-	virtual void			Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void			Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
 
-	virtual void			Event_Dying( const CTakeDamageInfo &info );
+	virtual void			Event_Dying( const ITakeDamageInfo&info );
 
 	bool					IsHLTV( void ) const { return pl.hltv; }
 	bool					IsReplay( void ) const { return pl.replay; }
@@ -458,7 +458,7 @@ public:
 	virtual const char	   *GetOverrideStepSound( const char *pszBaseStepSoundName ) { return pszBaseStepSoundName; }
 	virtual void			GetStepSoundVelocities( float *velwalk, float *velrun );
 	virtual void			SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalking );
-	virtual void			DeathSound( const CTakeDamageInfo &info );
+	virtual void			DeathSound( const ITakeDamageInfo&info );
 	virtual const char*		GetSceneSoundToken( void ) { return ""; }
 
 	virtual void			OnEmitFootstepSound( const CSoundParameters& params, const Vector& vecOrigin, float fVolume ) {}

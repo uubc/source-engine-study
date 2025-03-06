@@ -1102,7 +1102,7 @@ public:
 
 	void CheckBreakEscort();
 
-	void OnDamage( const CTakeDamageInfo &info );
+	void OnDamage( const ITakeDamageInfo&info );
 	static void DistributeFreeHunters();
 	static void FindFreeHunters( CUtlVector<CNPC_Hunter *> *pFreeHunters );
 
@@ -1313,17 +1313,17 @@ public:
 	//	Sounds & speech
 	//---------------------------------
 	void			AlertSound();
-	void			PainSound( const CTakeDamageInfo &info );
-	void			DeathSound( const CTakeDamageInfo &info );
+	void			PainSound( const ITakeDamageInfo&info );
+	void			DeathSound( const ITakeDamageInfo&info );
 
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
-	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	bool			IsHeavyDamage( const CTakeDamageInfo &info );
-	int				OnTakeDamage( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void			Event_Killed( const CTakeDamageInfo &info );
+	void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	bool			IsHeavyDamage( const ITakeDamageInfo&info );
+	int				OnTakeDamage( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void			Event_Killed( const ITakeDamageInfo&info );
 
 	void			StartBleeding();
 	inline bool		IsBleeding() { return m_bIsBleeding; }
@@ -1352,7 +1352,7 @@ public:
 
 private:
 
-	void ConsiderFlinching( const CTakeDamageInfo &info );
+	void ConsiderFlinching( const ITakeDamageInfo&info );
 
 	void TaskFindDodgeActivity();
 
@@ -5442,7 +5442,7 @@ void CNPC_Hunter::AlertSound()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Hunter::PainSound( const CTakeDamageInfo &info )
+void CNPC_Hunter::PainSound( const ITakeDamageInfo&info )
 {
 	if ( gpGlobals->curtime > m_flNextDamageTime )
 	{
@@ -5462,7 +5462,7 @@ void CNPC_Hunter::PainSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Hunter::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Hunter::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_Hunter.Death";
 	CPASAttenuationFilter filter(this, soundname);
@@ -5478,7 +5478,7 @@ void CNPC_Hunter::DeathSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Hunter::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Hunter::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -5618,7 +5618,7 @@ void CNPC_Hunter::BleedThink()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_Hunter::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_Hunter::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamage() < 45 )
 	{
@@ -5642,7 +5642,7 @@ bool CNPC_Hunter::IsHeavyDamage( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // We've taken some damage. Maybe we should flinch because of it.
 //-----------------------------------------------------------------------------
-void CNPC_Hunter::ConsiderFlinching( const CTakeDamageInfo &info )
+void CNPC_Hunter::ConsiderFlinching( const ITakeDamageInfo&info )
 {
 	if ( !m_FlinchTimer.Expired() )
 	{
@@ -5732,7 +5732,7 @@ void CNPC_Hunter::JostleVehicleThink()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_Hunter::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_Hunter::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo myInfo = info;
 
@@ -5773,7 +5773,7 @@ int CNPC_Hunter::OnTakeDamage( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_Hunter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Hunter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo myInfo = info;
 
@@ -5946,7 +5946,7 @@ int CNPC_Hunter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Hunter::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Hunter::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Remember the killing blow to make decisions about ragdolling.
 	m_nKillingDamageType = info.GetDamageType();
@@ -6826,7 +6826,7 @@ Activity CNPC_Hunter::GetDeathActivity()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CAI_HunterEscortBehavior::OnDamage( const CTakeDamageInfo &info )
+void CAI_HunterEscortBehavior::OnDamage( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamage() > 0 && info.GetAttacker()->IsPlayer() &&
 		GetFollowTarget() && ( AIGetNumFollowers( GetFollowTarget() ) > 1 ) &&

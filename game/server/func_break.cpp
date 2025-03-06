@@ -587,7 +587,7 @@ void CBreakable::BreakTouch( IServerEntity *pOther )
 			m_takedamage = DAMAGE_YES;
 
 			SetTouch( NULL );
-			OnTakeDamage( CTakeDamageInfo( (CBaseEntity*)pOther, (CBaseEntity*)pOther, flDamage, DMG_CRUSH ) );
+			OnTakeDamage( CTakeDamageInfo( pOther, pOther, flDamage, DMG_CRUSH ) );
 
 			// do a little damage to player if we broke glass or computer
 			CTakeDamageInfo info(pOther, pOther, flDamage/4, DMG_SLASH );
@@ -733,7 +733,7 @@ void CBreakable::Break( CBaseEntity *pBreaker )
 }
 
 
-void CBreakable::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBreakable::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// random spark if this is a 'computer' object
 	if (random->RandomInt(0,1) )
@@ -823,7 +823,7 @@ void CBreakable::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: Allows us to make damage exceptions that are breakable-specific.
 //-----------------------------------------------------------------------------
-int CBreakable::OnTakeDamage( const CTakeDamageInfo &info )
+int CBreakable::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	Vector	vecTemp;
 
@@ -1229,7 +1229,7 @@ public:
 	virtual int	ObjectCaps( void ) { return BaseClass::ObjectCaps() | FCAP_ONOFF_USE; }
 
 	// breakables use an overridden takedamage
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 	virtual void VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 	unsigned int PhysicsSolidMaskForEntity( void ) const { return MASK_PLAYERSOLID; }
 };
@@ -1299,7 +1299,7 @@ void CPushable::Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE
 }
 
 
-int CPushable::OnTakeDamage( const CTakeDamageInfo &info )
+int CPushable::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if (GetEngineObject()->GetSpawnFlags() & SF_PUSH_BREAKABLE)
 		return BaseClass::OnTakeDamage( info );

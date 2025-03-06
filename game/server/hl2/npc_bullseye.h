@@ -32,12 +32,12 @@ public:
 	virtual float GetAutoAimRadius() { return m_fAutoaimRadius; }
 
 	Class_T Classify( void );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 	void	DecalTrace( trace_t *pTrace, char const *decalName );
 	void	ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
-	bool	IsLightDamage( const CTakeDamageInfo &info );
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int		OnTakeDamage( const CTakeDamageInfo &info );
+	bool	IsLightDamage( const ITakeDamageInfo&info );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int		OnTakeDamage( const ITakeDamageInfo&info );
 	bool	UsePerfectAccuracy( void ) { return m_bPerfectAccuracy; }
 
 	bool	TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr ) { return false; } // force traces to test against hull

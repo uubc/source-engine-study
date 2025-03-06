@@ -52,7 +52,7 @@ public:
 	virtual int			SelectSchedule( void );
 	virtual int			TranslateSchedule( int scheduleType );
 	virtual void		GatherConditions( void );
-	virtual void		Event_Killed( const CTakeDamageInfo &info );
+	virtual void		Event_Killed( const ITakeDamageInfo&info );
 	virtual void		BuildScheduleTestBits( void );
 	virtual void		RunTask( const Task_t *pTask );
 	virtual void		StartTask( const Task_t *pTask );

@@ -1101,7 +1101,7 @@ void CNPC_Vortigaunt::UpdateOnRemove( void)
 //------------------------------------------------------------------------------
 // Purpose :
 //------------------------------------------------------------------------------
-void CNPC_Vortigaunt::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::Event_Killed( const ITakeDamageInfo&info )
 {
 	ClearBeams();
 	ClearHandGlow();
@@ -1257,7 +1257,7 @@ void CNPC_Vortigaunt::Use( IServerEntity *pActivator, IServerEntity *pCaller, US
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Vortigaunt::PainSound( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::PainSound( const ITakeDamageInfo&info )
 {
 	if ( gpGlobals->curtime < m_flPainTime )
 		return;
@@ -1270,7 +1270,7 @@ void CNPC_Vortigaunt::PainSound( const CTakeDamageInfo &info )
 //=========================================================
 // DeathSound 
 //=========================================================
-void CNPC_Vortigaunt::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::DeathSound( const ITakeDamageInfo&info )
 {
 	Speak( VORT_DIE );
 }
@@ -1278,7 +1278,7 @@ void CNPC_Vortigaunt::DeathSound( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CNPC_Vortigaunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Vortigaunt::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -2676,7 +2676,7 @@ void CNPC_Vortigaunt::SetScriptedScheduleIgnoreConditions( Interruptability_t in
 // Also stop it taking damage from flames: Fixes it being burnt to death from entity flames
 // attached to random debris chunks while inside scripted sequences.
 //-----------------------------------------------------------------------------
-int CNPC_Vortigaunt::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Vortigaunt::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( info.GetDamageType() & (DMG_CRUSH | DMG_BURN) )
 		return 0;

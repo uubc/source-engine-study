@@ -46,7 +46,7 @@ public:
 	void	CreateEffects( void );
 	void	SetTimer( float detonateDelay, float warnDelay );
 	void	SetVelocity( const Vector &velocity, const AngularImpulse &angVelocity );
-	int		OnTakeDamage( const CTakeDamageInfo &inputInfo );
+	int		OnTakeDamage( const ITakeDamageInfo&inputInfo );
 	void	BlipSound() { 
 		const char* soundname = "Grenade.Blip";
 		CPASAttenuationFilter filter(this, soundname);
@@ -375,7 +375,7 @@ void CGrenadeFrag::SetVelocity( const Vector &velocity, const AngularImpulse &an
 	}
 }
 
-int CGrenadeFrag::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CGrenadeFrag::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	// Manually apply vphysics because BaseCombatCharacter takedamage doesn't call back to CBaseEntity OnTakeDamage
 	VPhysicsTakeDamage( inputInfo );

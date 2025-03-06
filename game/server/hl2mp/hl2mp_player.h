@@ -62,8 +62,8 @@ public:
 	virtual bool ClientCommand( const CCommand &args );
 	virtual void CreateViewModel( int viewmodelindex = 0 );
 	//virtual bool BecomeRagdollOnClient( const Vector &force );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
-	virtual int OnTakeDamage( const CTakeDamageInfo &inputInfo );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&inputInfo );
 	virtual bool WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits ) const;
 	virtual void FireBullets ( const FireBulletsInfo_t &info );
 	virtual bool Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex = 0);
@@ -73,7 +73,7 @@ public:
 	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
 	virtual void Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget = NULL, const Vector *pVelocity = NULL );
 	virtual void UpdateOnRemove( void );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual IServerEntity* EntSelectSpawnPoint( void );
 		
 	int FlashlightIsOn( void );

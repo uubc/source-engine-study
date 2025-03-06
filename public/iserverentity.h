@@ -43,7 +43,6 @@ struct vehicleparams_t;
 struct vehicle_controlparams_t;
 struct vehicle_operatingparams_t;
 class CIKContext;
-class CTakeDamageInfo;
 class CDmgAccumulator;
 struct vehiclesounds_t;
 class IEngineObjectServer;
@@ -930,15 +929,15 @@ public:
 	virtual bool IsConnectedUserInfoChangeAllowed(CBasePlayer* pPlayer) = 0;
 	// Client damage rules
 	virtual float FlPlayerFallDamage(CBasePlayer* pPlayer) = 0;// this client just hit the ground after a fall. How much damage?
-	virtual bool  FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker, const CTakeDamageInfo& info) = 0;;// can this player take damage from this attacker?
+	virtual bool  FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker, const ITakeDamageInfo& info) = 0;;// can this player take damage from this attacker?
 	virtual bool ShouldAutoAim(CBasePlayer* pPlayer, CBaseEntity* target) = 0;
 	virtual float GetAutoAimScale(CBasePlayer* pPlayer) = 0;
 	virtual int	GetAutoAimMode() = 0;
 	virtual bool ShouldUseRobustRadiusDamage(CBaseEntity* pEntity) = 0;
-	virtual void  RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrc, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore) = 0;
+	virtual void  RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrc, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore) = 0;
 	// Let the game rules specify if fall death should fade screen to black
 	virtual bool  FlPlayerFallDeathDoesScreenFade(CBasePlayer* pl) = 0;
-	virtual bool AllowDamage(CBaseEntity* pVictim, const CTakeDamageInfo& info) = 0;
+	virtual bool AllowDamage(CBaseEntity* pVictim, const ITakeDamageInfo& info) = 0;
 	// Client spawn/respawn control
 	virtual void PlayerSpawn(CBasePlayer* pPlayer) = 0;// called by CBasePlayer::Spawn just before releasing player into the game
 	virtual void PlayerThink(CBasePlayer* pPlayer) = 0; // called by CBasePlayer::PreThink every frame, before physics are run and after keys are accepted
@@ -951,13 +950,13 @@ public:
 	virtual void ClientSettingsChanged(CBasePlayer* pPlayer) = 0;		 // the player has changed cvars
 	// Client kills/scoring
 	virtual int IPointsForKill(CBasePlayer* pAttacker, CBasePlayer* pKilled) = 0;// how many points do I award whoever kills this player?
-	virtual void PlayerKilled(CBasePlayer* pVictim, const CTakeDamageInfo& info) = 0;// Called each time a player dies
-	virtual void DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info) = 0;// Call this from within a GameRules class to report an obituary.
-	virtual const char* GetDamageCustomString(const CTakeDamageInfo& info) = 0;
+	virtual void PlayerKilled(CBasePlayer* pVictim, const ITakeDamageInfo& info) = 0;// Called each time a player dies
+	virtual void DeathNotice(CBasePlayer* pVictim, const ITakeDamageInfo& info) = 0;// Call this from within a GameRules class to report an obituary.
+	virtual const char* GetDamageCustomString(const ITakeDamageInfo& info) = 0;
 	// Weapon Damage
 		// Determines how much damage Player's attacks inflict, based on skill level.
 	virtual float AdjustPlayerDamageInflicted(float damage) = 0;
-	virtual void  AdjustPlayerDamageTaken(CTakeDamageInfo* pInfo) = 0; // Base class does nothing.
+	virtual void  AdjustPlayerDamageTaken(ITakeDamageInfo* pInfo) = 0; // Base class does nothing.
 	// Weapon retrieval
 	virtual bool CanHavePlayerItem(CBasePlayer* pPlayer, CBaseCombatWeapon* pWeapon) = 0;// The player is touching an CBaseCombatWeapon, do I give it to him?
 	// Weapon spawn/respawn control
@@ -1188,7 +1187,7 @@ public:
 	virtual void VPhysicsUpdate(IPhysicsObject* pPhysics) = 0;
 	virtual void VPhysicsShadowUpdate(IPhysicsObject* pPhysics) = 0;
 	virtual void UpdatePhysicsShadowToCurrentPosition(float deltaTime) = 0;
-	virtual int VPhysicsTakeDamage(const CTakeDamageInfo& info) = 0;
+	virtual int VPhysicsTakeDamage(const ITakeDamageInfo& info) = 0;
 	virtual void VPhysicsCollision(int index, gamevcollisionevent_t* pEvent) = 0;
 	virtual void VPhysicsShadowCollision(int index, gamevcollisionevent_t* pEvent) = 0;
 	virtual void VPhysicsFriction(IPhysicsObject* pObject, float energy, int surfaceProps, int surfacePropsHit) = 0;
@@ -1234,11 +1233,11 @@ public:
 	virtual const char& GetTakeDamage() const = 0;
 	virtual void SetTakeDamage(int takedamage) = 0;
 	virtual float GetAttackDamageScale(IHandleEntity* pVictim) = 0;
-	virtual bool PassesDamageFilter(const CTakeDamageInfo& info) = 0;
-	virtual void TakeDamage(const CTakeDamageInfo& info) = 0;
-	virtual int OnTakeDamage(const CTakeDamageInfo& info) = 0;
-	virtual void Event_Killed(const CTakeDamageInfo& info) = 0;
-	virtual void Event_KilledOther(IServerEntity* pVictim, const CTakeDamageInfo& info) = 0;
+	virtual bool PassesDamageFilter(const ITakeDamageInfo& info) = 0;
+	virtual void TakeDamage(const ITakeDamageInfo& info) = 0;
+	virtual int OnTakeDamage(const ITakeDamageInfo& info) = 0;
+	virtual void Event_Killed(const ITakeDamageInfo& info) = 0;
+	virtual void Event_KilledOther(IServerEntity* pVictim, const ITakeDamageInfo& info) = 0;
 	virtual void DeathNotice(IServerEntity* pVictim) = 0;
 	virtual int GetTeamNumber(void) const = 0;
 	virtual const char* TeamID(void) const = 0;
@@ -1263,7 +1262,7 @@ public:
 	virtual void PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
 	virtual void PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
 	virtual bool FindClosestPassableSpace(const Vector& vIndecisivePush, unsigned int fMask = MASK_SOLID) = 0;
-	virtual void DispatchTraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator = NULL) = 0;
+	virtual void DispatchTraceAttack(const ITakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator = NULL) = 0;
 	virtual IServerEntity* EntityPhysics_CreateSolver(IServerEntity* pPhysicsBlocker, bool disableCollisions, float separationDuration) = 0;
 	virtual IServerEntity* NPCPhysics_CreateSolver(IServerEntity* pPhysicsObject, bool disableCollisions, float separationDuration) = 0;
 	virtual bool NPC_CheckBrushExclude(IServerEntity* pBrush) = 0;
@@ -1388,8 +1387,8 @@ public:
 	virtual void PhysCallbackRemove(IServerEntity* pRemove) = 0;
 	virtual void PhysCallbackImpulse(IPhysicsObject* pPhysicsObject, const Vector& vecCenterForce, const AngularImpulse& vecCenterTorque) = 0;
 	virtual void PhysCallbackSetVelocity(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity) = 0;
-	virtual void PhysCallbackDamage(IServerEntity* pEntity, const CTakeDamageInfo& info) = 0;
-	virtual void PhysCallbackDamage(IServerEntity* pEntity, const CTakeDamageInfo& info, gamevcollisionevent_t& event, int hurtIndex) = 0;
+	virtual void PhysCallbackDamage(IServerEntity* pEntity, const ITakeDamageInfo& info) = 0;
+	virtual void PhysCallbackDamage(IServerEntity* pEntity, const ITakeDamageInfo& info, gamevcollisionevent_t& event, int hurtIndex) = 0;
 	virtual void PhysicsImpactSound(IServerEntity* pEntity, IPhysicsObject* pPhysObject, int channel, int surfaceProps, int surfacePropsHit, float volume, float impactSpeed) = 0;
 	virtual void PhysCollisionSound(IServerEntity* pEntity, IPhysicsObject* pPhysObject, int channel, int surfaceProps, int surfacePropsHit, float deltaTime, float speed) = 0;
 	virtual void PhysCleanupFrictionSounds(IHandleEntity* pEntity) = 0;

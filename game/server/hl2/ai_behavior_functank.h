@@ -87,7 +87,7 @@ public:
 
 	// Combat.
 	CBaseEntity *BestEnemy( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	bool HasFuncTank( void )							{ return ( m_hFuncTank != NULL ); }
 	void SetFuncTank( CHandle<CFuncTank> hFuncTank );
@@ -96,7 +96,7 @@ public:
 
 	void Dismount( void );
 
-	int	 OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int	 OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	// Time.
 	void SetBusy( float flTime )		{ m_flBusyTime = flTime; }

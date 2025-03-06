@@ -187,7 +187,7 @@ void CAI_FuncTankBehavior::Dismount( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int CAI_FuncTankBehavior::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CAI_FuncTankBehavior::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	int iResult = BaseClass::OnTakeDamage_Alive( info );
 	if ( !iResult )
@@ -498,7 +498,7 @@ void CAI_FuncTankBehavior::RunTask( const Task_t *pTask )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CAI_FuncTankBehavior::Event_Killed( const CTakeDamageInfo &info )
+void CAI_FuncTankBehavior::Event_Killed( const ITakeDamageInfo&info )
 {
 	if ( m_hFuncTank )
 	{

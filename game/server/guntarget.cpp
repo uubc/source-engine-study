@@ -40,7 +40,7 @@ public:
 #else
 	virtual Class_T Classify( void ) { return CLASS_NONE; }
 #endif
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 	virtual Vector BodyTarget( const Vector &posSrc, bool bNoisy = true ) { return GetEngineObject()->GetAbsOrigin(); }
 
 	// Input handlers
@@ -205,7 +205,7 @@ void CGunTarget::Stop( void )
 }
 
 
-int	CGunTarget::OnTakeDamage( const CTakeDamageInfo &info )
+int	CGunTarget::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( m_iHealth > 0 )
 	{

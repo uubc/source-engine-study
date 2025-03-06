@@ -236,7 +236,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 	if (pBCC || fabs( m_flBeamLength - tr.fraction ) > 0.001)
 	{
 		m_iHealth = 0;
-		Event_Killed( CTakeDamageInfo( (CBaseEntity*)m_hOwner, this, 100, GIB_NORMAL ) );
+		Event_Killed( CTakeDamageInfo( m_hOwner, this, 100, GIB_NORMAL ) );
 		return;
 	}
 
@@ -244,7 +244,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 }
 
 #if 0 // FIXME: OnTakeDamage_Alive() is no longer called now that base grenade derives from CBaseAnimating
-int CTripmineGrenade::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CTripmineGrenade::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if (gpGlobals->curtime < m_flPowerUp && info.GetDamage() < m_iHealth)
 	{
@@ -264,7 +264,7 @@ int CTripmineGrenade::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CTripmineGrenade::Event_Killed( const CTakeDamageInfo &info )
+void CTripmineGrenade::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_takedamage		= DAMAGE_NO;
 

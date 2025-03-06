@@ -179,7 +179,7 @@ void CMissile::Spawn( void )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CMissile::Event_Killed( const CTakeDamageInfo &info )
+void CMissile::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_takedamage = DAMAGE_NO;
 
@@ -193,7 +193,7 @@ unsigned int CMissile::PhysicsSolidMaskForEntity( void ) const
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CMissile::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CMissile::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if ( ( info.GetDamageType() & (DMG_MISSILEDEFENSE | DMG_AIRBOAT) ) == false )
 		return 0;

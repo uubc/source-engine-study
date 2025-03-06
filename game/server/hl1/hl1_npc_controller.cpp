@@ -138,21 +138,21 @@ public:
 		return new CControllerNavigator( this );
 	}
 
-	bool ShouldGib( const CTakeDamageInfo &info );
+	bool ShouldGib( const ITakeDamageInfo&info );
 	bool HasAlienGibs( void ) { return true; }
 	bool HasHumanGibs( void ) { return false; }
 
 	float m_flShootTime;
 	float m_flShootEnd;
 
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSound( void );
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void Event_Killed( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	CSprite *m_pBall[2];	// hand balls
 	int m_iBall[2];			// how bright it should be
@@ -288,13 +288,13 @@ void CNPC_Controller::Precache()
 //=========================================================
 // TakeDamage - 
 //=========================================================
-int CNPC_Controller::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Controller::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	PainSound( info );
 	return BaseClass::OnTakeDamage_Alive( info );
 }
 
-bool CNPC_Controller::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Controller::ShouldGib( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_NEVERGIB )
 		 return false;
@@ -316,7 +316,7 @@ int CNPC_Controller::IRelationPriority( CBaseEntity *pTarget )
 	return BaseClass::IRelationPriority( pTarget );
 }
 
-void CNPC_Controller::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Controller::Event_Killed( const ITakeDamageInfo&info )
 {
 	if( ShouldGib(info) )
 	{
@@ -350,7 +350,7 @@ void CNPC_Controller::Event_Killed( const CTakeDamageInfo &info )
 	BaseClass::Event_Killed( info );
 }
 
-void CNPC_Controller::PainSound( const CTakeDamageInfo &info )
+void CNPC_Controller::PainSound( const ITakeDamageInfo&info )
 {
 	if (random->RandomInt(0,5) < 2)
 	{
@@ -377,7 +377,7 @@ void CNPC_Controller::AttackSound( void )
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Controller.Attack" );
 }
 
-void CNPC_Controller::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Controller::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Controller.Die" );

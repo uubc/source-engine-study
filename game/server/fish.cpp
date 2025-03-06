@@ -177,7 +177,7 @@ void CFish::Spawn( void )
 
 
 //-------------------------------------------------------------------------------------------------------------
-void CFish::Event_Killed( const CTakeDamageInfo &info )
+void CFish::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_takedamage = DAMAGE_NO;
 	m_lifeState = LIFE_DEAD;

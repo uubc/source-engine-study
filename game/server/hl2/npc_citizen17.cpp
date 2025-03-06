@@ -2272,7 +2272,7 @@ bool CNPC_Citizen::ShouldLookForBetterWeapon()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_Citizen::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Citizen::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( (info.GetDamageType() & DMG_BURN) && (info.GetDamageType() & DMG_DIRECT) )
 	{
@@ -3852,7 +3852,7 @@ void CNPC_Citizen::InputSpeakIdleResponse( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CNPC_Citizen::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Citizen::DeathSound( const ITakeDamageInfo&info )
 {
 	// Sentences don't play on dead NPCs
 	SentenceStop();

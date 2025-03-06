@@ -110,8 +110,8 @@ public:
 	//
 	// CBaseCombatCharacter:
 	//
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual bool CorpseGib( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual bool CorpseGib( const ITakeDamageInfo&info );
 	//bool	BecomeRagdollOnClient( const Vector &force );
 
 	//
@@ -137,8 +137,8 @@ public:
 	virtual bool FValidateHintType( CAI_Hint *pHint );
 	virtual Activity GetHintActivity( short sHintType, Activity HintsActivity );
 
-	virtual void PainSound( const CTakeDamageInfo &info );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual void IdleSound( void );
 	virtual void AlertSound( void );
 	virtual void StopLoopingSounds( void );
@@ -148,7 +148,7 @@ public:
 
 	void InputFlyAway( inputdata_t &inputdata );
 	
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void StartTargetHandling( CBaseEntity *pTargetEnt );
 
 	DEFINE_CUSTOM_AI;
@@ -215,7 +215,7 @@ public:
 		m_iBirdType = BIRDTYPE_SEAGULL;
 	}
 
-	void PainSound( const CTakeDamageInfo &info )
+	void PainSound( const ITakeDamageInfo&info )
 	{
 		const char* soundname = "NPC_Seagull.Pain";
 		CPASAttenuationFilter filter(this, soundname);
@@ -228,7 +228,7 @@ public:
 		g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
 	}
 
-	void DeathSound( const CTakeDamageInfo &info )
+	void DeathSound( const ITakeDamageInfo&info )
 	{
 		const char* soundname = "NPC_Seagull.Pain";
 		CPASAttenuationFilter filter(this, soundname);

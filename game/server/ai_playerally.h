@@ -304,15 +304,15 @@ public:
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
-	void		TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void		TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	int			TakeHealth( float flHealth, int bitsDamageType );
-	void		Event_Killed( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
 	bool		CreateVPhysics();
 
 	//---------------------------------
 
-	virtual void PainSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
 
 	//---------------------------------
 	// Speech & Acting

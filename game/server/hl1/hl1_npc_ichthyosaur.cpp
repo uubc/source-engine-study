@@ -995,13 +995,13 @@ void CNPC_Ichthyosaur::BiteSound( void )
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Ichthyosaur.Bite" );
 }
 
-void CNPC_Ichthyosaur::DeathSound( const CTakeDamageInfo &info ) 
+void CNPC_Ichthyosaur::DeathSound( const ITakeDamageInfo&info )
 { 
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Ichthyosaur.Die" );
 }
 
-void CNPC_Ichthyosaur::PainSound( const CTakeDamageInfo &info )	
+void CNPC_Ichthyosaur::PainSound( const ITakeDamageInfo&info )
 { 
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Ichthyosaur.Pain" );

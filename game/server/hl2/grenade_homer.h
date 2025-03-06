@@ -70,8 +70,8 @@ private:
 	void		StopRocketTrail(void);
 	void		PlayFlySound( void );
 	void 		GrenadeHomerTouch( IServerEntity *pOther );
-	void		Event_Killed( const CTakeDamageInfo &info );
-	int			OnTakeDamage( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
+	int			OnTakeDamage( const ITakeDamageInfo&info );
 
 public:
 	void EXPORT				Detonate(void);

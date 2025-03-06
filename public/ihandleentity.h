@@ -318,6 +318,72 @@ public:
 	virtual const IEngineGhost* AsEngineGhost() const = 0;
 };
 
+class ITakeDamageInfo {
+public:
+	// Inflictor is the weapon or rocket (or player) that is dealing the damage.
+	virtual IHandleEntity* GetInflictor() const = 0;
+	virtual void SetInflictor(IHandleEntity* pInflictor) = 0;
+
+	// Weapon is the weapon that did the attack.
+	// For hitscan weapons, it'll be the same as the inflictor. For projectile weapons, the projectile 
+	// is the inflictor, and this contains the weapon that created the projectile.
+	virtual IHandleEntity* GetWeapon() const = 0;
+	virtual void SetWeapon(IHandleEntity* pWeapon) = 0;
+
+	// Attacker is the character who originated the attack (like a player or an AI).
+	virtual IHandleEntity* GetAttacker() const = 0;
+	virtual void SetAttacker(IHandleEntity* pAttacker) = 0;
+
+	virtual float GetDamage() const = 0;
+	virtual void SetDamage(float flDamage) = 0;
+	virtual float GetMaxDamage() const = 0;
+	virtual void SetMaxDamage(float flMaxDamage) = 0;
+	virtual void ScaleDamage(float flScaleAmount) = 0;
+	virtual void AddDamage(float flAddAmount) = 0;
+	virtual void SubtractDamage(float flSubtractAmount) = 0;
+	virtual float GetDamageBonus() const = 0;
+	virtual void SetDamageBonus(float flBonus) = 0;
+
+	virtual float GetBaseDamage() const = 0;
+	virtual bool BaseDamageIsValid() const = 0;
+
+	virtual Vector GetDamageForce() const = 0;
+	virtual void SetDamageForce(const Vector& damageForce) = 0;
+	virtual void ScaleDamageForce(float flScaleAmount) = 0;
+
+	virtual Vector GetDamagePosition() const = 0;
+	virtual void SetDamagePosition(const Vector& damagePosition) = 0;
+
+	virtual Vector GetReportedPosition() const = 0;
+	virtual void SetReportedPosition(const Vector& reportedPosition) = 0;
+
+	virtual int GetDamageType() const = 0;
+	virtual void SetDamageType(int bitsDamageType) = 0;
+	virtual void AddDamageType(int bitsDamageType) = 0;
+	virtual int GetDamageCustom(void) const = 0;
+	virtual void SetDamageCustom(int iDamageCustom) = 0;
+	virtual int GetDamageStats(void) const = 0;
+	virtual void SetDamageStats(int iDamageStats) = 0;
+	virtual void SetForceFriendlyFire(bool bValue) = 0;
+	virtual bool IsForceFriendlyFire(void) const = 0;
+
+	virtual int GetAmmoType() const = 0;
+	virtual void SetAmmoType(int iAmmoType) = 0;
+	virtual const char* GetAmmoName() const = 0;
+
+	virtual int GetPlayerPenetrationCount() const = 0;
+	virtual void SetPlayerPenetrationCount(int iPlayerPenetrationCount) = 0;
+
+	virtual int GetDamagedOtherPlayers() const = 0;
+	virtual void SetDamagedOtherPlayers(int iVal) = 0;
+
+	virtual void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, float flDamage, int bitsDamageType, int iKillType = 0) = 0;
+	virtual void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, IHandleEntity* pWeapon, float flDamage, int bitsDamageType, int iKillType = 0) = 0;
+	virtual void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector* reportedPosition = NULL) = 0;
+	virtual void Set(IHandleEntity* pInflictor, IHandleEntity* pAttacker, IHandleEntity* pWeapon, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector* reportedPosition = NULL) = 0;
+
+};
+
 abstract_class IHandleWorld{
 public:
 	// Level init, shutdown

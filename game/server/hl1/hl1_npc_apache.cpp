@@ -63,7 +63,7 @@ public:
 
 	int  ObjectCaps( void );
 	
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 /*	bool OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 	{
@@ -699,7 +699,7 @@ void CNPC_Apache::DyingThink( void )
 
 
 
-void CNPC_Apache::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Apache::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 
 	CTakeDamageInfo dmgInfo = info;

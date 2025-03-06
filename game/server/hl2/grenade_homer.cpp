@@ -341,7 +341,7 @@ void CGrenadeHomer::Launch( CBaseEntity*		pOwner,
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CGrenadeHomer::Event_Killed( const CTakeDamageInfo &info )
+void CGrenadeHomer::Event_Killed( const ITakeDamageInfo&info )
 {
 	Detonate( );
 }
@@ -672,7 +672,7 @@ void CGrenadeHomer::AimThink( void )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-int CGrenadeHomer::OnTakeDamage( const CTakeDamageInfo &info )
+int CGrenadeHomer::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// Don't take damage from other homing grenades so can shoot in vollies
 	if (FClassnameIs((CBaseEntity*)info.GetInflictor(), "grenade_homer"))

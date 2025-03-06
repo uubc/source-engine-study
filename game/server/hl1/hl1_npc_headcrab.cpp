@@ -133,13 +133,13 @@ void CNPC_Headcrab::AlertSound()
 }
 
 
-void CNPC_Headcrab::PainSound( const CTakeDamageInfo &info )
+void CNPC_Headcrab::PainSound( const ITakeDamageInfo&info )
 {
 	HeadCrabSound( "Headcrab.Pain" );
 }
 
 
-void CNPC_Headcrab::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Headcrab::DeathSound( const ITakeDamageInfo&info )
 {
 	HeadCrabSound( "Headcrab.Die" );
 }
@@ -288,7 +288,7 @@ void CNPC_Headcrab::Touch( IServerEntity *pOther )
 //			bitsDamageType - 
 // Output : 
 //-----------------------------------------------------------------------------
-int CNPC_Headcrab::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Headcrab::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 

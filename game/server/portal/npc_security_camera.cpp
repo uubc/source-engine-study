@@ -118,7 +118,7 @@ public:
 
 	void	SetLastSightTime();
 
-	int		OnTakeDamage( const CTakeDamageInfo &inputInfo );
+	int		OnTakeDamage( const ITakeDamageInfo&inputInfo );
 	virtual void	PlayerPenetratingVPhysics( void );
 	bool	OnAttemptPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason );
 
@@ -402,7 +402,7 @@ void CNPC_SecurityCamera::Use( IServerEntity *pActivator, IServerEntity *pCaller
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CNPC_SecurityCamera::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CNPC_SecurityCamera::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	if ( !m_takedamage )
 		return 0;

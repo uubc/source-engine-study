@@ -108,7 +108,7 @@ public:
 	virtual void		PreExitVehicle( CBaseCombatCharacter *pPassenger, int nRole ) {}
 	virtual void		ExitVehicle( int nRole );
 	virtual string_t GetVehicleScriptName() { return m_vehicleScript; }
-	virtual bool		PassengerShouldReceiveDamage( CTakeDamageInfo &info ) { return false; }
+	virtual bool		PassengerShouldReceiveDamage( ITakeDamageInfo &info ) { return false; }
 	
 	// If this is a vehicle, returns the vehicle interface
 	virtual IServerVehicle *GetServerVehicle() { return this; }

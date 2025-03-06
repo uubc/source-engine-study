@@ -56,7 +56,7 @@ public:
 
 	virtual Vector  GetCrouchEyeOffset( void );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 
 	void SetActivity( Activity NewActivity );
@@ -126,7 +126,7 @@ public:
 	// Sounds
 	// -------------
 	void			DeathSound( void );
-	void			PainSound( const CTakeDamageInfo &damageinfo );
+	void			PainSound( const ITakeDamageInfo&damageinfo );
 	void			IdleSound( void );
 	void			AlertSound( void );
 	void			LostEnemySound( void );

@@ -29,8 +29,8 @@ public:
 	void	Precache( void );
 	void	Spawn( void );
 	Class_T Classify( void );
-	void	Event_Killed( const CTakeDamageInfo &info );
-	bool	Event_Gibbed( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
+	bool	Event_Gibbed( const ITakeDamageInfo&info );
 	void	HuntThink( void );
 	void	SuperBounceTouch( IServerEntity *pOther );
 
@@ -38,7 +38,7 @@ public:
 
 	virtual unsigned int PhysicsSolidMaskForEntity( void ) const;
 
-	virtual bool ShouldGib( const CTakeDamageInfo &info ) { return false; }
+	virtual bool ShouldGib( const ITakeDamageInfo&info ) { return false; }
 	static float	m_flNextBounceSoundTime;
 
 	virtual bool IsValidEnemy( CBaseEntity *pEnemy );

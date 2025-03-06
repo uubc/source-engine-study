@@ -42,8 +42,8 @@ public:
 
 	int     GetSoundInterests ( void );
 
-	void    TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	void    TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	float	MaxYawSpeed( void );
 
@@ -66,8 +66,8 @@ public:
 	int		TranslateSchedule( int scheduleType );
 
 
-	void	PainSound( const CTakeDamageInfo &info );
-	void	DeathSound( const CTakeDamageInfo &info );
+	void	PainSound( const ITakeDamageInfo&info );
+	void	DeathSound( const ITakeDamageInfo&info );
 	void	SetAim( const Vector &aimDir );
 
 	bool	HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt);
@@ -76,7 +76,7 @@ public:
 
 	int		SquadRecruit( int searchRadius, int maxMembers );
 	
-	void	Event_Killed( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 
 	
 	static const char *pGruntSentences[];

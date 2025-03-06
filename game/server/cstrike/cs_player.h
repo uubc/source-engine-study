@@ -254,23 +254,23 @@ public:
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper );
 	virtual void		PostThink();
 
-	virtual int			OnTakeDamage( const CTakeDamageInfo &inputInfo );
-	virtual int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int			OnTakeDamage( const ITakeDamageInfo&inputInfo );
+	virtual int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
-	virtual void		Event_Killed( const CTakeDamageInfo &info );
+	virtual void		Event_Killed( const ITakeDamageInfo&info );
 
 	//=============================================================================
 	// HPE_BEGIN:
 	// [tj] We have a custom implementation so we can check for achievements.
 	//=============================================================================
 	
-	virtual void		Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void		Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
 
 	//=============================================================================
 	// HPE_END
 	//=============================================================================
 
-	virtual void		TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void		TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	virtual CBaseEntity	*GiveNamedItem( const char *pszName, int iSubType = 0 );
 	virtual bool		IsBeingGivenItem() const { return m_bIsBeingGivenItem; }
@@ -496,7 +496,7 @@ public:
 	bool IsArmored( int nHitGroup );
 	void Pain( bool HasArmour );
 	
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 	
 	bool Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon );
 
@@ -505,7 +505,7 @@ public:
 
 	void ModifyOrAppendPlayerCriteria( AI_CriteriaSet& set );
 
-	virtual void OnDamagedByExplosion( const CTakeDamageInfo &info );
+	virtual void OnDamagedByExplosion( const ITakeDamageInfo&info );
 
 	// Called whenever this player fires a shot.
 	void NoteWeaponFired();
@@ -570,7 +570,7 @@ public:
 	void				SetDeathPose( const int &iDeathPose ) { m_iDeathPose = iDeathPose; }
 	void				SetDeathPoseFrame( const int &iDeathPoseFrame ) { m_iDeathFrame = iDeathPoseFrame; }
 	
-	void				SelectDeathPose( const CTakeDamageInfo &info );
+	void				SelectDeathPose( const ITakeDamageInfo&info );
 
 private:
 	int	m_iDeathPose;
@@ -961,8 +961,8 @@ public:
     CCSPlayer* GetLastFlashbangAttacker() { return m_lastFlashBangAttacker; }
     void SetLastFlashbangAttacker(CCSPlayer* attacker) { m_lastFlashBangAttacker = attacker; }
 
-	static CSWeaponID GetWeaponIdCausingDamange( const CTakeDamageInfo &info );
-	static void ProcessPlayerDeathAchievements( CCSPlayer *pAttacker, CCSPlayer *pVictim, const CTakeDamageInfo &info );
+	static CSWeaponID GetWeaponIdCausingDamange( const ITakeDamageInfo&info );
+	static void ProcessPlayerDeathAchievements( CCSPlayer *pAttacker, CCSPlayer *pVictim, const ITakeDamageInfo&info );
 
     void                        OnCanceledDefuse();
     void                        OnStartedDefuse();

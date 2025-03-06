@@ -21,9 +21,9 @@ public:
 	Class_T	Classify( void );
 	
 	void IdleSound( void );
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 	void AttackSound( void );
 
 	float MaxYawSpeed( void );
@@ -37,7 +37,7 @@ public:
 	bool FValidateHintType ( CAI_Hint *pHint );
 	void RemoveIgnoredConditions( void );
 	Disposition_t IRelationType( CBaseEntity *pTarget );
-	int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	int GetSoundInterests ( void );
 	void RunAI ( void );

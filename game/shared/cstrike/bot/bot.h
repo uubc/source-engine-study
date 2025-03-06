@@ -197,13 +197,13 @@ public:
 	//
 
 	/// invoked when injured by something (EXTEND) - returns the amount of damage inflicted
-	virtual int OnTakeDamage( const CTakeDamageInfo &info )
+	virtual int OnTakeDamage( const ITakeDamageInfo&info )
 	{
 		return PlayerType::OnTakeDamage( info );
 	}
 
 	/// invoked when killed (EXTEND)
-	virtual void Event_Killed( const CTakeDamageInfo &info )
+	virtual void Event_Killed( const ITakeDamageInfo&info )
 	{ 
 		PlayerType::Event_Killed( info );
 	}

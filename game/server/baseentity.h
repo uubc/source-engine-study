@@ -793,34 +793,34 @@ public:
 	virtual ITraceFilter*	GetBeamTraceFilter( void );
 
 	// Call this to do a TraceAttack on an entity, performs filtering. Don't call TraceAttack() directly except when chaining up to base class
-	void			DispatchTraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator = NULL );
-	virtual bool	PassesDamageFilter( const CTakeDamageInfo &info );
+	void			DispatchTraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator = NULL );
+	virtual bool	PassesDamageFilter( const ITakeDamageInfo&info );
 
 
 protected:
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator = NULL );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator = NULL );
 
 public:
 
 	virtual bool	CanBeHitByMeleeAttack( IServerEntity *pAttacker ) { return true; }
 
 	// returns the amount of damage inflicted
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	// This is what you should call to apply damage to an entity.
-	void TakeDamage( const CTakeDamageInfo &info );
-	virtual void AdjustDamageDirection( const CTakeDamageInfo &info, Vector &dir, CBaseEntity *pEnt ) {}
+	void TakeDamage( const ITakeDamageInfo&info );
+	virtual void AdjustDamageDirection( const ITakeDamageInfo&info, Vector &dir, CBaseEntity *pEnt ) {}
 
 	virtual int		TakeHealth( float flHealth, int bitsDamageType );
 
 	virtual bool	IsAlive( void );
 	// Entity killed (only fired once)
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
 	
-	void SendOnKilledGameEvent( const CTakeDamageInfo &info );
+	void SendOnKilledGameEvent( const ITakeDamageInfo&info );
 
 	// Notifier that I've killed some other entity. (called from Victim's Event_Killed).
-	virtual void	Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info ) { return; }
+	virtual void	Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info ) { return; }
 
 	// UNDONE: Make this data?
 	virtual int				BloodColor( void );
@@ -969,12 +969,12 @@ public:
 		const Vector &vecSpread, float flDistance, int iAmmoType, int iTracerFreq = 4, 
 		int firingEntID = -1, int attachmentID = -1, int iDamage = 0, 
 		CBaseEntity *pAttacker = NULL, bool bFirstShotAccurate = false, bool bPrimaryAttack = true );
-	virtual void ModifyFireBulletsDamage( CTakeDamageInfo* dmgInfo ) {}
+	virtual void ModifyFireBulletsDamage(ITakeDamageInfo* dmgInfo ) {}
 
 	virtual CBaseEntity *Respawn( void ) { return NULL; }
 
 	// Method used to deal with attacks passing through triggers
-	void TraceAttackToTriggers( const CTakeDamageInfo &info, const Vector& start, const Vector& end, const Vector& dir );
+	void TraceAttackToTriggers( const ITakeDamageInfo&info, const Vector& start, const Vector& end, const Vector& dir );
 
 	virtual bool IsLockedByMaster( void ) { return false; }
 
@@ -1323,7 +1323,7 @@ public:
 	void			VPhysicsUpdatePusher( IPhysicsObject *pPhysics );
 	
 	// react physically to damage (called from CBaseEntity::OnTakeDamage() by default)
-	virtual int		VPhysicsTakeDamage( const CTakeDamageInfo &info );
+	virtual int		VPhysicsTakeDamage( const ITakeDamageInfo&info );
 	virtual void	VPhysicsShadowCollision( int index, gamevcollisionevent_t *pEvent );
 	virtual void	VPhysicsShadowUpdate( IPhysicsObject *pPhysics ) {}
 	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );

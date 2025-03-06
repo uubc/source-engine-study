@@ -189,17 +189,17 @@ public:
 
 	// Client damage rules
 	virtual float FlPlayerFallDamage(CBasePlayer* pPlayer) = 0;// this client just hit the ground after a fall. How much damage?
-	virtual bool  FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker, const CTakeDamageInfo& info) { return TRUE; };// can this player take damage from this attacker?
+	virtual bool  FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker, const ITakeDamageInfo& info) { return TRUE; };// can this player take damage from this attacker?
 	virtual bool ShouldAutoAim(CBasePlayer* pPlayer, CBaseEntity* target) { return TRUE; }
 	virtual float GetAutoAimScale(CBasePlayer* pPlayer) { return 1.0f; }
 	virtual int	GetAutoAimMode() { return AUTOAIM_ON; }
 
 	virtual bool ShouldUseRobustRadiusDamage(CBaseEntity* pEntity) { return false; }
-	virtual void  RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrc, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore);
+	virtual void  RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrc, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore);
 	// Let the game rules specify if fall death should fade screen to black
 	virtual bool  FlPlayerFallDeathDoesScreenFade(CBasePlayer* pl) { return TRUE; }
 
-	virtual bool AllowDamage(CBaseEntity* pVictim, const CTakeDamageInfo& info) = 0;
+	virtual bool AllowDamage(CBaseEntity* pVictim, const ITakeDamageInfo& info) = 0;
 
 
 	// Client spawn/respawn control
@@ -216,14 +216,14 @@ public:
 
 	// Client kills/scoring
 	virtual int IPointsForKill(CBasePlayer* pAttacker, CBasePlayer* pKilled) = 0;// how many points do I award whoever kills this player?
-	virtual void PlayerKilled(CBasePlayer* pVictim, const CTakeDamageInfo& info) = 0;// Called each time a player dies
-	virtual void DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info) = 0;// Call this from within a GameRules class to report an obituary.
-	virtual const char* GetDamageCustomString(const CTakeDamageInfo& info) { return NULL; }
+	virtual void PlayerKilled(CBasePlayer* pVictim, const ITakeDamageInfo& info) = 0;// Called each time a player dies
+	virtual void DeathNotice(CBasePlayer* pVictim, const ITakeDamageInfo& info) = 0;// Call this from within a GameRules class to report an obituary.
+	virtual const char* GetDamageCustomString(const ITakeDamageInfo& info) { return NULL; }
 
 	// Weapon Damage
 		// Determines how much damage Player's attacks inflict, based on skill level.
 	virtual float AdjustPlayerDamageInflicted(float damage) { return damage; }
-	virtual void  AdjustPlayerDamageTaken(CTakeDamageInfo* pInfo) {}; // Base class does nothing.
+	virtual void  AdjustPlayerDamageTaken(ITakeDamageInfo* pInfo) {}; // Base class does nothing.
 
 	// Weapon retrieval
 	virtual bool CanHavePlayerItem(CBasePlayer* pPlayer, CBaseCombatWeapon* pWeapon);// The player is touching an CBaseCombatWeapon, do I give it to him?

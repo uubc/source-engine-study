@@ -26,13 +26,13 @@ public:
 	void Precache( void );
 
 #if 0 // FIXME: OnTakeDamage_Alive() is no longer called now that base grenade derives from CBaseAnimating
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
 #endif	
 	void WarningThink( void );
 	void PowerupThink( void );
 	void BeamBreakThink( void );
 	void DelayDeathThink( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	void MakeBeam( void );
 	void KillBeam( void );

@@ -36,8 +36,8 @@ public:
 	bool	IsValidEnemy( CBaseEntity *pEnemy );
 
 
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
+	void	Event_Killed( const ITakeDamageInfo&info );
 
 	void	Heal( void );
 	bool	CanHeal( void );
@@ -59,7 +59,7 @@ public:
 	void	DeclineFollowing( void );
 
 	bool	CanBecomeRagdoll( void );
-	bool	ShouldGib( const CTakeDamageInfo &info );
+	bool	ShouldGib( const ITakeDamageInfo&info );
 	
 	void	SUB_StartLVFadeOut( float delay = 10.0f, bool bNotSolid = true );
 	void	SUB_LVFadeOut( void  );
@@ -69,8 +69,8 @@ public:
 	Activity GetStoppedActivity( void );
 	Activity NPC_TranslateActivity( Activity newActivity );
 
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 
 	enum
 	{

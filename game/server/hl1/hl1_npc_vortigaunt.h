@@ -24,20 +24,20 @@ public:
 
 	void AlertSound( void );
 	void IdleSound( void );
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 	
 	int	 GetSoundInterests ( void );
 	
 	float MaxYawSpeed ( void );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void CallForHelp( char *szClassname, float flDist, CBaseEntity * pEnemy, Vector &vecLocation );
 
 	int  RangeAttack1Conditions( float flDot, float flDist );
 
-	int  OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int  OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	
 	void StartTask( const Task_t *pTask );
 

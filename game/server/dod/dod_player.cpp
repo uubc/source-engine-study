@@ -676,7 +676,7 @@ void CDODPlayer::DestroyRagdoll( void )
 	}
 }
 
-void CDODPlayer::Event_Killed( const CTakeDamageInfo &info )
+void CDODPlayer::Event_Killed( const ITakeDamageInfo&info )
 {
 	// allow bots to react
 //	TheBots->OnEvent( EVENT_PLAYER_DIED, this, info.GetAttacker() );
@@ -1340,7 +1340,7 @@ ConVar dod_friendlyfiresafezone( "dod_friendlyfiresafezone",
 								"Units around a player where they will not damage teammates, even if FF is on",
 								true, 0, false, 0 );
 
-void CDODPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CDODPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	bool bTakeDamage = true;
 
@@ -3249,7 +3249,7 @@ void CDODPlayer::SetCPIndex( int index )
 	m_Shared.SetCPIndex( index );
 }
 
-int CDODPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CDODPlayer::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// set damage type sustained
 	m_bitsDamageType |= info.GetDamageType();
@@ -3380,7 +3380,7 @@ int CDODPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 ConVar dod_explosionforcescale( "dod_explosionforcescale", "1.0", FCVAR_CHEAT );
 ConVar dod_bulletforcescale( "dod_bulletforcescale", "1.0", FCVAR_CHEAT );
 
-int CDODPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CDODPlayer::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -3516,7 +3516,7 @@ void CDODPlayer::Pain( void )
 	}
 }
 
-void CDODPlayer::DeathSound( const CTakeDamageInfo &info )
+void CDODPlayer::DeathSound( const ITakeDamageInfo&info )
 {
 	if ( m_LastDamageType & DMG_CLUB )
 	{
@@ -3568,7 +3568,7 @@ void CDODPlayer::DeathSound( const CTakeDamageInfo &info )
 	}
 }
 
-void CDODPlayer::OnDamagedByExplosion( const CTakeDamageInfo &info )
+void CDODPlayer::OnDamagedByExplosion( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamage() >= 30.0f )
 	{
@@ -3586,7 +3586,7 @@ ConVar dod_stun_max_yaw( "dod_stun_max_yaw", "150", FCVAR_CHEAT );
 ConVar dod_stun_min_roll( "dod_stun_min_roll", "15", FCVAR_CHEAT );
 ConVar dod_stun_max_roll( "dod_stun_max_roll", "30", FCVAR_CHEAT );
 
-void CDODPlayer::OnDamageByStun( const CTakeDamageInfo &info )
+void CDODPlayer::OnDamageByStun( const ITakeDamageInfo&info )
 {
 	DevMsg( 2, "took %.1f stun damage\n", info.GetDamage() );
 

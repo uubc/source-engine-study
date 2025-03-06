@@ -148,14 +148,14 @@ public:
 	virtual void	PreThink();
 	virtual void	PostThink();
 
-	virtual int		OnTakeDamage( const CTakeDamageInfo &inputInfo );
-	virtual int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&inputInfo );
+	virtual int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void			Pain( void );
-	void			OnDamagedByExplosion( const CTakeDamageInfo &info );
-	void			OnDamageByStun( const CTakeDamageInfo &info );
+	void			OnDamagedByExplosion( const ITakeDamageInfo&info );
+	void			OnDamageByStun( const ITakeDamageInfo&info );
 	void			DeafenThink( void );
 
 	virtual void	UpdateGeigerCounter( void ) {}
@@ -353,7 +353,7 @@ public:
 	virtual void InitVCollision();
 	virtual void VPhysicsShadowUpdate( IPhysicsObject *pPhysics );
 
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 
 	Activity TranslateActivity( Activity baseAct, bool *pRequired = NULL );
 

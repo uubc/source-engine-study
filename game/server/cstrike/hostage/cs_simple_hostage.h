@@ -44,10 +44,10 @@ public:
 
 	virtual void PhysicsSimulate( void );
 
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual void Touch( IServerEntity *other );				// in contact with "other"
 	
 	void HostageRescueZoneTouch( inputdata_t &inputdata );	// invoked when hostage touches a rescue zone

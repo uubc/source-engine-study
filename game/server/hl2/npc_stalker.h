@@ -78,7 +78,7 @@ public:
 	void			RunTask( const Task_t *pTask );
 	virtual int		SelectSchedule ( void );
 	virtual int		TranslateSchedule( int scheduleType );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void			OnScheduleChange();
 
 	void			StalkerThink(void);
@@ -93,10 +93,10 @@ public:
 	float			GetHintDelay( short sHintType );
 
 	void			IdleSound( void );
-	void			DeathSound( const CTakeDamageInfo &info );
-	void			PainSound( const CTakeDamageInfo &info );
+	void			DeathSound( const ITakeDamageInfo&info );
+	void			PainSound( const ITakeDamageInfo&info );
 
-	void			Event_Killed( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
 	void			DoSmokeEffect( const Vector &position );
 
 	void			AddZigZagToPath(void);

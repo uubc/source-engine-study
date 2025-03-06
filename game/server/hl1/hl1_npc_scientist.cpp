@@ -257,7 +257,7 @@ bool CNPC_Scientist::CanBecomeRagdoll( void )
 	return BaseClass::CanBecomeRagdoll();
 }
 
-bool CNPC_Scientist::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Scientist::ShouldGib( const ITakeDamageInfo&info )
 {
 	if ( UTIL_IsLowViolence() )
 	{
@@ -485,7 +485,7 @@ void CNPC_Scientist::RunTask( const Task_t *pTask )
 	}
 }
 
-int CNPC_Scientist::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Scientist::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 
 	if ( inputInfo.GetInflictor() && inputInfo.GetInflictor()->GetEngineObject()->GetFlags() & FL_CLIENT )
@@ -498,7 +498,7 @@ int CNPC_Scientist::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	return BaseClass::OnTakeDamage_Alive( inputInfo );
 }
 
-void CNPC_Scientist::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Scientist::Event_Killed( const ITakeDamageInfo&info )
 {
 	SetUse( NULL );	
 	BaseClass::Event_Killed( info );
@@ -528,7 +528,7 @@ bool CNPC_Scientist::CanHeal( void )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Scientist::PainSound ( const CTakeDamageInfo &info )
+void CNPC_Scientist::PainSound ( const ITakeDamageInfo&info )
 {
 	if (gpGlobals->curtime < m_flPainTime )
 		return;
@@ -550,7 +550,7 @@ void CNPC_Scientist::PainSound ( const CTakeDamageInfo &info )
 //=========================================================
 // DeathSound 
 //=========================================================
-void CNPC_Scientist::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Scientist::DeathSound( const ITakeDamageInfo&info )
 {
 	PainSound( info );
 }

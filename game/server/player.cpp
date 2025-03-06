@@ -159,7 +159,7 @@ bool gInitHUD = true;
 extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 int MapTextureTypeStepType(char chTextureType);
 extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
-extern void AddMultiDamage( const CTakeDamageInfo &info, IHandleEntity *pEntity );
+extern void AddMultiDamage( const ITakeDamageInfo&info, IHandleEntity *pEntity );
 
 
 #define CMD_MOSTRECENT 0
@@ -814,7 +814,7 @@ int TrainSpeed(int iSpeed, int iMax)
 	return iRet;
 }
 
-void CBasePlayer::DeathSound( const CTakeDamageInfo &info )
+void CBasePlayer::DeathSound( const ITakeDamageInfo&info )
 {
 	// temporarily using pain sounds for death sounds
 
@@ -907,7 +907,7 @@ void CBasePlayer::DrawDebugGeometryOverlays(void)
 //=========================================================
 // TraceAttack
 //=========================================================
-void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBasePlayer::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( m_takedamage )
 	{
@@ -1064,7 +1064,7 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-bool CBasePlayer::ShouldTakeDamageInCommentaryMode( const CTakeDamageInfo &inputInfo )
+bool CBasePlayer::ShouldTakeDamageInCommentaryMode( const ITakeDamageInfo&inputInfo )
 {
 	// Only ignore damage when we're listening to a commentary node
 	if ( !IsListeningToCommentary() )
@@ -1091,7 +1091,7 @@ bool CBasePlayer::ShouldTakeDamageInCommentaryMode( const CTakeDamageInfo &input
 	return true;
 }
 
-int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CBasePlayer::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	// have suit diagnose the problem - ie: report damage type
 	int bitsDamage = inputInfo.GetDamageType();
@@ -1452,7 +1452,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-void CBasePlayer::OnDamagedByExplosion( const CTakeDamageInfo &info )
+void CBasePlayer::OnDamagedByExplosion( const ITakeDamageInfo&info )
 {
 	float lastDamage = info.GetDamage();
 
@@ -1621,7 +1621,7 @@ const impactdamagetable_t &CBasePlayer::GetPhysicsImpactDamageTable()
 }
 
 
-int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CBasePlayer::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// set damage type sustained
 	m_bitsDamageType |= info.GetDamageType();
@@ -1684,7 +1684,7 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 }
 
 
-void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
+void CBasePlayer::Event_Killed( const ITakeDamageInfo&info )
 {
 	CSound *pSound;
 
@@ -1765,7 +1765,7 @@ void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
 	BaseClass::Event_Killed( info );
 }
 
-void CBasePlayer::Event_Dying( const CTakeDamageInfo& info )
+void CBasePlayer::Event_Dying( const ITakeDamageInfo& info )
 {
 	// NOT GIBBED, RUN THIS CODE
 
@@ -9168,7 +9168,7 @@ CBotCmd CPlayerInfo::GetLastUserCommand()
 }
 
 // Notify that I've killed some other entity. (called from Victim's Event_Killed).
-void CBasePlayer::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CBasePlayer::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_KilledOther( pVictim, info );
 	if ( pVictim != this )

@@ -75,7 +75,7 @@ public:
 
 	Disposition_t IRelationType( CBaseEntity *pTarget );
 
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	void	MantainBoneFollowerCollisionGroups( int CollisionGroup );
 	virtual void SetPlayerAvoidState( void );
@@ -119,7 +119,7 @@ protected:
 	bool CreateVPhysics( void );
 	void UpdateOnRemove( void );
 	void NPCThink( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	void CreateSprites( void );
 	void ClearSprites( void );
@@ -288,7 +288,7 @@ void CNPC_Dog::GatherConditions( void )
 	BaseClass::GatherConditions();
 }
 
-int	CNPC_Dog::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CNPC_Dog::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if ( IsInAScript() )
 		 return 0;
@@ -438,7 +438,7 @@ void CNPC_Dog::NPCThink( void )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Dog::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Dog::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_BoneFollowerManager.DestroyBoneFollowers();
 	BaseClass::Event_Killed( info );

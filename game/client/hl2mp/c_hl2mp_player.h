@@ -51,7 +51,7 @@ public:
 	virtual void OnDataChanged( DataUpdateType_t type );
 	virtual float GetFOV( void );
 	virtual IStudioHdr *OnNewModel( void );
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	virtual void ItemPreFrame( void );
 	virtual void ItemPostFrame( void );
 	virtual float GetMinFOV()	const { return 5.0f; }

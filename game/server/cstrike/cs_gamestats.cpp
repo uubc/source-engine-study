@@ -414,7 +414,7 @@ void CCSGameStats::Event_ShotFired( CBasePlayer *pPlayer, CBaseCombatWeapon* pWe
     }
 }
 
-void CCSGameStats::Event_ShotHit( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CCSGameStats::Event_ShotHit( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 	Assert( pPlayer );
 	CCSPlayer *pCSPlayer = ToCSPlayer( pPlayer );
@@ -446,7 +446,7 @@ void CCSGameStats::Event_ShotHit( CBasePlayer *pPlayer, const CTakeDamageInfo &i
 		}
 	}
 }
-void CCSGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CCSGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 	Assert( pPlayer );
 	CCSPlayer *pCSPlayer = ToCSPlayer( pPlayer );
@@ -459,7 +459,7 @@ void CCSGameStats::Event_PlayerSprayedDecal( CCSPlayer* pPlayer )
     IncrementStat( pPlayer, CSSTAT_DECAL_SPRAYS, 1 );
 }
 
-void CCSGameStats::Event_PlayerKilled_PreWeaponDrop( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CCSGameStats::Event_PlayerKilled_PreWeaponDrop( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 	Assert( pPlayer );
 	CCSPlayer *pCSPlayer = ToCSPlayer( pPlayer );
@@ -910,7 +910,7 @@ void CCSGameStats::Event_PlayerDisconnected( CBasePlayer *pPlayer )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CCSGameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CCSGameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	// This also gets called when the victim is a building.  That gets tracked separately as building destruction, don't count it here
 	if ( !pVictim->IsPlayer() )
@@ -1099,7 +1099,7 @@ void CCSGameStats::CalculateOverkill(CCSPlayer* pAttacker, CCSPlayer* pVictim)
 //-----------------------------------------------------------------------------
 // Purpose: Steamworks Gamestats death tracking
 //-----------------------------------------------------------------------------
-void CCSGameStats::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CCSGameStats::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 	if ( !pVictim )
 		return;
@@ -1110,7 +1110,7 @@ void CCSGameStats::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &in
 //-----------------------------------------------------------------------------
 // Purpose: Stats event for giving damage to player
 //-----------------------------------------------------------------------------
-void CCSGameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDamageInfo &info )
+void CCSGameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const ITakeDamageInfo&info )
 {
 	CCSPlayer *pAttacker = ToCSPlayer((IServerEntity*)info.GetAttacker() );
 	if ( pAttacker && pAttacker->GetTeam() != pBasePlayer->GetTeam() )

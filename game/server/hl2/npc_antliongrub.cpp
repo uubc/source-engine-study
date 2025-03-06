@@ -56,7 +56,7 @@ public:
 	virtual void Spawn( void );
 	virtual void Precache( void );
 	virtual void VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
-	virtual void Event_Killed( const CTakeDamageInfo &info ); 
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual bool VPhysicsIsFlesh( void );
 	
 	bool	MyTouch( CBasePlayer *pPlayer );
@@ -87,9 +87,9 @@ public:
 	virtual void	Spawn( void );
 	virtual void	Precache( void );
 	virtual void	UpdateOnRemove( void );
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr );
 
 	void	InputSquash( inputdata_t &data );
 
@@ -285,7 +285,7 @@ void CAntlionGrub::CreateNugget( void )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-void CAntlionGrub::Event_Killed( const CTakeDamageInfo &info )
+void CAntlionGrub::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Fire our output only if the player is the one that killed us
 	if ( info.GetAttacker() && info.GetAttacker()->IsPlayer() )
@@ -318,7 +318,7 @@ void CAntlionGrub::Event_Killed( const CTakeDamageInfo &info )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CAntlionGrub::OnTakeDamage( const CTakeDamageInfo &info )
+int CAntlionGrub::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// Animate a flinch of pain if we're dying
 	bool bSquashed = ( (GetEngineObject()->GetEffects() & EF_NODRAW ) != 0 );
@@ -843,7 +843,7 @@ void CAntlionGrub::Squash( CBaseEntity *pOther, bool bDealDamage, bool bSpawnBlo
 //			&vecDir - 
 //			*ptr - 
 //-----------------------------------------------------------------------------
-void CAntlionGrub::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CAntlionGrub::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr )
 {
 	QAngle vecAngles;
 	VectorAngles( -vecDir, vecAngles );
@@ -1004,7 +1004,7 @@ void CGrubNugget::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-void CGrubNugget::Event_Killed( const CTakeDamageInfo &info )
+void CGrubNugget::Event_Killed( const ITakeDamageInfo&info )
 {
 	GetEngineObject()->AddEffects( EF_NODRAW );
 	DispatchParticleEffect( "antlion_spit_player", GetEngineObject()->GetAbsOrigin(), QAngle( -90, 0, 0 ) );

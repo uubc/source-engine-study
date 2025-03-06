@@ -171,8 +171,8 @@ public:
 	void Precache();
 	virtual void Spawn();
 	virtual bool OverridePropdata( void );
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 
 private:
 	enum
@@ -244,7 +244,7 @@ public:
 	void	StartCannon( void );
 	void	StopCannon( void );
 	void	MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	// Input handlers.
 	void	InputLandLeave( inputdata_t &inputdata );
@@ -604,7 +604,7 @@ void CCombineDropshipContainer::ThrowFlamingGib( void )
 //-----------------------------------------------------------------------------
 // Character killed (only fired once)
 //-----------------------------------------------------------------------------
-void CCombineDropshipContainer::Event_Killed( const CTakeDamageInfo &info )
+void CCombineDropshipContainer::Event_Killed( const ITakeDamageInfo&info )
 {
 	if (GetEngineObject()->GetOwnerEntity() )
 	{
@@ -619,7 +619,7 @@ void CCombineDropshipContainer::Event_Killed( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Damage effects 
 //-----------------------------------------------------------------------------
-int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
+int CCombineDropshipContainer::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( m_iHealth == 0 )
 		return 0;
@@ -1398,7 +1398,7 @@ void CNPC_CombineDropship::Flight( void )
 //------------------------------------------------------------------------------
 // Deals damage to what's behing carried
 //------------------------------------------------------------------------------
-int CNPC_CombineDropship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo ) 
+int CNPC_CombineDropship::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	// FIXME: To make this work for CRATE_STRIDER or CRATE_APC, we need to
 	// add code to the strider + apc to make them not take double-damage from rockets

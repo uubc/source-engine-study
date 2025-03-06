@@ -219,7 +219,7 @@ public:
 	virtual void PhysicsSimulate( void );
 	virtual float GetShakeAmplitude( void ) { return 25.0; }
 	virtual float GetShakeRadius( void ) { return sk_helicopter_grenaderadius.GetFloat() * 2; }
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 	virtual void VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 	void		 SetExplodeOnContact( bool bExplode ) { m_bExplodeOnContact = bExplode; }
 
@@ -378,9 +378,9 @@ public:
 
 	int		BloodColor( void ) { return DONT_BLEED; }
 	Class_T Classify ( void ) { return CLASS_COMBINE_GUNSHIP; }
-	virtual int	OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int	OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 	// Shot spread
 	virtual Vector GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget );
@@ -392,7 +392,7 @@ public:
 	virtual void PrescheduleThink( void );
 
 	// Purpose: Set the gunship's paddles flailing!
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 
 	// Drop a bomb at a particular location
 	void	InputDropBomb( inputdata_t &inputdata );
@@ -3509,7 +3509,7 @@ void CNPC_AttackHelicopter::DropCorpse( int nDamage )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_AttackHelicopter::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_AttackHelicopter::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// Take no damage from trace attacks unless it's blast damage. RadiusDamage() sometimes calls
 	// TraceAttack() as a means for delivering blast damage. Usually when the explosive penetrates
@@ -3526,7 +3526,7 @@ void CNPC_AttackHelicopter::TraceAttack( const CTakeDamageInfo &info, const Vect
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CNPC_AttackHelicopter::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_AttackHelicopter::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// We don't take blast damage from anything but the airboat or missiles (or myself!)
 	if( info.GetInflictor() != this )
@@ -3576,7 +3576,7 @@ int CNPC_AttackHelicopter::OnTakeDamage( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: Take damage from trace attacks if they hit the gunner
 //-----------------------------------------------------------------------------
-int CNPC_AttackHelicopter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_AttackHelicopter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	int nPrevHealth = GetHealth();
 
@@ -3756,7 +3756,7 @@ void Chopper_BecomeChunks( CBaseEntity *pChopper )
 //-----------------------------------------------------------------------------
 // Purpose: Start us crashing
 //-----------------------------------------------------------------------------
-void CNPC_AttackHelicopter::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_AttackHelicopter::Event_Killed( const ITakeDamageInfo&info )
 {
 	if( m_lifeState == LIFE_ALIVE )
 	{
@@ -5420,7 +5420,7 @@ float CGrenadeHelicopter::GetBombLifetime()
 //------------------------------------------------------------------------------
 // Pow!
 //------------------------------------------------------------------------------
-int CGrenadeHelicopter::OnTakeDamage( const CTakeDamageInfo &info )
+int CGrenadeHelicopter::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// We don't take blast damage
 	if ( info.GetDamageType() & DMG_BLAST )

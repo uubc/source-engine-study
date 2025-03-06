@@ -323,7 +323,7 @@ void CNPC_Manhack::PrescheduleThink( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Manhack::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Manhack::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	g_vecAttackDir = vecDir;
 
@@ -345,7 +345,7 @@ void CNPC_Manhack::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDi
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Manhack::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Manhack::DeathSound( const ITakeDamageInfo&info )
 {
 	g_pSoundEmitterSystem->StopSound(this, "NPC_Manhack.Stunned");
 	CPASAttenuationFilter filter2( this, "NPC_Manhack.Die" );
@@ -356,7 +356,7 @@ void CNPC_Manhack::DeathSound( const CTakeDamageInfo &info )
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Manhack::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Manhack::ShouldGib( const ITakeDamageInfo&info )
 {
 	return ( m_bGib );
 }
@@ -366,7 +366,7 @@ bool CNPC_Manhack::ShouldGib( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Manhack::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Manhack::Event_Killed( const ITakeDamageInfo&info )
 {
 	// turn off the blur!
 	GetEngineObject()->SetBodygroup( MANHACK_BODYGROUP_BLUR, MANHACK_BODYGROUP_OFF );
@@ -666,7 +666,7 @@ void CNPC_Manhack::DestroySmokeTrail()
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Manhack::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CNPC_Manhack::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Hafta make a copy of info cause we might need to scale damage.(sjb)
 	CTakeDamageInfo tdInfo = info;
@@ -822,7 +822,7 @@ int	CNPC_Manhack::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 // Purpose:
 //------------------------------------------------------------------------------
-bool CNPC_Manhack::CorpseGib( const CTakeDamageInfo &info )
+bool CNPC_Manhack::CorpseGib( const ITakeDamageInfo&info )
 {
 	Vector			vecGibVelocity;
 	AngularImpulse	vecGibAVelocity;
@@ -861,7 +861,7 @@ bool CNPC_Manhack::CorpseGib( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Manhack::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int	CNPC_Manhack::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	// Ignore damage for the first 1 second of crashing behavior.
 	// If we don't do this, manhacks always just explode under 

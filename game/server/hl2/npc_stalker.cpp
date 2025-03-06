@@ -138,7 +138,7 @@ END_DATADESC()
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Stalker::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int	CNPC_Stalker::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -373,7 +373,7 @@ void CNPC_Stalker::OnScheduleChange()
 //			flDamage - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-void CNPC_Stalker::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Stalker::Event_Killed( const ITakeDamageInfo&info )
 {
 	if( IsInSquad() && info.GetAttacker()->IsPlayer() )
 	{
@@ -401,7 +401,7 @@ void CNPC_Stalker::Event_Killed( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Stalker::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Stalker::DeathSound( const ITakeDamageInfo&info )
 { 
 	const char* soundname = "NPC_Stalker.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -419,7 +419,7 @@ void CNPC_Stalker::DeathSound( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Stalker::PainSound( const CTakeDamageInfo &info )
+void CNPC_Stalker::PainSound( const ITakeDamageInfo&info )
 { 
 	const char* soundname = "NPC_Stalker.Pain";
 	CPASAttenuationFilter filter(this, soundname);

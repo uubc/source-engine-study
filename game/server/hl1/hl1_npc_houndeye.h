@@ -20,13 +20,13 @@ public:
 	void Spawn( void );
 	void Precache( void );
 
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 
 	void WarmUpSound ( void );
 	void AlertSound( void );
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 	void WarnSound( void );
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
 	void IdleSound( void );
 	
 	float MaxYawSpeed  ( void );

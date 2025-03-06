@@ -321,7 +321,7 @@ void CNPC_CScanner::Activate()
 //------------------------------------------------------------------------------
 // Purpose: Override to split in two when attacked
 //------------------------------------------------------------------------------
-int CNPC_CScanner::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_CScanner::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Turn off my spotlight when shot
 	SpotlightDestroy();
@@ -382,7 +382,7 @@ void CNPC_CScanner::Gib( void )
 //			flDamage - 
 //			bitsDamageType - 
 //-----------------------------------------------------------------------------
-void CNPC_CScanner::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_CScanner::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Copy off the takedamage info that killed me, since we're not going to call
 	// up into the base class's Event_Killed() until we gib. (gibbing is ultimate death)

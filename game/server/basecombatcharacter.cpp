@@ -862,7 +862,7 @@ void CBaseCombatCharacter::UpdateOnRemove( void )
 // CorpseGib - create some gore and get rid of a character's
 // model.
 //=========================================================
-bool CBaseCombatCharacter::CorpseGib( const CTakeDamageInfo &info )
+bool CBaseCombatCharacter::CorpseGib( const ITakeDamageInfo&info )
 {
 	trace_t		tr;
 	bool		gibbed = false;
@@ -1323,7 +1323,7 @@ CBaseEntity *CBaseCombatCharacter::CheckTraceHullAttack( const Vector &vStart, c
 }
 
 
-bool  CBaseCombatCharacter::Event_Gibbed( const CTakeDamageInfo &info )
+bool  CBaseCombatCharacter::Event_Gibbed( const ITakeDamageInfo&info )
 {
 	bool fade = false;
 
@@ -1361,7 +1361,7 @@ bool  CBaseCombatCharacter::Event_Gibbed( const CTakeDamageInfo &info )
 }
 
 
-Vector CBaseCombatCharacter::CalcDamageForceVector( const CTakeDamageInfo &info )
+Vector CBaseCombatCharacter::CalcDamageForceVector( const ITakeDamageInfo&info )
 {
 	// Already have a damage force in the data, use that.
 	bool bNoPhysicsForceDamage = g_pGameRules->Damage_NoPhysicsForce( info.GetDamageType() );
@@ -1495,7 +1495,7 @@ bool CBaseCombatCharacter::BecomeRagdollBoogie( CBaseEntity *pKiller, const Vect
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector )
+bool CBaseCombatCharacter::BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector )
 {
 	if ( (info.GetDamageType() & DMG_VEHICLE) && !g_pGameRules->IsMultiplayer() )
 	{
@@ -1597,7 +1597,7 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 Killed
 ============
 */
-void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
+void CBaseCombatCharacter::Event_Killed( const ITakeDamageInfo&info )
 {
 	extern ConVar npc_vphysics;
 
@@ -1708,7 +1708,7 @@ void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 #endif // GLOWS_ENABLE
 }
 
-void CBaseCombatCharacter::Event_Dying( const CTakeDamageInfo &info )
+void CBaseCombatCharacter::Event_Dying( const ITakeDamageInfo&info )
 {
 }
 
@@ -2399,7 +2399,7 @@ When a NPC is poisoned via an arrow etc it takes all the poison damage at once.
 GLOBALS ASSUMED SET:  g_iSkillLevel
 ============
 */
-int CBaseCombatCharacter::OnTakeDamage( const CTakeDamageInfo &info )
+int CBaseCombatCharacter::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	int retVal = 0;
 
@@ -2486,7 +2486,7 @@ int CBaseCombatCharacter::OnTakeDamage( const CTakeDamageInfo &info )
 }
 
 
-int CBaseCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CBaseCombatCharacter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// grab the vector of the incoming attack. ( pretend that the inflictor is a little lower than it really is, so the body will tend to fly upward a bit).
 	Vector vecDir = vec3_origin;
@@ -2526,12 +2526,12 @@ int CBaseCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 }
 
 
-int CBaseCombatCharacter::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int CBaseCombatCharacter::OnTakeDamage_Dying( const ITakeDamageInfo&info )
 {
 	return 1;
 }
 
-int CBaseCombatCharacter::OnTakeDamage_Dead( const CTakeDamageInfo &info )
+int CBaseCombatCharacter::OnTakeDamage_Dead( const ITakeDamageInfo&info )
 {
 	// do the damage
 	if ( m_takedamage != DAMAGE_EVENTS_ONLY )
@@ -3211,7 +3211,7 @@ void CBaseCombatCharacter::VPhysicsShadowCollision( int index, gamevcollisioneve
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------	
-void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore )
+void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore )
 {
 	// NOTE: I did this this way so I wouldn't have to change a whole bunch of
 	// code unnecessarily. We need TF2 specific rules for RadiusDamage, so I moved

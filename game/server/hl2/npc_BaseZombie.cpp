@@ -651,7 +651,7 @@ int CNPC_BaseZombie::MeleeAttack1Conditions ( float flDot, float flDist )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 #define ZOMBIE_BUCKSHOT_TRIPLE_DAMAGE_DIST	96.0f // Triple damage from buckshot at 8 feet (headshot only)
-float CNPC_BaseZombie::GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info )
+float CNPC_BaseZombie::GetHitgroupDamageMultiplier( int iHitGroup, const ITakeDamageInfo&info )
 {
 	switch( iHitGroup )
 	{
@@ -684,7 +684,7 @@ float CNPC_BaseZombie::GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDa
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_BaseZombie::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_BaseZombie::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo infoCopy = info;
 
@@ -711,7 +711,7 @@ void CNPC_BaseZombie::TraceAttack( const CTakeDamageInfo &info, const Vector &ve
 // Input  : 
 // Output : bool, true if yes.
 //-----------------------------------------------------------------------------
-bool CNPC_BaseZombie::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold )
+bool CNPC_BaseZombie::ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	if ( info.GetDamageType() & DMG_REMOVENORAGDOLL )
 		return false;
@@ -759,7 +759,7 @@ bool CNPC_BaseZombie::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDa
 // Purpose: A zombie has taken damage. Determine whether he release his headcrab.
 // Output : YES, IMMEDIATE, or SCHEDULED (see HeadcrabRelease_t)
 //-----------------------------------------------------------------------------
-HeadcrabRelease_t CNPC_BaseZombie::ShouldReleaseHeadcrab( const CTakeDamageInfo &info, float flDamageThreshold )
+HeadcrabRelease_t CNPC_BaseZombie::ShouldReleaseHeadcrab( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	if ( m_iHealth <= 0 )
 	{
@@ -812,7 +812,7 @@ HeadcrabRelease_t CNPC_BaseZombie::ShouldReleaseHeadcrab( const CTakeDamageInfo 
 //-----------------------------------------------------------------------------
 #define ZOMBIE_SCORCH_RATE		8
 #define ZOMBIE_MIN_RENDERCOLOR	50
-int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_BaseZombie::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -1047,7 +1047,7 @@ void CNPC_BaseZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 //-----------------------------------------------------------------------------
 // Purpose: Determine whether the zombie is chopped up by some physics item
 //-----------------------------------------------------------------------------
-bool CNPC_BaseZombie::IsChopped( const CTakeDamageInfo &info )
+bool CNPC_BaseZombie::IsChopped( const ITakeDamageInfo&info )
 {
 	float flDamageThreshold = MIN( 1, info.GetDamage() / m_iMaxHealth );
 
@@ -1085,7 +1085,7 @@ bool CNPC_BaseZombie::ShouldIgniteZombieGib( void )
 //-----------------------------------------------------------------------------
 // Purpose: Handle the special case of a zombie killed by a physics chopper.
 //-----------------------------------------------------------------------------
-void CNPC_BaseZombie::DieChopped( const CTakeDamageInfo &info )
+void CNPC_BaseZombie::DieChopped( const ITakeDamageInfo&info )
 {
 	bool bSquashed = IsSquashed(info);
 
@@ -1194,7 +1194,7 @@ void CNPC_BaseZombie::DieChopped( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: damage has been done. Should the zombie ignite?
 //-----------------------------------------------------------------------------
-bool CNPC_BaseZombie::ShouldIgnite( const CTakeDamageInfo &info )
+bool CNPC_BaseZombie::ShouldIgnite( const ITakeDamageInfo&info )
 {
  	if ( IsOnFire() )
 	{
@@ -2306,7 +2306,7 @@ void CNPC_BaseZombie::BecomeTorso( const Vector &vecTorsoForce, const Vector &ve
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_BaseZombie::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_BaseZombie::Event_Killed( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_VEHICLE )
 	{
@@ -2322,7 +2322,7 @@ void CNPC_BaseZombie::Event_Killed( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-bool CNPC_BaseZombie::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector )
+bool CNPC_BaseZombie::BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector )
 {
 	bool bKilledByVehicle = ( ( info.GetDamageType() & DMG_VEHICLE ) != 0 );
 	if( m_fIsTorso || (!IsChopped(info) && !IsSquashed(info)) || bKilledByVehicle )

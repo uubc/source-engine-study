@@ -64,9 +64,9 @@ public:
 	virtual void OnAnimationEvent( animevent_t *event );	// when a QC-file animation event is triggered by the current animation sequence
 
 	virtual void OnIgnite( void );							// when bot starts to burn
-	virtual void OnInjured( const CTakeDamageInfo &info );	// when bot is damaged by something
-	virtual void OnKilled( const CTakeDamageInfo &info );	// when the bot's health reaches zero
-	virtual void OnOtherKilled( CBaseCombatCharacter *victim, const CTakeDamageInfo &info );	// when someone else dies
+	virtual void OnInjured( const ITakeDamageInfo&info );	// when bot is damaged by something
+	virtual void OnKilled( const ITakeDamageInfo&info );	// when the bot's health reaches zero
+	virtual void OnOtherKilled( CBaseCombatCharacter *victim, const ITakeDamageInfo&info );	// when someone else dies
 
 	virtual void OnSight( CBaseEntity *subject );			// when subject initially enters bot's visual awareness
 	virtual void OnLostSight( CBaseEntity *subject );		// when subject leaves enters bot's visual awareness
@@ -217,7 +217,7 @@ inline void INextBotEventResponder::OnIgnite( void )
 	}	
 }
 
-inline void INextBotEventResponder::OnInjured( const CTakeDamageInfo &info )
+inline void INextBotEventResponder::OnInjured( const ITakeDamageInfo&info )
 {
 	for ( INextBotEventResponder *sub = FirstContainedResponder(); sub; sub = NextContainedResponder( sub ) )
 	{
@@ -225,7 +225,7 @@ inline void INextBotEventResponder::OnInjured( const CTakeDamageInfo &info )
 	}	
 }
 
-inline void INextBotEventResponder::OnKilled( const CTakeDamageInfo &info )
+inline void INextBotEventResponder::OnKilled( const ITakeDamageInfo&info )
 {
 	for ( INextBotEventResponder *sub = FirstContainedResponder(); sub; sub = NextContainedResponder( sub ) )
 	{
@@ -233,7 +233,7 @@ inline void INextBotEventResponder::OnKilled( const CTakeDamageInfo &info )
 	}	
 }
 
-inline void INextBotEventResponder::OnOtherKilled( CBaseCombatCharacter *victim, const CTakeDamageInfo &info )
+inline void INextBotEventResponder::OnOtherKilled( CBaseCombatCharacter *victim, const ITakeDamageInfo&info )
 {
 	for ( INextBotEventResponder *sub = FirstContainedResponder(); sub; sub = NextContainedResponder( sub ) )
 	{

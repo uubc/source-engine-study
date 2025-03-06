@@ -142,8 +142,8 @@ public:
 
 // Client damage rules
 	virtual float FlPlayerFallDamage( CBasePlayer *pPlayer );
-	virtual bool  FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const CTakeDamageInfo &info );
-	virtual bool AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info );
+	virtual bool  FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const ITakeDamageInfo &info );
+	virtual bool AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info );
 
 // Client spawn/respawn control
 	virtual void PlayerSpawn( CBasePlayer *pPlayer );
@@ -156,8 +156,8 @@ public:
 
 // Client kills/scoring
 	virtual int IPointsForKill( CBasePlayer *pAttacker, CBasePlayer *pKilled );
-	virtual void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
-	virtual void DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
+	virtual void DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 	CBasePlayer *GetDeathScorer( CBaseEntity *pKiller, CBaseEntity *pInflictor );									// old version of method - kept for backward compat
 	virtual CBasePlayer *GetDeathScorer( CBaseEntity *pKiller, CBaseEntity *pInflictor, CBaseEntity *pVictim );		// new version of method
 

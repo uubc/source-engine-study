@@ -366,7 +366,7 @@ void CNPC_Barnacle::Activate( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Barnacle::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int	CNPC_Barnacle::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 	if ( info.GetDamageType() & DMG_CLUB )
@@ -2092,7 +2092,7 @@ void CNPC_Barnacle::SpawnDeathGibs( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Barnacle::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_OnDeath.FireOutput((IServerEntity*)info.GetAttacker(), this );
 	SendOnKilledGameEvent( info );

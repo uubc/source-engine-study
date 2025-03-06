@@ -154,7 +154,7 @@ void CNPC_Houndeye::Precache()
 	BaseClass::Precache();
 }	
 
-void CNPC_Houndeye::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Houndeye::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Close the eye to make death more obvious
 	GetEngineObject()->SetSkin(1);
@@ -242,7 +242,7 @@ void CNPC_Houndeye::AlertSound ( void )
 //=========================================================
 // DeathSound 
 //=========================================================
-void CNPC_Houndeye::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Houndeye::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "HoundEye.Die" );
@@ -251,7 +251,7 @@ void CNPC_Houndeye::DeathSound( const CTakeDamageInfo &info )
 //=========================================================
 // PainSound 
 //=========================================================
-void CNPC_Houndeye::PainSound ( const CTakeDamageInfo &info )
+void CNPC_Houndeye::PainSound ( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "HoundEye.Pain" );

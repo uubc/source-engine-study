@@ -98,7 +98,7 @@ public:
 	
 	void	Scale( float end, float time );
 	void	AddHeat( float heat, bool selfHeat = false );
-	int		OnTakeDamage( const CTakeDamageInfo &info );
+	int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	bool	IsBurning( void ) const;
 
@@ -1100,7 +1100,7 @@ void CFire::GoOutInSeconds( float seconds )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-int CFire::OnTakeDamage( const CTakeDamageInfo &info )
+int CFire::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	return 0;
 }

@@ -840,5 +840,9 @@ enum SkyboxVisibility_t
 	SKYBOX_2DSKYBOX_VISIBLE,
 };
 
+// Used to initialize m_flBaseDamage to something that we know pretty much for sure
+// hasn't been modified by a user. 
+#define BASEDAMAGE_NOT_SPECIFIED	FLT_MAX
+
 #endif
 

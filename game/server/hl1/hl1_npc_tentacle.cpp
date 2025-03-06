@@ -92,7 +92,7 @@ public:
 	void HandleAnimEvent( animevent_t *pEvent );
 	float HearingSensitivity( void ) { return 2.0; };
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 
 	bool CreateVPhysics( void );
 
@@ -947,7 +947,7 @@ void CNPC_Tentacle::HitTouch( IServerEntity *pOther )
 	}
 }
 
-int CNPC_Tentacle::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_Tentacle::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo i = info;
 

@@ -238,7 +238,7 @@ void CHostage::Precache()
 }
 
 //-----------------------------------------------------------------------------------------------------
-int CHostage::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CHostage::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	float actualDamage = info.GetDamage();
 
@@ -315,7 +315,7 @@ float CHostage::GetModifiedDamage( float flDamage, int nHitGroup )
 }
 
 //-----------------------------------------------------------------------------------------------------
-void CHostage::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CHostage::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo scaledInfo = info;
 	scaledInfo.SetDamage( GetModifiedDamage( info.GetDamage(), ptr->hitgroup ) );
@@ -351,7 +351,7 @@ void CHostage::CheckForHostageAbuse( CCSPlayer *player )
 /**
  * Hostage was killed
  */
-void CHostage::Event_Killed( const CTakeDamageInfo &info )
+void CHostage::Event_Killed( const ITakeDamageInfo&info )
 {
 	// tell the game logic that we've died
 	CSGameRules()->CheckWinConditions();

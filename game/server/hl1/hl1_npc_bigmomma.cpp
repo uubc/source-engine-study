@@ -222,8 +222,8 @@ public:
 	void Precache( void );
 
 	Class_T	Classify( void ) { return CLASS_ALIEN_MONSTER; };
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int	OnTakeDamage( const CTakeDamageInfo &info );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int	OnTakeDamage( const ITakeDamageInfo&info );
 	void HandleAnimEvent( animevent_t *pEvent );
 	void LayHeadcrab( void );
 	void LaunchMortar( void );
@@ -543,7 +543,7 @@ void CNPC_BigMomma::NodeReach( void )
 }
 
 
-void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_BigMomma::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo dmgInfo = info;
 
@@ -582,7 +582,7 @@ void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecD
 }
 
 
-int CNPC_BigMomma::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_BigMomma::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo newInfo = info;
 

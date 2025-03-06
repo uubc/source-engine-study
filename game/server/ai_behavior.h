@@ -78,7 +78,7 @@ public:
 	void BridgePrecache()									{ Precache();		}
 	void BridgeSpawn()										{ Spawn();			}
 	void BridgeUpdateOnRemove()								{ UpdateOnRemove();	}
-	void BridgeEvent_Killed( const CTakeDamageInfo &info )	{ Event_Killed( info );	}
+	void BridgeEvent_Killed( const ITakeDamageInfo&info )	{ Event_Killed( info );	}
 	void BridgeCleanupOnDeath( CBaseEntity *pCulprit, bool bFireDeathOutput )		{ CleanupOnDeath( pCulprit, bFireDeathOutput ); }
 
 	void BridgeOnChangeHintGroup( string_t oldGroup, string_t newGroup ) { 	OnChangeHintGroup( oldGroup, newGroup ); }
@@ -114,7 +114,7 @@ public:
 	bool BridgeIsInterruptable( void );
 	bool BridgeIsNavigationUrgent( void );
 	bool BridgeShouldPlayerAvoid( void );
-	int	 BridgeOnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int	 BridgeOnTakeDamage_Alive( const ITakeDamageInfo&info );
 	float BridgeGetReasonableFacingDist( void );
 	bool BridgeShouldAlwaysThink( bool *pResult );
 	void BridgeOnChangeActiveWeapon( CBaseCombatWeapon *pOldWeapon, CBaseCombatWeapon *pNewWeapon );
@@ -152,7 +152,7 @@ protected:
 	virtual void Precache()										{}
 	virtual void Spawn()										{}
 	virtual void UpdateOnRemove()								{}
-	virtual void Event_Killed( const CTakeDamageInfo &info )	{}
+	virtual void Event_Killed( const ITakeDamageInfo&info )	{}
 	virtual void CleanupOnDeath( CBaseEntity *pCulprit, bool bFireDeathOutput ) {}
 	
 	virtual void PrescheduleThink();
@@ -202,7 +202,7 @@ protected:
 	virtual void OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CBaseEntity *pAttacker );
 	virtual bool IsInterruptable( void );
 	virtual bool IsNavigationUrgent( void );
-	virtual int	 OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	virtual int	 OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	virtual float GetReasonableFacingDist( void );
 	virtual bool ShouldPlayerAvoid( void );
 	virtual bool CanFlinch( void );
@@ -346,7 +346,7 @@ public:
 	virtual bool		 BackBridge_IsInterruptable( void ) = 0;
 	virtual bool		 BackBridge_IsNavigationUrgent( void ) = 0;
 	virtual bool		 BackBridge_ShouldPlayerAvoid( void ) = 0;
-	virtual int			 BackBridge_OnTakeDamage_Alive( const CTakeDamageInfo &info ) = 0;
+	virtual int			 BackBridge_OnTakeDamage_Alive( const ITakeDamageInfo&info ) = 0;
 	virtual float		 BackBridge_GetDefaultNavGoalTolerance() = 0;
 	virtual float		 BackBridge_GetReasonableFacingDist( void ) = 0;
 	virtual bool		 BackBridge_CanFlinch( void ) = 0;
@@ -410,7 +410,7 @@ public:
 	void			Precache();
 	void			NPCInit();
 	void			UpdateOnRemove();
-	void			Event_Killed( const CTakeDamageInfo &info );
+	void			Event_Killed( const ITakeDamageInfo&info );
 	void 			GatherConditions();
 	void 			PrescheduleThink();
 	int 			SelectSchedule();
@@ -447,7 +447,7 @@ public:
 	bool			IsInterruptable( void );
 	bool			IsNavigationUrgent( void );
 	bool			ShouldPlayerAvoid( void );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	float			GetReasonableFacingDist( void );
 	bool			CanFlinch( void );
 	bool			IsCrouching( void );
@@ -502,7 +502,7 @@ private:
 	bool			BackBridge_IsInterruptable( void );
 	bool			BackBridge_IsNavigationUrgent( void );
 	bool			BackBridge_ShouldPlayerAvoid( void );
-	int				BackBridge_OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int				BackBridge_OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	float			BackBridge_GetDefaultNavGoalTolerance();
 	float			BackBridge_GetReasonableFacingDist( void );
 	bool			BackBridge_CanFlinch( void );
@@ -800,7 +800,7 @@ inline bool CAI_BehaviorBase::BridgeShouldPlayerAvoid( void )
 
 //-------------------------------------
 
-inline int CAI_BehaviorBase::BridgeOnTakeDamage_Alive( const CTakeDamageInfo &info )
+inline int CAI_BehaviorBase::BridgeOnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	return OnTakeDamage_Alive( info );
 }
@@ -1409,7 +1409,7 @@ inline bool CAI_BehaviorHost<BASE_NPC>::BackBridge_ShouldPlayerAvoid( void )
 //-------------------------------------
 
 template <class BASE_NPC>
-inline int CAI_BehaviorHost<BASE_NPC>::BackBridge_OnTakeDamage_Alive( const CTakeDamageInfo &info )
+inline int CAI_BehaviorHost<BASE_NPC>::BackBridge_OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	return BaseClass::OnTakeDamage_Alive( info );
 }
@@ -1690,7 +1690,7 @@ inline bool CAI_BehaviorHost<BASE_NPC>::ShouldPlayerAvoid( void )
 //-------------------------------------
 
 template <class BASE_NPC>
-inline int CAI_BehaviorHost<BASE_NPC>::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+inline int CAI_BehaviorHost<BASE_NPC>::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if ( m_pCurBehavior )
 		return m_pCurBehavior->BridgeOnTakeDamage_Alive( info );
@@ -1792,7 +1792,7 @@ inline void CAI_BehaviorHost<BASE_NPC>::UpdateOnRemove()
 //-------------------------------------
 
 template <class BASE_NPC>
-inline void CAI_BehaviorHost<BASE_NPC>::Event_Killed( const CTakeDamageInfo &info )
+inline void CAI_BehaviorHost<BASE_NPC>::Event_Killed( const ITakeDamageInfo&info )
 {
 	for( int i = 0; i < m_Behaviors.Count(); i++ )
 	{

@@ -2769,7 +2769,7 @@ void CFuncTrackTrain::MoveDone()
 	BaseClass::MoveDone();
 }
 
-int CFuncTrackTrain::OnTakeDamage( const CTakeDamageInfo &info )
+int CFuncTrackTrain::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( m_bDamageChild )
 	{

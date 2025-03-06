@@ -43,7 +43,7 @@ public:
 	// Don't treat as a live target
 	virtual bool IsAlive( void ) { return false; }
 	
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	virtual bool TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace );
 	virtual void Teleport( const Vector *newPosition, const QAngle *newAngles, const Vector *newVelocity );
 	virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
@@ -68,7 +68,7 @@ public:
 
 	// Damage passing
 	virtual void	SetDamageEntity( CBaseEntity *pEntity );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 	virtual void OnSave( IEntitySaveUtils *pUtils );
 	virtual void OnRestore();
 

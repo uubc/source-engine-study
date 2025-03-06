@@ -2988,7 +2988,7 @@ void CNPC_Strider::AlertSound()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::PainSound( const CTakeDamageInfo &info )
+void CNPC_Strider::PainSound( const ITakeDamageInfo&info )
 {
 	// This means that we've exploded into pieces and have no way to whimper
 	if ( ShouldExplodeFromDamage( info ) )
@@ -3007,7 +3007,7 @@ void CNPC_Strider::PainSound( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Strider::DeathSound( const ITakeDamageInfo&info )
 {
 	// This means that we've exploded into pieces and have no way to whimper
 	if ( m_bExploding )
@@ -3069,7 +3069,7 @@ void CNPC_Strider::HuntSound()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Strider::TraceAttack( const ITakeDamageInfo&inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -3122,7 +3122,7 @@ void CNPC_Strider::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_Strider::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// don't take damage from my own weapons!!!
 	if ( info.GetInflictor() && ((IEngineObjectServer*)info.GetInflictor()->GetEngineObject())->GetOwnerEntity() == this->GetEngineObject() )
@@ -3254,7 +3254,7 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CNPC_Strider::TakeDamageFromCombineBall( const CTakeDamageInfo &info )
+int CNPC_Strider::TakeDamageFromCombineBall( const ITakeDamageInfo&info )
 {
 	float damage = info.GetDamage();
 
@@ -3290,7 +3290,7 @@ int CNPC_Strider::TakeDamageFromCombineBall( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Strider::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Do a special death if we're killed by a combine ball in the Citadel
 	if ( info.GetInflictor() && UTIL_IsCombineBall((CBaseEntity*)info.GetInflictor() ) )
@@ -3387,7 +3387,7 @@ void CNPC_Strider::RagdollDeathEffect( CRagdollProp *pRagdoll, float flDuration 
 // Input  : &info - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Strider::ShouldExplodeFromDamage( const CTakeDamageInfo &info )
+bool CNPC_Strider::ShouldExplodeFromDamage( const ITakeDamageInfo&info )
 {
 	CBaseEntity *pInflictor = (CBaseEntity*)info.GetInflictor();
 	if ( pInflictor == NULL )
@@ -3411,7 +3411,7 @@ bool CNPC_Strider::ShouldExplodeFromDamage( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-bool CNPC_Strider::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector ) 
+bool CNPC_Strider::BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector )
 { 
 	static ConVarRef mat_dxlevel( "mat_dxlevel" );
 	// Combine balls make us explode

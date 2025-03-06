@@ -74,7 +74,7 @@ public: // Notify methods
 // forward decl.
 class CBasePlayer;
 class CBaseCombatWeapon;
-class CTakeDamageInfo;
+class ITakeDamageInfo;
 
 #endif // CLIENT_DLL
 
@@ -96,7 +96,7 @@ void HapticProcessSound(const char* soundname, int entIndex);
 	//bool value true if user is using a haptic device.
 	extern ConVar hap_HasDevice;
 #else
-	void HapticsDamage(CBasePlayer* pPlayer, const CTakeDamageInfo &info);
+	void HapticsDamage(CBasePlayer* pPlayer, const ITakeDamageInfo &info);
 	void HapticPunch(CBasePlayer* pPlayer, float amount, float x, float y);
 	void HapticMeleeContact(CBasePlayer* pPlayer);
 #endif

@@ -1262,7 +1262,7 @@ void CBaseHelicopter::DrawDebugGeometryOverlays(void)
 // Input  :
 // Output : 
 //-----------------------------------------------------------------------------
-void CBaseHelicopter::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBaseHelicopter::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// Take no damage from trace attacks unless it's blast damage. RadiusDamage() sometimes calls
 	// TraceAttack() as a means for delivering blast damage. Usually when the explosive penetrates
@@ -1319,7 +1319,7 @@ void CBaseHelicopter::StopLoopingSounds()
 	BaseClass::StopLoopingSounds();
 }
 
-void CBaseHelicopter::Event_Killed( const CTakeDamageInfo &info )
+void CBaseHelicopter::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_lifeState			= LIFE_DYING;
 

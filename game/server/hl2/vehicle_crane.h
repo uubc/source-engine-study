@@ -125,7 +125,7 @@ public:
 	virtual void	Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 	virtual void	DrawDebugGeometryOverlays( void );
 	
-	virtual bool PassengerShouldReceiveDamage( CTakeDamageInfo &info ) 
+	virtual bool PassengerShouldReceiveDamage( ITakeDamageInfo &info ) 
 	{ 
 		if ( info.GetDamageType() & DMG_VEHICLE )
 			return true;
@@ -134,8 +134,8 @@ public:
 	}
 
 	virtual Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	void			PlayerControlInit( CBasePlayer *pPlayer );
 	void			PlayerControlShutdown( void );

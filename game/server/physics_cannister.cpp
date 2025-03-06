@@ -155,7 +155,7 @@ void CPhysicsCannister::Precache( void )
 	BaseClass::Precache();
 }
 
-int CPhysicsCannister::OnTakeDamage( const CTakeDamageInfo &info )
+int CPhysicsCannister::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// HACKHACK: Shouldn't g_vecAttackDir be a parameter to this function?
 	if ( !m_takedamage )
@@ -193,7 +193,7 @@ int CPhysicsCannister::OnTakeDamage( const CTakeDamageInfo &info )
 }
 
 
-void CPhysicsCannister::TraceAttack( const CTakeDamageInfo &info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPhysicsCannister::TraceAttack( const ITakeDamageInfo&info, const Vector &dir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( !m_active && ptr->hitgroup != 0 )
 	{

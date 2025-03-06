@@ -188,7 +188,7 @@ void CNPC_Vortigaunt::IdleSound( void )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Vortigaunt::PainSound( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::PainSound( const ITakeDamageInfo&info )
 {
 	if ( random->RandomInt( 0, 2 ) == 0)
 	{
@@ -209,7 +209,7 @@ void CNPC_Vortigaunt::PainSound( const CTakeDamageInfo &info )
 // DieSound
 //=========================================================
 
-void CNPC_Vortigaunt::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::DeathSound( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	CSoundParameters params;
@@ -230,7 +230,7 @@ int CNPC_Vortigaunt::GetSoundInterests ( void )
 			SOUND_PLAYER;
 }
 
-void CNPC_Vortigaunt::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Vortigaunt::Event_Killed( const ITakeDamageInfo&info )
 {
 	ClearBeams( );
 	BaseClass::Event_Killed( info );
@@ -456,7 +456,7 @@ void CNPC_Vortigaunt::StartTask( const Task_t *pTask )
 // TakeDamage - get provoked when injured
 //=========================================================
 
-int CNPC_Vortigaunt::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_Vortigaunt::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	// don't slash one of your own
 	if ( ( inputInfo.GetDamageType() & DMG_SLASH ) && inputInfo.GetAttacker() && IRelationType((CBaseEntity*)inputInfo.GetAttacker() ) == D_NU )
@@ -468,7 +468,7 @@ int CNPC_Vortigaunt::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 }
 
 
-void CNPC_Vortigaunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Vortigaunt::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamageType() & DMG_SHOCK )
 		 return;

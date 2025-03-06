@@ -298,7 +298,7 @@ void CBaseButton::InputPressOut( inputdata_t &inputdata )
 //			bitsDamageType - 
 // Output : 
 //-----------------------------------------------------------------------------
-int CBaseButton::OnTakeDamage( const CTakeDamageInfo &info )
+int CBaseButton::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	m_OnDamaged.FireOutput(m_hActivator, this);
 

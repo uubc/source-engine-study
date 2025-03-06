@@ -238,7 +238,7 @@ public:
 	void	Flight( void );
 
 	bool	FVisible( CBaseEntity *pEntity, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void	FireDamageOutputsUpto( int iDamageNumber );
 
 	virtual float GetAcceleration( void ) { return 15; }
@@ -256,7 +256,7 @@ public:
 	void	FireCannonRound( void );
 
 	// Gunship death process
-	void	Event_Killed( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 	void	BeginCrash( void );				// I'm going to go to a crash point and die there
 	void	BeginDestruct( void );			// I want to die now, so create my ragdoll
 	void	SelfDestruct( void );			// I'm now fully dead, so remove myself.
@@ -272,7 +272,7 @@ public:
 	void	ApplyGeneralDrag( void );
 	void	ApplySidewaysDrag( const Vector &vecRight );
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	void	UpdateEnemyTarget( void );
 
@@ -1889,7 +1889,7 @@ void CNPC_CombineGunship::InputBlindfireOff( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose: Set the gunship's paddles flailing!
 //-----------------------------------------------------------------------------
-void CNPC_CombineGunship::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_CombineGunship::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_takedamage = DAMAGE_NO;
 
@@ -2885,7 +2885,7 @@ void CNPC_CombineGunship::MakeTracer( const Vector &vecTracerSrc, const trace_t 
 //			*ptr - 
 // Output : int
 //-----------------------------------------------------------------------------
-void CNPC_CombineGunship::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_CombineGunship::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// Reflect bullets
 	if ( info.GetDamageType() & DMG_BULLET )
@@ -2966,7 +2966,7 @@ void CNPC_CombineGunship::FireDamageOutputsUpto( int iDamageNumber )
 //------------------------------------------------------------------------------
 // Damage filtering
 //------------------------------------------------------------------------------
-int	CNPC_CombineGunship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int	CNPC_CombineGunship::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	// Allow npc_kill to kill me
 	if ( inputInfo.GetDamageType() != DMG_GENERIC )

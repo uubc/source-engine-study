@@ -26,10 +26,10 @@ public:
 	Class_T Classify ( void );
 	void	HandleAnimEvent( animevent_t *pEvent );
 	Activity NPC_TranslateActivity ( Activity activity );
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	bool	ShouldLookForBetterWeapon() { return false; }
 	bool	IsReadinessCapable() { return false; }
-	void	DeathSound( const CTakeDamageInfo &info );
+	void	DeathSound( const ITakeDamageInfo&info );
 
 	EHANDLE	m_hEmpTool;
 

@@ -49,7 +49,7 @@ public:
 
 	Vector		EyeDirection3D( void )	{ return CAI_BaseHumanoid::EyeDirection3D(); } // cops don't have eyes
 
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 
 	virtual void OnScheduleChange();
 
@@ -83,7 +83,7 @@ public:
 	virtual bool ShouldMoveAndShoot();
 
 	// TraceAttack
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	// Speaking
 	virtual void SpeakSentence( int nSentenceType );
@@ -134,15 +134,15 @@ private:
 	virtual void	LostEnemySound( void );
 	virtual void	FoundEnemySound( void );
 	virtual void	AlertSound( void );
-	virtual void	PainSound( const CTakeDamageInfo &info );
-	virtual void	DeathSound( const CTakeDamageInfo &info );
+	virtual void	PainSound( const ITakeDamageInfo&info );
+	virtual void	DeathSound( const ITakeDamageInfo&info );
 	virtual void	IdleSound( void );
 	virtual bool	ShouldPlayIdleSound( void );
 
 	// Burst mode!
 	void		SetBurstMode( bool bEnable );
 
-	int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 
 	int			GetSoundInterests( void );
 
@@ -203,7 +203,7 @@ private:
 	int SelectAirboatRangeAttackSchedule();
 
 	// Handle flinching
-	bool IsHeavyDamage( const CTakeDamageInfo &info );
+	bool IsHeavyDamage( const ITakeDamageInfo&info );
 
 	// Is my enemy currently in an airboat?
 	bool IsEnemyInAnAirboat() const;

@@ -202,7 +202,7 @@ Ep2LevelStats_t *CEP2GameStats::FindOrAddMapStats( const char *szMapName )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CEP2GameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDamageInfo &info )
+void CEP2GameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_PlayerDamage( pBasePlayer, info );
 
@@ -212,7 +212,7 @@ void CEP2GameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDam
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CEP2GameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CEP2GameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_PlayerKilledOther( pAttacker, pVictim, info );
 
@@ -261,7 +261,7 @@ void CEP2GameStats::Event_Punted( CBaseEntity *pObject )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CEP2GameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CEP2GameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_PlayerKilled( pPlayer, info );
 
@@ -388,7 +388,7 @@ void CEP2GameStats::Event_WeaponFired( CBasePlayer *pShooter, bool bPrimary, cha
 	}
 }
 
-void CEP2GameStats::Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const CTakeDamageInfo &info )
+void CEP2GameStats::Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_WeaponHit( pShooter, bPrimary, pchWeaponName, info );
 	Ep2LevelStats_t::WeaponLump_t *lump = FindWeaponsLump( pchWeaponName, bPrimary );

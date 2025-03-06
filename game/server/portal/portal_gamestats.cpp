@@ -481,7 +481,7 @@ void CPortalGameStats::LoadCustomDataFromBuffer( CUtlBuffer &LoadBuffer )
 }
 
 
-void CPortalGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CPortalGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 #ifdef PORTAL_GAMESTATS_VERBOSE
 	if( CBaseGameStats::StatTrackingAllowed() == false )

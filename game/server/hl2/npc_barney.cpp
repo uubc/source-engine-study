@@ -77,7 +77,7 @@ public:
 
 	void OnChangeRunningBehavior( CAI_BehaviorBase *pOldBehavior,  CAI_BehaviorBase *pNewBehavior );
 
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 	void GatherConditions();
 	void UseFunc( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 
@@ -201,7 +201,7 @@ void CNPC_Barney::HandleAnimEvent( animevent_t *pEvent )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CNPC_Barney::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Barney::DeathSound( const ITakeDamageInfo&info )
 {
 	// Sentences don't play on dead NPCs
 	SentenceStop();

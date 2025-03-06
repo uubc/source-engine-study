@@ -107,7 +107,7 @@ public:
 	virtual void	Spawn( void );
 	virtual void	Activate( void );
 	virtual void	UpdateOnRemove( void );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	virtual bool	ShouldAttractAutoAim( CBaseEntity *pAimingEnt );
 	virtual float	GetAutoAimRadius();
@@ -333,7 +333,7 @@ void CNPC_Portal_FloorTurret::UpdateOnRemove( void )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CNPC_Portal_FloorTurret::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_Portal_FloorTurret::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( m_lifeState == LIFE_ALIVE && ( info.GetDamageType() & DMG_BULLET ) && !info.GetAttacker()->IsPlayer() )
 	{

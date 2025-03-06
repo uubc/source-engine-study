@@ -93,11 +93,11 @@ public:
 	void		StartTask( const Task_t *pTask );
 	void		RunTask( const Task_t *pTask );
 	void		IdleSound( void );
-	void		PainSound( const CTakeDamageInfo &info );
+	void		PainSound( const ITakeDamageInfo&info );
 	void		Precache( void );
 	void		Spawn( void );
-	int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void		TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void		TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void		BuildScheduleTestBits( void );
 	void		GatherConditions( void );
 	void		PrescheduleThink( void );
@@ -112,7 +112,7 @@ public:
 	bool		OverrideMoveFacing( const AILocalMoveGoal_t &move, float flInterval );
 	bool		IsValidEnemy(CBaseEntity *pEnemy);
 	bool		QueryHearSound( CSound *pSound );
-	bool		IsLightDamage( const CTakeDamageInfo &info );
+	bool		IsLightDamage( const ITakeDamageInfo&info );
 	bool		CreateBehaviors( void );
 	bool		ShouldHearBugbait( void ) { return ( m_bIgnoreBugbait == false ); }
 	int			SelectSchedule( void );
@@ -123,17 +123,17 @@ public:
 	virtual int		MeleeAttack1Conditions( float flDot, float flDist );
 	virtual int		MeleeAttack2Conditions( float flDot, float flDist );
 	virtual int		GetSoundInterests( void ) { return (BaseClass::GetSoundInterests())|(SOUND_DANGER|SOUND_PHYSICS_DANGER|SOUND_THUMPER|SOUND_BUGBAIT); }
-	virtual	bool	IsHeavyDamage( const CTakeDamageInfo &info );
+	virtual	bool	IsHeavyDamage( const ITakeDamageInfo&info );
 
 	Class_T		Classify( void ) { return CLASS_ANTLION; }
 	
-	void		Event_Killed( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
 	bool		FValidateHintType ( CAI_Hint *pHint );
 	void		GatherEnemyConditions( CBaseEntity *pEnemy );
 	
 	bool		IsAllied( void );
-	bool		ShouldGib( const CTakeDamageInfo &info );
-	bool		CorpseGib( const CTakeDamageInfo &info );
+	bool		ShouldGib( const ITakeDamageInfo&info );
+	bool		CorpseGib( const ITakeDamageInfo&info );
 
 	float		GetMaxJumpSpeed() const { return 1024.0f; }
 

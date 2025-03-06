@@ -248,7 +248,7 @@ int	CPropAPC::ClassifyPassenger( CBaseCombatCharacter *pPassenger, int defaultCl
 //-----------------------------------------------------------------------------
 // Purpose: Damage events as modified for the passenger of the APC, not the APC itself
 //-----------------------------------------------------------------------------
-float CPropAPC::PassengerDamageModifier( const CTakeDamageInfo &info ) 
+float CPropAPC::PassengerDamageModifier( const ITakeDamageInfo &info ) 
 { 
 	CTakeDamageInfo DmgInfo = info;
 
@@ -414,7 +414,7 @@ inline bool CPropAPC::ShouldTriggerDamageEffect( int nPrevHealth, int nEffectCou
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropAPC::Event_Killed( const CTakeDamageInfo &info )
+void CPropAPC::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_OnDeath.FireOutput((IServerEntity*)info.GetAttacker(), this );
 
@@ -540,7 +540,7 @@ void CPropAPC::InputFireMissileAt( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CPropAPC::OnTakeDamage( const CTakeDamageInfo &info )
+int CPropAPC::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( m_iHealth == 0 )
 		return 0;

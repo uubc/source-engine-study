@@ -211,7 +211,7 @@ public:
 
 	void Activate ( void );
 
-	bool PassesDamageFilter( const CTakeDamageInfo &info );
+	bool PassesDamageFilter( const ITakeDamageInfo&info );
 
 	EHANDLE m_hPlayer;
 };
@@ -2194,7 +2194,7 @@ void CHL2_Player::SetPlayerUnderwater( bool state )
 }
 
 //-----------------------------------------------------------------------------
-bool CHL2_Player::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CHL2_Player::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	CBaseEntity *pAttacker = (CBaseEntity*)info.GetAttacker();
 	if( pAttacker && pAttacker->MyNPCPointer() && pAttacker->MyNPCPointer()->IsPlayerAlly() )
@@ -2313,7 +2313,7 @@ void CHL2_Player::NotifyFriendsOfDamage( CBaseEntity *pAttackerEntity )
 //-----------------------------------------------------------------------------
 ConVar test_massive_dmg("test_massive_dmg", "30" );
 ConVar test_massive_dmg_clip("test_massive_dmg_clip", "0.5" );
-int	CHL2_Player::OnTakeDamage( const CTakeDamageInfo &info )
+int	CHL2_Player::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if (engine->GlobalEntity_GetState( "gordon_invulnerable" ) == GLOBAL_ON )
 		return 0;
@@ -2385,7 +2385,7 @@ int	CHL2_Player::OnTakeDamage( const CTakeDamageInfo &info )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CHL2_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CHL2_Player::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Drown
 	if( info.GetDamageType() & DMG_DROWN )
@@ -2448,7 +2448,7 @@ int CHL2_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2_Player::OnDamagedByExplosion( const CTakeDamageInfo &info )
+void CHL2_Player::OnDamagedByExplosion( const ITakeDamageInfo&info )
 {
 	if ( info.GetInflictor() && ((IServerEntity*)info.GetInflictor())->ClassMatches( "mortarshell" ) )
 	{
@@ -2490,7 +2490,7 @@ void CHL2_Player::CombineBallSocketed( CPropCombineBall *pCombineBall )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2_Player::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CHL2_Player::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_KilledOther( pVictim, info );
 
@@ -2511,7 +2511,7 @@ void CHL2_Player::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageIn
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2_Player::Event_Killed( const CTakeDamageInfo &info )
+void CHL2_Player::Event_Killed( const ITakeDamageInfo&info )
 {
 	BaseClass::Event_Killed( info );
 
@@ -3876,7 +3876,7 @@ void CLogicPlayerProxy::Activate( void )
 	}
 }
 
-bool CLogicPlayerProxy::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CLogicPlayerProxy::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	if (m_hDamageFilter)
 	{

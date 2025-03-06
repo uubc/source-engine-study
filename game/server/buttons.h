@@ -48,7 +48,7 @@ protected:
 	void InputPressIn( inputdata_t &inputdata );
 	void InputPressOut( inputdata_t &inputdata );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 	
 	enum BUTTON_CODE { BUTTON_NOTHING, BUTTON_ACTIVATE, BUTTON_RETURN, BUTTON_PRESS };
 

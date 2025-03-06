@@ -980,13 +980,13 @@ ConVar cl_autohelp(
 		return retval;
 	}
 
-	void CCSGameWorld::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity * pEntityIgnore )
+	void CCSGameWorld::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity * pEntityIgnore )
 	{
 		RadiusDamage( info, vecSrcIn, flRadius, iClassIgnore, false );
 	}
 
 	// Add the ability to ignore the world trace
-	void CCSGameWorld::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld )
+	void CCSGameWorld::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld )
 	{
 		CBaseEntity *pEntity = NULL;
 		trace_t		tr;
@@ -1232,7 +1232,7 @@ ConVar cl_autohelp(
 	//			*pKiller - 
 	//			*pInflictor - 
 	//-----------------------------------------------------------------------------
-	void CCSGameWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CCSGameWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		// Work out what killed the player, and send a message to all clients about it
 		const char *killer_weapon_name = "world";		// by default, the player is killed by the world
@@ -1323,7 +1323,7 @@ ConVar cl_autohelp(
 
 	//=========================================================
 	//=========================================================
-	void CCSGameWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CCSGameWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		CBaseEntity *pInflictor = (CBaseEntity*)info.GetInflictor();
 		CBaseEntity *pKiller = (CBaseEntity*)info.GetAttacker();
@@ -5427,7 +5427,7 @@ bool CCSGameWorld::IsPistolRound()
 // [menglish]
 //=============================================================================
 
-void CCSGameWorld::PlayerTookDamage(CCSPlayer* player, const CTakeDamageInfo &damageInfo)
+void CCSGameWorld::PlayerTookDamage(CCSPlayer* player, const ITakeDamageInfo&damageInfo)
 {
 	CBaseEntity *pInflictor = (CBaseEntity*)damageInfo.GetInflictor();
 	CBaseEntity *pAttacker = (CBaseEntity*)damageInfo.GetAttacker();

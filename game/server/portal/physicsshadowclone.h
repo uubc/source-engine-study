@@ -62,11 +62,11 @@ public:
 	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 
 	//damage relays to source entity if anything ever hits the clone
-	virtual bool	PassesDamageFilter( const CTakeDamageInfo &info );
+	virtual bool	PassesDamageFilter( const ITakeDamageInfo&info );
 	virtual bool	CanBeHitByMeleeAttack( IServerEntity *pAttacker );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
 	virtual int		TakeHealth( float flHealth, int bitsDamageType );
-	virtual void	Event_Killed( const CTakeDamageInfo &info );
+	virtual void	Event_Killed( const ITakeDamageInfo&info );
 
 	//static bool IsShadowClone( const CBaseEntity *pEntity );
 	//static CPhysicsShadowCloneLL *GetClonesOfEntity( const CBaseEntity *pEntity );

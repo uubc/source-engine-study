@@ -73,7 +73,7 @@ public:
 	bool					DetectAndHandlePortalTeleportation( void ); //detects if the player has portalled and fixes views
 	virtual float			GetFOV( void );
 	virtual IStudioHdr*		OnNewModel( void );
-	virtual void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	virtual void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr );
 	virtual void			ItemPreFrame( void );
 	virtual void			ItemPostFrame( void );
 	virtual float			GetMinFOV()	const { return 5.0f; }

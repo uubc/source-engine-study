@@ -31,9 +31,9 @@ public:
 
 	}
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	bool	ShouldGib( const CTakeDamageInfo &info );
-	bool	CorpseGib( const CTakeDamageInfo &info );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	bool	ShouldGib( const ITakeDamageInfo&info );
+	bool	CorpseGib( const ITakeDamageInfo&info );
 
 	bool	HasAlienGibs( void );
 	bool	HasHumanGibs( void );

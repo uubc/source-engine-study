@@ -160,7 +160,7 @@ public:
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
-	int 			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int 			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	
 	//---------------------------------
 	// Commander mode
@@ -245,7 +245,7 @@ public:
 	//	Sounds & speech
 	//---------------------------------
 	void			FearSound( void );
-	void			DeathSound( const CTakeDamageInfo &info );
+	void			DeathSound( const ITakeDamageInfo&info );
 	bool			UseSemaphore( void );
 
 	virtual void	OnChangeRunningBehavior( CAI_BehaviorBase *pOldBehavior,  CAI_BehaviorBase *pNewBehavior );

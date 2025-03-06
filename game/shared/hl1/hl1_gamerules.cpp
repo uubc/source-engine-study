@@ -570,7 +570,7 @@ int	CHalfLife1World::Damage_GetShowOnHud( void )
 		const IHandleEntity *m_pPassEnt;
 	};
 
-	void CHalfLife1World::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore )
+	void CHalfLife1World::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore )
 	{
 		CBaseEntity *pEntity = NULL;
 		trace_t		tr;

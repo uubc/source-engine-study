@@ -1183,14 +1183,14 @@ static CDODViewVectors g_DODViewVectors(
 		return retval;
 	}
 
-	void CDODGameWorld::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore )
+	void CDODGameWorld::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore )
 	{
 		RadiusDamage( info, vecSrcIn, flRadius, iClassIgnore, pEntityIgnore, false );
 	}
 
 	ConVar r_visualizeExplosion( "r_visualizeExplosion", "0", FCVAR_CHEAT );
 
-	void CDODGameWorld::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore, bool bIgnoreWorld /* = false */ )
+	void CDODGameWorld::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore, bool bIgnoreWorld /* = false */ )
 	{
 		CBaseEntity *pEntity = NULL;
 		trace_t		tr;
@@ -1302,7 +1302,7 @@ static CDODViewVectors g_DODViewVectors(
 		}
 	}
 
-	void CDODGameWorld::RadiusStun( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius )
+	void CDODGameWorld::RadiusStun( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius )
 	{
 		IServerEntity *pEntity = NULL;
 		trace_t		tr;
@@ -4049,7 +4049,7 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 		return false;
 	}
 
-	void CDODGameWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CDODGameWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		CDODPlayer *pDODVictim = ToDODPlayer( pVictim );
 
@@ -4365,7 +4365,7 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 		BaseClass::ClientDisconnected( pClient );
 	}
 
-	void CDODGameWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+	void CDODGameWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 	{
 		// Work out what killed the player, and send a message to all clients about it
 		const char *killer_weapon_name = "world";		// by default, the player is killed by the world
@@ -4860,7 +4860,7 @@ void CDODGameWorld::CalcDominationAndRevenge( CDODPlayer *pAttacker, CDODPlayer 
 	}
 }
 
-int CDODGameWorld::DODPointsForKill( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+int CDODGameWorld::DODPointsForKill( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 	if ( IsInWarmup() )
 		return 0;

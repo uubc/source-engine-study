@@ -336,7 +336,7 @@ void CAI_PassengerBehaviorZombie::GatherConditions( void )
 //-----------------------------------------------------------------------------
 // Purpose: Handle death case
 //-----------------------------------------------------------------------------
-void CAI_PassengerBehaviorZombie::Event_Killed( const CTakeDamageInfo &info )
+void CAI_PassengerBehaviorZombie::Event_Killed( const ITakeDamageInfo&info )
 {
 	if ( m_hVehicle )
 	{

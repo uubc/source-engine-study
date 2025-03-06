@@ -147,7 +147,7 @@ Class_T	CSnark::Classify( void )
 }
 
 
-void CSnark::Event_Killed( const CTakeDamageInfo &inputInfo )
+void CSnark::Event_Killed( const ITakeDamageInfo&inputInfo )
 {
 //	pev->model = iStringNull;// make invisible
 	SetThink( &CSnark::SUB_Remove );
@@ -188,7 +188,7 @@ void CSnark::Event_Killed( const CTakeDamageInfo &inputInfo )
 }
 
 
-bool CSnark::Event_Gibbed( const CTakeDamageInfo &info )
+bool CSnark::Event_Gibbed( const ITakeDamageInfo&info )
 {
 	CPASAttenuationFilter filter( this );
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), "Snark.Gibbed" );

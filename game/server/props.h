@@ -60,9 +60,9 @@ public:
 
 	void BreakablePropTouch( IServerEntity *pOther );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
-	void Event_Killed( const CTakeDamageInfo &info );
-	void Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
+	void Event_Killed( const ITakeDamageInfo&info );
+	void Break( CBaseEntity *pBreaker, const ITakeDamageInfo&info );
 	void BreakThink( void );
 	void AnimateThink( void );
 
@@ -381,7 +381,7 @@ public:
 
 	void ClearFlagsThink( void );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const ITakeDamageInfo&info );
 	int DrawDebugTextOverlays(void);
 	bool IsGib() const;
 	DECLARE_DATADESC();
@@ -442,7 +442,7 @@ CPhysicsProp* CreatePhysicsProp( const char *pModelName, const Vector &vTraceSta
 
 bool UTIL_CreateScaledPhysObject( CBaseAnimating *pInstance, float flScale );
 
-float GetBreakableDamage( const CTakeDamageInfo &inputInfo, IBreakableWithPropData *pProp = NULL );
+float GetBreakableDamage( const ITakeDamageInfo&inputInfo, IBreakableWithPropData *pProp = NULL );
 int PropBreakablePrecacheAll( string_t modelName );
 
 extern ConVar func_breakdmg_bullet;

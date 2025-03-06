@@ -84,7 +84,6 @@ class IStudioHdr;
 #include "engine/ivmodelinfo.h"
 #include "engine/IStaticPropMgr.h"
 
-#include "takedamageinfo.h"
 #include "IEffects.h"
 #include "sharedInterface.h"
 #include "shareddefs.h"

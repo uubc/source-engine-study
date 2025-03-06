@@ -76,7 +76,7 @@ void CGrenadePathfollower::Spawn( void )
 	GetEngineObject()->SetSequence( 1 );
 }
 
-void CGrenadePathfollower::Event_Killed( const CTakeDamageInfo &info )
+void CGrenadePathfollower::Event_Killed( const ITakeDamageInfo&info )
 {
 	Detonate( );
 }

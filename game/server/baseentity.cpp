@@ -1140,7 +1140,7 @@ int CBaseEntity::TakeHealth( float flHealth, int bitsDamageType )
 
 // inflict damage on this entity.  bitsDamageType indicates type of damage inflicted, ie: DMG_CRUSH
 
-int CBaseEntity::OnTakeDamage( const CTakeDamageInfo &info )
+int CBaseEntity::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	Vector			vecTemp;
 
@@ -1208,7 +1208,7 @@ int CBaseEntity::OnTakeDamage( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: Scale damage done and call OnTakeDamage
 //-----------------------------------------------------------------------------
-void CBaseEntity::TakeDamage( const CTakeDamageInfo &inputInfo )
+void CBaseEntity::TakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	if ( !g_pGameRules )
 		return;
@@ -1310,7 +1310,7 @@ float CBaseEntity::GetReceivedDamageScale( IHandleEntity *pAttacker )
 //-----------------------------------------------------------------------------
 // Purpose: Applies forces to our physics object in response to damage.
 //-----------------------------------------------------------------------------
-int CBaseEntity::VPhysicsTakeDamage( const CTakeDamageInfo &info )
+int CBaseEntity::VPhysicsTakeDamage( const ITakeDamageInfo&info )
 {
 	// don't let physics impacts or fire cause objects to move (again)
 	bool bNoPhysicsForceDamage = g_pGameRules->Damage_NoPhysicsForce( info.GetDamageType() );
@@ -1375,7 +1375,7 @@ int CBaseEntity::VPhysicsTakeDamage( const CTakeDamageInfo &info )
 }
 
 	// Character killed (only fired once)
-void CBaseEntity::Event_Killed( const CTakeDamageInfo &info )
+void CBaseEntity::Event_Killed( const ITakeDamageInfo&info )
 {
 	if( info.GetAttacker() )
 	{
@@ -1392,7 +1392,7 @@ void CBaseEntity::Event_Killed( const CTakeDamageInfo &info )
 //			gets called specifically for particular entities (mostly NPC), this
 //			does not get called for every entity
 //-----------------------------------------------------------------------------
-void CBaseEntity::SendOnKilledGameEvent( const CTakeDamageInfo &info )
+void CBaseEntity::SendOnKilledGameEvent( const ITakeDamageInfo&info )
 {
 	IGameEvent *event = gameeventmanager->CreateEvent( "entity_killed" );
 	if ( event )
@@ -2475,7 +2475,7 @@ TraceAttack
 //-----------------------------------------------------------------------------
 // Purpose: Returns whether a damage info can damage this entity.
 //-----------------------------------------------------------------------------
-bool CBaseEntity::PassesDamageFilter( const CTakeDamageInfo &info )
+bool CBaseEntity::PassesDamageFilter( const ITakeDamageInfo&info )
 {
 	if (m_hDamageFilter)
 	{

@@ -36,13 +36,13 @@ public:
 	void HandleAnimEvent( animevent_t *pEvent );
 	int	 SelectSchedule( void );
 	void Touch( IServerEntity *pOther );
-	int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 	int TranslateSchedule( int scheduleType );
 	void PrescheduleThink( void );
 	int RangeAttack1Conditions ( float flDot, float flDist );
 	float GetDamageAmount( void );
-	virtual void PainSound( const CTakeDamageInfo &info );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual void IdleSound();
 	virtual void AlertSound();
 

@@ -33,8 +33,8 @@ public:
 
 	bool CanBecomeRagdoll() { return false; }
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 		
 /*	int TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType );
 	void TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType );
@@ -44,10 +44,10 @@ public:
 	void RunTask( Task_t *pTask );
 */
 	void PrescheduleThink( void );
-	void Event_Killed( const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void DeathEffect( void );
 
-	bool ShouldGib( const CTakeDamageInfo &info );
+	bool ShouldGib( const ITakeDamageInfo&info );
 
 	void EyeOff( void );
 	void EyeOn( int level );

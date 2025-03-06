@@ -351,7 +351,7 @@ void CRopeKeyframe::NotifyPositionChanged( CBaseEntity *pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: Take damage will break the rope
 //-----------------------------------------------------------------------------
-int CRopeKeyframe::OnTakeDamage( const CTakeDamageInfo &info )
+int CRopeKeyframe::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// Only allow this if it's been marked
 	if( !(GetEngineRope()->GetRopeFlags() & ROPE_BREAKABLE))

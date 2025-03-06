@@ -144,8 +144,8 @@ public:
 	// CBaseZombie implemenation.
 	//
 	virtual Vector HeadTarget( const Vector &posSrc );
-	bool ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold );
-	virtual bool IsChopped( const CTakeDamageInfo &info )	{ return false; }
+	bool ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold );
+	virtual bool IsChopped( const ITakeDamageInfo&info )	{ return false; }
 
 	//
 	// CAI_BaseNPC implementation.
@@ -178,13 +178,13 @@ public:
 	virtual void SetZombieModel( void );
 
 	virtual Class_T Classify( void );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
 
 	DECLARE_DATADESC();
 	DEFINE_CUSTOM_AI;
 
-	void PainSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSound( void );
@@ -428,7 +428,7 @@ void CNPC_PoisonZombie::StopLoopingSounds( void )
 // Purpose: 
 // Input  : info - 
 //-----------------------------------------------------------------------------
-void CNPC_PoisonZombie::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_PoisonZombie::Event_Killed( const ITakeDamageInfo&info )
 {
 	if ( !( info.GetDamageType() & ( DMG_BLAST | DMG_ALWAYSGIB) ) ) 
 	{
@@ -457,7 +457,7 @@ void CNPC_PoisonZombie::Event_Killed( const CTakeDamageInfo &info )
 // Input  : &inputInfo - 
 // Output : int
 //-----------------------------------------------------------------------------
-int CNPC_PoisonZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CNPC_PoisonZombie::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 	//
 	// Calculate what percentage of the creature's max health
@@ -1054,7 +1054,7 @@ void CNPC_PoisonZombie::IdleSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: Play a random pain sound.
 //-----------------------------------------------------------------------------
-void CNPC_PoisonZombie::PainSound( const CTakeDamageInfo &info )
+void CNPC_PoisonZombie::PainSound( const ITakeDamageInfo&info )
 {
 	// Don't make pain sounds too often.
 	if ( m_flNextPainSoundTime <= gpGlobals->curtime )
@@ -1178,7 +1178,7 @@ void CNPC_PoisonZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize
 //-----------------------------------------------------------------------------
 // Purpose: Overloaded so that explosions don't split the poison zombie in twain.
 //-----------------------------------------------------------------------------
-bool CNPC_PoisonZombie::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold )
+bool CNPC_PoisonZombie::ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	return false;
 }

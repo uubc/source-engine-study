@@ -18,7 +18,7 @@
 //#define DISABLE_DEBUG_HISTORY	
 
 //#include "items.h"
-class CTakeDamageInfo;
+class ITakeDamageInfo;
 class CCommand;
 class CAmmoDef;
 class CTacticalMissionManager;

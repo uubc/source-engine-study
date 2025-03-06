@@ -242,8 +242,8 @@ public:
 		return eye;
 	}
 
-	int		OnTakeDamage( const CTakeDamageInfo &info );
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int		OnTakeDamage( const ITakeDamageInfo&info );
+	void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	Class_T	Classify() 
 	{ 
@@ -2526,7 +2526,7 @@ void CNPC_RollerMine::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Re
 // Input  : &info - 
 // Output : float
 //-----------------------------------------------------------------------------
-int CNPC_RollerMine::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_RollerMine::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	if ( !(info.GetDamageType() & DMG_BURN) )
 	{
@@ -2911,7 +2911,7 @@ float CNPC_RollerMine::VehicleHeading( CBaseEntity *pVehicle )
 //			&vecDir - 
 //			*ptr - 
 //-----------------------------------------------------------------------------
-void CNPC_RollerMine::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_RollerMine::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamageType() & (DMG_BULLET | DMG_CLUB) )
 	{

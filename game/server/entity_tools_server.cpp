@@ -50,8 +50,8 @@ public:
 	virtual void ResetSequenceInfo( CBaseAnimating *pEntity );
 	virtual void ClearMultiDamage( void );
 	virtual void ApplyMultiDamage( void );
-	virtual void AddMultiDamage( const CTakeDamageInfo &pTakeDamageInfo, IServerEntity *pEntity );
-	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore );
+	virtual void AddMultiDamage( const ITakeDamageInfo&pTakeDamageInfo, IServerEntity *pEntity );
+	virtual void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore );
 
 	virtual ITempEntsSystem *GetTempEntsSystem( void );
 	virtual CBaseTempEntity *GetTempEntList( void );
@@ -346,12 +346,12 @@ void CServerTools::ApplyMultiDamage( void )
 	::ApplyMultiDamage();
 }
 
-void CServerTools::AddMultiDamage( const CTakeDamageInfo &pTakeDamageInfo, IServerEntity *pEntity )
+void CServerTools::AddMultiDamage( const ITakeDamageInfo&pTakeDamageInfo, IServerEntity *pEntity )
 {
 	::AddMultiDamage( pTakeDamageInfo, pEntity );
 }
 
-void CServerTools::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore )
+void CServerTools::RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, IServerEntity *pEntityIgnore )
 {
 	::RadiusDamage( info, vecSrc, flRadius, iClassIgnore, (CBaseEntity*)pEntityIgnore );
 }

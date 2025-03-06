@@ -1920,7 +1920,7 @@ void CNPC_FloorTurret::ToggleUse ( IServerEntity *pActivator, IServerEntity *pCa
 //-----------------------------------------------------------------------------
 // Purpose: Reduce physics forces from the front
 //-----------------------------------------------------------------------------
-int CNPC_FloorTurret::VPhysicsTakeDamage( const CTakeDamageInfo &info )
+int CNPC_FloorTurret::VPhysicsTakeDamage( const ITakeDamageInfo&info )
 {
 	bool bShouldIgnoreFromFront = false;
 
@@ -1952,7 +1952,7 @@ int CNPC_FloorTurret::VPhysicsTakeDamage( const CTakeDamageInfo &info )
 // Purpose: 
 // Input  : &info - 
 //-----------------------------------------------------------------------------
-int CNPC_FloorTurret::OnTakeDamage( const CTakeDamageInfo &info )
+int CNPC_FloorTurret::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	CTakeDamageInfo	newInfo = info;
 

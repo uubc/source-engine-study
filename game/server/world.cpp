@@ -981,7 +981,7 @@ bool IsExplosionTraceBlocked(trace_t* ptr)
 // Default implementation of radius damage
 //-----------------------------------------------------------------------------
 #define ROBUST_RADIUS_PROBE_DIST 16.0f // If a solid surface blocks the explosion, this is how far to creep along the surface looking for another way to the target
-void CWorld::RadiusDamage(const CTakeDamageInfo& info, const Vector& vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore)
+void CWorld::RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity* pEntityIgnore)
 {
 	const int MASK_RADIUS_DAMAGE = MASK_SHOT & (~CONTENTS_HITBOX);
 	CBaseEntity* pEntity = NULL;

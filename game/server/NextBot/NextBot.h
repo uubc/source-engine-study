@@ -41,9 +41,9 @@ public:
 	virtual INextBot *MyNextBotPointer( void ) { return this; }
 
 	// Event hooks into NextBot system ---------------------------------------
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual int OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	virtual void Event_Killed( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual int OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	virtual void Event_Killed( const ITakeDamageInfo&info );
 	virtual void HandleAnimEvent( animevent_t *event );
 	virtual void OnNavAreaChanged( CNavArea *enteredArea, CNavArea *leftArea );	// invoked (by UpdateLastKnownArea) when we enter a new nav area (or it is reset to NULL)
 	virtual void Touch( IServerEntity *other );
@@ -58,7 +58,7 @@ public:
 	// Implement this if you use MOVETYPE_CUSTOM
 	virtual void PerformCustomPhysics( Vector *pNewPosition, Vector *pNewVelocity, QAngle *pNewAngles, QAngle *pNewAngVelocity );
 
-	virtual bool BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector );
+	virtual bool BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector );
 	
 	// hook to INextBot update
 	void DoThink( void );

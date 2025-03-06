@@ -82,7 +82,7 @@ public:
 	void DyingThink( void );
 	void CommandUse( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );	
 */
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 
 	float m_startTime;
 
@@ -246,7 +246,7 @@ void CNPC_Osprey::Precache( void )
 	BaseClass::Precache();
 }
 
-void CNPC_Osprey::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Osprey::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	float flDamage = info.GetDamage();
 
@@ -1310,7 +1310,7 @@ void CBaseHelicopter::DyingThink( void )
 // Input  :
 // Output : 
 //-----------------------------------------------------------------------------
-int CBaseHelicopter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CBaseHelicopter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 #if 0
 	// This code didn't port easily. WTF does it do? (sjb)
@@ -1356,7 +1356,7 @@ void CBaseHelicopter::DrawDebugGeometryOverlays(void)
 // Input  :
 // Output : 
 //-----------------------------------------------------------------------------
-void CBaseHelicopter::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CBaseHelicopter::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo dmgInfo = info;
 
@@ -1405,7 +1405,7 @@ void CBaseHelicopter::Startup( void )
 }
 
 
-void CBaseHelicopter::Event_Killed( const CTakeDamageInfo &info )
+void CBaseHelicopter::Event_Killed( const ITakeDamageInfo&info )
 {
 	m_lifeState			= LIFE_DYING;
 

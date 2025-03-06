@@ -59,8 +59,8 @@ public:
 
 	virtual void	IdleSound( void );
 	virtual void	AlertSound( void );
-	virtual void	DeathSound( const CTakeDamageInfo &info );
-	virtual void	PainSound( const CTakeDamageInfo &info );
+	virtual void	DeathSound( const ITakeDamageInfo&info );
+	virtual void	PainSound( const ITakeDamageInfo&info );
 
 	void	AttackSound( void );
 	void	BiteSound( void );

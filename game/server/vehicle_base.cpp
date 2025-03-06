@@ -1044,7 +1044,7 @@ void CPropVehicleDriveable::VPhysicsCollision( int index, gamevcollisionevent_t 
 //-----------------------------------------------------------------------------
 // Purpose: Handle trace attacks from the physcannon
 //-----------------------------------------------------------------------------
-void CPropVehicleDriveable::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CPropVehicleDriveable::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	// If we've just been zapped by the physcannon, try and right ourselves
 	if ( info.GetDamageType() & DMG_PHYSGUN )
@@ -1160,7 +1160,7 @@ bool CPropVehicleDriveable::NPC_RemovePassenger( CAI_BaseNPC *pPassenger )
 // Input  : *pVictim - 
 //			&info - 
 //-----------------------------------------------------------------------------
-void CPropVehicleDriveable::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CPropVehicleDriveable::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 { 
 	CBaseEntity *pDriver = GetDriver();
 	if ( pDriver != NULL )

@@ -62,12 +62,12 @@ public:
 
 	Class_T			Classify(void);
 
-	bool			CorpseGib( const CTakeDamageInfo &info );
+	bool			CorpseGib( const ITakeDamageInfo&info );
 	void			Event_Dying(void);
-	void			Event_Killed( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	int				OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	void			Event_Killed( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	int				OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void			TranslateNavGoal( CBaseEntity *pEnemy, Vector &chasePosition );
 	float			GetDefaultNavGoalTolerance();
 
@@ -78,8 +78,8 @@ public:
 
 	virtual bool	CreateVPhysics( void );
 
-	virtual void	DeathSound( const CTakeDamageInfo &info );
-	virtual bool	ShouldGib( const CTakeDamageInfo &info );
+	virtual void	DeathSound( const ITakeDamageInfo&info );
+	virtual bool	ShouldGib( const ITakeDamageInfo&info );
 
 	Activity		NPC_TranslateActivity( Activity baseAct );
 	virtual int		TranslateSchedule( int scheduleType );

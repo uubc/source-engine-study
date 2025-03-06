@@ -2724,7 +2724,7 @@ bool CNPC_PlayerCompanion::IsGunship( CBaseEntity *pEntity )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_PlayerCompanion::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_PlayerCompanion::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( info.GetAttacker() )
 	{
@@ -3561,7 +3561,7 @@ void CNPC_PlayerCompanion::InputClearAllOuputs( inputdata_t &inputdata )
 // Input  : *pVictim - Who he killed
 //			&info - How they died
 //-----------------------------------------------------------------------------
-void CNPC_PlayerCompanion::OnPlayerKilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info )
+void CNPC_PlayerCompanion::OnPlayerKilledOther( CBaseEntity *pVictim, const ITakeDamageInfo&info )
 {
 	// filter everything that comes in here that isn't an NPC
 	CAI_BaseNPC *pCombatVictim = dynamic_cast<CAI_BaseNPC *>( pVictim );

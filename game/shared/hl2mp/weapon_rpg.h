@@ -58,8 +58,8 @@ public:
 	void	DumbFire( void );
 	void	SetGracePeriod( float flGracePeriod );
 
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void	Event_Killed( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void	Event_Killed( const ITakeDamageInfo&info );
 	
 	virtual float	GetDamage() { return m_flDamage; }
 	virtual void	SetDamage(float flDamage) { m_flDamage = flDamage; }

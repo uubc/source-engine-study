@@ -47,7 +47,7 @@ public:
 
 
 	virtual unsigned int PhysicsSolidMaskForEntity( void ) const;
-	virtual bool ShouldGib( const CTakeDamageInfo &info ) { return false; }
+	virtual bool ShouldGib( const ITakeDamageInfo&info ) { return false; }
 	
 	/*	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );

@@ -91,7 +91,7 @@ bool CHL1BaseNPC::NoFriendlyFire( void )
 	return true;
 }
 
-void CHL1BaseNPC::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CHL1BaseNPC::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamage() >= 1.0 && !(info.GetDamageType() & DMG_SHOCK ) )
 	{
@@ -102,7 +102,7 @@ void CHL1BaseNPC::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir
 }
 
 
-bool CHL1BaseNPC::ShouldGib( const CTakeDamageInfo &info )
+bool CHL1BaseNPC::ShouldGib( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_NEVERGIB )
 		 return false;
@@ -157,7 +157,7 @@ void CHL1BaseNPC::Precache( void )
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CHL1BaseNPC::CorpseGib( const CTakeDamageInfo &info )
+bool CHL1BaseNPC::CorpseGib( const ITakeDamageInfo&info )
 {
 	CEffectData	data;
 	

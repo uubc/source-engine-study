@@ -51,7 +51,7 @@ public:
 	void Wake( bool bWake );
 	float FindNearestNPC();
 	void SetNearestNPC( CBaseEntity *pNearest ) { m_hNearestNPC.Set( pNearest ); }
-	int OnTakeDamage( const CTakeDamageInfo &info );
+	int OnTakeDamage( const ITakeDamageInfo&info );
 	bool IsFriend( CBaseEntity *pEntity );
 
 	void UpdateLight( bool bTurnOn, unsigned int r, unsigned int g, unsigned int b, unsigned int a );

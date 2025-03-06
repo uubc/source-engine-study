@@ -190,21 +190,21 @@ public:
 	virtual float		GetLastDamageTime( void ) const { return m_flLastDamageTime; }
 	virtual bool		IsDucking( void ) const { return !!(GetEngineObject()->GetFlags() & FL_DUCKING ); }
 
-	virtual bool		PassesDamageFilter( const CTakeDamageInfo &info );
+	virtual bool		PassesDamageFilter( const ITakeDamageInfo&info );
 	void				InputIgnoreFallDamage( inputdata_t &inputdata );
 	void				InputIgnoreFallDamageWithoutReset( inputdata_t &inputdata );
 	void				InputEnableFlashlight( inputdata_t &inputdata );
 	void				InputDisableFlashlight( inputdata_t &inputdata );
 
 	const impactdamagetable_t &GetPhysicsImpactDamageTable();
-	virtual int			OnTakeDamage( const CTakeDamageInfo &info );
-	virtual int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual void		OnDamagedByExplosion( const CTakeDamageInfo &info );
+	virtual int			OnTakeDamage( const ITakeDamageInfo&info );
+	virtual int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual void		OnDamagedByExplosion( const ITakeDamageInfo&info );
 	bool				ShouldShootMissTarget( CBaseCombatCharacter *pAttacker );
 
 	void				CombineBallSocketed( CPropCombineBall *pCombineBall );
 
-	virtual void		Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
+	virtual void		Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
 
 	virtual void		GetAutoaimVector( autoaim_params_t &params );
 	bool				ShouldKeepLockedAutoaimTarget( EHANDLE hLockedTarget );
@@ -247,7 +247,7 @@ public:
 	virtual bool		IsFollowingPhysics( void ) { return (m_afPhysicsFlags & PFLAG_ONBARNACLE) > 0; }
 	void				InputForceDropPhysObjects( inputdata_t &data );
 
-	virtual void		Event_Killed( const CTakeDamageInfo &info );
+	virtual void		Event_Killed( const ITakeDamageInfo&info );
 	void				NotifyScriptsOfDeath( void );
 
 	// override the test for getting hit

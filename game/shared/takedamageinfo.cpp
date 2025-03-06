@@ -226,7 +226,7 @@ void ApplyMultiDamage( void )
 //-----------------------------------------------------------------------------
 // Purpose: Add damage to the existing multidamage, and apply if it won't fit
 //-----------------------------------------------------------------------------
-void AddMultiDamage( const CTakeDamageInfo &info, IHandleEntity *pEntity )
+void AddMultiDamage( const ITakeDamageInfo&info, IHandleEntity *pEntity )
 {
 	if ( !pEntity )
 		return;
@@ -295,7 +295,7 @@ float ImpulseScale( float flTargetMass, float flDesiredSpeed )
 //-----------------------------------------------------------------------------
 // Purpose: Fill out a takedamageinfo with a damage force for an explosive
 //-----------------------------------------------------------------------------
-void CalculateExplosiveDamageForce( CTakeDamageInfo *info, const Vector &vecDir, const Vector &vecForceOrigin, float flScale )
+void CalculateExplosiveDamageForce(ITakeDamageInfo*info, const Vector &vecDir, const Vector &vecForceOrigin, float flScale )
 {
 	info->SetDamagePosition( vecForceOrigin );
 
@@ -326,7 +326,7 @@ void CalculateExplosiveDamageForce( CTakeDamageInfo *info, const Vector &vecDir,
 //-----------------------------------------------------------------------------
 // Purpose: Fill out a takedamageinfo with a damage force for a bullet impact
 //-----------------------------------------------------------------------------
-void CalculateBulletDamageForce( CTakeDamageInfo *info, int iBulletType, const Vector &vecBulletDir, const Vector &vecForceOrigin, float flScale )
+void CalculateBulletDamageForce(ITakeDamageInfo*info, int iBulletType, const Vector &vecBulletDir, const Vector &vecForceOrigin, float flScale )
 {
 	info->SetDamagePosition( vecForceOrigin );
 	Vector vecForce = vecBulletDir;
@@ -341,7 +341,7 @@ void CalculateBulletDamageForce( CTakeDamageInfo *info, int iBulletType, const V
 //-----------------------------------------------------------------------------
 // Purpose: Fill out a takedamageinfo with a damage force for a melee impact
 //-----------------------------------------------------------------------------
-void CalculateMeleeDamageForce( CTakeDamageInfo *info, const Vector &vecMeleeDir, const Vector &vecForceOrigin, float flScale )
+void CalculateMeleeDamageForce(ITakeDamageInfo*info, const Vector &vecMeleeDir, const Vector &vecForceOrigin, float flScale )
 {
 	info->SetDamagePosition( vecForceOrigin );
 
@@ -360,7 +360,7 @@ void CalculateMeleeDamageForce( CTakeDamageInfo *info, const Vector &vecMeleeDir
 //			This shouldn't be used for any damage where the damage force is unknown.
 //			i.e. only use it for mapmaker specified damages.
 //-----------------------------------------------------------------------------
-void GuessDamageForce( CTakeDamageInfo *info, const Vector &vecForceDir, const Vector &vecForceOrigin, float flScale )
+void GuessDamageForce(ITakeDamageInfo*info, const Vector &vecForceDir, const Vector &vecForceOrigin, float flScale )
 {
 	if ( info->GetDamageType() & DMG_BULLET )
 	{

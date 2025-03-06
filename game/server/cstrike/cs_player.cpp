@@ -1077,7 +1077,7 @@ CRagdollProp* CCSPlayer::CreateRagdollProp()
 //
 //}
 
-int CCSPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CCSPlayer::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// set damage type sustained
 	m_bitsDamageType |= info.GetDamageType();
@@ -1197,7 +1197,7 @@ int CCSPlayer::GetPercentageOfEnemyTeamKilled()
 // HPE_END
 //=============================================================================
 
-void CCSPlayer::Event_Killed( const CTakeDamageInfo &info )
+void CCSPlayer::Event_Killed( const ITakeDamageInfo&info )
 {
 	//=============================================================================
 	// HPE_BEGIN:
@@ -1368,7 +1368,7 @@ void CCSPlayer::Event_Killed( const CTakeDamageInfo &info )
 //=============================================================================
 
 // Notify that I've killed some other entity. (called from Victim's Event_Killed).
-void CCSPlayer::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CCSPlayer::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	BaseClass::Event_KilledOther(pVictim, info);
 }
@@ -1377,7 +1377,7 @@ void CCSPlayer::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo
 // HPE_END
 //=============================================================================
 
-void CCSPlayer::DeathSound( const CTakeDamageInfo &info )
+void CCSPlayer::DeathSound( const ITakeDamageInfo&info )
 {
 	if( m_LastHitGroup == HITGROUP_HEAD )
 	{
@@ -1894,7 +1894,7 @@ void CCSPlayer::Pain( bool bHasArmour )
 	}
 }
 
-int CCSPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
+int CCSPlayer::OnTakeDamage( const ITakeDamageInfo&inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -2269,7 +2269,7 @@ bool CCSPlayer::IsHittingShield( const Vector &vecDirection, trace_t *ptr )
 }
 
 
-void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CCSPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	bool bShouldBleed = true;
 	bool bShouldSpark = false;
@@ -4161,7 +4161,7 @@ void CCSPlayer::ListPlayers()
 // Purpose:
 // Input  : &info -
 //-----------------------------------------------------------------------------
-void CCSPlayer::OnDamagedByExplosion( const CTakeDamageInfo &info )
+void CCSPlayer::OnDamagedByExplosion( const ITakeDamageInfo&info )
 {
 	float lastDamage = info.GetDamage();
 
@@ -7406,7 +7406,7 @@ void CCSPlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float
 }
 
 
-void CCSPlayer::SelectDeathPose( const CTakeDamageInfo &info )
+void CCSPlayer::SelectDeathPose( const ITakeDamageInfo&info )
 {
 	MDLCACHE_CRITICAL_SECTION();
 	if ( !GetEngineObject()->GetModelPtr() )
@@ -7647,7 +7647,7 @@ void CCSPlayer::ResetRoundBasedAchievementVariables()
  *	Returns:
  *		int -
  */
-CSWeaponID CCSPlayer::GetWeaponIdCausingDamange( const CTakeDamageInfo &info )
+CSWeaponID CCSPlayer::GetWeaponIdCausingDamange( const ITakeDamageInfo&info )
 {
 	IServerEntity *pInflictor = (IServerEntity*)info.GetInflictor();
 	CCSPlayer *pAttacker = ToCSPlayer((IServerEntity*)info.GetAttacker());
@@ -7705,7 +7705,7 @@ void CCSPlayer::PlayerUsedFirearm( CBaseCombatWeapon* pBaseWeapon )
  * 		pVictim -
  * 		info -
  */
-void CCSPlayer::ProcessPlayerDeathAchievements( CCSPlayer *pAttacker, CCSPlayer *pVictim, const CTakeDamageInfo &info )
+void CCSPlayer::ProcessPlayerDeathAchievements( CCSPlayer *pAttacker, CCSPlayer *pVictim, const ITakeDamageInfo&info )
 {
 	Assert(pVictim != NULL);
 	CBaseEntity *pInflictor = (CBaseEntity*)info.GetInflictor();

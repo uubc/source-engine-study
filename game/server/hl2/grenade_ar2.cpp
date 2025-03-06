@@ -159,7 +159,7 @@ void CGrenadeAR2::GrenadeAR2Think( void )
 	CSoundEnt::InsertSound( SOUND_DANGER, GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 0.5, m_fDangerRadius, 0.2, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 }
 
-void CGrenadeAR2::Event_Killed( const CTakeDamageInfo &info )
+void CGrenadeAR2::Event_Killed( const ITakeDamageInfo&info )
 {
 	Detonate( );
 }

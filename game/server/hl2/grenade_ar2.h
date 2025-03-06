@@ -35,7 +35,7 @@ public:
 	void		Precache( void );
 	void 		GrenadeAR2Touch( IServerEntity *pOther );
 	void		GrenadeAR2Think( void );
-	void		Event_Killed( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
 
 public:
 	void EXPORT				Detonate(void);

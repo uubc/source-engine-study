@@ -64,7 +64,7 @@ public:
 
 	void		Precache( void );
 	void		Spawn(void);
-	void		Event_Killed( const CTakeDamageInfo &info );
+	void		Event_Killed( const ITakeDamageInfo&info );
 	void		CheatImpulseCommands( int iImpulse );
 	void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper );
 	void		UpdateClientData( void );
@@ -87,12 +87,12 @@ public:
 	float		GetLastDamageTime( void ) const { return m_flLastDamageTime; }
 	bool		IsDucking( void ) const { return !!(GetEngineObject()->GetFlags() & FL_DUCKING ); }
 
-	int			OnTakeDamage( const CTakeDamageInfo &info );
-	int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int			OnTakeDamage( const ITakeDamageInfo&info );
+	int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void		FindMissTargets( void );
 	bool		GetMissPosition( Vector *position );
 
-	void		OnDamagedByExplosion( const CTakeDamageInfo &info ) { };
+	void		OnDamagedByExplosion( const ITakeDamageInfo&info ) { };
 	void		PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject );
 
 	virtual void CreateViewModel( int index /*=0*/ );

@@ -96,7 +96,7 @@ public:
 
 	void SetZombieModel( void );
 	void MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize );
-	bool ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold );
+	bool ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold );
 	bool CanBecomeLiveTorso() { return !m_fIsHeadless; }
 
 	void GatherConditions( void );
@@ -129,16 +129,16 @@ public:
 
 	void Ignite( float flFlameLifetime, bool bNPCOnly = true, float flSize = 0.0f, bool bCalledByLevelDesigner = false );
 	void Extinguish();
-	int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
-	bool IsHeavyDamage( const CTakeDamageInfo &info );
-	bool IsSquashed( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo );
+	bool IsHeavyDamage( const ITakeDamageInfo&info );
+	bool IsSquashed( const ITakeDamageInfo&info );
 	void BuildScheduleTestBits( void );
 
 	void PrescheduleThink( void );
 	int SelectSchedule ( void );
 
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info );
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSound( void );
@@ -425,7 +425,7 @@ void CZombie::AttackMissSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CZombie::PainSound( const CTakeDamageInfo &info )
+void CZombie::PainSound( const ITakeDamageInfo&info )
 {
 	// We're constantly taking damage when we are on fire. Don't make all those noises!
 	if ( IsOnFire() )
@@ -446,7 +446,7 @@ void CZombie::PainSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CZombie::DeathSound( const CTakeDamageInfo &info ) 
+void CZombie::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "Zombie.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -610,7 +610,7 @@ void CZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-bool CZombie::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold )
+bool CZombie::ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	if( IsSlumped() ) 
 	{
@@ -907,7 +907,7 @@ void CZombie::Extinguish()
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-int CZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
+int CZombie::OnTakeDamage_Alive( const ITakeDamageInfo&inputInfo )
 {
 #ifndef HL2_EPISODIC
 	if ( inputInfo.GetDamageType() & DMG_BUCKSHOT )
@@ -928,7 +928,7 @@ int CZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CZombie::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CZombie::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 #ifdef HL2_EPISODIC
 	if ( info.GetDamageType() & DMG_BUCKSHOT )
@@ -961,7 +961,7 @@ bool CZombie::IsHeavyDamage( const CTakeDamageInfo &info )
 //---------------------------------------------------------
 //---------------------------------------------------------
 #define ZOMBIE_SQUASH_MASS	300.0f  // Anything this heavy or heavier squashes a zombie good. (show special fx)
-bool CZombie::IsSquashed( const CTakeDamageInfo &info )
+bool CZombie::IsSquashed( const ITakeDamageInfo&info )
 {
 	if( GetHealth() > 0 )
 	{

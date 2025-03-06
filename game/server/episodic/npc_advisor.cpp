@@ -179,8 +179,8 @@ public:
 	virtual void OnScheduleChange( void );
 #endif
 
-	virtual void PainSound( const CTakeDamageInfo &info );
-	virtual void DeathSound( const CTakeDamageInfo &info );
+	virtual void PainSound( const ITakeDamageInfo&info );
+	virtual void DeathSound( const ITakeDamageInfo&info );
 	virtual void IdleSound();
 	virtual void AlertSound();
 
@@ -194,8 +194,8 @@ public:
 	inline bool DidThrow(const CBaseEntity *pEnt) { return false; }
 #endif
 
-	virtual bool IsHeavyDamage( const CTakeDamageInfo &info );
-	virtual int	 OnTakeDamage( const CTakeDamageInfo &info );
+	virtual bool IsHeavyDamage( const ITakeDamageInfo&info );
+	virtual int	 OnTakeDamage( const ITakeDamageInfo&info );
 
 	virtual const impactdamagetable_t &GetPhysicsImpactDamageTable( void );
 	COutputInt   m_OnHealthIsNow;
@@ -504,7 +504,7 @@ Class_T	CNPC_Advisor::Classify()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_Advisor::IsHeavyDamage( const CTakeDamageInfo &info )
+bool CNPC_Advisor::IsHeavyDamage( const ITakeDamageInfo&info )
 {
 	return (info.GetDamage() > 0);
 }
@@ -1459,7 +1459,7 @@ void CNPC_Advisor::PullObjectToStaging( CBaseEntity *pEnt, const Vector &staging
 
 #endif
 
-int	CNPC_Advisor::OnTakeDamage( const CTakeDamageInfo &info )
+int	CNPC_Advisor::OnTakeDamage( const ITakeDamageInfo&info )
 {
 	// Clip our max 
 	CTakeDamageInfo newInfo = info;
@@ -1598,7 +1598,7 @@ void CNPC_Advisor::AlertSound()
 }
 
 
-void CNPC_Advisor::PainSound( const CTakeDamageInfo &info )
+void CNPC_Advisor::PainSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_Advisor.Pain";
 	CPASAttenuationFilter filter(this, soundname);
@@ -1612,7 +1612,7 @@ void CNPC_Advisor::PainSound( const CTakeDamageInfo &info )
 }
 
 
-void CNPC_Advisor::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Advisor::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_Advisor.Die";
 	CPASAttenuationFilter filter(this, soundname);

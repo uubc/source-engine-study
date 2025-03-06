@@ -63,7 +63,7 @@ public:
 	virtual bool	IsVehicleBodyInWater() { return m_WaterData.m_bBodyInWater; }
 	
 	// Passengers do not directly receive damage from blasts or radiation damage
-	virtual bool PassengerShouldReceiveDamage( CTakeDamageInfo &info ) 
+	virtual bool PassengerShouldReceiveDamage( ITakeDamageInfo &info ) 
 	{ 
 		if ( GetServerVehicle() && GetServerVehicle()->IsPassengerExiting() )
 			return false;
@@ -82,9 +82,9 @@ public:
 
 	//virtual void	CreateServerVehicle( void );
 	virtual Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true );
-	virtual void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
-	virtual float	PassengerDamageModifier( const CTakeDamageInfo &info );
+	virtual void	TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual int		OnTakeDamage( const ITakeDamageInfo&info );
+	virtual float	PassengerDamageModifier( const ITakeDamageInfo &info );
 
 	virtual void	EnterVehicle( CBaseCombatCharacter *pPassenger );
 	virtual void	ExitVehicle( int nRole );

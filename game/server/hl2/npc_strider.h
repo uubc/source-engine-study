@@ -210,19 +210,19 @@ public:
 	//	Sounds & speech
 	//---------------------------------
 	void			AlertSound();
-	void			PainSound( const CTakeDamageInfo &info );
-	void			DeathSound( const CTakeDamageInfo &info );
+	void			PainSound( const ITakeDamageInfo&info );
+	void			DeathSound( const ITakeDamageInfo&info );
 	void			HuntSound();
 
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
-	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
-	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	int				TakeDamageFromCombineBall( const CTakeDamageInfo &info );
-	void			Event_Killed( const CTakeDamageInfo &info );
+	void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	int				OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	int				TakeDamageFromCombineBall( const ITakeDamageInfo&info );
+	void			Event_Killed( const ITakeDamageInfo&info );
 	void			RagdollDeathEffect( CRagdollProp *pRagdoll, float flDuration );
-	bool			BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector );
+	bool			BecomeRagdoll( const ITakeDamageInfo&info, const Vector &forceVector );
 	void			StartSmoking();
 	void			StopSmoking( float flDelay = 0.1 );
 	bool			IsSmoking() { return m_hSmoke != NULL; }
@@ -376,7 +376,7 @@ protected:
 
 private:
 	
-	bool	ShouldExplodeFromDamage( const CTakeDamageInfo &info );
+	bool	ShouldExplodeFromDamage( const ITakeDamageInfo&info );
 	bool	m_bExploding;
 	
 	//-----------------------------------------------------

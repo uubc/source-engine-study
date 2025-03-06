@@ -247,7 +247,7 @@ bool CHL2MPWorld::IsIntermission( void )
 	return false;
 }
 
-void CHL2MPWorld::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CHL2MPWorld::PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 #ifndef CLIENT_DLL
 	if ( IsIntermission() )
@@ -636,7 +636,7 @@ void CHL2MPWorld::ClientDisconnected( int pClient )
 //=========================================================
 // Deathnotice. 
 //=========================================================
-void CHL2MPWorld::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CHL2MPWorld::DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info )
 {
 #ifndef CLIENT_DLL
 	// Work out what killed the player, and send a message to all clients about it

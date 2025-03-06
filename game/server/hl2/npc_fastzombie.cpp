@@ -253,13 +253,13 @@ public:
 
 	void OnChangeActivity( Activity NewActivity );
 	void OnStateChange( NPC_STATE OldState, NPC_STATE NewState );
-	void Event_Killed( const CTakeDamageInfo &info );
-	bool ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold );
+	void Event_Killed( const ITakeDamageInfo&info );
+	bool ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold );
 
 	virtual Vector GetAutoAimCenter() { return WorldSpaceCenter() - Vector( 0, 0, 12.0f ); }
 
-	void PainSound( const CTakeDamageInfo &info );
-	void DeathSound( const CTakeDamageInfo &info ); 
+	void PainSound( const ITakeDamageInfo&info );
+	void DeathSound( const ITakeDamageInfo&info );
 	void AlertSound( void );
 	void IdleSound( void );
 	void AttackSound( void );
@@ -961,7 +961,7 @@ void CFastZombie::IdleSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: Play a random pain sound.
 //-----------------------------------------------------------------------------
-void CFastZombie::PainSound( const CTakeDamageInfo &info )
+void CFastZombie::PainSound( const ITakeDamageInfo&info )
 {
 	if ( m_pLayer2 )
 		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumePain, ARRAYSIZE(envFastZombieVolumePain) );
@@ -971,7 +971,7 @@ void CFastZombie::PainSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CFastZombie::DeathSound( const CTakeDamageInfo &info ) 
+void CFastZombie::DeathSound( const ITakeDamageInfo&info )
 {
 	const char* soundname = "NPC_FastZombie.Die";
 	CPASAttenuationFilter filter(this, soundname);
@@ -1931,7 +1931,7 @@ void CFastZombie::OnStateChange( NPC_STATE OldState, NPC_STATE NewState )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CFastZombie::Event_Killed( const CTakeDamageInfo &info )
+void CFastZombie::Event_Killed( const ITakeDamageInfo&info )
 {
 	// Shut up my screaming sounds.
 	CPASAttenuationFilter filter( this );
@@ -1977,7 +1977,7 @@ void CFastZombie::Event_Killed( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CFastZombie::ShouldBecomeTorso( const CTakeDamageInfo &info, float flDamageThreshold )
+bool CFastZombie::ShouldBecomeTorso( const ITakeDamageInfo&info, float flDamageThreshold )
 {
 	if( m_fIsTorso )
 	{

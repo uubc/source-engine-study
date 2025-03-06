@@ -1054,7 +1054,7 @@ public:
 	void				SetDeathPose( const int &iDeathPose ) { m_iDeathPose = iDeathPose; }
 	void				SetDeathPoseFrame( const int &iDeathPoseFrame ) { m_iDeathFrame = iDeathPoseFrame; }
 	
-	void				SelectDeathPose( const CTakeDamageInfo &info );
+	void				SelectDeathPose( const ITakeDamageInfo&info );
 	virtual bool		ShouldPickADeathPose( void ) { return true; }
 
 	virtual	bool		AllowedToIgnite( void ) { return false; }
@@ -1182,10 +1182,10 @@ public:
 	virtual bool		FOkToMakeSound( int soundPriority = 0 );
 	virtual void		JustMadeSound( int soundPriority = 0, float flSoundLength = 0.0f );
 
-	virtual void		DeathSound( const CTakeDamageInfo &info )	{ return; };
+	virtual void		DeathSound( const ITakeDamageInfo&info )	{ return; };
 	virtual void		AlertSound( void )							{ return; };
 	virtual void		IdleSound( void )							{ return; };
-	virtual void		PainSound( const CTakeDamageInfo &info )	{ return; };
+	virtual void		PainSound( const ITakeDamageInfo&info )		{ return; };
 	virtual void		FearSound( void )				 			{ return; };
 	virtual void		LostEnemySound( void ) 						{ return; };
 	virtual void		FoundEnemySound( void ) 					{ return; };
@@ -1740,13 +1740,13 @@ public:
 	//---------------------------------
 
 	virtual void		Ignite( float flFlameLifetime, bool bNPCOnly = true, float flSize = 0.0f, bool bCalledByLevelDesigner = false );
-	virtual bool		PassesDamageFilter( const CTakeDamageInfo &info );
+	virtual bool		PassesDamageFilter( const ITakeDamageInfo&info );
 
 	//---------------------------------
 
 	void				MakeDamageBloodDecal( int cCount, float flNoise, trace_t *ptr, Vector vecDir );
-	virtual float		GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info );
-	void				TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual float		GetHitgroupDamageMultiplier( int iHitGroup, const ITakeDamageInfo&info );
+	void				TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void				DecalTrace( trace_t *pTrace, char const *decalName );
 	void				ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
 	virtual	bool		PlayerInSpread( const Vector &sourcePos, const Vector &targetPos, float flSpread, float maxDistOffCenter, bool ignoreHatedPlayers = true );
@@ -1761,9 +1761,9 @@ public:
 
 	virtual Activity	GetFlinchActivity( bool bHeavyDamage, bool bGesture );
 	
-	virtual bool		ShouldGib( const CTakeDamageInfo &info ) { return false; }	// Always ragdoll, unless specified by the leaf class
-	virtual bool		Event_Gibbed( const CTakeDamageInfo &info );
-	virtual void		Event_Killed( const CTakeDamageInfo &info );
+	virtual bool		ShouldGib( const ITakeDamageInfo&info ) { return false; }	// Always ragdoll, unless specified by the leaf class
+	virtual bool		Event_Gibbed( const ITakeDamageInfo&info );
+	virtual void		Event_Killed( const ITakeDamageInfo&info );
 
 	virtual Vector		GetShootEnemyDir( const Vector &shootOrigin, bool bNoisy = true );
 #ifdef HL2_DLL
@@ -1788,18 +1788,18 @@ public:
 	//---------------------------------
 	//  Damage
 	//---------------------------------
-	virtual int			OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	virtual int			OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	virtual int			OnTakeDamage_Dead( const CTakeDamageInfo &info );
+	virtual int			OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	virtual int			OnTakeDamage_Dying( const ITakeDamageInfo&info );
+	virtual int			OnTakeDamage_Dead( const ITakeDamageInfo&info );
 
 	virtual void		NotifyFriendsOfDamage( CBaseEntity *pAttackerEntity );
 	virtual void		OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CBaseEntity *pAttacker );
 
-	virtual bool		IsLightDamage( const CTakeDamageInfo &info );
-	virtual bool		IsHeavyDamage( const CTakeDamageInfo &info );
+	virtual bool		IsLightDamage( const ITakeDamageInfo&info );
+	virtual bool		IsHeavyDamage( const ITakeDamageInfo&info );
 
-	void				DoRadiusDamage( const CTakeDamageInfo &info, int iClassIgnore, CBaseEntity *pEntityIgnore );
-	void				DoRadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, int iClassIgnore, CBaseEntity *pEntityIgnore );
+	void				DoRadiusDamage( const ITakeDamageInfo&info, int iClassIgnore, CBaseEntity *pEntityIgnore );
+	void				DoRadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, int iClassIgnore, CBaseEntity *pEntityIgnore );
 
 	//---------------------------------
 

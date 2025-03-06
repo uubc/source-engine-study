@@ -49,7 +49,7 @@ public:
 
 	virtual int	    ObjectCaps( void ) { return BaseClass::ObjectCaps() | FCAP_IMPULSE_USE | FCAP_USE_IN_RADIUS; }
 
-	virtual	int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual	int		OnTakeDamage( const ITakeDamageInfo&info );
 
 	virtual void	Detonate();
 

@@ -25,11 +25,11 @@ public:
 	void PostNPCInit();
 
 	// Damage & Death
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void Event_Killed( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage_Alive( const ITakeDamageInfo&info );
+	void Event_Killed( const ITakeDamageInfo&info );
 	void DeathEffects();
 	bool CanBecomeRagdoll( void ) { return false; }
-	void DeathSound( const CTakeDamageInfo &info );
+	void DeathSound( const ITakeDamageInfo&info );
 
 	// Combat
 	void MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );

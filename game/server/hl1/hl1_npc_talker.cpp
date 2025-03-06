@@ -182,7 +182,7 @@ void CHL1NPCTalker::RunTask( const Task_t *pTask )
 	}
 }
 
-bool CHL1NPCTalker::ShouldGib( const CTakeDamageInfo &info )
+bool CHL1NPCTalker::ShouldGib( const ITakeDamageInfo&info )
 {
 	if ( info.GetDamageType() & DMG_NEVERGIB )
 		 return false;
@@ -482,7 +482,7 @@ void CHL1NPCTalker::StopFollowing( void )
 	BaseClass::StopFollowing();
 }
 
-void CHL1NPCTalker::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CHL1NPCTalker::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamage() >= 1.0 && !(info.GetDamageType() & DMG_SHOCK ) )
 	{
@@ -568,7 +568,7 @@ void CHL1NPCTalker::SetHeadDirection( const Vector &vTargetPos, float flInterval
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CHL1NPCTalker::CorpseGib( const CTakeDamageInfo &info )
+bool CHL1NPCTalker::CorpseGib( const ITakeDamageInfo&info )
 {
 	CEffectData	data;
 

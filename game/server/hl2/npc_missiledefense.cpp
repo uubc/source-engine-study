@@ -56,8 +56,8 @@ public:
 	void	AimGun( void );
 	void	EnemyShootPosition(CBaseEntity* pEnemy, Vector *vPosition);
 
-	void	Event_Killed( const CTakeDamageInfo &info );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	void	Event_Killed( const ITakeDamageInfo&info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void	Gib();
 	void	GetGunAim( Vector *vecAim );	
 	~CNPC_MissileDefense();
@@ -308,7 +308,7 @@ void CNPC_MissileDefense::Spawn( void )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-int CNPC_MissileDefense::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CNPC_MissileDefense::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	// Only take blast damage
 	if (info.GetDamageType() & DMG_BLAST )
@@ -326,7 +326,7 @@ int CNPC_MissileDefense::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CNPC_MissileDefense::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_MissileDefense::Event_Killed( const ITakeDamageInfo&info )
 {
 	g_pSoundEmitterSystem->StopSound(this, "NPC_MissileDefense.Turn" );
 	Gib();

@@ -209,10 +209,10 @@ public:
 
 	bool IsLaserOn( void ) { return m_pBeam != NULL; }
 
-	void Event_Killed( const CTakeDamageInfo &info );
-	void Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info );
+	void Event_Killed( const ITakeDamageInfo&info );
+	void Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info );
 	void UpdateOnRemove( void );
-	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	bool WeaponLOSCondition(const Vector &ownerPos, const Vector &targetPos, bool bSetConditions) {return true;}
 	int IRelationPriority( CBaseEntity *pTarget );
 	bool IsFastSniper() { return GetEngineObject()->HasSpawnFlags(SF_SNIPER_FAST); }
@@ -1268,7 +1268,7 @@ void CProtoSniper::AddOldDecoy( CBaseEntity *pDecoy )
 // Output : 
 //-----------------------------------------------------------------------------
 #define SNIPER_MAX_INFLICTOR_DIST	15.0f * 12.0f // 15 feet.
-int CProtoSniper::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int CProtoSniper::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 {
 	if( !m_fEnabled )
 	{
@@ -1322,7 +1322,7 @@ int CProtoSniper::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 //
 // Output : 
 //-----------------------------------------------------------------------------
-void CProtoSniper::Event_Killed( const CTakeDamageInfo &info )
+void CProtoSniper::Event_Killed( const ITakeDamageInfo&info )
 {
 	if( !(GetEngineObject()->GetSpawnFlags() & SF_SNIPER_NOCORPSE))
 	{
@@ -1371,7 +1371,7 @@ void CProtoSniper::Event_Killed( const CTakeDamageInfo &info )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CProtoSniper::Event_KilledOther( IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CProtoSniper::Event_KilledOther( IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	if( pVictim && pVictim->IsPlayer() )
 	{

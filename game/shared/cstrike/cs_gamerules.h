@@ -157,7 +157,7 @@ public:
 
 	static void EndRound();
 
-	virtual void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 	virtual void Think();
 
 	// Called at the end of GameFrame (i.e. after all game logic has run this frame)
@@ -197,7 +197,7 @@ public:
     // [tj] So game rules can react to damage taken
     //=============================================================================
 
-    void PlayerTookDamage(CCSPlayer* player, const CTakeDamageInfo &damageInfo);
+    void PlayerTookDamage(CCSPlayer* player, const ITakeDamageInfo&damageInfo);
 
     //=============================================================================
     // HPE_END
@@ -208,13 +208,13 @@ public:
 	// Let the game rules specify if fall death should fade screen to black
 	virtual bool  FlPlayerFallDeathDoesScreenFade( CBasePlayer *pl ) { return FALSE; }
 
-	virtual void  RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
-	void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld );
+	virtual void  RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
+	void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, bool bIgnoreWorld );
 
 	virtual void UpdateClientData( CBasePlayer *pl );
 
 	// Death notices
-	virtual void		DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info );
+	virtual void		DeathNotice( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
 	virtual void			InitDefaultAIRelationships( void );
 

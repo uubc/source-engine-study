@@ -40,7 +40,7 @@ public:
 	DECLARE_DATADESC();
 
 	bool PassesFilter( CBaseEntity *pCaller, CBaseEntity *pEntity );
-	bool PassesDamageFilter( const CTakeDamageInfo &info );
+	bool PassesDamageFilter( const ITakeDamageInfo&info );
 
 	bool m_bNegated;
 
@@ -54,7 +54,7 @@ public:
 protected:
 
 	virtual bool PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity );
-	virtual bool PassesDamageFilterImpl(const CTakeDamageInfo &info);
+	virtual bool PassesDamageFilterImpl(const ITakeDamageInfo&info);
 };
 
 #endif // FILTERS_H

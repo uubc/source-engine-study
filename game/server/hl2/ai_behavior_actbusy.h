@@ -116,7 +116,7 @@ public:
 	bool	IsCurScheduleOverridable( void );
 	bool	ShouldIgnoreSound( CSound *pSound );
 	void	OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CBaseEntity *pAttacker );
-	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
+	int		OnTakeDamage_Alive( const ITakeDamageInfo&info );
 	void	GatherConditions( void );
 	void	BuildScheduleTestBits( void );
 	void	EndScheduleSelection( void );

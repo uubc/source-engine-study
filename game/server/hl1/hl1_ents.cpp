@@ -1175,7 +1175,7 @@ public:
 	void		Precache( void );
 	void		Touch( IServerEntity *pOther );
 	void		Think( void );
-	int			OnTakeDamage( const CTakeDamageInfo &info ) { Attack(); return 0; }
+	int			OnTakeDamage( const ITakeDamageInfo&info ) { Attack(); return 0; }
 	void		HandleAnimEvent( animevent_t *pEvent );
 	void		Attack( void );	
 	Class_T			Classify( void ) { return CLASS_ALIEN_PREDATOR; }

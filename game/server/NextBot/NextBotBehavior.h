@@ -656,9 +656,9 @@ public:
 	virtual EventDesiredResult< Actor > OnAnimationActivityInterrupted( Actor *me, int activity )				{ return TryContinue(); }
 	virtual EventDesiredResult< Actor > OnAnimationEvent( Actor *me, animevent_t *event )						{ return TryContinue(); }
 	virtual EventDesiredResult< Actor > OnIgnite( Actor *me )													{ return TryContinue(); }
-	virtual EventDesiredResult< Actor > OnInjured( Actor *me, const CTakeDamageInfo &info )						{ return TryContinue(); }
-	virtual EventDesiredResult< Actor > OnKilled( Actor *me, const CTakeDamageInfo &info )						{ return TryContinue(); }
-	virtual EventDesiredResult< Actor > OnOtherKilled( Actor *me, CBaseCombatCharacter *victim, const CTakeDamageInfo &info )	{ return TryContinue(); }
+	virtual EventDesiredResult< Actor > OnInjured( Actor *me, const ITakeDamageInfo&info )						{ return TryContinue(); }
+	virtual EventDesiredResult< Actor > OnKilled( Actor *me, const ITakeDamageInfo&info )						{ return TryContinue(); }
+	virtual EventDesiredResult< Actor > OnOtherKilled( Actor *me, CBaseCombatCharacter *victim, const ITakeDamageInfo&info )	{ return TryContinue(); }
 	virtual EventDesiredResult< Actor > OnSight( Actor *me, CBaseEntity *subject )								{ return TryContinue(); }
 	virtual EventDesiredResult< Actor > OnLostSight( Actor *me, CBaseEntity *subject )							{ return TryContinue(); }
 	virtual EventDesiredResult< Actor > OnSound( Actor *me, CBaseEntity *source, const Vector &pos, KeyValues *keys )	{ return TryContinue(); }
@@ -907,9 +907,9 @@ private:
 	virtual void OnAnimationActivityInterrupted( int activity )			{ PROCESS_EVENT_WITH_1_ARG( OnAnimationActivityInterrupted, activity ); }
 	virtual void OnAnimationEvent( animevent_t *event )					{ PROCESS_EVENT_WITH_1_ARG( OnAnimationEvent, event ); }
 	virtual void OnIgnite( void )										{ PROCESS_EVENT( OnIgnite ); }
-	virtual void OnInjured( const CTakeDamageInfo &info )				{ PROCESS_EVENT_WITH_1_ARG( OnInjured, info ); }
-	virtual void OnKilled( const CTakeDamageInfo &info )				{ PROCESS_EVENT_WITH_1_ARG( OnKilled, info ); }
-	virtual void OnOtherKilled( CBaseCombatCharacter *victim, const CTakeDamageInfo &info )	{ PROCESS_EVENT_WITH_2_ARGS( OnOtherKilled, victim, info ); }
+	virtual void OnInjured( const ITakeDamageInfo&info )				{ PROCESS_EVENT_WITH_1_ARG( OnInjured, info ); }
+	virtual void OnKilled( const ITakeDamageInfo&info )				{ PROCESS_EVENT_WITH_1_ARG( OnKilled, info ); }
+	virtual void OnOtherKilled( CBaseCombatCharacter *victim, const ITakeDamageInfo&info )	{ PROCESS_EVENT_WITH_2_ARGS( OnOtherKilled, victim, info ); }
 	virtual void OnSight( CBaseEntity *subject )						{ PROCESS_EVENT_WITH_1_ARG( OnSight, subject ); }
 	virtual void OnLostSight( CBaseEntity *subject )					{ PROCESS_EVENT_WITH_1_ARG( OnLostSight, subject ); }
 	virtual void OnSound( CBaseEntity *source, const Vector &pos, KeyValues *keys )					{ PROCESS_EVENT_WITH_3_ARGS( OnSound, source, pos, keys ); }

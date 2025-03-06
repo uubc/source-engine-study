@@ -316,7 +316,7 @@ void CBaseGameStats::Event_LoadGame( void )
 
 #ifdef GAME_DLL
 
-void CBaseGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const CTakeDamageInfo &info )
+void CBaseGameStats::Event_PlayerKilled( CBasePlayer *pPlayer, const ITakeDamageInfo&info )
 {
 	++m_BasicStats.m_Summary.m_nDeaths;
 
@@ -470,12 +470,12 @@ void CBaseGameStats::Event_PlayerDisconnected( CBasePlayer *pBasePlayer )
 	StatsLog( "CBaseGameStats::Event_PlayerDisconnected\n" );
 }
 
-void CBaseGameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const CTakeDamageInfo &info )
+void CBaseGameStats::Event_PlayerDamage( CBasePlayer *pBasePlayer, const ITakeDamageInfo&info )
 {
 	//StatsLog( "CBaseGameStats::Event_PlayerDamage [%s] took %.2f damage\n", pBasePlayer->GetPlayerName(), info.GetDamage() );
 }
 
-void CBaseGameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const CTakeDamageInfo &info )
+void CBaseGameStats::Event_PlayerKilledOther( CBasePlayer *pAttacker, IServerEntity *pVictim, const ITakeDamageInfo&info )
 {
 	StatsLog( "CBaseGameStats::Event_PlayerKilledOther [%s] killed [%s]\n", pAttacker->GetPlayerName(), pVictim->GetClassname() );
 }
@@ -485,7 +485,7 @@ void CBaseGameStats::Event_WeaponFired( CBasePlayer *pShooter, bool bPrimary, ch
 	StatsLog( "CBaseGameStats::Event_WeaponFired [%s] %s weapon [%s]\n", pShooter->GetPlayerName(), bPrimary ? "primary" : "secondary", pchWeaponName );
 }
 
-void CBaseGameStats::Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const CTakeDamageInfo &info )
+void CBaseGameStats::Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const ITakeDamageInfo&info )
 {
 	StatsLog( "CBaseGameStats::Event_WeaponHit [%s] %s weapon [%s] damage [%f]\n", pShooter->GetPlayerName(), bPrimary ? "primary" : "secondary", pchWeaponName, info.GetDamage() );
 }
