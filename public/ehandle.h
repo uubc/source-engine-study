@@ -20,6 +20,14 @@
 //#include "const.h"
 #include "basehandle.h"
 #include "networkvar.h"
+#ifdef CLIENT_DLL
+#include "icliententity.h"
+#endif // CLIENT_DLL
+#ifdef CAME_DLL
+#include "iserverentity.h"
+#endif // CAME_DLL
+
+
 //#include "entitylist_base.h"
 
 // Network ehandle wrapper.
