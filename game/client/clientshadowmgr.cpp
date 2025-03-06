@@ -2657,7 +2657,7 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 	}
 
 	// We know what we are focused on, so just add the shadow directly to that receiver
-	Assert( shadow.m_hTargetEntity->GetEngineObject()->GetModel() );
+	Assert(entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject()->GetModel() );
 
 	IEngineObjectClient* pChild = entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject()->FirstMoveChild();
 	while( pChild )

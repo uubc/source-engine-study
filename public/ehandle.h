@@ -152,7 +152,12 @@ T* CHandle<T>::operator -> () const
 template<class T>
 inline T* CHandle<T>::Get() const
 {
-	return (T*)EntityList()->GetBaseEntityFromHandle(*this);
+#ifdef CLIENT_DLL
+	return (T*)entitylist->GetBaseEntityFromHandle(*this);
+#endif // CLIENT_DLL
+#ifdef GAME_DLL
+	return (T*)serverEntitylist->GetBaseEntityFromHandle(*this);
+#endif // GAME_DLL
 }
 
 template< class Type, class T, int (*OffsetFun)(void), void (T::* ChangeFun)(void*), bool debug = false >
