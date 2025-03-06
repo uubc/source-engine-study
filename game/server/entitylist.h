@@ -4089,7 +4089,7 @@ public:
 
 	bool PhysHasShadow(IServerEntity* pEntity)
 	{
-		ENTHANDLE hTestEnt = pEntity;
+		CBaseHandle hTestEnt = pEntity;
 		entitem_t* pCurrent = m_pShadowEntities->m_pItemList;
 		while (pCurrent)
 		{
