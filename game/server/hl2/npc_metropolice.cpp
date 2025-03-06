@@ -2441,11 +2441,11 @@ void CNPC_MetroPolice::InputEnableManhackToss( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::InputSetPoliceGoal( inputdata_t &inputdata )
 {
-	IServerEntity *pGoal = EntityList()->FindEntityByName( NULL, inputdata.value.String() );
+	IServerEntity *pGoal = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()) );
 
 	if ( pGoal == NULL )
 	{
-		DevMsg( "SetPoliceGoal: %s (%s) unable to find ai_goal_police: %s\n", GetClassname(), GetDebugName(), inputdata.value.String() );
+		DevMsg( "SetPoliceGoal: %s (%s) unable to find ai_goal_police: %s\n", GetClassname(), GetDebugName(), inputdata.value.String(EntityList()) );
 		return;
 	}
 
@@ -2453,7 +2453,7 @@ void CNPC_MetroPolice::InputSetPoliceGoal( inputdata_t &inputdata )
 
 	if ( pPoliceGoal == NULL )
 	{
-		DevMsg( "SetPoliceGoal: %s (%s)'s target %s is not an ai_goal_police entity!\n", GetClassname(), GetDebugName(), inputdata.value.String() );
+		DevMsg( "SetPoliceGoal: %s (%s)'s target %s is not an ai_goal_police entity!\n", GetClassname(), GetDebugName(), inputdata.value.String(EntityList()) );
 		return;
 	}
 

@@ -194,7 +194,7 @@ void CCycler::InputSetSequence( inputdata_t &inputdata )
 	if (m_animate)
 	{
 		// Legacy support: Try it as a number, and support '0'
-		const char *sChar = inputdata.value.String();
+		const char *sChar = inputdata.value.String(EntityList());
 		int iSeqNum = atoi( sChar );
 		if ( !iSeqNum && sChar[0] != '0' )
 		{

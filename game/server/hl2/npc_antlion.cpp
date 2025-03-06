@@ -4030,7 +4030,7 @@ void CNPC_Antlion::InputFightToPosition( inputdata_t &inputdata )
 	if ( IsAlive() == false )
 		return;
 
-	IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 
 	if ( pEntity != NULL )
 	{
@@ -4497,10 +4497,10 @@ void CNPC_Antlion::Flip( bool bZapped /*= false*/ )
 //-----------------------------------------------------------------------------
 void CNPC_Antlion::InputJumpAtTarget( inputdata_t &inputdata )
 {
-	IServerEntity *pJumpTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(), this, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pJumpTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), this, inputdata.pActivator, inputdata.pCaller );
 	if ( pJumpTarget == NULL )
 	{
-		Msg("Unable to find jump target named (%s)\n", inputdata.value.String() );
+		Msg("Unable to find jump target named (%s)\n", inputdata.value.String(EntityList()) );
 		return;
 	}
 

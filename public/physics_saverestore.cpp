@@ -7,7 +7,6 @@
 
 #ifdef GAME_DLL
 #include "entitylist.h"
-#include "enginecallback.h"
 #endif // GAME_DLL
 #ifdef CLIENT_DLL
 #include "cliententitylist.h"
@@ -76,7 +75,7 @@ struct PhysObjectHeader_t
 	}
 
 	PhysInterfaceId_t 	type;
-	CHandle<IHandleEntity> hEntity;
+	CBaseHandle			hEntity;
 	string_t			fieldName;
 	int 				nObjects;
 	string_t			modelName;
@@ -149,7 +148,7 @@ public:
 		{
 			const QueuedItem_t &item = m_QueuedSaves.ElementAtHead();
 			
-			IHandleEntity *pOwner = item.header.hEntity.Get();
+			IHandleEntity *pOwner = EntityList()->GetBaseEntityFromHandle(item.header.hEntity);
 			
 			if ( pOwner )
 			{
@@ -253,7 +252,7 @@ public:
 	
 	void RestoreBlock( IRestore *pRestore, const PhysObjectHeader_t &header ) 
 	{
-		IHandleEntity *  pOwner  = header.hEntity.Get();
+		IHandleEntity *  pOwner  = EntityList()->GetBaseEntityFromHandle(header.hEntity);
 		unsigned short iQueued = m_QueuedRestores.Find( pOwner );
 		
 		if ( iQueued != m_QueuedRestores.InvalidIndex() )
@@ -318,7 +317,7 @@ public:
 			
 			if ( header.modelName != NULL_STRING )
 			{
-				IHandleEntity *pGlobalEntity = header.hEntity;
+				IHandleEntity *pGlobalEntity = EntityList()->GetBaseEntityFromHandle(header.hEntity);
 #if !defined( CLIENT_DLL )
 				if ( NULL_STRING != pGlobalEntity->GetEngineObject()->GetGlobalname() )
 				{
@@ -508,7 +507,7 @@ public:
 	{
 		if (EntityList()->PhysGetEnv())
 		{
-			physrestoreparams_t params = { pRestore, ppObject, header.type, header.hEntity.Get(), STRING(header.modelName), pCollide, EntityList()->PhysGetEnv(), physgametrace };
+			physrestoreparams_t params = { pRestore, ppObject, header.type, EntityList()->GetBaseEntityFromHandle(header.hEntity), STRING(header.modelName), pCollide, EntityList()->PhysGetEnv(), physgametrace };
 			EntityList()->PhysGetEnv()->Restore( params );
 		}
 	}
@@ -656,7 +655,7 @@ private:
 	static bool SaveQueueFunc( const QueuedItem_t &left, const QueuedItem_t &right )
 	{
 		if ( left.header.type == right.header.type )
-			return ( left.header.hEntity->entindex() > right.header.hEntity->entindex() );
+			return (EntityList()->GetBaseEntityFromHandle(left.header.hEntity)->entindex() > EntityList()->GetBaseEntityFromHandle(right.header.hEntity)->entindex() );
 
 		return ( left.header.type > right.header.type );
 	}
@@ -676,6 +675,7 @@ private:
 	//---------------------------------
 	
 	PhysBlockHeader_t							m_blockHeader;
+	IEntityList*								pEntityList = NULL;
 };
 
 //-----------------------------------------------------------------------------

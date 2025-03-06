@@ -504,7 +504,7 @@ void CPropTelescopicArm::InputEnable( inputdata_t &inputdata )
 
 void CPropTelescopicArm::InputSetTarget( inputdata_t &inputdata )
 {
-	SetTarget( inputdata.value.String() );
+	SetTarget( inputdata.value.String(EntityList()) );
 }
 
 void CPropTelescopicArm::InputTargetPlayer( inputdata_t &inputdata )

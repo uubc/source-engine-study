@@ -357,7 +357,7 @@ void CEnvEntityMaker::InputForceSpawn( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CEnvEntityMaker::InputForceSpawnAtEntityOrigin( inputdata_t &inputdata )
 {
-	IServerEntity *pTargetEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(), this, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pTargetEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), this, inputdata.pActivator, inputdata.pCaller );
 		
 	if( pTargetEntity )
 	{

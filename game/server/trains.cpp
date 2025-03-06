@@ -1546,7 +1546,7 @@ void CFuncTrackTrain::SetSpeedForwardModifier( float flModifier )
 //-----------------------------------------------------------------------------
 void CFuncTrackTrain::InputTeleportToPathTrack( inputdata_t &inputdata )
 {
-	const char *pszName = inputdata.value.String();
+	const char *pszName = inputdata.value.String(EntityList());
 	CPathTrack *pTrack = dynamic_cast<CPathTrack*>( EntityList()->FindEntityByName( NULL, pszName ) );
 
 	if ( pTrack )

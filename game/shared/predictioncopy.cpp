@@ -5,7 +5,16 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#include "cbase.h"
+//#include "cbase.h"
+#include "tier1/convar.h"
+#include "engine/ivmodelinfo.h"
+#include "icliententity.h"
+#include "globalvars_base.h"
+#ifdef WIN32
+#include <typeinfo>
+#else
+#include <typeinfo>
+#endif
 
 #if !defined( NO_ENTITY_PREDICTION )
 
@@ -60,6 +69,12 @@ static const char *g_FieldTypes[ FIELD_TYPECOUNT ] =
 	"FIELD_INTERVAL"		// FIELD_INTERVAL
 	"FIELD_MODELINDEX"		// FIELD_MODELINDEX
 };
+
+#ifdef CLIENT_DLL
+extern IVModelInfoClient* modelinfo;
+extern CGlobalVarsBase* gpGlobals;
+#endif // CLIENT_DLL
+
 
 CPredictionCopy::CPredictionCopy( int type, void *dest, bool dest_packed, void const *src, bool src_packed, 
 	bool counterrors /*= false*/, bool reporterrors /*= false*/, bool performcopy /*= true*/,
@@ -545,7 +560,7 @@ void CPredictionCopy::WatchQuaternion( difftype_t dt, Quaternion* outValue, cons
 
 
 
-void CPredictionCopy::DescribeEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count )
+void CPredictionCopy::DescribeEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count )
 {
 	if ( !m_bErrorCheck )
 		return;
@@ -553,11 +568,11 @@ void CPredictionCopy::DescribeEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE
 	if ( dt == DIFFERS )
 	{
 		int i = 0;
-		ReportFieldsDiffer( "EHandles differ (net) 0x%p (pred) 0x%p\n", (void const *)invalue[ i ].Get(), (void *)outvalue[ i ].Get() );
+		ReportFieldsDiffer( "EHandles differ (net) 0x%p (pred) 0x%p\n", (void const *)entitylist->GetBaseEntityFromHandle(invalue[ i ]), (void *)entitylist->GetBaseEntityFromHandle(outvalue[ i ]) );
 	}
 
 #if defined( CLIENT_DLL )
-	C_BaseEntity *ent = outvalue[0].Get();
+	IClientEntity *ent = entitylist->GetBaseEntityFromHandle(outvalue[0]);
 	if ( ent )
 	{
 		const char *classname = ent->GetClassname();
@@ -566,7 +581,7 @@ void CPredictionCopy::DescribeEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE
 			classname = typeid( *ent ).name();
 		}
 
-		DescribeFields( dt, "EHandle (0x%p->%s)", (void *)outvalue[ 0 ], classname );
+		DescribeFields( dt, "EHandle (0x%p->%s)", (void *)entitylist->GetBaseEntityFromHandle(outvalue[ 0 ]), classname );
 	}
 	else
 	{
@@ -579,13 +594,13 @@ void CPredictionCopy::DescribeEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE
 
 }
 
-void CPredictionCopy::WatchEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count )
+void CPredictionCopy::WatchEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count )
 {
 	if ( m_pWatchField != m_pCurrentField )
 		return;
 
 #if defined( CLIENT_DLL )
-	C_BaseEntity *ent = outvalue[0].Get();
+	IClientEntity *ent = entitylist->GetBaseEntityFromHandle(outvalue[0]);
 	if ( ent )
 	{
 		const char *classname = ent->GetClassname();
@@ -594,7 +609,7 @@ void CPredictionCopy::WatchEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE co
 			classname = typeid( *ent ).name();
 		}
 
-		WatchMsg( "EHandle (0x%p->%s)", (void *)outvalue[ 0 ], classname );
+		WatchMsg( "EHandle (0x%p->%s)", (void *)entitylist->GetBaseEntityFromHandle(outvalue[ 0 ]), classname );
 	}
 	else
 	{
@@ -954,7 +969,7 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareQuaternion( Quaternion* outV
 	return retval;
 }
 
-void CPredictionCopy::CopyEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count )
+void CPredictionCopy::CopyEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count )
 {
 	if ( !m_bPerformCopy )
 		return;
@@ -968,7 +983,7 @@ void CPredictionCopy::CopyEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE con
 	}
 }
 
-CPredictionCopy::difftype_t CPredictionCopy::CompareEHandle( EHANDLE *outvalue, EHANDLE const *invalue, int count )
+CPredictionCopy::difftype_t CPredictionCopy::CompareEHandle( CBaseHandle *outvalue, CBaseHandle const *invalue, int count )
 {
 	if ( !m_bErrorCheck )
 		return DIFFERS;
@@ -978,7 +993,7 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareEHandle( EHANDLE *outvalue, 
 	{
 		for ( i = 0; i < count; i++ )
 		{
-			if ( outvalue[ i ].Get() == invalue[ i ].Get() )
+			if ( entitylist->GetBaseEntityFromHandle(outvalue[ i ]) == entitylist->GetBaseEntityFromHandle(invalue[ i ]) )
 				continue;
 
 			return DIFFERS;
@@ -1201,10 +1216,10 @@ void CPredictionCopy::CopyFields( int chain_count, datamap_t *pRootMap, typedesc
 			break;
 		case FIELD_EHANDLE:
 			{
-				difftype = CompareEHandle( (EHANDLE *)pOutputData, (EHANDLE const *)pInputData, fieldSize );
-				CopyEHandle( difftype, (EHANDLE *)pOutputData, (EHANDLE const *)pInputData, fieldSize );
-				if ( m_bErrorCheck && m_bShouldDescribe ) DescribeEHandle( difftype, (EHANDLE *)pOutputData, (EHANDLE const *)pInputData, fieldSize );
-				if ( bShouldWatch ) WatchEHandle( difftype, (EHANDLE *)pOutputData, (EHANDLE const *)pInputData, fieldSize );
+				difftype = CompareEHandle( (CBaseHandle*)pOutputData, (CBaseHandle const *)pInputData, fieldSize );
+				CopyEHandle( difftype, (CBaseHandle*)pOutputData, (CBaseHandle const *)pInputData, fieldSize );
+				if ( m_bErrorCheck && m_bShouldDescribe ) DescribeEHandle( difftype, (CBaseHandle*)pOutputData, (CBaseHandle const *)pInputData, fieldSize );
+				if ( bShouldWatch ) WatchEHandle( difftype, (CBaseHandle*)pOutputData, (CBaseHandle const *)pInputData, fieldSize );
 			}
 			break;
 		case FIELD_FUNCTION:
@@ -1592,9 +1607,9 @@ void CPredictionDescribeData::DescribeQuaternion( const Quaternion *inValue, int
 				inValue[0][0], inValue[0][1], inValue[0][2], inValue[0][3] );
 }
 
-void CPredictionDescribeData::DescribeEHandle( EHANDLE const *invalue, int count )
+void CPredictionDescribeData::DescribeEHandle(CBaseHandle const *invalue, int count )
 {
-	Describe( "EHandle (%p)\n", (void *)invalue[ 0 ] );
+	Describe( "EHandle (%p)\n", (void *)entitylist->GetBaseEntityFromHandle(invalue[ 0 ]) );
 }
 
 void CPredictionDescribeData::DescribeFields_R( int chain_count, datamap_t *pRootMap, typedescription_t *pFields, int fieldCount )
@@ -1717,7 +1732,7 @@ void CPredictionDescribeData::DescribeFields_R( int chain_count, datamap_t *pRoo
 			break;
 			
 		case FIELD_EHANDLE:
-			DescribeEHandle( (EHANDLE const *)pInputData, fieldSize );
+			DescribeEHandle( (CBaseHandle const *)pInputData, fieldSize );
 			break;
 		case FIELD_FUNCTION:
 			Assert( 0 );
@@ -1761,7 +1776,7 @@ CValueChangeTracker::CValueChangeTracker() :
 
 IClientEntity *CValueChangeTracker::GetEntity()
 {
-	return m_hEntityToTrack.Get();
+	return entitylist->GetBaseEntityFromHandle(m_hEntityToTrack);
 }
 
 void CValueChangeTracker::GetValue( char *buf, size_t bufsize )
@@ -1770,10 +1785,10 @@ void CValueChangeTracker::GetValue( char *buf, size_t bufsize )
 
 	Assert( IsActive() );
 
-	if ( !m_hEntityToTrack.Get() )
+	if ( !entitylist->GetBaseEntityFromHandle(m_hEntityToTrack) )
 		return;
 
-	void const *pInputData = ( const void * )m_hEntityToTrack.Get();
+	void const *pInputData = ( const void * )entitylist->GetBaseEntityFromHandle(m_hEntityToTrack);
 	typedescription_t *td = NULL;
 	for ( int i = 0; i < m_FieldStack.Count(); ++i )
 	{
@@ -1859,7 +1874,7 @@ void CValueChangeTracker::GetValue( char *buf, size_t bufsize )
 		break;
 
 	case FIELD_EHANDLE:
-		Q_snprintf( buf, bufsize, "eh 0x%p", (void const *)((const EHANDLE *)pInputData)->Get() );
+		Q_snprintf( buf, bufsize, "eh 0x%p", (void const *)entitylist->GetBaseEntityFromHandle(*(const CBaseHandle*)pInputData));
 		break;
 	}
 }
@@ -2012,7 +2027,7 @@ CON_COMMAND_F( cl_pred_track, "<entindex> <fieldname>:  Track changes to entity 
 
 	int iEntIndex = Q_atoi( args[1] );
 
-	C_BaseEntity *ent = (C_BaseEntity*)EntityList()->GetBaseEntity( iEntIndex );
+	IClientEntity *ent = entitylist->GetBaseEntity( iEntIndex );
 	if ( !ent )
 	{
 		Msg( "cl_pred_track:  Unknown ent index %d\n", iEntIndex );

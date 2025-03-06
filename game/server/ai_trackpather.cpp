@@ -1633,8 +1633,8 @@ void CAI_TrackPather::SetTrack( string_t strTrackName )
 //-----------------------------------------------------------------------------
 void CAI_TrackPather::InputSetTrack( inputdata_t &inputdata )
 {
-	string_t strTrackName = MAKE_STRING( inputdata.value.String() );
-	SetTrack( MAKE_STRING( inputdata.value.String() ) );
+	string_t strTrackName = MAKE_STRING( inputdata.value.String(EntityList()) );
+	SetTrack( MAKE_STRING( inputdata.value.String(EntityList()) ) );
 }
 
 
@@ -1671,7 +1671,7 @@ void CAI_TrackPather::FlyToPathTrack( string_t strTrackName )
 void CAI_TrackPather::InputFlyToPathTrack( inputdata_t &inputdata )
 { 
 	// Find our specified target
-	string_t strTrackName = MAKE_STRING( inputdata.value.String() );
+	string_t strTrackName = MAKE_STRING( inputdata.value.String(EntityList()) );
 	m_nPauseState = PAUSE_NO_PAUSE;
 	FlyToPathTrack( strTrackName );
 }

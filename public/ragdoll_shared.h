@@ -90,7 +90,6 @@ class IStudioHdr;
 #include "soundenvelope.h"
 #include "collisionproperty.h"
 #include "portal_util_shared.h"
-#include "predictioncopy.h"
 #include "ai_activity.h"
 #include "vphysics_sound.h"
 

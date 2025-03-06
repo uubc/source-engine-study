@@ -1626,5 +1626,5 @@ void CNPC_Portal_FloorTurret::FireBullet( const char *pTargetName )
 //-----------------------------------------------------------------------------
 void CNPC_Portal_FloorTurret::InputFireBullet( inputdata_t &inputdata )
 {
-	FireBullet( inputdata.value.String() );
+	FireBullet( inputdata.value.String(EntityList()) );
 }

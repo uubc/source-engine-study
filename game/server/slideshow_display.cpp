@@ -314,7 +314,7 @@ void CSlideshowDisplay::InputEnable( inputdata_t &inputdata )
 
 void CSlideshowDisplay::InputSetDisplayText( inputdata_t &inputdata )
 {
-	Q_strcpy( m_szDisplayText.GetForModify(), inputdata.value.String() );
+	Q_strcpy( m_szDisplayText.GetForModify(), inputdata.value.String(EntityList()) );
 }
 
 void CSlideshowDisplay::InputRemoveAllSlides( inputdata_t &inputdata )
@@ -330,7 +330,7 @@ void CSlideshowDisplay::InputAddSlides( inputdata_t &inputdata )
 	int iList;
 	for ( iList = 0; iList < m_SlideKeywordList.Count(); ++iList )
 	{
-		if ( Q_strcmp( m_SlideKeywordList[ iList ]->szSlideKeyword, inputdata.value.String() ) == 0 )
+		if ( Q_strcmp( m_SlideKeywordList[ iList ]->szSlideKeyword, inputdata.value.String(EntityList()) ) == 0 )
 			break;
 	}
 

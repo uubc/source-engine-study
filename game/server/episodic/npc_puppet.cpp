@@ -94,7 +94,7 @@ void CNPC_Puppet::Spawn( void )
 void CNPC_Puppet::InputSetAnimationTarget( inputdata_t &inputdata )
 {
 	// Take the new name
-	m_sAnimTargetname = MAKE_STRING( inputdata.value.String() );
+	m_sAnimTargetname = MAKE_STRING( inputdata.value.String(EntityList()) );
 
 	// Find our animation target
 	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, m_sAnimTargetname );

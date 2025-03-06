@@ -109,10 +109,10 @@ void CWaterLODControl::Spawn( void )
 //------------------------------------------------------------------------------
 void CWaterLODControl::SetCheapWaterStartDistance( inputdata_t &inputdata )
 {
-	m_flCheapWaterStartDistance = atof( inputdata.value.String() );
+	m_flCheapWaterStartDistance = atof( inputdata.value.String(EntityList()) );
 }
 
 void CWaterLODControl::SetCheapWaterEndDistance( inputdata_t &inputdata )
 {
-	m_flCheapWaterEndDistance = atof( inputdata.value.String() );
+	m_flCheapWaterEndDistance = atof( inputdata.value.String(EntityList()) );
 }

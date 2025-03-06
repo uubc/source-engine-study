@@ -489,7 +489,7 @@ public:
 	virtual void SetParentName(const char* parentName) = 0;
 	virtual string_t& GetParentName() = 0;
 	virtual void SetName(const char* newName) = 0;
-	virtual string_t& GetEntityName() = 0;
+	virtual const string_t& GetEntityName() const = 0;
 	virtual bool NameMatches(const char* pszNameOrWildcard) = 0;
 	virtual bool ClassMatches(const char* pszClassOrWildcard) = 0;
 	virtual bool NameMatches(string_t nameStr) = 0;
@@ -1058,7 +1058,7 @@ public:
 	virtual bool NameMatches(string_t nameStr) = 0;
 	virtual bool ClassMatches(const char* pszClassOrWildcard) = 0;
 	virtual bool ClassMatches(string_t nameStr) = 0;
-	virtual string_t GetEntityName() = 0;
+	virtual const string_t& GetEntityName() const = 0;
 	virtual const string_t& GetTarget() const = 0;
 	virtual void SetTarget(const string_t& target) = 0;
 	virtual bool HasTarget(string_t targetname) = 0;
@@ -1499,6 +1499,7 @@ public:
 	virtual IServerEntity* FindEntityByName(IServerEntity* pStartEntity, string_t iszName, IServerEntity* pSearchingEntity = NULL, IServerEntity* pActivator = NULL, IServerEntity* pCaller = NULL, IEntityFindFilter* pFilter = NULL) = 0;
 	virtual IServerEntity* FindEntityByNameNearest(const char* szName, const Vector& vecSrc, float flRadius, IServerEntity* pSearchingEntity = NULL, IServerEntity* pActivator = NULL, IServerEntity* pCaller = NULL) = 0;
 	virtual IServerEntity* FindEntityByNameWithin(IServerEntity* pStartEntity, const char* szName, const Vector& vecSrc, float flRadius, IServerEntity* pSearchingEntity = NULL, IServerEntity* pActivator = NULL, IServerEntity* pCaller = NULL) = 0;
+	virtual IHandleEntity* FindHandleEntityByName(IHandleEntity* pStartEntity, string_t iszName) { return FindEntityByName((IServerEntity*)pStartEntity, iszName); }
 
 	virtual IServerEntity* FindEntityByTarget(IServerEntity* pStartEntity, const char* szName) = 0;
 	virtual IServerEntity* FindEntityByModel(IServerEntity* pStartEntity, const char* szModelName) = 0;

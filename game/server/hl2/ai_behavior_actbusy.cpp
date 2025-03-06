@@ -2465,7 +2465,7 @@ void CAI_ActBusyGoal::InputSetBusySearchRange( inputdata_t &inputdata )
 void CAI_ActBusyGoal::InputForceNPCToActBusy( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	CAI_Hint *pHintNode = NULL;
 	float flMaxTime = NO_MAX_TIME;
@@ -2563,7 +2563,7 @@ void CAI_ActBusyGoal::InputForceNPCToActBusy( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CAI_ActBusyGoal::InputForceThisNPCToActBusy( inputdata_t &inputdata )
 {
-	CAI_ActBusyBehavior *pBehavior = GetBusyBehaviorForNPC( inputdata.value.Entity(), "InputForceThisNPCToActBusy" );
+	CAI_ActBusyBehavior *pBehavior = GetBusyBehaviorForNPC( (CBaseEntity*)inputdata.value.Entity(EntityList()), "InputForceThisNPCToActBusy" );
 	if ( !pBehavior )
 		return;
 
@@ -2577,7 +2577,7 @@ void CAI_ActBusyGoal::InputForceThisNPCToActBusy( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CAI_ActBusyGoal::InputForceThisNPCToLeave( inputdata_t &inputdata )
 {
-	CAI_ActBusyBehavior *pBehavior = GetBusyBehaviorForNPC( inputdata.value.Entity(), "InputForceThisNPCToLeave" );
+	CAI_ActBusyBehavior *pBehavior = GetBusyBehaviorForNPC( (CBaseEntity*)inputdata.value.Entity(EntityList()), "InputForceThisNPCToLeave" );
 	if ( !pBehavior )
 		return;
 

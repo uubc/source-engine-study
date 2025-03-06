@@ -9,7 +9,6 @@
 #include "entitylist.h"
 //#include "vphysics/collision_set.h"
 #include "igamesystem.h"
-#include "enginecallback.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -5257,11 +5256,11 @@ const QAngle& CEngineObjectInternal::GetAbsAngles(void) const
 //-----------------------------------------------------------------------------
 CEngineObjectInternal* CEngineObjectInternal::GetMoveParent(void) const
 {
-	return m_hMoveParent.Get() ? (CEngineObjectInternal*)(m_hMoveParent.Get()->GetEngineObject()) : NULL;
+	return serverEntitylist->GetBaseEntityFromHandle(m_hMoveParent) ? (CEngineObjectInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hMoveParent)->GetEngineObject() : NULL;
 }
 
 void CEngineObjectInternal::SetMoveParent(IEngineObjectServer* hMoveParent) {
-	m_hMoveParent = hMoveParent ? hMoveParent->GetOuter() : NULL;
+	m_hMoveParent = hMoveParent ? hMoveParent->GetOuter()->GetRefEHandle() : NULL;
 	//this->NetworkStateChanged();
 }
 
@@ -6096,7 +6095,7 @@ void CEngineObjectInternal::PhysicsRemoveGroundList()
 
 void CEngineObjectInternal::SetGroundEntity(IEngineObjectServer* ground)
 {
-	if ((m_hGroundEntity.Get() ? m_hGroundEntity.Get()->GetEngineObject() : NULL) == ground)
+	if ((serverEntitylist->GetBaseEntityFromHandle(m_hGroundEntity) ? serverEntitylist->GetBaseEntityFromHandle(m_hGroundEntity)->GetEngineObject() : NULL) == ground)
 		return;
 
 	// this can happen in-between updates to the held object controller (physcannon, +USE)
@@ -6114,8 +6113,8 @@ void CEngineObjectInternal::SetGroundEntity(IEngineObjectServer* ground)
 		}
 	}
 
-	IServerEntity* oldGround = m_hGroundEntity;
-	m_hGroundEntity = ground ? ground->GetOuter() : NULL;
+	IServerEntity* oldGround = serverEntitylist->GetBaseEntityFromHandle(m_hGroundEntity);
+	m_hGroundEntity = ground ? ground->GetOuter()->GetRefEHandle() : NULL;
 
 	// Just starting to touch
 	if (!oldGround && ground)
@@ -6148,7 +6147,7 @@ void CEngineObjectInternal::SetGroundEntity(IEngineObjectServer* ground)
 
 CEngineObjectInternal* CEngineObjectInternal::GetGroundEntity(void)
 {
-	return m_hGroundEntity.Get() ? (CEngineObjectInternal*)m_hGroundEntity.Get()->GetEngineObject() : NULL;
+	return serverEntitylist->GetBaseEntityFromHandle(m_hGroundEntity) ? (CEngineObjectInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hGroundEntity)->GetEngineObject() : NULL;
 }
 
 void CEngineObjectInternal::SetModelIndex(int index)
@@ -10065,7 +10064,7 @@ void CEngineObjectInternal::SetOwnerEntity(IEngineObjectServer* pOwner)
 	{
 		if (m_hOwnerEntity.Get() != (pOwner ? pOwner->GetServerEntity() : NULL))
 		{
-			m_hOwnerEntity = (pOwner ? pOwner->GetServerEntity() : NULL);
+			m_hOwnerEntity = (pOwner ? pOwner->GetServerEntity()->GetRefEHandle() : NULL);
 
 			CollisionRulesChanged();
 		}
@@ -10076,7 +10075,7 @@ void CEngineObjectInternal::SetEffectEntity(IEngineObjectServer* pEffectEnt)
 {
 	if (m_hEffectEntity.Get() != (pEffectEnt ? pEffectEnt->GetServerEntity() : NULL))
 	{
-		m_hEffectEntity = (pEffectEnt ? pEffectEnt->GetServerEntity() : NULL);
+		m_hEffectEntity = (pEffectEnt ? pEffectEnt->GetServerEntity()->GetRefEHandle() : NULL);
 	}
 }
 
@@ -10683,8 +10682,8 @@ void CEnginePortalInternal::MoveTo(const Vector& ptCenter, const QAngle& angles)
 
 void CEnginePortalInternal::AttachTo(IEnginePortalServer* pLinkedPortal) 
 {
-	m_hLinkedPortal = pLinkedPortal->AsEngineObject()->GetHandleEntity()->AsServerEntity();
-	GetLinkedPortal()->m_hLinkedPortal = this->AsEngineObject()->GetOuter();
+	m_hLinkedPortal = pLinkedPortal->AsEngineObject()->GetHandleEntity()->AsServerEntity()->GetRefEHandle();
+	GetLinkedPortal()->m_hLinkedPortal = this->AsEngineObject()->GetOuter()->GetRefEHandle();
 }
 
 void CEnginePortalInternal::DetachFromLinked(void) {
@@ -15941,7 +15940,7 @@ CEngineRopeInternal::~CEngineRopeInternal() {
 
 void CEngineRopeInternal::EndpointsChanged()
 {
-	IServerEntity* pStartEnt = m_hStartPoint.Get();
+	IServerEntity* pStartEnt = serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint);
 	if (pStartEnt)
 	{
 		if ((pStartEnt != this->m_pOuter) || GetMoveParent())
@@ -15950,7 +15949,7 @@ void CEngineRopeInternal::EndpointsChanged()
 			pStartEnt->AddWatcherToEntity(this->m_pOuter, POSITIONWATCHER);
 		}
 	}
-	IServerEntity* pEndEnt = m_hEndPoint.Get();
+	IServerEntity* pEndEnt = serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint);
 	if (pEndEnt)
 	{
 		if ((pEndEnt != this->m_pOuter) || GetMoveParent())
@@ -16021,8 +16020,8 @@ void CEngineRopeInternal::ActivateEndDirectionConstraints(bool bEnable)
 
 bool CEngineRopeInternal::SetupHangDistance(float flHangDist)
 {
-	IServerEntity* pEnt1 = m_hStartPoint.Get();
-	IServerEntity* pEnt2 = m_hEndPoint.Get();
+	IServerEntity* pEnt1 = serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint);
+	IServerEntity* pEnt2 = serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint);
 	if (!pEnt1 || !pEnt2)
 		return false;
 
@@ -16049,10 +16048,10 @@ bool CEngineRopeInternal::SetupHangDistance(float flHangDist)
 void CEngineRopeInternal::RecalculateLength(void)
 {
 	// Get my entities
-	if (m_hEndPoint.Get())
+	if (serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint))
 	{
-		IServerEntity* pStartEnt = m_hStartPoint.Get();
-		IServerEntity* pEndEnt = m_hEndPoint.Get();
+		IServerEntity* pStartEnt = serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint);
+		IServerEntity* pEndEnt = serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint);
 
 		// Set the length
 		m_RopeLength = (int)(pStartEnt->GetEngineObject()->GetAbsOrigin() - pEndEnt->GetEngineObject()->GetAbsOrigin()).Length();
@@ -16092,9 +16091,9 @@ bool CEngineRopeInternal::GetEndPointPos2(IServerEntity* pAttached, int iAttachm
 bool CEngineRopeInternal::GetEndPointPos(int iPt, Vector& v)
 {
 	if (iPt == 0)
-		return GetEndPointPos2(m_hStartPoint, m_iStartAttachment, v);
+		return GetEndPointPos2(serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint), m_iStartAttachment, v);
 	else
-		return GetEndPointPos2(m_hEndPoint, m_iEndAttachment, v);
+		return GetEndPointPos2(serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint), m_iEndAttachment, v);
 }
 
 void CEngineRopeInternal::UpdateBBox(bool bForceRelink)
@@ -16146,7 +16145,7 @@ void CEngineRopeInternal::NotifyPositionChanged()
 	// Update our bbox?
 	UpdateBBox(false);
 
-	IServerEntity* ents[2] = { m_hStartPoint.Get(), m_hEndPoint.Get() };
+	IServerEntity* ents[2] = { serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint), serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint) };
 	if ((m_RopeFlags & ROPE_RESIZE) && ents[0] && ents[0]->entindex() != -1 && ents[1] && ents[1]->entindex() != -1)
 	{
 		int len = (int)(ents[0]->GetEngineObject()->GetAbsOrigin() - ents[1]->GetEngineObject()->GetAbsOrigin()).Length() + m_Slack;

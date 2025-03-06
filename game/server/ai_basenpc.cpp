@@ -11580,7 +11580,7 @@ CAI_Pathfinder *CAI_BaseNPC::CreatePathfinder()
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::InputSetRelationship( inputdata_t &inputdata )
 {
-	AddRelationship( inputdata.value.String(), inputdata.pActivator );
+	AddRelationship( inputdata.value.String(EntityList()), inputdata.pActivator );
 }
 
 
@@ -11677,7 +11677,7 @@ void CAI_BaseNPC::InputWake( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::InputForgetEntity( inputdata_t &inputdata )
 {
-	const char *pszEntityToForget = inputdata.value.String();
+	const char *pszEntityToForget = inputdata.value.String(EntityList());
 	ConVarRef developer("developer");
 	if ( developer.GetInt() && pszEntityToForget[strlen( pszEntityToForget ) - 1] == '*' )
 		DevMsg( "InputForgetEntity does not support wildcards\n" );
@@ -11713,7 +11713,7 @@ void CAI_BaseNPC::InputIgnoreDangerSounds( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::InputUpdateEnemyMemory( inputdata_t &inputdata )
 {
-	const char *pszEnemy = inputdata.value.String();
+	const char *pszEnemy = inputdata.value.String(EntityList());
 	IServerEntity *pEnemy = EntityList()->FindEntityByName( NULL, pszEnemy );
 
 	if( pEnemy )
@@ -13870,13 +13870,13 @@ void CAI_BaseNPC::InputForceInteractionWithNPC( inputdata_t &inputdata )
 {
 	// Get the interaction name & target
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// First, the target's name
 	char *pszParam = strtok(parseString," ");
 	if ( !pszParam || !pszParam[0] )
 	{
-		Warning("%s(%s) received ForceInteractionWithNPC input with bad parameters: %s\nFormat should be: ForceInteractionWithNPC <target NPC> <interaction name>\n", GetClassname(), GetDebugName(), inputdata.value.String() );
+		Warning("%s(%s) received ForceInteractionWithNPC input with bad parameters: %s\nFormat should be: ForceInteractionWithNPC <target NPC> <interaction name>\n", GetClassname(), GetDebugName(), inputdata.value.String(EntityList()) );
 		return;
 	}
 	// Find the target
@@ -13897,7 +13897,7 @@ void CAI_BaseNPC::InputForceInteractionWithNPC( inputdata_t &inputdata )
 	pszParam = strtok(NULL," ");
 	if ( !pszParam || !pszParam[0] )
 	{
-		Warning("%s(%s) received ForceInteractionWithNPC input with bad parameters: %s\nFormat should be: ForceInteractionWithNPC <target NPC> <interaction name>\n", GetClassname(), GetDebugName(), inputdata.value.String() );
+		Warning("%s(%s) received ForceInteractionWithNPC input with bad parameters: %s\nFormat should be: ForceInteractionWithNPC <target NPC> <interaction name>\n", GetClassname(), GetDebugName(), inputdata.value.String(EntityList()) );
 		return;
 	}
 

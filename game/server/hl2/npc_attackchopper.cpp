@@ -1007,7 +1007,7 @@ void CNPC_AttackHelicopter::InputOutsideTransition( inputdata_t &inputdata )
 
 void CNPC_AttackHelicopter::InputSetOutsideTransitionTarget( inputdata_t &inputdata )
 {
-	m_iszTransitionTarget = MAKE_STRING( inputdata.value.String() );
+	m_iszTransitionTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 }
 
 
@@ -2938,7 +2938,7 @@ void CNPC_AttackHelicopter::InputDropBombAtTargetInternal( inputdata_t &inputdat
 	m_flInputDropBombTime = gpGlobals->curtime + 0.01f;
 
 	// Find our specified target
-	string_t strBombTarget = MAKE_STRING( inputdata.value.String() );
+	string_t strBombTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 	IServerEntity *pBombEnt = EntityList()->FindEntityByName( NULL, strBombTarget );
 	if ( pBombEnt == NULL )
 	{

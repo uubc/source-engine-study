@@ -128,7 +128,7 @@ void CEnvTonemapController::InputSetTonemapScale( inputdata_t &inputdata )
 void CEnvTonemapController::InputBlendTonemapScale( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get the target tonemap scale
 	char *pszParam = strtok(parseString," ");
@@ -162,7 +162,7 @@ void CEnvTonemapController::InputBlendTonemapScale( inputdata_t &inputdata )
 void CEnvTonemapController::InputSetBloomScaleRange( inputdata_t &inputdata )
 {
 	float bloom_max=1, bloom_min=1;
-	int nargs=sscanf("%f %f",inputdata.value.String(), bloom_max, bloom_min );
+	int nargs=sscanf("%f %f",inputdata.value.String(EntityList()), bloom_max, bloom_min );
 	if (nargs != 2)
 	{
 		Warning("%s (%s) received SetBloomScaleRange input without 2 arguments. Syntax: <max bloom> <min bloom>\n", GetClassname(), GetDebugName() );

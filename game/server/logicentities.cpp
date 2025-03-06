@@ -75,7 +75,7 @@ END_DATADESC()
 void CLogicCompareInteger::InputValue( inputdata_t &inputdata )
 {
 	// make sure it's an int, if it can't be converted just throw it away
-	if ( !inputdata.value.Convert(FIELD_INTEGER) )
+	if ( !inputdata.value.Convert(EntityList(), FIELD_INTEGER) )
 		return;
 
 	// update the value list with the new value
@@ -1774,7 +1774,7 @@ void CLogicCase::Spawn( void )
 //-----------------------------------------------------------------------------
 void CLogicCase::InputValue( inputdata_t &inputdata )
 {
-	const char *pszValue = inputdata.value.String();
+	const char *pszValue = inputdata.value.String(EntityList());
 	for (int i = 0; i < MAX_LOGIC_CASES; i++)
 	{
 		if ((m_nCase[i] != NULL_STRING) && !stricmp(STRING(m_nCase[i]), pszValue))

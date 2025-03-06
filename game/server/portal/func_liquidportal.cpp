@@ -154,7 +154,7 @@ int	CFunc_LiquidPortal::Restore( IRestore &restore )
 
 void CFunc_LiquidPortal::InputSetLinkedLiquidPortal( inputdata_t &inputdata )
 {
-	IServerEntity *pBaseEnt = EntityList()->FindEntityByName( NULL, inputdata.value.String() );
+	IServerEntity *pBaseEnt = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()) );
 	Assert( (pBaseEnt == NULL) || (dynamic_cast<CFunc_LiquidPortal *>(pBaseEnt) != NULL) );
 	SetLinkedLiquidPortal( (CFunc_LiquidPortal *)pBaseEnt );
 }

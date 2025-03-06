@@ -8549,7 +8549,7 @@ void CBasePlayer::InputSetHUDVisibility( inputdata_t &inputdata )
 void CBasePlayer::InputSetFogController( inputdata_t &inputdata )
 {
 	// Find the fog controller with the given name.
-	CFogController *pFogController = dynamic_cast<CFogController*>( EntityList()->FindEntityByName( NULL, inputdata.value.String() ) );
+	CFogController *pFogController = dynamic_cast<CFogController*>( EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()) ) );
 	if ( pFogController )
 	{
 		m_Local.m_PlayerFog.m_hCtrl.Set( pFogController );

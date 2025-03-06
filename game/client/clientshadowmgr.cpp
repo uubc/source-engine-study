@@ -813,7 +813,7 @@ private:
 		TextureHandle_t			m_ShadowTexture;
 		CTextureReference		m_ShadowDepthTexture;
 		int						m_nRenderFrame;
-		CHandle<IClientEntity>	m_hTargetEntity;
+		CBaseHandle				m_hTargetEntity;
 	};
 
 private:
@@ -928,7 +928,7 @@ private:
 	void	UnlockAllShadowDepthTextures();
 
 	// Set and clear flashlight target renderable
-	void	SetFlashlightTarget( ClientShadowHandle_t shadowHandle, CHandle<IClientEntity> targetEntity );
+	void	SetFlashlightTarget( ClientShadowHandle_t shadowHandle, CBaseHandle targetEntity );
 
 	// Set flashlight light world flag
 	void	SetFlashlightLightWorld( ClientShadowHandle_t shadowHandle, bool bLightWorld );
@@ -2621,7 +2621,7 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 	VPROF_BUDGET( "CClientShadowMgr::BuildFlashlight", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
 	bool bLightModels = r_flashlightmodels.GetBool();
-	bool bLightSpecificEntity = shadow.m_hTargetEntity.Get() != NULL;
+	bool bLightSpecificEntity = entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity) != NULL;
 	bool bLightWorld = ( shadow.m_Flags & SHADOW_FLAGS_LIGHT_WORLD ) != 0;
 	int nCount = 0;
 	const int *pLeafList = 0;
@@ -2659,7 +2659,7 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 	// We know what we are focused on, so just add the shadow directly to that receiver
 	Assert( shadow.m_hTargetEntity->GetEngineObject()->GetModel() );
 
-	IEngineObjectClient* pChild = shadow.m_hTargetEntity->GetEngineObject()->FirstMoveChild();
+	IEngineObjectClient* pChild = entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject()->FirstMoveChild();
 	while( pChild )
 	{
 		int modelType = modelinfo->GetModelType( pChild->GetModel() );
@@ -2675,14 +2675,14 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 		pChild = pChild->NextMovePeer();
 	}
 
-	int modelType = modelinfo->GetModelType( shadow.m_hTargetEntity->GetEngineObject()->GetModel() );
+	int modelType = modelinfo->GetModelType(entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject()->GetModel() );
 	if (modelType == mod_brush)
 	{
-		AddShadowToReceiver( handle, shadow.m_hTargetEntity->GetEngineObject(), SHADOW_RECEIVER_BRUSH_MODEL );
+		AddShadowToReceiver( handle, entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject(), SHADOW_RECEIVER_BRUSH_MODEL );
 	}
 	else if ( modelType == mod_studio )
 	{
-		AddShadowToReceiver( handle, shadow.m_hTargetEntity->GetEngineObject(), SHADOW_RECEIVER_STUDIO_MODEL );
+		AddShadowToReceiver( handle, entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject(), SHADOW_RECEIVER_STUDIO_MODEL );
 	}
 }
 
@@ -3454,7 +3454,7 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 		{
 			VPROF_BUDGET( "CClientShadowMgr::AddShadowToReceiver", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
-			if( (!shadow.m_hTargetEntity) || IsFlashlightTarget( handle, pRenderable ) )
+			if( (!entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)) || IsFlashlightTarget( handle, pRenderable ) )
 			{
 				shadowmgr->AddShadowToBrushModel( shadow.m_ShadowHandle, 
 					const_cast<model_t*>(pRenderable->GetModel()),
@@ -3487,7 +3487,7 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 		{
 			VPROF_BUDGET( "CClientShadowMgr::AddShadowToReceiver", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
-			if( (!shadow.m_hTargetEntity) || IsFlashlightTarget( handle, pRenderable ) )
+			if( (!entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)) || IsFlashlightTarget( handle, pRenderable ) )
 			{
 				staticpropmgr->AddShadowToStaticProp( shadow.m_ShadowHandle, pRenderable );
 
@@ -3501,7 +3501,7 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 		{
 			VPROF_BUDGET( "CClientShadowMgr::AddShadowToReceiver", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
-			if( (!shadow.m_hTargetEntity) || IsFlashlightTarget( handle, pRenderable ) )
+			if( (!entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)) || IsFlashlightTarget( handle, pRenderable ) )
 			{
 				pRenderable->CreateModelInstance();
 				shadowmgr->AddShadowToModel( shadow.m_ShadowHandle, pRenderable->GetModelInstance() );
@@ -4127,7 +4127,7 @@ void CClientShadowMgr::UnlockAllShadowDepthTextures()
 	SetViewFlashlightState( 0, NULL );
 }
 
-void CClientShadowMgr::SetFlashlightTarget( ClientShadowHandle_t shadowHandle, CHandle<IClientEntity> targetEntity )
+void CClientShadowMgr::SetFlashlightTarget( ClientShadowHandle_t shadowHandle, CBaseHandle targetEntity )
 {
 	Assert( m_Shadows.IsValidIndex( shadowHandle ) );
 
@@ -4163,10 +4163,10 @@ bool CClientShadowMgr::IsFlashlightTarget( ClientShadowHandle_t shadowHandle, IC
 {
 	ClientShadow_t &shadow = m_Shadows[ shadowHandle ];
 
-	if( shadow.m_hTargetEntity->GetClientRenderable() == pRenderable )
+	if(entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetClientRenderable() == pRenderable )
 		return true;
 
-	IEngineObjectClient* pChild = shadow.m_hTargetEntity->GetEngineObject()->FirstMoveChild();
+	IEngineObjectClient* pChild = entitylist->GetBaseEntityFromHandle(shadow.m_hTargetEntity)->GetEngineObject()->FirstMoveChild();
 	while( pChild )
 	{
 		if( pChild->GetClientRenderable()==pRenderable )

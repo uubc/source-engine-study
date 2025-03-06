@@ -160,7 +160,7 @@ void CNPC_Launcher::InputLOSCheckOff( inputdata_t &inputdata )
 
 void CNPC_Launcher::InputSetEnemy( inputdata_t &inputdata )
 {
-	SetEnemy( inputdata.value.Entity().Get() );
+	SetEnemy( (CBaseEntity*)inputdata.value.Entity(EntityList()) );
 }
 
 void CNPC_Launcher::InputClearEnemy( inputdata_t &inputdata )

@@ -1240,7 +1240,7 @@ void CNPC_RocketTurret::InputDisable( inputdata_t &inputdata )
 
 void CNPC_RocketTurret::InputSetTarget( inputdata_t &inputdata )
 {
-	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, NULL );
+	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, NULL );
 	SetTarget((CBaseEntity*)pTarget );
 }
 

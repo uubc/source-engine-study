@@ -2276,7 +2276,7 @@ void CDynamicProp::PropSetAnim( const char *szAnim )
 //------------------------------------------------------------------------------
 void CDynamicProp::InputSetAnimation( inputdata_t &inputdata )
 {
-	PropSetAnim( inputdata.value.String() );
+	PropSetAnim( inputdata.value.String(EntityList()) );
 }
 
 //------------------------------------------------------------------------------
@@ -2416,7 +2416,7 @@ void COrnamentProp::Activate()
 
 void COrnamentProp::InputSetAttached( inputdata_t &inputdata )
 {
-	AttachTo( inputdata.value.String(), inputdata.pActivator, inputdata.pCaller );
+	AttachTo( inputdata.value.String(EntityList()), inputdata.pActivator, inputdata.pCaller );
 }
 
 void COrnamentProp::AttachTo( const char *pAttachName, IServerEntity *pActivator, IServerEntity *pCaller )
@@ -4014,7 +4014,7 @@ void CBasePropDoor::InputOpen(inputdata_t &inputdata)
 //-----------------------------------------------------------------------------
 void CBasePropDoor::InputOpenAwayFrom(inputdata_t &inputdata)
 {
-	IServerEntity *pOpenAwayFrom = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pOpenAwayFrom = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 	OpenIfUnlocked(inputdata.pActivator, (CBaseEntity*)pOpenAwayFrom);
 }
 

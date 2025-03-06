@@ -151,7 +151,7 @@ private:
 // Data
 protected:
 	// Last object the player was standing on
-	CHandle< C_BaseEntity > m_hLastGround;
+	CBaseHandle		m_hLastGround;
 private:
 	bool			m_bInPrediction;
 	bool			m_bFirstTimePredicted;

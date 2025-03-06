@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------------
 //#include "cbase.h"
 #include "cliententitylist.h"
+#include "predictioncopy.h"
 //#include "vphysics/collision_set.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

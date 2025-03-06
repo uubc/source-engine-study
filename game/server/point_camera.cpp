@@ -114,7 +114,7 @@ void CPointCamera::InputChangeFOV( inputdata_t &inputdata )
 	// Parse the keyvalue data
 	char parseString[255];
 
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get FOV
 	char *pszParam = strtok(parseString," ");

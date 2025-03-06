@@ -238,7 +238,7 @@ void CNPC_Combine::InputStopPatrolling( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CNPC_Combine::InputAssault( inputdata_t &inputdata )
 {
-	m_AssaultBehavior.SetParameters( AllocPooledString(inputdata.value.String()), CUE_DONT_WAIT, RALLY_POINT_SELECT_DEFAULT );
+	m_AssaultBehavior.SetParameters( AllocPooledString(inputdata.value.String(EntityList())), CUE_DONT_WAIT, RALLY_POINT_SELECT_DEFAULT );
 }
 
 //-----------------------------------------------------------------------------
@@ -260,10 +260,10 @@ void CNPC_Combine::InputThrowGrenadeAtTarget( inputdata_t &inputdata )
 	if ( m_NPCState == NPC_STATE_SCRIPT && m_hCine )
 		return;
 
-	IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 	if ( !pEntity )
 	{
-		DevMsg("%s (%s) received ThrowGrenadeAtTarget input, but couldn't find target entity '%s'\n", GetClassname(), GetDebugName(), inputdata.value.String() );
+		DevMsg("%s (%s) received ThrowGrenadeAtTarget input, but couldn't find target entity '%s'\n", GetClassname(), GetDebugName(), inputdata.value.String(EntityList()) );
 		return;
 	}
 

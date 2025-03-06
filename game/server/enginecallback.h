@@ -50,14 +50,6 @@ extern CSteamGameServerAPIContext *steamgameserverapicontext; //available on gam
 extern CGlobalVars*				gpGlobals;
 inline IServerEntityList* EntityList() { return serverEntitylist; }
 
-template<class T>
-inline T* CHandle<T>::Get() const
-{
-#ifdef GAME_DLL
-	return (T*)EntityList()->GetServerEntityFromHandle(*this);
-#endif // GAME_DLL
-}
-
 // returns the next entity of the specified class, using RTTI
 template< class U >
 U* NextEntByClass(U* start)

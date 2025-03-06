@@ -1168,11 +1168,11 @@ void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 		beam.attachmentIndex[0] = pbeam->m_nAttachIndex[0];
 		beam.entity[1] = pbeam->m_hAttachEntity[1];
 		beam.attachmentIndex[1] = pbeam->m_nAttachIndex[1];
-		if (beam.entity[0].Get())
+		if (entitylist->GetBaseEntityFromHandle(beam.entity[0]))
 		{
 			beam.flags |= FBEAM_STARTENTITY;
 		}
-		if (beam.entity[1].Get())
+		if (entitylist->GetBaseEntityFromHandle(beam.entity[1]))
 		{
 			beam.flags |= FBEAM_ENDENTITY;
 		}
@@ -1186,12 +1186,12 @@ void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 
 	beam.flags |= pbeam->GetBeamFlags() & (FBEAM_SINENOISE | FBEAM_SOLID | FBEAM_SHADEIN | FBEAM_SHADEOUT | FBEAM_NOTILE);
 
-	if (beam.entity[0])
+	if (entitylist->GetBaseEntityFromHandle(beam.entity[0]))
 	{
 		// don't draw viewmodel effects in reflections
 		if (g_pViewRender->CurrentViewID() == VIEW_REFLECTION)
 		{
-			int group = beam.entity[0]->GetRenderGroup();
+			int group = entitylist->GetBaseEntityFromHandle(beam.entity[0])->GetRenderGroup();
 			if (group == RENDER_GROUP_VIEW_MODEL_TRANSLUCENT || group == RENDER_GROUP_VIEW_MODEL_OPAQUE)
 				return;
 		}

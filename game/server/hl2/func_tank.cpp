@@ -269,15 +269,15 @@ void CFuncTank::InputSetTargetEntityName( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CFuncTank::InputSetTargetEntity( inputdata_t &inputdata )
 {
-	if ( inputdata.value.Entity() != NULL )
+	if ( inputdata.value.Entity(EntityList()) != NULL )
 	{
-		m_targetEntityName = inputdata.value.Entity()->GetEntityName();
+		m_targetEntityName = inputdata.value.Entity(EntityList())->GetEntityName();
 	}
 	else
 	{
 		m_targetEntityName = NULL_STRING;
 	}
-	m_hTarget = inputdata.value.Entity();
+	m_hTarget = (CBaseEntity*)inputdata.value.Entity(EntityList());
 
 	// No longer aim at target position if have one
 	GetEngineObject()->RemoveSpawnFlags(SF_TANK_AIM_AT_POS);

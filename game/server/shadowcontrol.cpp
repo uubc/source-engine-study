@@ -141,7 +141,7 @@ void CShadowControl::Spawn( void )
 //------------------------------------------------------------------------------
 void CShadowControl::InputSetAngles( inputdata_t &inputdata )
 {
-	const char *pAngles = inputdata.value.String();
+	const char *pAngles = inputdata.value.String(EntityList());
 
 	QAngle angles;
 	UTIL_StringToVector( angles.Base(), pAngles );

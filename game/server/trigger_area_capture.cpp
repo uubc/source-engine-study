@@ -1039,7 +1039,7 @@ void CTriggerAreaCapture::InputSetTeamCanCap( inputdata_t &inputdata )
 {
 	// Get the interaction name & target
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	char *pszParam = strtok(parseString," ");
 	if ( pszParam && pszParam[0] )
@@ -1079,7 +1079,7 @@ void CTriggerAreaCapture::InputSetControlPoint( inputdata_t &inputdata )
 	BreakCapture( false );	// clear the capping for the previous point, forces us to recalc on the new one
 
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	m_iszCapPointName = MAKE_STRING( parseString );
 	m_hPoint = NULL;	// force a reset of this

@@ -1464,7 +1464,7 @@ void CBaseHelicopter::InputMoveSpecifiedSpeed( inputdata_t &inputdata )
 //------------------------------------------------------------------------------
 void CBaseHelicopter::InputSetAngles( inputdata_t &inputdata )
 {
-	const char *pAngles = inputdata.value.String();
+	const char *pAngles = inputdata.value.String(EntityList());
 
 	QAngle angles;
 	UTIL_StringToVector( angles.Base(), pAngles );

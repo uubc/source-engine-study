@@ -1025,14 +1025,14 @@ void CProtoSniper::SetSweepTarget( const char *pszTarget )
 //-----------------------------------------------------------------------------
 void CProtoSniper::InputSweepTarget( inputdata_t &inputdata )
 {
-	SetSweepTarget( inputdata.value.String() );
+	SetSweepTarget( inputdata.value.String(EntityList()) );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CProtoSniper::InputSweepTargetHighestPriority( inputdata_t &inputdata )
 {
-	SetSweepTarget( inputdata.value.String() );
+	SetSweepTarget( inputdata.value.String(EntityList()) );
 	m_bSweepHighestPriority = true;
 
 	if( GetCurSchedule() && stricmp( GetCurSchedule()->GetName(), "SCHED_PSNIPER_RELOAD" ) )
@@ -1081,7 +1081,7 @@ void CProtoSniper::InputSweepGroupRandomly( inputdata_t &inputdata )
 		// If the pointer is null, this isn't a sniper target.
 		if( pTarget )
 		{
-			if( !strcmp( inputdata.value.String(), STRING( pTarget->m_iszGroupName ) ) )
+			if( !strcmp( inputdata.value.String(EntityList()), STRING( pTarget->m_iszGroupName ) ) )
 			{
 				m_pGroupTarget[ m_iNumGroupTargets ] = pTarget;
 				m_iNumGroupTargets++;
@@ -1110,11 +1110,11 @@ void CProtoSniper::InputStopSweeping( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CProtoSniper::InputProtectTarget( inputdata_t &inputdata )
 {
-	m_hProtectTarget = (CBaseEntity*)EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	m_hProtectTarget = (CBaseEntity*)EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 
 	if ( !m_hProtectTarget )
 	{
-		DevMsg( "Sniper %s cannot find protect target %s\n", GetClassname(), inputdata.value.String() );
+		DevMsg( "Sniper %s cannot find protect target %s\n", GetClassname(), inputdata.value.String(EntityList()) );
 		return;
 	}
 

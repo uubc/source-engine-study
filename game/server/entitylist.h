@@ -478,7 +478,7 @@ public:
 	{
 		m_iName = AllocPooledStringInEntityList(newName);
 	}
-	string_t& GetEntityName()
+	const string_t& GetEntityName() const
 	{
 		return m_iName;
 	}
@@ -1040,7 +1040,7 @@ private:
 
 	// Our immediate parent in the movement hierarchy.
 	// FIXME: clarify m_pParent vs. m_pMoveParent
-	CNetworkHandle(IServerEntity, m_hMoveParent);
+	CNetworkVar(CBaseHandle, m_hMoveParent);
 	// cached child list
 	CBaseHandle m_hMoveChild = NULL;
 	// generated from m_pMoveParent
@@ -1071,7 +1071,7 @@ private:
 	int		touchStamp;
 	int		m_fDataObjectTypes;
 
-	CNetworkHandle(IServerEntity, m_hGroundEntity);
+	CNetworkVar(CBaseHandle, m_hGroundEntity);
 	float			m_flGroundChangeTime; // Time that the ground entity changed
 
 	string_t		m_ModelName;
@@ -1178,8 +1178,8 @@ private:
 	CNetworkVar(bool, m_bAlternateSorting);
 	CNetworkVar(int, m_ubInterpolationFrame);
 
-	CNetworkHandle(IServerEntity, m_hOwnerEntity);	// only used to point to an edict it won't collide with
-	CNetworkHandle(IServerEntity, m_hEffectEntity);	// Fire/Dissolve entity.
+	CNetworkVar(CBaseHandle, m_hOwnerEntity);	// only used to point to an edict it won't collide with
+	CNetworkVar(CBaseHandle, m_hEffectEntity);	// Fire/Dissolve entity.
 	CGrabControllerInternal m_grabController;
 };
 
@@ -1969,12 +1969,12 @@ inline void CEngineObjectInternal::SetRenderColorA(byte a)
 
 inline CEngineObjectInternal* CEngineObjectInternal::GetOwnerEntity() const
 {
-	return m_hOwnerEntity.Get() ? (CEngineObjectInternal*)m_hOwnerEntity.Get()->GetEngineObject() : NULL;
+	return serverEntitylist->GetBaseEntityFromHandle(m_hOwnerEntity) ? (CEngineObjectInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hOwnerEntity)->GetEngineObject() : NULL;
 }
 
 inline CEngineObjectInternal* CEngineObjectInternal::GetEffectEntity() const
 {
-	return m_hEffectEntity.Get() ? (CEngineObjectInternal*)m_hEffectEntity.Get()->GetEngineObject() : NULL;
+	return serverEntitylist->GetBaseEntityFromHandle(m_hEffectEntity) ? (CEngineObjectInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hEffectEntity)->GetEngineObject() : NULL;
 }
 
 class CEngineWorldInternal : public CEngineObjectInternal, public IEngineWorldServer {
@@ -2056,10 +2056,10 @@ public:
 	const CEnginePlayerInternal* AsEnginePlayer() const { return this; }
 	CEngineObjectInternal* AsEngineObject() { return this; }
 	const CEngineObjectInternal* AsEngineObject() const { return this; }
-	IEnginePortalServer* GetPortalEnvironment() { return m_hPortalEnvironment.Get() ? m_hPortalEnvironment.Get()->GetEnginePortal() : NULL; }
-	void SetPortalEnvironment(IEnginePortalServer* pEnginePortal) { m_hPortalEnvironment = pEnginePortal ? pEnginePortal->AsEngineObject()->GetHandleEntity()->AsServerEntity() : NULL; }
-	IEnginePortalServer* GetHeldObjectPortal(void) { return m_pHeldObjectPortal.Get() ? m_pHeldObjectPortal.Get()->GetEnginePortal() : NULL; }
-	void SetHeldObjectPortal(IEnginePortalServer* pPortal) { m_pHeldObjectPortal = pPortal ? pPortal->AsEngineObject()->GetHandleEntity()->AsServerEntity() : NULL; }
+	IEnginePortalServer* GetPortalEnvironment() { return serverEntitylist->GetBaseEntityFromHandle(m_hPortalEnvironment) ? serverEntitylist->GetBaseEntityFromHandle(m_hPortalEnvironment)->GetEnginePortal() : NULL; }
+	void SetPortalEnvironment(IEnginePortalServer* pEnginePortal) { m_hPortalEnvironment = pEnginePortal ? pEnginePortal->AsEngineObject()->GetHandleEntity()->AsServerEntity()->GetRefEHandle() : NULL; }
+	IEnginePortalServer* GetHeldObjectPortal(void) { return serverEntitylist->GetBaseEntityFromHandle(m_pHeldObjectPortal) ? serverEntitylist->GetBaseEntityFromHandle(m_pHeldObjectPortal)->GetEnginePortal() : NULL; }
+	void SetHeldObjectPortal(IEnginePortalServer* pPortal) { m_pHeldObjectPortal = pPortal ? pPortal->AsEngineObject()->GetHandleEntity()->AsServerEntity()->GetRefEHandle() : NULL; }
 	void ToggleHeldObjectOnOppositeSideOfPortal(void) { m_bHeldObjectOnOppositeSideOfPortal = !m_bHeldObjectOnOppositeSideOfPortal; }
 	void SetHeldObjectOnOppositeSideOfPortal(bool p_bHeldObjectOnOppositeSideOfPortal) { m_bHeldObjectOnOppositeSideOfPortal = p_bHeldObjectOnOppositeSideOfPortal; }
 	bool IsHeldObjectOnOppositeSideOfPortal(void) { return m_bHeldObjectOnOppositeSideOfPortal; }
@@ -2074,8 +2074,8 @@ private:
 	// Player Physics Shadow
 	int m_vphysicsCollisionState;
 	bool m_bPlayerIsInSimulator = false;
-	CNetworkHandle(IServerEntity, m_hPortalEnvironment); //if the player is in a portal environment, this is the associated portal
-	CNetworkHandle(IServerEntity, m_pHeldObjectPortal);	// networked entity handle
+	CNetworkVar(CBaseHandle, m_hPortalEnvironment); //if the player is in a portal environment, this is the associated portal
+	CNetworkVar(CBaseHandle, m_pHeldObjectPortal);	// networked entity handle
 	CNetworkVar(bool, m_bHeldObjectOnOppositeSideOfPortal);
 	bool m_bSilentDropAndPickup;
 
@@ -2112,8 +2112,8 @@ public:
 	bool IsActivedAndLinked(void) const;
 	void MoveTo(const Vector& ptCenter, const QAngle& angles);
 	void AttachTo(IEnginePortalServer* pLinkedPortal);
-	CEnginePortalInternal* GetLinkedPortal() { return m_hLinkedPortal.Get() ? (CEnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
-	const CEnginePortalInternal* GetLinkedPortal() const { return m_hLinkedPortal.Get() ? (const CEnginePortalInternal*)m_hLinkedPortal.Get()->GetEnginePortal() : NULL; }
+	CEnginePortalInternal* GetLinkedPortal() { return serverEntitylist->GetBaseEntityFromHandle(m_hLinkedPortal) ? (CEnginePortalInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hLinkedPortal)->GetEnginePortal() : NULL; }
+	const CEnginePortalInternal* GetLinkedPortal() const { return serverEntitylist->GetBaseEntityFromHandle(m_hLinkedPortal) ? (const CEnginePortalInternal*)serverEntitylist->GetBaseEntityFromHandle(m_hLinkedPortal)->GetEnginePortal() : NULL; }
 	void DetachFromLinked(void);
 	void UpdateLinkMatrix(IEnginePortalServer* pRemoteCollisionEntity);
 	bool EntityIsInPortalHole(IEngineObjectServer* pEntity) const; //true if the entity is within the portal cutout bounds and crossing the plane. Not just *near* the portal
@@ -2205,7 +2205,7 @@ private:
 	//IPhysicsEnvironment* pPhysicsEnvironment = NULL;
 	CNetworkVar(bool, m_bActivated); //a portal can exist and not be active
 	CNetworkVar(bool, m_bIsPortal2); //For teleportation, this doesn't matter, but for drawing and moving, it matters
-	CNetworkHandle(IServerEntity, m_hLinkedPortal);
+	CNetworkVar(CBaseHandle, m_hLinkedPortal);
 	bool				m_bSimulateVPhysics;
 	bool				m_bLocalDataIsReady; //this side of the portal is properly setup, no guarantees as to linkage to another portal
 	PS_InternalData_t m_InternalData;
@@ -2518,8 +2518,8 @@ public:
 	CEngineRopeInternal(IServerEntityList* pServerEntityList, int iForceEdictIndex, int iSerialNum);
 	~CEngineRopeInternal();
 
-	IServerEntity* GetStartPoint() { return m_hStartPoint; }
-	IServerEntity* GetEndPoint() { return m_hEndPoint.Get(); }
+	IServerEntity* GetStartPoint() { return serverEntitylist->GetBaseEntityFromHandle(m_hStartPoint); }
+	IServerEntity* GetEndPoint() { return serverEntitylist->GetBaseEntityFromHandle(m_hEndPoint); }
 	int GetEndAttachment() { return m_iStartAttachment; };
 
 	void SetStartPoint(IServerEntity* pStartPoint, int attachment = 0);
@@ -2592,8 +2592,8 @@ private:
 	CNetworkVar(int, m_fLockedPoints);
 	CNetworkVar(float, m_flScrollSpeed);
 
-	CNetworkHandle(IServerEntity, m_hStartPoint);		// StartPoint/EndPoint are entities
-	CNetworkHandle(IServerEntity, m_hEndPoint);
+	CNetworkVar(CBaseHandle, m_hStartPoint);		// StartPoint/EndPoint are entities
+	CNetworkVar(CBaseHandle, m_hEndPoint);
 	CNetworkVar(short, m_iStartAttachment);	// StartAttachment/EndAttachment are attachment points.
 	CNetworkVar(short, m_iEndAttachment);
 	// Used to detect changes.

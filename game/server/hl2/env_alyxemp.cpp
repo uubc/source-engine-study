@@ -292,5 +292,5 @@ void CAlyxEmpEffect::Stop( float flDuration )
 //-----------------------------------------------------------------------------
 void CAlyxEmpEffect::InputSetTargetEnt( inputdata_t &inputdata )
 {
-	SetTargetEntity( inputdata.value.String() );
+	SetTargetEntity( inputdata.value.String(EntityList()) );
 }

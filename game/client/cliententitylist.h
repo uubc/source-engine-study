@@ -3035,7 +3035,7 @@ public:
 
 	virtual int					NumberOfEntities( bool bIncludeNonNetworkable = false );
 
-	virtual T*					GetClientUnknownFromHandle( CBaseHandle hEnt );
+	virtual T*					GetClientUnknownFromHandle( CBaseHandle hEnt ) const;
 	virtual IClientNetworkable*	GetClientNetworkableFromHandle( CBaseHandle hEnt );
 	virtual IClientEntity*		GetClientEntityFromHandle( CBaseHandle hEnt );
 
@@ -3067,7 +3067,7 @@ public:
 	ICollideable*			GetCollideable( int entnum );
 
 	IClientRenderable*		GetClientRenderableFromHandle( CBaseHandle hEnt );
-	IClientEntity*			GetBaseEntityFromHandle( CBaseHandle hEnt );
+	IClientEntity*			GetBaseEntityFromHandle( CBaseHandle hEnt ) const;
 	ICollideable*			GetCollideableFromHandle( CBaseHandle hEnt );
 	IClientThinkable*		GetClientThinkableFromHandle( CBaseHandle hEnt );
 
@@ -3986,7 +3986,7 @@ inline T* CClientEntityList<T>::GetListedEntity( int entnum )
 }
 
 template<class T>
-inline T* CClientEntityList<T>::GetClientUnknownFromHandle( CBaseHandle hEnt )
+inline T* CClientEntityList<T>::GetClientUnknownFromHandle( CBaseHandle hEnt ) const
 {
 	return BaseClass::LookupEntity( hEnt );
 }
@@ -4323,7 +4323,7 @@ IClientRenderable* CClientEntityList<T>::GetClientRenderableFromHandle(CBaseHand
 }
 
 template<class T>
-IClientEntity* CClientEntityList<T>::GetBaseEntityFromHandle(CBaseHandle hEnt)
+IClientEntity* CClientEntityList<T>::GetBaseEntityFromHandle(CBaseHandle hEnt) const
 {
 	T* pEnt = GetClientUnknownFromHandle(hEnt);
 	return pEnt ? pEnt->GetBaseEntity() : 0;

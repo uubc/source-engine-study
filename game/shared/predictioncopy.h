@@ -13,12 +13,11 @@
 
 #include <memory.h>
 #include "datamap.h"
-#include "ehandle.h"
 #include "tier1/utlstring.h"
+#include "basehandle.h"
 
 #if defined( CLIENT_DLL )
 class C_BaseEntity;
-typedef CHandle<C_BaseEntity> EHANDLE;
 #if defined( _DEBUG )
 // #define COPY_CHECK_STRESSTEST
 class IGameSystem;
@@ -26,7 +25,6 @@ IGameSystem* GetPredictionCopyTester( void );
 #endif
 #else
 class CBaseEntity;
-typedef CHandle<CBaseEntity> EHANDLE;
 #endif
 
 enum
@@ -65,7 +63,7 @@ public:
 	void	CopyVector( difftype_t dt, Vector* outValue, const Vector *inValue, int count );	// Copy a vector array
 	void	CopyQuaternion( difftype_t dt, Quaternion& outValue, const Quaternion &inValue );				// Copy a quaternion
 	void	CopyQuaternion( difftype_t dt, Quaternion* outValue, const Quaternion *inValue, int count );				// Copy a quaternion array
-	void	CopyEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count );
+	void	CopyEHandle( difftype_t dt, CBaseHandle *outvalue, CBaseHandle const *invalue, int count );
 
 	void	FORCEINLINE CopyData( difftype_t dt, int size, char *outdata, const char *indata )		// Copy a binary data block
 	{
@@ -97,7 +95,7 @@ private:
 	difftype_t	CompareVector( Vector* outValue, const Vector *inValue, int count );	// Compare a vector array
 	difftype_t	CompareQuaternion( Quaternion& outValue, const Quaternion &inValue );				// Compare a Quaternion
 	difftype_t	CompareQuaternion( Quaternion* outValue, const Quaternion *inValue, int count );	// Compare a Quaternion array
-	difftype_t	CompareEHandle( EHANDLE *outvalue, EHANDLE const *invalue, int count );
+	difftype_t	CompareEHandle(CBaseHandle*outvalue, CBaseHandle const *invalue, int count );
 
 	void	DescribeShort( difftype_t dt, short *outvalue, const short *invalue, int count );
 	void	DescribeInt( difftype_t dt, int *outvalue, const int *invalue, int count );		// Compare an int
@@ -109,7 +107,7 @@ private:
 	void	DescribeVector( difftype_t dt, Vector* outValue, const Vector *inValue, int count );	// Compare a vector array
 	void	DescribeQuaternion( difftype_t dt, Quaternion& outValue, const Quaternion &inValue );				// Compare a Quaternion
 	void	DescribeQuaternion( difftype_t dt, Quaternion* outValue, const Quaternion *inValue, int count );	// Compare a Quaternion array
-	void	DescribeEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count );
+	void	DescribeEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count );
 
 	void	WatchShort( difftype_t dt, short *outvalue, const short *invalue, int count );
 	void	WatchInt( difftype_t dt, int *outvalue, const int *invalue, int count );		// Compare an int
@@ -121,7 +119,7 @@ private:
 	void	WatchVector( difftype_t dt, Vector* outValue, const Vector *inValue, int count );	// Compare a vector array
 	void	WatchQuaternion( difftype_t dt, Quaternion& outValue, const Quaternion &inValue );				// Compare a Quaternion
 	void	WatchQuaternion( difftype_t dt, Quaternion* outValue, const Quaternion *inValue, int count );	// Compare a Quaternion array
-	void	WatchEHandle( difftype_t dt, EHANDLE *outvalue, EHANDLE const *invalue, int count );
+	void	WatchEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count );
 
 	// Report function
 	void	ReportFieldsDiffer( PRINTF_FORMAT_STRING const char *fmt, ... );
@@ -178,7 +176,7 @@ public:
 	void	DescribeVector( const Vector *inValue, int count );
 	void	DescribeQuaternion( const Quaternion &inValue );
 	void	DescribeQuaternion( const Quaternion *inValue, int count );
-	void	DescribeEHandle( EHANDLE const *invalue, int count );
+	void	DescribeEHandle(CBaseHandle const *invalue, int count );
 
 	void	DumpDescription( datamap_t *pMap );
 
@@ -231,7 +229,7 @@ private:
 
 	bool				m_bActive : 1;
 	bool				m_bTracking : 1;
-	CHandle<IClientEntity>			m_hEntityToTrack;
+	CBaseHandle			m_hEntityToTrack;
 	CUtlVector< typedescription_t * > m_FieldStack;
 	CUtlString			m_strFieldName;
 	CUtlString			m_strContext;

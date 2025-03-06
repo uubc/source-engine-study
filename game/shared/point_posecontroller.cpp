@@ -273,7 +273,7 @@ void CPoseController::RandomizeFMod( float fExtremeness )
 
 void CPoseController::InputSetPoseParameterName( inputdata_t &inputdata )
 {
-	SetPoseParameterName( inputdata.value.String() );
+	SetPoseParameterName( inputdata.value.String(EntityList()) );
 }
 
 void CPoseController::InputSetPoseValue( inputdata_t &inputdata )

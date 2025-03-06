@@ -460,6 +460,7 @@ public:
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex) {}
 	virtual bool Init(int entnum, int iSerialNum) { return true; }
 	virtual void AfterInit() {};
+	virtual const string_t& GetEntityName() const { static string_t s; return s; }
 	virtual char const* GetClassname(void) const { return NULL; }
 	virtual bool ClassMatches(const char* pszClassOrWildcard) { return false; }
 	virtual char const* GetDebugName(void) const { return NULL; }
@@ -538,6 +539,8 @@ abstract_class IEntityList
 public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
+	virtual IHandleEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
+	virtual IHandleEntity* FindHandleEntityByName(IHandleEntity* pStartEntity, string_t iszName) = 0;
 	virtual IEngineWorld* GetEngineWorld() = 0;
 	virtual IHandleWorld* GetWorld() = 0;
 	virtual int GetPortalCount() = 0;

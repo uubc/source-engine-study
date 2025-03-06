@@ -2260,12 +2260,12 @@ void CNPC_Vortigaunt::InputDisableArmorRecharge( inputdata_t &data )
 //-----------------------------------------------------------------------------
 void CNPC_Vortigaunt::InputChargeTarget( inputdata_t &data )
 {
-	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, data.value.String(), NULL, data.pActivator, data.pCaller );
+	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, data.value.String(EntityList()), NULL, data.pActivator, data.pCaller );
 
 	// Must be valid
 	if ( pTarget == NULL )
 	{
-		DevMsg( 1, "Unable to charge from unknown entity: %s!\n", data.value.String() );
+		DevMsg( 1, "Unable to charge from unknown entity: %s!\n", data.value.String(EntityList()) );
 		return;
 	}
 
@@ -2288,12 +2288,12 @@ void CNPC_Vortigaunt::InputChargeTarget( inputdata_t &data )
 //-----------------------------------------------------------------------------
 void CNPC_Vortigaunt::InputExtractBugbait( inputdata_t &data )
 {
-	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, data.value.String(), NULL, data.pActivator, data.pCaller );
+	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, data.value.String(EntityList()), NULL, data.pActivator, data.pCaller );
 
 	// Must be valid
 	if ( pTarget == NULL )
 	{
-		DevMsg( 1, "Unable to extract bugbait from unknown entity %s!\n", data.value.String() );
+		DevMsg( 1, "Unable to extract bugbait from unknown entity %s!\n", data.value.String(EntityList()) );
 		return;
 	}
 

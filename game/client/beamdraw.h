@@ -15,7 +15,7 @@
 #include "mathlib/vector.h"
 #include "tier2/beamsegdraw.h"
 #include "shareddefs.h"
-#include "ehandle.h"
+#include "basehandle.h"
 #include "c_pixel_visibility.h"
 
 #define NOISE_DIVISIONS		128
@@ -99,7 +99,7 @@ public:
 	int				segments;
 
 	// Attachment entities for the beam
-	CHandle<IClientEntity> entity[MAX_BEAM_ENTS];
+	CBaseHandle		entity[MAX_BEAM_ENTS];
 	int				attachmentIndex[MAX_BEAM_ENTS];
 
 	// Model info

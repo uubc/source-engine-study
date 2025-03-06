@@ -1155,7 +1155,7 @@ public:
 	virtual IEngineWorldClient* GetEngineWorld() = 0;
 	virtual IClientNetworkable* GetClientNetworkable(int entnum) = 0;
 	virtual IClientNetworkable* GetClientNetworkableFromHandle(CBaseHandle hEnt) = 0;
-	virtual IClientUnknown* GetClientUnknownFromHandle(CBaseHandle hEnt) = 0;
+	virtual IClientUnknown* GetClientUnknownFromHandle(CBaseHandle hEnt) const = 0;
 	virtual IClientRenderable* GetClientRenderableFromHandle(CBaseHandle hEnt) = 0;
 	virtual IClientThinkable* GetClientThinkableFromHandle(CBaseHandle hEnt) = 0;
 
@@ -1167,7 +1167,8 @@ public:
 	virtual IClientEntity* GetBaseEntity(int entnum) = 0;
 	// For backwards compatibility...
 	virtual IClientEntity* GetEnt(int entnum) { return GetBaseEntity(entnum); }
-	virtual IClientEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) = 0;
+	virtual IClientEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
+	virtual IHandleEntity* FindHandleEntityByName(IHandleEntity* pStartEntity, string_t iszName) { return NULL; }
 	virtual IClientEntity* FirstBaseEntity() const = 0;
 	virtual IClientEntity* NextBaseEntity(IClientEntity* pEnt) const = 0;
 	virtual IClientEntity* GetLocalPlayer(void) = 0;

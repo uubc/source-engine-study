@@ -105,5 +105,5 @@ void CFuncMonitor::SetCameraByName(const char *szName)
 //-----------------------------------------------------------------------------
 void CFuncMonitor::InputSetCamera(inputdata_t &inputdata)
 {
-	SetCameraByName( inputdata.value.String() );
+	SetCameraByName( inputdata.value.String(EntityList()) );
 }

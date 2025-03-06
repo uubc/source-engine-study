@@ -2223,7 +2223,7 @@ void CSceneEntity::InputInterjectResponse( inputdata_t &inputdata )
 			CAI_BaseActor *npc = candidates[ i ];
 			Assert( npc );
 
-			AI_Response *response = npc->SpeakFindResponse( inputdata.value.String(), modifiers );
+			AI_Response *response = npc->SpeakFindResponse( inputdata.value.String(EntityList()), modifiers );
 			if ( !response )
 				continue;
 
@@ -2256,7 +2256,7 @@ void CSceneEntity::InputInterjectResponse( inputdata_t &inputdata )
 				NPCInterjection *pInterjection = &validResponses[ i ];
 				if ( i == slot )
 				{
-					pInterjection->npc->SpeakDispatchResponse( inputdata.value.String(), pInterjection->response );
+					pInterjection->npc->SpeakDispatchResponse( inputdata.value.String(EntityList()), pInterjection->response );
 				}
 				else
 				{

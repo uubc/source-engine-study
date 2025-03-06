@@ -210,7 +210,7 @@ void CFogController::InputSetFarZ(inputdata_t &inputdata)
 //------------------------------------------------------------------------------
 void CFogController::InputSetAngles( inputdata_t &inputdata )
 {
-	const char *pAngles = inputdata.value.String();
+	const char *pAngles = inputdata.value.String(EntityList());
 
 	QAngle angles;
 	UTIL_StringToVector( angles.Base(), pAngles );

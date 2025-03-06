@@ -336,7 +336,7 @@ void CNPC_Crow::OnChangeActivity( Activity eNewActivity )
 //-----------------------------------------------------------------------------
 void CNPC_Crow::InputFlyAway( inputdata_t &inputdata )
 {
-	string_t sTarget = MAKE_STRING( inputdata.value.String() );
+	string_t sTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 
 	if ( sTarget != NULL_STRING )// this npc has a target
 	{

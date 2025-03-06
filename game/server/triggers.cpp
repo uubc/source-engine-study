@@ -4153,7 +4153,7 @@ void CTriggerVPhysicsMotion::InputSetVelocityLimitTime( inputdata_t &inputdata )
 	m_linearLimitStartTime = gpGlobals->curtime;
 
 	float args[2];
-	UTIL_StringToFloatArray( args, 2, inputdata.value.String() );
+	UTIL_StringToFloatArray( args, 2, inputdata.value.String(EntityList()) );
 	m_linearLimit = args[0];
 	m_linearLimitTime = args[1];
 }

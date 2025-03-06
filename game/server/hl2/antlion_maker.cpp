@@ -1383,7 +1383,7 @@ void CAntlionTemplateMaker::ChildPostSpawn( CAI_BaseNPC *pChild )
 void CAntlionTemplateMaker::InputSetFightTarget( inputdata_t &inputdata )
 {
 	// Set our new goal
-	m_strFightTarget = MAKE_STRING( inputdata.value.String() );
+	m_strFightTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 
 	SetFightTarget( m_strFightTarget, inputdata.pActivator, inputdata.pCaller );
 	SetChildMoveState( ANTLION_MOVE_FIGHT_TO_GOAL );
@@ -1398,7 +1398,7 @@ void CAntlionTemplateMaker::InputSetFightTarget( inputdata_t &inputdata )
 void CAntlionTemplateMaker::InputSetFollowTarget( inputdata_t &inputdata )
 {
 	// Set our new goal
-	m_strFollowTarget = MAKE_STRING( inputdata.value.String() );
+	m_strFollowTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 
 	SetFollowTarget( m_strFollowTarget, inputdata.pActivator, inputdata.pCaller );
 	SetChildMoveState( ANTLION_MOVE_FOLLOW );

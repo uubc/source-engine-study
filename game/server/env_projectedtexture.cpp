@@ -186,7 +186,7 @@ void CEnvProjectedTexture::InputSetFOV( inputdata_t &inputdata )
 
 void CEnvProjectedTexture::InputSetTarget( inputdata_t &inputdata )
 {
-	m_hTargetEntity = inputdata.value.Entity();
+	m_hTargetEntity = (CBaseEntity*)inputdata.value.Entity(EntityList());
 }
 
 void CEnvProjectedTexture::InputSetCameraSpace( inputdata_t &inputdata )
@@ -221,7 +221,7 @@ void CEnvProjectedTexture::InputSetAmbient( inputdata_t &inputdata )
 
 void CEnvProjectedTexture::InputSetSpotlightTexture( inputdata_t &inputdata )
 {
-	Q_strcpy( m_SpotlightTextureName.GetForModify(), inputdata.value.String() );
+	Q_strcpy( m_SpotlightTextureName.GetForModify(), inputdata.value.String(EntityList()) );
 }
 
 void CEnvProjectedTexture::Activate( void )

@@ -3467,11 +3467,11 @@ void CNPC_AntlionGuard::InputSetShoveTarget( inputdata_t &inputdata )
 	if ( IsAlive() == false )
 		return;
 
-	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 
 	if ( pTarget == NULL )
 	{
-		Warning( "**Guard %s cannot find shove target %s\n", GetClassname(), inputdata.value.String() );
+		Warning( "**Guard %s cannot find shove target %s\n", GetClassname(), inputdata.value.String(EntityList()) );
 		m_hShoveTarget = NULL;
 		return;
 	}
@@ -3489,7 +3489,7 @@ void CNPC_AntlionGuard::InputSetChargeTarget( inputdata_t &inputdata )
 
 	// Pull the target & position out of the string
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get charge target name
 	char *pszParam = strtok(parseString," ");

@@ -330,7 +330,7 @@ void CScriptIntro::InputDeactivate( inputdata_t &inputdata )
 void CScriptIntro::InputFadeTo( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get the fade alpha
 	char *pszParam = strtok(parseString," ");
@@ -363,7 +363,7 @@ void CScriptIntro::InputFadeTo( inputdata_t &inputdata )
 void CScriptIntro::InputSetFadeColor( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get the fade colors
 	char *pszParam = strtok(parseString," ");

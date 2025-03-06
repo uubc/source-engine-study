@@ -2018,7 +2018,7 @@ void CFastZombie::InputAttachToVehicle( inputdata_t &inputdata )
 	SetCondition( COND_PROVOKED );
 
 	// Find the target vehicle
-	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String() );
+	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String(EntityList()) );
 	CPropJeepEpisodic *pVehicle = dynamic_cast<CPropJeepEpisodic *>(pEntity);
 
 	// Get in the car if it's valid

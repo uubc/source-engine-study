@@ -1481,7 +1481,7 @@ void CBaseHelicopter::ChangePathCorner( const char *pszName )
 //-----------------------------------------------------------------------------
 void CBaseHelicopter::InputChangePathCorner( inputdata_t &inputdata )
 {
-	ChangePathCorner( inputdata.value.String() );
+	ChangePathCorner( inputdata.value.String(EntityList()) );
 }
 
 

@@ -494,7 +494,7 @@ public:
 	//-----------------------------------------------------------------------------
 // Inline methods
 //-----------------------------------------------------------------------------
-	string_t GetEntityName()
+	const string_t& GetEntityName() const
 	{
 		return GetEngineObject()->GetEntityName();
 	}

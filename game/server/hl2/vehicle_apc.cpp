@@ -525,7 +525,7 @@ void CPropAPC::InputDestroy( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CPropAPC::InputFireMissileAt( inputdata_t &inputdata )
 {
-	string_t strMissileTarget = MAKE_STRING( inputdata.value.String() );
+	string_t strMissileTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, strMissileTarget, NULL, inputdata.pActivator, inputdata.pCaller );
 	if ( pTarget == NULL )
 	{

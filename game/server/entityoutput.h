@@ -14,6 +14,7 @@
 #endif
 
 #include "variant_t.h"
+#include "ehandle.h"
 //#include "baseentity.h"
 
 class IServerEntity;

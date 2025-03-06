@@ -2109,7 +2109,7 @@ void CProp_Portal::InputFizzle( inputdata_t &inputdata )
 void CProp_Portal::InputNewLocation( inputdata_t &inputdata )
 {
 	char sLocationStats[MAX_PATH];
-	Q_strncpy( sLocationStats, inputdata.value.String(), sizeof(sLocationStats) );
+	Q_strncpy( sLocationStats, inputdata.value.String(EntityList()), sizeof(sLocationStats) );
 
 	// first 3 are location of new origin
 	Vector vNewOrigin;

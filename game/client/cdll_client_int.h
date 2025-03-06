@@ -113,13 +113,7 @@ extern IEngineReplay *g_pEngineReplay;
 extern IEngineClientReplay *g_pEngineClientReplay;
 inline IClientEntityList* EntityList() { return entitylist; }
 
-template<class T>
-inline T* CHandle<T>::Get() const
-{
-#ifdef CLIENT_DLL
-	return (T*)EntityList()->GetClientEntityFromHandle(*this);
-#endif // CLIENT_DLL
-}
+
 
 // Used for debugging. Will produce asserts if someone tries to setup bones or
 	// attachments before it's allowed.

@@ -176,7 +176,7 @@ void CMaterialModifyControl::SetMaterialVar( inputdata_t &inputdata )
 		//DevMsg( 1, "CMaterialModifyControl::SetMaterialVar %s %s %s=\"%s\"\n", 
 			//GetDebugName(), m_szMaterialName.Get(), m_szMaterialVar.Get(), inputdata.value.String() );
 	//}
-	Q_strncpy( m_szMaterialVarValue.GetForModify(), inputdata.value.String(), MATERIAL_MODIFY_STRING_SIZE );
+	Q_strncpy( m_szMaterialVarValue.GetForModify(), inputdata.value.String(EntityList()), MATERIAL_MODIFY_STRING_SIZE );
 	m_nModifyMode = MATERIAL_MODIFY_MODE_SETVAR;
 }
 
@@ -197,7 +197,7 @@ void CMaterialModifyControl::SetMaterialVarToCurrentTime( inputdata_t &inputdata
 void CMaterialModifyControl::InputStartAnimSequence( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 	// Get the start & end frames
 	char *pszParam = strtok(parseString," ");
@@ -242,7 +242,7 @@ void CMaterialModifyControl::InputStartAnimSequence( inputdata_t &inputdata )
 void CMaterialModifyControl::InputStartFloatLerp( inputdata_t &inputdata )
 {
 	char parseString[255];
-	Q_strncpy(parseString, inputdata.value.String(), sizeof(parseString));
+	Q_strncpy(parseString, inputdata.value.String(EntityList()), sizeof(parseString));
 
 //	if( debug_materialmodifycontrol.GetBool() )//&& Q_stristr( GetDebugName(), "alyx" ) )
 //	{

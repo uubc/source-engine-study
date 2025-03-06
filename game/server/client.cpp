@@ -509,7 +509,7 @@ public:
 
 void CPointClientCommand::InputCommand( inputdata_t& inputdata )
 {
-	if ( !inputdata.value.String()[0] )
+	if ( !inputdata.value.String(EntityList())[0] )
 		return;
 
 	int pClient = NULL;
@@ -536,7 +536,7 @@ void CPointClientCommand::InputCommand( inputdata_t& inputdata )
 	if ( !pClient  )//|| !pClient->GetUnknown()
 		return;
 
-	engine->ClientCommand( pClient, "%s\n", inputdata.value.String());
+	engine->ClientCommand( pClient, "%s\n", inputdata.value.String(EntityList()));
 }
 
 BEGIN_DATADESC( CPointClientCommand )
@@ -562,10 +562,10 @@ public:
 //-----------------------------------------------------------------------------
 void CPointServerCommand::InputCommand( inputdata_t& inputdata )
 {
-	if ( !inputdata.value.String()[0] )
+	if ( !inputdata.value.String(EntityList())[0] )
 		return;
 
-	engine->ServerCommand( UTIL_VarArgs( "%s\n", inputdata.value.String() ) );
+	engine->ServerCommand( UTIL_VarArgs( "%s\n", inputdata.value.String(EntityList()) ) );
 }
 
 BEGIN_DATADESC( CPointServerCommand )

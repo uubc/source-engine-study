@@ -2068,7 +2068,7 @@ void CNPC_Strider::InputSetMinigunTime( inputdata_t &inputdata )
 //---------------------------------------------------------
 void CNPC_Strider::InputSetMinigunTarget( inputdata_t &inputdata )
 {
-	IServerEntity *pTargetEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pTargetEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 
 	m_pMinigun->StopShootingForSeconds( this, m_pMinigun->GetTarget(), 0 );
 	m_pMinigun->ShootAtTarget( this, (CBaseEntity*)pTargetEntity, m_miniGunShootDuration );
@@ -2079,7 +2079,7 @@ void CNPC_Strider::InputSetMinigunTarget( inputdata_t &inputdata )
 //---------------------------------------------------------
 void CNPC_Strider::InputSetCannonTarget( inputdata_t &inputdata )
 {
-	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	IServerEntity *pTarget = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 
 	if ( pTarget )
 	{
@@ -2180,7 +2180,7 @@ void CNPC_Strider::InputDisableCollisionWith( inputdata_t &inputdata )
 //---------------------------------------------------------
 void CNPC_Strider::InputDisableCollisionWith( inputdata_t &inputdata )
 {
-	IPhysicsObject *pIgnorePhys  = FindPhysicsObjectByName( inputdata.value.String(), this );
+	IPhysicsObject *pIgnorePhys  = FindPhysicsObjectByName( inputdata.value.String(EntityList()), this );
 	if ( !pIgnorePhys )
 		return;
 
@@ -2201,7 +2201,7 @@ void CNPC_Strider::InputDisableCollisionWith( inputdata_t &inputdata )
 //---------------------------------------------------------
 void CNPC_Strider::InputEnableCollisionWith( inputdata_t &inputdata )
 {
-	IPhysicsObject *pIgnorePhys  = FindPhysicsObjectByName( inputdata.value.String(), this );
+	IPhysicsObject *pIgnorePhys  = FindPhysicsObjectByName( inputdata.value.String(EntityList()), this );
 	if ( !pIgnorePhys )
 		return;
 
@@ -2262,7 +2262,7 @@ void CNPC_Strider::InputSetHeight( inputdata_t &inputdata )
 //---------------------------------------------------------
 void CNPC_Strider::InputSetTargetPath( inputdata_t &inputdata )
 {
-	m_strTrackName = MAKE_STRING( inputdata.value.String() );
+	m_strTrackName = MAKE_STRING( inputdata.value.String(EntityList()) );
 	SetGoalEnt( NULL );
 
 	if( !IsStriderCrouching() && !IsStriderStanding() && !IsInCrouchedPosture() )

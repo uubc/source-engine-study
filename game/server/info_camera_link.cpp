@@ -120,7 +120,7 @@ void CInfoCameraLink::SetCameraByName(const char *szName)
 //-----------------------------------------------------------------------------
 void CInfoCameraLink::InputSetCamera(inputdata_t &inputdata)
 {
-	SetCameraByName( inputdata.value.String() );
+	SetCameraByName( inputdata.value.String(EntityList()) );
 }
 
 

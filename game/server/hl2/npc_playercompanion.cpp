@@ -3332,7 +3332,7 @@ void CNPC_PlayerCompanion::EnterVehicle( CBaseEntity *pEntityVehicle, bool bImme
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::InputEnterVehicle( inputdata_t &inputdata )
 {
-	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String() );
+	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String(EntityList()) );
 	EnterVehicle( (CBaseEntity*)pEntity, false );
 }
 
@@ -3342,7 +3342,7 @@ void CNPC_PlayerCompanion::InputEnterVehicle( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::InputEnterVehicleImmediately( inputdata_t &inputdata )
 {
-	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String() );
+	IServerEntity *pEntity = FindNamedEntity( inputdata.value.String(EntityList()) );
 	EnterVehicle( (CBaseEntity*)pEntity, true );
 }
 

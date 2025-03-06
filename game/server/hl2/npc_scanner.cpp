@@ -1062,7 +1062,7 @@ void CNPC_CScanner::InputInspectTargetSpotlight(inputdata_t &inputdata)
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InspectTarget( inputdata_t &inputdata, ScannerFlyMode_t eFlyMode )
 {
-	IServerEntity *pEnt = EntityList()->FindEntityGeneric( NULL, inputdata.value.String(), this, inputdata.pActivator );
+	IServerEntity *pEnt = EntityList()->FindEntityGeneric( NULL, inputdata.value.String(EntityList()), this, inputdata.pActivator );
 	
 	if ( pEnt != NULL )
 	{
@@ -1077,7 +1077,7 @@ void CNPC_CScanner::InspectTarget( inputdata_t &inputdata, ScannerFlyMode_t eFly
 	}
 	else
 	{
-		DevMsg( "InspectTarget: target %s not found!\n", inputdata.value.String() );
+		DevMsg( "InspectTarget: target %s not found!\n", inputdata.value.String(EntityList()) );
 	}
 }
 

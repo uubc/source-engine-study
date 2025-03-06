@@ -227,28 +227,28 @@ void CLogicMeasureMovement::InputDisable( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CLogicMeasureMovement::InputSetMeasureTarget( inputdata_t &inputdata )
 {
-	m_strMeasureTarget = MAKE_STRING( inputdata.value.String() );
-	SetMeasureTarget( inputdata.value.String() );
+	m_strMeasureTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
+	SetMeasureTarget( inputdata.value.String(EntityList()) );
 	SetTarget( STRING(m_target) );
 	SetTargetReference( STRING(m_strTargetReference) );
 }
 
 void CLogicMeasureMovement::InputSetMeasureReference( inputdata_t &inputdata )
 {
-	m_strMeasureReference = MAKE_STRING( inputdata.value.String() );
-	SetMeasureReference( inputdata.value.String() );
+	m_strMeasureReference = MAKE_STRING( inputdata.value.String(EntityList()) );
+	SetMeasureReference( inputdata.value.String(EntityList()) );
 }
 
 void CLogicMeasureMovement::InputSetTarget( inputdata_t &inputdata )
 {
-	m_target = MAKE_STRING( inputdata.value.String() );
-	SetTarget( inputdata.value.String() );
+	m_target = MAKE_STRING( inputdata.value.String(EntityList()) );
+	SetTarget( inputdata.value.String(EntityList()) );
 }
 
 void CLogicMeasureMovement::InputSetTargetReference( inputdata_t &inputdata )
 {
-	m_strTargetReference = MAKE_STRING( inputdata.value.String() );
-	SetTargetReference( inputdata.value.String() );
+	m_strTargetReference = MAKE_STRING( inputdata.value.String(EntityList()) );
+	SetTargetReference( inputdata.value.String(EntityList()) );
 }
 
 void CLogicMeasureMovement::InputSetTargetScale( inputdata_t &inputdata )

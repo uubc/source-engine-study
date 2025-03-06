@@ -285,7 +285,7 @@ void CPointAngleSensor::InputTest(inputdata_t &inputdata)
 //-----------------------------------------------------------------------------
 void CPointAngleSensor::InputSetTargetEntity(inputdata_t &inputdata)
 {
-	if ((inputdata.value.String() == NULL) || (inputdata.value.StringID() == NULL_STRING) || (inputdata.value.String()[0] == '\0'))
+	if ((inputdata.value.String(EntityList()) == NULL) || (inputdata.value.StringID() == NULL_STRING) || (inputdata.value.String(EntityList())[0] == '\0'))
 	{
 		m_target = NULL_STRING;
 		m_hTargetEntity = NULL;
@@ -293,7 +293,7 @@ void CPointAngleSensor::InputSetTargetEntity(inputdata_t &inputdata)
 	}
 	else
 	{
-		m_target = AllocPooledString(inputdata.value.String());
+		m_target = AllocPooledString(inputdata.value.String(EntityList()));
 		m_hTargetEntity = (CBaseEntity*)EntityList()->FindEntityByName( NULL, m_target, NULL, inputdata.pActivator, inputdata.pCaller );
 		if (!m_bDisabled && m_hTargetEntity)
 		{
@@ -467,7 +467,7 @@ void CPointProximitySensor::Activate( void )
 //-----------------------------------------------------------------------------
 void CPointProximitySensor::InputSetTargetEntity(inputdata_t &inputdata)
 {
-	if ((inputdata.value.String() == NULL) || (inputdata.value.StringID() == NULL_STRING) || (inputdata.value.String()[0] == '\0'))
+	if ((inputdata.value.String(EntityList()) == NULL) || (inputdata.value.StringID() == NULL_STRING) || (inputdata.value.String(EntityList())[0] == '\0'))
 	{
 		m_target = NULL_STRING;
 		m_hTargetEntity = NULL;
@@ -475,7 +475,7 @@ void CPointProximitySensor::InputSetTargetEntity(inputdata_t &inputdata)
 	}
 	else
 	{
-		m_target = AllocPooledString(inputdata.value.String());
+		m_target = AllocPooledString(inputdata.value.String(EntityList()));
 		m_hTargetEntity = (CBaseEntity*)EntityList()->FindEntityByName( NULL, m_target, NULL, inputdata.pActivator, inputdata.pCaller );
 		if (!m_bDisabled && m_hTargetEntity)
 		{

@@ -3074,7 +3074,7 @@ void CBaseEntity::DrawInputOverlay(const char *szInputName, IServerEntity *pCall
 	}
 	else if ( Value.FieldType() == FIELD_STRING )
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%s) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.String(), pCaller ? pCaller->GetDebugName() : NULL);
+		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%s) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.String(EntityList()), pCaller ? pCaller->GetDebugName() : NULL);
 	}
 	else
 	{
@@ -3088,7 +3088,7 @@ void CBaseEntity::DrawInputOverlay(const char *szInputName, IServerEntity *pCall
 	}
 	else if ( Value.FieldType() == FIELD_STRING )
 	{
-		DevMsg( 2, "input: (%s,%s) -> (%s,%s), from (%s)\n", szInputName, Value.String(), STRING(GetEngineObject()->GetClassname()), GetDebugName(), pCaller ? pCaller->GetDebugName() : NULL);
+		DevMsg( 2, "input: (%s,%s) -> (%s,%s), from (%s)\n", szInputName, Value.String(EntityList()), STRING(GetEngineObject()->GetClassname()), GetDebugName(), pCaller ? pCaller->GetDebugName() : NULL);
 	}
 	else
 		DevMsg( 2, "input: (%s) -> (%s,%s), from (%s)\n", szInputName, STRING(GetEngineObject()->GetClassname()), GetDebugName(), pCaller ? pCaller->GetDebugName() : NULL);
@@ -3233,11 +3233,11 @@ bool CBaseEntity::AcceptInput( const char *szInputName, IServerEntity *pActivato
 					// mapper debug message
 					if (pCaller != NULL)
 					{
-						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input %s: %s.%s(%s)\n", gpGlobals->curtime, STRING(pCaller->GetEngineObject()->GetEntityName()), GetDebugName(), szInputName, Value.String() );
+						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input %s: %s.%s(%s)\n", gpGlobals->curtime, STRING(pCaller->GetEngineObject()->GetEntityName()), GetDebugName(), szInputName, Value.String(EntityList()) );
 					}
 					else
 					{
-						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input <NULL>: %s.%s(%s)\n", gpGlobals->curtime, GetDebugName(), szInputName, Value.String() );
+						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input <NULL>: %s.%s(%s)\n", gpGlobals->curtime, GetDebugName(), szInputName, Value.String(EntityList()) );
 					}
 					DevMsg( 2, "%s", szBuffer );
 					ADD_DEBUG_HISTORY( HISTORY_ENTITY_IO, szBuffer );
@@ -3252,7 +3252,7 @@ bool CBaseEntity::AcceptInput( const char *szInputName, IServerEntity *pActivato
 					{
 						if ( !(Value.FieldType() == FIELD_VOID && dmap->dataDesc[i].fieldType == FIELD_STRING) ) // allow empty strings
 						{
-							if ( !Value.Convert( (fieldtype_t)dmap->dataDesc[i].fieldType ) )
+							if ( !Value.Convert(EntityList(), (fieldtype_t)dmap->dataDesc[i].fieldType ) )
 							{
 								// bad conversion
 								Warning( "!! ERROR: bad input/output link:\n!! %s(%s,%s) doesn't match type from %s(%s)\n", 
@@ -3281,7 +3281,7 @@ bool CBaseEntity::AcceptInput( const char *szInputName, IServerEntity *pActivato
 					else if ( dmap->dataDesc[i].flags & FTYPEDESC_KEY )
 					{
 						// set the value directly
-						Value.SetOther( ((char*)this) + dmap->dataDesc[i].fieldOffset[ TD_OFFSET_NORMAL ]);
+						Value.SetOther(EntityList(), ((char*)this) + dmap->dataDesc[i].fieldOffset[ TD_OFFSET_NORMAL ]);
 					
 						// TODO: if this becomes evil and causes too many full entity updates, then we should make
 						// a macro like this:
@@ -3413,7 +3413,7 @@ void CBaseEntity::InputSetDamageFilter( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputDispatchEffect( inputdata_t &inputdata )
 {
-	const char *sEffect = inputdata.value.String();
+	const char *sEffect = inputdata.value.String(EntityList());
 	if ( sEffect && sEffect[0] )
 	{
 		CEffectData data;
@@ -3536,7 +3536,7 @@ void CBaseEntity::SetParentAttachment( const char *szInputName, const char *szAt
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputSetParentAttachment( inputdata_t &inputdata )
 {
-	SetParentAttachment( "SetParentAttachment", inputdata.value.String(), false );
+	SetParentAttachment( "SetParentAttachment", inputdata.value.String(EntityList()), false );
 }
 
 //-----------------------------------------------------------------------------
@@ -3544,7 +3544,7 @@ void CBaseEntity::InputSetParentAttachment( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputSetParentAttachmentMaintainOffset( inputdata_t &inputdata )
 {
-	SetParentAttachment( "SetParentAttachmentMaintainOffset", inputdata.value.String(), true );
+	SetParentAttachment( "SetParentAttachmentMaintainOffset", inputdata.value.String(EntityList()), true );
 }
 
 //------------------------------------------------------------------------------
@@ -4584,7 +4584,7 @@ void CC_Ent_Dump( const CCommand& args )
 					switch( var.FieldType() )
 					{
 					case FIELD_STRING:
-						Q_strncpy( buf, var.String() ,sizeof(buf));
+						Q_strncpy( buf, var.String(EntityList()) ,sizeof(buf));
 						break;
 					case FIELD_INTEGER:
 						if ( var.Int() )
@@ -4597,9 +4597,9 @@ void CC_Ent_Dump( const CCommand& args )
 					case FIELD_EHANDLE:
 						{
 							// get the entities name
-							if ( var.Entity() )
+							if ( var.Entity(EntityList()) )
 							{
-								Q_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity()->GetEntityName()) );
+								Q_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity(EntityList())->GetEntityName()) );
 							}
 						}
 						break;
@@ -5440,7 +5440,7 @@ int CBaseEntity::FindContextByName( const char *name ) const
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputAddContext( inputdata_t& inputdata )
 {
-	const char *contextName = inputdata.value.String();
+	const char *contextName = inputdata.value.String(EntityList());
 	AddContext( contextName );
 }
 
@@ -5679,7 +5679,7 @@ void CBaseEntity::InputIgniteHitboxFireScale(inputdata_t& inputdata)
 void CBaseEntity::InputSetLightingOriginRelative(inputdata_t& inputdata)
 {
 	// Find our specified target
-	string_t strLightingOriginRelative = MAKE_STRING(inputdata.value.String());
+	string_t strLightingOriginRelative = MAKE_STRING(inputdata.value.String(EntityList()));
 	SetLightingOriginRelative(strLightingOriginRelative);
 }
 
@@ -5690,7 +5690,7 @@ void CBaseEntity::InputSetLightingOriginRelative(inputdata_t& inputdata)
 void CBaseEntity::InputSetLightingOrigin(inputdata_t& inputdata)
 {
 	// Find our specified target
-	string_t strLightingOrigin = MAKE_STRING(inputdata.value.String());
+	string_t strLightingOrigin = MAKE_STRING(inputdata.value.String(EntityList()));
 	SetLightingOrigin(strLightingOrigin);
 }
 
@@ -5738,7 +5738,7 @@ void CBaseEntity::AddContext( const char *contextName )
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputRemoveContext( inputdata_t& inputdata )
 {
-	const char *contextName = inputdata.value.String();
+	const char *contextName = inputdata.value.String(EntityList());
 	int idx = FindContextByName( contextName );
 	if ( idx == -1 )
 		return;
@@ -5770,7 +5770,7 @@ IResponseSystem *CBaseEntity::GetResponseSystem()
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputDispatchResponse( inputdata_t& inputdata )
 {
-	DispatchResponse( inputdata.value.String() );
+	DispatchResponse( inputdata.value.String(EntityList()) );
 }
 
 //-----------------------------------------------------------------------------
@@ -5794,7 +5794,7 @@ void CBaseEntity::InputEnableShadow( inputdata_t &inputdata )
 void CBaseEntity::InputAddOutput( inputdata_t &inputdata )
 {
 	char sOutputName[MAX_PATH];
-	Q_strncpy( sOutputName, inputdata.value.String(), sizeof(sOutputName) );
+	Q_strncpy( sOutputName, inputdata.value.String(EntityList()), sizeof(sOutputName) );
 	char *sChar = strchr( sOutputName, ' ' );
 	if ( sChar )
 	{

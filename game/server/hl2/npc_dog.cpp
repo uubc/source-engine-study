@@ -738,7 +738,7 @@ void CNPC_Dog::InputSetThrowArcModifier( inputdata_t &inputdata )
 void CNPC_Dog::InputSetPickupTarget( inputdata_t &inputdata )
 {
 	CleanCatchAndThrow( false );
-	FindPhysicsObject( inputdata.value.String() );
+	FindPhysicsObject( inputdata.value.String(EntityList()) );
 }
 
 void CNPC_Dog::InputStartWaitAndCatch( inputdata_t &inputdata )
@@ -756,13 +756,13 @@ void CNPC_Dog::InputStartCatchThrowBehavior( inputdata_t &inputdata )
 {
 	CleanCatchAndThrow();
 
-	m_sObjectName = MAKE_STRING( inputdata.value.String() );
+	m_sObjectName = MAKE_STRING( inputdata.value.String(EntityList()) );
 	m_bDoCatchThrowBehavior = true;
 
 	m_flTimeToCatch = 0.0f;
 	m_flNextSwat = 0.0f;
 
-	FindPhysicsObject( inputdata.value.String() );
+	FindPhysicsObject( inputdata.value.String(EntityList()) );
 }
 
 void CNPC_Dog::InputStopCatchThrowBehavior( inputdata_t &inputdata )
@@ -778,7 +778,7 @@ void CNPC_Dog::InputStopCatchThrowBehavior( inputdata_t &inputdata )
 
 void CNPC_Dog::InputSetThrowTarget( inputdata_t &inputdata )
 {
-	m_hThrowTarget = (CBaseEntity*)EntityList()->FindEntityByName( NULL, inputdata.value.String(), NULL, inputdata.pActivator, inputdata.pCaller );
+	m_hThrowTarget = (CBaseEntity*)EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), NULL, inputdata.pActivator, inputdata.pCaller );
 }
 
 void CNPC_Dog::SetTurnActivity( void )

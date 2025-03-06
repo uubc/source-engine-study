@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "ehandle.h"
+//#include "ehandle.h"
 
 abstract_class IPositionWatcher : public IWatcherCallback
 {

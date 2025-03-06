@@ -195,7 +195,7 @@ void CNPCEventResponseSystemEntity::Spawn( void )
 //-----------------------------------------------------------------------------
 void CNPCEventResponseSystemEntity::InputTriggerResponseEvent( inputdata_t &inputdata )
 {
-	NPCEventResponse()->TriggerEvent( inputdata.value.String(), false, false );
+	NPCEventResponse()->TriggerEvent( inputdata.value.String(EntityList()), false, false );
 }
 
 //-----------------------------------------------------------------------------
@@ -203,7 +203,7 @@ void CNPCEventResponseSystemEntity::InputTriggerResponseEvent( inputdata_t &inpu
 //-----------------------------------------------------------------------------
 void CNPCEventResponseSystemEntity::InputForceTriggerResponseEvent( inputdata_t &inputdata )
 {
-	NPCEventResponse()->TriggerEvent( inputdata.value.String(), true, true );
+	NPCEventResponse()->TriggerEvent( inputdata.value.String(EntityList()), true, true );
 }
 
 //-----------------------------------------------------------------------------
@@ -211,5 +211,5 @@ void CNPCEventResponseSystemEntity::InputForceTriggerResponseEvent( inputdata_t 
 //-----------------------------------------------------------------------------
 void CNPCEventResponseSystemEntity::InputForceTriggerResponseEventNoCancel( inputdata_t &inputdata )
 {
-	NPCEventResponse()->TriggerEvent( inputdata.value.String(), true, false );
+	NPCEventResponse()->TriggerEvent( inputdata.value.String(EntityList()), true, false );
 }

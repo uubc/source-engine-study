@@ -3984,7 +3984,7 @@ void CLogicPlayerProxy::InputSetLocatorTargetEntity( inputdata_t &inputdata )
 		return;
 
 	IServerEntity *pTarget = NULL; // assume no target
-	string_t iszTarget = MAKE_STRING( inputdata.value.String() );
+	string_t iszTarget = MAKE_STRING( inputdata.value.String(EntityList()) );
 
 	if( iszTarget != NULL_STRING )
 	{

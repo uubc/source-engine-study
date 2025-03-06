@@ -453,7 +453,7 @@ int Beam_t::DrawModel( int flags )
 		for (int i=0;i<MAX_BEAM_ENTS;i++)
 		{
 			//C_BaseViewModel *vm = dynamic_cast<C_BaseViewModel *>(entity[i].Get());
-			if (entity[i].Get()->IsViewModel())
+			if (entitylist->GetBaseEntityFromHandle(entity[i])->IsViewModel())
 			{
 				return 0;
 			}
@@ -1532,7 +1532,7 @@ void CViewRenderBeams::UpdateBeam( Beam_t *pbeam, float frametime )
 			// Why isn't attachment[0] being computed?
 			for (int i=1; i < pbeam->numAttachments; i++)
 			{
-				if (!ComputeBeamEntPosition( pbeam->entity[i], pbeam->attachmentIndex[i], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[i] ))
+				if (!ComputeBeamEntPosition(entitylist->GetBaseEntityFromHandle(pbeam->entity[i]), pbeam->attachmentIndex[i], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[i] ))
 				{
 					// This should never happen, but if for some reason the attachment doesn't exist, 
 					// as a safety measure copy in the location of the previous attachment point (rather than bailing)
@@ -2065,7 +2065,7 @@ bool CViewRenderBeams::RecomputeBeamEndpoints( Beam_t *pbeam )
 {
 	if ( pbeam->flags & FBEAM_STARTENTITY )
 	{
-		if (ComputeBeamEntPosition( pbeam->entity[0], pbeam->attachmentIndex[0], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[0] ))
+		if (ComputeBeamEntPosition(entitylist->GetBaseEntityFromHandle(pbeam->entity[0]), pbeam->attachmentIndex[0], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[0] ))
 		{
 			pbeam->flags |= FBEAM_STARTVISIBLE;
 		}
@@ -2086,7 +2086,7 @@ bool CViewRenderBeams::RecomputeBeamEndpoints( Beam_t *pbeam )
 
 	if ( pbeam->flags & FBEAM_ENDENTITY )
 	{
-		if (ComputeBeamEntPosition( pbeam->entity[1], pbeam->attachmentIndex[1], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[1] ))
+		if (ComputeBeamEntPosition(entitylist->GetBaseEntityFromHandle(pbeam->entity[1]), pbeam->attachmentIndex[1], (pbeam->flags & FBEAM_USE_HITBOXES) != 0, pbeam->attachment[1] ))
 		{
 			pbeam->flags |= FBEAM_ENDVISIBLE;
 		}

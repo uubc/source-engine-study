@@ -187,10 +187,10 @@ void CGameUI::InputActivate( inputdata_t &inputdata )
 	// Determine if we're specifying this as an override parameter
 	if ( inputdata.value.StringID() != NULL_STRING )
 	{
-		IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(), this, inputdata.pActivator, inputdata.pCaller );
+		IServerEntity *pEntity = EntityList()->FindEntityByName( NULL, inputdata.value.String(EntityList()), this, inputdata.pActivator, inputdata.pCaller );
 		if ( pEntity == NULL || pEntity->IsPlayer() == false )
 		{
-			Warning( "%s InputActivate: entity %s not found or is not a player!\n", GetEntityName().ToCStr(), inputdata.value.String() );
+			Warning( "%s InputActivate: entity %s not found or is not a player!\n", GetEntityName().ToCStr(), inputdata.value.String(EntityList()) );
 			return;
 		}
 

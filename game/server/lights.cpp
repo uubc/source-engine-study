@@ -183,7 +183,7 @@ void CLight::InputSetPattern( inputdata_t &inputdata )
 void CLight::InputFadeToPattern( inputdata_t &inputdata )
 {
 	m_iCurrentFade	= (STRING(m_iszPattern))[0];
-	m_iTargetFade	= inputdata.value.String()[0];
+	m_iTargetFade	= inputdata.value.String(EntityList())[0];
 	m_iszPattern	= inputdata.value.StringID();
 	SetThink(&CLight::FadeThink);
 	GetEngineObject()->SetNextThink( gpGlobals->curtime );
