@@ -56,7 +56,6 @@ ConVar	g_antlionguard_hemorrhage( "g_antlionguard_hemorrhage", "1", FCVAR_NONE, 
 #define	SF_ANTLIONGUARD_SERVERSIDE_RAGDOLL	( 1 << 16 )
 #define SF_ANTLIONGUARD_INSIDE_FOOTSTEPS	( 1 << 17 )
 
-#define	ENVELOPE_CONTROLLER		(CSoundEnvelopeController::GetController())
 #define	ANTLIONGUARD_MODEL		"models/antlion_guard.mdl"
 #define	MIN_BLAST_DAMAGE		25.0f
 #define MIN_CRUSH_DAMAGE		20.0f
@@ -378,11 +377,11 @@ private:
 
 	COutputEvent	m_OnSummon;
 
-	CSoundPatch		*m_pGrowlHighSound;
-	CSoundPatch		*m_pGrowlLowSound;
-	CSoundPatch		*m_pGrowlIdleSound;
-	CSoundPatch		*m_pBreathSound;
-	CSoundPatch		*m_pConfusedSound;
+	ISoundPatch		*m_pGrowlHighSound;
+	ISoundPatch		*m_pGrowlLowSound;
+	ISoundPatch		*m_pGrowlIdleSound;
+	ISoundPatch		*m_pBreathSound;
+	ISoundPatch		*m_pConfusedSound;
 
 	string_t		m_iszPhysicsPropClass;
 	string_t		m_strShoveTargets;
@@ -2018,7 +2017,7 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 
 		if ( random->RandomInt( 0, 10 ) < 6 )
 		{
-			duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardFastGrowl, ARRAYSIZE(envAntlionGuardFastGrowl) );
+			duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardFastGrowl, ARRAYSIZE(envAntlionGuardFastGrowl) );
 		}
 		else
 		{
@@ -2032,13 +2031,13 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 			params.m_pflSoundDuration = NULL;
 			params.m_bWarnOnDirectWaveReference = true;
 			g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
-			ENVELOPE_CONTROLLER.SoundFadeOut( m_pGrowlHighSound, 0.5f, false );
+			g_pSoundEnvelopeController->SoundFadeOut( m_pGrowlHighSound, 0.5f, false );
 		}
 		
 		m_flAngerNoiseTime = gpGlobals->curtime + duration + random->RandomFloat( 2.0f, 4.0f );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 
 		m_flBreathTime = gpGlobals->curtime + duration - 0.2f;
 
@@ -2059,13 +2058,13 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 	{
 		StartSounds();
 
-		float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark1, ARRAYSIZE(envAntlionGuardBark1) );
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark2, ARRAYSIZE(envAntlionGuardBark2) );
+		float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark1, ARRAYSIZE(envAntlionGuardBark1) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark2, ARRAYSIZE(envAntlionGuardBark2) );
 		
 		m_flAngerNoiseTime = gpGlobals->curtime + duration + random->RandomFloat( 2.0f, 4.0f );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 		
 		m_flBreathTime = gpGlobals->curtime + duration - 0.2f;
 		return;
@@ -2075,12 +2074,12 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 	{
 		StartSounds();
 
-		float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardFastGrowl, ARRAYSIZE(envAntlionGuardFastGrowl) );
+		float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardFastGrowl, ARRAYSIZE(envAntlionGuardFastGrowl) );
 		
 		m_flAngerNoiseTime = gpGlobals->curtime + duration + random->RandomFloat( 2.0f, 4.0f );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 
 		m_flBreathTime = gpGlobals->curtime + duration - 0.2f;
 
@@ -2100,11 +2099,11 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 	{
 		StartSounds();
 
-		float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardPain1, ARRAYSIZE(envAntlionGuardPain1) );
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark2, ARRAYSIZE(envAntlionGuardBark2) );
+		float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardPain1, ARRAYSIZE(envAntlionGuardPain1) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardBark2, ARRAYSIZE(envAntlionGuardBark2) );
 		
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 		
 		m_flBreathTime = gpGlobals->curtime + duration - 0.2f;
 		return;
@@ -2114,12 +2113,12 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 	{	
 		StartSounds();
 
-		float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardSqueeze, ARRAYSIZE(envAntlionGuardSqueeze) );
+		float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardSqueeze, ARRAYSIZE(envAntlionGuardSqueeze) );
 		
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.6f, random->RandomFloat( 2.0f, 4.0f ) );
-		ENVELOPE_CONTROLLER.SoundChangePitch( m_pBreathSound, random->RandomInt( 60, 80 ), random->RandomFloat( 2.0f, 4.0f ) );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.6f, random->RandomFloat( 2.0f, 4.0f ) );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pBreathSound, random->RandomInt( 60, 80 ), random->RandomFloat( 2.0f, 4.0f ) );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 
 		m_flBreathTime = gpGlobals->curtime + ( duration * 0.5f );
 
@@ -2141,10 +2140,10 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 
 		float duration = random->RandomFloat( 2.0f, 4.0f );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.6f, duration );
-		ENVELOPE_CONTROLLER.SoundChangePitch( m_pBreathSound, random->RandomInt( 60, 80 ), duration );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.6f, duration );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pBreathSound, random->RandomInt( 60, 80 ), duration );
 
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 
 		m_flBreathTime = gpGlobals->curtime + duration;
 
@@ -2164,11 +2163,11 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 	{	
 		StartSounds();
 
-		float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardGrunt, ARRAYSIZE(envAntlionGuardGrunt) );
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardGrunt2, ARRAYSIZE(envAntlionGuardGrunt2) );
+		float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pConfusedSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardGrunt, ARRAYSIZE(envAntlionGuardGrunt) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pGrowlHighSound, SOUNDCTRL_CHANGE_VOLUME, envAntlionGuardGrunt2, ARRAYSIZE(envAntlionGuardGrunt2) );
 		
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 0.1f );
 
 		m_flBreathTime = gpGlobals->curtime + duration;
 		return;
@@ -3750,11 +3749,11 @@ void CNPC_AntlionGuard::PrescheduleThink( void )
 
 			float duration = random->RandomFloat( 2.0f, 8.0f );
 
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.0f, duration );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pBreathSound, random->RandomInt( 40, 60 ), duration );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.0f, duration );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pBreathSound, random->RandomInt( 40, 60 ), duration );
 			
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, duration );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 120, 140 ), duration );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, duration );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 120, 140 ), duration );
 
 			m_flBreathTime = gpGlobals->curtime + duration - (duration*0.75f);
 		}
@@ -3765,8 +3764,8 @@ void CNPC_AntlionGuard::PrescheduleThink( void )
 		{
 			StartSounds();
 
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, random->RandomFloat( 0.2f, 0.3f ), random->RandomFloat( 0.5f, 1.0f ) );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 80, 120 ), random->RandomFloat( 0.5f, 1.0f ) );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, random->RandomFloat( 0.2f, 0.3f ), random->RandomFloat( 0.5f, 1.0f ) );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 80, 120 ), random->RandomFloat( 0.5f, 1.0f ) );
 
 			m_flBreathTime = gpGlobals->curtime + random->RandomFloat( 1.0f, 8.0f );
 		}
@@ -3777,11 +3776,11 @@ void CNPC_AntlionGuard::PrescheduleThink( void )
 		{
 			StartSounds();
 
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pBreathSound, 0.6f, random->RandomFloat( 2.0f, 4.0f ) );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pBreathSound, random->RandomInt( 140, 160 ), random->RandomFloat( 2.0f, 4.0f ) );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pBreathSound, 0.6f, random->RandomFloat( 2.0f, 4.0f ) );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pBreathSound, random->RandomInt( 140, 160 ), random->RandomFloat( 2.0f, 4.0f ) );
 
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 1.0f );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 90, 110 ), 0.2f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pGrowlIdleSound, 0.0f, 1.0f );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pGrowlIdleSound, random->RandomInt( 90, 110 ), 0.2f );
 		}
 
 
@@ -3849,10 +3848,10 @@ void CNPC_AntlionGuard::GatherConditions( void )
 void CNPC_AntlionGuard::StopLoopingSounds()
 {
 	//Stop all sounds
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pGrowlHighSound );
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pGrowlIdleSound );
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pBreathSound );
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pConfusedSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pGrowlHighSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pGrowlIdleSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pBreathSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pConfusedSound );
 	
 	
 	m_pGrowlHighSound	= NULL;
@@ -4421,41 +4420,41 @@ void CNPC_AntlionGuard::StartSounds( void )
 
 	if ( m_pGrowlHighSound == NULL )
 	{
-		m_pGrowlHighSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_VOICE, "NPC_AntlionGuard.GrowlHigh",	ATTN_NORM );
+		m_pGrowlHighSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_VOICE, "NPC_AntlionGuard.GrowlHigh",	ATTN_NORM );
 		
 		if ( m_pGrowlHighSound )
 		{
-			ENVELOPE_CONTROLLER.Play( m_pGrowlHighSound,0.0f, 100 );
+			g_pSoundEnvelopeController->Play( m_pGrowlHighSound,0.0f, 100 );
 		}
 	}
 
 	if ( m_pGrowlIdleSound == NULL )
 	{
-		m_pGrowlIdleSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_STATIC, "NPC_AntlionGuard.GrowlIdle",	ATTN_NORM );
+		m_pGrowlIdleSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "NPC_AntlionGuard.GrowlIdle",	ATTN_NORM );
 
 		if ( m_pGrowlIdleSound )
 		{
-			ENVELOPE_CONTROLLER.Play( m_pGrowlIdleSound,0.0f, 100 );
+			g_pSoundEnvelopeController->Play( m_pGrowlIdleSound,0.0f, 100 );
 		}
 	}
 
 	if ( m_pBreathSound == NULL )
 	{
-		m_pBreathSound	= ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_ITEM, "NPC_AntlionGuard.BreathSound",		ATTN_NORM );
+		m_pBreathSound	= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_ITEM, "NPC_AntlionGuard.BreathSound",		ATTN_NORM );
 		
 		if ( m_pBreathSound )
 		{
-			ENVELOPE_CONTROLLER.Play( m_pBreathSound,	0.0f, 100 );
+			g_pSoundEnvelopeController->Play( m_pBreathSound,	0.0f, 100 );
 		}
 	}
 
 	if ( m_pConfusedSound == NULL )
 	{
-		m_pConfusedSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_WEAPON,"NPC_AntlionGuard.Confused",	ATTN_NORM );
+		m_pConfusedSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_WEAPON,"NPC_AntlionGuard.Confused",	ATTN_NORM );
 
 		if ( m_pConfusedSound )
 		{
-			ENVELOPE_CONTROLLER.Play( m_pConfusedSound,	0.0f, 100 );
+			g_pSoundEnvelopeController->Play( m_pConfusedSound,	0.0f, 100 );
 		}
 	}
 

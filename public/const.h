@@ -13,6 +13,7 @@
 #endif
 
 #include "bspflags.h"
+#include "soundflags.h"
 #include "worldsize.h"
 
 // the command line param that tells the engine to use steam

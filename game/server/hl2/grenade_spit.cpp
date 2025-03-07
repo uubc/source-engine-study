@@ -213,7 +213,7 @@ void CGrenadeSpit::Detonate(void)
 	// Stop our hissing sound
 	if ( m_pHissSound != NULL )
 	{
-		CSoundEnvelopeController::GetController().SoundDestroy( m_pHissSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pHissSound );
 		m_pHissSound = NULL;
 	}
 
@@ -230,12 +230,11 @@ void CGrenadeSpit::InitHissSound( void )
 	if ( m_bPlaySound == false )
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	if ( m_pHissSound == NULL )
 	{
 		CPASAttenuationFilter filter( this );
-		m_pHissSound = controller.SoundCreate( filter, entindex(), "NPC_Antlion.PoisonBall" );
-		controller.Play( m_pHissSound, 1.0f, 100 );
+		m_pHissSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_Antlion.PoisonBall" );
+		g_pSoundEnvelopeController->Play( m_pHissSound, 1.0f, 100 );
 	}
 }
 
@@ -270,7 +269,7 @@ void CGrenadeSpit::Think( void )
 		}
 
 		// Set the pitch we've calculated
-		CSoundEnvelopeController::GetController().SoundChangePitch( m_pHissSound, iPitch, 0.1f );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pHissSound, iPitch, 0.1f );
 	}
 
 	// Set us up to think again shortly

@@ -214,8 +214,8 @@ private:
 	int RandomThrowCrab( void );
 	void EvacuateNest( bool bExplosion, float flDamage, CBaseEntity *pAttacker );
 
-	CSoundPatch *m_pFastBreathSound;
-	CSoundPatch *m_pSlowBreathSound;
+	ISoundPatch *m_pFastBreathSound;
+	ISoundPatch *m_pSlowBreathSound;
 
 	int m_nCrabCount;				// How many headcrabs we have on our back.
 	bool m_bCrabs[MAX_CRABS];		// Which crabs in particular are on our back.
@@ -301,12 +301,12 @@ void CNPC_PoisonZombie::Spawn( void )
 	BaseClass::Spawn();
 
 	CPASAttenuationFilter filter( this, ATTN_IDLE );
-	m_pFastBreathSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_ITEM, "NPC_PoisonZombie.FastBreath", ATTN_IDLE );
-	ENVELOPE_CONTROLLER.Play( m_pFastBreathSound, 0.0f, 100 );
+	m_pFastBreathSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_ITEM, "NPC_PoisonZombie.FastBreath", ATTN_IDLE );
+	g_pSoundEnvelopeController->Play( m_pFastBreathSound, 0.0f, 100 );
 
 	CPASAttenuationFilter filter2( this );
-	m_pSlowBreathSound = ENVELOPE_CONTROLLER.SoundCreate( filter2, entindex(), CHAN_ITEM, "NPC_PoisonZombie.Moan1", ATTN_NORM );
-	ENVELOPE_CONTROLLER.Play( m_pSlowBreathSound, BREATH_VOL_MAX, 100 );
+	m_pSlowBreathSound = g_pSoundEnvelopeController->SoundCreate( filter2, entindex(), CHAN_ITEM, "NPC_PoisonZombie.Moan1", ATTN_NORM );
+	g_pSoundEnvelopeController->Play( m_pSlowBreathSound, BREATH_VOL_MAX, 100 );
 
 	int nCrabs = m_nCrabCount;
 	if ( !nCrabs )
@@ -414,10 +414,10 @@ void CNPC_PoisonZombie::EnableCrab( int nCrab, bool bEnable )
 //-----------------------------------------------------------------------------
 void CNPC_PoisonZombie::StopLoopingSounds( void )
 {
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pFastBreathSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pFastBreathSound );
 	m_pFastBreathSound = NULL;
 
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pSlowBreathSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pSlowBreathSound );
 	m_pSlowBreathSound = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -639,11 +639,11 @@ void CNPC_PoisonZombie::BreatheOffShort( void )
 {
 	if ( m_bNearEnemy )
 	{
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pFastBreathSound, SOUNDCTRL_CHANGE_VOLUME, envPoisonZombieBreatheVolumeOffShort, ARRAYSIZE(envPoisonZombieBreatheVolumeOffShort) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pFastBreathSound, SOUNDCTRL_CHANGE_VOLUME, envPoisonZombieBreatheVolumeOffShort, ARRAYSIZE(envPoisonZombieBreatheVolumeOffShort) );
 	}
 	else
 	{
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pSlowBreathSound, SOUNDCTRL_CHANGE_VOLUME, envPoisonZombieBreatheVolumeOffShort, ARRAYSIZE(envPoisonZombieBreatheVolumeOffShort) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pSlowBreathSound, SOUNDCTRL_CHANGE_VOLUME, envPoisonZombieBreatheVolumeOffShort, ARRAYSIZE(envPoisonZombieBreatheVolumeOffShort) );
 	}
 }
 
@@ -867,10 +867,10 @@ void CNPC_PoisonZombie::PrescheduleThink( void )
 		{
 			// Our enemy is nearby. Breathe faster.
 			float duration = random->RandomFloat( 1.0f, 2.0f );
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pFastBreathSound, BREATH_VOL_MAX, duration );
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pFastBreathSound, random->RandomInt( 100, 120 ), random->RandomFloat( 1.0f, 2.0f ) );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pFastBreathSound, BREATH_VOL_MAX, duration );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pFastBreathSound, random->RandomInt( 100, 120 ), random->RandomFloat( 1.0f, 2.0f ) );
 
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pSlowBreathSound, 0.0f, duration );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pSlowBreathSound, 0.0f, duration );
 
 			m_bNearEnemy = true;
 		}
@@ -879,9 +879,9 @@ void CNPC_PoisonZombie::PrescheduleThink( void )
 	{
 		// Our enemy is far away. Slow our breathing down.
 		float duration = random->RandomFloat( 2.0f, 4.0f );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pFastBreathSound, BREATH_VOL_MAX, duration );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pSlowBreathSound, 0.0f, duration );
-//		ENVELOPE_CONTROLLER.SoundChangePitch( m_pBreathSound, random->RandomInt( 80, 100 ), duration );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pFastBreathSound, BREATH_VOL_MAX, duration );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pSlowBreathSound, 0.0f, duration );
+//		g_pSoundEnvelopeController->SoundChangePitch( m_pBreathSound, random->RandomInt( 80, 100 ), duration );
 
 		m_bNearEnemy = false;
 	}
@@ -1152,10 +1152,10 @@ void CNPC_PoisonZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize
 		m_flMoanPitch = random->RandomInt( 98, 110 );
 
 		CPASAttenuationFilter filter( this, 1.5 );
-		//m_pMoanSound = ENVELOPE_CONTROLLER.SoundCreate( entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
-		m_pMoanSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_STATIC, pszSound, 1.5 );
+		//m_pMoanSound = g_pSoundEnvelopeController->SoundCreate( entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
+		m_pMoanSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, pszSound, 1.5 );
 
-		ENVELOPE_CONTROLLER.Play( m_pMoanSound, 0.5, m_flMoanPitch );
+		g_pSoundEnvelopeController->Play( m_pMoanSound, 0.5, m_flMoanPitch );
 	}
 
 	envPoisonZombieMoanVolumeFast[ 1 ].durationMin = 0.1;
@@ -1166,10 +1166,10 @@ void CNPC_PoisonZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize
 		IdleSound();
 	}
 
-	float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, pEnvelope, iEnvelopeSize );
+	float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, pEnvelope, iEnvelopeSize );
 
 	float flPitchShift = random->RandomInt( -4, 4 );
-	ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, m_flMoanPitch + flPitchShift, 0.3 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, m_flMoanPitch + flPitchShift, 0.3 );
 
 	m_flNextMoanSound = gpGlobals->curtime + duration + 9999;
 }

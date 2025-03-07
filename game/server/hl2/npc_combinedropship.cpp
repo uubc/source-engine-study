@@ -280,7 +280,7 @@ private:
 	LandingState_t GetLandingState() const { return (LandingState_t)m_iLandState; }
 	bool IsHovering();
 	void UpdateGroundRotorWashSound( float flAltitude );
-	void UpdateRotorWashVolume( CSoundPatch *pRotorSound, float flVolume, float flDeltaTime );
+	void UpdateRotorWashVolume( ISoundPatch *pRotorSound, float flVolume, float flDeltaTime );
 
 private:
 	// Timers
@@ -346,10 +346,10 @@ private:
 	int 			m_poseWeapon_Yaw;
 
 	// Sounds
-	CSoundPatch		*m_pCannonSound;
-	CSoundPatch		*m_pRotorOnGroundSound;
-	CSoundPatch		*m_pDescendingWarningSound;
-	CSoundPatch		*m_pNearRotorSound;
+	ISoundPatch		*m_pCannonSound;
+	ISoundPatch		*m_pRotorOnGroundSound;
+	ISoundPatch		*m_pDescendingWarningSound;
+	ISoundPatch		*m_pNearRotorSound;
 
 	// Outputs
 	COutputEvent	m_OnFinishedDropoff;
@@ -1456,34 +1456,33 @@ void CNPC_CombineDropship::UpdateFacingDirection( void )
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::InitializeRotorSound( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter( this );
-	m_pRotorSound = controller.SoundCreate( filter, entindex(), "NPC_CombineDropship.RotorLoop" );
-	m_pNearRotorSound = controller.SoundCreate( filter, entindex(), "NPC_CombineDropship.NearRotorLoop" );
-	m_pRotorOnGroundSound = controller.SoundCreate( filter, entindex(), "NPC_CombineDropship.OnGroundRotorLoop" );
-	m_pDescendingWarningSound = controller.SoundCreate( filter, entindex(), "NPC_CombineDropship.DescendingWarningLoop" );
-	m_pCannonSound = controller.SoundCreate( filter, entindex(), "NPC_CombineDropship.FireLoop"  );
+	m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineDropship.RotorLoop" );
+	m_pNearRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineDropship.NearRotorLoop" );
+	m_pRotorOnGroundSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineDropship.OnGroundRotorLoop" );
+	m_pDescendingWarningSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineDropship.DescendingWarningLoop" );
+	m_pCannonSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineDropship.FireLoop"  );
 
 	// NOTE: m_pRotorSound is started up by the base class
 	if ( m_pCannonSound )
 	{
-		controller.Play( m_pCannonSound, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pCannonSound, 0.0, 100 );
 	}
 
 	if ( m_pDescendingWarningSound )
 	{
-		controller.Play( m_pDescendingWarningSound, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pDescendingWarningSound, 0.0, 100 );
 	}
 
 	if ( m_pRotorOnGroundSound )
 	{
-		controller.Play( m_pRotorOnGroundSound, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pRotorOnGroundSound, 0.0, 100 );
 	}
 	
 	if ( m_pNearRotorSound )
 	{
-		controller.Play( m_pNearRotorSound, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pNearRotorSound, 0.0, 100 );
 	}
 
 	m_engineThrust = 1.0f;
@@ -1497,29 +1496,28 @@ void CNPC_CombineDropship::InitializeRotorSound( void )
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_pCannonSound )
 	{
-		controller.SoundDestroy( m_pCannonSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pCannonSound );
 		m_pCannonSound = NULL;
 	}
 
 	if ( m_pRotorOnGroundSound )
 	{
-		controller.SoundDestroy( m_pRotorOnGroundSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pRotorOnGroundSound );
 		m_pRotorOnGroundSound = NULL;
 	}
 
 	if ( m_pDescendingWarningSound )
 	{
-		controller.SoundDestroy( m_pDescendingWarningSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pDescendingWarningSound );
 		m_pDescendingWarningSound = NULL;
 	}
 
 	if ( m_pNearRotorSound )
 	{
-		controller.SoundDestroy( m_pNearRotorSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pNearRotorSound );
 		m_pNearRotorSound = NULL;
 	}
 
@@ -1530,19 +1528,18 @@ void CNPC_CombineDropship::StopLoopingSounds()
 //------------------------------------------------------------------------------
 // Updates the rotor wash volume
 //------------------------------------------------------------------------------
-void CNPC_CombineDropship::UpdateRotorWashVolume( CSoundPatch *pRotorSound, float flVolume, float flDeltaTime )
+void CNPC_CombineDropship::UpdateRotorWashVolume( ISoundPatch *pRotorSound, float flVolume, float flDeltaTime )
 {
 	if ( !pRotorSound )
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	float flVolDelta = flVolume - controller.SoundGetVolume( pRotorSound );
+	float flVolDelta = flVolume - g_pSoundEnvelopeController->SoundGetVolume( pRotorSound );
 	if ( flVolDelta )
 	{
 		// We can change from 0 to 1 in 3 seconds. 
 		// Figure out how many seconds flVolDelta will take.
 		float flRampTime = fabs( flVolDelta ) * flDeltaTime; 
-		controller.SoundChangeVolume( pRotorSound, flVolume, flRampTime );
+		g_pSoundEnvelopeController->SoundChangeVolume( pRotorSound, flVolume, flRampTime );
 	}
 }
 
@@ -1580,22 +1577,21 @@ void CNPC_CombineDropship::UpdateRotorWashVolume()
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::UpdateRotorSoundPitch( int iPitch )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	float rotorPitch = 0.2 + m_engineThrust * 0.8;
 	if ( m_pRotorSound )
 	{
-		controller.SoundChangePitch( m_pRotorSound, iPitch + rotorPitch, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pRotorSound, iPitch + rotorPitch, 0.1 );
 	}
 
 	if ( m_pNearRotorSound )
 	{
-		controller.SoundChangePitch( m_pNearRotorSound, iPitch + rotorPitch, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pNearRotorSound, iPitch + rotorPitch, 0.1 );
 	}
 
 	if (m_pRotorOnGroundSound)
 	{
-		controller.SoundChangePitch( m_pRotorOnGroundSound, iPitch + rotorPitch, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pRotorOnGroundSound, iPitch + rotorPitch, 0.1 );
 	}
 
 	UpdateRotorWashVolume();
@@ -1887,14 +1883,13 @@ void CNPC_CombineDropship::SetLandingState( LandingState_t landingState )
 
 	if ( m_pDescendingWarningSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 		if ( ( landingState == LANDING_DESCEND ) || ( landingState == LANDING_TOUCHDOWN ) || ( landingState == LANDING_UNLOADING ) || ( landingState == LANDING_UNLOADED ) || ( landingState == LANDING_HOVER_DESCEND ) )
 		{
-			controller.SoundChangeVolume( m_pDescendingWarningSound, m_bSuppressSound ? 0.0f : 1.0f, 0.3f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pDescendingWarningSound, m_bSuppressSound ? 0.0f : 1.0f, 0.3f );
 		}
 		else
 		{
-			controller.SoundChangeVolume( m_pDescendingWarningSound, 0.0f, 0.0f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pDescendingWarningSound, 0.0f, 0.0f );
 		}
 	}
 	
@@ -2944,8 +2939,7 @@ void CNPC_CombineDropship::StartCannon( void )
 	// Start up the cannon sound.
 	if ( m_pCannonSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangeVolume(m_pCannonSound, 1.0, 0.0);
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pCannonSound, 1.0, 0.0);
 	}
 
 }
@@ -2963,8 +2957,7 @@ void CNPC_CombineDropship::StopCannon( void )
 	// Stop the cannon sound.
 	if ( m_pCannonSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangeVolume(m_pCannonSound, 0.0, 0.1);
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pCannonSound, 0.0, 0.1);
 	}
 }
 

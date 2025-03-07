@@ -1022,7 +1022,7 @@ void CTeamTrainWatcher::StopCaptureAlarm( void )
 {
 	if ( m_pAlarm )
 	{
-		CSoundEnvelopeController::GetController().SoundDestroy( m_pAlarm );
+		g_pSoundEnvelopeController->SoundDestroy( m_pAlarm );
 		m_pAlarm = NULL;
 		m_flAlarmEndTime = -1.0f;
 	}
@@ -1037,9 +1037,8 @@ void CTeamTrainWatcher::StartCaptureAlarm( CTeamControlPoint *pPoint )
 	if ( pPoint )
 	{
 		CReliableBroadcastRecipientFilter filter;
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		m_pAlarm = controller.SoundCreate( filter, pPoint->entindex(), CHAN_STATIC, TEAM_TRAIN_ALARM, ATTN_NORM );
-		controller.Play( m_pAlarm, 1.0, PITCH_NORM );
+		m_pAlarm = g_pSoundEnvelopeController->SoundCreate( filter, pPoint->entindex(), CHAN_STATIC, TEAM_TRAIN_ALARM, ATTN_NORM );
+		g_pSoundEnvelopeController->Play( m_pAlarm, 1.0, PITCH_NORM );
 
 		m_flAlarmEndTime = gpGlobals->curtime + MAX_ALARM_TIME_NO_RECEDE;
 	}

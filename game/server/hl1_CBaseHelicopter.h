@@ -97,7 +97,7 @@ public:
 
 	void	DrawDebugGeometryOverlays(void);
 
-	CSoundPatch *m_pRotorSound;
+	ISoundPatch*	m_pRotorSound;
 
 	float			m_flForce;
 	int				m_fHelicopterFlags;

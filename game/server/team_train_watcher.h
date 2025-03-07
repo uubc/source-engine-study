@@ -167,7 +167,7 @@ private:
 	float m_flNextSpeakForwardConceptTime; // used to have players speak the forward concept every X seconds
 	CHandle<CTriggerAreaCapture> m_hAreaCap;
 
-	CSoundPatch *m_pAlarm;
+	ISoundPatch *m_pAlarm;
 	float m_flAlarmEndTime;
 	bool m_bAlarmPlayed;
 

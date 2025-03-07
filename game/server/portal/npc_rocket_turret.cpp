@@ -291,7 +291,7 @@ public:
 	virtual void MissileTouch( IServerEntity *pOther );
 
 	EHANDLE			m_hLauncher;
-	CSoundPatch		*m_pAmbientSound;
+	ISoundPatch		*m_pAmbientSound;
 protected:
 	virtual void DoExplosion( void );
 	virtual void CreateSounds( void );
@@ -1372,21 +1372,19 @@ void CRocket_Turret_Projectile::CreateSounds()
 {
 	if (!m_pAmbientSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pAmbientSound = controller.SoundCreate( filter, entindex(), ROCKET_PROJECTILE_LOOPING_SOUND );
-		controller.Play( m_pAmbientSound, 1.0, 100 );
+		m_pAmbientSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), ROCKET_PROJECTILE_LOOPING_SOUND );
+		g_pSoundEnvelopeController->Play( m_pAmbientSound, 1.0, 100 );
 	}
 }
 
 
 void CRocket_Turret_Projectile::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pAmbientSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pAmbientSound );
 	m_pAmbientSound = NULL;
 
 	BaseClass::StopLoopingSounds();

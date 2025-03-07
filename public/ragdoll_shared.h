@@ -83,11 +83,11 @@ class IStudioHdr;
 #include "sequence_Transitioner.h"
 #include "engine/ivmodelinfo.h"
 #include "engine/IStaticPropMgr.h"
+#include "engine/IEngineSound.h"
 
 #include "IEffects.h"
 #include "sharedInterface.h"
 #include "shareddefs.h"
-#include "soundenvelope.h"
 #include "collisionproperty.h"
 #include "portal_util_shared.h"
 #include "ai_activity.h"

@@ -54,7 +54,7 @@ public:
 	CNetworkVar( bool, m_bIsInfiniteLife );
 	CNetworkVar( float, m_fTimeTillDeath );
 
-	CSoundPatch		*m_pAmbientSound;
+	ISoundPatch		*m_pAmbientSound;
 
 };
 
@@ -107,21 +107,19 @@ void CPropEnergyBall::CreateSounds()
 {
 	if (!m_pAmbientSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pAmbientSound = controller.SoundCreate( filter, entindex(), "EnergyBall.AmbientLoop" );
-		controller.Play( m_pAmbientSound, 1.0, 100 );
+		m_pAmbientSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "EnergyBall.AmbientLoop" );
+		g_pSoundEnvelopeController->Play( m_pAmbientSound, 1.0, 100 );
 	}
 }
 
 
 void CPropEnergyBall::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pAmbientSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pAmbientSound );
 	m_pAmbientSound = NULL;
 
 	BaseClass::StopLoopingSounds();

@@ -259,8 +259,7 @@ void CBounceBomb::SetMineState( int iState )
 	{
 	case MINE_STATE_DORMANT:
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundChangeVolume( m_pWarnSound, 0.0, 0.1 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pWarnSound, 0.0, 0.1 );
 			UpdateLight( false, 0, 0, 0, 0 );
 			SetThink( NULL );
 		}
@@ -268,8 +267,7 @@ void CBounceBomb::SetMineState( int iState )
 
 	case MINE_STATE_CAPTIVE:
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundChangeVolume( m_pWarnSound, 0.0, 0.2 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pWarnSound, 0.0, 0.2 );
 
 			// Unhook
 			unsigned int flags = GetEngineObject()->VPhysicsGetObject()->GetCallbackFlags();
@@ -312,8 +310,7 @@ void CBounceBomb::SetMineState( int iState )
 			// Scare NPC's
 			CSoundEnt::InsertSound( SOUND_DANGER, GetEngineObject()->GetAbsOrigin(), 300, 1.0f, this );
 
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundChangeVolume( m_pWarnSound, 0.0, 0.2 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pWarnSound, 0.0, 0.2 );
 
 			SetTouch( &CBounceBomb::ExplodeTouch );
 			unsigned int flags = GetEngineObject()->VPhysicsGetObject()->GetCallbackFlags();
@@ -791,14 +788,13 @@ void CBounceBomb::UpdateLight( bool bTurnOn, unsigned int r, unsigned int g, uns
 //---------------------------------------------------------
 void CBounceBomb::Wake( bool bAwake )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CReliableBroadcastRecipientFilter filter;
 	
 	if( !m_pWarnSound )
 	{
-		m_pWarnSound = controller.SoundCreate( filter, entindex(), "NPC_CombineMine.ActiveLoop" );
-		controller.Play( m_pWarnSound, 1.0, PITCH_NORM  );
+		m_pWarnSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineMine.ActiveLoop" );
+		g_pSoundEnvelopeController->Play( m_pWarnSound, 1.0, PITCH_NORM  );
 	}
 
 	if( bAwake )
@@ -815,7 +811,7 @@ void CBounceBomb::Wake( bool bAwake )
 			params.m_pflSoundDuration = NULL;
 			params.m_bWarnOnDirectWaveReference = true;
 			g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
-			controller.SoundChangeVolume( m_pWarnSound, 1.0, 0.1 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pWarnSound, 1.0, 0.1 );
 		}
 
 		unsigned char r, g, b;
@@ -849,7 +845,7 @@ void CBounceBomb::Wake( bool bAwake )
 		}
 
 		SetNearestNPC( NULL );
-		controller.SoundChangeVolume( m_pWarnSound, 0.0, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pWarnSound, 0.0, 0.1 );
 		UpdateLight( false, 0, 0, 0, 0 );
 	}
 
@@ -1109,8 +1105,7 @@ void CBounceBomb::ExplodeThink()
 
 	if( m_pWarnSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundDestroy( m_pWarnSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pWarnSound );
 	}
 
 

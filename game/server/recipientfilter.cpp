@@ -101,7 +101,7 @@ void CRecipientFilter::AddAllPlayers( void )
 	}
 }
 
-void CRecipientFilter::AddRecipient( CBasePlayer *player )
+void CRecipientFilter::AddRecipient( const IHandleEntity *player )
 {
 	Assert( player );
 
@@ -133,7 +133,7 @@ void CRecipientFilter::RemoveAllRecipients( void )
 	m_Recipients.RemoveAll();
 }
 
-void CRecipientFilter::RemoveRecipient( CBasePlayer *player )
+void CRecipientFilter::RemoveRecipient( const IHandleEntity *player )
 {
 	Assert( player );
 	if ( player )

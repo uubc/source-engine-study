@@ -256,7 +256,7 @@ private:
 
 	bool m_bActivated;
 	bool m_bExplodeOnContact;
-	CSoundPatch	*m_pWarnSound;
+	ISoundPatch	*m_pWarnSound;
 
 	EHANDLE m_hWarningSprite;
 	bool m_bBlinkerAtTop;
@@ -755,7 +755,7 @@ private:
 	float		m_flGoalYawDmg;
 
 	// Sounds
-	CSoundPatch	*m_pGunFiringSound;
+	ISoundPatch	*m_pGunFiringSound;
 
 	// Outputs
 	COutputInt	m_OnHealthChanged;
@@ -907,8 +907,7 @@ void CNPC_AttackHelicopter::StopLoopingSounds()
 
 	if ( m_pGunFiringSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundDestroy( m_pGunFiringSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pGunFiringSound );
 		m_pGunFiringSound = NULL;
 	}
 }
@@ -1354,21 +1353,20 @@ void CNPC_AttackHelicopter::InitializeRotorSound( void )
 {
 	if ( !m_pRotorSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 		CPASAttenuationFilter filter( this );
 
 		if (GetEngineObject()->HasSpawnFlags( SF_HELICOPTER_LOUD_ROTOR_SOUND ) )
 		{
-			m_pRotorSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopter.RotorsLoud" );
+			m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopter.RotorsLoud" );
 		}
 		else
 		{
-			m_pRotorSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopter.Rotors" );
+			m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopter.Rotors" );
 		}
 
-		m_pRotorBlast = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopter.RotorBlast" );
-		m_pGunFiringSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopter.FireGun" );
-		controller.Play( m_pGunFiringSound, 0.0, 100 );
+		m_pRotorBlast = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopter.RotorBlast" );
+		m_pGunFiringSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopter.FireGun" );
+		g_pSoundEnvelopeController->Play( m_pGunFiringSound, 0.0, 100 );
 	}
 	else
 	{
@@ -2684,11 +2682,10 @@ void CNPC_AttackHelicopter::FireElectricityGun( )
 
 bool CNPC_AttackHelicopter::DoGunFiring( const Vector &vBasePos, const Vector &vGunDir, const Vector &vecFireAtPosition )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	float flVolume = controller.SoundGetVolume( m_pGunFiringSound );
+	float flVolume = g_pSoundEnvelopeController->SoundGetVolume( m_pGunFiringSound );
 	if ( flVolume != 1.0f )
 	{
-		controller.SoundChangeVolume( m_pGunFiringSound, 1.0, 0.01f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 1.0, 0.01f );
 	}
 
 	if ( ( m_nAttackMode == ATTACK_MODE_BULLRUSH_VEHICLE ) && ( IsInSecondaryMode( BULLRUSH_MODE_SHOOT_GUN ) ) )
@@ -2728,7 +2725,7 @@ bool CNPC_AttackHelicopter::DoGunFiring( const Vector &vBasePos, const Vector &v
 	if ( m_nRemainingBursts > 0 )
 		return true;
 
-	controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.01f );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.01f );
 	float flIdleTime = CHOPPER_GUN_IDLE_TIME;
 	float flVariance = flIdleTime * 0.1f;
 	m_flNextAttack = gpGlobals->curtime + m_flIdleTimeDelay + random->RandomFloat(flIdleTime - flVariance, flIdleTime + flVariance);
@@ -3176,8 +3173,7 @@ void CNPC_AttackHelicopter::InputGunOff( inputdata_t &inputdata )
 
 	if ( m_pGunFiringSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.01f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.01f );
 	}
 }
 
@@ -3765,8 +3761,7 @@ void CNPC_AttackHelicopter::Event_Killed( const ITakeDamageInfo&info )
 
 	m_lifeState			= LIFE_DYING;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
 
 	if( GetCrashPoint() == NULL )
 	{
@@ -3777,12 +3772,11 @@ void CNPC_AttackHelicopter::Event_Killed( const ITakeDamageInfo&info )
 			SetDesiredPosition( pCrashPoint->GetEngineObject()->GetAbsOrigin() );
 
 			// Start the failing engine sound
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundDestroy( m_pRotorSound );
+			g_pSoundEnvelopeController->SoundDestroy( m_pRotorSound );
 
 			CPASAttenuationFilter filter( this );
-			m_pRotorSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopter.EngineFailure" );
-			controller.Play( m_pRotorSound, 1.0, 100 );
+			m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopter.EngineFailure" );
+			g_pSoundEnvelopeController->Play( m_pRotorSound, 1.0, 100 );
 
 			// Tailspin!!
 			SetActivity( ACT_HELICOPTER_CRASHING );
@@ -4443,8 +4437,7 @@ void CNPC_AttackHelicopter::SwitchToBullrushIdle( void )
 	m_flBullrushAdditionalHeight = 0.0f;
 	SetPauseState( PAUSE_NO_PAUSE );
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
 }
 
 
@@ -4470,8 +4463,7 @@ void CNPC_AttackHelicopter::ShutdownGunDuringBullrush( )
 	m_nRemainingBursts = 0;
 	SetPauseState( PAUSE_NO_PAUSE );
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.1f );
 }
 
 #define	HELICOPTER_MIN_IDLE_BOMBING_DIST	350.0f
@@ -5135,8 +5127,7 @@ void CGrenadeHelicopter::UpdateOnRemove()
 {
 	if( m_pWarnSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundDestroy( m_pWarnSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pWarnSound );
 	}
 	g_pNotify->ClearEntity( this );
 	BaseClass::UpdateOnRemove();
@@ -5202,10 +5193,9 @@ void CGrenadeHelicopter::BecomeActive()
 	{
 		SetContextThink( &CGrenadeHelicopter::RampSoundThink, gpGlobals->curtime + GetBombLifetime() - BOMB_RAMP_SOUND_TIME, s_pRampSoundContext );
 
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 		CReliableBroadcastRecipientFilter filter;
-		m_pWarnSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopterGrenade.Ping" );
-		controller.Play( m_pWarnSound, 1.0, PITCH_NORM );
+		m_pWarnSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopterGrenade.Ping" );
+		g_pSoundEnvelopeController->Play( m_pWarnSound, 1.0, PITCH_NORM );
 	}
 
 	SetContextThink( &CGrenadeHelicopter::WarningBlinkerThink, gpGlobals->curtime + (GetBombLifetime() - 2.0f), s_pWarningBlinkerContext );
@@ -5223,8 +5213,7 @@ void CGrenadeHelicopter::RampSoundThink( )
 {
 	if ( m_pWarnSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangePitch( m_pWarnSound, 140, BOMB_RAMP_SOUND_TIME );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pWarnSound, 140, BOMB_RAMP_SOUND_TIME );
 	}
 
 	SetContextThink( NULL, gpGlobals->curtime, s_pRampSoundContext );
@@ -5577,12 +5566,11 @@ void CGrenadeHelicopter::OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPicku
 			// Change the warning sound to a captured sound.
 			SetContextThink( &CGrenadeHelicopter::RampSoundThink, gpGlobals->curtime + GetBombLifetime() - BOMB_RAMP_SOUND_TIME, s_pRampSoundContext );
 
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundDestroy( m_pWarnSound );
+			g_pSoundEnvelopeController->SoundDestroy( m_pWarnSound );
 
 			CReliableBroadcastRecipientFilter filter;
-			m_pWarnSound = controller.SoundCreate( filter, entindex(), "NPC_AttackHelicopterGrenade.PingCaptured" );
-			controller.Play( m_pWarnSound, 1.0, PITCH_NORM );
+			m_pWarnSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_AttackHelicopterGrenade.PingCaptured" );
+			g_pSoundEnvelopeController->Play( m_pWarnSound, 1.0, PITCH_NORM );
 
 			// Reset our counter so the player has more time
 			SetThink( &CGrenadeHelicopter::ExplodeThink );

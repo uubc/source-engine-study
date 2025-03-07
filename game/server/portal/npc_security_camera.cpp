@@ -184,7 +184,7 @@ private:
 	Vector	m_vNoisePos;
 	int		m_iTicksTillNextNoise;
 
-	CSoundPatch		*m_pMovementSound;
+	ISoundPatch		*m_pMovementSound;
 
 	COutputEvent m_OnDeploy;
 	COutputEvent m_OnRetire;
@@ -278,20 +278,18 @@ void CNPC_SecurityCamera::CreateSounds()
 {
 	if (!m_pMovementSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pMovementSound = controller.SoundCreate( filter, entindex(), "Portalgun.pedestal_rotate_loop" );
-		controller.Play( m_pMovementSound, 0, 100 );
+		m_pMovementSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Portalgun.pedestal_rotate_loop" );
+		g_pSoundEnvelopeController->Play( m_pMovementSound, 0, 100 );
 	}
 }
 
 void CNPC_SecurityCamera::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pMovementSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pMovementSound );
 	m_pMovementSound = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -571,9 +569,8 @@ bool CNPC_SecurityCamera::UpdateFacing( void )
 	{
 		if ( m_pMovementSound )
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-			controller.SoundChangeVolume( m_pMovementSound, RandomFloat( 0.7f, 0.9f ), 0.05f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pMovementSound, RandomFloat( 0.7f, 0.9f ), 0.05f );
 		}
 
 		// Update pitch
@@ -590,9 +587,8 @@ bool CNPC_SecurityCamera::UpdateFacing( void )
 	{
 		if ( m_pMovementSound )
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-			controller.SoundChangeVolume( m_pMovementSound, 0.0f, 0.05f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pMovementSound, 0.0f, 0.05f );
 		}
 	}
 

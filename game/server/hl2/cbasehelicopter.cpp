@@ -641,8 +641,7 @@ void CBaseHelicopter::DoRotorPhysicsPush( const Vector &vecRotorOrigin, float fl
 	{
 		if ( m_pRotorBlast )
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundChangeVolume( m_pRotorBlast, 1.0, 1.0 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pRotorBlast, 1.0, 1.0 );
 		}
 	}
 	else if ( bWasPushingObjects && m_hEntitiesPushedByWash.Count() == 0 )
@@ -650,8 +649,7 @@ void CBaseHelicopter::DoRotorPhysicsPush( const Vector &vecRotorOrigin, float fl
 		if ( m_pRotorBlast )
 		{
 			// We just stopped pushing objects, so fade the blast sound out.
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundChangeVolume( m_pRotorBlast, 0, 1.0 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pRotorBlast, 0, 1.0 );
 		}
 	}
 }
@@ -1068,14 +1066,13 @@ void CBaseHelicopter::UpdateRotorWashVolume()
 	if ( !m_pRotorSound )
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	float flVolDelta = GetRotorVolume()	- controller.SoundGetVolume( m_pRotorSound );
+	float flVolDelta = GetRotorVolume()	- g_pSoundEnvelopeController->SoundGetVolume( m_pRotorSound );
 	if ( flVolDelta )
 	{
 		// We can change from 0 to 1 in 3 seconds. 
 		// Figure out how many seconds flVolDelta will take.
 		float flRampTime = fabs( flVolDelta ) * 3.0f; 
-		controller.SoundChangeVolume( m_pRotorSound, GetRotorVolume(), flRampTime );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pRotorSound, GetRotorVolume(), flRampTime );
 	}
 }
 
@@ -1150,20 +1147,19 @@ void CBaseHelicopter::DelayedKillThink( )
 //------------------------------------------------------------------------------
 void CBaseHelicopter::InitializeRotorSound( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_pRotorSound )
 	{
 		// Get the rotor sound started up.
-		controller.Play( m_pRotorSound, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pRotorSound, 0.0, 100 );
 		UpdateRotorWashVolume();
 	}
 
 	if ( m_pRotorBlast )
 	{
 		// Start the blast sound and then immediately drop it to 0 (starting it at 0 wouldn't start it)
-		controller.Play( m_pRotorBlast, 1.0, 100 );
-		controller.SoundChangeVolume(m_pRotorBlast, 0, 0.0);
+		g_pSoundEnvelopeController->Play( m_pRotorBlast, 1.0, 100 );
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pRotorBlast, 0, 0.0);
 	}
 
 	m_iSoundState = SND_CHANGE_PITCH; // hack for going through level transitions
@@ -1179,8 +1175,7 @@ void CBaseHelicopter::UpdateRotorSoundPitch( int iPitch )
 {
 	if (m_pRotorSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangePitch( m_pRotorSound, iPitch, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pRotorSound, iPitch, 0.1 );
 		UpdateRotorWashVolume();
 	}
 }
@@ -1310,9 +1305,8 @@ void CBaseHelicopter::Startup( void )
 void CBaseHelicopter::StopLoopingSounds()
 {
 	// Kill the rotor sounds
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pRotorSound );
-	controller.SoundDestroy( m_pRotorBlast );
+	g_pSoundEnvelopeController->SoundDestroy( m_pRotorSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pRotorBlast );
 	m_pRotorSound = NULL;
 	m_pRotorBlast = NULL;
 

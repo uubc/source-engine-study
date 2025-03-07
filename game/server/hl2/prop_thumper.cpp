@@ -54,7 +54,7 @@ private:
 	
 	bool m_bEnabled;
 	int m_iHammerAttachment;
-	CSoundPatch* m_sndMotor;
+	ISoundPatch* m_sndMotor;
 	EHANDLE m_hRepellantEnt;
 	int m_iDustScale;
 	
@@ -159,11 +159,11 @@ void CPropThumper::Precache( void )
 void CPropThumper::InitMotorSound( void )
 {
 	CPASAttenuationFilter filter( this );
-	m_sndMotor = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "coast.thumper_ambient" , ATTN_NORM );
+	m_sndMotor = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "coast.thumper_ambient" , ATTN_NORM );
 
 	if ( m_sndMotor )
 	{
-		(CSoundEnvelopeController::GetController()).Play( m_sndMotor, 1.0f, 100 );
+		g_pSoundEnvelopeController->Play( m_sndMotor, 1.0f, 100 );
 	}
 }
 
@@ -178,7 +178,7 @@ void CPropThumper::HandleState( void )
 		GetEngineObject()->SetPlaybackRate(MIN(GetEngineObject()->GetPlaybackRate() + STATE_CHANGE_MODIFIER, 1.0f));
 	}
 
-	(CSoundEnvelopeController::GetController()).Play( m_sndMotor, 1.0f, GetEngineObject()->GetPlaybackRate() * 100 );
+	g_pSoundEnvelopeController->Play( m_sndMotor, 1.0f, GetEngineObject()->GetPlaybackRate() * 100 );
 }
 
 void CPropThumper::Think( void )
@@ -269,7 +269,7 @@ void CPropThumper::StopLoopingSounds( void )
 {
 	if ( m_sndMotor != NULL )
 	{
-		 (CSoundEnvelopeController::GetController()).SoundDestroy( m_sndMotor );
+		 g_pSoundEnvelopeController->SoundDestroy( m_sndMotor );
 		 m_sndMotor = NULL;
 	}
 

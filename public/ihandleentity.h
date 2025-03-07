@@ -36,6 +36,7 @@ class CTraceListData;
 class CPhysCollide;
 class IStudioHdr;
 class IPhysicsObject;
+struct EmitSound_t;
 
 //-----------------------------------------------------------------------------
 // A ray...
@@ -474,6 +475,7 @@ public:
 	virtual bool IsBSPModel() const { return false; }
 	virtual bool IsNPC(void) const { return false; }
 	virtual bool IsPlayer(void) const { return false; }
+	virtual bool IsLocalPlayer(void) const { return false; }
 	virtual IHandlePlayer* AsHandlePlayer() { return NULL; }
 	virtual bool IsAlive(void) { return false; }
 	virtual bool IsStandable() const { return false; }
@@ -636,6 +638,86 @@ public:
 	virtual void OnEntitySpawned(T* pEntity) {};
 	virtual void OnEntityDeleted(T* pEntity) {};
 	virtual void PostEntityRemove(int entnum) {};
+};
+
+class ISoundPatch
+{
+public:
+	virtual ~ISoundPatch() {}
+	virtual void	ChangePitch(float pitchTarget, float deltaTime) = 0;
+	virtual void	ChangeVolume(float volumeTarget, float deltaTime) = 0;
+	virtual void	FadeOut(float deltaTime, bool destroyOnFadeout) = 0;
+	virtual float	GetPitch(void) = 0;
+	virtual float	GetVolume(void) = 0;
+	virtual string_t GetName() = 0;
+	virtual string_t GetScriptName() = 0;
+	// UNDONE: Don't call this, use the controller to shut down
+	virtual void	Shutdown(void) = 0;
+	virtual bool	Update(float time, float deltaTime) = 0;
+	virtual void	Reset(void) = 0;
+	virtual void	StartSound(float flStartTime = 0) = 0;
+	virtual void	ResumeSound(void) = 0;
+	virtual int		IsPlaying(void) = 0;
+	virtual void	AddPlayerPost(IHandleEntity* pPlayer) = 0;
+	virtual void	SetCloseCaptionDuration(float flDuration) = 0;
+	virtual void	SetBaseFlags(int iFlags) = 0;
+	// Returns the ent index
+	virtual int		EntIndex() const = 0;
+};
+
+enum soundcommands_t
+{
+	SOUNDCTRL_CHANGE_VOLUME,
+	SOUNDCTRL_CHANGE_PITCH,
+	SOUNDCTRL_STOP,
+	SOUNDCTRL_DESTROY,
+};
+
+//Envelope point
+struct envelopePoint_t
+{
+	float	amplitudeMin, amplitudeMax;
+	float	durationMin, durationMax;
+};
+
+//Envelope description
+struct envelopeDescription_t
+{
+	envelopePoint_t* pPoints;
+	int				nNumPoints;
+};
+
+abstract_class ISoundEnvelopeController
+{
+public:
+	virtual void		SystemReset(void) = 0;
+	virtual void		SystemUpdate(void) = 0;
+	virtual void		Play(ISoundPatch* pSound, float volume, float pitch, float flStartTime = 0) = 0;
+	virtual void		CommandAdd(ISoundPatch* pSound, float executeDeltaTime, soundcommands_t command, float commandTime, float value) = 0;
+	virtual void		CommandClear(ISoundPatch* pSound) = 0;
+	virtual void		Shutdown(ISoundPatch* pSound) = 0;
+
+	virtual ISoundPatch* SoundCreate(IRecipientFilter& filter, int nEntIndex, const char* pSoundName) = 0;
+	virtual ISoundPatch* SoundCreate(IRecipientFilter& filter, int nEntIndex, int channel, const char* pSoundName,
+							float attenuation) = 0;
+	virtual ISoundPatch* SoundCreate(IRecipientFilter& filter, int nEntIndex, int channel, const char* pSoundName,
+							soundlevel_t soundlevel) = 0;
+	virtual ISoundPatch* SoundCreate(IRecipientFilter& filter, int nEntIndex, const EmitSound_t& es) = 0;
+	virtual void		SoundDestroy(ISoundPatch*) = 0;
+	virtual void		SoundChangePitch(ISoundPatch* pSound, float pitchTarget, float deltaTime) = 0;
+	virtual void		SoundChangeVolume(ISoundPatch* pSound, float volumeTarget, float deltaTime) = 0;
+	virtual void		SoundFadeOut(ISoundPatch* pSound, float deltaTime, bool destroyOnFadeout = false) = 0;
+	virtual float		SoundGetPitch(ISoundPatch* pSound) = 0;
+	virtual float		SoundGetVolume(ISoundPatch* pSound) = 0;
+
+	virtual float		SoundPlayEnvelope(ISoundPatch* pSound, soundcommands_t soundCommand, envelopePoint_t* points, int numPoints) = 0;
+	virtual float		SoundPlayEnvelope(ISoundPatch* pSound, soundcommands_t soundCommand, envelopeDescription_t* envelope) = 0;
+
+	virtual void		CheckLoopingSoundsForPlayer(IHandleEntity* pPlayer) = 0;
+
+	virtual string_t	SoundGetName(ISoundPatch* pSound) = 0;
+
+	virtual void		SoundSetCloseCaptionDuration(ISoundPatch* pSound, float flDuration) = 0;
 };
 
 #endif // IHANDLEENTITY_H

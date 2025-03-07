@@ -18,7 +18,6 @@
 #include "basegrenade_shared.h"
 #include "hl2mp/weapon_slam.h"
 
-class CSoundPatch;
 
 class CSatchelCharge : public CBaseGrenade
 {
@@ -34,7 +33,7 @@ public:
 	void			SatchelThink( void );
 	void			SatchelUse( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 
-	CSoundPatch*	m_soundSlide;
+	ISoundPatch*	m_soundSlide;
 	float			m_flSlideVolume;
 	float			m_flNextBounceSoundTime;
 	bool			m_bInAir;

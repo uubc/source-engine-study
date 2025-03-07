@@ -46,7 +46,7 @@ public:
 	EHANDLE	m_hMicrophone; //the microphone for teleporting sound
 	EHANDLE	m_hSpeaker; //the speaker for teleported sound
 	
-	CSoundPatch		*m_pAmbientSound;
+	ISoundPatch		*m_pAmbientSound;
 
 	Vector		m_vAudioOrigin;
 	Vector		m_vDelayedPosition;

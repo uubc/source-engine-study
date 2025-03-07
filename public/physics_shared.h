@@ -18,7 +18,7 @@ class IPhysicsSurfaceProps;
 class IPhysicsCollision;
 class IPhysicsObject;
 class IPhysicsObjectPairHash;
-class CSoundPatch;
+class ISoundPatch;
 struct objectparams_t;
 class CPhysCollide;
 struct solid_t;

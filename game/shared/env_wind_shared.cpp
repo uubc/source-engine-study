@@ -89,7 +89,7 @@ CEnvWindShared::~CEnvWindShared()
 {
 	if (m_pWindSound)
 	{
-		CSoundEnvelopeController::GetController().Shutdown( m_pWindSound );
+		g_pSoundEnvelopeController->Shutdown( m_pWindSound );
 	}
 }
 
@@ -110,10 +110,9 @@ void CEnvWindShared::Init( int nEntIndex, int iRandomSeed, float flTime,
 	// Cache in the wind sound...
 	if (!g_pEffects->IsServer())
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		m_pWindSound = controller.SoundCreate( -1, CHAN_STATIC, 
+		m_pWindSound = g_pSoundEnvelopeController->SoundCreate( -1, CHAN_STATIC, 
 			"EnvWind.Loop", ATTN_NONE );
-		controller.Play( m_pWindSound, 0.0f, 100 );
+		g_pSoundEnvelopeController->Play( m_pWindSound, 0.0f, 100 );
 	}
 	*/
 
@@ -149,7 +148,6 @@ void CEnvWindShared::UpdateWindSound( float flTotalWindSpeed )
 	if (!g_pEffects->IsServer())
 	{
 		float flDuration = random->RandomFloat( 1.0f, 2.0f );
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		// FIXME: Tweak with these numbers
 		float flNormalizedWindSpeed = flTotalWindSpeed / 150.0f;
@@ -157,8 +155,8 @@ void CEnvWindShared::UpdateWindSound( float flTotalWindSpeed )
 			flNormalizedWindSpeed = 1.0f;
 		float flPitch = 120 * Bias( flNormalizedWindSpeed, 0.3f ) + 100;
 		float flVolume = 0.3f * Bias( flNormalizedWindSpeed, 0.3f ) + 0.7f;
-		controller.SoundChangePitch( m_pWindSound, flPitch, flDuration );
-		controller.SoundChangeVolume( m_pWindSound, flVolume, flDuration );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pWindSound, flPitch, flDuration );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pWindSound, flVolume, flDuration );
 	}
 }
 

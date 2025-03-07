@@ -652,8 +652,7 @@ CBasePlayer *CNPC_BaseScanner::HasPhysicsAttacker( float dt )
 //------------------------------------------------------------------------------
 void CNPC_BaseScanner::StopLoopingSounds(void)
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pEngineSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pEngineSound );
 	m_pEngineSound = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -795,7 +794,6 @@ void CNPC_BaseScanner::PlayFlySound(void)
 	if (GetEngineObject()->IsMarkedForDeletion() )
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	//Setup the sound if we're not already
 	if ( m_pEngineSound == NULL )
@@ -803,13 +801,13 @@ void CNPC_BaseScanner::PlayFlySound(void)
 		// Create the sound
 		CPASAttenuationFilter filter( this );
 
-		m_pEngineSound = controller.SoundCreate( filter, entindex(), CHAN_STATIC, GetEngineSound(), ATTN_NORM );
+		m_pEngineSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, GetEngineSound(), ATTN_NORM );
 
 		Assert(m_pEngineSound);
 
 		// Start the engine sound
-		controller.Play( m_pEngineSound, 0.0f, 100.0f );
-		controller.SoundChangeVolume( m_pEngineSound, 1.0f, 2.0f );
+		g_pSoundEnvelopeController->Play( m_pEngineSound, 0.0f, 100.0f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pEngineSound, 1.0f, 2.0f );
 	}
 
 	float	speed	 = GetCurrentVelocity().Length();
@@ -817,8 +815,8 @@ void CNPC_BaseScanner::PlayFlySound(void)
 	int		iPitch	 = MIN( 255, 80 + (20*(speed/GetMaxSpeed())) );
 
 	//Update our pitch and volume based on our speed
-	controller.SoundChangePitch( m_pEngineSound, iPitch, 0.1f );
-	controller.SoundChangeVolume( m_pEngineSound, flVolume, 0.1f );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pEngineSound, iPitch, 0.1f );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pEngineSound, flVolume, 0.1f );
 }
 
 //-----------------------------------------------------------------------------

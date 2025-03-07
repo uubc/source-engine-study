@@ -179,7 +179,7 @@ private:
 
 	virtual CAI_Expresser* CreateExpresser( void );
 
-	CSoundPatch		*m_pWooshSound;
+	ISoundPatch		*m_pWooshSound;
 
 	CNetworkQAngle( m_angEyeAngles );
 

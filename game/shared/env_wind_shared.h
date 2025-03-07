@@ -18,7 +18,6 @@
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-class CSoundPatch;
 
 //-----------------------------------------------------------------------------
 // Class used to help store events that occurred over time
@@ -217,7 +216,7 @@ private:
 	CUniformRandomStream m_WindVariationStream;
 
 	// Used to generate the wind sound...
-	CSoundPatch *m_pWindSound;
+	ISoundPatch *m_pWindSound;
 
 	// Event history required for prediction
 	CTimedEventQueue< WindAveEvent_t, unsigned short >	m_WindAveQueue;

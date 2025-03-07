@@ -440,7 +440,7 @@ void CNPC_Alyx::Activate( void )
 //-----------------------------------------------------------------------------
 void CNPC_Alyx::StopLoopingSounds( void )
 {
-	CSoundEnvelopeController::GetController().SoundDestroy( m_sndDarknessBreathing );
+	g_pSoundEnvelopeController->SoundDestroy( m_sndDarknessBreathing );
 	m_sndDarknessBreathing = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -1230,14 +1230,14 @@ void CNPC_Alyx::DoCustomSpeechAI( void )
 				if ( !m_sndDarknessBreathing )
 				{
 					CPASAttenuationFilter filter( this );
-					m_sndDarknessBreathing = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), CHAN_STATIC, 
+					m_sndDarknessBreathing = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, 
 						"ep_01.al_dark_breathing01", SNDLVL_TALKING );
-					CSoundEnvelopeController::GetController().Play( m_sndDarknessBreathing, 0.0f, PITCH_NORM );
+					g_pSoundEnvelopeController->Play( m_sndDarknessBreathing, 0.0f, PITCH_NORM );
 				}
 				
 				if ( m_sndDarknessBreathing )
 				{
- 					CSoundEnvelopeController::GetController().SoundChangeVolume( m_sndDarknessBreathing, ALYX_BREATHING_VOLUME_MAX, RandomFloat(10,20) );
+ 					g_pSoundEnvelopeController->SoundChangeVolume( m_sndDarknessBreathing, ALYX_BREATHING_VOLUME_MAX, RandomFloat(10,20) );
 					m_SpeechWatch_BreathingRamp.Stop();
 				}
 			}
@@ -1361,7 +1361,7 @@ void CNPC_Alyx::DoCustomSpeechAI( void )
 
 			if ( m_sndDarknessBreathing )
 			{
-				CSoundEnvelopeController::GetController().SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.5 );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.5 );
 				m_SpeechWatch_BreathingRamp.Stop();
 			}
 		}
@@ -1370,7 +1370,7 @@ void CNPC_Alyx::DoCustomSpeechAI( void )
 	{
 		if ( m_sndDarknessBreathing )
 		{
-			CSoundEnvelopeController::GetController().SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.5 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.5 );
 			m_SpeechWatch_BreathingRamp.Stop();
 		}
 
@@ -1424,7 +1424,7 @@ void CNPC_Alyx::DoCustomSpeechAI( void )
 	{
 		if ( m_SpeechWatch_BreathingRamp.Expired() )
 		{
-			CSoundEnvelopeController::GetController().SoundChangeVolume( m_sndDarknessBreathing, ALYX_BREATHING_VOLUME_MAX, RandomFloat(5,10) );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_sndDarknessBreathing, ALYX_BREATHING_VOLUME_MAX, RandomFloat(5,10) );
 			m_SpeechWatch_BreathingRamp.Stop();
 		}
 	}
@@ -1438,9 +1438,9 @@ bool CNPC_Alyx::SpeakIfAllowed( AIConcept_t concept, const char *modifiers /*= N
 	if ( BaseClass::SpeakIfAllowed( concept, modifiers, bRespondingToPlayer, pszOutResponseChosen, bufsize ) )
 	{
 		// If we're breathing in the darkness, drop the volume quickly
-		if ( m_sndDarknessBreathing && CSoundEnvelopeController::GetController().SoundGetVolume( m_sndDarknessBreathing ) > 0.0 )
+		if ( m_sndDarknessBreathing && g_pSoundEnvelopeController->SoundGetVolume( m_sndDarknessBreathing ) > 0.0 )
 		{
-			CSoundEnvelopeController::GetController().SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.1 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_sndDarknessBreathing, 0.0f, 0.1 );
 
 			// Ramp up the sound again after the response is over
 			float flDelay = (GetTimeSpeechComplete() - gpGlobals->curtime);

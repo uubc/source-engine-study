@@ -54,9 +54,9 @@ public:
 	bool	m_bDinosaurExtinct;
 
 	// Sound envelopes
-	CSoundPatch		*m_pNormalSound;
-	CSoundPatch		*m_pStaticSound;
-	CSoundPatch		*m_pSignalSound;
+	ISoundPatch		*m_pNormalSound;
+	ISoundPatch		*m_pStaticSound;
+	ISoundPatch		*m_pSignalSound;
 };
 
 IMPLEMENT_CLIENTCLASS_DT( C_Portal_Dinosaur, DT_PropDinosaur, CPortal_Dinosaur )
@@ -78,17 +78,17 @@ C_Portal_Dinosaur::~C_Portal_Dinosaur( void )
 {
 	if ( m_pNormalSound != NULL )
 	{
-		CSoundEnvelopeController::GetController().Shutdown( m_pNormalSound );
+		g_pSoundEnvelopeController->Shutdown( m_pNormalSound );
 	}
 
 	if ( m_pStaticSound != NULL )
 	{
-		CSoundEnvelopeController::GetController().Shutdown( m_pStaticSound );
+		g_pSoundEnvelopeController->Shutdown( m_pStaticSound );
 	}
 
 	if ( m_pSignalSound != NULL )
 	{
-		CSoundEnvelopeController::GetController().Shutdown( m_pSignalSound );
+		g_pSoundEnvelopeController->Shutdown( m_pSignalSound );
 	}
 }
 
@@ -130,21 +130,21 @@ void C_Portal_Dinosaur::SetupSounds()
 
 	if ( m_pNormalSound == NULL )
 	{
-		m_pNormalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), "Portal.room1_radio" );
-		CSoundEnvelopeController::GetController().Play( m_pNormalSound, 0.0, PITCH_NORM );
+		m_pNormalSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Portal.room1_radio" );
+		g_pSoundEnvelopeController->Play( m_pNormalSound, 0.0, PITCH_NORM );
 	}
 
 	if ( m_pStaticSound == NULL )
 	{
-		m_pStaticSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), "UpdateItem.Static" );
-		CSoundEnvelopeController::GetController().Play( m_pStaticSound, 0.0, PITCH_NORM );
+		m_pStaticSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "UpdateItem.Static" );
+		g_pSoundEnvelopeController->Play( m_pStaticSound, 0.0, PITCH_NORM );
 	}
 
 	if ( m_pSignalSound == NULL && 	m_hDinosaur_Signal.Get() != NULL )
 	{
-		m_pSignalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), m_hDinosaur_Signal->m_szSoundName );
-		//m_pSignalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), "UpdateItem.Signal" );
-		CSoundEnvelopeController::GetController().Play( m_pSignalSound, 0.0, PITCH_NORM );
+		m_pSignalSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), m_hDinosaur_Signal->m_szSoundName );
+		//m_pSignalSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "UpdateItem.Signal" );
+		g_pSoundEnvelopeController->Play( m_pSignalSound, 0.0, PITCH_NORM );
 	}
 }
 
@@ -187,7 +187,7 @@ void C_Portal_Dinosaur::ScanForSounds()
 
 	if ( m_pNormalSound )
 	{
-		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pNormalSound, flOuterBlend, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pNormalSound, flOuterBlend, 0.1f );
 	}
 
 	float flMidBlend = 0.0f;
@@ -202,12 +202,12 @@ void C_Portal_Dinosaur::ScanForSounds()
 			flMidBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), 0.0f, 1.0f );
 			flMidBlend = Bias( flMidBlend, 0.9f );
 		}
-		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pStaticSound, flMidBlend, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pStaticSound, flMidBlend, 0.1f );
 	}
 
 	if ( m_pSignalSound )
 	{
-		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pSignalSound, flInnerBlend, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pSignalSound, flInnerBlend, 0.1f );
 	}
 
 #if defined ( RADIO_DEBUG_CLIENT )

@@ -127,7 +127,7 @@ private:
 
 			if ( !_filter.IgnorePredictionCull() )
 			{
-				_filter.RemoveRecipient( (CBasePlayer *)GetSuppressHost()  );
+				_filter.RemoveRecipient( GetSuppressHost()  );
 			}
 
 			if ( !_filter.GetRecipientCount() )

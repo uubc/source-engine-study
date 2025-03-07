@@ -47,7 +47,6 @@ ConVar	sk_ichthyosaur_melee_dmg( "sk_ichthyosaur_melee_dmg", "0" );
 #define	ICH_MIN_TURN_SPEED		4.0f
 #define	ICH_MAX_TURN_SPEED		30.0f
 
-#define	ENVELOPE_CONTROLLER		(CSoundEnvelopeController::GetController())
 
 #define	FEELER_COLLISION			0
 #define	FEELER_COLLISION_VISUALIZE	(FEELER_COLLISION&&0)
@@ -138,8 +137,8 @@ private:
 	bool	m_bHasMoveTarget;
 	bool	m_bIgnoreSurface;
 
-	//CSoundPatch	*m_pSwimSound;
-	//CSoundPatch	*m_pVoiceSound;
+	//ISoundPatch	*m_pSwimSound;
+	//ISoundPatch	*m_pVoiceSound;
 	
 	DEFINE_CUSTOM_AI;
 };
@@ -304,11 +303,11 @@ void CNPC_Ichthyosaur::Spawn( void )
 
 	NPCInit();
 
-	//m_pSwimSound	= ENVELOPE_CONTROLLER.SoundCreate( edict(), CHAN_BODY,	"xxxCONVERTTOGAMESOUNDS!!!npc/ichthyosaur/ich_amb1wav", ATTN_NORM );
-	//m_pVoiceSound	= ENVELOPE_CONTROLLER.SoundCreate( edict(), CHAN_VOICE,	"xxxCONVERTTOGAMESOUNDS!!!npc/ichthyosaur/water_breathwav", ATTN_IDLE );
+	//m_pSwimSound	= g_pSoundEnvelopeController->SoundCreate( edict(), CHAN_BODY,	"xxxCONVERTTOGAMESOUNDS!!!npc/ichthyosaur/ich_amb1wav", ATTN_NORM );
+	//m_pVoiceSound	= g_pSoundEnvelopeController->SoundCreate( edict(), CHAN_VOICE,	"xxxCONVERTTOGAMESOUNDS!!!npc/ichthyosaur/water_breathwav", ATTN_IDLE );
 
-	//ENVELOPE_CONTROLLER.Play( m_pSwimSound,	1.0f, 100 );
-	//ENVELOPE_CONTROLLER.Play( m_pVoiceSound,1.0f, 100 );
+	//g_pSoundEnvelopeController->Play( m_pSwimSound,	1.0f, 100 );
+	//g_pSoundEnvelopeController->Play( m_pVoiceSound,1.0f, 100 );
 
 	BaseClass::Spawn();
 }
@@ -1166,11 +1165,11 @@ void CNPC_Ichthyosaur::PrescheduleThink( void )
 	{
 		if ( random->RandomInt( 0, 1 ) )
 		{
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pSwimSound, random->RandomFloat( 0.0f, 0.5f ), 1.0f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pSwimSound, random->RandomFloat( 0.0f, 0.5f ), 1.0f );
 		}
 		else
 		{
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pVoiceSound, random->RandomFloat( 0.0f, 0.5f ), 1.0f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pVoiceSound, random->RandomFloat( 0.0f, 0.5f ), 1.0f );
 		}
 	}
 	*/

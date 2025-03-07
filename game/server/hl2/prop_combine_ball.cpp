@@ -838,9 +838,8 @@ void CPropCombineBall::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup
 		// Now we own this ball
 		SetPlayerLaunched( pPhysGunUser );
 
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		m_pHoldingSound = controller.SoundCreate( filter, entindex(), ep );
-		controller.Play( m_pHoldingSound, 1.0f, 100 ); 
+		m_pHoldingSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), ep );
+		g_pSoundEnvelopeController->Play( m_pHoldingSound, 1.0f, 100 );
 
 		// Don't collide with anything we may have to pull the ball through
 		GetEngineObject()->SetCollisionGroup( COLLISION_GROUP_DEBRIS );
@@ -961,9 +960,8 @@ void CPropCombineBall::StopLoopingSounds()
 {
 	if ( m_pHoldingSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.Shutdown( m_pHoldingSound );
-		controller.SoundDestroy( m_pHoldingSound );
+		g_pSoundEnvelopeController->Shutdown( m_pHoldingSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pHoldingSound );
 		m_pHoldingSound = NULL;
 	}
 }
@@ -977,8 +975,7 @@ void CPropCombineBall::DissolveRampSoundThink( )
 	float dt = GetBallHoldDissolveTime() - GetBallHoldSoundRampTime();
 	if ( m_pHoldingSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangePitch( m_pHoldingSound, 150, dt );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pHoldingSound, 150, dt );
 	}
 	SetContextThink( &CPropCombineBall::DissolveThink, gpGlobals->curtime + dt, s_pHoldDissolveContext );
 }

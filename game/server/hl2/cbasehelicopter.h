@@ -187,8 +187,8 @@ protected:
 	void	InputDisableRotorSound( inputdata_t &inputdata );
 
 protected:
-	CSoundPatch		*m_pRotorSound;				// Rotor loop played when the player can see the helicopter
-	CSoundPatch		*m_pRotorBlast;				// Sound played when the helicopter's pushing around physics objects
+	ISoundPatch		*m_pRotorSound;				// Rotor loop played when the player can see the helicopter
+	ISoundPatch		*m_pRotorBlast;				// Sound played when the helicopter's pushing around physics objects
 
 	float			m_flForce;
 	int				m_fHelicopterFlags;

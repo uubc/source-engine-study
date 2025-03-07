@@ -83,7 +83,7 @@ private:
 	CNetworkVar( int, m_nAttackState);
 	CNetworkVar( bool, m_bPrimaryFire);
 
-	CSoundPatch	*m_sndCharge;
+	ISoundPatch	*m_sndCharge;
 };
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponGauss, DT_WeaponGauss );
@@ -253,12 +253,12 @@ void CWeaponGauss::SecondaryAttack( void )
 		if ( m_sndCharge == NULL )
 		{
 			CPASAttenuationFilter filter( this );
-			m_sndCharge	= (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_WEAPON, "Weapon_Gauss.Spin", ATTN_NORM );
+			m_sndCharge	= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_WEAPON, "Weapon_Gauss.Spin", ATTN_NORM );
 		}
 
 		if ( m_sndCharge != NULL )
 		{
-			(CSoundEnvelopeController::GetController()).Play( m_sndCharge, 1.0f, 110 );
+			g_pSoundEnvelopeController->Play( m_sndCharge, 1.0f, 110 );
 		}
 	}
 	else if (m_nAttackState == 1)
@@ -313,7 +313,7 @@ void CWeaponGauss::SecondaryAttack( void )
 
 		if ( m_sndCharge != NULL )
 		{
-			(CSoundEnvelopeController::GetController()).SoundChangePitch( m_sndCharge, pitch, 0 );
+			g_pSoundEnvelopeController->SoundChangePitch( m_sndCharge, pitch, 0 );
 		}
 
 //FIXME		m_pPlayer->m_iWeaponVolume = GAUSS_PRIMARY_CHARGE_VOLUME;
@@ -748,7 +748,7 @@ void CWeaponGauss::StopSpinSound( void )
 {
 	if ( m_sndCharge != NULL )
 	{
-		(CSoundEnvelopeController::GetController()).SoundDestroy( m_sndCharge );
+		g_pSoundEnvelopeController->SoundDestroy( m_sndCharge );
 		m_sndCharge = NULL;
 	}
 }

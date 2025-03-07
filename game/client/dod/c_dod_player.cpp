@@ -724,7 +724,7 @@ C_DODPlayer::~C_DODPlayer()
 	// Kill the stamina sound!
 	if ( m_pStaminaSound )
 	{
-		CSoundEnvelopeController::GetController().SoundDestroy( m_pStaminaSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pStaminaSound );
 		m_pStaminaSound = NULL;
 	}
 
@@ -1276,8 +1276,7 @@ void C_DODPlayer::StaminaSoundThink( void )
 		if ( !IsAlive() || m_Shared.GetStamina() >= LOW_STAMINA_THRESHOLD )
 		{
 			// stop the sprint sound
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-			controller.SoundFadeOut( m_pStaminaSound, 1.0, true );
+			g_pSoundEnvelopeController->SoundFadeOut( m_pStaminaSound, 1.0, true );
 
 			// SoundFadeOut will destroy this sound, so we will have to create another one
 			// if we go below the threshold again soon
@@ -1293,13 +1292,12 @@ void C_DODPlayer::StaminaSoundThink( void )
 			// we are alive and have low stamina
 			CLocalPlayerFilter filter;
 
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 			if ( !m_pStaminaSound )
-                m_pStaminaSound = controller.SoundCreate( filter, entindex(), "Player.Sprint" );
+                m_pStaminaSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Player.Sprint" );
 
-			controller.Play( m_pStaminaSound, 0.0, 100 );
-			controller.SoundChangeVolume( m_pStaminaSound, 1.0, 2.0 );
+			g_pSoundEnvelopeController->Play( m_pStaminaSound, 0.0, 100 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pStaminaSound, 1.0, 2.0 );
 
 			m_bPlayingLowStaminaSound = true;
 		}

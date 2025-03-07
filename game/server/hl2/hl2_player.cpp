@@ -3681,22 +3681,22 @@ void CHL2_Player::StartWaterDeathSounds( void )
 
 	if ( m_sndLeeches == NULL )
 	{
-		m_sndLeeches = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "coast.leech_bites_loop" , ATTN_NORM );
+		m_sndLeeches = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "coast.leech_bites_loop" , ATTN_NORM );
 	}
 
 	if ( m_sndLeeches )
 	{
-		(CSoundEnvelopeController::GetController()).Play( m_sndLeeches, 1.0f, 100 );
+		g_pSoundEnvelopeController->Play( m_sndLeeches, 1.0f, 100 );
 	}
 
 	if ( m_sndWaterSplashes == NULL )
 	{
-		m_sndWaterSplashes = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "coast.leech_water_churn_loop" , ATTN_NORM );
+		m_sndWaterSplashes = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "coast.leech_water_churn_loop" , ATTN_NORM );
 	}
 
 	if ( m_sndWaterSplashes )
 	{
-		(CSoundEnvelopeController::GetController()).Play( m_sndWaterSplashes, 1.0f, 100 );
+		g_pSoundEnvelopeController->Play( m_sndWaterSplashes, 1.0f, 100 );
 	}
 }
 
@@ -3704,13 +3704,13 @@ void CHL2_Player::StopWaterDeathSounds( void )
 {
 	if ( m_sndLeeches )
 	{
-		(CSoundEnvelopeController::GetController()).SoundFadeOut( m_sndLeeches, 0.5f, true );
+		g_pSoundEnvelopeController->SoundFadeOut( m_sndLeeches, 0.5f, true );
 		m_sndLeeches = NULL;
 	}
 
 	if ( m_sndWaterSplashes )
 	{
-		(CSoundEnvelopeController::GetController()).SoundFadeOut( m_sndWaterSplashes, 0.5f, true );
+		g_pSoundEnvelopeController->SoundFadeOut( m_sndWaterSplashes, 0.5f, true );
 		m_sndWaterSplashes = NULL;
 	}
 }
@@ -3750,13 +3750,13 @@ void CHL2_Player::StopLoopingSounds( void )
 {
 	if ( m_sndLeeches != NULL )
 	{
-		 (CSoundEnvelopeController::GetController()).SoundDestroy( m_sndLeeches );
+		 g_pSoundEnvelopeController->SoundDestroy( m_sndLeeches );
 		 m_sndLeeches = NULL;
 	}
 
 	if ( m_sndWaterSplashes != NULL )
 	{
-		 (CSoundEnvelopeController::GetController()).SoundDestroy( m_sndWaterSplashes );
+		 g_pSoundEnvelopeController->SoundDestroy( m_sndWaterSplashes );
 		 m_sndWaterSplashes = NULL;
 	}
 

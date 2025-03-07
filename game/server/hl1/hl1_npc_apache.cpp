@@ -228,10 +228,9 @@ void CNPC_Apache::Precache( void )
 
 void CNPC_Apache::InitializeRotorSound( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter( this );
-	m_pRotorSound	= controller.SoundCreate( filter, entindex(), "Apache.Rotor" );
+	m_pRotorSound	= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Apache.Rotor" );
 
 	BaseClass::InitializeRotorSound();
 }

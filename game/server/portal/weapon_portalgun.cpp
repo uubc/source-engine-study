@@ -139,20 +139,18 @@ void CWeaponPortalgun::CreateSounds()
 {
 	if (!m_pMiniGravHoldSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pMiniGravHoldSound = controller.SoundCreate( filter, entindex(), "Weapon_Portalgun.HoldSound" );
-		controller.Play( m_pMiniGravHoldSound, 0, 100 );
+		m_pMiniGravHoldSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Weapon_Portalgun.HoldSound" );
+		g_pSoundEnvelopeController->Play( m_pMiniGravHoldSound, 0, 100 );
 	}
 }
 
 void CWeaponPortalgun::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pMiniGravHoldSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pMiniGravHoldSound );
 	m_pMiniGravHoldSound = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -656,9 +654,8 @@ void CWeaponPortalgun::DoEffectReady( void )
 {
 	if ( m_pMiniGravHoldSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundChangeVolume( m_pMiniGravHoldSound, 0.0, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pMiniGravHoldSound, 0.0, 0.1 );
 	}
 }
 
@@ -670,9 +667,8 @@ void CWeaponPortalgun::DoEffectHolding( void )
 {
 	if ( m_pMiniGravHoldSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundChangeVolume( m_pMiniGravHoldSound, 1.0, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pMiniGravHoldSound, 1.0, 0.1 );
 	}
 }
 
@@ -683,9 +679,8 @@ void CWeaponPortalgun::DoEffectNone( void )
 {
 	if ( m_pMiniGravHoldSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundChangeVolume( m_pMiniGravHoldSound, 0.0, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pMiniGravHoldSound, 0.0, 0.1 );
 	}
 }
 

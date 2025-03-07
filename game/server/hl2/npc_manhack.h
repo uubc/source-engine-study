@@ -46,7 +46,6 @@ enum
 
 class CSprite;
 class SmokeTrail;
-class CSoundPatch;
 
 //-----------------------------------------------------------------------------
 // Manhack 

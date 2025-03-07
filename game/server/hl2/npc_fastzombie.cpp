@@ -331,7 +331,7 @@ private:
 	float	m_flJumpStartAltitude;
 	float	m_flTimeUpdateSound;
 
-	CSoundPatch	*m_pLayer2; // used for climbing ladders, and when jumping (pre apex)
+	ISoundPatch	*m_pLayer2; // used for climbing ladders, and when jumping (pre apex)
 
 public:
 	DEFINE_CUSTOM_AI;
@@ -538,7 +538,7 @@ void CFastZombie::PrescheduleThink( void )
 			// Go back to normal pitch.
 			m_flDistFactor = 1.0;
 
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, FASTZOMBIE_IDLE_PITCH, FASTZOMBIE_SOUND_UPDATE_FREQ );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, FASTZOMBIE_IDLE_PITCH, FASTZOMBIE_SOUND_UPDATE_FREQ );
 		}
 		else if( flDistNoBBox < FASTZOMBIE_EXCITE_DIST )
 		{
@@ -547,7 +547,7 @@ void CFastZombie::PrescheduleThink( void )
 
 			m_flDistFactor = MIN( 1.0, 1 - flDistNoBBox / FASTZOMBIE_EXCITE_DIST ); 
 			iPitch = FASTZOMBIE_MIN_PITCH + ( ( FASTZOMBIE_MAX_PITCH - FASTZOMBIE_MIN_PITCH ) * m_flDistFactor); 
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, iPitch, FASTZOMBIE_SOUND_UPDATE_FREQ );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, iPitch, FASTZOMBIE_SOUND_UPDATE_FREQ );
 		}
 
 		m_flTimeUpdateSound = gpGlobals->curtime + FASTZOMBIE_SOUND_UPDATE_FREQ;
@@ -581,7 +581,7 @@ void CFastZombie::SoundInit( void )
 		MoanSound( envFastZombieMoanVolume, ARRAYSIZE( envFastZombieMoanVolume ) );
 
 		// Clear the commands that the base class gave the moaning sound channel.
-		ENVELOPE_CONTROLLER.CommandClear( m_pMoanSound );
+		g_pSoundEnvelopeController->CommandClear( m_pMoanSound );
 	}
 
 	CPASAttenuationFilter filter( this );
@@ -589,10 +589,10 @@ void CFastZombie::SoundInit( void )
 	if( !m_pLayer2 )
 	{
 		// Set up layer2
-		m_pLayer2 = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_VOICE, "NPC_FastZombie.Gurgle", ATTN_NORM );
+		m_pLayer2 = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_VOICE, "NPC_FastZombie.Gurgle", ATTN_NORM );
 
 		// Start silent.
-		ENVELOPE_CONTROLLER.Play( m_pLayer2, 0.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pLayer2, 0.0, 100 );
 	}
 
 	SetIdleSoundState();
@@ -606,15 +606,15 @@ void CFastZombie::SetIdleSoundState( void )
 	// Main looping sound
 	if ( m_pMoanSound )
 	{
-		ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, FASTZOMBIE_IDLE_PITCH, 1.0 );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 0.75, 1.0 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, FASTZOMBIE_IDLE_PITCH, 1.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 0.75, 1.0 );
 	}
 
 	// Second Layer
 	if ( m_pLayer2 )
 	{
-		ENVELOPE_CONTROLLER.SoundChangePitch( m_pLayer2, 100, 1.0 );
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pLayer2, 0.0, 1.0 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pLayer2, 100, 1.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pLayer2, 0.0, 1.0 );
 	}
 }
 
@@ -640,12 +640,12 @@ void CFastZombie::SetAngrySoundState( void )
 	g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
 
 	// Main looping sound
-	ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, FASTZOMBIE_MIN_PITCH, 0.5 );
-	ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1.0, 0.5 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, FASTZOMBIE_MIN_PITCH, 0.5 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 1.0, 0.5 );
 
 	// Second Layer
-	ENVELOPE_CONTROLLER.SoundChangePitch( m_pLayer2, 100, 1.0 );
-	ENVELOPE_CONTROLLER.SoundChangeVolume( m_pLayer2, 0.0, 1.0 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pLayer2, 100, 1.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pLayer2, 0.0, 1.0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -964,9 +964,9 @@ void CFastZombie::IdleSound( void )
 void CFastZombie::PainSound( const ITakeDamageInfo&info )
 {
 	if ( m_pLayer2 )
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumePain, ARRAYSIZE(envFastZombieVolumePain) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumePain, ARRAYSIZE(envFastZombieVolumePain) );
 	if ( m_pMoanSound )
-		ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, envFastZombieInverseVolumePain, ARRAYSIZE(envFastZombieInverseVolumePain) );
+		g_pSoundEnvelopeController->SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, envFastZombieInverseVolumePain, ARRAYSIZE(envFastZombieInverseVolumePain) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1139,8 +1139,8 @@ void CFastZombie::HandleAnimEvent( animevent_t *pEvent )
 	{
 		if( ++m_iClimbCount % 3 == 0 )
 		{
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pLayer2, random->RandomFloat( 100, 150 ), 0.0 );
-			ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumeClimb, ARRAYSIZE(envFastZombieVolumeClimb) );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pLayer2, random->RandomFloat( 100, 150 ), 0.0 );
+			g_pSoundEnvelopeController->SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumeClimb, ARRAYSIZE(envFastZombieVolumeClimb) );
 		}
 
 		return;
@@ -1651,13 +1651,13 @@ void CFastZombie::StopLoopingSounds( void )
 {
 	if ( m_pMoanSound )
 	{
-		ENVELOPE_CONTROLLER.SoundDestroy( m_pMoanSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pMoanSound );
 		m_pMoanSound = NULL;
 	}
 
 	if ( m_pLayer2 )
 	{
-		ENVELOPE_CONTROLLER.SoundDestroy( m_pLayer2 );
+		g_pSoundEnvelopeController->SoundDestroy( m_pLayer2 );
 		m_pLayer2 = NULL;
 	}
 
@@ -1798,14 +1798,14 @@ void CFastZombie::OnChangeActivity( Activity NewActivity )
 		EndNavJump();
 
 		if ( m_pMoanSound )
-			ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, FASTZOMBIE_MIN_PITCH, 0.3 );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, FASTZOMBIE_MIN_PITCH, 0.3 );
 	}
 
 	if ( NewActivity == ACT_CLIMB_UP )
 	{
 		// Started a climb!
 		if ( m_pMoanSound )
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 0.0, 0.2 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 0.0, 0.2 );
 
 		SetTouch( &CFastZombie::ClimbTouch );
 	}
@@ -1813,7 +1813,7 @@ void CFastZombie::OnChangeActivity( Activity NewActivity )
 	{
 		// Ended a climb
 		if ( m_pMoanSound )
-			ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1.0, 0.2 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 1.0, 0.2 );
 
 		SetTouch( NULL );
 	}
@@ -1846,7 +1846,7 @@ void CFastZombie::BeginNavJump( void )
 	m_fIsNavJumping = true;
 	m_fHitApex = false;
 
-	ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumeJump, ARRAYSIZE(envFastZombieVolumeJump) );
+	g_pSoundEnvelopeController->SoundPlayEnvelope( m_pLayer2, SOUNDCTRL_CHANGE_VOLUME, envFastZombieVolumeJump, ARRAYSIZE(envFastZombieVolumeJump) );
 }
 
 //=========================================================

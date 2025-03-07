@@ -55,9 +55,9 @@ public:
 	void			AddRecipientsByPVS( const Vector& origin );
 	void			RemoveRecipientsByPVS( const Vector& origin );
 	void			AddRecipientsByPAS( const Vector& origin );
-	void			AddRecipient( CBasePlayer *player );
+	void			AddRecipient( const IHandleEntity *player );
 	void			RemoveAllRecipients( void );
-	void			RemoveRecipient( CBasePlayer *player );
+	void			RemoveRecipient( const IHandleEntity *player );
 	void			RemoveRecipientByPlayerIndex( int playerindex );
 	void			AddRecipientsByTeam( CTeam *team );
 	void			RemoveRecipientsByTeam( CTeam *team );
@@ -91,7 +91,7 @@ private:
 class CSingleUserRecipientFilter : public CRecipientFilter
 {
 public:
-	CSingleUserRecipientFilter( CBasePlayer *player )
+	CSingleUserRecipientFilter( IHandleEntity *player )
 	{
 		AddRecipient( player );
 	}
@@ -136,7 +136,7 @@ public:
 class CBroadcastNonOwnerRecipientFilter : public CRecipientFilter
 {
 public:
-	CBroadcastNonOwnerRecipientFilter( CBasePlayer *player )
+	CBroadcastNonOwnerRecipientFilter( IHandleEntity *player )
 	{
 		AddAllPlayers();
 		RemoveRecipient( player );

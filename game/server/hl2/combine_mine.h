@@ -13,7 +13,6 @@
 #pragma once
 #endif
 
-class CSoundPatch;
 
 //---------------------------------------------------------
 //---------------------------------------------------------
@@ -97,7 +96,7 @@ private:
 	int		m_iHookS;
 	int		m_iAllHooks;
 
-	CSoundPatch	*m_pWarnSound;
+	ISoundPatch	*m_pWarnSound;
 
 	bool	m_bLockSilently;
 	bool	m_bFoeNearest;

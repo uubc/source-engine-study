@@ -1020,11 +1020,11 @@ void CNPC_BaseZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 		const char *pszSound = GetMoanSound( m_iMoanSound );
 		m_flMoanPitch = random->RandomInt( zombie_basemin.GetInt(), zombie_basemax.GetInt() );
 
-		//m_pMoanSound = ENVELOPE_CONTROLLER.SoundCreate( entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
+		//m_pMoanSound = g_pSoundEnvelopeController->SoundCreate( entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
 		CPASAttenuationFilter filter( this );
-		m_pMoanSound = ENVELOPE_CONTROLLER.SoundCreate( filter, entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
+		m_pMoanSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, pszSound, ATTN_NORM );
 
-		ENVELOPE_CONTROLLER.Play( m_pMoanSound, 1.0, m_flMoanPitch );
+		g_pSoundEnvelopeController->Play( m_pMoanSound, 1.0, m_flMoanPitch );
 	}
 
 	//HACKHACK get these from chia chin's console vars.
@@ -1036,10 +1036,10 @@ void CNPC_BaseZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 		IdleSound();
 	}
 
-	float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, pEnvelope, iEnvelopeSize );
+	float duration = g_pSoundEnvelopeController->SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, pEnvelope, iEnvelopeSize );
 
 	float flPitch = random->RandomInt( m_flMoanPitch + zombie_changemin.GetInt(), m_flMoanPitch + zombie_changemax.GetInt() );
-	ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, flPitch, 0.3 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, flPitch, 0.3 );
 
 	m_flNextMoanSound = gpGlobals->curtime + duration + 9999;
 }
@@ -2342,7 +2342,7 @@ bool CNPC_BaseZombie::BecomeRagdoll( const ITakeDamageInfo&info, const Vector &f
 //---------------------------------------------------------
 void CNPC_BaseZombie::StopLoopingSounds()
 {
-	ENVELOPE_CONTROLLER.SoundDestroy( m_pMoanSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pMoanSound );
 	m_pMoanSound = NULL;
 
 	BaseClass::StopLoopingSounds();

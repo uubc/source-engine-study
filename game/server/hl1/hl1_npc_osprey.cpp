@@ -331,10 +331,9 @@ void CNPC_Osprey::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir,
 //------------------------------------------------------------------------------
 void CNPC_Osprey::InitializeRotorSound( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter( this );
-	m_pRotorSound = controller.SoundCreate( filter, entindex(), CHAN_STATIC, "Apache.RotorSpinup", 0.2 );
+	m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "Apache.RotorSpinup", 0.2 );
 
 	BaseClass::InitializeRotorSound();
 }
@@ -1217,11 +1216,10 @@ void CBaseHelicopter::InitializeRotorSound( void )
 {
 	if (m_pRotorSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		// Get the rotor sound started up.
-		controller.Play( m_pRotorSound, 0.0, 100 );
-		controller.SoundChangeVolume(m_pRotorSound, GetRotorVolume(), 2.0);
+		g_pSoundEnvelopeController->Play( m_pRotorSound, 0.0, 100 );
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pRotorSound, GetRotorVolume(), 2.0);
 	}
 
 	m_iSoundState = SND_CHANGE_PITCH; // hack for going through level transitions
@@ -1237,9 +1235,8 @@ void CBaseHelicopter::UpdateRotorSoundPitch( int iPitch )
 {
 	if (m_pRotorSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangePitch( m_pRotorSound, iPitch, 0.1 );
-		controller.SoundChangeVolume( m_pRotorSound, GetRotorVolume(), 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pRotorSound, iPitch, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pRotorSound, GetRotorVolume(), 0.1 );
 	}
 }
 
@@ -1440,8 +1437,7 @@ void CBaseHelicopter::Event_Killed( const ITakeDamageInfo&info )
 
 void CBaseHelicopter::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pRotorSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pRotorSound );
 	m_pRotorSound = NULL;
 
 	BaseClass::StopLoopingSounds();

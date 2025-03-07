@@ -1842,11 +1842,10 @@ void CNPC_Hunter::Spawn()
 
 	//if ( !m_pGunFiringSound )
 	//{
-	//	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	//	CPASAttenuationFilter filter( this );
 	//
 	//	m_pGunFiringSound = controller.SoundCreate( filter, entindex(), "NPC_Hunter.FlechetteShootLoop" );
-	//	controller.Play( m_pGunFiringSound, 0.0, 100 );
+	//	g_pSoundEnvelopeController->Play( m_pGunFiringSound, 0.0, 100 );
 	//}
 }
 
@@ -1916,8 +1915,7 @@ void CNPC_Hunter::StopLoopingSounds()
 
 	//if ( m_pGunFiringSound )
 	//{
-	//	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	//	controller.SoundDestroy( m_pGunFiringSound );
+	//	g_pSoundEnvelopeController->SoundDestroy( m_pGunFiringSound );
 	//	m_pGunFiringSound = NULL;
 	//}
 }
@@ -3508,8 +3506,7 @@ void CNPC_Hunter::StartTask( const Task_t *pTask )
 				}
 
 				// Start the firing sound.
-				//CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-				//controller.SoundChangeVolume( m_pGunFiringSound, 1.0, hunter_first_flechette_delay.GetFloat() );
+				//g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 1.0, hunter_first_flechette_delay.GetFloat() );
 
 				SetIdealActivity( ACT_RANGE_ATTACK2 );
 
@@ -3752,8 +3749,7 @@ void CNPC_Hunter::RunTask( const Task_t *pTask )
 				if ( bDone )     
 				{
 					// Stop the firing sound.
-					//CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-					//controller.SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.1f );
+					//g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.1f );
 
 					DelayRangedAttackers( hunter_flechette_volley_end_min_delay.GetFloat(), hunter_flechette_volley_end_max_delay.GetFloat(), true );
 					TaskComplete();
@@ -7045,10 +7041,9 @@ void CAI_HunterEscortBehavior::RunTask( const Task_t *pTask )
 								if ( bHasSlot )
 								{
 									// Start the firing sound.
-									//CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-									//if ( controller.SoundGetVolume( pHunter->m_pGunFiringSound ) == 0.0f )
+									//if ( g_pSoundEnvelopeController->SoundGetVolume( pHunter->m_pGunFiringSound ) == 0.0f )
 									//{
-									//	controller.SoundChangeVolume( pHunter->m_pGunFiringSound, 1.0f, 0.0f );
+									//	g_pSoundEnvelopeController->SoundChangeVolume( pHunter->m_pGunFiringSound, 1.0f, 0.0f );
 									//}
 									
 									pHunter->ShootFlechette( GetEnemy(), true );
@@ -7060,8 +7055,7 @@ void CAI_HunterEscortBehavior::RunTask( const Task_t *pTask )
 									else
 									{
 										// Stop the firing sound.
-										//CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-										//controller.SoundChangeVolume( pHunter->m_pGunFiringSound, 0, 0.01f );
+										//g_pSoundEnvelopeController->SoundChangeVolume( pHunter->m_pGunFiringSound, 0, 0.01f );
 
 										bVacate = true;
 										pHunter->BeginVolley( NUM_FLECHETTE_VOLLEY_ON_FOLLOW, gpGlobals->curtime + 1.0 + random->RandomFloat( 0, .25 ) + random->RandomFloat( 0, .25 ) );

@@ -18,7 +18,6 @@
 
 #define ZOM_ATTN_FOOTSTEP ATTN_IDLE
 
-#define	ENVELOPE_CONTROLLER		(CSoundEnvelopeController::GetController())
 
 #define ZOMBIE_MELEE_REACH	55
 
@@ -243,7 +242,7 @@ public:
 
 protected:
 
-	CSoundPatch	*m_pMoanSound;
+	ISoundPatch	*m_pMoanSound;
 
 	bool	m_fIsTorso;			// is this is a half-zombie?
 	bool	m_fIsHeadless;		// is this zombie headless

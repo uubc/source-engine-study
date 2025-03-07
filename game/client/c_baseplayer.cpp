@@ -1932,7 +1932,7 @@ bool C_BasePlayer::ShouldDrawThisPlayer()
 //-----------------------------------------------------------------------------
 bool C_BasePlayer::IsLocalPlayer( void ) const
 {
-	return ((C_BasePlayer*)EntityList()->GetLocalPlayer() == this );
+	return (EntityList()->GetLocalPlayer() == this );
 }
 
 int	C_BasePlayer::GetUserID( void )

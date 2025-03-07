@@ -531,7 +531,7 @@ friction_t* CCollisionEvent::FindFriction(IClientEntity* pObject)
 void CCollisionEvent::ShutdownFriction(friction_t& friction)
 {
 	//	Msg( "Scrape Stop %s \n", STRING(friction.pObject->m_iClassname) );
-	CSoundEnvelopeController::GetController().SoundDestroy(friction.patch);
+	g_pSoundEnvelopeController->SoundDestroy(friction.patch);
 	friction.patch = NULL;
 	friction.pObject = NULL;
 }

@@ -706,7 +706,7 @@ protected:
 	float	SpriteScaleFactor();
 
 	float			GetLoadPercentage();
-	CSoundPatch		*GetMotorSound( void );
+	ISoundPatch		*GetMotorSound( void );
 
 	void	DryFire( void );
 	void	PrimaryFireEffect( void );
@@ -739,7 +739,7 @@ protected:
 	CHandle<CSprite>	m_hCenterSprite;
 	CHandle<CSprite>	m_hBlastSprite;
 
-	CSoundPatch			*m_sndMotor;		// Whirring sound for the gun
+	ISoundPatch			*m_sndMotor;		// Whirring sound for the gun
 	
 	//CGrabController		m_grabController;
 	
@@ -1811,9 +1811,9 @@ bool CWeaponPhysCannon::AttachObject( CBaseEntity *pObject, const Vector &vPosit
 
 	if ( GetMotorSound() )
 	{
-		(CSoundEnvelopeController::GetController()).Play( GetMotorSound(), 0.0f, 50 );
-		(CSoundEnvelopeController::GetController()).SoundChangePitch( GetMotorSound(), 100, 0.5f );
-		(CSoundEnvelopeController::GetController()).SoundChangeVolume( GetMotorSound(), 0.8f, 0.5f );
+		g_pSoundEnvelopeController->Play( GetMotorSound(), 0.0f, 50 );
+		g_pSoundEnvelopeController->SoundChangePitch( GetMotorSound(), 100, 0.5f );
+		g_pSoundEnvelopeController->SoundChangeVolume( GetMotorSound(), 0.8f, 0.5f );
 	}
 
 	return true;
@@ -2128,8 +2128,8 @@ void CWeaponPhysCannon::DetachObject( bool playSound, bool wasLaunched )
 	// Stop our looping sound
 	if ( GetMotorSound() )
 	{
-		(CSoundEnvelopeController::GetController()).SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
-		(CSoundEnvelopeController::GetController()).SoundChangePitch( GetMotorSound(), 50, 1.0f );
+		g_pSoundEnvelopeController->SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
+		g_pSoundEnvelopeController->SoundChangePitch( GetMotorSound(), 50, 1.0f );
 	}
 
 	m_bActive = false;
@@ -2648,8 +2648,8 @@ void CWeaponPhysCannon::LaunchObject( const Vector &vecDir, float flForce )
 	// Stop our looping sound
 	if ( GetMotorSound() )
 	{
-		(CSoundEnvelopeController::GetController()).SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
-		(CSoundEnvelopeController::GetController()).SoundChangePitch( GetMotorSound(), 50, 1.0f );
+		g_pSoundEnvelopeController->SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
+		g_pSoundEnvelopeController->SoundChangePitch( GetMotorSound(), 50, 1.0f );
 	}
 
 	//Close the elements and suppress checking for a bit
@@ -2788,8 +2788,8 @@ void CWeaponPhysCannon::CloseElements( void )
 
 	if ( GetMotorSound() )
 	{
-		(CSoundEnvelopeController::GetController()).SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
-		(CSoundEnvelopeController::GetController()).SoundChangePitch( GetMotorSound(), 50, 1.0f );
+		g_pSoundEnvelopeController->SoundChangeVolume( GetMotorSound(), 0.0f, 1.0f );
+		g_pSoundEnvelopeController->SoundChangePitch( GetMotorSound(), 50, 1.0f );
 	}
 	
 	DoEffect( EFFECT_CLOSED );
@@ -2815,7 +2815,7 @@ float CWeaponPhysCannon::GetLoadPercentage( void )
 // Purpose: 
 // Output : CSoundPatch
 //-----------------------------------------------------------------------------
-CSoundPatch *CWeaponPhysCannon::GetMotorSound( void )
+ISoundPatch *CWeaponPhysCannon::GetMotorSound( void )
 {
 	if ( m_sndMotor == NULL )
 	{
@@ -2823,11 +2823,11 @@ CSoundPatch *CWeaponPhysCannon::GetMotorSound( void )
 		
 		if ( IsMegaPhysCannon() )
 		{
-			m_sndMotor = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "Weapon_MegaPhysCannon.HoldSound", ATTN_NORM );
+			m_sndMotor = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "Weapon_MegaPhysCannon.HoldSound", ATTN_NORM );
 		}
 		else
 		{
-			m_sndMotor = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "Weapon_PhysCannon.HoldSound", ATTN_NORM );
+			m_sndMotor = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "Weapon_PhysCannon.HoldSound", ATTN_NORM );
 		}
 	}
 
@@ -2842,7 +2842,7 @@ void CWeaponPhysCannon::StopLoopingSounds()
 {
 	if ( m_sndMotor != NULL )
 	{
-		 (CSoundEnvelopeController::GetController()).SoundDestroy( m_sndMotor );
+		 g_pSoundEnvelopeController->SoundDestroy( m_sndMotor );
 		 m_sndMotor = NULL;
 	}
 
@@ -2947,7 +2947,7 @@ void CWeaponPhysCannon::StopEffects( bool stopSound )
 	//Shut off sounds
 	if ( stopSound && GetMotorSound() != NULL )
 	{
-		(CSoundEnvelopeController::GetController()).SoundFadeOut( GetMotorSound(), 0.1f );
+		g_pSoundEnvelopeController->SoundFadeOut( GetMotorSound(), 0.1f );
 	}
 }
 

@@ -303,12 +303,11 @@ void CPortal_Player::CreateSounds()
 {
 	if ( !m_pWooshSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pWooshSound = controller.SoundCreate( filter, entindex(), "PortalPlayer.Woosh" );
-		controller.Play( m_pWooshSound, 0, 100 );
+		m_pWooshSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "PortalPlayer.Woosh" );
+		g_pSoundEnvelopeController->Play( m_pWooshSound, 0, 100 );
 	}
 }
 
@@ -316,9 +315,8 @@ void CPortal_Player::StopLoopingSounds()
 {
 	if ( m_pWooshSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundDestroy( m_pWooshSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pWooshSound );
 		m_pWooshSound = NULL;
 	}
 
@@ -840,13 +838,12 @@ void CPortal_Player::UpdateWooshSounds( void )
 {
 	if ( m_pWooshSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		float fWooshVolume = GetEngineObject()->GetAbsVelocity().Length() - MIN_FLING_SPEED;
 
 		if ( fWooshVolume < 0.0f )
 		{
-			controller.SoundChangeVolume( m_pWooshSound, 0.0f, 0.1f );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pWooshSound, 0.0f, 0.1f );
 			return;
 		}
 
@@ -854,8 +851,8 @@ void CPortal_Player::UpdateWooshSounds( void )
 		if ( fWooshVolume > 1.0f )
 			fWooshVolume = 1.0f;
 
-		controller.SoundChangeVolume( m_pWooshSound, fWooshVolume, 0.1f );
-		//		controller.SoundChangePitch( m_pWooshSound, fWooshVolume + 0.5f, 0.1f );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pWooshSound, fWooshVolume, 0.1f );
+		//		g_pSoundEnvelopeController->SoundChangePitch( m_pWooshSound, fWooshVolume + 0.5f, 0.1f );
 	}
 }
 

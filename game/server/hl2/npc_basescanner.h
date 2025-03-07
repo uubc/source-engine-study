@@ -201,7 +201,7 @@ protected:
 	float				m_flAttackRange;
 
 private:
-	CSoundPatch			*m_pEngineSound;
+	ISoundPatch			*m_pEngineSound;
 
 	// physics influence
 	CHandle<CBasePlayer>	m_hPhysicsAttacker;

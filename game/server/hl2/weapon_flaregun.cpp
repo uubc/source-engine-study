@@ -139,7 +139,7 @@ CFlare::CFlare( void )
 
 CFlare::~CFlare()
 {
-	CSoundEnvelopeController::GetController().SoundDestroy( m_pBurnSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pBurnSound );
 	m_pBurnSound = NULL;
 
 	RemoveFromActiveFlares();
@@ -246,7 +246,7 @@ void CFlare::StartBurnSound( void )
 	if ( m_pBurnSound == NULL )
 	{
 		CPASAttenuationFilter filter( this );
-		m_pBurnSound = CSoundEnvelopeController::GetController().SoundCreate( 
+		m_pBurnSound = g_pSoundEnvelopeController->SoundCreate( 
 			filter, entindex(), CHAN_WEAPON, "Weapon_FlareGun.Burn", 3.0f );
 	}
 }
@@ -318,8 +318,8 @@ void CFlare::FlareThink( void )
 		if ( ( deltaTime <= FLARE_DECAY_TIME ) && ( m_bFading == false ) )
 		{
 			m_bFading = true;
-			CSoundEnvelopeController::GetController().SoundChangePitch( m_pBurnSound, 60, deltaTime );
-			CSoundEnvelopeController::GetController().SoundFadeOut( m_pBurnSound, deltaTime );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pBurnSound, 60, deltaTime );
+			g_pSoundEnvelopeController->SoundFadeOut( m_pBurnSound, deltaTime );
 		}
 
 		// if flare is no longer bright, remove it from active flare list
@@ -519,9 +519,9 @@ void CFlare::Start( float lifeTime )
 
 	if ( m_pBurnSound != NULL )
 	{		
-		CSoundEnvelopeController::GetController().Play( m_pBurnSound, 0.0f, 60 );
-		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pBurnSound, 0.8f, 2.0f );
-		CSoundEnvelopeController::GetController().SoundChangePitch( m_pBurnSound, 100, 2.0f );
+		g_pSoundEnvelopeController->Play( m_pBurnSound, 0.0f, 60 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pBurnSound, 0.8f, 2.0f );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pBurnSound, 100, 2.0f );
 	}
 
 	if ( lifeTime > 0 )

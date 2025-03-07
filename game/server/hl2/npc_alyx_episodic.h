@@ -194,7 +194,7 @@ private:
 	float	m_fCombatEndTime;
 	float	m_flNextCrouchTime;
 
-	CSoundPatch		*m_sndDarknessBreathing;
+	ISoundPatch		*m_sndDarknessBreathing;
 
 	// Speech timers
 	// Theoretically, these shouldn't be needed. Instead, each response

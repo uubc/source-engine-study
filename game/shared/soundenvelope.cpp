@@ -193,7 +193,7 @@ public:
 		return (m_Flags & FLAG_INIT_MESSAGE) != 0;
 	}
 
-	virtual bool AddRecipient( CBasePlayer *player )
+	virtual bool AddRecipient( const IHandleEntity *player )
 	{
 		Assert( player );
 
@@ -233,7 +233,7 @@ END_DATADESC()
 #include "tier0/memdbgoff.h"
 // This is the a basic sound controller, a "patch"
 // It has envelopes for pitch and volume and can manage state changes to those
-class CSoundPatch
+class CSoundPatch : public ISoundPatch
 {
 public:
 	DECLARE_SIMPLE_DATADESC();
@@ -267,7 +267,7 @@ public:
 	void	StartSound( float flStartTime = 0 );
 	void	ResumeSound( void );
 	int		IsPlaying( void ) { return m_isPlaying; }
-	void	AddPlayerPost( CBasePlayer *pPlayer );
+	void	AddPlayerPost( IHandleEntity *pPlayer );
 	void	SetCloseCaptionDuration( float flDuration ) { m_flCloseCaptionDuration = flDuration; }
 
 	void	SetBaseFlags( int iFlags ) { m_baseFlags = iFlags; }
@@ -635,7 +635,7 @@ void CSoundPatch::ResumeSound( void )
 //-----------------------------------------------------------------------------
 // Purpose: A new player's entered the game. See if we need to restart our sound.
 //-----------------------------------------------------------------------------
-void CSoundPatch::AddPlayerPost( CBasePlayer *pPlayer )
+void CSoundPatch::AddPlayerPost( IHandleEntity *pPlayer )
 {
 	if ( m_Filter.IsActive() && m_Filter.AddRecipient(pPlayer) )
 	{
@@ -662,9 +662,9 @@ void CSoundPatch::AddPlayerPost( CBasePlayer *pPlayer )
 struct SoundCommand_t
 {
 	SoundCommand_t( void ) { memset( this, 0, sizeof(*this) ); }
-	SoundCommand_t( CSoundPatch *pSound, float executeTime, soundcommands_t command, float deltaTime, float value ) : m_pPatch(pSound), m_time(executeTime), m_deltaTime(deltaTime), m_command(command), m_value(value) {}
+	SoundCommand_t( ISoundPatch *pSound, float executeTime, soundcommands_t command, float deltaTime, float value ) : m_pPatch(pSound), m_time(executeTime), m_deltaTime(deltaTime), m_command(command), m_value(value) {}
 
-	CSoundPatch		*m_pPatch;
+	ISoundPatch		*m_pPatch;
 	float			m_time;
 	float			m_deltaTime;
 	soundcommands_t	m_command;
@@ -703,7 +703,7 @@ bool SoundCommandLessFunc( const SOUNDCOMMANDPTR &lhs, const SOUNDCOMMANDPTR &rh
 
 
 // This implements the sound controller
-class CSoundControllerImp : public CSoundEnvelopeController, public CAutoGameSystemPerFrame
+class CSoundControllerImp : public ISoundEnvelopeController, public CAutoGameSystemPerFrame
 {
 	//-----------------------------------------------------------------------------
 	// internal functions, private to this file
@@ -715,9 +715,9 @@ public:
 	}
 
 	void ProcessCommand( SoundCommand_t *pCmd );
-	void RemoveFromList( CSoundPatch *pSound );
-	void SaveSoundPatch( CSoundPatch *pSound, ISave *pSave );
-	void RestoreSoundPatch( CSoundPatch **ppSound, IRestore *pRestore );
+	void RemoveFromList( ISoundPatch *pSound );
+	void SaveSoundPatch( ISoundPatch *pSound, ISave *pSave );
+	void RestoreSoundPatch( ISoundPatch **ppSound, IRestore *pRestore );
 
 	virtual void	OnRestore();
 
@@ -727,33 +727,33 @@ public:
 public:
 
 	// Start this sound playing, or reset if already playing with new volume/pitch
-	void			Play( CSoundPatch *pSound, float volume, float pitch, float flStartTime = 0 );
-	void			CommandAdd( CSoundPatch *pSound, float executeDeltaTime, soundcommands_t command, float commandTime, float commandValue );
+	void			Play( ISoundPatch *pSound, float volume, float pitch, float flStartTime = 0 );
+	void			CommandAdd( ISoundPatch *pSound, float executeDeltaTime, soundcommands_t command, float commandTime, float commandValue );
 	
 	void			SystemReset( void );
 	void			SystemUpdate( void );
-	void			CommandClear( CSoundPatch *pSound );
-	void			Shutdown( CSoundPatch *pSound );
+	void			CommandClear( ISoundPatch *pSound );
+	void			Shutdown( ISoundPatch *pSound );
 
-	CSoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, const char *pSoundName );
-	CSoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, const char *pSoundName, 
+	ISoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, const char *pSoundName );
+	ISoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, const char *pSoundName, 
 						float attenuation );
-	CSoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, const char *pSoundName, 
+	ISoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, const char *pSoundName, 
 						soundlevel_t soundlevel );
-	CSoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, const EmitSound_t &es );
-	void			SoundDestroy( CSoundPatch *pSound );
-	void			SoundChangePitch( CSoundPatch *pSound, float pitchTarget, float deltaTime );
-	void			SoundChangeVolume( CSoundPatch *pSound, float volumeTarget, float deltaTime );
-	void			SoundFadeOut( CSoundPatch *pSound, float deltaTime, bool destroyOnFadeout );
-	float			SoundGetPitch( CSoundPatch *pSound );
-	float			SoundGetVolume( CSoundPatch *pSound );
-	string_t		SoundGetName( CSoundPatch *pSound ) { return pSound->GetName(); }
-	void			SoundSetCloseCaptionDuration( CSoundPatch *pSound, float flDuration ) { pSound->SetCloseCaptionDuration(flDuration); }
+	ISoundPatch		*SoundCreate( IRecipientFilter& filter, int nEntIndex, const EmitSound_t &es );
+	void			SoundDestroy( ISoundPatch *pSound );
+	void			SoundChangePitch( ISoundPatch *pSound, float pitchTarget, float deltaTime );
+	void			SoundChangeVolume( ISoundPatch *pSound, float volumeTarget, float deltaTime );
+	void			SoundFadeOut( ISoundPatch *pSound, float deltaTime, bool destroyOnFadeout );
+	float			SoundGetPitch( ISoundPatch *pSound );
+	float			SoundGetVolume( ISoundPatch *pSound );
+	string_t		SoundGetName( ISoundPatch *pSound ) { return pSound->GetName(); }
+	void			SoundSetCloseCaptionDuration( ISoundPatch *pSound, float flDuration ) { pSound->SetCloseCaptionDuration(flDuration); }
 
-	float			SoundPlayEnvelope( CSoundPatch *pSound, soundcommands_t soundCommand, envelopePoint_t *points, int numPoints );
-	float			SoundPlayEnvelope( CSoundPatch *pSound, soundcommands_t soundCommand, envelopeDescription_t *envelope );
+	float			SoundPlayEnvelope( ISoundPatch *pSound, soundcommands_t soundCommand, envelopePoint_t *points, int numPoints );
+	float			SoundPlayEnvelope( ISoundPatch *pSound, soundcommands_t soundCommand, envelopeDescription_t *envelope );
 
-	void			CheckLoopingSoundsForPlayer( CBasePlayer *pPlayer );
+	void			CheckLoopingSoundsForPlayer( IHandleEntity *pPlayer );
 
 	// Inserts the command into the list, sorted by time
 	void			CommandInsert( SoundCommand_t *pCommand );
@@ -777,7 +777,7 @@ public:
 	}
 	
 private:
-	CUtlVector<CSoundPatch *>			m_soundList;
+	CUtlVector<ISoundPatch *>			m_soundList;
 	CUtlPriorityQueue<SoundCommand_t *>	m_commandList;
 	float				m_flLastTime;
 };
@@ -813,7 +813,7 @@ void CSoundControllerImp::ProcessCommand( SoundCommand_t *pCmd )
 // Purpose: Remove this sound from the sound list & shutdown (not in external interface)
 // Input  : *pSound - patch to remove
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::RemoveFromList( CSoundPatch *pSound )
+void CSoundControllerImp::RemoveFromList( ISoundPatch *pSound )
 {
 	m_soundList.FindAndRemove( pSound );
 	pSound->Shutdown();
@@ -823,7 +823,7 @@ void CSoundControllerImp::RemoveFromList( CSoundPatch *pSound )
 //-----------------------------------------------------------------------------
 // Start this sound playing, or reset if already playing with new volume/pitch
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::Play( CSoundPatch *pSound, float volume, float pitch, float flStartTime )
+void CSoundControllerImp::Play( ISoundPatch *pSound, float volume, float pitch, float flStartTime )
 {
 	// reset the vars
 	pSound->Reset();
@@ -862,7 +862,7 @@ void CSoundControllerImp::CommandInsert( SoundCommand_t *pCommand )
 //			value - 
 // Output : 	void
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::CommandAdd( CSoundPatch *pSound, float executeDeltaTime, soundcommands_t command, float commandTime, float commandValue )
+void CSoundControllerImp::CommandAdd( ISoundPatch *pSound, float executeDeltaTime, soundcommands_t command, float commandTime, float commandValue )
 {
 	SoundCommand_t *pCommand = new SoundCommand_t( pSound, g_pEffects->Time() + executeDeltaTime, command, commandTime, commandValue );
 	CommandInsert( pCommand );
@@ -873,7 +873,7 @@ void CSoundControllerImp::SystemReset( void )
 {
 	for ( int i = m_soundList.Count()-1; i >=0; i-- )
 	{
-		CSoundPatch *pNode = m_soundList[i];
+		ISoundPatch *pNode = m_soundList[i];
 	
 		// shutdown all active sounds
 		pNode->Shutdown();
@@ -928,7 +928,7 @@ void CSoundControllerImp::SystemUpdate( void )
 		VPROF( "CSoundControllerImp::SystemUpdate:removesounds" );
 		for ( int i = m_soundList.Count()-1; i >=0; i-- )
 		{
-			CSoundPatch *pNode = m_soundList[i];
+			ISoundPatch *pNode = m_soundList[i];
 			if ( !pNode->Update( time, deltaTime ) )
 			{
 				pNode->Reset();
@@ -939,7 +939,7 @@ void CSoundControllerImp::SystemUpdate( void )
 }
 
 // Remove any envelope commands from the list (dynamically changing envelope)
-void CSoundControllerImp::CommandClear( CSoundPatch *pSound )
+void CSoundControllerImp::CommandClear( ISoundPatch *pSound )
 {
 	for ( int i = m_commandList.Count()-1; i >= 0; i-- )
 	{
@@ -956,13 +956,13 @@ void CSoundControllerImp::CommandClear( CSoundPatch *pSound )
 //-----------------------------------------------------------------------------
 // Saves the sound patch + associated commands
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::SaveSoundPatch( CSoundPatch *pSoundPatch, ISave *pSave )
+void CSoundControllerImp::SaveSoundPatch( ISoundPatch *pSoundPatch, ISave *pSave )
 {
 	int i;
 
 	// Write out the sound patch
 	pSave->StartBlock();
-	pSave->WriteAll( pSoundPatch );
+	pSave->WriteAll( (CSoundPatch*)pSoundPatch );
 	pSave->EndBlock();
 
 	// Count the number of commands that refer to the sound patch
@@ -997,7 +997,7 @@ void CSoundControllerImp::SaveSoundPatch( CSoundPatch *pSoundPatch, ISave *pSave
 //-----------------------------------------------------------------------------
 // Restores the sound patch	+ associated commands
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::RestoreSoundPatch( CSoundPatch **ppSoundPatch, IRestore *pRestore )
+void CSoundControllerImp::RestoreSoundPatch( ISoundPatch **ppSoundPatch, IRestore *pRestore )
 {
 	CSoundPatch *pPatch = new CSoundPatch;
 
@@ -1043,7 +1043,7 @@ void CSoundControllerImp::RestoreSoundPatch( CSoundPatch **ppSoundPatch, IRestor
 // Purpose: immediately stop playing this sound 
 // Input  : *pSound - Patch to shut down
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::Shutdown( CSoundPatch *pSound )
+void CSoundControllerImp::Shutdown( ISoundPatch *pSound )
 {
 	if ( !pSound )
 		return;
@@ -1053,7 +1053,7 @@ void CSoundControllerImp::Shutdown( CSoundPatch *pSound )
 	RemoveFromList( pSound );
 }
 
-CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, const char *pSoundName )
+ISoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, const char *pSoundName )
 {
 #ifdef CLIENT_DLL
 	if ( GameRules() )
@@ -1071,7 +1071,7 @@ CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEn
 	return pSound;
 }
 
-CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, 
+ISoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, 
 			const char *pSoundName, float attenuation )
 {
 #ifdef CLIENT_DLL
@@ -1088,7 +1088,7 @@ CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEn
 	return pSound;
 }
 
-CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, 
+ISoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, int channel, 
 			const char *pSoundName, soundlevel_t soundlevel )
 {
 #ifdef CLIENT_DLL
@@ -1105,7 +1105,7 @@ CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEn
 	return pSound;
 }
 
-CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, const EmitSound_t &es )
+ISoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEntIndex, const EmitSound_t &es )
 {
 	CSoundPatch *pSound = new CSoundPatch;
 
@@ -1123,7 +1123,7 @@ CSoundPatch *CSoundControllerImp::SoundCreate( IRecipientFilter& filter, int nEn
 	return pSound;
 }
 
-void CSoundControllerImp::SoundDestroy( CSoundPatch	*pSound )
+void CSoundControllerImp::SoundDestroy( ISoundPatch	*pSound )
 {
 	if ( !pSound )
 		return;
@@ -1132,28 +1132,28 @@ void CSoundControllerImp::SoundDestroy( CSoundPatch	*pSound )
 	delete pSound;
 }
 
-void CSoundControllerImp::SoundChangePitch( CSoundPatch *pSound, float pitchTarget, float deltaTime )
+void CSoundControllerImp::SoundChangePitch( ISoundPatch *pSound, float pitchTarget, float deltaTime )
 {
 	pSound->ChangePitch( pitchTarget, deltaTime );
 }
 
 
-void CSoundControllerImp::SoundChangeVolume( CSoundPatch *pSound, float volumeTarget, float deltaTime )
+void CSoundControllerImp::SoundChangeVolume( ISoundPatch *pSound, float volumeTarget, float deltaTime )
 {
 	pSound->ChangeVolume( volumeTarget, deltaTime );
 }
 
-float CSoundControllerImp::SoundGetPitch( CSoundPatch *pSound )
+float CSoundControllerImp::SoundGetPitch( ISoundPatch *pSound )
 {
 	return pSound->GetPitch();
 }
 
-float CSoundControllerImp::SoundGetVolume( CSoundPatch *pSound )
+float CSoundControllerImp::SoundGetVolume( ISoundPatch *pSound )
 {
 	return pSound->GetVolume();
 }
 
-void CSoundControllerImp::SoundFadeOut( CSoundPatch *pSound, float deltaTime, bool destroyOnFadeout )
+void CSoundControllerImp::SoundFadeOut( ISoundPatch *pSound, float deltaTime, bool destroyOnFadeout )
 {
 	if ( destroyOnFadeout && (deltaTime == 0.0f) )
 	{
@@ -1176,7 +1176,7 @@ void CSoundControllerImp::SoundFadeOut( CSoundPatch *pSound, float deltaTime, bo
 //			numPoints - Number of points provided
 // Output : float - Returns the total duration of the envelope
 //-----------------------------------------------------------------------------
-float CSoundControllerImp::SoundPlayEnvelope( CSoundPatch *pSound, soundcommands_t soundCommand, envelopePoint_t *points, int numPoints )
+float CSoundControllerImp::SoundPlayEnvelope( ISoundPatch *pSound, soundcommands_t soundCommand, envelopePoint_t *points, int numPoints )
 {
 	float	amplitude	= 0.0f;
 	float	duration	= 0.0f;
@@ -1230,7 +1230,7 @@ float CSoundControllerImp::SoundPlayEnvelope( CSoundPatch *pSound, soundcommands
 //			*envelope - The envelope description to be queued
 // Output : float - Returns the total duration of the envelope
 //-----------------------------------------------------------------------------
-float CSoundControllerImp::SoundPlayEnvelope( CSoundPatch *pSound, soundcommands_t soundCommand, envelopeDescription_t *envelope )
+float CSoundControllerImp::SoundPlayEnvelope( ISoundPatch *pSound, soundcommands_t soundCommand, envelopeDescription_t *envelope )
 {
 	return SoundPlayEnvelope( pSound, soundCommand, envelope->pPoints, envelope->nNumPoints );
 }
@@ -1240,11 +1240,11 @@ float CSoundControllerImp::SoundPlayEnvelope( CSoundPatch *pSound, soundcommands
 //			In singleplayer, the player's not ready to receive sounds then, so restart 
 //			and SoundPatches that are active and have no receivers.
 //-----------------------------------------------------------------------------
-void CSoundControllerImp::CheckLoopingSoundsForPlayer( CBasePlayer *pPlayer )
+void CSoundControllerImp::CheckLoopingSoundsForPlayer( IHandleEntity *pPlayer )
 {
 	for ( int i = m_soundList.Count()-1; i >=0; i-- )
 	{
-		CSoundPatch *pNode = m_soundList[i];
+		ISoundPatch *pNode = m_soundList[i];
 		pNode->AddPlayerPost( pPlayer );
 	}
 }
@@ -1256,7 +1256,7 @@ void CSoundControllerImp::OnRestore()
 {
 	for ( int i = m_soundList.Count()-1; i >=0; i-- )
 	{
-		CSoundPatch *pNode = m_soundList[i];
+		ISoundPatch *pNode = m_soundList[i];
 		if ( pNode && pNode->IsPlaying() )
 		{
 			pNode->ResumeSound();
@@ -1268,11 +1268,8 @@ void CSoundControllerImp::OnRestore()
 //-----------------------------------------------------------------------------
 // Singleton accessors
 //-----------------------------------------------------------------------------
-static CSoundControllerImp g_Controller;
-CSoundEnvelopeController &CSoundEnvelopeController::GetController( void )
-{
-	return g_Controller;
-}
+static CSoundControllerImp s_Controller;
+ISoundEnvelopeController* g_pSoundEnvelopeController = &s_Controller;
 
 
 //-----------------------------------------------------------------------------
@@ -1290,7 +1287,7 @@ public:
 		while ( --nSoundPatchCount >= 0 )
 		{
 			// Write out commands associated with this sound patch
-			g_Controller.SaveSoundPatch( *ppSoundPatch, pSave );
+			s_Controller.SaveSoundPatch( *ppSoundPatch, pSave );
 			++ppSoundPatch;
 		}
 
@@ -1302,11 +1299,11 @@ public:
 		pRestore->StartBlock();
 
 		int nSoundPatchCount = fieldInfo.pTypeDesc->fieldSize;
-		CSoundPatch **ppSoundPatch = (CSoundPatch**)fieldInfo.pField;
+		ISoundPatch **ppSoundPatch = (ISoundPatch**)fieldInfo.pField;
 		while ( --nSoundPatchCount >= 0 )
 		{
 			// Write out commands associated with this sound patch
-			g_Controller.RestoreSoundPatch( ppSoundPatch, pRestore );
+			s_Controller.RestoreSoundPatch( ppSoundPatch, pRestore );
 			++ppSoundPatch;
 		}
 

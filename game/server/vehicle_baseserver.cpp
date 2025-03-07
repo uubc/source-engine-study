@@ -1779,43 +1779,41 @@ void CBaseServerVehicle::PlaySound( const char *pSound )
 
 void CBaseServerVehicle::StopLoopingSound( float fadeTime )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	if ( m_pStateSoundFade )
 	{
-		controller.SoundDestroy( m_pStateSoundFade );
+		g_pSoundEnvelopeController->SoundDestroy( m_pStateSoundFade );
 		m_pStateSoundFade = NULL;
 	}
 	if ( m_pStateSound )
 	{
 		m_pStateSoundFade = m_pStateSound;
 		m_pStateSound = NULL;
-		controller.SoundFadeOut( m_pStateSoundFade, fadeTime, false );
+		g_pSoundEnvelopeController->SoundFadeOut( m_pStateSoundFade, fadeTime, false );
 	}
 }
 
 void CBaseServerVehicle::PlayLoopingSound( const char *pSoundName )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter(this);
-	CSoundPatch *pNewSound = NULL;
+	ISoundPatch *pNewSound = NULL;
 	if ( pSoundName && pSoundName[0] )
 	{
-		pNewSound = controller.SoundCreate( filter, this->entindex(), CHAN_STATIC, pSoundName, ATTN_NORM );
+		pNewSound = g_pSoundEnvelopeController->SoundCreate( filter, this->entindex(), CHAN_STATIC, pSoundName, ATTN_NORM );
 	}
 
-	if ( m_pStateSound && pNewSound && controller.SoundGetName( pNewSound ) == controller.SoundGetName( m_pStateSound ) )
+	if ( m_pStateSound && pNewSound && g_pSoundEnvelopeController->SoundGetName( pNewSound ) == g_pSoundEnvelopeController->SoundGetName( m_pStateSound ) )
 	{
 		// if the sound is the same, don't play this, just re-use the old one
-		controller.SoundDestroy( pNewSound );
+		g_pSoundEnvelopeController->SoundDestroy( pNewSound );
 		pNewSound = m_pStateSound;
-		controller.SoundChangeVolume( pNewSound, 1.0f, 0.0f );
+		g_pSoundEnvelopeController->SoundChangeVolume( pNewSound, 1.0f, 0.0f );
 		m_pStateSound = NULL;
 	}
 	else if ( g_debug_vehiclesound.GetInt() )
 	{
-		const char *pStopSound = m_pStateSound ?  controller.SoundGetName( m_pStateSound ).ToCStr() : "NULL";
-		const char *pStartSound = pNewSound ?  controller.SoundGetName( pNewSound ).ToCStr() : "NULL";
+		const char *pStopSound = m_pStateSound ?  g_pSoundEnvelopeController->SoundGetName( m_pStateSound ).ToCStr() : "NULL";
+		const char *pStartSound = pNewSound ?  g_pSoundEnvelopeController->SoundGetName( pNewSound ).ToCStr() : "NULL";
 		Msg("Stop %s, start %s\n", pStopSound, pStartSound );
 	}
 
@@ -1823,7 +1821,7 @@ void CBaseServerVehicle::PlayLoopingSound( const char *pSoundName )
 	m_pStateSound = pNewSound;
 	if ( m_pStateSound )
 	{
-		controller.Play( m_pStateSound, 1.0f, 100 );
+		g_pSoundEnvelopeController->Play( m_pStateSound, 1.0f, 100 );
 	}
 }
 
@@ -2240,15 +2238,14 @@ void CBaseServerVehicle::SoundShutdown( float flFadeTime )
 		StopSound( g_iSoundsToStopOnExit[i] );
 	}
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	if ( m_pStateSoundFade )
 	{
-		controller.SoundFadeOut( m_pStateSoundFade, flFadeTime, true );
+		g_pSoundEnvelopeController->SoundFadeOut( m_pStateSoundFade, flFadeTime, true );
 		m_pStateSoundFade = NULL;
 	}
 	if ( m_pStateSound )
 	{
-		controller.SoundFadeOut( m_pStateSound, flFadeTime, true );
+		g_pSoundEnvelopeController->SoundFadeOut( m_pStateSound, flFadeTime, true );
 		m_pStateSound = NULL;
 	}
 }

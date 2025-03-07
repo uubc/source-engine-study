@@ -557,10 +557,9 @@ void CTeamControlPoint::CaptureInterrupted( bool bBlocked )
 	{
 		CPASFilter filter(GetEngineObject()->GetAbsOrigin() );
 
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		m_pCaptureInProgressSound = controller.SoundCreate( filter, entindex(), pSoundName );
+		m_pCaptureInProgressSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), pSoundName );
 
-		controller.Play( m_pCaptureInProgressSound, 1.0, 100 );
+		g_pSoundEnvelopeController->Play( m_pCaptureInProgressSound, 1.0, 100 );
 	}
 
 }
@@ -571,11 +570,10 @@ void CTeamControlPoint::CaptureInterrupted( bool bBlocked )
 //-----------------------------------------------------------------------------
 void CTeamControlPoint::StopLoopingSounds( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_pCaptureInProgressSound )
 	{
-		controller.SoundDestroy( m_pCaptureInProgressSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pCaptureInProgressSound );
 		m_pCaptureInProgressSound = NULL;
 	}
 }

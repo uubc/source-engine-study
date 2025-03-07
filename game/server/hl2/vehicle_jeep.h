@@ -144,7 +144,7 @@ protected:
 	float			m_flCannonTime;
 	float			m_flCannonChargeStartTime;
 	Vector			m_vecGunOrigin;
-	CSoundPatch		*m_sndCannonCharge;
+	ISoundPatch		*m_sndCannonCharge;
 	int				m_nSpinPos;
 	float			m_aimYaw;
 	float			m_aimPitch;

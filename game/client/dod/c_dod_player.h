@@ -249,7 +249,7 @@ private:
 	bool m_bPlayingProneMoveSound;
 
 	void StaminaSoundThink( void );
-	CSoundPatch		*m_pStaminaSound;
+	ISoundPatch		*m_pStaminaSound;
 	bool m_bPlayingLowStaminaSound;
 
 	// Cold Breath

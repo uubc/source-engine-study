@@ -883,8 +883,8 @@ void CZombie::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bool b
 
 			if ( m_pMoanSound )
 			{
-				ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, 120, 1.0 );
-				ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1, 1.0 );
+				g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, 120, 1.0 );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 1, 1.0 );
 			}
 		}
 	}
@@ -897,8 +897,8 @@ void CZombie::Extinguish()
 {
 	if( m_pMoanSound )
 	{
-		ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 0, 2.0 );
-		ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, 100, 2.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pMoanSound, 0, 2.0 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pMoanSound, 100, 2.0 );
 		m_flNextMoanSound = gpGlobals->curtime + random->RandomFloat( 2.0, 4.0 );
 	}
 

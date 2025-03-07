@@ -1753,17 +1753,16 @@ void ConstraintSoundInfo::OnThink( CPhysConstraint *pOuter, const Vector &relati
 			// if we want to play a sound...
 			if ( m_pTravelSound )
 			{	// if a sound exists, modify it
-				CSoundEnvelopeController::GetController().SoundChangeVolume( m_pTravelSound, soundVol, 0.1f );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_pTravelSound, soundVol, 0.1f );
 			}
 			else
 			{	// if a sound does not exist, create it
 				bool travellingForward = relativeVelocity.Dot(m_forwardAxis) > 0;
 
-				CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 				CPASAttenuationFilter filter( pChildEntity );
-				m_pTravelSound = controller.SoundCreate( filter, pChildEntity->entindex(), 
+				m_pTravelSound = g_pSoundEnvelopeController->SoundCreate( filter, pChildEntity->entindex(), 
 					(travellingForward ? m_iszTravelSoundFwd : m_iszTravelSoundBack).ToCStr() );
-				controller.Play( m_pTravelSound, soundVol, 100 );
+				g_pSoundEnvelopeController->Play( m_pTravelSound, soundVol, 100 );
 			}
 		}
 		else
@@ -1771,7 +1770,7 @@ void ConstraintSoundInfo::OnThink( CPhysConstraint *pOuter, const Vector &relati
 			// if we want to not play sound
 			if ( m_pTravelSound )
 			{	// and it exists, kill it
-				CSoundEnvelopeController::GetController().SoundDestroy( m_pTravelSound );
+				g_pSoundEnvelopeController->SoundDestroy( m_pTravelSound );
 				m_pTravelSound = NULL;
 			}
 		}
@@ -1828,7 +1827,7 @@ void ConstraintSoundInfo::DeleteAllSounds()
 {
 	if ( m_pTravelSound )
 	{
-		CSoundEnvelopeController::GetController().SoundDestroy( m_pTravelSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pTravelSound );
 		m_pTravelSound = NULL;
 	}
 }

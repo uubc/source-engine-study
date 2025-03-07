@@ -74,7 +74,7 @@ public:
 	float		m_flDuration;
 	float		m_flNextDamage;
 	
-	CSoundPatch	*m_pBurnSound;
+	ISoundPatch	*m_pBurnSound;
 	bool		m_bFading;
 	CNetworkVar( bool, m_bLight );
 	CNetworkVar( bool, m_bSmoke );

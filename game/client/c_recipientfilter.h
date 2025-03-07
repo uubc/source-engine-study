@@ -47,8 +47,8 @@ public:
 	void			AddAllPlayers( void );
 	void			AddRecipientsByPVS( const Vector& origin );
 	void			AddRecipientsByPAS( const Vector& origin );
-	void			AddRecipient( C_BasePlayer *player );
-	void			RemoveRecipient( C_BasePlayer *player );
+	void			AddRecipient( const IHandleEntity *player );
+	void			RemoveRecipient( const IHandleEntity *player );
 	void			AddRecipientsByTeam( C_Team *team );
 	void			RemoveRecipientsByTeam( C_Team *team );
 
@@ -78,7 +78,7 @@ public:
 class CSingleUserRecipientFilter : public C_RecipientFilter
 {
 public:
-	CSingleUserRecipientFilter( C_BasePlayer *player )
+	CSingleUserRecipientFilter( IHandleEntity *player )
 	{
 		AddRecipient( player );
 	}

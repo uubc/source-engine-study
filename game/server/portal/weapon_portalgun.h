@@ -98,7 +98,7 @@ public:
 	float TraceFirePortal( bool bPortal2, const Vector &vTraceStart, const Vector &vDirection, trace_t &tr, Vector &vFinalPosition, QAngle &qFinalAngles, int iPlacedBy, bool bTest = false );
 	float FirePortal( bool bPortal2, Vector *pVector = 0, bool bTest = false );
 
-	CSoundPatch		*m_pMiniGravHoldSound;
+	ISoundPatch		*m_pMiniGravHoldSound;
 
 	// Outputs for portalgun
 	COutputEvent m_OnFiredPortal1;		// Fires when the gun's first (blue) portal is fired

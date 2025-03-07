@@ -164,7 +164,7 @@ public:
 	Vector m_forwardAxis; ///< velocity in this direction is forward. The opposite direction is backward.
 
 	string_t m_iszTravelSoundFwd,m_iszTravelSoundBack;			// Path/filename of WAV file to play.
-	CSoundPatch		*m_pTravelSound;
+	ISoundPatch		*m_pTravelSound;
 	bool			m_bPlayTravelSound;
 
 	string_t m_iszReversalSounds[SimpleConstraintSoundProfile::kREVERSAL_SOUND_ARRAY_SIZE];			// Path/filename of WAV files to play -- one per entry in threshold.

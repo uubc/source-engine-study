@@ -43,6 +43,7 @@ extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger
 extern ISaveRestoreBlockHandler* GetPhysSaveRestoreBlockHandler();
 extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
 extern IServerGameDLL* serverGameDLL;
+extern ISoundEnvelopeController* g_pSoundEnvelopeController;
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return serverGameDLL->AllocPooledString(pStr);
 }
@@ -3835,15 +3836,15 @@ public:
 
 				pFriction->pObject = pEntity;
 				CPASAttenuationFilter filter((IServerEntity*)pEntity, params.soundlevel);
-				pFriction->patch = CSoundEnvelopeController::GetController().SoundCreate(
+				pFriction->patch = g_pSoundEnvelopeController->SoundCreate(
 					filter, ((IServerEntity*)pEntity)->entindex(), CHAN_BODY, pSoundName, params.soundlevel);
-				CSoundEnvelopeController::GetController().Play(pFriction->patch, params.volume * flVolume, params.pitch);
+				g_pSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
 			}
 			else
 			{
 				float pitch = (flVolume * (params.pitchhigh - params.pitchlow)) + params.pitchlow;
-				CSoundEnvelopeController::GetController().SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
-				CSoundEnvelopeController::GetController().SoundChangePitch(pFriction->patch, pitch, 0.1f);
+				g_pSoundEnvelopeController->SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
+				g_pSoundEnvelopeController->SoundChangePitch(pFriction->patch, pitch, 0.1f);
 			}
 
 			pFriction->flLastUpdateTime = gpGlobals->curtime;

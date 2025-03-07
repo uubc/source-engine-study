@@ -283,8 +283,8 @@ public:
 	// HUD HINTS
 	void DisplayLadderHudHint();
 
-	CSoundPatch *m_sndLeeches;
-	CSoundPatch *m_sndWaterSplashes;
+	ISoundPatch *m_sndLeeches;
+	ISoundPatch *m_sndWaterSplashes;
 
 protected:
 	virtual void		PreThink( void );

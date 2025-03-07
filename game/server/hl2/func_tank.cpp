@@ -2852,7 +2852,7 @@ private:
 	void StartFiring();
 	void StopFiring();
 
-	CSoundPatch *m_pGunFiringSound;
+	ISoundPatch *m_pGunFiringSound;
     float		m_flNextHeavyShotTime;
 	bool		m_bIsFiring;
 
@@ -2928,21 +2928,19 @@ void CFuncTankAirboatGun::Activate()
 //-----------------------------------------------------------------------------
 void CFuncTankAirboatGun::CreateSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter( this );
 	if (!m_pGunFiringSound)
 	{
-		m_pGunFiringSound = controller.SoundCreate( filter, entindex(), "Airboat.FireGunLoop" );
-		controller.Play( m_pGunFiringSound, 0, 100 );
+		m_pGunFiringSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat.FireGunLoop" );
+		g_pSoundEnvelopeController->Play( m_pGunFiringSound, 0, 100 );
 	}
 }
 
 void CFuncTankAirboatGun::DestroySounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pGunFiringSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pGunFiringSound );
 	m_pGunFiringSound = NULL;
 }
 
@@ -2954,9 +2952,8 @@ void CFuncTankAirboatGun::StartFiring()
 {
 	if ( !m_bIsFiring )
 	{
-		CSoundEnvelopeController *pController = &CSoundEnvelopeController::GetController();
-		float flVolume = pController->SoundGetVolume( m_pGunFiringSound );
-		pController->SoundChangeVolume( m_pGunFiringSound, 1.0f, 0.1f * (1.0f - flVolume) );
+		float flVolume = g_pSoundEnvelopeController->SoundGetVolume( m_pGunFiringSound );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 1.0f, 0.1f * (1.0f - flVolume) );
 		m_bIsFiring = true;
 	}
 }
@@ -2965,9 +2962,8 @@ void CFuncTankAirboatGun::StopFiring()
 {
 	if ( m_bIsFiring )
 	{
-		CSoundEnvelopeController *pController = &CSoundEnvelopeController::GetController();
-		float flVolume = pController->SoundGetVolume( m_pGunFiringSound );
-		pController->SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.1f * flVolume );
+		float flVolume = g_pSoundEnvelopeController->SoundGetVolume( m_pGunFiringSound );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.1f * flVolume );
 		const char* soundname = "Airboat.FireGunRevDown";
 		CPASAttenuationFilter filter(this, soundname);
 

@@ -189,12 +189,11 @@ void CProp_Portal::CreateSounds()
 {
 	if (!m_pAmbientSound)
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		CPASAttenuationFilter filter( this );
 
-		m_pAmbientSound = controller.SoundCreate( filter, entindex(), "Portal.ambient_loop" );
-		controller.Play( m_pAmbientSound, 0, 100 );
+		m_pAmbientSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Portal.ambient_loop" );
+		g_pSoundEnvelopeController->Play( m_pAmbientSound, 0, 100 );
 	}
 }
 
@@ -202,9 +201,8 @@ void CProp_Portal::StopLoopingSounds()
 {
 	if ( m_pAmbientSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundDestroy( m_pAmbientSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pAmbientSound );
 		m_pAmbientSound = NULL;
 	}
 
@@ -558,9 +556,8 @@ void CProp_Portal::FizzleThink( void )
 
 	if ( m_pAmbientSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundChangeVolume( m_pAmbientSound, 0.0, 0.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pAmbientSound, 0.0, 0.0 );
 	}
 
 	StopParticleEffects( this );
@@ -1953,8 +1950,7 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles )
 
 	if ( m_pAmbientSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-		controller.SoundChangeVolume( m_pAmbientSound, 0.4, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pAmbientSound, 0.4, 0.1 );
 	}
 
 	DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_particles" ) : ( "portal_1_particles" ) ), PATTACH_POINT_FOLLOW, this, "particles_2", true );
@@ -2045,9 +2041,8 @@ void CProp_Portal::InputSetActivatedState( inputdata_t &inputdata )
 
 			if ( m_pAmbientSound )
 			{
-				CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-				controller.SoundChangeVolume( m_pAmbientSound, 0.4, 0.1 );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_pAmbientSound, 0.4, 0.1 );
 			}
 
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_particles" ) : ( "portal_1_particles" ) ), PATTACH_POINT_FOLLOW, this, "particles_2", true );
@@ -2083,9 +2078,8 @@ void CProp_Portal::InputSetActivatedState( inputdata_t &inputdata )
 	{
 		if ( m_pAmbientSound )
 		{
-			CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-			controller.SoundChangeVolume( m_pAmbientSound, 0.0, 0.0 );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pAmbientSound, 0.0, 0.0 );
 		}
 
 		StopParticleEffects( this );

@@ -13,7 +13,6 @@
 #include "game/server/vehicle_sounds.h"
 #include "entityblocker.h"
 
-class CSoundPatch;
 
 // -----------------------------------------
 //  Information about the passenger in the car 
@@ -281,8 +280,8 @@ private:
 	int								m_iSoundGear;			// The sound "gear" that we're currently in
 	float							m_flSpeedPercentage;
 
-	CSoundPatch						*m_pStateSound;
-	CSoundPatch						*m_pStateSoundFade;
+	ISoundPatch						*m_pStateSound;
+	ISoundPatch						*m_pStateSoundFade;
 	sound_states					m_soundState;
 	float							m_soundStateStartTime;
 	float							m_lastSpeed;

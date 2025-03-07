@@ -178,7 +178,7 @@ public:
 	char		m_iszSpeakers[MAX_SPEAKER_NAME];
 	int			m_iNodeNumber;
 	int			m_iNodeNumberMax;
-	CSoundPatch *m_sndCommentary;
+	ISoundPatch *m_sndCommentary;
 	EHANDLE		m_hViewPosition;
 	bool		m_bRestartAfterRestore;
 };
@@ -266,15 +266,15 @@ void C_PointCommentaryNode::OnDataChanged( DataUpdateType_t updateType )
 			pSoundEntity = pPlayer;
 		}
 		CSingleUserRecipientFilter filter( pPlayer );
-		m_sndCommentary = (CSoundEnvelopeController::GetController()).SoundCreate( filter, pSoundEntity->entindex(), es );
+		m_sndCommentary = g_pSoundEnvelopeController->SoundCreate( filter, pSoundEntity->entindex(), es );
 		if ( m_sndCommentary )
 		{
-			(CSoundEnvelopeController::GetController()).SoundSetCloseCaptionDuration( m_sndCommentary, -1 );
-			(CSoundEnvelopeController::GetController()).Play( m_sndCommentary, 1.0f, 100, m_flStartTime );
+			g_pSoundEnvelopeController->SoundSetCloseCaptionDuration( m_sndCommentary, -1 );
+			g_pSoundEnvelopeController->Play( m_sndCommentary, 1.0f, 100, m_flStartTime );
 		}
 
 		// Get the duration so we know when it finishes
-		float flDuration = enginesound->GetSoundDuration( STRING( CSoundEnvelopeController::GetController().SoundGetName( m_sndCommentary ) ) ) ;
+		float flDuration = enginesound->GetSoundDuration( STRING( g_pSoundEnvelopeController->SoundGetName( m_sndCommentary ) ) ) ;
 
 		CHudCloseCaption *pHudCloseCaption = (CHudCloseCaption *)GET_HUDELEMENT( CHudCloseCaption );
 		if ( pHudCloseCaption )
@@ -319,7 +319,7 @@ void C_PointCommentaryNode::StopLoopingSounds( void )
 {
 	if ( m_sndCommentary != NULL )
 	{
-		(CSoundEnvelopeController::GetController()).SoundDestroy( m_sndCommentary );
+		g_pSoundEnvelopeController->SoundDestroy( m_sndCommentary );
 		m_sndCommentary = NULL;
 	}
 }

@@ -3016,7 +3016,7 @@ void CServerGameClients::ClientActive( int pEdict, bool bLoadGame )
 
 	// Tell the sound controller to check looping sounds
 	CBasePlayer *pPlayer = ( CBasePlayer * )EntityList()->GetBaseEntity( pEdict );
-	CSoundEnvelopeController::GetController().CheckLoopingSoundsForPlayer( pPlayer );
+	g_pSoundEnvelopeController->CheckLoopingSoundsForPlayer( pPlayer );
 	SceneManager_ClientActive( pPlayer );
 
 	#if defined( TF_DLL )

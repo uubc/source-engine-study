@@ -51,7 +51,7 @@ private:
 	void	InitHissSound( void );
 	
 	CHandle< CParticleSystem >	m_hSpitEffect;
-	CSoundPatch		*m_pHissSound;
+	ISoundPatch		*m_pHissSound;
 	bool			m_bPlaySound;
 };
 

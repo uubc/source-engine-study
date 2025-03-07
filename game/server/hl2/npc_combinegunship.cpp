@@ -357,9 +357,9 @@ private:
 	CHandle<SmokeTrail>	m_pSmokeTrail;
 	EHANDLE			m_hGroundAttackTarget;
 
-	CSoundPatch		*m_pAirExhaustSound;
-	CSoundPatch		*m_pAirBlastSound;
-	CSoundPatch		*m_pCannonSound;
+	ISoundPatch		*m_pAirExhaustSound;
+	ISoundPatch		*m_pAirBlastSound;
+	ISoundPatch		*m_pCannonSound;
 
 	CBaseEntity		*m_pRotorWashModel;
 	QAngle			m_vecAngAcceleration;
@@ -802,9 +802,8 @@ void CNPC_CombineGunship::PlayPatrolLoop( void )
 {
 	m_fPatrolLoopPlaying = true;
 	/*
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pPatrolSound, 1.0, 1.0 );
-	controller.SoundChangeVolume( m_pAngrySound, 0.0, 1.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pPatrolSound, 1.0, 1.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pAngrySound, 0.0, 1.0 );
 	*/
 }
 
@@ -815,9 +814,8 @@ void CNPC_CombineGunship::PlayAngryLoop( void )
 {
 	m_fPatrolLoopPlaying = false;
 	/*
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pPatrolSound, 0.0, 1.0 );
-	controller.SoundChangeVolume( m_pAngrySound, 1.0, 1.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pPatrolSound, 0.0, 1.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pAngrySound, 1.0, 1.0 );
 	*/
 }
 
@@ -1896,13 +1894,12 @@ void CNPC_CombineGunship::Event_Killed( const ITakeDamageInfo&info )
 	StopCannonBurst();
 
 	// Replace the rotor sound with broken engine sound.
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pRotorSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pRotorSound );
 
 	// BUGBUG: Isn't this sound just going to get stomped when the base class calls StopLoopingSounds() ??
 	CPASAttenuationFilter filter2( this );
-	m_pRotorSound = controller.SoundCreate( filter2, entindex(), "NPC_CombineGunship.DyingSound" );
-	controller.Play( m_pRotorSound, 1.0, 100 );
+	m_pRotorSound = g_pSoundEnvelopeController->SoundCreate( filter2, entindex(), "NPC_CombineGunship.DyingSound" );
+	g_pSoundEnvelopeController->Play( m_pRotorSound, 1.0, 100 );
 
 	m_OnDeath.FireOutput((IServerEntity*)info.GetAttacker(), this );
 	SendOnKilledGameEvent( info );
@@ -2383,18 +2380,17 @@ void CNPC_CombineGunship::UpdateFacingDirection( void )
 //------------------------------------------------------------------------------
 void CNPC_CombineGunship::InitializeRotorSound( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	
 	CPASAttenuationFilter filter( this );
 
-	m_pCannonSound		= controller.SoundCreate( filter, entindex(), "NPC_CombineGunship.CannonSound" );
-	m_pRotorSound		= controller.SoundCreate( filter, entindex(), "NPC_CombineGunship.RotorSound" );
-	m_pAirExhaustSound	= controller.SoundCreate( filter, entindex(), "NPC_CombineGunship.ExhaustSound" );
-	m_pAirBlastSound	= controller.SoundCreate( filter, entindex(), "NPC_CombineGunship.RotorBlastSound" );
+	m_pCannonSound		= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineGunship.CannonSound" );
+	m_pRotorSound		= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineGunship.RotorSound" );
+	m_pAirExhaustSound	= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineGunship.ExhaustSound" );
+	m_pAirBlastSound	= g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "NPC_CombineGunship.RotorBlastSound" );
 	
-	controller.Play( m_pCannonSound, 0.0, 100 );
-	controller.Play( m_pAirExhaustSound, 0.0, 100 );
-	controller.Play( m_pAirBlastSound, 0.0, 100 );
+	g_pSoundEnvelopeController->Play( m_pCannonSound, 0.0, 100 );
+	g_pSoundEnvelopeController->Play( m_pAirExhaustSound, 0.0, 100 );
+	g_pSoundEnvelopeController->Play( m_pAirBlastSound, 0.0, 100 );
 
 	BaseClass::InitializeRotorSound();
 }
@@ -2407,10 +2403,9 @@ void CNPC_CombineGunship::InitializeRotorSound( void )
 //------------------------------------------------------------------------------
 void CNPC_CombineGunship::UpdateRotorSoundPitch( int iPitch )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	// Apply the pitch to both sounds. 
-	controller.SoundChangePitch( m_pAirExhaustSound, iPitch, 0.1 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pAirExhaustSound, iPitch, 0.1 );
 
 	// FIXME: Doesn't work in multiplayer
 	IServerEntity *pPlayer = EntityList()->GetPlayerByIndex(1);
@@ -2424,11 +2419,11 @@ void CNPC_CombineGunship::UpdateRotorSoundPitch( int iPitch )
 
 		// Fade in exhaust when we're far from the player
 		float flVolume = clamp( RemapVal( flDistance, (900*900), (1800*1800), 1, 0 ), 0, 1 );
-		controller.SoundChangeVolume( m_pAirExhaustSound, flVolume * GetRotorVolume(), 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pAirExhaustSound, flVolume * GetRotorVolume(), 0.1 );
 
 		// Fade in the blast when it's close to the player (in 2D)
 		flVolume = clamp( RemapVal( flDistance, (600*600), (700*700), 1, 0 ), 0, 1 );
-		controller.SoundChangeVolume( m_pAirBlastSound, flVolume * GetRotorVolume(), 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pAirBlastSound, flVolume * GetRotorVolume(), 0.1 );
 	}
 
 	BaseClass::UpdateRotorSoundPitch( iPitch );
@@ -3085,8 +3080,7 @@ void CNPC_CombineGunship::StartCannonBurst( int iBurstSize )
 	m_flTimeNextAttack = gpGlobals->curtime;
 
 	// Start up the cannon sound.
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundChangeVolume( m_pCannonSound, 1.0, 0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pCannonSound, 1.0, 0 );
 
 	m_bIsFiring = true;
 
@@ -3159,7 +3153,7 @@ void CNPC_CombineGunship::StopCannonBurst( void )
 	// Stop the cannon sound.
 	if ( m_pCannonSound != NULL )
 	{
-		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pCannonSound, 0.0, 0.05 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pCannonSound, 0.0, 0.05 );
 	}
 
 	const char* soundname = "NPC_CombineGunship.CannonStopSound";
@@ -3179,29 +3173,28 @@ void CNPC_CombineGunship::StopCannonBurst( void )
 //-----------------------------------------------------------------------------
 void CNPC_CombineGunship::StopLoopingSounds( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_pCannonSound )
 	{
-		controller.SoundDestroy( m_pCannonSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pCannonSound );
 		m_pCannonSound = NULL;
 	}
 
 	if ( m_pRotorSound )
 	{
-		controller.SoundDestroy( m_pRotorSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pRotorSound );
 		m_pRotorSound = NULL;
 	}
 
 	if ( m_pAirExhaustSound )
 	{
-		controller.SoundDestroy( m_pAirExhaustSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pAirExhaustSound );
 		m_pAirExhaustSound = NULL;
 	}
 
 	if ( m_pAirBlastSound )
 	{
-		controller.SoundDestroy( m_pAirBlastSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pAirBlastSound );
 		m_pAirBlastSound = NULL;
 	}
 

@@ -189,9 +189,9 @@ private:
 	void			CreateSounds();
 	void			UpdateSound();
 	void			UpdateWeaponSound();
-	void			UpdateEngineSound( CSoundEnvelopeController &controller, float speedRatio );
-	void			UpdateFanSound( CSoundEnvelopeController &controller, float speedRatio );
-	void			UpdateWaterSound( CSoundEnvelopeController &controller, float speedRatio );
+	void			UpdateEngineSound( float speedRatio );
+	void			UpdateFanSound( float speedRatio );
+	void			UpdateWaterSound( float speedRatio );
 
 	void			UpdatePropeller();
 	void			UpdateGauge();
@@ -239,12 +239,12 @@ private:
 	float			m_flPropTime;				// Time to turn on/off the prop.
 	float			m_flBlurTime;				// Time to turn on/off the blur.
 
-	CSoundPatch		*m_pFanSound;
-	CSoundPatch		*m_pFanMaxSpeedSound;
-	CSoundPatch		*m_pEngineSound;
-	CSoundPatch		*m_pWaterFastSound;
-	CSoundPatch		*m_pWaterStoppedSound;
-	CSoundPatch		*m_pGunFiringSound;
+	ISoundPatch		*m_pFanSound;
+	ISoundPatch		*m_pFanMaxSpeedSound;
+	ISoundPatch		*m_pEngineSound;
+	ISoundPatch		*m_pWaterFastSound;
+	ISoundPatch		*m_pWaterStoppedSound;
+	ISoundPatch		*m_pGunFiringSound;
 
 	float			m_flEngineIdleTime;			// Time to start playing the engine's idle sound.
 	float			m_flEngineDuckTime;			// Time to reduce the volume of the engine's idle sound.
@@ -557,20 +557,19 @@ void CPropAirboat::UpdateWeaponSound()
 {
 	if ( HasGun() )
 	{
-		CSoundEnvelopeController *pController = &CSoundEnvelopeController::GetController();
-		float flVolume = pController->SoundGetVolume( m_pGunFiringSound );
+		float flVolume = g_pSoundEnvelopeController->SoundGetVolume( m_pGunFiringSound );
 		if ( (m_nGunState == GUN_STATE_IDLE) || (m_nAmmoCount == 0) )
 		{
 			if ( flVolume != 0.0f )
 			{
-				pController->SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.01f );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0f, 0.01f );
 			}
 		}
 		else
 		{
 			if ( flVolume != 1.0f )
 			{
-				pController->SoundChangeVolume( m_pGunFiringSound, 1.0f, 0.01f );
+				g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 1.0f, 0.01f );
 			}
 		}
 	}
@@ -737,26 +736,25 @@ void CPropAirboat::ExitVehicle( int nRole )
 	ClearNavIgnore();
 
 	// Play the engine shutoff sound.
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	CPASAttenuationFilter filter( this );
 
 	EmitSound_t ep;
 	ep.m_nChannel = CHAN_BODY;
 	ep.m_pSoundName = "Airboat_engine_stop";
-	ep.m_flVolume = controller.SoundGetVolume( m_pEngineSound );
+	ep.m_flVolume = g_pSoundEnvelopeController->SoundGetVolume( m_pEngineSound );
 	ep.m_SoundLevel = SNDLVL_NORM;
-	ep.m_nPitch = controller.SoundGetPitch( m_pEngineSound );
+	ep.m_nPitch = g_pSoundEnvelopeController->SoundGetPitch( m_pEngineSound );
 
 	g_pSoundEmitterSystem->EmitSound( filter, entindex(), ep );
 	GetEngineVehicle()->TurnOff();
 
 	// Shut off the airboat sounds.
-	controller.SoundChangeVolume( m_pEngineSound, 0.0, 0.0 );
-	controller.SoundChangeVolume( m_pFanSound, 0.0, 0.0 );
-	controller.SoundChangeVolume( m_pFanMaxSpeedSound, 0.0, 0.0 );
-	controller.SoundChangeVolume( m_pWaterStoppedSound, 0.0, 0.0 );
-	controller.SoundChangeVolume( m_pWaterFastSound, 0.0, 0.0 );
-	controller.SoundChangeVolume( m_pGunFiringSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pEngineSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pFanSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pFanMaxSpeedSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pWaterStoppedSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pWaterFastSound, 0.0, 0.0 );
+	g_pSoundEnvelopeController->SoundChangeVolume( m_pGunFiringSound, 0.0, 0.0 );
 }
 
 
@@ -1312,44 +1310,43 @@ void CPropAirboat::UpdateGauge()
 //-----------------------------------------------------------------------------
 void CPropAirboat::CreateSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	CPASAttenuationFilter filter( this );
 
 	if (!m_pEngineSound)
 	{
-		m_pEngineSound = controller.SoundCreate( filter, entindex(), "Airboat_engine_idle" );
-		controller.Play( m_pEngineSound, 0, 100 );
+		m_pEngineSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat_engine_idle" );
+		g_pSoundEnvelopeController->Play( m_pEngineSound, 0, 100 );
 	}
 
 	if (!m_pFanSound)
 	{
-		m_pFanSound = controller.SoundCreate( filter, entindex(), "Airboat_fan_idle" );
-		controller.Play( m_pFanSound, 0, 100 );
+		m_pFanSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat_fan_idle" );
+		g_pSoundEnvelopeController->Play( m_pFanSound, 0, 100 );
 	}
 
 	if (!m_pFanMaxSpeedSound)
 	{
-		m_pFanMaxSpeedSound = controller.SoundCreate( filter, entindex(), "Airboat_fan_fullthrottle" );
-		controller.Play( m_pFanMaxSpeedSound, 0, 100 );
+		m_pFanMaxSpeedSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat_fan_fullthrottle" );
+		g_pSoundEnvelopeController->Play( m_pFanMaxSpeedSound, 0, 100 );
 	}
 
 	if (!m_pWaterStoppedSound)
 	{
-		m_pWaterStoppedSound = controller.SoundCreate( filter, entindex(), "Airboat_water_stopped" );
-		controller.Play( m_pWaterStoppedSound, 0, 100 );
+		m_pWaterStoppedSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat_water_stopped" );
+		g_pSoundEnvelopeController->Play( m_pWaterStoppedSound, 0, 100 );
 	}
 
 	if (!m_pWaterFastSound)
 	{
-		m_pWaterFastSound = controller.SoundCreate( filter, entindex(), "Airboat_water_fast" );
-		controller.Play( m_pWaterFastSound, 0, 100 );
+		m_pWaterFastSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat_water_fast" );
+		g_pSoundEnvelopeController->Play( m_pWaterFastSound, 0, 100 );
 	}
 
 	if (!m_pGunFiringSound)
 	{
-		m_pGunFiringSound = controller.SoundCreate( filter, entindex(), "Airboat.FireGunLoop" );
-		controller.Play( m_pGunFiringSound, 0, 100 );
+		m_pGunFiringSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), "Airboat.FireGunLoop" );
+		g_pSoundEnvelopeController->Play( m_pGunFiringSound, 0, 100 );
 	}
 }
 
@@ -1359,24 +1356,23 @@ void CPropAirboat::CreateSounds()
 //-----------------------------------------------------------------------------
 void CPropAirboat::StopLoopingSounds()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-	controller.SoundDestroy( m_pEngineSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pEngineSound );
 	m_pEngineSound = NULL;
 
-	controller.SoundDestroy( m_pFanSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pFanSound );
 	m_pFanSound = NULL;
 
-	controller.SoundDestroy( m_pFanMaxSpeedSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pFanMaxSpeedSound );
 	m_pFanMaxSpeedSound = NULL;
 
-	controller.SoundDestroy( m_pWaterStoppedSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pWaterStoppedSound );
 	m_pWaterStoppedSound = NULL;
 
-	controller.SoundDestroy( m_pWaterFastSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pWaterFastSound );
 	m_pWaterFastSound = NULL;
 
-	controller.SoundDestroy( m_pGunFiringSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pGunFiringSound );
 	m_pGunFiringSound = NULL;
 
 	BaseClass::StopLoopingSounds();
@@ -1386,7 +1382,7 @@ void CPropAirboat::StopLoopingSounds()
 //-----------------------------------------------------------------------------
 // Purpose: Manage the state of the engine sound.
 //-----------------------------------------------------------------------------
-void CPropAirboat::UpdateEngineSound( CSoundEnvelopeController &controller, float speedRatio )
+void CPropAirboat::UpdateEngineSound( float speedRatio )
 {
 	#define ENGINE_MIN_VOLUME	0.22
 	#define ENGINE_MAX_VOLUME	0.62
@@ -1394,16 +1390,16 @@ void CPropAirboat::UpdateEngineSound( CSoundEnvelopeController &controller, floa
 	#define	ENGINE_MAX_PITCH	140
 	#define ENGINE_DUCK_TIME	4.0
 
-	if ( controller.SoundGetVolume(m_pEngineSound ) == 0 )
+	if ( g_pSoundEnvelopeController->SoundGetVolume(m_pEngineSound ) == 0 )
 	{ 
 		if ( gpGlobals->curtime > m_flEngineIdleTime )
 		{
 			// If we've finished playing the engine start sound, start playing the idle sound.
-			controller.Play( m_pEngineSound, ENGINE_MAX_VOLUME, 100 );
+			g_pSoundEnvelopeController->Play( m_pEngineSound, ENGINE_MAX_VOLUME, 100 );
 
 			// Ramp down the engine idle sound over time so that we can ramp it back up again based on speed.
-			controller.SoundChangeVolume( m_pEngineSound, ENGINE_MIN_VOLUME, ENGINE_DUCK_TIME );
-			controller.SoundChangePitch( m_pEngineSound, ENGINE_MIN_PITCH, ENGINE_DUCK_TIME );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pEngineSound, ENGINE_MIN_VOLUME, ENGINE_DUCK_TIME );
+			g_pSoundEnvelopeController->SoundChangePitch( m_pEngineSound, ENGINE_MIN_PITCH, ENGINE_DUCK_TIME );
 
 			// Reduce the volume of the engine idle sound after our ears get 'used' to it.
 			m_flEngineDuckTime = gpGlobals->curtime + ENGINE_DUCK_TIME;
@@ -1411,8 +1407,8 @@ void CPropAirboat::UpdateEngineSound( CSoundEnvelopeController &controller, floa
 	}
 	else if ( gpGlobals->curtime > m_flEngineDuckTime )
 	{
-		controller.SoundChangeVolume( m_pEngineSound, RemapValClamped(speedRatio, 0, 1.0, ENGINE_MIN_VOLUME, ENGINE_MAX_VOLUME ), 0.0 );
-		controller.SoundChangePitch( m_pEngineSound, RemapValClamped( speedRatio, 0, 1.0, ENGINE_MIN_PITCH, ENGINE_MAX_PITCH ), 0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pEngineSound, RemapValClamped(speedRatio, 0, 1.0, ENGINE_MIN_VOLUME, ENGINE_MAX_VOLUME ), 0.0 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pEngineSound, RemapValClamped( speedRatio, 0, 1.0, ENGINE_MIN_PITCH, ENGINE_MAX_PITCH ), 0 );
 	}
 }
 
@@ -1420,7 +1416,7 @@ void CPropAirboat::UpdateEngineSound( CSoundEnvelopeController &controller, floa
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropAirboat::UpdateFanSound( CSoundEnvelopeController &controller, float speedRatio )
+void CPropAirboat::UpdateFanSound( float speedRatio )
 {
 	#define FAN_MIN_VOLUME	0.0
 	#define FAN_MAX_VOLUME	0.82
@@ -1432,37 +1428,37 @@ void CPropAirboat::UpdateFanSound( CSoundEnvelopeController &controller, float s
 	if (speedRatio >= 0.8)
 	{
 		// Crossfade between a 'max speed' fan sound and the normal fan sound.
-		controller.SoundChangeVolume( m_pFanSound, RemapValClamped( speedRatio, 0.8, 1.0, FAN_MAX_VOLUME, FAN_MIN_VOLUME ), FAN_CHANGE_VOLUME_TIME );
-		controller.SoundChangeVolume( m_pFanMaxSpeedSound, RemapValClamped( speedRatio, 0.8, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), FAN_CHANGE_VOLUME_TIME );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pFanSound, RemapValClamped( speedRatio, 0.8, 1.0, FAN_MAX_VOLUME, FAN_MIN_VOLUME ), FAN_CHANGE_VOLUME_TIME );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pFanMaxSpeedSound, RemapValClamped( speedRatio, 0.8, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), FAN_CHANGE_VOLUME_TIME );
 
 		if (!m_bFadeOutFan)
 		{
 			m_bFadeOutFan = true;
-			controller.SoundChangeVolume( m_pFanSound, FAN_DUCK_VOLUME, FAN_DUCK_TIME );
+			g_pSoundEnvelopeController->SoundChangeVolume( m_pFanSound, FAN_DUCK_VOLUME, FAN_DUCK_TIME );
 		}
 	}
 	else
 	{
 		m_bFadeOutFan = false;
-		controller.SoundChangeVolume( m_pFanSound, RemapValClamped( fabs(m_flThrottle), 0, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), 0.25 );
-		controller.SoundChangeVolume( m_pFanMaxSpeedSound, 0.0, 0.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pFanSound, RemapValClamped( fabs(m_flThrottle), 0, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), 0.25 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pFanMaxSpeedSound, 0.0, 0.0 );
 	}
 
-	controller.SoundChangePitch( m_pFanSound, 100 * (fabs(m_flThrottle) + 0.2), 0.25 );
+	g_pSoundEnvelopeController->SoundChangePitch( m_pFanSound, 100 * (fabs(m_flThrottle) + 0.2), 0.25 );
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropAirboat::UpdateWaterSound( CSoundEnvelopeController &controller, float speedRatio )
+void CPropAirboat::UpdateWaterSound( float speedRatio )
 {
 	int nWaterLevel = GetWaterLevel();
 
 	// Manage the state of the water stopped sound (gentle lapping at the pontoons).
 	if ( nWaterLevel == 0 )
 	{
-		controller.SoundChangeVolume(m_pWaterStoppedSound, 0.0, 0.0);
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pWaterStoppedSound, 0.0, 0.0);
 	}
 	else
 	{
@@ -1503,25 +1499,25 @@ void CPropAirboat::UpdateWaterSound( CSoundEnvelopeController &controller, float
 
 		if (speedRatio <= 0.1)
 		{
-			if (!controller.SoundGetVolume(m_pWaterStoppedSound))
+			if (!g_pSoundEnvelopeController->SoundGetVolume(m_pWaterStoppedSound))
 			{
 				// Fade in the water stopped sound over 2 seconds.
-				controller.SoundChangeVolume(m_pWaterStoppedSound, 1.0, 2.0);
+				g_pSoundEnvelopeController->SoundChangeVolume(m_pWaterStoppedSound, 1.0, 2.0);
 				m_flWaterStoppedPitchTime = gpGlobals->curtime + random->RandomFloat(1.0, 3.0);
 			}
 			else if (gpGlobals->curtime > m_flWaterStoppedPitchTime)
 			{
-				controller.SoundChangeVolume(m_pWaterStoppedSound, random->RandomFloat(0.2, 1.0), random->RandomFloat(1.0, 3.0));
-				controller.SoundChangePitch(m_pWaterStoppedSound, random->RandomFloat(90, 110), random->RandomFloat(1.0, 3.0));
+				g_pSoundEnvelopeController->SoundChangeVolume(m_pWaterStoppedSound, random->RandomFloat(0.2, 1.0), random->RandomFloat(1.0, 3.0));
+				g_pSoundEnvelopeController->SoundChangePitch(m_pWaterStoppedSound, random->RandomFloat(90, 110), random->RandomFloat(1.0, 3.0));
 				m_flWaterStoppedPitchTime = gpGlobals->curtime + random->RandomFloat(2.0, 4.0);
 			}
 		}
 		else
 		{
-			if (controller.SoundGetVolume(m_pWaterStoppedSound))
+			if (g_pSoundEnvelopeController->SoundGetVolume(m_pWaterStoppedSound))
 			{
 				// Fade out the water stopped sound over 1 second.
-				controller.SoundChangeVolume(m_pWaterStoppedSound, 0.0, 1.0);
+				g_pSoundEnvelopeController->SoundChangeVolume(m_pWaterStoppedSound, 0.0, 1.0);
 			}
 		}
 	}
@@ -1529,11 +1525,11 @@ void CPropAirboat::UpdateWaterSound( CSoundEnvelopeController &controller, float
 	// Manage the state of the water fast sound (water hissing under the pontoons).
 	if ( nWaterLevel == 0 )
 	{
-		controller.SoundChangeVolume(m_pWaterFastSound, 0.0, 0.0);
+		g_pSoundEnvelopeController->SoundChangeVolume(m_pWaterFastSound, 0.0, 0.0);
 	}
 	else
 	{
-		controller.SoundChangeVolume( m_pWaterFastSound, speedRatio, 0.0 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pWaterFastSound, speedRatio, 0.0 );
 	}
 
 	m_nPrevWaterLevel = nWaterLevel;
@@ -1548,7 +1544,6 @@ void CPropAirboat::UpdateSound()
 	if (!GetDriver())
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	// Sample the data that we need for sounds.
 	IEngineVehicleServer *pPhysics = GetEngineVehicle();
@@ -1559,9 +1554,9 @@ void CPropAirboat::UpdateSound()
 	//Msg("speedRatio=%f\n", speedRatio);
 
 	UpdateWeaponSound();
-	UpdateEngineSound( controller, speedRatio );
-	UpdateFanSound( controller, speedRatio );
-	UpdateWaterSound( controller, speedRatio );
+	UpdateEngineSound( speedRatio );
+	UpdateFanSound( speedRatio );
+	UpdateWaterSound( speedRatio );
 }
 
 

@@ -1051,7 +1051,7 @@ void CPropJeep::ChargeCannon( void )
 
 		//Start charging sound
 		CPASAttenuationFilter filter( this );
-		m_sndCannonCharge = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "Jeep.GaussCharge", ATTN_NORM );
+		m_sndCannonCharge = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, "Jeep.GaussCharge", ATTN_NORM );
 
 		if ( m_hPlayer )
 		{
@@ -1061,8 +1061,8 @@ void CPropJeep::ChargeCannon( void )
 		assert(m_sndCannonCharge!=NULL);
 		if ( m_sndCannonCharge != NULL )
 		{
-			(CSoundEnvelopeController::GetController()).Play( m_sndCannonCharge, 1.0f, 50 );
-			(CSoundEnvelopeController::GetController()).SoundChangePitch( m_sndCannonCharge, 250, 3.0f );
+			g_pSoundEnvelopeController->Play( m_sndCannonCharge, 1.0f, 50 );
+			g_pSoundEnvelopeController->SoundChangePitch( m_sndCannonCharge, 250, 3.0f );
 		}
 
 		return;
@@ -1095,7 +1095,7 @@ void CPropJeep::StopChargeSound( void )
 {
 	if ( m_sndCannonCharge != NULL )
 	{
-		(CSoundEnvelopeController::GetController()).SoundFadeOut( m_sndCannonCharge, 0.1f );
+		g_pSoundEnvelopeController->SoundFadeOut( m_sndCannonCharge, 0.1f );
 	}
 
 	if( m_hPlayer )

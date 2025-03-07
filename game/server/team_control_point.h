@@ -185,7 +185,7 @@ private:
 
 	float		m_flLastContestedAt;
 
-	CSoundPatch *m_pCaptureInProgressSound;
+	ISoundPatch *m_pCaptureInProgressSound;
 	string_t	m_iszCaptureStartSound;
 	string_t	m_iszCaptureEndSound;
 	string_t	m_iszCaptureInProgress;

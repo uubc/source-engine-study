@@ -179,8 +179,8 @@ private:
 	EHANDLE			m_hTargetEntity;
 	int				m_soundPlaying;
 
-	CSoundPatch		*m_soundTreads;
-	CSoundPatch		*m_soundEngine;
+	ISoundPatch		*m_soundTreads;
+	ISoundPatch		*m_soundEngine;
 
 	string_t		m_startSoundName;
 	string_t		m_engineSoundName;
@@ -235,16 +235,15 @@ CBaseEntity *CTankTrainAI::FindTarget( string_t target, IServerEntity *pActivato
 
 CTankTrainAI::~CTankTrainAI( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_soundTreads )
 	{
-		controller.SoundDestroy( m_soundTreads );
+		g_pSoundEnvelopeController->SoundDestroy( m_soundTreads );
 	}
 	
 	if ( m_soundEngine )
 	{
-		controller.SoundDestroy( m_soundEngine );
+		g_pSoundEnvelopeController->SoundDestroy( m_soundEngine );
 	}
 }
 
@@ -288,19 +287,18 @@ void CTankTrainAI::SoundEngineStart( void )
 	}
 
 	// play the looping sounds using the envelope controller
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 	if ( m_soundTreads )
 	{
-		controller.Play( m_soundTreads, 1.0, 100 );
+		g_pSoundEnvelopeController->Play( m_soundTreads, 1.0, 100 );
 	}
 	
 	if ( m_soundEngine )
 	{
-		controller.Play( m_soundEngine, 0.5, 90 );
-		controller.CommandClear( m_soundEngine );
-		controller.CommandAdd( m_soundEngine, 0, SOUNDCTRL_CHANGE_PITCH, 1.5, random->RandomInt(130, 145) );
-		controller.CommandAdd( m_soundEngine, 1.5, SOUNDCTRL_CHANGE_PITCH, 2, random->RandomInt(105, 115) );
+		g_pSoundEnvelopeController->Play( m_soundEngine, 0.5, 90 );
+		g_pSoundEnvelopeController->CommandClear( m_soundEngine );
+		g_pSoundEnvelopeController->CommandAdd( m_soundEngine, 0, SOUNDCTRL_CHANGE_PITCH, 1.5, random->RandomInt(130, 145) );
+		g_pSoundEnvelopeController->CommandAdd( m_soundEngine, 1.5, SOUNDCTRL_CHANGE_PITCH, 2, random->RandomInt(105, 115) );
 	}
 	
 	m_soundPlaying = true;
@@ -312,17 +310,16 @@ void CTankTrainAI::SoundEngineStop( void )
 	if ( !m_soundPlaying )
 		return;
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	
 	if ( m_soundTreads )
 	{
-		controller.SoundFadeOut( m_soundTreads, 0.25 );
+		g_pSoundEnvelopeController->SoundFadeOut( m_soundTreads, 0.25 );
 	}
 
 	if ( m_soundEngine )
 	{
-		controller.CommandClear( m_soundEngine );
-		controller.SoundChangePitch( m_soundEngine, 70, 3.0 );
+		g_pSoundEnvelopeController->CommandClear( m_soundEngine );
+		g_pSoundEnvelopeController->SoundChangePitch( m_soundEngine, 70, 3.0 );
 	}
 	m_soundPlaying = false;	
 }
@@ -330,15 +327,14 @@ void CTankTrainAI::SoundEngineStop( void )
 
 void CTankTrainAI::SoundShutdown( void )
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	if ( m_soundTreads )
 	{
-		controller.Shutdown( m_soundTreads );
+		g_pSoundEnvelopeController->Shutdown( m_soundTreads );
 	}
 
 	if ( m_soundEngine )
 	{
-		controller.Shutdown( m_soundEngine );
+		g_pSoundEnvelopeController->Shutdown( m_soundEngine );
 	}
 	m_soundPlaying = false;	
 }
@@ -375,17 +371,16 @@ void CTankTrainAI::Activate( void )
 	if ( pTrain )
 	{
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.5f );
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
 		if ( m_movementSoundName != NULL_STRING )
 		{
 			CPASAttenuationFilter filter( this, ATTN_NORM * 0.5 );
-			m_soundTreads = controller.SoundCreate( filter, pTrain->entindex(), CHAN_STATIC, STRING(m_movementSoundName), ATTN_NORM*0.5 );
+			m_soundTreads = g_pSoundEnvelopeController->SoundCreate( filter, pTrain->entindex(), CHAN_STATIC, STRING(m_movementSoundName), ATTN_NORM*0.5 );
 		}
 		if ( m_engineSoundName != NULL_STRING )
 		{
 			CPASAttenuationFilter filter( this );
-			m_soundEngine = controller.SoundCreate( filter, pTrain->entindex(), CHAN_STATIC, STRING(m_engineSoundName), ATTN_NORM );
+			m_soundEngine = g_pSoundEnvelopeController->SoundCreate( filter, pTrain->entindex(), CHAN_STATIC, STRING(m_engineSoundName), ATTN_NORM );
 		}
 	}
 }

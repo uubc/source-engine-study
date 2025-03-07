@@ -316,8 +316,8 @@ protected:
 	virtual	bool	HasBeenInteractedWith()	{ return m_bHackedByAlyx; }
 	virtual void	NotifyInteraction( CAI_BaseNPC *pUser );
 
-	CSoundPatch					*m_pRollSound;
-	CSoundPatch					*m_pPingSound;
+	ISoundPatch					*m_pRollSound;
+	ISoundPatch					*m_pPingSound;
 
 	CRollerController			m_RollerController;
 	IPhysicsMotionController	*m_pMotionController;
@@ -2725,7 +2725,6 @@ void CNPC_RollerMine::UpdateRollingSound()
 	}
 
 
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 	CSoundParameters params;
 	switch( soundState )
 	{
@@ -2752,8 +2751,8 @@ void CNPC_RollerMine::UpdateRollingSound()
 			return;
 
 		CPASAttenuationFilter filter( this );
-		m_pRollSound = controller.SoundCreate( filter, entindex(), params.channel, params.soundname, params.soundlevel );
-		controller.Play( m_pRollSound, params.volume, params.pitch );
+		m_pRollSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), params.channel, params.soundname, params.soundlevel );
+		g_pSoundEnvelopeController->Play( m_pRollSound, params.volume, params.pitch );
 		m_rollingSoundState = soundState;
 	}
 
@@ -2761,16 +2760,15 @@ void CNPC_RollerMine::UpdateRollingSound()
 	{
 		// for tuning
 		//DevMsg("SOUND: %s, VOL: %.1f\n", m_rollingSoundState == ROLL_SOUND_CLOSED ? "CLOSED" : "OPEN ", rollingSpeed );
-		controller.SoundChangePitch( m_pRollSound, params.pitchlow + (params.pitchhigh - params.pitchlow) * rollingSpeed, 0.1 );
-		controller.SoundChangeVolume( m_pRollSound, params.volume * rollingSpeed, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pRollSound, params.pitchlow + (params.pitchhigh - params.pitchlow) * rollingSpeed, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pRollSound, params.volume * rollingSpeed, 0.1 );
 	}
 }
 
 
 void CNPC_RollerMine::StopRollingSound()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pRollSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pRollSound );
 	m_pRollSound = NULL;
 }
 
@@ -2791,18 +2789,17 @@ void CNPC_RollerMine::UpdatePingSound()
 	if ( pingSpeed > 0 )
 	{
 		pingSpeed = 1-pingSpeed;
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 		CSoundParameters params;
 		g_pSoundEmitterSystem->GetParametersForSound( "NPC_RollerMine.Ping", params, NULL );//CBaseEntity::
 		if ( !m_pPingSound )
 		{
 			CPASAttenuationFilter filter( this );
-			m_pPingSound = controller.SoundCreate( filter, entindex(), params.channel, params.soundname, params.soundlevel );
-			controller.Play( m_pPingSound, params.volume, 101 );
+			m_pPingSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), params.channel, params.soundname, params.soundlevel );
+			g_pSoundEnvelopeController->Play( m_pPingSound, params.volume, 101 );
 		}
 
-		controller.SoundChangePitch( m_pPingSound, params.pitchlow + (params.pitchhigh - params.pitchlow) * pingSpeed, 0.1 );
-		controller.SoundChangeVolume( m_pPingSound, params.volume, 0.1 );
+		g_pSoundEnvelopeController->SoundChangePitch( m_pPingSound, params.pitchlow + (params.pitchhigh - params.pitchlow) * pingSpeed, 0.1 );
+		g_pSoundEnvelopeController->SoundChangeVolume( m_pPingSound, params.volume, 0.1 );
 		//DevMsg("PING: %.1f\n", pingSpeed );
 
 	}
@@ -2815,8 +2812,7 @@ void CNPC_RollerMine::UpdatePingSound()
 
 void CNPC_RollerMine::StopPingSound()
 {
-	CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
-	controller.SoundDestroy( m_pPingSound );
+	g_pSoundEnvelopeController->SoundDestroy( m_pPingSound );
 	m_pPingSound = NULL;
 }
 

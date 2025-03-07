@@ -41,7 +41,7 @@ public:
 	string_t	m_NoiseMoving;	// sound a plat makes while moving
 	string_t	m_NoiseArrived;
 
-	CSoundPatch *m_pMovementSound;
+	ISoundPatch *m_pMovementSound;
 #ifdef HL1_DLL
 	int			m_MoveSound;
 	int			m_StopSound;
@@ -100,11 +100,10 @@ void CBasePlatTrain::PlayMovingSound()
 	StopMovingSound();
 	if(m_NoiseMoving != NULL_STRING )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 		CPASAttenuationFilter filter( this );
-		m_pMovementSound = controller.SoundCreate( filter, entindex(), CHAN_STATIC, STRING(m_NoiseMoving), ATTN_NORM );
+		m_pMovementSound = g_pSoundEnvelopeController->SoundCreate( filter, entindex(), CHAN_STATIC, STRING(m_NoiseMoving), ATTN_NORM );
 		
-		controller.Play( m_pMovementSound, m_volume, PITCH_NORM );
+		g_pSoundEnvelopeController->Play( m_pMovementSound, m_volume, PITCH_NORM );
 	}
 }
 
@@ -112,9 +111,8 @@ void CBasePlatTrain::StopMovingSound()
 {
 	if ( m_pMovementSound )
 	{
-		CSoundEnvelopeController &controller = CSoundEnvelopeController::GetController();
 
-		controller.SoundDestroy( m_pMovementSound );
+		g_pSoundEnvelopeController->SoundDestroy( m_pMovementSound );
 		m_pMovementSound = NULL;
 	}
 }

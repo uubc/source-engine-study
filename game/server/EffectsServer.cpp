@@ -61,7 +61,7 @@ private:
 		{
 			if ( !filter.IgnorePredictionCull() )
 			{
-				filter.RemoveRecipient( (CBasePlayer *)GetSuppressHost()  );
+				filter.RemoveRecipient( GetSuppressHost()  );
 			}
 
 			if ( !filter.GetRecipientCount() )

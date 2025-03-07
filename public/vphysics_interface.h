@@ -1229,14 +1229,14 @@ struct ragdoll_t
 #define FVPHYSICS_NO_SELF_COLLISIONS	0x8000		// don't collide with other objects that are part of the same entity
 #define FVPHYSICS_IS_SHADOWCLONE		0x4000
 
-class CSoundPatch;
+class ISoundPatch;
 class IHandleEntity;
 //-----------------------------------------------------------------------------
 // Purpose: A little cache of current objects making noises
 //-----------------------------------------------------------------------------
 struct friction_t
 {
-	CSoundPatch* patch;
+	ISoundPatch* patch;
 	IHandleEntity* pObject;
 	float		flLastUpdateTime;
 	float		flLastEffectTime;

@@ -24,7 +24,6 @@
 class CNPC_VehicleDriver;
 //class CFourWheelVehiclePhysics;
 class CPropVehicleDriveable;
-class CSoundPatch;
 
 
 //-----------------------------------------------------------------------------

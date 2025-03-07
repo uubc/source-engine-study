@@ -82,14 +82,14 @@ int	C_RecipientFilter::GetRecipientIndex( int slot ) const
 
 void C_RecipientFilter::AddAllPlayers( void )
 {
-	if ( !(C_BasePlayer*)EntityList()->GetLocalPlayer() )
+	if ( !EntityList()->GetLocalPlayer() )
 		return;
 
 	m_Recipients.RemoveAll();
-	AddRecipient( (C_BasePlayer*)EntityList()->GetLocalPlayer() );
+	AddRecipient( EntityList()->GetLocalPlayer() );
 }
 
-void C_RecipientFilter::AddRecipient( C_BasePlayer *player )
+void C_RecipientFilter::AddRecipient( const IHandleEntity *player )
 {
 	Assert( player );
 
@@ -102,7 +102,7 @@ void C_RecipientFilter::AddRecipient( C_BasePlayer *player )
 	//  then don't send it to the local player again.
 	if ( m_bUsingPredictionRules )
 	{
-		Assert( player == (C_BasePlayer*)EntityList()->GetLocalPlayer() );
+		Assert( player == EntityList()->GetLocalPlayer() );
 		Assert( prediction->InPrediction() );
 
 		// Only add local player if this is the first time doing prediction
@@ -123,7 +123,7 @@ void C_RecipientFilter::AddRecipient( C_BasePlayer *player )
 	m_Recipients.AddToTail( index );
 }
 
-void C_RecipientFilter::RemoveRecipient( C_BasePlayer *player )
+void C_RecipientFilter::RemoveRecipient( const IHandleEntity *player )
 {
 	if ( !player )
 		return;
@@ -216,8 +216,8 @@ void C_RecipientFilter::SetIgnorePredictionCull( bool ignore )
 
 CLocalPlayerFilter::CLocalPlayerFilter()
 {
-	if ( (C_BasePlayer*)EntityList()->GetLocalPlayer() )
+	if ( EntityList()->GetLocalPlayer() )
 	{
-		AddRecipient( (C_BasePlayer*)EntityList()->GetLocalPlayer() );
+		AddRecipient( EntityList()->GetLocalPlayer() );
 	}
 }

@@ -182,7 +182,7 @@ private:
 	float	m_flSpeed;
 
 	CSpriteTrail *m_pGlowTrail;
-	CSoundPatch *m_pHoldingSound;
+	ISoundPatch *m_pHoldingSound;
 
 	float	m_flNextDamageTime;
 	float	m_flLastCaptureTime;
