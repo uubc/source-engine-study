@@ -16,17 +16,6 @@
 #include "tier1/utlstring.h"
 #include "basehandle.h"
 
-#if defined( CLIENT_DLL )
-class C_BaseEntity;
-#if defined( _DEBUG )
-// #define COPY_CHECK_STRESSTEST
-class IGameSystem;
-IGameSystem* GetPredictionCopyTester( void );
-#endif
-#else
-class CBaseEntity;
-#endif
-
 enum
 {
 	PC_EVERYTHING = 0,
@@ -197,7 +186,6 @@ private:
 	FN_FIELD_DESCRIPTION	m_FieldDescFunc;
 };
 
-#if defined( CLIENT_DLL )
 class CValueChangeTracker
 {
 public:
@@ -285,5 +273,4 @@ private:
 #define PREDICTION_SPEWVALUECHANGES() 
 #endif
 
-#endif // !CLIENT_DLL
 #endif // PREDICTIONCOPY_H

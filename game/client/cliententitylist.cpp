@@ -43,8 +43,6 @@ void cc_cl_interp_all_changed(IConVar* pConVar, const char* pOldString, float fl
 
 static ConVar  cl_interp_all("cl_interp_all", "0", 0, "Disable interpolation list optimizations.", 0, 0, 0, 0, cc_cl_interp_all_changed);
 extern ConVar	cl_showerror;
-extern ConVar think_limit;
-extern IStaticPropMgrClient* staticpropmgr;
 
 // Create interface
 CClientEntityList<IClientEntity> g_EntityList;
@@ -5818,6 +5816,7 @@ bool C_EngineObjectInternal::PhysicsRunSpecificThink(int nContextIndex, CTHINKPT
 //-----------------------------------------------------------------------------
 void C_EngineObjectInternal::PhysicsDispatchThink(CTHINKPTR thinkFunc)
 {
+	ConVarRef think_limit("think_limit");
 	float thinkLimit = think_limit.GetFloat();
 	float startTime = 0.0;
 

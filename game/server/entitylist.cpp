@@ -13,12 +13,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern ConVar ent_debugkeys;
-extern ConVar think_limit;
-
-//extern bool ParseKeyvalue(void* pObject, typedescription_t* pFields, int iNumFields, const char* szKeyName, const char* szValue);
-//extern bool ExtractKeyvalue(void* pObject, typedescription_t* pFields, int iNumFields, const char* szKeyName, char* szValue, int iMaxLen);
-
 CGlobalEntityList<IServerEntity> gEntList;
 IServerEntityList* serverEntitylist = &gEntList;
 
@@ -4213,6 +4207,7 @@ bool CEngineObjectInternal::KeyValue(const char* szKeyName, const char* szValue)
 	}
 
 	// loop through the data description, and try and place the keys in
+	ConVarRef ent_debugkeys("ent_debugkeys");
 	if (!*ent_debugkeys.GetString())
 	{
 		for (datamap_t* dmap = GetDataDescMap(); dmap != NULL; dmap = dmap->baseMap)
@@ -6871,6 +6866,7 @@ void CEngineObjectInternal::PhysicsDispatchThink(THINKPTR thinkFunc)
 		"IServerEntity::PhysicsDispatchThink" :
 		gEntList.GetCannonicalName(GetClassname()));
 
+	ConVarRef think_limit("think_limit");
 	float thinkLimit = think_limit.GetFloat();
 
 	// The thinkLimit stuff makes a LOT of calls to Sys_FloatTime, which winds up calling into
@@ -14889,7 +14885,6 @@ void CEngineVehicleInternal::Spawn()
 	InitializePoseParameters();
 }
 
-extern IPhysicsGameTrace* physgametrace;
 
 //-----------------------------------------------------------------------------
 // Purpose: Initializes the vehicle physics

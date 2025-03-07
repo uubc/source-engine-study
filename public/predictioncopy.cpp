@@ -18,19 +18,13 @@
 
 #if !defined( NO_ENTITY_PREDICTION )
 
-#if defined( CLIENT_DLL )
-
-#include "igamesystem.h"
-
-#endif
 #include <memory.h>
 #include <stdarg.h>
 #include "tier0/dbg.h"
 #include "tier1/strtools.h"
 #include "predictioncopy.h"
-#include "engine/ivmodelinfo.h"
 #include "tier1/fmtstr.h"
-
+#include "Color.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -70,11 +64,9 @@ static const char *g_FieldTypes[ FIELD_TYPECOUNT ] =
 	"FIELD_MODELINDEX"		// FIELD_MODELINDEX
 };
 
-#ifdef CLIENT_DLL
+
 extern IVModelInfoClient* modelinfo;
 extern CGlobalVarsBase* gpGlobals;
-#endif // CLIENT_DLL
-
 
 CPredictionCopy::CPredictionCopy( int type, void *dest, bool dest_packed, void const *src, bool src_packed, 
 	bool counterrors /*= false*/, bool reporterrors /*= false*/, bool performcopy /*= true*/,
@@ -297,11 +289,6 @@ void CPredictionCopy::WatchShort( difftype_t dt, short *outvalue, const short *i
 	WatchMsg( "short (%i)", (int)(outvalue[0]) );
 }
 
-#if defined( CLIENT_DLL )
-#include "cdll_int.h"
-
-#endif
-
 void CPredictionCopy::DescribeInt( difftype_t dt, int *outvalue, const int *invalue, int count )
 {
 	if ( !m_bErrorCheck )
@@ -313,7 +300,6 @@ void CPredictionCopy::DescribeInt( difftype_t dt, int *outvalue, const int *inva
 		ReportFieldsDiffer( "int differs (net %i pred %i) diff(%i)\n", invalue[i], outvalue[i], outvalue[i] - invalue[i] );
 	}
 
-#if defined( CLIENT_DLL )
 	bool described = false;
 	if ( m_pCurrentField->flags & FTYPEDESC_MODELINDEX )
 	{
@@ -334,9 +320,6 @@ void CPredictionCopy::DescribeInt( difftype_t dt, int *outvalue, const int *inva
 	{
 		DescribeFields( dt, "integer (%i)\n", outvalue[0] );
 	}
-#else
-	DescribeFields( dt, "integer (%i)\n", outvalue[0] );
-#endif
 }
 
 void CPredictionCopy::WatchInt( difftype_t dt, int *outvalue, const int *invalue, int count )
@@ -344,7 +327,6 @@ void CPredictionCopy::WatchInt( difftype_t dt, int *outvalue, const int *invalue
 	if ( m_pWatchField != m_pCurrentField )
 		return;
 
-#if defined( CLIENT_DLL )
 	bool described = false;
 	if ( m_pCurrentField->flags & FTYPEDESC_MODELINDEX )
 	{
@@ -365,9 +347,6 @@ void CPredictionCopy::WatchInt( difftype_t dt, int *outvalue, const int *invalue
 	{
 		WatchMsg( "integer (%i)", outvalue[0] );
 	}
-#else
-	WatchMsg( "integer (%i)", outvalue[0] );
-#endif
 }
 
 void CPredictionCopy::DescribeBool( difftype_t dt, bool *outvalue, const bool *invalue, int count )
@@ -571,7 +550,6 @@ void CPredictionCopy::DescribeEHandle( difftype_t dt, CBaseHandle*outvalue, CBas
 		ReportFieldsDiffer( "EHandles differ (net) 0x%p (pred) 0x%p\n", (void const *)entitylist->GetBaseEntityFromHandle(invalue[ i ]), (void *)entitylist->GetBaseEntityFromHandle(outvalue[ i ]) );
 	}
 
-#if defined( CLIENT_DLL )
 	IClientEntity *ent = entitylist->GetBaseEntityFromHandle(outvalue[0]);
 	if ( ent )
 	{
@@ -588,10 +566,6 @@ void CPredictionCopy::DescribeEHandle( difftype_t dt, CBaseHandle*outvalue, CBas
 		DescribeFields( dt, "EHandle (NULL)" );
 	}
 
-#else
-	DescribeFields( dt, "EHandle (0x%p)", (void *)outvalue[ 0 ] );
-#endif
-
 }
 
 void CPredictionCopy::WatchEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHandle const *invalue, int count )
@@ -599,7 +573,6 @@ void CPredictionCopy::WatchEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHa
 	if ( m_pWatchField != m_pCurrentField )
 		return;
 
-#if defined( CLIENT_DLL )
 	IClientEntity *ent = entitylist->GetBaseEntityFromHandle(outvalue[0]);
 	if ( ent )
 	{
@@ -615,10 +588,6 @@ void CPredictionCopy::WatchEHandle( difftype_t dt, CBaseHandle*outvalue, CBaseHa
 	{
 		WatchMsg( "EHandle (NULL)" );
 	}
-
-#else
-	WatchMsg( "EHandle (0x%p)", (void *)outvalue[ 0 ] );
-#endif
 
 }
 
@@ -1766,7 +1735,6 @@ void CPredictionDescribeData::DumpDescription( datamap_t *pMap )
 	}
 }
 
-#if defined( CLIENT_DLL )
 CValueChangeTracker::CValueChangeTracker() :
 	m_bActive( false ),
 	m_bTracking( false )
@@ -2037,11 +2005,10 @@ CON_COMMAND_F( cl_pred_track, "<entindex> <fieldname>:  Track changes to entity 
 	g_pChangeTracker->SetupTracking( ent, args[2] );
 }
 
-#endif
 
 #if defined( CLIENT_DLL ) && defined( COPY_CHECK_STRESSTEST )
 
-class CPredictionCopyTester : public IGameSystem
+class CPredictionCopyTester
 {
 public:
 
@@ -2076,11 +2043,11 @@ private:
 	void RunTests( void );
 };
 
-IGameSystem* GetPredictionCopyTester( void )
-{
-	static CPredictionCopyTester s_PredictionCopyTesterSystem;
-	return &s_PredictionCopyTesterSystem;
-}
+//IGameSystem* GetPredictionCopyTester( void )
+//{
+//	static CPredictionCopyTester s_PredictionCopyTesterSystem;
+//	return &s_PredictionCopyTesterSystem;
+//}
 
 class CCopyTesterData
 {

@@ -5,15 +5,19 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "cbase.h"
+//#include "cbase.h"
 #include "sendproxy.h"
 #include "basetypes.h"
-#include "baseentity.h"
-#include "team.h"
-#include "player.h"
+#include "basehandle.h"
+#include "edict.h"
+//#include "baseentity.h"
+//#include "team.h"
+//#include "player.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
+extern CGlobalVars* gpGlobals;
 
 void SendProxy_Color32ToInt( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
 {
@@ -83,25 +87,25 @@ SendProp SendPropIntWithMinusOneFlag( const char *pVarName, int offset, int size
 //			objectID - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-void* SendProxy_OnlyToTeam( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID )
-{
-	CBaseEntity *pEntity = (CBaseEntity*)pStruct;
-	if ( pEntity )
-	{
-		CTeam *pTeam = pEntity->GetTeam();
-		if ( pTeam )
-		{
-			pRecipients->ClearAllRecipients();
-			for ( int i=0; i < pTeam->GetNumPlayers(); i++ )
-				pRecipients->SetRecipient( pTeam->GetPlayer( i )->GetClientIndex() );
-		
-			return (void*)pVarData;
-		}
-	}
-
-	return NULL;
-}
-REGISTER_SEND_PROXY_NON_MODIFIED_POINTER( SendProxy_OnlyToTeam );
+//void* SendProxy_OnlyToTeam( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID )
+//{
+//	CBaseEntity *pEntity = (CBaseEntity*)pStruct;
+//	if ( pEntity )
+//	{
+//		CTeam *pTeam = pEntity->GetTeam();
+//		if ( pTeam )
+//		{
+//			pRecipients->ClearAllRecipients();
+//			for ( int i=0; i < pTeam->GetNumPlayers(); i++ )
+//				pRecipients->SetRecipient( pTeam->GetPlayer( i )->GetClientIndex() );
+//		
+//			return (void*)pVarData;
+//		}
+//	}
+//
+//	return NULL;
+//}
+//REGISTER_SEND_PROXY_NON_MODIFIED_POINTER( SendProxy_OnlyToTeam );
 
 #define TIME_BITS 24
 

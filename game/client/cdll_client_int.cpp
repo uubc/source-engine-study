@@ -1068,7 +1068,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 #endif
 
 #if defined( CLIENT_DLL ) && defined( COPY_CHECK_STRESSTEST )
-	IGameSystem::Add( GetPredictionCopyTester() );
+	//IGameSystem::Add( GetPredictionCopyTester() );
 #endif
 
 	modemanager->Init( );

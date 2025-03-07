@@ -54,7 +54,6 @@ static int  g_nThreadModeTicks = 0;
 
 static ConVar  cl_interp_npcs( "cl_interp_npcs", "0.0", FCVAR_USERINFO, "Interpolate NPC positions starting this many seconds in past (or cl_interp, if greater)" );  
 ConVar  r_drawmodeldecals( "r_drawmodeldecals", "1" );
-extern ConVar	cl_showerror;
 static ConVar  r_drawrenderboxes( "r_drawrenderboxes", "0", FCVAR_CHEAT );  
 static void VCollideWireframe_ChangeCallback(IConVar* pConVar, char const* pOldString, float flOldValue)
 {

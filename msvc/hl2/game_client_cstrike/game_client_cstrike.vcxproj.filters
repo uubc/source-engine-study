@@ -1188,9 +1188,6 @@
     <ClCompile Include="..\..\..\game\shared\predicted_viewmodel.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\predictioncopy.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\shared\props_shared.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -1770,9 +1767,6 @@
     <ClCompile Include="..\..\..\public\ehandle.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal_util_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\public\rope_helpers.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -1804,6 +1798,12 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\sequence_Transitioner.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\portal_util_shared.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\predictioncopy.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,6 +30,15 @@
 #define MAX_ENTITY_BYTE_COUNT	(NUM_ENT_ENTRIES >> 3)
 #define DEBUG_TRANSITIONS_VERBOSE	2
 
+extern ConVar phys_timescale;
+extern ConVar sv_strict_notarget;
+extern ConVar sv_fullsyncclones;
+extern ConVar phys_speeds;
+extern ConVar sv_alternateticks;
+extern ConVar g_ragdoll_important_maxcount;
+extern ConVar g_ragdoll_maxcount;
+extern ConVar g_debug_ragdoll_removal;
+extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobals;
 extern IVEngineServer* engine;
 extern IVDebugOverlay* debugoverlay;
@@ -44,6 +53,23 @@ extern ISaveRestoreBlockHandler* GetPhysSaveRestoreBlockHandler();
 extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
 extern IServerGameDLL* serverGameDLL;
 extern ISoundEnvelopeController* g_pSoundEnvelopeController;
+#if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
+namespace _SUBSYSTEM
+{
+	extern IUniformRandomStream* random;
+}
+#else
+extern IUniformRandomStream* random;
+#endif
+extern IPhysicsGameTrace* physgametrace;
+extern bool ShouldRemoveThisRagdoll(IServerEntity* pRagdoll);
+extern void PostSimulation_ImpulseEvent(IPhysicsObject* pObject, const Vector& centerForce, const AngularImpulse& centerTorque);
+extern void PostSimulation_SetVelocityEvent(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity);
+extern void UpdateShadowClonesPortalSimulationFlags(const IServerEntity* pSourceEntity, unsigned int iFlags, int iSourceFlags);
+class CAimTargetManager;
+extern CAimTargetManager g_AimManager;
+class CSimThinkManager;
+extern CSimThinkManager g_SimThinkManager;
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return serverGameDLL->AllocPooledString(pStr);
 }
@@ -2655,7 +2681,6 @@ private:
 	IPhysicsObjectPairHash* m_pLevelAdjacencyDependencyHash;
 };
 
-extern bool ShouldRemoveThisRagdoll(IServerEntity* pRagdoll);
 
 //-----------------------------------------------------------------------------
 // Purpose: Simple object for storing a list of objects
@@ -3383,10 +3408,7 @@ private:
 	unsigned short m_list;
 };
 
-extern void PostSimulation_ImpulseEvent(IPhysicsObject* pObject, const Vector& centerForce, const AngularImpulse& centerTorque);
-extern void PostSimulation_SetVelocityEvent(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity);
-extern ConVar phys_timescale;
-extern ConVar sv_strict_notarget;
+
 
 //-----------------------------------------------------------------------------
 // Purpose: a global list of all the entities in the game.  All iteration through
@@ -4887,7 +4909,6 @@ void CGlobalEntityList<T>::LevelShutdownPostEntity()
 	FlushVehicleScripts();
 }
 
-extern void UpdateShadowClonesPortalSimulationFlags(const IServerEntity* pSourceEntity, unsigned int iFlags, int iSourceFlags);
 
 template<class T>
 void CGlobalEntityList<T>::PrePhysFrame(void)
@@ -4970,7 +4991,6 @@ void CGlobalEntityList<T>::PostPhysFrame(void)
 	}
 }
 
-extern ConVar sv_fullsyncclones;
 template<class T>
 void CGlobalEntityList<T>::PortalPhysFrame(float deltaTime) //small wrapper for PhysFrame that simulates all environments at once
 {
@@ -4991,7 +5011,6 @@ void CGlobalEntityList<T>::PortalPhysFrame(float deltaTime) //small wrapper for 
 	PostPhysFrame();
 }
 
-extern ConVar phys_speeds;
 // Advance physics by time (in seconds)
 template<class T>
 void CGlobalEntityList<T>::PhysFrame(float deltaTime)
@@ -6807,7 +6826,6 @@ IServerEntity* CGlobalEntityList<T>::NextEnt(IServerEntity* pCurrentEnt)
 
 }
 
-extern CAimTargetManager g_AimManager;
 
 template<class T>
 void CGlobalEntityList<T>::ReportEntityFlagsChanged(IServerEntity* pEntity, unsigned int flagsOld, unsigned int flagsNow)
@@ -6850,8 +6868,7 @@ void CGlobalEntityList<T>::AimTarget_ForceRepopulateList()
 	g_AimManager.ForceRepopulateList();
 }
 
-class CSimThinkManager;
-extern CSimThinkManager g_SimThinkManager;
+
 
 template<class T>
 int CGlobalEntityList<T>::SimThink_ListCount()
@@ -7667,7 +7684,6 @@ void CGlobalEntityList<T>::SetPredictionPlayer(IEngineObject* player)
 	m_pPredictionPlayer = player;
 }
 
-extern ConVar	sv_alternateticks;
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : Returns true on success, false on failure.
@@ -7683,7 +7699,6 @@ bool CGlobalEntityList<T>::IsSimulatingOnAlternateTicks()
 	return sv_alternateticks.GetBool();
 }
 
-extern ConVar g_ragdoll_important_maxcount;
 //-----------------------------------------------------------------------------
 // Move it to the top of the LRU
 //-----------------------------------------------------------------------------
@@ -7721,8 +7736,7 @@ void CGlobalEntityList<T>::MoveToTopOfLRU(IServerEntity* pRagdoll, bool bImporta
 	m_LRU.AddToTail(pRagdoll->GetRefEHandle());
 }
 
-extern ConVar g_ragdoll_maxcount;
-extern ConVar g_debug_ragdoll_removal;
+
 //-----------------------------------------------------------------------------
 // Cull stale ragdolls. There is an ifdef here: one version for episodic, 
 // one for everything else.

@@ -4,13 +4,16 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#include "cbase.h"
+//#include "cbase.h"
 #include "recvproxy.h"
-
+#include "basehandle.h"
+#include "cdll_int.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
 #include "proto_version.h"
+
+extern IVEngineClient* engine;
 
 void RecvProxy_IntToColor32( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {

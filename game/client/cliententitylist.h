@@ -30,7 +30,25 @@
 
 //extern IVEngineClient* engine;
 
+extern ConVar cl_phys_timescale;
+extern ConVar sv_alternateticks;
+extern ConVar cl_threaded_bone_setup;
+extern ConVar cl_interpolate;
+extern ConVar cl_extrapolate;
+extern ConVar g_ragdoll_important_maxcount;
+extern ConVar g_ragdoll_maxcount;
+extern ConVar g_debug_ragdoll_removal;
+extern IStaticPropMgrClient* staticpropmgr;
+#if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
+namespace _SUBSYSTEM
+{
+	extern IUniformRandomStream* random;
+}
+#else
+extern IUniformRandomStream* random;
+#endif
 extern ISoundEnvelopeController* g_pSoundEnvelopeController;
+extern bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll);
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return clientdll->AllocPooledString(pStr);
 }
@@ -2809,7 +2827,6 @@ struct clientanimating_t
 	clientanimating_t(C_EngineObjectInternal* _pAnim, unsigned int _flags) : pAnimating(_pAnim), flags(_flags) {}
 };
 
-extern bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll);
 
 class CCollisionEvent : public IPhysicsCollisionEvent, public IPhysicsCollisionSolver, public IPhysicsObjectEvent
 {
@@ -2956,7 +2973,6 @@ private:
 	unsigned short m_list;
 };
 
-extern ConVar cl_phys_timescale;
 
 //
 // This is the IClientEntityList implemenation. It serves two functions:
@@ -4724,7 +4740,6 @@ void CClientEntityList<T>::ShutdownBoneSetupThreadPool()
 {
 }
 
-extern ConVar cl_threaded_bone_setup;
 
 //-----------------------------------------------------------------------------
 // Purpose: Do the default sequence blending rules as done in HL1
@@ -4977,7 +4992,6 @@ bool	CClientEntityList<T>::IsInterpolationEnabled()
 	return m_bInterpolate;
 }
 
-extern ConVar	sv_alternateticks;
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : Returns true on success, false on failure.
@@ -4993,8 +5007,7 @@ bool CClientEntityList<T>::IsSimulatingOnAlternateTicks()
 	return sv_alternateticks.GetBool();
 }
 
-extern ConVar  cl_interpolate;
-extern ConVar  cl_extrapolate;
+
 
 template<class T>
 void CClientEntityList<T>::InterpolateServerEntities()
@@ -5130,7 +5143,6 @@ void CClientEntityList<T>::ProcessInterpolatedList()
 	}
 }
 
-extern ConVar g_ragdoll_important_maxcount;
 //-----------------------------------------------------------------------------
 // Move it to the top of the LRU
 //-----------------------------------------------------------------------------
@@ -5168,8 +5180,7 @@ void CClientEntityList<T>::MoveToTopOfLRU(IClientEntity* pRagdoll, bool bImporta
 	m_LRU.AddToTail(pRagdoll->GetRefEHandle());
 }
 
-extern ConVar g_ragdoll_maxcount;
-extern ConVar g_debug_ragdoll_removal;
+
 //-----------------------------------------------------------------------------
 // Cull stale ragdolls. There is an ifdef here: one version for episodic, 
 // one for everything else.
