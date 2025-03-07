@@ -39,6 +39,9 @@ extern ConVar g_ragdoll_important_maxcount;
 extern ConVar g_ragdoll_maxcount;
 extern ConVar g_debug_ragdoll_removal;
 extern IStaticPropMgrClient* staticpropmgr;
+#ifdef POSIX
+#define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
+#endif
 #if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
 namespace _SUBSYSTEM
 {
