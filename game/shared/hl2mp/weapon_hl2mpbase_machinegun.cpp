@@ -23,8 +23,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( HL2MPMachineGun, DT_HL2MPMachineGun )
 BEGIN_NETWORK_TABLE( CHL2MPMachineGun, DT_HL2MPMachineGun )
 END_NETWORK_TABLE()
 
+#if defined( CLIENT_DLL )
 BEGIN_PREDICTION_DATA( CHL2MPMachineGun )
 END_PREDICTION_DATA()
+#endif
 
 //=========================================================
 //	>> CHLSelectFireMachineGun

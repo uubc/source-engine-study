@@ -23,8 +23,10 @@ BEGIN_NETWORK_TABLE( CDODFireSelectWeapon, DT_FireSelectWeapon )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CDODFireSelectWeapon )
 END_PREDICTION_DATA()
+#endif
 
 
 CDODFireSelectWeapon::CDODFireSelectWeapon()

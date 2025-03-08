@@ -17,9 +17,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponBaseRifleGrenade, DT_WeaponBaseRifleGrenad
 BEGIN_NETWORK_TABLE( CWeaponBaseRifleGrenade, DT_WeaponBaseRifleGrenade )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponBaseRifleGrenade )
 END_PREDICTION_DATA()
-
+#endif
 
 CWeaponBaseRifleGrenade::CWeaponBaseRifleGrenade()
 {

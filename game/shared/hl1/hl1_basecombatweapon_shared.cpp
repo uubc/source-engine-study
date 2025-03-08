@@ -16,8 +16,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( BaseHL1CombatWeapon , DT_BaseHL1CombatWeapon )
 BEGIN_NETWORK_TABLE( CBaseHL1CombatWeapon , DT_BaseHL1CombatWeapon )
 END_NETWORK_TABLE()
 
+#if defined( CLIENT_DLL )
 BEGIN_PREDICTION_DATA( CBaseHL1CombatWeapon )
 END_PREDICTION_DATA()
+#endif
 
 
 void CBaseHL1CombatWeapon::Spawn( void )

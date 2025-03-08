@@ -31,8 +31,10 @@ BEGIN_NETWORK_TABLE(CWeaponDODBaseGrenade, DT_WeaponDODBaseGrenade)
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponDODBaseGrenade )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_basedodgrenade, CWeaponDODBaseGrenade );
 

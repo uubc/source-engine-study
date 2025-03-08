@@ -72,10 +72,10 @@ int g_sModelIndexC4Glow = -1;
 		SendPropFloat( SENDINFO(m_flDefuseCountDown), 0, SPROP_NOSCALE ),
 	END_SEND_TABLE()
 
-	
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CPlantedC4 )
 END_PREDICTION_DATA()
-
+#endif
 
 
 	CUtlVector< CPlantedC4* > g_PlantedC4s;

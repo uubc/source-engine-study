@@ -34,8 +34,10 @@ BEGIN_NETWORK_TABLE( CDODBaseRocketWeapon, DT_BaseRocketWeapon )
 
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CDODBaseRocketWeapon )
 END_PREDICTION_DATA()
+#endif
 
 #ifndef CLIENT_DLL
 

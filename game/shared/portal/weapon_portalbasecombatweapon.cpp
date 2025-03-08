@@ -41,8 +41,10 @@ END_DATADESC()
 
 #endif
 
+#if defined( CLIENT_DLL )
 BEGIN_PREDICTION_DATA( CBasePortalCombatWeapon )
 END_PREDICTION_DATA()
+#endif
 
 extern ConVar sk_auto_reload_time;
 

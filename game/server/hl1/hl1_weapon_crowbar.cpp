@@ -74,10 +74,6 @@ BEGIN_NETWORK_TABLE( CWeaponCrowbar, DT_WeaponCrowbar )
 /// what
 END_NETWORK_TABLE()
 
-#ifdef CLIENT_DLL
-BEGIN_PREDICTION_DATA( CWeaponCrowbar )
-END_PREDICTION_DATA()
-#endif
 
 LINK_ENTITY_TO_CLASS( weapon_crowbar, CWeaponCrowbar );
 PRECACHE_WEAPON_REGISTER( weapon_crowbar );

@@ -76,8 +76,10 @@ BEGIN_NETWORK_TABLE( CWeaponPortalBase, DT_WeaponPortalBase )
 	
 END_NETWORK_TABLE()
 
+#if defined( CLIENT_DLL )
 BEGIN_PREDICTION_DATA( CWeaponPortalBase ) 
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_portal_base, CWeaponPortalBase );
 
