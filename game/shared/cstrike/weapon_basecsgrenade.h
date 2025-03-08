@@ -26,7 +26,9 @@ class CBaseCSGrenade : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CBaseCSGrenade, CWeaponCSBase );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CBaseCSGrenade();
 

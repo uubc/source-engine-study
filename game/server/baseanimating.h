@@ -34,10 +34,6 @@ public:
 	CBaseAnimating();
 	~CBaseAnimating();
 
-	DECLARE_PREDICTABLE();
-
-	
-
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex);

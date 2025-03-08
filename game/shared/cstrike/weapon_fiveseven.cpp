@@ -25,7 +25,9 @@ class CWeaponFiveSeven : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CWeaponFiveSeven, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponFiveSeven();
 

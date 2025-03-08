@@ -330,8 +330,6 @@ public:
 	CBaseEntity();
 	virtual ~CBaseEntity();
 
-	// prediction system
-	DECLARE_PREDICTABLE();
 	// network data
 	DECLARE_SERVERCLASS();
 	// data description

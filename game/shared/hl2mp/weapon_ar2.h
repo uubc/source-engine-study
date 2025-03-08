@@ -29,7 +29,9 @@ public:
 	CWeaponAR2();
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	void	ItemPostFrame( void );
 	void	Precache( void );

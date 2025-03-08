@@ -21,7 +21,9 @@ class CDODFireSelectWeapon : public CWeaponDODBaseGun
 public:
 	DECLARE_CLASS( CDODFireSelectWeapon, CWeaponDODBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CDODFireSelectWeapon();
 

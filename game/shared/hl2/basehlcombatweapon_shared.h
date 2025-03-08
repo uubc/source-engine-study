@@ -31,7 +31,9 @@ private:
 	DECLARE_CLASS( CBaseHLCombatWeapon, CBaseCombatWeapon );
 public:
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	virtual bool	WeaponShouldBeLowered( void );
 

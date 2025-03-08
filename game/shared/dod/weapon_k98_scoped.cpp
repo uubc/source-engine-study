@@ -19,7 +19,9 @@ class CWeaponK98Scoped : public CDODSniperWeapon
 public:
 	DECLARE_CLASS( CWeaponK98Scoped, CDODSniperWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponK98Scoped()  {}
@@ -79,8 +81,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponK98Scoped, DT_WeaponK98Scoped )
 BEGIN_NETWORK_TABLE( CWeaponK98Scoped, DT_WeaponK98Scoped )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponK98Scoped )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_k98_scoped, CWeaponK98Scoped );
 PRECACHE_WEAPON_REGISTER( weapon_k98_scoped );

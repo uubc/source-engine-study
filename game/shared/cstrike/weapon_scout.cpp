@@ -29,7 +29,9 @@ class CWeaponScout : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponScout, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponScout();
 
@@ -54,8 +56,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponScout, DT_WeaponScout )
 BEGIN_NETWORK_TABLE( CWeaponScout, DT_WeaponScout )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponScout )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_scout, CWeaponScout );
 PRECACHE_WEAPON_REGISTER( weapon_scout );

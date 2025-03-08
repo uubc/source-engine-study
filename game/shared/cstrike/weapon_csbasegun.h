@@ -29,7 +29,9 @@ public:
 	
 	DECLARE_CLASS( CWeaponCSBaseGun, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponCSBaseGun();
 

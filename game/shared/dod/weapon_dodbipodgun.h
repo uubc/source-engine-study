@@ -17,7 +17,9 @@ class CDODBipodWeapon : public CDODFullAutoWeapon
 public:
 	DECLARE_CLASS( CDODBipodWeapon, CDODFullAutoWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CDODBipodWeapon();
 

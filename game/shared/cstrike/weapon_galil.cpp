@@ -25,7 +25,9 @@ class CWeaponGalil : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponGalil, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponGalil();
 
@@ -48,8 +50,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponGalil, DT_WeaponGalil )
 BEGIN_NETWORK_TABLE( CWeaponGalil, DT_WeaponGalil )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponGalil )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_galil, CWeaponGalil );
 PRECACHE_WEAPON_REGISTER( weapon_galil );

@@ -65,7 +65,9 @@ class CWeaponPortalBase : public CBaseCombatWeapon
 public:
 	DECLARE_CLASS( CWeaponPortalBase, CBaseCombatWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponPortalBase();
 

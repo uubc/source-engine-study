@@ -28,7 +28,9 @@ class CWeaponIFMBase : public CWeaponModBaseClass
 public:
 	DECLARE_CLASS( CWeaponIFMBase, CWeaponModBaseClass );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponIFMBase();
 

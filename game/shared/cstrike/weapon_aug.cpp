@@ -25,7 +25,9 @@ class CWeaponAug : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponAug, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponAug();
 
@@ -54,8 +56,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponAug, DT_WeaponAug )
 BEGIN_NETWORK_TABLE( CWeaponAug, DT_WeaponAug )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponAug )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_aug, CWeaponAug );
 PRECACHE_WEAPON_REGISTER( weapon_aug );

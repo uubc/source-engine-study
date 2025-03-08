@@ -26,7 +26,9 @@ class CWeaponSG550 : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponSG550, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponSG550();
 

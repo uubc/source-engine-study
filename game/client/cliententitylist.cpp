@@ -1965,7 +1965,7 @@ void C_GrabControllerInternal::SetPortalPenetratingEntity(IClientEntity* pPenetr
 const float coordTolerance = 2.0f / (float)(1 << COORD_FRACTIONAL_BITS);
 
 BEGIN_PREDICTION_DATA_NO_BASE(C_EngineObjectInternal)
-	DEFINE_PRED_TYPEDESCRIPTION(m_Collision, CCollisionProperty),
+	DEFINE_PRED_TYPEDESCRIPTION(m_Collision, CCollisionPropertyClient),
 	DEFINE_FIELD(m_vecAbsVelocity, FIELD_VECTOR),
 	DEFINE_PRED_FIELD_TOL(m_vecVelocity, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.5f),
 	DEFINE_FIELD(m_vecAbsOrigin, FIELD_VECTOR),

@@ -34,7 +34,9 @@ public:
 	DECLARE_CLASS( CWeapon_SLAM, CBaseHL2MPCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CNetworkVar( int,	m_tSlamState );
 	CNetworkVar( bool,				m_bDetonatorArmed );

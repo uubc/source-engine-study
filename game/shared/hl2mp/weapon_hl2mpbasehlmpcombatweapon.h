@@ -26,7 +26,9 @@ class CBaseHL2MPCombatWeapon : public CWeaponHL2MPBase
 	DECLARE_CLASS( CBaseHL2MPCombatWeapon, CWeaponHL2MPBase );
 public:
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CBaseHL2MPCombatWeapon();
 

@@ -19,7 +19,9 @@ class CWeaponRifleGrenadeUS_Live : public CWeaponDODBaseGrenade
 public:
 	DECLARE_CLASS( CWeaponRifleGrenadeUS_Live, CWeaponDODBaseGrenade );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponRifleGrenadeUS_Live() {}
 
@@ -49,8 +51,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponRifleGrenadeUS_Live, DT_WeaponRifleGrenade
 BEGIN_NETWORK_TABLE(CWeaponRifleGrenadeUS_Live, DT_WeaponRifleGrenadeUS_Live)
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponRifleGrenadeUS_Live )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_riflegren_us_live, CWeaponRifleGrenadeUS_Live );
 PRECACHE_WEAPON_REGISTER( weapon_riflegren_us_live );

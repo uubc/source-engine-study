@@ -160,7 +160,9 @@ class CBaseCombatWeapon : public BASECOMBATWEAPON_DERIVED_FROM
 public:
 	DECLARE_CLASS( CBaseCombatWeapon, BASECOMBATWEAPON_DERIVED_FROM );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 							CBaseCombatWeapon();
 	virtual 				~CBaseCombatWeapon();

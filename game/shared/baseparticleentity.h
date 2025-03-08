@@ -29,7 +29,9 @@ class CBaseParticleEntity : public CBaseEntity
 {
 public:
 	DECLARE_CLASS( CBaseParticleEntity, CBaseEntity );
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_NETWORKCLASS();
 
 	CBaseParticleEntity();

@@ -338,7 +338,9 @@ class CWeaponCrossbow : public CBaseHL1MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponCrossbow( void );
 
@@ -376,11 +378,13 @@ BEGIN_NETWORK_TABLE( CWeaponCrossbow, DT_WeaponCrossbow )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponCrossbow )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_fInZoom, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_crossbow, CWeaponCrossbow );
 

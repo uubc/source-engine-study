@@ -20,7 +20,9 @@ class CDODFullAutoWeapon : public CWeaponDODBaseGun
 public:
 	DECLARE_CLASS( CDODFullAutoWeapon, CWeaponDODBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CDODFullAutoWeapon();
 

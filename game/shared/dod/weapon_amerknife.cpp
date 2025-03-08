@@ -20,7 +20,9 @@ class CWeaponAmerKnife : public CWeaponDODBaseMelee
 public:
 	DECLARE_CLASS( CWeaponAmerKnife, CWeaponDODBaseMelee );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponAmerKnife()  {}
@@ -43,8 +45,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponAmerKnife, DT_WeaponAmerKnife )
 BEGIN_NETWORK_TABLE( CWeaponAmerKnife, DT_WeaponAmerKnife )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponAmerKnife )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_amerknife, CWeaponAmerKnife );
 PRECACHE_WEAPON_REGISTER( weapon_amerknife );

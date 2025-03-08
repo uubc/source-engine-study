@@ -25,7 +25,9 @@ class CWeaponBazooka : public CDODBaseRocketWeapon
 public:
 	DECLARE_CLASS( CWeaponBazooka, CDODBaseRocketWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponBazooka()  {}
@@ -43,8 +45,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponBazooka, DT_WeaponBazooka )
 BEGIN_NETWORK_TABLE( CWeaponBazooka, DT_WeaponBazooka )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponBazooka )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_bazooka, CWeaponBazooka );
 PRECACHE_WEAPON_REGISTER( weapon_bazooka );

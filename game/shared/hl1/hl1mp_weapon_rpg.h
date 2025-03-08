@@ -98,7 +98,9 @@ public:
 //	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 private:
 	void	CreateLaserPointer( void );

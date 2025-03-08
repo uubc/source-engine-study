@@ -19,7 +19,9 @@ class CWeaponSpade : public CWeaponDODBaseMelee
 public:
 	DECLARE_CLASS( CWeaponSpade, CWeaponDODBaseMelee );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponSpade()  {}
@@ -37,8 +39,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponSpade, DT_WeaponSpade )
 BEGIN_NETWORK_TABLE( CWeaponSpade, DT_WeaponSpade )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponSpade )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_spade, CWeaponSpade );
 PRECACHE_WEAPON_REGISTER( weapon_spade );

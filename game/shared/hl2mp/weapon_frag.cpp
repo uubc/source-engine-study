@@ -47,7 +47,9 @@ class CWeaponFrag: public CBaseHL2MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponFrag();
 

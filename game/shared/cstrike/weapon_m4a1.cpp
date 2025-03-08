@@ -24,7 +24,9 @@ class CWeaponM4A1 : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponM4A1, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponM4A1();
 
@@ -80,8 +82,10 @@ BEGIN_NETWORK_TABLE( CWeaponM4A1, DT_WeaponM4A1 )
 	#endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponM4A1 )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_m4a1, CWeaponM4A1 );
 PRECACHE_WEAPON_REGISTER( weapon_m4a1 );

@@ -34,7 +34,9 @@ class CWeapon357 : public CBaseHL1MPCombatWeapon
 	DECLARE_CLASS( CWeapon357, CBaseHL1CombatWeapon );
 public:
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeapon357( void );
 
@@ -66,11 +68,13 @@ BEGIN_NETWORK_TABLE( CWeapon357, DT_Weapon357 )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeapon357 )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_fInZoom, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_357, CWeapon357 );
 

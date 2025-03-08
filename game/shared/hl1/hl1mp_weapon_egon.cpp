@@ -66,7 +66,9 @@ class CWeaponEgon : public CBaseHL1MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
     CWeaponEgon(void);
 
@@ -110,8 +112,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponEgon, DT_WeaponEgon );
 BEGIN_NETWORK_TABLE( CWeaponEgon, DT_WeaponEgon )
 END_NETWORK_TABLE()    
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponEgon )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_egon, CWeaponEgon );
 PRECACHE_WEAPON_REGISTER( weapon_egon );

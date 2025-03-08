@@ -26,7 +26,9 @@ class CWeaponGlock : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CWeaponGlock, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponGlock();
 

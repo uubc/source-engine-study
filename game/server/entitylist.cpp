@@ -5277,9 +5277,9 @@ void CEngineObjectInternal::SetNextMovePeer(IEngineObjectServer* hMovePeer) {
 	m_hMovePeer = hMovePeer ? hMovePeer->GetOuter() : NULL;
 }
 
-CEngineObjectInternal* CEngineObjectInternal::GetRootMoveParent()
+CEngineObjectInternal* CEngineObjectInternal::GetRootMoveParent() const
 {
-	CEngineObjectInternal* pEntity = this;
+	CEngineObjectInternal* pEntity = (CEngineObjectInternal*)this;
 	CEngineObjectInternal* pParent = this->GetMoveParent();
 	while (pParent)
 	{

@@ -87,7 +87,9 @@ class CSprite : public CBaseEntity
 {
 	DECLARE_CLASS( CSprite, CBaseEntity );
 public:
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_NETWORKCLASS();
 
 	CSprite();

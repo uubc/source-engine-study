@@ -35,7 +35,9 @@ class CWeaponMP5 : public CBaseHL1MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponMP5();
 

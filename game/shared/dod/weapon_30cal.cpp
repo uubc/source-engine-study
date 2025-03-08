@@ -25,7 +25,9 @@ class CWeapon30cal : public CDODBipodWeapon
 public:
 	DECLARE_CLASS( CWeapon30cal, CDODBipodWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeapon30cal()  {}
@@ -64,8 +66,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( Weapon30cal, DT_Weapon30cal )
 BEGIN_NETWORK_TABLE( CWeapon30cal, DT_Weapon30cal )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeapon30cal )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_30cal, CWeapon30cal );
 PRECACHE_WEAPON_REGISTER( weapon_30cal );

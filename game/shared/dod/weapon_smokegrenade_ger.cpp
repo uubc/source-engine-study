@@ -18,7 +18,9 @@ class CWeaponSmokeGrenadeGER : public CWeaponDODBaseGrenade
 public:
 	DECLARE_CLASS( CWeaponSmokeGrenadeGER, CWeaponDODBaseGrenade );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponSmokeGrenadeGER() {}
 
@@ -48,8 +50,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponSmokeGrenadeGER, DT_WeaponSmokeGrenadeGER 
 BEGIN_NETWORK_TABLE(CWeaponSmokeGrenadeGER, DT_WeaponSmokeGrenadeGER)
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponSmokeGrenadeGER )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_smoke_ger, CWeaponSmokeGrenadeGER );
 PRECACHE_WEAPON_REGISTER( weapon_smoke_ger );

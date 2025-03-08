@@ -36,7 +36,9 @@ class CWeaponShotgun : public CBaseHL1MPCombatWeapon
 	DECLARE_CLASS( CWeaponShotgun, CBaseHL1MPCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 private:
 //	float	m_flPumpTime;
@@ -78,12 +80,14 @@ BEGIN_NETWORK_TABLE( CWeaponShotgun, DT_WeaponShotgun )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponShotgun )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_flPumpTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_fInSpecialReload, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_shotgun, CWeaponShotgun );
 PRECACHE_WEAPON_REGISTER(weapon_shotgun);

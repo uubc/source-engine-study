@@ -32,7 +32,9 @@ public:
 	
 	DECLARE_CLASS( CWeaponDODBaseGun, CWeaponDODBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponDODBaseGun();
 

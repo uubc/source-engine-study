@@ -30,7 +30,9 @@ class CKnife : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CKnife, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	#ifndef CLIENT_DLL
 		DECLARE_DATADESC();

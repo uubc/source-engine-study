@@ -26,7 +26,9 @@ class CWeaponP228 : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CWeaponP228, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponP228();
 

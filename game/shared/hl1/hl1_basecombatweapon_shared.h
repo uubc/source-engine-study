@@ -21,7 +21,9 @@ class CBaseHL1CombatWeapon : public CBaseCombatWeapon
 	DECLARE_CLASS( CBaseHL1CombatWeapon, CBaseCombatWeapon );
 public:
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 public:
 	void Spawn( void );

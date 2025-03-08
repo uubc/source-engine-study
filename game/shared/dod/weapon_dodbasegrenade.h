@@ -27,7 +27,9 @@ class CWeaponDODBaseGrenade : public CWeaponDODBase
 public:
 	DECLARE_CLASS( CWeaponDODBaseGrenade, CWeaponDODBase );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 
 	CWeaponDODBaseGrenade();

@@ -626,6 +626,7 @@ BEGIN_NETWORK_TABLE( CWeaponRPG, DT_WeaponRPG )
 END_NETWORK_TABLE()
 
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponRPG )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_bIntialStateUpdate,	FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
@@ -634,6 +635,7 @@ BEGIN_PREDICTION_DATA( CWeaponRPG )
 	DEFINE_PRED_FIELD( m_flLaserDotReviveTime,	FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 
 //-----------------------------------------------------------------------------

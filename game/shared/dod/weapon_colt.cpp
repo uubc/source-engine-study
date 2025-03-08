@@ -19,7 +19,9 @@ class CWeaponColt : public CDODSemiAutoWeapon
 public:
 	DECLARE_CLASS( CWeaponColt, CDODSemiAutoWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponColt()  {}
@@ -42,8 +44,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponColt, DT_WeaponColt )
 BEGIN_NETWORK_TABLE( CWeaponColt, DT_WeaponColt )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponColt )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_colt, CWeaponColt );
 PRECACHE_WEAPON_REGISTER( weapon_colt );

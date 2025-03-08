@@ -435,7 +435,7 @@ public:
 
 	virtual IEngineObjectServer* GetMoveParent(void) const = 0;
 	//virtual void SetMoveParent(IEngineObjectServer* hMoveParent) = 0;
-	virtual IEngineObjectServer* GetRootMoveParent() = 0;
+	virtual IEngineObjectServer* GetRootMoveParent() const = 0;
 	virtual IEngineObjectServer* FirstMoveChild(void) const = 0;
 	//virtual void SetFirstMoveChild(IEngineObjectServer* hMoveChild) = 0;
 	virtual IEngineObjectServer* NextMovePeer(void) const = 0;

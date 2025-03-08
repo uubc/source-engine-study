@@ -56,7 +56,9 @@ public:
 	CWeaponStunStick();
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #ifndef CLIENT_DLL
 	DECLARE_ACTTABLE();
@@ -142,8 +144,10 @@ BEGIN_NETWORK_TABLE( CWeaponStunStick, DT_WeaponStunStick )
 
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponStunStick )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_stunstick, CWeaponStunStick );
 PRECACHE_WEAPON_REGISTER( weapon_stunstick );

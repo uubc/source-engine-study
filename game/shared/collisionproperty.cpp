@@ -13,12 +13,10 @@
 #include "tier0/tslist.h"
 #include "worldsize.h"
 #include "sharedInterface.h"
+#include "shareddefs.h"
 #ifdef CLIENT_DLL
-#include "cliententitylist.h"
-#endif // CLIENT_DLL
-#ifdef GAME_DLL
-#include "entitylist.h"
-#endif // GAME_DLL
+#include "iclientshadowmgr.h"
+#endif // CLIENT_LL
 
 //#include "predictable_entity.h"
 
@@ -172,7 +170,7 @@ void CDirtySpatialPartitionEntityList::OnPreQuery( SpatialPartitionListMask_t li
 
 #ifdef CLIENT_DLL
 	// FIXME: This should really be an assertion... feh!
-	if ( !EntityList()->IsAbsRecomputationsEnabled() )
+	if ( !entitylist->IsAbsRecomputationsEnabled() )
 	{
 		LockPartitionForRead();
 		return;
@@ -199,9 +197,9 @@ void CDirtySpatialPartitionEntityList::OnPreQuery( SpatialPartitionListMask_t li
 				pCurrent = pNext;
 
 #ifndef CLIENT_DLL
-				IServerEntity *pEntity = EntityList()->GetBaseEntityFromHandle( handle );
+				IServerEntity *pEntity = serverEntitylist->GetBaseEntityFromHandle( handle );
 #else
-				IClientEntity *pEntity = EntityList()->GetBaseEntityFromHandle( handle );
+				IClientEntity *pEntity = entitylist->GetBaseEntityFromHandle( handle );
 #endif
 
 				if ( pEntity )
@@ -257,37 +255,36 @@ void CDirtySpatialPartitionEntityList::OnPostQuery( SpatialPartitionListMask_t l
 // Save/load
 //-----------------------------------------------------------------------------
 
-#ifndef CLIENT_DLL
 
-	BEGIN_DATADESC_NO_BASE( CCollisionProperty )
+
+BEGIN_DATADESC_NO_BASE( CCollisionPropertyServer )
 
 //		DEFINE_FIELD( m_pOuter, FIELD_CLASSPTR ),
-		DEFINE_GLOBAL_FIELD( m_vecMinsPreScaled, FIELD_VECTOR ),
-		DEFINE_GLOBAL_FIELD( m_vecMaxsPreScaled, FIELD_VECTOR ),
-		DEFINE_GLOBAL_FIELD( m_vecMins, FIELD_VECTOR ),
-		DEFINE_GLOBAL_FIELD( m_vecMaxs, FIELD_VECTOR ),
-		DEFINE_KEYFIELD( m_nSolidType, FIELD_CHARACTER, "solid" ),
-		DEFINE_FIELD( m_usSolidFlags, FIELD_SHORT ),
-		DEFINE_FIELD( m_nSurroundType, FIELD_CHARACTER ),
-		DEFINE_FIELD( m_flRadius, FIELD_FLOAT ),
-		DEFINE_FIELD( m_triggerBloat, FIELD_CHARACTER ),
-		DEFINE_FIELD( m_vecSpecifiedSurroundingMinsPreScaled, FIELD_VECTOR ),
-		DEFINE_FIELD( m_vecSpecifiedSurroundingMaxsPreScaled, FIELD_VECTOR ),
-		DEFINE_FIELD( m_vecSpecifiedSurroundingMins, FIELD_VECTOR ),
-		DEFINE_FIELD( m_vecSpecifiedSurroundingMaxs, FIELD_VECTOR ),
-		DEFINE_FIELD( m_vecSurroundingMins, FIELD_VECTOR ),
-		DEFINE_FIELD( m_vecSurroundingMaxs, FIELD_VECTOR ),
+	DEFINE_GLOBAL_FIELD( m_vecMinsPreScaled, FIELD_VECTOR ),
+	DEFINE_GLOBAL_FIELD( m_vecMaxsPreScaled, FIELD_VECTOR ),
+	DEFINE_GLOBAL_FIELD( m_vecMins, FIELD_VECTOR ),
+	DEFINE_GLOBAL_FIELD( m_vecMaxs, FIELD_VECTOR ),
+	DEFINE_KEYFIELD( m_nSolidType, FIELD_CHARACTER, "solid" ),
+	DEFINE_FIELD( m_usSolidFlags, FIELD_SHORT ),
+	DEFINE_FIELD( m_nSurroundType, FIELD_CHARACTER ),
+	DEFINE_FIELD( m_flRadius, FIELD_FLOAT ),
+	DEFINE_FIELD( m_triggerBloat, FIELD_CHARACTER ),
+	DEFINE_FIELD( m_vecSpecifiedSurroundingMinsPreScaled, FIELD_VECTOR ),
+	DEFINE_FIELD( m_vecSpecifiedSurroundingMaxsPreScaled, FIELD_VECTOR ),
+	DEFINE_FIELD( m_vecSpecifiedSurroundingMins, FIELD_VECTOR ),
+	DEFINE_FIELD( m_vecSpecifiedSurroundingMaxs, FIELD_VECTOR ),
+	DEFINE_FIELD( m_vecSurroundingMins, FIELD_VECTOR ),
+	DEFINE_FIELD( m_vecSurroundingMaxs, FIELD_VECTOR ),
 //		DEFINE_FIELD( m_Partition, FIELD_SHORT ),
 //		DEFINE_PHYSPTR( m_pPhysicsObject ),
 
-	END_DATADESC()
+END_DATADESC()
 
-#else
 
 //-----------------------------------------------------------------------------
 // Prediction
 //-----------------------------------------------------------------------------
-BEGIN_PREDICTION_DATA_NO_BASE( CCollisionProperty )
+BEGIN_PREDICTION_DATA_NO_BASE( CCollisionPropertyClient )
 
 	DEFINE_PRED_FIELD( m_vecMinsPreScaled, FIELD_VECTOR, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_vecMaxsPreScaled, FIELD_VECTOR, FTYPEDESC_INSENDTABLE ),
@@ -299,12 +296,10 @@ BEGIN_PREDICTION_DATA_NO_BASE( CCollisionProperty )
 
 END_PREDICTION_DATA()
 
-#endif
 
 //-----------------------------------------------------------------------------
 // Networking
 //-----------------------------------------------------------------------------
-#ifdef CLIENT_DLL
 
 static void RecvProxy_Solid( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
@@ -351,8 +346,6 @@ static void RecvProxy_IntDirtySurround( const CRecvProxyData *pData, void *pStru
 	}
 }
 
-#else
-
 static void SendProxy_Solid( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
 {
 	pOut->m_Int = ((CCollisionProperty*)pStruct)->GetSolid();
@@ -363,11 +356,8 @@ static void SendProxy_SolidFlags( const SendProp *pProp, const void *pStruct, co
 	pOut->m_Int = ((CCollisionProperty*)pStruct)->GetSolidFlags();
 }
 
-#endif
-
-BEGIN_NETWORK_TABLE_NOBASE( CCollisionProperty, DT_CollisionProperty )
-
 #ifdef CLIENT_DLL
+BEGIN_RECV_TABLE_NOBASE( CCollisionPropertyClient, DT_CollisionProperty )
 	RecvPropVector( RECVINFO(m_vecMinsPreScaled), 0, RecvProxy_OBBMinsPreScaled ),
 	RecvPropVector( RECVINFO(m_vecMaxsPreScaled), 0, RecvProxy_OBBMaxsPreScaled ),
 	RecvPropVector( RECVINFO(m_vecMins), 0 ),
@@ -380,23 +370,25 @@ BEGIN_NETWORK_TABLE_NOBASE( CCollisionProperty, DT_CollisionProperty )
 	RecvPropVector( RECVINFO(m_vecSpecifiedSurroundingMaxsPreScaled), 0, RecvProxy_VectorDirtySurround ),
 	RecvPropVector( RECVINFO(m_vecSpecifiedSurroundingMins), 0, RecvProxy_VectorDirtySurround ),
 	RecvPropVector( RECVINFO(m_vecSpecifiedSurroundingMaxs), 0, RecvProxy_VectorDirtySurround ),
-#else
-	SendPropVector( SENDINFO(m_vecMinsPreScaled), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecMaxsPreScaled), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecMins), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecMaxs), 0, SPROP_NOSCALE),
-	SendPropInt( SENDINFO( m_nSolidType ),		3, SPROP_UNSIGNED, SendProxy_Solid ),
-	SendPropInt( SENDINFO( m_usSolidFlags ),	FSOLID_MAX_BITS, SPROP_UNSIGNED, SendProxy_SolidFlags ),
-	SendPropInt( SENDINFO( m_nSurroundType ), SURROUNDING_TYPE_BIT_COUNT, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO(m_triggerBloat), 0, SPROP_UNSIGNED),
-	SendPropVector( SENDINFO(m_vecSpecifiedSurroundingMinsPreScaled), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecSpecifiedSurroundingMaxsPreScaled), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecSpecifiedSurroundingMins), 0, SPROP_NOSCALE),
-	SendPropVector( SENDINFO(m_vecSpecifiedSurroundingMaxs), 0, SPROP_NOSCALE),
-#endif
+END_RECV_TABLE()
+#endif // CLIENT_DLL
 
-END_NETWORK_TABLE()
-
+#ifdef GAME_DLL
+BEGIN_SEND_TABLE_NOBASE(CCollisionPropertyServer, DT_CollisionProperty)
+	SendPropVector(SENDINFO(m_vecMinsPreScaled), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecMaxsPreScaled), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecMins), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecMaxs), 0, SPROP_NOSCALE),
+	SendPropInt(SENDINFO(m_nSolidType), 3, SPROP_UNSIGNED, SendProxy_Solid),
+	SendPropInt(SENDINFO(m_usSolidFlags), FSOLID_MAX_BITS, SPROP_UNSIGNED, SendProxy_SolidFlags),
+	SendPropInt(SENDINFO(m_nSurroundType), SURROUNDING_TYPE_BIT_COUNT, SPROP_UNSIGNED),
+	SendPropInt(SENDINFO(m_triggerBloat), 0, SPROP_UNSIGNED),
+	SendPropVector(SENDINFO(m_vecSpecifiedSurroundingMinsPreScaled), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecSpecifiedSurroundingMaxsPreScaled), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecSpecifiedSurroundingMins), 0, SPROP_NOSCALE),
+	SendPropVector(SENDINFO(m_vecSpecifiedSurroundingMaxs), 0, SPROP_NOSCALE),
+END_SEND_TABLE()
+#endif // GAME_DLL
 																							
 //-----------------------------------------------------------------------------
 // Constructor, destructor
@@ -404,7 +396,7 @@ END_NETWORK_TABLE()
 CCollisionProperty::CCollisionProperty()
 {
 	m_Partition = PARTITION_INVALID_HANDLE;
-	Init( NULL );
+	Init();
 }
 
 CCollisionProperty::~CCollisionProperty()
@@ -416,9 +408,8 @@ CCollisionProperty::~CCollisionProperty()
 //-----------------------------------------------------------------------------
 // Initialization
 //-----------------------------------------------------------------------------
-void CCollisionProperty::Init(CEngineObjectInternal *pEntity )
+void CCollisionProperty::Init()
 {
-	m_pOuter = pEntity;
 	m_vecMinsPreScaled.GetForModify().Init();
 	m_vecMaxsPreScaled.GetForModify().Init();
 	m_vecMins.GetForModify().Init();
@@ -444,7 +435,7 @@ void CCollisionProperty::Init(CEngineObjectInternal *pEntity )
 //-----------------------------------------------------------------------------
 IHandleEntity *CCollisionProperty::GetEntityHandle()
 {
-	return m_pOuter->GetOuter();
+	return GetOuter()->GetHandleEntity();
 }
 
 
@@ -453,7 +444,7 @@ IHandleEntity *CCollisionProperty::GetEntityHandle()
 //-----------------------------------------------------------------------------
 int CCollisionProperty::GetCollisionGroup() const
 {
-	return m_pOuter->GetCollisionGroup();
+	return GetOuter()->GetCollisionGroup();
 }
 
 
@@ -479,7 +470,7 @@ const matrix3x4_t *CCollisionProperty::GetRootParentToWorldTransform() const
 {
 	if ( IsSolidFlagSet( FSOLID_ROOT_PARENT_ALIGNED ) )
 	{
-		CEngineObjectInternal* pEntity = m_pOuter->GetRootMoveParent();
+		const IEngineObject* pEntity = GetOuter()->GetRootMoveParent();
 		Assert(pEntity);
 		if ( pEntity )
 		{
@@ -512,11 +503,11 @@ void CCollisionProperty::CheckForUntouch()
 	if ( !IsSolid() && !IsSolidFlagSet(FSOLID_TRIGGER))
 	{
 		// If this ent's touch list isn't empty, it's transitioning to not solid
-		if ( m_pOuter->IsCurrentlyTouching() )
+		if (GetOuter()->AsEngineObjectServer()->IsCurrentlyTouching())
 		{
 			// mark ent so that at the end of frame it will check to 
 			// see if it's no longer touching ents
-			m_pOuter->SetCheckUntouch( true );
+			GetOuter()->AsEngineObjectServer()->SetCheckUntouch(true);
 		}
 	}
 #endif
@@ -558,7 +549,7 @@ void CCollisionProperty::SetSolid( SolidType_t val )
 			// NOTE: This assumes things don't change back from SOLID_BSP
 			// NOTE: This is 100% true for HL2 - need to support removing the flag to support changing from SOLID_BSP
 			CUtlVector<IEngineObjectServer *> list;
-			GetOuter()->GetAllChildren( list);
+			GetOuter()->AsEngineObjectServer()->GetAllChildren(list);
 			for ( int i = list.Count()-1; i>=0; --i )
 			{
 				list[i]->AddSolidFlags(FSOLID_ROOT_PARENT_ALIGNED);
@@ -570,7 +561,7 @@ void CCollisionProperty::SetSolid( SolidType_t val )
 	m_nSolidType = val;
 
 #ifndef CLIENT_DLL
-	m_pOuter->CollisionRulesChanged();
+	GetOuter()->CollisionRulesChanged();
 
 	UpdateServerPartitionMask( );
 
@@ -606,7 +597,7 @@ void CCollisionProperty::SetSolidFlags( int flags )
 
 	if ( (oldFlags & (FSOLID_NOT_SOLID|FSOLID_TRIGGER)) != (m_usSolidFlags & (FSOLID_NOT_SOLID|FSOLID_TRIGGER)) )
 	{
-		m_pOuter->CollisionRulesChanged();
+		GetOuter()->CollisionRulesChanged();
 	}
 
 #ifndef CLIENT_DLL
@@ -624,14 +615,14 @@ void CCollisionProperty::SetSolidFlags( int flags )
 //-----------------------------------------------------------------------------
 const Vector& CCollisionProperty::GetCollisionOrigin() const
 {
-	return m_pOuter->GetAbsOrigin();
+	return GetOuter()->GetAbsOrigin();
 }
 
 const QAngle& CCollisionProperty::GetCollisionAngles() const
 {
 	if ( IsBoundsDefinedInEntitySpace() )
 	{
-		return m_pOuter->GetAbsAngles();
+		return GetOuter()->GetAbsAngles();
 	}
 
 	return vec3_angle;
@@ -647,7 +638,7 @@ const matrix3x4_t& CCollisionProperty::CollisionToWorldTransform() const
 
 	if ( IsBoundsDefinedInEntitySpace() )
 	{
-		return m_pOuter->EntityToWorldTransform();
+		return GetOuter()->EntityToWorldTransform();
 	}
 
 	SetIdentityMatrix( matResult );
@@ -781,12 +772,12 @@ void CCollisionProperty::UseTriggerBounds( bool bEnable, float flBloat )
 //-----------------------------------------------------------------------------
 int CCollisionProperty::GetCollisionModelIndex()
 {
-	return m_pOuter->GetModelIndex();
+	return GetOuter()->GetModelIndex();
 }
 
 const model_t* CCollisionProperty::GetCollisionModel()
 {
-	return m_pOuter->GetOuter()->GetEngineObject()->GetModel();
+	return GetOuter()->GetHandleEntity()->GetEngineObject()->GetModel();
 }
 
 
@@ -796,12 +787,12 @@ const model_t* CCollisionProperty::GetCollisionModel()
 //-----------------------------------------------------------------------------
 bool CCollisionProperty::TestCollision( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr )
 {
-	return m_pOuter->GetOuter()->TestCollision(ray, fContentsMask, tr);
+	return GetOuter()->GetHandleEntity()->TestCollision(ray, fContentsMask, tr);
 }
 
 bool CCollisionProperty::TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr )
 {
-	return m_pOuter->GetOuter()->TestHitboxes(ray, fContentsMask, tr);
+	return GetOuter()->GetHandleEntity()->TestHitboxes(ray, fContentsMask, tr);
 }
 
 
@@ -962,13 +953,19 @@ float CCollisionProperty::ComputeSupportMap( const Vector &vecDirection ) const
 void CCollisionProperty::ComputeVPhysicsSurroundingBox( Vector *pVecWorldMins, Vector *pVecWorldMaxs )
 {
 	bool bSetBounds = false;
-	IPhysicsObject *pPhysicsObject = GetOuter()->GetOuter()->GetEngineObject()->VPhysicsGetObject();
+	IPhysicsObject *pPhysicsObject = GetOuter()->GetHandleEntity()->GetEngineObject()->VPhysicsGetObject();
 	if ( pPhysicsObject )
 	{
 		if ( pPhysicsObject->GetCollide() )
 		{
-			EntityList()->PhysGetCollision()->CollideGetAABB( pVecWorldMins, pVecWorldMaxs,
-				pPhysicsObject->GetCollide(), GetCollisionOrigin(), GetCollisionAngles() );
+#ifdef GAME_DLL
+			serverEntitylist->PhysGetCollision()->CollideGetAABB(pVecWorldMins, pVecWorldMaxs,
+				pPhysicsObject->GetCollide(), GetCollisionOrigin(), GetCollisionAngles());
+#endif // GAME_DLL
+#ifdef CLIENT_DLL
+			entitylist->PhysGetCollision()->CollideGetAABB(pVecWorldMins, pVecWorldMaxs,
+				pPhysicsObject->GetCollide(), GetCollisionOrigin(), GetCollisionAngles());
+#endif // CLIENT_DLL
 			bSetBounds = true;
 		}
 		else if ( pPhysicsObject->GetSphereRadius( ) )
@@ -1092,10 +1089,10 @@ void CCollisionProperty::ComputeSurroundingBox( Vector *pVecWorldMins, Vector *p
 		{
 			Assert( GetSolid() != SOLID_CUSTOM );
 			bool bUseVPhysics = false;
-			if ( ( GetSolid() == SOLID_VPHYSICS ) && ( GetOuter()->GetOuter()->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS))
+			if ( ( GetSolid() == SOLID_VPHYSICS ) && ( GetOuter()->GetHandleEntity()->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS))
 			{
 				// UNDONE: This may not be necessary any more.
-				IPhysicsObject *pPhysics = GetOuter()->GetOuter()->GetEngineObject()->VPhysicsGetObject();
+				IPhysicsObject *pPhysics = GetOuter()->GetHandleEntity()->GetEngineObject()->VPhysicsGetObject();
 				bUseVPhysics = pPhysics && pPhysics->IsAsleep();
 			}
 			ComputeCollisionSurroundingBox( bUseVPhysics, pVecWorldMins, pVecWorldMaxs );
@@ -1126,7 +1123,7 @@ void CCollisionProperty::ComputeSurroundingBox( Vector *pVecWorldMins, Vector *p
 		break;
 
 	case USE_GAME_CODE:
-		GetOuter()->GetOuter()->ComputeWorldSpaceSurroundingBox(pVecWorldMins, pVecWorldMaxs);
+		GetOuter()->GetHandleEntity()->ComputeWorldSpaceSurroundingBox(pVecWorldMins, pVecWorldMaxs);
 		Assert( pVecWorldMins->x <= pVecWorldMaxs->x );
 		Assert( pVecWorldMins->y <= pVecWorldMaxs->y );
 		Assert( pVecWorldMins->z <= pVecWorldMaxs->z );
@@ -1210,9 +1207,9 @@ void CCollisionProperty::MarkSurroundingBoundsDirty()
 	MarkPartitionHandleDirty();
 
 #ifdef CLIENT_DLL
-	g_pClientShadowMgr->MarkRenderToTextureShadowDirty( GetOuter()->GetShadowHandle());
+	g_pClientShadowMgr->MarkRenderToTextureShadowDirty( GetOuter()->AsEngineObjectClient()->GetShadowHandle());
 #else
-	GetOuter()->MarkPVSInformationDirty();
+	GetOuter()->AsEngineObjectServer()->MarkPVSInformationDirty();
 #endif
 }
 
@@ -1228,7 +1225,7 @@ bool CCollisionProperty::DoesVPhysicsInvalidateSurroundingBox( ) const
 		return true;
 
 	case USE_OBB_COLLISION_BOUNDS:
-		return (GetSolid() == SOLID_VPHYSICS) && (m_pOuter->GetOuter()->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS) && m_pOuter->GetOuter()->GetEngineObject()->VPhysicsGetObject();
+		return (GetSolid() == SOLID_VPHYSICS) && (GetOuter()->GetHandleEntity()->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS) && GetOuter()->GetHandleEntity()->GetEngineObject()->VPhysicsGetObject();
 
 	// In the case of game code, we don't really know, so we have to assume it does
 	case USE_GAME_CODE:
@@ -1306,16 +1303,16 @@ void CCollisionProperty::UpdateServerPartitionMask( )
 	partition->Remove( handle );
 
 	// Don't bother with deleted things
-	if ( m_pOuter->entindex()==-1 )
+	if (GetOuter()->entindex()==-1 )
 		return;
 
 	// don't add the world
-	if ( m_pOuter->entindex() == 0 )
+	if (GetOuter()->entindex() == 0 )
 		return;		
 
 	// Make sure it's in the list of all entities
 	bool bIsSolid = IsSolid() || IsSolidFlagSet(FSOLID_TRIGGER);
-	if ( bIsSolid || m_pOuter->IsEFlagSet(EFL_USE_PARTITION_WHEN_NOT_SOLID) )
+	if ( bIsSolid || GetOuter()->IsEFlagSet(EFL_USE_PARTITION_WHEN_NOT_SOLID) )
 	{
 		partition->Insert( PARTITION_ENGINE_NON_STATIC_EDICTS, handle );
 	}
@@ -1346,18 +1343,18 @@ void CCollisionProperty::UpdateServerPartitionMask( )
 void CCollisionProperty::MarkPartitionHandleDirty()
 {
 	// don't bother with the world
-	if (!m_pOuter->GetOuter() || m_pOuter->entindex() == 0)//->IsNetworkable()
+	if (!GetOuter()->GetHandleEntity() || GetOuter()->entindex() == 0)//->IsNetworkable()
 		return;
 	
-	if ( !m_pOuter->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
+	if ( !GetOuter()->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
 	{
-		m_pOuter->AddEFlags( EFL_DIRTY_SPATIAL_PARTITION );
-		s_DirtyKDTree.AddEntity(m_pOuter);
+		GetOuter()->AddEFlags( EFL_DIRTY_SPATIAL_PARTITION );
+		s_DirtyKDTree.AddEntity(GetOuter());
 	}
 
 #ifdef CLIENT_DLL
-	GetOuter()->MarkRenderHandleDirty();
-	g_pClientShadowMgr->AddToDirtyShadowList( GetOuter() );
+	GetOuter()->AsEngineObjectClient()->MarkRenderHandleDirty();
+	g_pClientShadowMgr->AddToDirtyShadowList( GetOuter()->AsEngineObjectClient() );
 #endif
 }
 
@@ -1367,15 +1364,15 @@ void CCollisionProperty::MarkPartitionHandleDirty()
 //-----------------------------------------------------------------------------
 void CCollisionProperty::UpdatePartition( )
 {
-	if ( m_pOuter->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
+	if (GetOuter()->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
 	{
-		m_pOuter->RemoveEFlags( EFL_DIRTY_SPATIAL_PARTITION );
+		GetOuter()->RemoveEFlags( EFL_DIRTY_SPATIAL_PARTITION );
 
 #ifndef CLIENT_DLL
-		Assert( m_pOuter->entindex() != 0 );
+		Assert(GetOuter()->entindex() != 0 );
 
 		// Don't bother with deleted things
-		if ( m_pOuter->entindex()==-1 )
+		if (GetOuter()->entindex()==-1 )
 			return;
 
 		if ( GetPartitionHandle() == PARTITION_INVALID_HANDLE )
@@ -1389,7 +1386,7 @@ void CCollisionProperty::UpdatePartition( )
 #endif
 
 		// We don't need to bother if it's not a trigger or solid
-		if ( IsSolid() || IsSolidFlagSet( FSOLID_TRIGGER ) || m_pOuter->IsEFlagSet( EFL_USE_PARTITION_WHEN_NOT_SOLID ) )
+		if ( IsSolid() || IsSolidFlagSet( FSOLID_TRIGGER ) || GetOuter()->IsEFlagSet( EFL_USE_PARTITION_WHEN_NOT_SOLID ) )
 		{
 			// Bloat a little bit...
 			if ( BoundingRadius() != 0.0f )

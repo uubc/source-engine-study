@@ -27,7 +27,9 @@ class CWeaponXM1014 : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CWeaponXM1014, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponXM1014();
 

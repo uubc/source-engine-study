@@ -34,7 +34,9 @@ public:
 	DECLARE_CLASS( CWeaponCrowbar, CBaseHL2MPBludgeonWeapon );
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #ifndef CLIENT_DLL
 	DECLARE_ACTTABLE();

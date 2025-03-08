@@ -26,7 +26,9 @@ class CWeaponFamas : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponFamas, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponFamas();
 

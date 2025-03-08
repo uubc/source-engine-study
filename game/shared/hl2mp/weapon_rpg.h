@@ -173,7 +173,9 @@ public:
 	~CWeaponRPG();
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	void	Precache( void );
 

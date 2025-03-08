@@ -26,7 +26,9 @@ class CWeaponMG42 : public CDODBipodWeapon
 public:
 	DECLARE_CLASS( CWeaponMG42, CDODBipodWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 
 #ifdef GAME_DLL

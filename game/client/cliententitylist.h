@@ -440,7 +440,7 @@ public:
 	// Methods relating to traversing hierarchy
 	C_EngineObjectInternal* GetMoveParent(void) const;
 	void SetMoveParent(IEngineObjectClient* pMoveParent);
-	C_EngineObjectInternal* GetRootMoveParent();
+	C_EngineObjectInternal* GetRootMoveParent() const;
 	C_EngineObjectInternal* FirstMoveChild(void) const;
 	void SetFirstMoveChild(IEngineObjectClient* pMoveChild);
 	C_EngineObjectInternal* NextMovePeer(void) const;
@@ -1370,7 +1370,7 @@ protected:
 	string_t						m_ModelName;
 	// Object model index
 	short							m_nModelIndex;
-	CCollisionProperty				m_Collision;
+	CCollisionPropertyClient		m_Collision;
 	// used to cull collision tests
 	int								m_CollisionGroup;
 	// Effects to apply
@@ -1612,9 +1612,9 @@ inline void C_EngineObjectInternal::SetMovePrevPeer(IEngineObjectClient* pMovePr
 	m_pMovePrevPeer = (C_EngineObjectInternal*)pMovePrevPeer;
 }
 
-inline C_EngineObjectInternal* C_EngineObjectInternal::GetRootMoveParent()
+inline C_EngineObjectInternal* C_EngineObjectInternal::GetRootMoveParent() const
 {
-	C_EngineObjectInternal* pEntity = this;
+	C_EngineObjectInternal* pEntity = (C_EngineObjectInternal*)this;
 	C_EngineObjectInternal* pParent = this->GetMoveParent();
 	while (pParent)
 	{

@@ -19,7 +19,9 @@ class CWeaponM1Carbine : public CDODSemiAutoWeapon
 public:
 	DECLARE_CLASS( CWeaponM1Carbine, CDODSemiAutoWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponM1Carbine()  {}
@@ -37,8 +39,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM1Carbine, DT_WeaponM1Carbine )
 BEGIN_NETWORK_TABLE( CWeaponM1Carbine, DT_WeaponM1Carbine )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponM1Carbine )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_m1carbine, CWeaponM1Carbine );
 PRECACHE_WEAPON_REGISTER( weapon_m1carbine );

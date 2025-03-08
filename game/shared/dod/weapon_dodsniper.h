@@ -27,7 +27,9 @@ class CDODSniperWeapon : public CDODSemiAutoWeapon
 public:
 	DECLARE_CLASS( CDODSniperWeapon, CDODSemiAutoWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #ifndef CLIENT_DLL
 	DECLARE_DATADESC();

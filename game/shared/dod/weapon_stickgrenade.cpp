@@ -18,7 +18,9 @@ class CWeaponStickGrenade : public CWeaponDODBaseGrenade
 public:
 	DECLARE_CLASS( CWeaponStickGrenade, CWeaponDODBaseGrenade );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 
 	CWeaponStickGrenade() {}
@@ -46,8 +48,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponStickGrenade, DT_WeaponStickGrenade )
 BEGIN_NETWORK_TABLE(CWeaponStickGrenade, DT_WeaponStickGrenade)
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponStickGrenade )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_frag_ger, CWeaponStickGrenade );
 PRECACHE_WEAPON_REGISTER( weapon_frag_ger );

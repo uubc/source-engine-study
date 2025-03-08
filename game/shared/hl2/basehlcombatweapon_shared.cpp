@@ -43,8 +43,10 @@ END_DATADESC()
 
 #endif
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CBaseHLCombatWeapon )
 END_PREDICTION_DATA()
+#endif
 
 ConVar sk_auto_reload_time( "sk_auto_reload_time", "3", FCVAR_REPLICATED );
 

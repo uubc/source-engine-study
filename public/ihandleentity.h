@@ -254,20 +254,25 @@ public:
 	virtual const string_t& GetGlobalname() const = 0;
 	virtual int GetFlags(void) const = 0;
 	virtual void AddEFlags(int nEFlagMask) = 0;
+	virtual void RemoveEFlags(int nEFlagMask) = 0;
 	virtual bool IsEFlagSet(int nEFlagMask) const = 0;
 	virtual IEngineObject* GetMoveParent(void) const = 0;
 	//virtual void SetMoveParent(IEngineObjectServer* hMoveParent) = 0;
-	virtual IEngineObject* GetRootMoveParent() = 0;
+	virtual IEngineObject* GetRootMoveParent() const = 0;
 	virtual IEngineObject* FirstMoveChild(void) const = 0;
 	//virtual void SetFirstMoveChild(IEngineObjectServer* hMoveChild) = 0;
 	virtual IEngineObject* NextMovePeer(void) const = 0;
 	virtual int GetModelIndex(void) const = 0;
 	virtual string_t GetModelName(void) const = 0;
+	virtual const model_t* GetModel(void) const = 0;
 	virtual IStudioHdr* GetModelPtr(void) const = 0;
+	virtual float GetModelScale() const = 0;
 	virtual void AddSolidFlags(int flags) = 0;
 	virtual SolidType_t GetSolid() const = 0;
 	virtual bool IsSolidFlagSet(int flagMask) const = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
+	virtual bool ComputeHitboxSurroundingBox(Vector* pVecWorldMins, Vector* pVecWorldMaxs) = 0;
+	virtual bool ComputeEntitySpaceHitboxSurroundingBox(Vector* pVecWorldMins, Vector* pVecWorldMaxs) = 0;
 	virtual void CollisionRulesChanged() = 0;
 	virtual const Vector& GetAbsOrigin(void) const = 0;
 	virtual const QAngle& GetAbsAngles(void) const = 0;
@@ -285,6 +290,8 @@ public:
 	virtual const Vector& GetCollisionOrigin() const = 0;
 	virtual const QAngle& GetCollisionAngles() const = 0;
 	virtual int GetCollisionGroup() const = 0;
+	virtual const matrix3x4_t& CollisionToWorldTransform() const = 0;
+	virtual const matrix3x4_t& EntityToWorldTransform() const = 0;
 	virtual MoveType_t GetMoveType() const = 0;
 	virtual IPhysicsObject* VPhysicsGetObject(void) const = 0;
 	virtual bool IsRagdoll() const = 0;
@@ -467,6 +474,9 @@ public:
 	virtual char const* GetDebugName(void) const { return NULL; }
 	virtual int GetModelType() const { return mod_bad; }
 	virtual	bool ShouldCollide(int collisionGroup, int contentsMask) const { return false; }
+	virtual bool TestCollision(const Ray_t& ray, unsigned int mask, trace_t& trace) { return false; }
+	virtual	bool TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr) { return false; }
+	virtual void ComputeWorldSpaceSurroundingBox(Vector* pWorldMins, Vector* pWorldMaxs) {}
 	virtual bool ShouldSavePhysics() { return false; }
 	virtual bool CreateVPhysics() { return false; }
 	virtual bool IsWorld() const { return false; }

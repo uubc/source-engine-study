@@ -33,7 +33,9 @@
 		DECLARE_DATADESC();
 		DECLARE_SERVERCLASS();
 
+#ifdef CLIENT_DLL
 		DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 		CPlantedC4();
 		virtual ~CPlantedC4();
@@ -133,7 +135,9 @@ class CC4 : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CC4, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CC4();
 	virtual ~CC4();

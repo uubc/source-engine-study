@@ -213,7 +213,9 @@ class CWeaponHandGrenade : public CBaseHL1MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponHandGrenade( void );
 
@@ -245,12 +247,14 @@ BEGIN_NETWORK_TABLE( CWeaponHandGrenade, DT_WeaponHandGrenade )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponHandGrenade )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_flStartThrow, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flReleaseThrow, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_handgrenade, CWeaponHandGrenade );
 

@@ -33,7 +33,9 @@ class CWeaponGlock : public CBaseHL1MPCombatWeapon
 	DECLARE_CLASS( CWeaponGlock, CBaseHL1MPCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 public:
 
@@ -57,8 +59,10 @@ END_NETWORK_TABLE()
 
 LINK_ENTITY_TO_CLASS( weapon_glock, CWeaponGlock );
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponGlock )
 END_PREDICTION_DATA()
+#endif
 
 PRECACHE_WEAPON_REGISTER( weapon_glock );
 

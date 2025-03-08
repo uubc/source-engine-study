@@ -32,7 +32,9 @@ public:
 	CBaseHL2MPBludgeonWeapon();
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	virtual	void	Spawn( void );
 	virtual	void	Precache( void );

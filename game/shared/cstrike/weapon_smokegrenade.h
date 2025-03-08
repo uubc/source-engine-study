@@ -30,7 +30,9 @@ class CSmokeGrenade : public CBaseCSGrenade
 public:
 	DECLARE_CLASS( CSmokeGrenade, CBaseCSGrenade );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CSmokeGrenade() {}
 

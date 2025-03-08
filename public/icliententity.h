@@ -349,7 +349,7 @@ public:
 	// Methods relating to traversing hierarchy
 	virtual IEngineObjectClient* GetMoveParent(void) const = 0;
 	//virtual void SetMoveParent(IEngineObjectClient* pMoveParent) = 0;
-	virtual IEngineObjectClient* GetRootMoveParent() = 0;
+	virtual IEngineObjectClient* GetRootMoveParent() const = 0;
 	virtual IEngineObjectClient* FirstMoveChild(void) const = 0;
 	//virtual void SetFirstMoveChild(IEngineObjectClient* pMoveChild) = 0;
 	virtual IEngineObjectClient* NextMovePeer(void) const = 0;
@@ -799,6 +799,7 @@ public:
 	virtual void DestroyModelInstance() = 0;
 	virtual void CreateShadow() = 0;
 	virtual void DestroyShadow() = 0;
+	virtual void MarkRenderHandleDirty() = 0;
 	virtual void AddToLeafSystem() = 0;
 	virtual void AddToLeafSystem(RenderGroup_t group) = 0;
 	virtual void RemoveFromLeafSystem() = 0;

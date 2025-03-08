@@ -414,7 +414,7 @@ public:
 
 	CEngineObjectInternal* GetMoveParent(void) const;
 	void SetMoveParent(IEngineObjectServer* hMoveParent);
-	CEngineObjectInternal* GetRootMoveParent();
+	CEngineObjectInternal* GetRootMoveParent() const;
 	CEngineObjectInternal* FirstMoveChild(void) const;
 	void SetFirstMoveChild(IEngineObjectServer* hMoveChild);
 	CEngineObjectInternal* NextMovePeer(void) const;
@@ -1107,7 +1107,7 @@ private:
 	string_t		m_ModelName;
 	CNetworkVar(short, m_nModelIndex);
 
-	CNetworkVarEmbedded(CCollisionProperty, m_Collision);
+	CNetworkVarEmbedded(CCollisionPropertyServer, m_Collision);
 	CNetworkVar(int, m_CollisionGroup);		// used to cull collision tests
 	// was pev->effects
 	CNetworkVar(int, m_fEffects);

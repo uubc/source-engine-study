@@ -21,7 +21,9 @@ class CWeaponIFMSteadyCam : public CWeaponIFMBaseCamera
 public:
 	DECLARE_CLASS( CWeaponIFMSteadyCam, CWeaponIFMBaseCamera );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #ifdef GAME_DLL
 	DECLARE_DATADESC();

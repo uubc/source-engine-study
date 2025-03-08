@@ -20,7 +20,9 @@ public :
 	CBaseHL1MPCombatWeapon();
 
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #ifdef GAME_DLL
 	void PostConstructor(const char* szClassname, int iForceEdictIndex);

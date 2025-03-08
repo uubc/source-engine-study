@@ -29,7 +29,9 @@ public:
 	DECLARE_CLASS( CWeaponShotgun, CBaseHL2MPCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 private:
 	CNetworkVar( bool,	m_bNeedPump );		// When emptied completely

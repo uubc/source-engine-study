@@ -35,7 +35,9 @@ class CSpriteTrail : public CSprite
 	DECLARE_CLASS( CSpriteTrail, CSprite );
 	DECLARE_DATADESC();
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 public:
 	CSpriteTrail( void );

@@ -56,7 +56,9 @@ class CWeaponGauss : public CBaseHL1MPCombatWeapon
 public:
 
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponGauss( void );
 
@@ -98,12 +100,14 @@ BEGIN_NETWORK_TABLE( CWeaponGauss, DT_WeaponGauss )
 #endif
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponGauss )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_nAttackState, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bPrimaryFire, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_gauss, CWeaponGauss );
 

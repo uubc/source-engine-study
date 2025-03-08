@@ -1058,7 +1058,6 @@ private:
 
 //-----------------------------------------------------------------------------
 
-#ifndef GAME_DLL
 #ifndef NO_ENTITY_PREDICTION
 #define DECLARE_PREDICTABLE()											\
 	public:																\
@@ -1130,12 +1129,6 @@ private:
 		} \
 	}
 #endif
-#else
-// nothing, only client and engine has a prediction system
-#define DECLARE_PREDICTABLE()	
-#define BEGIN_PREDICTION_DATA( className ) 
-#define END_PREDICTION_DATA() 
-#endif // !GAME_DLL
 
 #include "tier0/memdbgoff.h"
 

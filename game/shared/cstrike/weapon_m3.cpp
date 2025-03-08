@@ -27,7 +27,9 @@ class CWeaponM3 : public CWeaponCSBase
 public:
 	DECLARE_CLASS( CWeaponM3, CWeaponCSBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponM3();
 

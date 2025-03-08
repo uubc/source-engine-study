@@ -19,7 +19,9 @@ class CWeaponSpring : public CDODSniperWeapon
 public:
 	DECLARE_CLASS( CWeaponSpring, CDODSniperWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponSpring()  {}
@@ -79,8 +81,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponSpring, DT_WeaponSpring )
 BEGIN_NETWORK_TABLE( CWeaponSpring, DT_WeaponSpring )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponSpring )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_spring, CWeaponSpring );
 PRECACHE_WEAPON_REGISTER( weapon_spring );

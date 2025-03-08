@@ -31,7 +31,9 @@ class CWeaponSatchel : public CBaseHL1CombatWeapon
 	DECLARE_CLASS( CWeaponSatchel, CBaseHL1CombatWeapon );
 
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 public:
 
 	CWeaponSatchel( void );

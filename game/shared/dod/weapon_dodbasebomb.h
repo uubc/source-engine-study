@@ -32,7 +32,9 @@ class CDODBaseBombWeapon : public CWeaponDODBase
 public:
 	DECLARE_CLASS( CDODBaseBombWeapon, CWeaponDODBase );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 
 	CDODBaseBombWeapon();

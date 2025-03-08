@@ -20,7 +20,9 @@ class CWeaponThompson : public CDODFullAutoPunchWeapon
 public:
 	DECLARE_CLASS( CWeaponThompson, CDODFullAutoPunchWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponThompson()  {}
@@ -39,8 +41,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponThompson, DT_WeaponThompson )
 BEGIN_NETWORK_TABLE( CWeaponThompson, DT_WeaponThompson )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponThompson )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_thompson, CWeaponThompson );
 PRECACHE_WEAPON_REGISTER( weapon_thompson );

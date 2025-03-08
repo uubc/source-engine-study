@@ -236,7 +236,6 @@ class CCSPlayer : public CBaseMultiplayerPlayer, public ICSPlayerAnimStateHelper
 public:
 	DECLARE_CLASS( CCSPlayer, CBaseMultiplayerPlayer );
 	DECLARE_SERVERCLASS();
-	DECLARE_PREDICTABLE();
 	DECLARE_DATADESC();
 
 	CCSPlayer();

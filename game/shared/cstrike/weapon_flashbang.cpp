@@ -32,8 +32,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( Flashbang, DT_Flashbang )
 BEGIN_NETWORK_TABLE(CFlashbang, DT_Flashbang)
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CFlashbang )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_flashbang, CFlashbang );
 PRECACHE_WEAPON_REGISTER( weapon_flashbang );

@@ -33,7 +33,9 @@ class CBaseViewModel : public CBaseAnimating, public IHasOwner
 public:
 
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 #if !defined( CLIENT_DLL )
 	DECLARE_DATADESC();

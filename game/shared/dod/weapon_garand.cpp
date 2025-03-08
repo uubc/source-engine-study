@@ -25,7 +25,9 @@ class CWeaponGarand : public CDODSniperWeapon
 public:
 	DECLARE_CLASS( CWeaponGarand, CDODSniperWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponGarand()  {}
@@ -68,8 +70,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponGarand, DT_WeaponGarand )
 BEGIN_NETWORK_TABLE( CWeaponGarand, DT_WeaponGarand )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponGarand )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_garand, CWeaponGarand );
 PRECACHE_WEAPON_REGISTER( weapon_garand );

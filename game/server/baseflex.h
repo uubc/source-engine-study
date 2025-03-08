@@ -48,7 +48,6 @@ class CBaseFlex : public CBaseAnimatingOverlay
 public:
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
-	DECLARE_PREDICTABLE();
 
 	// Construction
 						CBaseFlex( void );

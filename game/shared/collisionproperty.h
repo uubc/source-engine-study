@@ -16,28 +16,10 @@
 #include "engine/ICollideable.h"
 #include "mathlib/vector.h"
 #include "ispatialpartition.h"
-#ifdef CLIENT_DLL
-#include "dt_recv.h"
-#endif // CLIENT_DLL
-#ifdef GAME_DLL
 #include "dt_send.h"
-#endif // GAME_DLL
-
-
-#ifdef CLIENT_DLL
-#define CEngineObjectInternal C_EngineObjectInternal
-#endif // CLIENT_DLL
-
-//-----------------------------------------------------------------------------
-// Forward declarations
-//-----------------------------------------------------------------------------
-class CEngineObjectInternal;
-class IHandleEntity;
-class QAngle;
-class Vector;
-struct Ray_t;
-class IPhysicsObject;
-
+#include "dt_recv.h"
+#include "iserverentity.h"
+#include "icliententity.h"
 
 //-----------------------------------------------------------------------------
 // Force spatial partition updates (to avoid threading problems caused by lazy update)
@@ -53,17 +35,12 @@ class CCollisionProperty : public ICollideable
 {
 	DECLARE_CLASS_NOBASE( CCollisionProperty );
 	DECLARE_EMBEDDED_NETWORKVAR();
-	DECLARE_PREDICTABLE();
-
-#ifdef GAME_DLL
-	DECLARE_DATADESC();
-#endif
 
 public:
 	CCollisionProperty();
 	~CCollisionProperty();
 
-	void Init( CEngineObjectInternal *pEntity );
+	void Init();
 
 	// Methods of ICollideable
 	virtual IHandleEntity	*GetEntityHandle();
@@ -228,11 +205,10 @@ private:
 	void UpdateServerPartitionMask( );
 
 	// Outer
-	CEngineObjectInternal *GetOuter();
-	const CEngineObjectInternal *GetOuter() const;
+	virtual IEngineObject*GetOuter() = 0;
+	virtual const IEngineObject*GetOuter() const = 0;
 
 private:
-	CEngineObjectInternal *m_pOuter;
 
 	CNetworkVector( m_vecMinsPreScaled );
 	CNetworkVector( m_vecMaxsPreScaled );
@@ -273,7 +249,6 @@ private:
 	friend class CEngineObjectInternal;
 };
 
-
 //-----------------------------------------------------------------------------
 // For networking this bad boy
 //-----------------------------------------------------------------------------
@@ -282,21 +257,6 @@ EXTERN_RECV_TABLE( DT_CollisionProperty );
 #else
 EXTERN_SEND_TABLE( DT_CollisionProperty );
 #endif
-
-
-//-----------------------------------------------------------------------------
-// Inline methods
-//-----------------------------------------------------------------------------
-inline CEngineObjectInternal *CCollisionProperty::GetOuter()
-{
-	return m_pOuter;
-}
-
-inline const CEngineObjectInternal *CCollisionProperty::GetOuter() const
-{
-	return m_pOuter;
-}
-
 
 //-----------------------------------------------------------------------------
 // Spatial partition
@@ -494,5 +454,58 @@ inline bool CCollisionProperty::DoesRotationInvalidateSurroundingBox( ) const
 	}
 }
 
+class CCollisionPropertyClient : public CCollisionProperty
+{
+public:
+	DECLARE_CLASS(CCollisionPropertyClient, CCollisionProperty);
+	DECLARE_PREDICTABLE();
+	DECLARE_EMBEDDED_NETWORKVAR();
+
+	void Init(IEngineObjectClient* pEntity)
+	{
+		m_pOuter = pEntity;
+		CCollisionProperty::Init();
+	}
+
+	// Outer
+	IEngineObjectClient* GetOuter()
+	{
+		return m_pOuter;
+	}
+
+	const IEngineObjectClient* GetOuter() const
+	{
+		return m_pOuter;
+	}
+private:
+	IEngineObjectClient* m_pOuter;
+};
+
+class CCollisionPropertyServer : public CCollisionProperty
+{
+public:
+	DECLARE_CLASS(CCollisionPropertyServer, CCollisionProperty);
+	DECLARE_DATADESC();
+	DECLARE_EMBEDDED_NETWORKVAR();
+
+	void Init(IEngineObjectServer* pEntity)
+	{
+		m_pOuter = pEntity;
+		CCollisionProperty::Init();
+	}
+
+	// Outer
+	IEngineObjectServer* GetOuter()
+	{
+		return m_pOuter;
+	}
+
+	const IEngineObjectServer* GetOuter() const
+	{
+		return m_pOuter;
+	}
+private:
+	IEngineObjectServer* m_pOuter;
+};
 
 #endif // COLLISIONPROPERTY_H

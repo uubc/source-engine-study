@@ -23,7 +23,9 @@ class CWeaponPschreck : public CDODBaseRocketWeapon
 public:
 	DECLARE_CLASS( CWeaponPschreck, CDODBaseRocketWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_ACTTABLE();
 	
 	CWeaponPschreck()  {}
@@ -41,8 +43,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponPschreck, DT_WeaponPschreck )
 BEGIN_NETWORK_TABLE( CWeaponPschreck, DT_WeaponPschreck )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponPschreck )
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_pschreck, CWeaponPschreck );
 PRECACHE_WEAPON_REGISTER( weapon_pschreck );

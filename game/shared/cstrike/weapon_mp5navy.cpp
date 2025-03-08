@@ -25,7 +25,9 @@ class CWeaponMP5Navy : public CWeaponCSBaseGun
 public:
 	DECLARE_CLASS( CWeaponMP5Navy, CWeaponCSBaseGun );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	
 	CWeaponMP5Navy();
 
@@ -48,8 +50,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponMP5Navy, DT_WeaponMP5Navy )
 BEGIN_NETWORK_TABLE( CWeaponMP5Navy, DT_WeaponMP5Navy )
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponMP5Navy )
 END_PREDICTION_DATA()
+#endif // CLIENT_DLL
 
 LINK_ENTITY_TO_CLASS( weapon_mp5navy, CWeaponMP5Navy );
 PRECACHE_WEAPON_REGISTER( weapon_mp5navy );

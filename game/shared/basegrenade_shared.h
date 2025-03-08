@@ -42,7 +42,9 @@ public:
 	CBaseGrenade(void);
 	~CBaseGrenade(void);
 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_NETWORKCLASS();
 
 #ifdef CLIENT_DLL

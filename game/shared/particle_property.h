@@ -66,7 +66,9 @@ class CParticleProperty
 {
 	DECLARE_CLASS_NOBASE( CParticleProperty );
 	DECLARE_EMBEDDED_NETWORKVAR();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	DECLARE_DATADESC();
 
 public:

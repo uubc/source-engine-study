@@ -19,7 +19,9 @@ class CWeaponExplodingHandGrenade : public CWeaponDODBaseGrenade
 public:
 	DECLARE_CLASS( CWeaponExplodingHandGrenade, CWeaponDODBaseGrenade );
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponExplodingHandGrenade() {}
 
@@ -45,8 +47,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponExplodingHandGrenade, DT_WeaponExplodingHa
 BEGIN_NETWORK_TABLE(CWeaponExplodingHandGrenade, DT_WeaponExplodingHandGrenade)
 END_NETWORK_TABLE()
 
+#ifdef CLIENT_DLL
 BEGIN_PREDICTION_DATA( CWeaponExplodingHandGrenade )	//MATTTODO: are these necessary?
 END_PREDICTION_DATA()
+#endif
 
 LINK_ENTITY_TO_CLASS( weapon_frag_us_live, CWeaponExplodingHandGrenade );
 PRECACHE_WEAPON_REGISTER( weapon_frag_us_live );

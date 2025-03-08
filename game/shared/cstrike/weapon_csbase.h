@@ -80,7 +80,9 @@ class CWeaponCSBase : public CBaseCombatWeapon
 public:
 	DECLARE_CLASS( CWeaponCSBase, CBaseCombatWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponCSBase();
 

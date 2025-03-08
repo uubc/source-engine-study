@@ -48,7 +48,9 @@ class CBeam : public CBaseEntity
 	DECLARE_CLASS( CBeam, CBaseEntity );
 public:
 	DECLARE_NETWORKCLASS();
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 #if !defined( CLIENT_DLL )
 	DECLARE_DATADESC();
 #endif

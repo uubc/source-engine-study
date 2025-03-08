@@ -24,7 +24,6 @@ public:
 	DECLARE_CLASS( CWeaponPortalgun, CBasePortalCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
-	DECLARE_PREDICTABLE();
 
 private:
 	CNetworkVar( bool,	m_bCanFirePortal1 );	// Is able to use primary fire

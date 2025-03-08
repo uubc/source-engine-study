@@ -219,7 +219,9 @@ class CWeaponDODBase : public CBaseCombatWeapon
 public:
 	DECLARE_CLASS( CWeaponDODBase, CBaseCombatWeapon );
 	DECLARE_NETWORKCLASS(); 
+#ifdef CLIENT_DLL
 	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 
 	CWeaponDODBase();
 
