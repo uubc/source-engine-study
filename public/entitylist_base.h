@@ -24,6 +24,7 @@
 #include "vphysics_interface.h"
 #include "tier0/threadtools.h"
 #include "tier0/tslist.h"
+#include "shareddefs.h"
 
 class CPhysCollide;
 
@@ -592,6 +593,7 @@ protected:
 	CTHREADLOCALINT	 m_readLockCount;
 };
 
+extern ISpatialPartition* partition;
 //-----------------------------------------------------------------------------
 // Initialization, shutdown
 //-----------------------------------------------------------------------------
