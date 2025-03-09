@@ -1312,7 +1312,7 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 	//			nAmmoType - What been shot out.
 	// Output : How much hurt to put on dude what done got shot (pVictim).
 	//-----------------------------------------------------------------------------
-	float CHalfLife2World::GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType )
+	float CHalfLife2World::GetAmmoDamage( IHandleEntity *pAttacker, IHandleEntity *pVictim, int nAmmoType )
 	{
 		float flDamage = 0.0f;
 		CAmmoDef *pAmmoDef = GetAmmoDef();
@@ -1340,7 +1340,7 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 
 		if( pAttacker->IsPlayer() && pVictim->IsNPC() )
 		{
-			if( pVictim->MyCombatCharacterPointer() )
+			if( pVictim->IsCombatCharacter() )
 			{
 				// Player is shooting an NPC. Adjust the damage! This protects breakables
 				// and other 'non-living' entities from being easier/harder to break

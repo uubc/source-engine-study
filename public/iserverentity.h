@@ -978,7 +978,7 @@ public:
 	virtual void PlayerGotAmmo(CBaseCombatCharacter* pPlayer, char* szName, int iCount) = 0;// called each time a player picks up some ammo in the world
 	virtual float GetAmmoQuantityScale(int iAmmoIndex) = 0;
 	// Damage rules for ammo types
-	virtual float GetAmmoDamage(CBaseEntity* pAttacker, CBaseEntity* pVictim, int nAmmoType) = 0;
+	virtual float GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, int nAmmoType) = 0;
 	// AI Definitions
 	virtual void InitDefaultAIRelationships(void) = 0;
 	virtual const char* AIClassText(int classType) = 0;

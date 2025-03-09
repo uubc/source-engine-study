@@ -1055,7 +1055,7 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 	//			nAmmoType - What been shot out.
 	// Output : How much hurt to put on dude what done got shot (pVictim).
 	//-----------------------------------------------------------------------------
-	float CPortalGameWorld::GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType )
+	float CPortalGameWorld::GetAmmoDamage( IHandleEntity *pAttacker, IHandleEntity *pVictim, int nAmmoType )
 	{
 		return BaseClass::GetAmmoDamage( pAttacker, pVictim, nAmmoType );
 	}

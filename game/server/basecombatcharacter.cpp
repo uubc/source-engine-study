@@ -1942,7 +1942,7 @@ void CBaseCombatCharacter::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector
 			{
 				// Drop enough ammo to kill 2 of me.
 				// Figure out how much damage one piece of this type of ammo does to this type of enemy.
-				float flAmmoDamage = g_pGameRules->GetAmmoDamage((CBaseEntity*)EntityList()->GetPlayerByIndex(1), this, pWeapon->GetPrimaryAmmoType() );
+				float flAmmoDamage = g_pGameRules->GetAmmoDamage(EntityList()->GetPlayerByIndex(1), this, pWeapon->GetPrimaryAmmoType() );
 				pWeapon->m_iClip1 = (GetMaxHealth() / flAmmoDamage) * 2;
 			}
 		}

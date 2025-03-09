@@ -415,7 +415,7 @@ const CViewVectors* C_World::GetViewVectors() const
 //			nAmmoType - What been shot out.
 // Output : How much hurt to put on dude what done got shot (pVictim).
 //-----------------------------------------------------------------------------
-float C_World::GetAmmoDamage(CBaseEntity* pAttacker, CBaseEntity* pVictim, int nAmmoType)
+float C_World::GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, int nAmmoType)
 {
 	float flDamage = 0;
 	CAmmoDef* pAmmoDef = GetAmmoDef();

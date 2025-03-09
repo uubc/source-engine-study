@@ -37,7 +37,7 @@ public:
 	virtual void	OnPreDataChanged( DataUpdateType_t updateType );
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
 
-	virtual bool	IsBaseCombatCharacter( void ) { return true; };
+	virtual bool	IsCombatCharacter( void ) const { return true; };
 	virtual C_BaseCombatCharacter *MyCombatCharacterPointer( void ) { return this; }
 
 	// -----------------------
@@ -162,7 +162,7 @@ public:
 
 inline C_BaseCombatCharacter *ToBaseCombatCharacter( IClientEntity *pEntity )
 {
-	if ( !pEntity || !pEntity->IsBaseCombatCharacter() )
+	if ( !pEntity || !pEntity->IsCombatCharacter() )
 		return NULL;
 
 #if _DEBUG

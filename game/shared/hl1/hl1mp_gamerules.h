@@ -34,7 +34,7 @@ public:
 		return m_bTeamPlayEnabled;
 	}
 
-	virtual float GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType );
+	virtual float GetAmmoDamage( IHandleEntity *pAttacker, IHandleEntity *pVictim, int nAmmoType );
     virtual float GetDamageMultiplier( void );    
 
 	virtual bool IsConnectedUserInfoChangeAllowed( CBasePlayer *pPlayer )

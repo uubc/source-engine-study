@@ -73,7 +73,7 @@ private:
 
 	// Ammo
 	virtual void			PlayerThink( CBasePlayer *pPlayer );
-	virtual float			GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType );
+	virtual float			GetAmmoDamage( IHandleEntity *pAttacker, IHandleEntity *pVictim, int nAmmoType );
 
 	virtual bool			ShouldBurningPropsEmitLight();
 

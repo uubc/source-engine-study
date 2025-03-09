@@ -678,7 +678,7 @@ bool CClientTools::IsPlayer( EntitySearchResult currentEnt )
 bool CClientTools::IsBaseCombatCharacter( EntitySearchResult currentEnt )
 {
 	C_BaseEntity *ent = reinterpret_cast< C_BaseEntity* >( currentEnt );
-	return ent ? ent->IsBaseCombatCharacter() : false;
+	return ent ? ent->IsCombatCharacter() : false;
 }
 
 bool CClientTools::IsNPC( EntitySearchResult currentEnt )

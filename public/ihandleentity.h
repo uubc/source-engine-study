@@ -484,6 +484,7 @@ public:
 	virtual IHandleWorld* AsHandleWorld() { return NULL; }
 	virtual bool IsStaticProp() const { return false; }
 	virtual bool IsBSPModel() const { return false; }
+	virtual bool IsCombatCharacter(void) const { return false; }
 	virtual bool IsNPC(void) const { return false; }
 	virtual bool IsPlayer(void) const { return false; }
 	virtual bool IsLocalPlayer(void) const { return false; }

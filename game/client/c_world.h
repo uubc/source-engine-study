@@ -83,7 +83,7 @@ public:
 	virtual const CViewVectors* GetViewVectors() const;
 
 	// Damage rules for ammo types
-	virtual float GetAmmoDamage(CBaseEntity* pAttacker, CBaseEntity* pVictim, int nAmmoType);
+	virtual float GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, int nAmmoType);
 	virtual float GetDamageMultiplier(void) { return 1.0f; }
 
 	// Functions to verify the single/multiplayer status of a game

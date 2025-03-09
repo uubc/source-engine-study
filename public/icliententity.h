@@ -860,7 +860,7 @@ public:
 	virtual void ModifySentChat(char* pBuf, int iBufSize) = 0;
 	virtual bool ShouldWarnOfAbandonOnQuit() = 0;
 	// Damage rules for ammo types
-	virtual float GetAmmoDamage(C_BaseEntity* pAttacker, C_BaseEntity* pVictim, int nAmmoType) = 0;
+	virtual float GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, int nAmmoType) = 0;
 	virtual bool IsConnectedUserInfoChangeAllowed(C_BasePlayer* pPlayer) = 0;
 	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 };
@@ -943,7 +943,7 @@ public:
 	virtual bool IsPlayer(void) const = 0;
 	virtual IClientPlayer* AsHandlePlayer() = 0;
 	virtual bool IsViewModel() const = 0;
-	virtual bool IsBaseCombatCharacter(void) = 0;
+	virtual bool IsCombatCharacter(void) const = 0;
 	virtual bool IsBaseCombatWeapon(void) const = 0;
 	virtual bool IsAlive(void) = 0;
 	virtual bool IsFloating() = 0;

@@ -982,7 +982,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 	}
 
 	// the default attacker is ourselves
-	CBaseEntity *pAttacker = info.m_pAttacker ? info.m_pAttacker : this;
+	IHandleEntity *pAttacker = info.m_pAttacker ? info.m_pAttacker : this;
 
 	// Make sure we don't have a dangling damage target from a recursive call
 	if ( g_MultiDamage.GetTarget() != NULL )
@@ -1224,7 +1224,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			int nActualDamageType = nDamageType;
 			if ( flActualDamage == 0.0 )
 			{
-				flActualDamage = g_pGameRules->GetAmmoDamage( pAttacker, (CBaseEntity*)tr.m_pEnt, info.m_iAmmoType );
+				flActualDamage = g_pGameRules->GetAmmoDamage( pAttacker, tr.m_pEnt, info.m_iAmmoType );
 			}
 			else
 			{

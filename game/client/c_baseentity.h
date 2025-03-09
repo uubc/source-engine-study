@@ -739,8 +739,8 @@ public:
 
 	virtual bool					IsPlayer(void) const { return false; };
 	virtual IClientPlayer*			AsHandlePlayer() { return NULL; }
-	virtual bool					IsBaseCombatCharacter(void) { return false; };
-	virtual C_BaseCombatCharacter* MyCombatCharacterPointer(void) { return NULL; }
+	virtual bool					IsCombatCharacter(void) const { return false; };
+	virtual C_BaseCombatCharacter  *MyCombatCharacterPointer(void) { return NULL; }
 	virtual bool					IsNPC(void) const { return false; }
 	C_AI_BaseNPC* MyNPCPointer(void);
 	virtual bool					IsNextBot() { return false; }

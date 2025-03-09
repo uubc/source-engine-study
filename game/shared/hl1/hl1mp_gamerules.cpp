@@ -184,7 +184,7 @@ void CHL1MPWorld::CreateStandardEntities( void )
 #endif
 }
 
-float CHL1MPWorld::GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, int nAmmoType )
+float CHL1MPWorld::GetAmmoDamage( IHandleEntity *pAttacker, IHandleEntity *pVictim, int nAmmoType )
 {
     return BaseClass::GetAmmoDamage( pAttacker, pVictim, nAmmoType ) * GetDamageMultiplier();
 }
