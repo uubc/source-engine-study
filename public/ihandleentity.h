@@ -37,6 +37,7 @@ class CPhysCollide;
 class IStudioHdr;
 class IPhysicsObject;
 struct EmitSound_t;
+class IPhysicsCollision;
 
 //-----------------------------------------------------------------------------
 // A ray...
@@ -557,6 +558,8 @@ public:
 	virtual IHandleWorld* GetWorld() = 0;
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;
+	virtual void AddDirtyEntity(IEngineObject* pEntity) = 0;
+	virtual IPhysicsCollision* PhysGetCollision() = 0;
 	//-----------------------------------------------------------------------------
 // Shared random number generators for shared/predicted code:
 // whenever generating random numbers in shared/predicted code, these functions

@@ -7,10 +7,8 @@
 
 //#include "cbase.h"
 #include "collisionproperty.h"
-#include "igamesystem.h"
+//#include "igamesystem.h"
 #include "utlvector.h"
-#include "tier0/threadtools.h"
-#include "tier0/tslist.h"
 #include "worldsize.h"
 #include "sharedInterface.h"
 #include "shareddefs.h"
@@ -24,238 +22,6 @@
 #include "tier0/memdbgon.h"
 
 extern ISpatialPartition* partition;
-//extern IPhysicsCollision* physcollision;
-
-//-----------------------------------------------------------------------------
-// KD tree query callbacks
-//-----------------------------------------------------------------------------
-class CDirtySpatialPartitionEntityList : public CAutoGameSystem, public IPartitionQueryCallback
-{
-public:
-	CDirtySpatialPartitionEntityList( char const *name );
-
-	// Members of IGameSystem
-	virtual bool Init();
-	virtual void Shutdown();
-	virtual void LevelShutdownPostEntity();
-
-	// Members of IPartitionQueryCallback
-	virtual void OnPreQuery_V1()	{ Assert( 0 ); }
-	virtual void OnPreQuery( SpatialPartitionListMask_t listMask );
-	virtual void OnPostQuery( SpatialPartitionListMask_t listMask );
-
-	void AddEntity( IEngineObject *pEntity );
-
-	~CDirtySpatialPartitionEntityList();
-	void LockPartitionForRead()
-	{
-		int nThreadId = g_nThreadID;
-		if (  m_nReadLockCount[nThreadId] == 0 )
-		{
-			m_partitionMutex.LockForRead();
-		}
-		m_nReadLockCount[nThreadId]++;
-	}
-	void UnlockPartitionForRead()
-	{
-		int nThreadId = g_nThreadID;
-		m_nReadLockCount[nThreadId]--;
-		if ( m_nReadLockCount[nThreadId] == 0 )
-		{
-			m_partitionMutex.UnlockRead();
-		}
-	}
-
-
-private:
-	int m_nReadLockCount[MAX_THREADS_SUPPORTED];
-
-	CTSListWithFreeList<CBaseHandle> m_DirtyEntities;
-	CThreadSpinRWLock	 m_partitionMutex;
-	uint32			 m_partitionWriteId;
-	CTHREADLOCALINT	 m_readLockCount;
-};
-
-
-//-----------------------------------------------------------------------------
-// Singleton instance
-//-----------------------------------------------------------------------------
-static CDirtySpatialPartitionEntityList s_DirtyKDTree( "CDirtySpatialPartitionEntityList" );
-
-
-//-----------------------------------------------------------------------------
-// Force spatial partition updates (to avoid threading problems caused by lazy update)
-//-----------------------------------------------------------------------------
-void UpdateDirtySpatialPartitionEntities()
-{
-	SpatialPartitionListMask_t listMask;
-#ifdef CLIENT_DLL
-	listMask = PARTITION_CLIENT_GAME_EDICTS;
-#else
-	listMask = PARTITION_SERVER_GAME_EDICTS;
-#endif
-	s_DirtyKDTree.OnPreQuery( listMask );
-	s_DirtyKDTree.OnPostQuery( listMask );
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Constructor.
-//-----------------------------------------------------------------------------
-CDirtySpatialPartitionEntityList::CDirtySpatialPartitionEntityList( char const *name ) : CAutoGameSystem( name )
-{
-	m_DirtyEntities.Purge();
-	memset( m_nReadLockCount, 0, sizeof( m_nReadLockCount ) );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Deconstructor.
-//-----------------------------------------------------------------------------
-CDirtySpatialPartitionEntityList::~CDirtySpatialPartitionEntityList()
-{
-	m_DirtyEntities.Purge();
-}
-
-//-----------------------------------------------------------------------------
-// Initialization, shutdown
-//-----------------------------------------------------------------------------
-bool CDirtySpatialPartitionEntityList::Init()
-{
-	partition->InstallQueryCallback( this );
-	return true;
-}
-
-void CDirtySpatialPartitionEntityList::Shutdown()
-{
-	partition->RemoveQueryCallback( this );
-}
-
-
-//-----------------------------------------------------------------------------
-// Makes sure all entries in the KD tree are in the correct position
-//-----------------------------------------------------------------------------
-void CDirtySpatialPartitionEntityList::AddEntity( IEngineObject *pEntity )
-{
-	m_DirtyEntities.PushItem( pEntity->GetRefEHandle() );
-}
-
-
-//-----------------------------------------------------------------------------
-// Members of IGameSystem
-//-----------------------------------------------------------------------------
-void CDirtySpatialPartitionEntityList::LevelShutdownPostEntity()
-{
-	m_DirtyEntities.RemoveAll();
-}
-
-
-//-----------------------------------------------------------------------------
-// Makes sure all entries in the KD tree are in the correct position
-//-----------------------------------------------------------------------------
-void CDirtySpatialPartitionEntityList::OnPreQuery( SpatialPartitionListMask_t listMask )
-{
-#ifdef CLIENT_DLL
-	const int validMask = PARTITION_CLIENT_GAME_EDICTS;
-#else
-	const int validMask = PARTITION_SERVER_GAME_EDICTS;
-#endif
-
-	if ( !( listMask & validMask ) )
-		return;
-
-	int nThreadID = g_nThreadID;
-
-	if ( m_partitionWriteId != 0 && m_partitionWriteId == nThreadID + 1 )
-		return;
-
-#ifdef CLIENT_DLL
-	// FIXME: This should really be an assertion... feh!
-	if ( !entitylist->IsAbsRecomputationsEnabled() )
-	{
-		LockPartitionForRead();
-		return;
-	}
-#endif
-
-	// if you're holding a read lock, then these are entities that were still dirty after your trace started
-	// or became dirty due to some other thread or callback. Updating them may cause corruption further up the
-	// stack (e.g. partition iterator).  Ignoring the state change should be safe since it happened after the 
-	// trace was requested or was unable to be resolved in a previous attempt (still dirty).
-	if ( m_DirtyEntities.Count() && !m_nReadLockCount[nThreadID] )
-	{
-		CUtlVector< CBaseHandle > vecStillDirty;
-		m_partitionMutex.LockForWrite();
-		m_partitionWriteId = nThreadID + 1;
-		CTSListWithFreeList<CBaseHandle>::Node_t *pCurrent, *pNext;
-		while ( ( pCurrent = m_DirtyEntities.Detach() ) != NULL )
-		{
-			while ( pCurrent )
-			{
-				CBaseHandle handle = pCurrent->elem;
-				pNext = (CTSListWithFreeList<CBaseHandle>::Node_t *)pCurrent->Next;
-				m_DirtyEntities.FreeNode( pCurrent );
-				pCurrent = pNext;
-
-#ifndef CLIENT_DLL
-				IServerEntity *pEntity = serverEntitylist->GetBaseEntityFromHandle( handle );
-#else
-				IClientEntity *pEntity = entitylist->GetBaseEntityFromHandle( handle );
-#endif
-
-				if ( pEntity )
-				{
-					// If an entity is in the middle of bone setup, don't call UpdatePartition
-					//  which can cause it to redo bone setup on the same frame causing a recursive
-					//  call to bone setup.
-					if ( !pEntity->GetEngineObject()->IsEFlagSet( EFL_SETTING_UP_BONES ) )
-					{
-						pEntity->GetEngineObject()->UpdatePartition();
-					}
-					else
-					{
-						vecStillDirty.AddToTail( handle );
-					}
-				}
-			}
-		}
-		if ( vecStillDirty.Count() > 0 )
-		{
-			for ( int i = 0; i < vecStillDirty.Count(); i++ )
-			{
-				m_DirtyEntities.PushItem( vecStillDirty[i] );
-			}
-		}
-		m_partitionWriteId = 0;
-		m_partitionMutex.UnlockWrite();
-	}
-	LockPartitionForRead();
-}
-
-//-----------------------------------------------------------------------------
-// Makes sure all entries in the KD tree are in the correct position
-//-----------------------------------------------------------------------------
-void CDirtySpatialPartitionEntityList::OnPostQuery( SpatialPartitionListMask_t listMask )
-{
-#ifdef CLIENT_DLL
-	if ( !( listMask & PARTITION_CLIENT_GAME_EDICTS ) )
-		return;
-#else
-	if ( !( listMask & PARTITION_SERVER_GAME_EDICTS ) )
-		return;
-#endif
-
-	if ( m_partitionWriteId != 0 )
-		return;
-
-	UnlockPartitionForRead();
-}
-
-
-//-----------------------------------------------------------------------------
-// Save/load
-//-----------------------------------------------------------------------------
-
-
 
 BEGIN_DATADESC_NO_BASE( CCollisionPropertyServer )
 
@@ -497,9 +263,8 @@ const matrix3x4_t *CCollisionProperty::GetRootParentToWorldTransform() const
 //-----------------------------------------------------------------------------
 // Check for untouch
 //-----------------------------------------------------------------------------
-void CCollisionProperty::CheckForUntouch()
+void CCollisionPropertyServer::CheckForUntouch()
 {
-#ifndef CLIENT_DLL
 	if ( !IsSolid() && !IsSolidFlagSet(FSOLID_TRIGGER))
 	{
 		// If this ent's touch list isn't empty, it's transitioning to not solid
@@ -510,7 +275,6 @@ void CCollisionProperty::CheckForUntouch()
 			GetOuter()->AsEngineObjectServer()->SetCheckUntouch(true);
 		}
 	}
-#endif
 }
 
 
@@ -521,10 +285,6 @@ void CCollisionProperty::SetSolid( SolidType_t val )
 {
 	if ( m_nSolidType == val )
 		return;
-
-#ifndef CLIENT_DLL
-	bool bWasNotSolid = IsSolid();
-#endif
 
 	MarkSurroundingBoundsDirty();
 
@@ -539,37 +299,50 @@ void CCollisionProperty::SetSolid( SolidType_t val )
 				val = SOLID_VPHYSICS;
 			}
 		}
-#ifndef CLIENT_DLL
-		// UNDONE: This should be fine in the client DLL too.  Move GetAllChildren() into shared code.
-		// If the root of the hierarchy is SOLID_BSP, then assume that the designer
-		// wants the collisions to rotate with this hierarchy so that the player can
-		// move while riding the hierarchy.
-		if ( !GetOuter()->GetMoveParent() )
-		{
-			// NOTE: This assumes things don't change back from SOLID_BSP
-			// NOTE: This is 100% true for HL2 - need to support removing the flag to support changing from SOLID_BSP
-			CUtlVector<IEngineObjectServer *> list;
-			GetOuter()->AsEngineObjectServer()->GetAllChildren(list);
-			for ( int i = list.Count()-1; i>=0; --i )
-			{
-				list[i]->AddSolidFlags(FSOLID_ROOT_PARENT_ALIGNED);
-			}
-		}
-#endif
+		FixChildrenFlags();
 	}
 
 	m_nSolidType = val;
+}
 
-#ifndef CLIENT_DLL
+void CCollisionPropertyClient::SetSolid(SolidType_t val)
+{
+	if (m_nSolidType == val)
+		return;
+	BaseClass::SetSolid(val);
+}
+
+void CCollisionPropertyServer::FixChildrenFlags()
+{
+	// UNDONE: This should be fine in the client DLL too.  Move GetAllChildren() into shared code.
+	// If the root of the hierarchy is SOLID_BSP, then assume that the designer
+	// wants the collisions to rotate with this hierarchy so that the player can
+	// move while riding the hierarchy.
+	if (!GetOuter()->GetMoveParent())
+	{
+		// NOTE: This assumes things don't change back from SOLID_BSP
+		// NOTE: This is 100% true for HL2 - need to support removing the flag to support changing from SOLID_BSP
+		CUtlVector<IEngineObjectServer*> list;
+		GetOuter()->AsEngineObjectServer()->GetAllChildren(list);
+		for (int i = list.Count() - 1; i >= 0; --i)
+		{
+			list[i]->AddSolidFlags(FSOLID_ROOT_PARENT_ALIGNED);
+		}
+	}
+}
+
+void CCollisionPropertyServer::SetSolid(SolidType_t val)
+{
+	if (m_nSolidType == val)
+		return;
+	bool bWasNotSolid = IsSolid();
+	BaseClass::SetSolid(val);
 	GetOuter()->CollisionRulesChanged();
-
-	UpdateServerPartitionMask( );
-
-	if ( bWasNotSolid != IsSolid() )
+	UpdateServerPartitionMask();
+	if (bWasNotSolid != IsSolid())
 	{
 		CheckForUntouch();
 	}
-#endif
 }
 
 SolidType_t CCollisionProperty::GetSolid() const
@@ -600,13 +373,22 @@ void CCollisionProperty::SetSolidFlags( int flags )
 		GetOuter()->CollisionRulesChanged();
 	}
 
-#ifndef CLIENT_DLL
-	if ( (oldFlags & (FSOLID_NOT_SOLID | FSOLID_TRIGGER)) != (m_usSolidFlags & (FSOLID_NOT_SOLID | FSOLID_TRIGGER)) )
+}
+
+void CCollisionPropertyClient::SetSolidFlags(int flags)
+{
+	BaseClass::SetSolidFlags(flags);
+}
+
+void CCollisionPropertyServer::SetSolidFlags(int flags)
+{
+	int oldFlags = m_usSolidFlags;
+	BaseClass::SetSolidFlags(flags);
+	if ((oldFlags & (FSOLID_NOT_SOLID | FSOLID_TRIGGER)) != (m_usSolidFlags & (FSOLID_NOT_SOLID | FSOLID_TRIGGER)))
 	{
-		UpdateServerPartitionMask( );
+		UpdateServerPartitionMask();
 		CheckForUntouch();
 	}
-#endif
 }
 
 
@@ -958,14 +740,9 @@ void CCollisionProperty::ComputeVPhysicsSurroundingBox( Vector *pVecWorldMins, V
 	{
 		if ( pPhysicsObject->GetCollide() )
 		{
-#ifdef GAME_DLL
-			serverEntitylist->PhysGetCollision()->CollideGetAABB(pVecWorldMins, pVecWorldMaxs,
+			GetOuter()->GetEntityList()->PhysGetCollision()->CollideGetAABB(pVecWorldMins, pVecWorldMaxs,
 				pPhysicsObject->GetCollide(), GetCollisionOrigin(), GetCollisionAngles());
-#endif // GAME_DLL
-#ifdef CLIENT_DLL
-			entitylist->PhysGetCollision()->CollideGetAABB(pVecWorldMins, pVecWorldMaxs,
-				pPhysicsObject->GetCollide(), GetCollisionOrigin(), GetCollisionAngles());
-#endif // CLIENT_DLL
+
 			bSetBounds = true;
 		}
 		else if ( pPhysicsObject->GetSphereRadius( ) )
@@ -1205,14 +982,21 @@ void CCollisionProperty::MarkSurroundingBoundsDirty()
 {
 	GetOuter()->AddEFlags( EFL_DIRTY_SURROUNDING_COLLISION_BOUNDS );
 	MarkPartitionHandleDirty();
-
-#ifdef CLIENT_DLL
-	g_pClientShadowMgr->MarkRenderToTextureShadowDirty( GetOuter()->AsEngineObjectClient()->GetShadowHandle());
-#else
-	GetOuter()->AsEngineObjectServer()->MarkPVSInformationDirty();
-#endif
 }
 
+void CCollisionPropertyClient::MarkSurroundingBoundsDirty()
+{
+	BaseClass::MarkSurroundingBoundsDirty();
+#ifdef CLIENT_DLL
+	g_pClientShadowMgr->MarkRenderToTextureShadowDirty(GetOuter()->AsEngineObjectClient()->GetShadowHandle());
+#endif // CLIENT_DLL
+}
+
+void CCollisionPropertyServer::MarkSurroundingBoundsDirty()
+{
+	BaseClass::MarkSurroundingBoundsDirty();
+	GetOuter()->AsEngineObjectServer()->MarkPVSInformationDirty();
+}
 
 //-----------------------------------------------------------------------------
 // Does VPhysicsUpdate make us need to recompute the surrounding box?
@@ -1291,9 +1075,8 @@ void CCollisionProperty::DestroyPartitionHandle()
 //-----------------------------------------------------------------------------
 // Updates the spatial partition
 //-----------------------------------------------------------------------------
-void CCollisionProperty::UpdateServerPartitionMask( )
+void CCollisionPropertyServer::UpdateServerPartitionMask( )
 {
-#ifndef CLIENT_DLL
 	SpatialPartitionHandle_t handle = GetPartitionHandle();
 	if ( handle == PARTITION_INVALID_HANDLE )
 		return;
@@ -1333,7 +1116,6 @@ void CCollisionProperty::UpdateServerPartitionMask( )
 	}
 	Assert( mask != 0 );
 	partition->Insert( mask, handle );
-#endif
 }
 
 
@@ -1349,13 +1131,22 @@ void CCollisionProperty::MarkPartitionHandleDirty()
 	if ( !GetOuter()->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
 	{
 		GetOuter()->AddEFlags( EFL_DIRTY_SPATIAL_PARTITION );
-		s_DirtyKDTree.AddEntity(GetOuter());
+		GetOuter()->GetEntityList()->AddDirtyEntity(GetOuter());
 	}
+}
 
-#ifdef CLIENT_DLL
+void CCollisionPropertyClient::MarkPartitionHandleDirty()
+{
+	BaseClass::MarkPartitionHandleDirty();
 	GetOuter()->AsEngineObjectClient()->MarkRenderHandleDirty();
-	g_pClientShadowMgr->AddToDirtyShadowList( GetOuter()->AsEngineObjectClient() );
-#endif
+#ifdef CLIENT_DLL
+	g_pClientShadowMgr->AddToDirtyShadowList(GetOuter()->AsEngineObjectClient());
+#endif // CLIENT_DLL
+}
+
+void CCollisionPropertyServer::MarkPartitionHandleDirty()
+{
+	BaseClass::MarkPartitionHandleDirty();
 }
 
 
@@ -1364,45 +1155,55 @@ void CCollisionProperty::MarkPartitionHandleDirty()
 //-----------------------------------------------------------------------------
 void CCollisionProperty::UpdatePartition( )
 {
-	if (GetOuter()->IsEFlagSet( EFL_DIRTY_SPATIAL_PARTITION ) )
+	// We don't need to bother if it's not a trigger or solid
+	if ( IsSolid() || IsSolidFlagSet( FSOLID_TRIGGER ) || GetOuter()->IsEFlagSet( EFL_USE_PARTITION_WHEN_NOT_SOLID ) )
 	{
-		GetOuter()->RemoveEFlags( EFL_DIRTY_SPATIAL_PARTITION );
-
-#ifndef CLIENT_DLL
-		Assert(GetOuter()->entindex() != 0 );
-
-		// Don't bother with deleted things
-		if (GetOuter()->entindex()==-1 )
-			return;
-
-		if ( GetPartitionHandle() == PARTITION_INVALID_HANDLE )
+		// Bloat a little bit...
+		if ( BoundingRadius() != 0.0f )
 		{
-			CreatePartitionHandle();
-			UpdateServerPartitionMask();
+			Vector vecSurroundMins, vecSurroundMaxs;
+			WorldSpaceSurroundingBounds( &vecSurroundMins, &vecSurroundMaxs );
+			vecSurroundMins -= Vector( 1, 1, 1 );
+			vecSurroundMaxs += Vector( 1, 1, 1 );
+			partition->ElementMoved( GetPartitionHandle(), vecSurroundMins,  vecSurroundMaxs );
 		}
-#else
-		if ( GetPartitionHandle() == PARTITION_INVALID_HANDLE )
-			return;
-#endif
-
-		// We don't need to bother if it's not a trigger or solid
-		if ( IsSolid() || IsSolidFlagSet( FSOLID_TRIGGER ) || GetOuter()->IsEFlagSet( EFL_USE_PARTITION_WHEN_NOT_SOLID ) )
+		else
 		{
-			// Bloat a little bit...
-			if ( BoundingRadius() != 0.0f )
-			{
-				Vector vecSurroundMins, vecSurroundMaxs;
-				WorldSpaceSurroundingBounds( &vecSurroundMins, &vecSurroundMaxs );
-				vecSurroundMins -= Vector( 1, 1, 1 );
-				vecSurroundMaxs += Vector( 1, 1, 1 );
-				partition->ElementMoved( GetPartitionHandle(), vecSurroundMins,  vecSurroundMaxs );
-			}
-			else
-			{
-				partition->ElementMoved( GetPartitionHandle(), GetCollisionOrigin(),  GetCollisionOrigin() );
-			}
+			partition->ElementMoved( GetPartitionHandle(), GetCollisionOrigin(),  GetCollisionOrigin() );
 		}
 	}
 }
 
+void CCollisionPropertyClient::UpdatePartition()
+{
+	if (GetOuter()->IsEFlagSet(EFL_DIRTY_SPATIAL_PARTITION))
+	{
+		GetOuter()->RemoveEFlags(EFL_DIRTY_SPATIAL_PARTITION);
 
+		if (GetPartitionHandle() == PARTITION_INVALID_HANDLE)
+			return;
+		BaseClass::UpdatePartition();
+	}
+}
+
+void CCollisionPropertyServer::UpdatePartition()
+{
+	if (GetOuter()->IsEFlagSet(EFL_DIRTY_SPATIAL_PARTITION))
+	{
+		GetOuter()->RemoveEFlags(EFL_DIRTY_SPATIAL_PARTITION);
+
+		Assert(GetOuter()->entindex() != 0);
+
+		// Don't bother with deleted things
+		if (GetOuter()->entindex() == -1)
+			return;
+
+		if (GetPartitionHandle() == PARTITION_INVALID_HANDLE)
+		{
+			CreatePartitionHandle();
+			UpdateServerPartitionMask();
+		}
+
+		BaseClass::UpdatePartition();
+	}
+}

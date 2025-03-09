@@ -4488,6 +4488,10 @@ public:
 		return QAngle(random.x, random.y, random.z);
 	}
 
+	void AddDirtyEntity(IEngineObject* pEntity) {
+		BaseClass::AddDirtyEntity(pEntity);
+	}
+
 protected:
 	virtual void AfterCreated(IHandleEntity* pEntity);
 	virtual void BeforeDestroy(IHandleEntity* pEntity);
@@ -4668,6 +4672,10 @@ protected:
 
 	Vector ModelSpaceLandmark(int modelIndex);
 
+	virtual int GetPartitionMask() const
+	{
+		return PARTITION_SERVER_GAME_EDICTS;
+	}
 private:
 	CEntityFactoryDictionary m_EntityFactoryDictionary;
 	int m_iHighestEnt; // the topmost used array index
@@ -4757,6 +4765,7 @@ private:
 template<class T>
 bool CGlobalEntityList<T>::Init()
 {
+	BaseClass::Init();
 	factorylist_t factories;
 
 	// Get the list of interface factories to extract the physics DLL's factory
@@ -4791,6 +4800,7 @@ bool CGlobalEntityList<T>::Init()
 template<class T>
 void CGlobalEntityList<T>::Shutdown()
 {
+	BaseClass::Shutdown();
 	RemoveDataAccessor(TOUCHLINK);
 	RemoveDataAccessor(GROUNDLINK);
 	RemoveDataAccessor(STEPSIMULATION);
@@ -4887,6 +4897,7 @@ void CGlobalEntityList<T>::LevelShutdownPreEntity()
 template<class T>
 void CGlobalEntityList<T>::LevelShutdownPostEntity()
 {
+	BaseClass::LevelShutdownPostEntity();
 	if (!m_pPhysenv)
 		return;
 

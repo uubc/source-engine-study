@@ -22,6 +22,8 @@
 #include "cmodel.h"
 #include "tier1/utldict.h"
 #include "vphysics_interface.h"
+#include "tier0/threadtools.h"
+#include "tier0/tslist.h"
 
 class CPhysCollide;
 
@@ -469,14 +471,46 @@ private:
 	IEntityDataInstantiator<T>* m_Accessors[MAX_ACCESSORS];
 };
 
+//-----------------------------------------------------------------------------
+// KD tree query callbacks
+//-----------------------------------------------------------------------------
 template<class T>// = IHandleEntity
-class CBaseEntityList
+class CBaseEntityList : public IPartitionQueryCallback
 {
 public:
 	CBaseEntityList();
 	~CBaseEntityList();
 	
-	
+	// Members of IGameSystem
+	virtual bool Init();
+	virtual void Shutdown();
+	virtual void LevelShutdownPostEntity();
+
+	// Members of IPartitionQueryCallback
+	virtual void OnPreQuery_V1() { Assert(0); }
+	virtual void OnPreQuery(SpatialPartitionListMask_t listMask);
+	virtual void OnPostQuery(SpatialPartitionListMask_t listMask);
+
+	void AddDirtyEntity(IEngineObject* pEntity);
+
+	void LockPartitionForRead()
+	{
+		int nThreadId = g_nThreadID;
+		if (m_nReadLockCount[nThreadId] == 0)
+		{
+			m_partitionMutex.LockForRead();
+		}
+		m_nReadLockCount[nThreadId]++;
+	}
+	void UnlockPartitionForRead()
+	{
+		int nThreadId = g_nThreadID;
+		m_nReadLockCount[nThreadId]--;
+		if (m_nReadLockCount[nThreadId] == 0)
+		{
+			m_partitionMutex.UnlockRead();
+		}
+	}
 	// Get an ehandle from a networkable entity's index (note: if there is no entity in that slot,
 	// then the ehandle will be invalid and produce NULL).
 	CBaseHandle GetNetworkableHandle( int iEntity ) const;
@@ -504,6 +538,8 @@ public:
 	//void NotifyCreateEntity(T* pEnt);
 	void NotifySpawn(T* pEnt);
 	//void NotifyRemoveEntity(T* pEnt);
+
+	void UpdateDirtySpatialPartitionEntities();
 protected:
 	void ReserveSlot(int index);
 	bool IsReservedSlot(int index);
@@ -531,6 +567,9 @@ protected:
 	void* CreateDataObject(int type, T* instance);
 	void DestroyDataObject(int type, T* instance);
 
+	virtual int GetPartitionMask() const = 0;
+	virtual T* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
+	virtual bool ShouldFastReturn() { return false; }
 protected:
 	//CBaseHandle AddEntityAtSlot( T *pEnt, int iSlot, int iForcedSerialNum );
 	//void RemoveEntityAtSlot( int iSlot );
@@ -544,7 +583,147 @@ protected:
 	CEntInfoList<T>	m_freeNonNetworkableList;
 	CUtlVector<IEntityListener<T>*>	m_entityListeners;
 	CDataObjectAccessSystem<T> m_DataObjectAccessSystem;
+
+	int m_nReadLockCount[MAX_THREADS_SUPPORTED];
+
+	CTSListWithFreeList<CBaseHandle> m_DirtyEntities;
+	CThreadSpinRWLock	 m_partitionMutex;
+	uint32			 m_partitionWriteId;
+	CTHREADLOCALINT	 m_readLockCount;
 };
+
+//-----------------------------------------------------------------------------
+// Initialization, shutdown
+//-----------------------------------------------------------------------------
+template<class T>
+bool CBaseEntityList<T>::Init()
+{
+	partition->InstallQueryCallback(this);
+	return true;
+}
+
+template<class T>
+void CBaseEntityList<T>::Shutdown()
+{
+	partition->RemoveQueryCallback(this);
+}
+
+//-----------------------------------------------------------------------------
+// Members of IGameSystem
+//-----------------------------------------------------------------------------
+template<class T>
+void CBaseEntityList<T>::LevelShutdownPostEntity()
+{
+	m_DirtyEntities.RemoveAll();
+}
+
+//-----------------------------------------------------------------------------
+// Makes sure all entries in the KD tree are in the correct position
+//-----------------------------------------------------------------------------
+template<class T>
+void CBaseEntityList<T>::AddDirtyEntity(IEngineObject* pEntity)
+{
+	m_DirtyEntities.PushItem(pEntity->GetRefEHandle());
+}
+
+//-----------------------------------------------------------------------------
+// Makes sure all entries in the KD tree are in the correct position
+//-----------------------------------------------------------------------------
+template<class T>
+void CBaseEntityList<T>::OnPreQuery(SpatialPartitionListMask_t listMask)
+{
+	const int validMask = GetPartitionMask();
+
+	if (!(listMask & validMask))
+		return;
+
+	int nThreadID = g_nThreadID;
+
+	if (m_partitionWriteId != 0 && m_partitionWriteId == nThreadID + 1)
+		return;
+
+	if (ShouldFastReturn()) {
+		LockPartitionForRead();
+		return;
+	}
+
+	// if you're holding a read lock, then these are entities that were still dirty after your trace started
+	// or became dirty due to some other thread or callback. Updating them may cause corruption further up the
+	// stack (e.g. partition iterator).  Ignoring the state change should be safe since it happened after the 
+	// trace was requested or was unable to be resolved in a previous attempt (still dirty).
+	if (m_DirtyEntities.Count() && !m_nReadLockCount[nThreadID])
+	{
+		CUtlVector< CBaseHandle > vecStillDirty;
+		m_partitionMutex.LockForWrite();
+		m_partitionWriteId = nThreadID + 1;
+		CTSListWithFreeList<CBaseHandle>::Node_t* pCurrent, * pNext;
+		while ((pCurrent = m_DirtyEntities.Detach()) != NULL)
+		{
+			while (pCurrent)
+			{
+				CBaseHandle handle = pCurrent->elem;
+				pNext = (CTSListWithFreeList<CBaseHandle>::Node_t*)pCurrent->Next;
+				m_DirtyEntities.FreeNode(pCurrent);
+				pCurrent = pNext;
+
+				T* pEntity = GetBaseEntityFromHandle(handle);
+
+				if (pEntity)
+				{
+					// If an entity is in the middle of bone setup, don't call UpdatePartition
+					//  which can cause it to redo bone setup on the same frame causing a recursive
+					//  call to bone setup.
+					if (!pEntity->GetEngineObject()->IsEFlagSet(EFL_SETTING_UP_BONES))
+					{
+						pEntity->GetEngineObject()->UpdatePartition();
+					}
+					else
+					{
+						vecStillDirty.AddToTail(handle);
+					}
+				}
+			}
+		}
+		if (vecStillDirty.Count() > 0)
+		{
+			for (int i = 0; i < vecStillDirty.Count(); i++)
+			{
+				m_DirtyEntities.PushItem(vecStillDirty[i]);
+			}
+		}
+		m_partitionWriteId = 0;
+		m_partitionMutex.UnlockWrite();
+	}
+	LockPartitionForRead();
+}
+
+//-----------------------------------------------------------------------------
+// Makes sure all entries in the KD tree are in the correct position
+//-----------------------------------------------------------------------------
+template<class T>
+void CBaseEntityList<T>::OnPostQuery(SpatialPartitionListMask_t listMask)
+{
+
+	if (!(listMask & GetPartitionMask()))
+		return;
+
+	if (m_partitionWriteId != 0)
+		return;
+
+	UnlockPartitionForRead();
+}
+
+//-----------------------------------------------------------------------------
+// Force spatial partition updates (to avoid threading problems caused by lazy update)
+//-----------------------------------------------------------------------------
+template<class T>
+void CBaseEntityList<T>::UpdateDirtySpatialPartitionEntities()
+{
+	SpatialPartitionListMask_t listMask;
+	listMask = GetPartitionMask();
+	OnPreQuery(listMask);
+	OnPostQuery(listMask);
+}
 
 template<class T>
 inline void CBaseEntityList<T>::ReserveSlot(int index) {
@@ -751,12 +930,15 @@ CBaseEntityList<T>::CBaseEntityList()
 		CEntInfo<T>* pList = &m_EntPtrArray[i];
 		m_freeNonNetworkableList.AddToTail(pList);
 	}
+	m_DirtyEntities.Purge();
+	memset(m_nReadLockCount, 0, sizeof(m_nReadLockCount));
 }
 
 template<class T>
 CBaseEntityList<T>::~CBaseEntityList()
 {
 	Clear();
+	m_DirtyEntities.Purge();
 }
 
 //template<class T>

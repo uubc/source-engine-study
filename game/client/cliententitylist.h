@@ -3076,6 +3076,17 @@ protected:
 	bool DoRestoreEntity(T* pEntity, IRestore* pRestore);
 	int RestoreEntity(T* pEntity, IRestore* pRestore, entitytable_t* pEntInfo);
 	void SaveEntityOnTable(T* pEntity, CSaveRestoreData* pSaveData, int& iSlot);
+
+	virtual int GetPartitionMask() const 
+	{
+		return PARTITION_CLIENT_GAME_EDICTS;
+	}
+
+	virtual bool ShouldFastReturn() 
+	{ 
+		// FIXME: This should really be an assertion... feh!
+		return !IsAbsRecomputationsEnabled();
+	}
 // Internal to client DLL.
 public:
 
@@ -3162,7 +3173,7 @@ public:
 	// Update client side animations
 	void UpdateClientSideAnimations();
 	void UpdateDirtySpatialPartitionEntities() {
-		::UpdateDirtySpatialPartitionEntities();
+		BaseClass::UpdateDirtySpatialPartitionEntities();
 	}
 
 	int GetPredictionRandomSeed(void);
@@ -3425,6 +3436,10 @@ public:
 		random.y = RandomFloat(minVal, maxVal);
 		random.z = RandomFloat(minVal, maxVal);
 		return QAngle(random.x, random.y, random.z);
+	}
+
+	void AddDirtyEntity(IEngineObject* pEntity) {
+		BaseClass::AddDirtyEntity(pEntity);
 	}
 private:
 	void AddPVSNotifier(IClientUnknown* pUnknown);
@@ -4050,6 +4065,7 @@ CClientEntityList<T>::~CClientEntityList(void)
 template<class T>
 bool CClientEntityList<T>::Init()
 {
+	BaseClass::Init();
 	factorylist_t factories;
 
 	// Get the list of interface factories to extract the physics DLL's factory
@@ -4086,6 +4102,7 @@ bool CClientEntityList<T>::Init()
 template<class T>
 void CClientEntityList<T>::Shutdown()
 {
+	BaseClass::Shutdown();
 	RemoveDataAccessor(TOUCHLINK);
 	RemoveDataAccessor(GROUNDLINK);
 	RemoveDataAccessor(STEPSIMULATION);
@@ -4168,6 +4185,7 @@ void CClientEntityList<T>::LevelShutdownPreEntity()
 template<class T>
 void CClientEntityList<T>::LevelShutdownPostEntity()
 {
+	BaseClass::LevelShutdownPostEntity();
 	if (m_pPhysenv)
 	{
 		// environment destroys all objects

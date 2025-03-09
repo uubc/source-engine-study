@@ -21,12 +21,6 @@
 #include "iserverentity.h"
 #include "icliententity.h"
 
-//-----------------------------------------------------------------------------
-// Force spatial partition updates (to avoid threading problems caused by lazy update)
-//-----------------------------------------------------------------------------
-void UpdateDirtySpatialPartitionEntities();
-
-
 
 //-----------------------------------------------------------------------------
 // Encapsulates collision representation for an entity
@@ -71,7 +65,7 @@ public:
 	unsigned short	GetPartitionHandle() const;
 
 	// Marks the spatial partition dirty
-	void			MarkPartitionHandleDirty();
+	virtual void	 MarkPartitionHandleDirty();
 
 	// Sets the collision bounds + the size (OBB)
 	void			SetCollisionBounds( const Vector& mins, const Vector &maxs );
@@ -89,7 +83,7 @@ public:
 	void			SetSurroundingBoundsType( SurroundingBoundsType_t type, const Vector *pMins = NULL, const Vector *pMaxs = NULL );
 
 	// Sets the solid type (which type of collision representation)
-	void			SetSolid( SolidType_t val );
+	virtual void	SetSolid( SolidType_t val );
 
 	// Methods related to size. The OBB here is measured in CollisionSpace
 	// (specified by GetCollisionToWorld)
@@ -114,11 +108,11 @@ public:
 	void			RemoveSolidFlags( int flags );
 	void			AddSolidFlags( int flags );
 	bool			IsSolidFlagSet( int flagMask ) const;
-	void		 	SetSolidFlags( int flags );
+	virtual void	SetSolidFlags( int flags );
 	bool			IsSolid() const;
 
 	// Updates the spatial partition
-	void			UpdatePartition( );
+	virtual void	UpdatePartition( );
 
 	// Are the bounds defined in entity space?
 	bool			IsBoundsDefinedInEntitySpace() const;
@@ -173,12 +167,12 @@ public:
 	bool			DoesVPhysicsInvalidateSurroundingBox( ) const;
 
 	// Marks the entity has having a dirty surrounding box
-	void			MarkSurroundingBoundsDirty();
+	virtual void	MarkSurroundingBoundsDirty();
 
 	// Compute the largest dot product of the OBB and the specified direction vector
 	float			ComputeSupportMap( const Vector &vecDirection ) const;
 
-private:
+protected:
 	// Transforms an AABB measured in collision space to a box that surrounds it in world space
 	void CollisionAABBToWorldAABB( const Vector &entityMins, const Vector &entityMaxs, Vector *pWorldMins, Vector *pWorldMaxs ) const;
 
@@ -198,16 +192,11 @@ private:
 	// Computes the surrounding collision bounds based on whatever algorithm we want...
 	void ComputeSurroundingBox( Vector *pVecWorldMins, Vector *pVecWorldMaxs );
 
-	// Check for untouch
-	void CheckForUntouch();
-
-	// Updates the spatial partition
-	void UpdateServerPartitionMask( );
-
 	// Outer
 	virtual IEngineObject*GetOuter() = 0;
 	virtual const IEngineObject*GetOuter() const = 0;
 
+	virtual void FixChildrenFlags() {}
 private:
 
 	CNetworkVector( m_vecMinsPreScaled );
@@ -477,6 +466,12 @@ public:
 	{
 		return m_pOuter;
 	}
+
+	void	 MarkPartitionHandleDirty();
+	void	SetSolidFlags(int flags);
+	void	MarkSurroundingBoundsDirty();
+	void	SetSolid(SolidType_t val);
+	void	UpdatePartition();
 private:
 	IEngineObjectClient* m_pOuter;
 };
@@ -504,6 +499,17 @@ public:
 	{
 		return m_pOuter;
 	}
+
+	void	 MarkPartitionHandleDirty();
+	void	SetSolidFlags(int flags);
+	void	MarkSurroundingBoundsDirty();
+	void	SetSolid(SolidType_t val);
+	void	FixChildrenFlags();
+	// Check for untouch
+	void CheckForUntouch();
+	void	UpdatePartition();
+	// Updates the spatial partition
+	void UpdateServerPartitionMask();
 private:
 	IEngineObjectServer* m_pOuter;
 };
