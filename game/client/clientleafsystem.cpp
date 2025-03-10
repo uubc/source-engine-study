@@ -20,7 +20,8 @@
 #include "vstdlib/jobthread.h"
 #include "tier1/utllinkedlist.h"
 #include "datacache/imdlcache.h"
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
+
 #include "clientleafsystem.h"
 #include "iclientshadowmgr.h"
 #include "detailobjectsystem.h"
@@ -34,7 +35,9 @@ static ConVar cl_drawleaf("cl_drawleaf", "-1", FCVAR_CHEAT );
 static ConVar r_PortalTestEnts( "r_PortalTestEnts", "1", FCVAR_CHEAT, "Clip entities against portal frustums." );
 static ConVar r_portalsopenall( "r_portalsopenall", "0", FCVAR_CHEAT, "Open all portals" );
 static ConVar cl_threaded_client_leaf_system("cl_threaded_client_leaf_system", "0"  );
-
+extern IVEngineClient* engine;
+extern IVModelInfoClient* modelinfo;
+extern CGlobalVarsBase* gpGlobals;
 
 DEFINE_FIXEDSIZE_ALLOCATOR( CClientRenderablesList, 1, CUtlMemoryPool::GROW_SLOW );
 

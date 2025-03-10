@@ -6,6 +6,7 @@
 // $NoKeywords: $
 //===========================================================================//
 //#include "cbase.h"
+#include "tier2/tier2.h"
 #include "gamebspfile.h"
 #include "tier1/utlbuffer.h"
 #include "tier1/utlmap.h"
@@ -31,8 +32,8 @@
 #endif
 
 #include "clientleafsystem.h"
-#include "sharedInterface.h"
-#include "cdll_client_int.h"
+//#include "sharedInterface.h"
+//#include "cdll_client_int.h"
 #include "iviewrender.h"
 #include "clientmode.h"
 #include "detailobjectsystem.h"
@@ -59,6 +60,10 @@ ConVar cl_detail_avoid_radius( "cl_detail_avoid_radius", "0", FCVAR_ARCHIVE, "ra
 ConVar cl_detail_avoid_force( "cl_detail_avoid_force", "0", FCVAR_ARCHIVE, "force with which to avoid players ( in units, percentage of the width of the detail sprite )" );
 ConVar cl_detail_avoid_recover_speed( "cl_detail_avoid_recover_speed", "0", FCVAR_ARCHIVE, "how fast to recover position after avoiding players" );
 #endif
+extern IVModelInfoClient* modelinfo;
+extern IVModelRender* modelrender;
+extern IVEngineClient* engine;
+extern IBaseClientDLL* clientdll;
 
 // Per detail instance information
 struct DetailModelAdvInfo_t
@@ -107,7 +112,7 @@ struct SptrintInfo_t
 
 class CDetailModel : public IClientUnknown, public IClientRenderable
 {
-	DECLARE_CLASS_NOBASE( CDetailModel );
+	typedef CDetailModel ThisClass;;
 
 public:
 	CDetailModel();
@@ -2051,7 +2056,7 @@ int CDetailObjectSystem::SortSpritesBackToFront( int nLeaf, const Vector &viewOr
 	ClientLeafSystem()->GetDetailObjectsInLeaf( nLeaf, nFirstDetailObject, nDetailObjectCount );
 
 	float flFactor = 1.0f;
-	IClientEntity *pLocalPlayer = EntityList()->GetLocalPlayer();
+	IClientEntity *pLocalPlayer = entitylist->GetLocalPlayer();
 	if ( pLocalPlayer )
 	{
 		flFactor = 1.0 / pLocalPlayer->GetFOVDistanceAdjustFactor();
@@ -2806,7 +2811,7 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 	}
 
 	float factor = 1.0f;
-	IClientEntity *local = EntityList()->GetLocalPlayer();
+	IClientEntity *local = entitylist->GetLocalPlayer();
 	if ( local )
 	{
 		factor = local->GetFOVDistanceAdjustFactor();

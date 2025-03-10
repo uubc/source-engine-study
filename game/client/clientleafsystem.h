@@ -21,7 +21,7 @@
 #include "ivrenderview.h"
 #include "tier1/mempool.h"
 #include "tier1/refcount.h"
-
+#include "icliententity.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations

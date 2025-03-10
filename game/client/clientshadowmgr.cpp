@@ -54,6 +54,7 @@
 // the shadow from all studio models
 //===========================================================================//
 
+#include "tier2/tier2.h"
 #include "model_types.h"
 #include "bitmap/imageformat.h"
 #include "materialsystem/imaterialproxy.h"
@@ -73,9 +74,9 @@
 #include "tier0/icommandline.h"
 #include "vstdlib/jobthread.h"
 #include "cmodel.h"
+#include "icliententity.h"
 
 #include "bonetoworldarray.h"
-#include "cdll_client_int.h"
 #include "iclientshadowmgr.h"
 #include "iviewrender.h"
 #include "clientleafsystem.h"
@@ -102,6 +103,14 @@ ConVar r_threaded_client_shadow_manager( "r_threaded_client_shadow_manager", "0"
 #pragma warning( disable: 4701 )
 #endif
 
+extern CGlobalVarsBase* gpGlobals;
+extern IShadowMgr* shadowmgr;
+extern IVEngineClient* engine;
+extern IStaticPropMgrClient* staticpropmgr;
+extern IVDebugOverlay* debugoverlay;
+extern IVModelInfoClient* modelinfo;
+extern IMDLCache* mdlcache;
+extern IVModelRender* modelrender;
 // forward declarations
 void ToolFramework_RecordMaterialParams( IMaterial *pMaterial );
 
@@ -1070,7 +1079,7 @@ void CVisibleShadowList::EnumShadow( unsigned short clientShadowHandle )
 	if ( shadowInfo.m_FalloffBias == 255 )
 		return;
 
-	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+	IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 	Assert( pRenderable );
 
 	// Don't bother with children of hierarchy; they will be drawn with their parents
@@ -1583,7 +1592,7 @@ void CClientShadowMgr::SetupRenderToTextureShadow( ClientShadowHandle_t h )
 	// First, compute how much texture memory we want to use.
 	ClientShadow_t& shadow = m_Shadows[h];
 	
-	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+	IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 	if ( !pRenderable )
 		return;
 
@@ -1636,7 +1645,7 @@ void CClientShadowMgr::UpdateAllShadows()
 		if ( ( shadow.m_Flags & SHADOW_FLAGS_FLASHLIGHT ) != 0 )
 			continue;
 
-		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+		IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 		if ( !pRenderable )
 			continue;
 
@@ -1798,7 +1807,7 @@ ClientShadowHandle_t CClientShadowMgr::CreateProjectedTexture( CBaseHandle entit
 	// We need to know if it's a brush model for shadows
 	if( !( flags & SHADOW_FLAGS_FLASHLIGHT ) )
 	{
-		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( entity );
+		IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( entity );
 		int modelType = modelinfo->GetModelType( pRenderable->GetModel() );
 		if (modelType == mod_brush)
 		{
@@ -1878,7 +1887,7 @@ ClientShadowHandle_t CClientShadowMgr::CreateShadow( CBaseHandle entity, int fla
 	flags |= SHADOW_FLAGS_SHADOW | SHADOW_FLAGS_TEXTURE_DIRTY;
 	ClientShadowHandle_t shadowHandle = CreateProjectedTexture( entity, flags );
 
-	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( entity );
+	IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( entity );
 	if ( pRenderable )
 	{
 		Assert( !pRenderable->IsShadowDirty( ) );
@@ -1918,7 +1927,7 @@ void CClientShadowMgr::RemoveShadowFromDirtyList( ClientShadowHandle_t handle )
 	if ( idx != m_DirtyShadows.InvalidIndex() )
 	{
 		// Clean up the shadow update bit.
-		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( m_Shadows[handle].m_Entity );
+		IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( m_Shadows[handle].m_Entity );
 		if ( pRenderable )
 		{
 			pRenderable->MarkShadowDirty( false );
@@ -2197,7 +2206,7 @@ void CClientShadowMgr::ComputeExtraClipPlanes( IClientRenderable* pRenderable,
 	}
 
 	ClientShadow_t& shadow = m_Shadows[handle];
-	IClientEntity *pEntity = EntityList()->GetBaseEntityFromHandle( shadow.m_Entity );
+	IClientEntity *pEntity = entitylist->GetBaseEntityFromHandle( shadow.m_Entity );
 	if ( pEntity && pEntity->IsEnableRenderingClipPlane() )
 	{
 		normal[ 0 ] = -pEntity->GetRenderClipPlane()[ 0 ];
@@ -2954,7 +2963,7 @@ void CClientShadowMgr::PreRender()
 IClientRenderable *CClientShadowMgr::GetParentShadowEntity( ClientShadowHandle_t handle )
 {
 	ClientShadow_t& shadow = m_Shadows[handle];
-	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+	IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 	if ( pRenderable )
 	{
 		if ( ShouldUseParentShadow( pRenderable ) )
@@ -3027,7 +3036,7 @@ void CClientShadowMgr::AddToDirtyShadowList( IClientRenderable *pRenderable, boo
 	// Make sure everything's consistent
 	if ( handle != CLIENTSHADOW_INVALID_HANDLE )
 	{
-		IClientRenderable *pShadowRenderable = EntityList()->GetClientRenderableFromHandle( m_Shadows[handle].m_Entity );
+		IClientRenderable *pShadowRenderable = entitylist->GetClientRenderableFromHandle( m_Shadows[handle].m_Entity );
 		Assert( pRenderable == pShadowRenderable );
 	}
 #endif
@@ -3071,7 +3080,7 @@ void CClientShadowMgr::UpdateShadow( ClientShadowHandle_t handle, bool force )
 	ClientShadow_t& shadow = m_Shadows[handle];
 
 	// Get the client entity....
-	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+	IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 	if ( !pRenderable )
 	{
 		// Retire the shadow if the entity is gone
@@ -3431,7 +3440,7 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 	ClientShadow_t &shadow = m_Shadows[handle];
 
 	// Don't add a shadow cast by an object to itself...
-	IClientRenderable* pSourceRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+	IClientRenderable* pSourceRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 
 	// NOTE: if pSourceRenderable == NULL, the source is probably a flashlight since there is no entity.
 	if (pSourceRenderable == pRenderable)
@@ -3708,7 +3717,7 @@ bool CClientShadowMgr::BuildSetupListForRenderToTextureShadow( unsigned short cl
 			return false;
 
 		// shadow to be redrawn; for now, we'll always do it.
-		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+		IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 
 		if ( BuildSetupShadowHierarchy( pRenderable, shadow ) )
 			return true;
@@ -3745,7 +3754,7 @@ bool CClientShadowMgr::DrawRenderToTextureShadow( unsigned short clientShadowHan
 	if ( bNeedsRedraw || bDirtyTexture )
 	{
 		// shadow to be redrawn; for now, we'll always do it.
-		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle( shadow.m_Entity );
+		IClientRenderable *pRenderable = entitylist->GetClientRenderableFromHandle( shadow.m_Entity );
 
 		CMatRenderContextPtr pRenderContext( materials );
 		
