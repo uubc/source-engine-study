@@ -64,6 +64,18 @@ extern IVModelInfoClient* modelinfo;
 extern IVModelRender* modelrender;
 extern IVEngineClient* engine;
 extern IBaseClientDLL* clientdll;
+extern CGlobalVarsBase* gpGlobals;
+#ifdef POSIX
+#define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
+#endif
+#if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
+namespace _SUBSYSTEM
+{
+	extern IUniformRandomStream* random;
+}
+#else
+extern IUniformRandomStream* random;
+#endif
 
 // Per detail instance information
 struct DetailModelAdvInfo_t
@@ -1337,7 +1349,7 @@ void CDetailModel::UpdatePlayerAvoid( void )
 	{
 		if ( i == c )
 		{
-			pEnt = EntityList()->GetLocalPlayer();
+			pEnt = entitylist->GetLocalPlayer();
 			if ( !pEnt ) continue;
 		}
 		else
