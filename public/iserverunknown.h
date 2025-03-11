@@ -33,12 +33,14 @@ public:
 	virtual IServerNetworkable*	GetNetworkable() = 0;
 	//virtual int					entindex() const = 0;
 	virtual int				entindex() const {
-		CBaseHandle Handle = this->GetRefEHandle();
-		if (Handle == INVALID_ENTITY_HANDLE) {
-			return -1;
-		}
-		else {
+		const CBaseHandle& Handle = this->GetRefEHandle();
+		if (Handle.IsValid()) 
+		{
 			return Handle.GetEntryIndex();
+		}
+		else 
+		{
+			return -1;
 		}
 	};
 	virtual const char*			GetClassName() const = 0;

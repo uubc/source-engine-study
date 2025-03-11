@@ -5173,7 +5173,7 @@ void C_EngineObjectInternal::PhysicsNotifyOtherOfGroundRemoval(IEngineObjectClie
 void C_EngineObjectInternal::PhysicsRemoveGround(clientgroundlink_t* link)
 {
 	// Every start Touch gets a corresponding end touch
-	if (link->entity != INVALID_EHANDLE_INDEX)
+	if (link->entity != NULL)
 	{
 		IClientEntity* linkEntity = (IClientEntity*)g_EntityList.GetClientEntityFromHandle(link->entity);
 		IClientEntity* otherEntity = this->m_pOuter;

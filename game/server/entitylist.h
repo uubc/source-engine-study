@@ -264,12 +264,14 @@ public:
 	}
 
 	int entindex() const {
-		CBaseHandle Handle = this->GetRefEHandle();
-		if (Handle == INVALID_ENTITY_HANDLE) {
-			return -1;
-		}
-		else {
+		const CBaseHandle& Handle = this->GetRefEHandle();
+		if (Handle.IsValid()) 
+		{
 			return Handle.GetEntryIndex();
+		}
+		else 
+		{
+			return -1;
 		}
 	};
 
@@ -6715,7 +6717,7 @@ CGlobalEntityList<T>::CGlobalEntityList()
 template<class T>
 void CGlobalEntityList<T>::AddToDeleteList(T* ent)
 {
-	if (ent && ent->GetRefEHandle() != INVALID_EHANDLE_INDEX)
+	if (ent && ent->GetRefEHandle() != NULL)
 	{
 		m_DeleteList.AddToTail(ent);
 	}

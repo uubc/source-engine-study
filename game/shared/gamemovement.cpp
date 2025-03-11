@@ -792,7 +792,7 @@ CBaseHandle CGameMovement::TestPlayerPosition( const Vector& pos, int collisionG
 	}
 	else
 	{	
-		return INVALID_EHANDLE_INDEX;
+		return NULL;
 	}
 }
 
@@ -3385,7 +3385,7 @@ int CGameMovement::CheckStuck( void )
 	CreateStuckTable();
 
 	hitent = TestPlayerPosition( mv->GetAbsOrigin(), COLLISION_GROUP_PLAYER_MOVEMENT, traceresult );
-	if ( hitent == INVALID_ENTITY_HANDLE )
+	if ( !hitent.IsValid())
 	{
 		ResetStuckOffsets( player );
 		return 0;
@@ -3420,7 +3420,7 @@ int CGameMovement::CheckStuck( void )
 				GetRandomStuckOffsets( player, offset );
 				VectorAdd( base, offset, test );
 				
-				if ( TestPlayerPosition( test, COLLISION_GROUP_PLAYER_MOVEMENT, traceresult ) == INVALID_ENTITY_HANDLE )
+				if ( !TestPlayerPosition( test, COLLISION_GROUP_PLAYER_MOVEMENT, traceresult ).IsValid() )
 				{
 					ResetStuckOffsets( player );
 					mv->SetAbsOrigin( test );
@@ -3446,7 +3446,7 @@ int CGameMovement::CheckStuck( void )
 	GetRandomStuckOffsets( player, offset );
 	VectorAdd( base, offset, test );
 
-	if ( TestPlayerPosition( test, COLLISION_GROUP_PLAYER_MOVEMENT, traceresult ) == INVALID_ENTITY_HANDLE)
+	if ( !TestPlayerPosition( test, COLLISION_GROUP_PLAYER_MOVEMENT, traceresult ).IsValid() )
 	{
 		ResetStuckOffsets( player );
 		mv->SetAbsOrigin( test );
@@ -4020,7 +4020,7 @@ void CGameMovement::FixPlayerCrouchStuck( bool upward )
 	int direction = upward ? 1 : 0;
 
 	hitent = TestPlayerPosition( mv->GetAbsOrigin(), COLLISION_GROUP_PLAYER_MOVEMENT, dummy );
-	if (hitent == INVALID_ENTITY_HANDLE )
+	if (!hitent.IsValid())
 		return;
 	
 	VectorCopy( mv->GetAbsOrigin(), test );	
@@ -4030,7 +4030,7 @@ void CGameMovement::FixPlayerCrouchStuck( bool upward )
 		org.z += direction;
 		mv->SetAbsOrigin( org );
 		hitent = TestPlayerPosition( mv->GetAbsOrigin(), COLLISION_GROUP_PLAYER_MOVEMENT, dummy );
-		if (hitent == INVALID_ENTITY_HANDLE )
+		if (!hitent.IsValid())
 			return;
 	}
 

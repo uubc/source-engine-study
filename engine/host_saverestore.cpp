@@ -711,10 +711,10 @@ bool CSave::ShouldSaveField(const void* pData, typedescription_t * pField)
 			Assert(0);
 		}
 
-		int* pEHandle = (int*)pData;
+		CBaseHandle* pEHandle = (CBaseHandle*)pData;
 		for (int i = 0; i < pField->fieldSize; ++i, ++pEHandle)
 		{
-			if ((*pEHandle) != INVALID_EHANDLE_INDEX)
+			if ((*pEHandle).IsValid())
 				return true;
 		}
 	}

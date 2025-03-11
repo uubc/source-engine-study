@@ -175,12 +175,14 @@ public:
 	}
 
 	int entindex() const {
-		CBaseHandle Handle = this->GetRefEHandle();
-		if (Handle == INVALID_ENTITY_HANDLE) {
-			return -1;
-		}
-		else {
+		const CBaseHandle& Handle = this->GetRefEHandle();
+		if (Handle.IsValid()) 
+		{
 			return Handle.GetEntryIndex();
+		}
+		else 
+		{
+			return -1;
 		}
 	};
 	bool IsNetworkable(void) { return entindex() >= 0 && entindex() < MAX_EDICTS; }

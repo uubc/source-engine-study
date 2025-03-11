@@ -107,7 +107,7 @@ public:
 };
 
 // Maximum size of entity list
-#define INVALID_CLIENTENTITY_HANDLE CBaseHandle( INVALID_EHANDLE_INDEX )
+#define INVALID_CLIENTENTITY_HANDLE CBaseHandle(NULL)
 
 //-----------------------------------------------------------------------------
 // Converts an IHandleEntity to an CBaseEntity

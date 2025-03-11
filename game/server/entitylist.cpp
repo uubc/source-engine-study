@@ -5926,7 +5926,7 @@ void CEngineObjectInternal::PhysicsRemoveToucher(servertouchlink_t* link)
 {
 	// Every start Touch gets a corresponding end touch
 	if ((link->flags & FTOUCHLINK_START_TOUCH) &&
-		link->entityTouched != INVALID_EHANDLE_INDEX)
+		link->entityTouched != NULL)
 	{
 		IServerEntity* pEntity = gEntList.GetBaseEntityFromHandle(link->entityTouched);
 		this->m_pOuter->EndTouch(pEntity);
@@ -6044,7 +6044,7 @@ void CEngineObjectInternal::PhysicsNotifyOtherOfGroundRemoval(IEngineObjectServe
 void CEngineObjectInternal::PhysicsRemoveGround(servergroundlink_t* link)
 {
 	// Every start Touch gets a corresponding end touch
-	if (link->entity != INVALID_EHANDLE_INDEX)
+	if (link->entity != NULL)
 	{
 		IServerEntity* linkEntity = gEntList.GetBaseEntityFromHandle(link->entity);
 		IServerEntity* otherEntity = this->m_pOuter;

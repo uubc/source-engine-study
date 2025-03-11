@@ -14,10 +14,7 @@
 #include "const.h"
 #include "tier0/dbg.h"
 
-#define INVALID_ENTITY_HANDLE INVALID_EHANDLE_INDEX
-
 class IHandleEntity;
-
 
 // -------------------------------------------------------------------------------------------------- //
 // CBaseHandle.
@@ -32,7 +29,7 @@ public:
 
 	CBaseHandle();
 	CBaseHandle( const CBaseHandle &other );
-	CBaseHandle( uintp value );
+	CBaseHandle( IHandleEntity* pEntity );
 	CBaseHandle( int iEntry, int iSerialNumber );
 
 	void Init( int iEntry, int iSerialNumber );
@@ -82,9 +79,16 @@ inline CBaseHandle::CBaseHandle( const CBaseHandle &other )
 	m_Index = other.m_Index;
 }
 
-inline CBaseHandle::CBaseHandle( uintp value )
+inline CBaseHandle::CBaseHandle( IHandleEntity* pEntity)
 {
-	m_Index = value;
+	if (pEntity)
+	{
+		*this = pEntity->GetRefEHandle();
+	}
+	else
+	{
+		m_Index = INVALID_EHANDLE_INDEX;
+	}
 }
 
 inline CBaseHandle::CBaseHandle( int iEntry, int iSerialNumber )
@@ -137,12 +141,12 @@ inline bool CBaseHandle::operator ==( const CBaseHandle &other ) const
 
 inline bool CBaseHandle::operator ==( const IHandleEntity* pEntity) const
 {
-	return operator==(pEntity ? pEntity->GetRefEHandle() : INVALID_EHANDLE_INDEX);
+	return pEntity ? operator==(pEntity->GetRefEHandle()) : m_Index == INVALID_EHANDLE_INDEX;
 }
 
 inline bool CBaseHandle::operator !=( const IHandleEntity* pEntity) const
 {
-	return operator!=(pEntity ? pEntity->GetRefEHandle() : INVALID_EHANDLE_INDEX);
+	return pEntity ? operator!=(pEntity->GetRefEHandle()) : m_Index != INVALID_EHANDLE_INDEX;
 }
 
 inline bool CBaseHandle::operator <( const CBaseHandle &other ) const

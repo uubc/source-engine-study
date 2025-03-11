@@ -833,7 +833,7 @@ inline short CBaseEntityList<T>::GetNetworkSerialNumber(int iEntity) const {
 template<class T>
 inline T* CBaseEntityList<T>::LookupEntity( const CBaseHandle &handle ) const
 {
-	if ( handle.m_Index == INVALID_EHANDLE_INDEX )
+	if ( !handle.IsValid() )
 		return NULL;
 
 	const CEntInfo<T> *pInfo = &m_EntPtrArray[ handle.GetEntryIndex() ];
@@ -858,7 +858,7 @@ template<class T>
 inline CBaseHandle CBaseEntityList<T>::FirstHandle() const
 {
 	if ( !m_activeList.Head() )
-		return INVALID_EHANDLE_INDEX;
+		return NULL;
 
 	int index = GetEntInfoIndex( m_activeList.Head() );
 	return CBaseHandle( index, m_EntPtrArray[index].m_SerialNumber );
@@ -870,7 +870,7 @@ inline CBaseHandle CBaseEntityList<T>::NextHandle( CBaseHandle hEnt ) const
 	int iSlot = hEnt.GetEntryIndex();
 	CEntInfo<T> *pNext = m_EntPtrArray[iSlot].m_pNext;
 	if ( !pNext )
-		return INVALID_EHANDLE_INDEX;
+		return NULL;
 
 	int index = GetEntInfoIndex( pNext );
 
@@ -880,7 +880,7 @@ inline CBaseHandle CBaseEntityList<T>::NextHandle( CBaseHandle hEnt ) const
 template<class T>
 inline CBaseHandle CBaseEntityList<T>::InvalidHandle()
 {
-	return INVALID_EHANDLE_INDEX;
+	return NULL;
 }
 
 template<class T>

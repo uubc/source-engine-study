@@ -460,7 +460,7 @@ CStaticProp::CStaticProp() : m_pModel(0), m_Alpha(255)
 {
 	m_ModelInstance = MODEL_INSTANCE_INVALID;
 	m_Partition = PARTITION_INVALID_HANDLE;
-	m_EntHandle = INVALID_EHANDLE_INDEX;
+	m_EntHandle = NULL;
 	m_RenderHandle = INVALID_CLIENT_RENDER_HANDLE;
 }
 

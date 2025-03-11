@@ -1253,7 +1253,7 @@ void CBaseEntity::PerformPush( float movetime )
 {
 	VPROF("CBaseEntity::PerformPush");
 	// NOTE: Use handle index because the previous blocker could have been deleted
-	int hPrevBlocker = m_pBlocker.ToInt();
+	EHANDLE hPrevBlocker = m_pBlocker;
 	CBaseEntity *pBlocker;
 	g_pPushedEntities->BeginPush( this );
 	if (movetime > 0)
@@ -1298,9 +1298,9 @@ void CBaseEntity::PerformPush( float movetime )
 		}
 
 		m_pBlocker = pBlocker;
-		if (m_pBlocker.ToInt() != hPrevBlocker)
+		if (m_pBlocker != hPrevBlocker)
 		{
-			if (hPrevBlocker != INVALID_EHANDLE_INDEX)
+			if (hPrevBlocker.IsValid())
 			{
 				EndBlocked();
 			}

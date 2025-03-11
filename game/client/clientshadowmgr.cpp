@@ -1865,7 +1865,7 @@ ClientShadowHandle_t CClientShadowMgr::CreateProjectedTexture( CBaseHandle entit
 ClientShadowHandle_t CClientShadowMgr::CreateFlashlight( const FlashlightState_t &lightState )
 {
 	// We don't really need a model entity handle for a projective light source, so use an invalid one.
-	static CBaseHandle invalidHandle(INVALID_EHANDLE_INDEX);
+	static CBaseHandle invalidHandle(NULL);
 
 	int shadowFlags = SHADOW_FLAGS_FLASHLIGHT | SHADOW_FLAGS_LIGHT_WORLD;
 	if( lightState.m_bEnableShadows && r_flashlightdepthtexture.GetBool() )
