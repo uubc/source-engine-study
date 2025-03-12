@@ -633,28 +633,9 @@ ConVar cl_autohelp(
 
 		m_flNextHostageAnnouncement = gpGlobals->curtime;	// asap.
 
-		ReadMultiplayCvars();
-
 		//m_pPrices = NULL;
 		//m_bBlackMarket = false;
 		m_bDontUploadStats = false;
-
-		// Create the team managers
-		for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
-		{
-			CTeam *pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "cs_team_manager" ));
-			pTeam->Init( sTeamNames[i], i );
-
-			g_Teams.AddToTail( pTeam );
-		}
-
-		if ( filesystem->FileExists( UTIL_VarArgs( "maps/cfg/%s.cfg", STRING(gpGlobals->mapname) ) ) )
-		{
-			// Execute a map specific cfg file - as in Day of Defeat
-			// Map names cannot contain quotes or control characters so this is safe but silly that we have to do it.
-			engine->ServerCommand( UTIL_VarArgs( "exec \"%s.cfg\" */maps\n", STRING(gpGlobals->mapname) ) );
-			engine->ServerExecute();
-		}
 
 #ifndef CLIENT_DLL
 		// stats
@@ -685,18 +666,167 @@ ConVar cl_autohelp(
 	//	SetBlackMarketPrices( false );
 	//}
 
+	void CCSGameWorld::LevelInit() 
+	{
+		BaseClass::LevelInit();
+		m_iRoundTime = 0;
+		m_iRoundWinStatus = WINNER_NONE;
+		m_iFreezeTime = 0;
+
+		m_fRoundStartTime = 0;
+		m_bAllowWeaponSwitch = true;
+		m_bFreezePeriod = true;
+		m_iNumTerrorist = m_iNumCT = 0;	// number of players per team
+		m_flRestartRoundTime = 0.1f; // restart first round as soon as possible
+		m_iNumSpawnableTerrorist = m_iNumSpawnableCT = 0;
+		m_bFirstConnected = false;
+		m_bCompleteReset = false;
+		m_iAccountTerrorist = m_iAccountCT = 0;
+		m_iNumCTWins = 0;
+		m_iNumTerroristWins = 0;
+		m_iNumConsecutiveCTLoses = 0;
+		m_iNumConsecutiveTerroristLoses = 0;
+		m_bTargetBombed = false;
+		m_bBombDefused = false;
+		m_iTotalRoundsPlayed = -1;
+		m_iUnBalancedRounds = 0;
+		m_flGameStartTime = 0;
+		m_iHostagesRemaining = 0;
+		m_bLevelInitialized = false;
+		m_bLogoMap = false;
+		m_tmNextPeriodicThink = 0;
+
+		m_bMapHasBombTarget = false;
+		m_bMapHasRescueZone = false;
+
+		m_iSpawnPointCount_Terrorist = 0;
+		m_iSpawnPointCount_CT = 0;
+
+		m_bTCantBuy = false;
+		m_bCTCantBuy = false;
+		m_bMapHasBuyZone = false;
+
+		m_iLoserBonus = 0;
+
+		m_iHostagesRescued = 0;
+		m_iHostagesTouched = 0;
+		m_flNextHostageAnnouncement = 0.0f;
+
+		//=============================================================================
+		// HPE_BEGIN
+		// [dwenger] Reset rescue-related achievement values
+		//=============================================================================
+
+		// [tj] reset flawless and lossless round related flags
+		m_bNoTerroristsKilled = true;
+		m_bNoCTsKilled = true;
+		m_bNoTerroristsDamaged = true;
+		m_bNoCTsDamaged = true;
+		m_pFirstKill = NULL;
+		m_firstKillTime = 0;
+
+		// [menglish] Reset fun fact values
+		m_pFirstBlood = NULL;
+		m_firstBloodTime = 0;
+
+		m_bCanDonateWeapons = true;
+
+		// [dwenger] Reset rescue-related achievement values
+		m_pLastRescuer = NULL;
+		m_iNumRescuers = 0;
+
+		m_hostageWasInjured = false;
+		m_hostageWasKilled = false;
+
+		m_pFunFactManager = new CCSFunFactMgr();
+		m_pFunFactManager->Init();
+
+		//=============================================================================
+		// HPE_END
+		//=============================================================================
+
+		m_iHaveEscaped = 0;
+		m_bMapHasEscapeZone = false;
+		m_iNumEscapers = 0;
+		m_iNumEscapeRounds = 0;
+
+		m_iMapHasVIPSafetyZone = 0;
+		m_pVIP = NULL;
+		m_iConsecutiveVIP = 0;
+
+		m_bMapHasBombZone = false;
+		m_bBombDropped = false;
+		m_bBombPlanted = false;
+		m_pLastBombGuy = NULL;
+
+		m_bAllowWeaponSwitch = true;
+
+		m_flNextHostageAnnouncement = gpGlobals->curtime;	// asap.
+
+		ReadMultiplayCvars();
+
+		//m_pPrices = NULL;
+		//m_bBlackMarket = false;
+		m_bDontUploadStats = false;
+
+		// Create the team managers
+		for (int i = 0; i < ARRAYSIZE(sTeamNames); i++)
+		{
+			CTeam* pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("cs_team_manager"));
+			pTeam->Init(sTeamNames[i], i);
+
+			g_Teams.AddToTail(pTeam);
+		}
+
+		if (filesystem->FileExists(UTIL_VarArgs("maps/cfg/%s.cfg", STRING(gpGlobals->mapname))))
+		{
+			// Execute a map specific cfg file - as in Day of Defeat
+			// Map names cannot contain quotes or control characters so this is safe but silly that we have to do it.
+			engine->ServerCommand(UTIL_VarArgs("exec \"%s.cfg\" */maps\n", STRING(gpGlobals->mapname)));
+			engine->ServerExecute();
+		}
+
+#ifndef CLIENT_DLL
+		// stats
+
+		if (g_flGameStatsUpdateTime == 0.0f)
+		{
+			memset(g_iWeaponPurchases, 0, sizeof(g_iWeaponPurchases));
+			memset(g_iTerroristVictories, 0, sizeof(g_iTerroristVictories));
+			memset(g_iCounterTVictories, 0, sizeof(g_iTerroristVictories));
+			g_flGameStatsUpdateTime = CS_GAME_STATS_UPDATE; //Next update is between 22 and 24 hours.
+		}
+#endif	
+	}
+
+	void CCSGameWorld::LevelShutdown() 
+	{
+		// Note, don't delete each team since they are in the gEntList and will 
+		// automatically be deleted from there, instead.
+		g_Teams.Purge();
+		if (m_pFunFactManager)
+		{
+			delete m_pFunFactManager;
+			m_pFunFactManager = NULL;
+		}
+
+		int iLevelIndex = GetCSLevelIndex(STRING(gpGlobals->mapname));
+
+		if (iLevelIndex != -1)
+		{
+			g_iTerroristVictories[iLevelIndex] += m_iNumTerroristWins;
+			g_iCounterTVictories[iLevelIndex] += m_iNumCTWins;
+		}
+
+		BaseClass::LevelShutdown();
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: 
 	//-----------------------------------------------------------------------------
 	CCSGameWorld::~CCSGameWorld()
 	{
-		// Note, don't delete each team since they are in the gEntList and will 
-		// automatically be deleted from there, instead.
-		g_Teams.Purge();
-		if( m_pFunFactManager )
-		{
-			delete m_pFunFactManager;
-		}
+		
 	}
 
 	//-----------------------------------------------------------------------------
@@ -1635,22 +1765,6 @@ ConVar cl_autohelp(
 
 		CheckWinConditions();
 	}
-
-
-	// Called when game rules are destroyed by CWorld
-	void CCSGameWorld::LevelShutdown()
-	{
-		int iLevelIndex = GetCSLevelIndex( STRING( gpGlobals->mapname ) );
-
-		if ( iLevelIndex != -1 )
-		{
-			g_iTerroristVictories[iLevelIndex] += m_iNumTerroristWins;
-			g_iCounterTVictories[iLevelIndex] += m_iNumCTWins;
-		}
-
-		BaseClass::LevelShutdown();
-	}
-
 	
 	//---------------------------------------------------------------------------------------------------
 	/**

@@ -151,6 +151,10 @@ public:
 	CCSGameWorld();
 	virtual ~CCSGameWorld();
 
+	virtual void	LevelInit();
+	virtual void	LevelShutdown();
+
+
 	void DumpTimers( void ) const;	// debugging to help track down a stuck server (rare?)
 
 	IServerEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );
@@ -162,9 +166,6 @@ public:
 
 	// Called at the end of GameFrame (i.e. after all game logic has run this frame)
 	virtual void EndGameFrame( void );
-
-	// Called when game rules are destroyed by CWorld
-	virtual void LevelShutdown( void );
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void PlayerSpawn( CBasePlayer *pPlayer );
@@ -428,7 +429,7 @@ public:
 	bool m_hostageWasKilled;
 
 	// [menglish] Fun Fact Manager
-	CCSFunFactMgr *m_pFunFactManager;
+	CCSFunFactMgr *m_pFunFactManager = NULL;
 
 	// [tj] To avoid rewriting the same piece of code, we can get all the information
 	//		we want from one call that fills in an array of structures.

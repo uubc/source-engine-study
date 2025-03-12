@@ -101,22 +101,28 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 
 CHL1MPWorld::CHL1MPWorld()
 {
-#ifndef CLIENT_DLL
+
+}
+
+#ifdef GAME_DLL
+void CHL1MPWorld::LevelInit()
+{
+	BaseClass::LevelInit();
 	m_bTeamPlayEnabled = teamplay.GetBool();
 
-	if ( IsTeamplay() )
+	if (IsTeamplay())
 	{
 		// Create basic server teams
 
-		CTeam *pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ));
-		pTeam->Init( "Unassigned", 0 );
-		g_Teams.AddToTail( pTeam );
+		CTeam* pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+		pTeam->Init("Unassigned", 0);
+		g_Teams.AddToTail(pTeam);
 
-		pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ));
-		pTeam->Init( "Spectator", 1 );
-		g_Teams.AddToTail( pTeam );
+		pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+		pTeam->Init("Spectator", 1);
+		g_Teams.AddToTail(pTeam);
 
-		char	*pName;
+		char* pName;
 		char	szTeamlist[TEAMPLAY_TEAMLISTLENGTH];
 
 		// loop through all teams, recounting everything
@@ -124,48 +130,51 @@ CHL1MPWorld::CHL1MPWorld()
 
 		// Copy all of the teams from the teamlist
 		// make a copy because strtok is destructive
-		Q_strncpy( szTeamlist, teamlist.GetString(), sizeof(teamlist) );
+		Q_strncpy(szTeamlist, teamlist.GetString(), sizeof(teamlist));
 		pName = szTeamlist;
-		pName = strtok( pName, "," );
-		while ( pName != NULL && *pName )
+		pName = strtok(pName, ",");
+		while (pName != NULL && *pName)
 		{
-			if ( GetTeamIndex( pName ) < 0 )
+			if (GetTeamIndex(pName) < 0)
 			{
 				// create team
-				pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ));
-				pTeam->Init( pName, num_teams + 2 );
-				g_Teams.AddToTail( pTeam );
+				pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+				pTeam->Init(pName, num_teams + 2);
+				g_Teams.AddToTail(pTeam);
 
 				num_teams++;
 			}
-			pName = strtok( NULL, "," );
+			pName = strtok(NULL, ",");
 		}
 
 		// Manually create teams
-		if ( num_teams == 0 )
+		if (num_teams == 0)
 		{
-			pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ) );
-			pTeam->Init( "robo", num_teams + 2 );
-			g_Teams.AddToTail( pTeam );
+			pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+			pTeam->Init("robo", num_teams + 2);
+			g_Teams.AddToTail(pTeam);
 			num_teams++;
 
-			pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ) );
-			pTeam->Init( "hgrunt", num_teams + 2 );
-			g_Teams.AddToTail( pTeam );
+			pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+			pTeam->Init("hgrunt", num_teams + 2);
+			g_Teams.AddToTail(pTeam);
 			num_teams++;
 		}
-		
-	}
-#endif
-}
 
-CHL1MPWorld::~CHL1MPWorld( void )
+	}
+}
+void CHL1MPWorld::LevelShutdown()
 {
-#ifndef CLIENT_DLL
 	// Note, don't delete each team since they are in the gEntList and will 
 	// automatically be deleted from there, instead.
 	g_Teams.Purge();
-#endif
+	BaseClass::LevelShutdown();
+}
+#endif // GAME_DLL
+
+CHL1MPWorld::~CHL1MPWorld( void )
+{
+
 }
 
 void CHL1MPWorld::CreateStandardEntities( void )

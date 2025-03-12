@@ -1757,6 +1757,50 @@ bool ClientDLL_Load()
 				Sys_Error( "Could not get client.dll interface from library client" );
 			}
 
+			// Load the prediction interface from the client .dll
+			g_pClientSidePrediction = (IPrediction*)g_ClientFactory(VCLIENT_PREDICTION_INTERFACE_VERSION, NULL);
+			if (!g_pClientSidePrediction)
+			{
+				Sys_Error("Could not get IPrediction interface from library client");
+			}
+
+			entitylist = (IClientEntityList*)g_ClientFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL);
+			if (!entitylist)
+			{
+				Sys_Error("Could not get client entity list interface from library client");
+			}
+			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist);
+
+			IEntityFactory* pEntityFactory = g_ClientDLL->GetAllEntityFactories();
+			while (pEntityFactory) {
+				entitylist->InstallEntityFactory(pEntityFactory);
+				pEntityFactory = pEntityFactory->m_pNext;
+			}
+
+			centerprint = (ICenterPrint*)g_ClientFactory(VCENTERPRINT_INTERFACE_VERSION, NULL);
+			if (!centerprint)
+			{
+				Sys_Error("Could not get centerprint interface from library client");
+			}
+
+			clientleafsystem = (IClientLeafSystemEngine*)g_ClientFactory(CLIENTLEAFSYSTEM_INTERFACE_VERSION, NULL);
+			if (clientleafsystem)
+			{
+				g_bClientLeafSystemV1 = false;
+			}
+			else if (!clientleafsystem)
+			{
+				clientleafsystem = (IClientLeafSystemEngine*)g_ClientFactory(CLIENTLEAFSYSTEM_INTERFACE_VERSION_1, NULL);
+				if (!clientleafsystem)
+				{
+					Sys_Error("Could not get client leaf system interface from library client");
+				}
+				else
+				{
+					g_bClientLeafSystemV1 = true;
+				}
+			}
+
 			if( g_pSourceVR )
 			{
 				g_pClientVR = (IClientVirtualReality *)g_ClientFactory( CLIENTVIRTUALREALITY_INTERFACE_VERSION, NULL );
@@ -1839,55 +1883,11 @@ void ClientDLL_Init( void )
 			Sys_Error("Client.dll Init() in library client failed.");
 		}
 
+		COM_TimestampedLog("g_pClientSidePrediction->Init");
+		g_pClientSidePrediction->Init();
+
 		if ( g_ClientFactory )
 		{
-			COM_TimestampedLog( "g_pClientSidePrediction->Init" );
-
-			// Load the prediction interface from the client .dll
-			g_pClientSidePrediction = (IPrediction *)g_ClientFactory( VCLIENT_PREDICTION_INTERFACE_VERSION, NULL );
-			if ( !g_pClientSidePrediction )
-			{
-				Sys_Error( "Could not get IPrediction interface from library client" );
-			}
-			g_pClientSidePrediction->Init();
-
-			entitylist = ( IClientEntityList  *)g_ClientFactory( VCLIENTENTITYLIST_INTERFACE_VERSION, NULL );
-			if ( !entitylist )
-			{
-				Sys_Error( "Could not get client entity list interface from library client" );
-			}
-			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist);
-
-			IEntityFactory* pEntityFactory = g_ClientDLL->GetAllEntityFactories();
-			while (pEntityFactory) {
-				entitylist->InstallEntityFactory(pEntityFactory);
-				pEntityFactory = pEntityFactory->m_pNext;
-			}
-
-			centerprint = ( ICenterPrint * )g_ClientFactory( VCENTERPRINT_INTERFACE_VERSION, NULL );
-			if ( !centerprint )
-			{
-				Sys_Error( "Could not get centerprint interface from library client" );
-			}
-
-			clientleafsystem = ( IClientLeafSystemEngine *)g_ClientFactory( CLIENTLEAFSYSTEM_INTERFACE_VERSION, NULL );
-			if ( clientleafsystem )
-			{
-				g_bClientLeafSystemV1 = false;
-			}
-			else if ( !clientleafsystem )
-			{
-				clientleafsystem = ( IClientLeafSystemEngine *)g_ClientFactory( CLIENTLEAFSYSTEM_INTERFACE_VERSION_1, NULL );
-				if ( !clientleafsystem )
-				{
-					Sys_Error( "Could not get client leaf system interface from library client" );
-				}
-				else
-				{
-					g_bClientLeafSystemV1 = true;
-				}
-			}
-
 #if defined( REPLAY_ENABLED )
 			if ( Replay_IsSupportedModAndPlatform() )
 			{

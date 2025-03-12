@@ -1715,6 +1715,14 @@ void CHLClient::LevelInitPreEntity()
 		CReplayRagdollRecorder::Instance().Init();
 	}
 #endif
+	EntityList()->LevelInit();
+	EntityList()->LevelInitPreEntity();
+	g_pClientShadowMgr->LevelInitPreEntity();
+	g_pClientLeafSystem->LevelInitPreEntity();
+	g_pDetailObjectSystem->LevelInitPreEntity();
+	g_pViewRender->LevelInitPreEntity();
+
+	IGameSystem::LevelInitPreEntityAllSystems();//pMapName
 }
 
 
@@ -1787,7 +1795,7 @@ void CHLClient::LevelShutdown( void )
 	tempents->LevelShutdown();
 
 	// Now release/delete the entities
-	EntityList()->Release();
+	EntityList()->LevelShutdown();
 
 	C_BaseEntityClassList *pClassList = s_pClassLists;
 	while ( pClassList )

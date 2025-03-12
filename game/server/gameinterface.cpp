@@ -1032,6 +1032,10 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	//Tony; parse custom manifest if exists!
 	ParseParticleEffectsMap( pMapName, false );
 
+	// Sometimes an ent will Remove() itself during its precache, so RemoveImmediate won't happen.
+// This makes sure those ents get cleaned up.
+	EntityList()->LevelInit();
+
 	// IGameSystem::LevelInitPreEntityAllSystems() is called when the world is precached
 	// That happens either in LoadGameState() or in MapEntity_ParseAllEntities()
 	if ( loadGame )
@@ -1113,9 +1117,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	// load MOTD from file into stringtable
 	LoadMessageOfTheDay();
 
-	// Sometimes an ent will Remove() itself during its precache, so RemoveImmediate won't happen.
-	// This makes sure those ents get cleaned up.
-	EntityList()->CleanupDeleteList();
+
 
 	g_AIFriendliesTalkSemaphore.Release();
 	g_AIFoesTalkSemaphore.Release();
@@ -1451,7 +1453,7 @@ void CServerGameDLL::LevelShutdown( void )
 	// This entity pointer is going away now and is corrupting memory on level transitions/restarts
 	CSoundEnt::ShutdownSoundEnt();
 
-	EntityList()->Clear();
+	EntityList()->LevelShutdown();
 	CBaseEntity::m_nDebugPlayer = -1;
 	CBaseEntity::m_bInDebugSelect = false;
 	InvalidateQueryCache();

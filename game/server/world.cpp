@@ -531,9 +531,7 @@ extern bool	g_fGameOver;
 
 CWorld::CWorld( )
 {
-	//NetworkProp()->AttachEdict( RequiredEdictIndex() );
-	mdlcache->ActivityList_Init();
-	mdlcache->EventList_Init();
+
 	m_bColdWorld = false;
 	GetVoiceGameMgr()->Init(g_pVoiceGameMgrHelper, gpGlobals->maxClients);
 	ClearMultiDamage();
@@ -552,9 +550,7 @@ void CWorld::PostConstructor(const char* szClassname, int iForceEdictIndex)
 
 CWorld::~CWorld( )
 {
-	mdlcache->EventList_Free();
-	UTIL_UnLoadActivityRemapFile();
-	mdlcache->ActivityList_Free();
+
 	//if ( g_pGameRules )
 	//{
 	//	g_pGameRules->LevelShutdown();
@@ -608,18 +604,7 @@ int CWorld::UpdateTransmitState()
 
 void CWorld::Spawn( void )
 {
-	GetEngineObject()->SetLocalOrigin( vec3_origin );
-	GetEngineObject()->SetLocalAngles( vec3_angle );
-	// NOTE:  SHOULD NEVER BE ANYTHING OTHER THAN 1!!!
-	GetEngineObject()->SetModelIndex( 1 );
-	// world model
-	GetEngineObject()->SetModelName( AllocPooledString( modelinfo->GetModelName(GetEngineObject()->GetModel() ) ) );
-	GetEngineObject()->AddFlag( FL_WORLDBRUSH );
 
-	g_EventQueue.Init();
-	Precache( );
-	engine->GlobalEntity_Add( "is_console", STRING(gpGlobals->mapname), ( IsConsole() ) ? GLOBAL_ON : GLOBAL_OFF );
-	engine->GlobalEntity_Add( "is_pc", STRING(gpGlobals->mapname), ( !IsConsole() ) ? GLOBAL_ON : GLOBAL_OFF );
 }
 
 static const char *g_DefaultLightstyles[] =
@@ -1226,6 +1211,26 @@ bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
 	return false;
 }
 
+void CWorld::LevelInit()
+{
+	//NetworkProp()->AttachEdict( RequiredEdictIndex() );
+	mdlcache->ActivityList_Init();
+	mdlcache->EventList_Init();
+
+	GetEngineObject()->SetLocalOrigin(vec3_origin);
+	GetEngineObject()->SetLocalAngles(vec3_angle);
+	// NOTE:  SHOULD NEVER BE ANYTHING OTHER THAN 1!!!
+	GetEngineObject()->SetModelIndex(1);
+	// world model
+	GetEngineObject()->SetModelName(AllocPooledString(modelinfo->GetModelName(GetEngineObject()->GetModel())));
+	GetEngineObject()->AddFlag(FL_WORLDBRUSH);
+
+	g_EventQueue.Init();
+	Precache();
+	engine->GlobalEntity_Add("is_console", STRING(gpGlobals->mapname), (IsConsole()) ? GLOBAL_ON : GLOBAL_OFF);
+	engine->GlobalEntity_Add("is_pc", STRING(gpGlobals->mapname), (!IsConsole()) ? GLOBAL_ON : GLOBAL_OFF);
+}
+
 // Level init, shutdown
 void CWorld::LevelInitPreEntity()
 {
@@ -1246,6 +1251,13 @@ void CWorld::LevelShutdownPreEntity()
 void CWorld::LevelShutdownPostEntity()
 {
 	
+}
+
+void CWorld::LevelShutdown()
+{
+	mdlcache->EventList_Free();
+	UTIL_UnLoadActivityRemapFile();
+	mdlcache->ActivityList_Free();
 }
 
 void CWorld::FrameUpdatePreEntityThink()

@@ -46,7 +46,9 @@ public:
 #ifndef CLIENT_DLL
 	DECLARE_DATADESC();
 #endif
-
+#ifdef CLIENT_DLL
+	DECLARE_PREDICTABLE();
+#endif // CLIENT_DLL
 	CWeaponCrowbar();
 
 	void			Precache( void );
@@ -77,6 +79,12 @@ END_NETWORK_TABLE()
 
 LINK_ENTITY_TO_CLASS( weapon_crowbar, CWeaponCrowbar );
 PRECACHE_WEAPON_REGISTER( weapon_crowbar );
+
+#ifdef CLIENT_DLL
+BEGIN_PREDICTION_DATA(CWeaponCrowbar)
+
+END_PREDICTION_DATA()
+#endif
 
 #ifndef CLIENT_DLL
 BEGIN_DATADESC( CWeaponCrowbar )

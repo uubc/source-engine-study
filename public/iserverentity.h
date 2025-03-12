@@ -1363,10 +1363,12 @@ public:
 
 	// Level init, shutdown
 	virtual void LevelInitPreEntity() = 0;
+	virtual void LevelInit(void) = 0;
 	virtual void LevelInitPostEntity() = 0;
 
 	// The level is shutdown in two parts
 	virtual void LevelShutdownPreEntity() = 0;
+	virtual void LevelShutdown(void) = 0;
 	virtual void LevelShutdownPostEntity() = 0;
 
 	virtual void FrameUpdatePreEntityThink() = 0;
@@ -1438,7 +1440,6 @@ public:
 	virtual void AddListenerEntity(IEntityListener<IServerEntity>* pListener) = 0;
 	virtual void RemoveListenerEntity(IEntityListener<IServerEntity>* pListener) = 0;
 
-	virtual void ReserveSlot(int index) = 0;
 	virtual int AllocateFreeSlot(bool bNetworkable = true, int index = -1) = 0;
 	virtual IServerEntity* CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual int DispatchSpawn(IServerEntity* pEntity) = 0;
@@ -1459,7 +1460,6 @@ public:
 	virtual int IndexOfHighestEdict(void) = 0;
 	virtual void CleanupDeleteList(void) = 0;
 	virtual int ResetDeleteList(void) = 0;
-	virtual void Clear(void) = 0;
 
 	virtual CBaseHandle GetNetworkableHandle(int iEntity) const = 0;
 	virtual IHandleEntity* LookupEntityByNetworkIndex(int edictIndex) const = 0;

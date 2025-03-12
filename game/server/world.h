@@ -62,6 +62,7 @@ public:
 
 	bool IsColdWorld( void );
 
+	virtual void	LevelInit();
 	//gamerule
 		// Level init, shutdown
 	virtual void LevelInitPreEntity();
@@ -71,6 +72,7 @@ public:
 	virtual void LevelShutdownPreEntity();
 
 	virtual void LevelShutdownPostEntity();
+	virtual void LevelShutdown();
 
 	virtual void FrameUpdatePreEntityThink();
 	// Called each frame. This just forwards the call to Think().
@@ -137,7 +139,7 @@ public:
 	// Setup
 
 		// Called when game rules are destroyed by CWorld
-	virtual void LevelShutdown(void) { return; };
+	//virtual void LevelShutdown(void) { return; };
 
 	//virtual void Precache(void) { return; };
 

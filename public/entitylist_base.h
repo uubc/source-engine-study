@@ -544,6 +544,8 @@ public:
 protected:
 	void ReserveSlot(int index);
 	bool IsReservedSlot(int index);
+	void FreeReservedSlot(void);
+
 	int AllocateFreeSlot(bool bNetworkable = true, int index = -1);
 	// Add and remove entities. iForcedSerialNum should only be used on the client. The server
 	// gets to dictate what the networkable serial numbers are on the client so it can send
@@ -560,7 +562,6 @@ protected:
 	// calling OnRemoveEntity.
 	virtual void OnRemoveEntity( T *pEnt, CBaseHandle handle );
 
-	virtual void Clear(void);
 
 	void AddDataAccessor(int type, IEntityDataInstantiator<T>* instantiator);
 	void RemoveDataAccessor(int type);
@@ -729,9 +730,9 @@ void CBaseEntityList<T>::UpdateDirtySpatialPartitionEntities()
 
 template<class T>
 inline void CBaseEntityList<T>::ReserveSlot(int index) {
-	Assert(index >= 0 && index < MAX_EDICTS);
+	Assert(index > 0 && index < MAX_EDICTS);
 	if (m_activeList.Head()) {
-		Error("already actived");
+		//Error("already actived");
 	}
 	CEntInfo<T>* pSlot = &m_EntPtrArray[index];
 	if (pSlot->m_bReserved) {
@@ -746,6 +747,30 @@ template<class T>
 bool CBaseEntityList<T>::IsReservedSlot(int index) {
 	CEntInfo<T>* pSlot = &m_EntPtrArray[index];
 	return pSlot->m_bReserved;
+}
+
+template<class T>
+void CBaseEntityList<T>::FreeReservedSlot(void) {
+	CEntInfo<T>* pList = m_activeList.Head();
+	if (pList) {
+		//Error("entity must been cleared by sub class");
+	}
+	//while (pList)
+	//{
+	//	CEntInfo<T>* pNext = pList->m_pNext;
+	//	RemoveEntityAtSlot(GetEntInfoIndex(pList));
+	//	pList = pNext;
+	//}
+
+	pList = m_ReservedNetworkableList.Head();
+	while (pList)
+	{
+		CEntInfo<T>* pNext = pList->m_pNext;
+		pList->m_bReserved = false;
+		m_ReservedNetworkableList.Unlink(pList);
+		m_freeNetworkableList.AddToTail(pList);
+		pList = pNext;
+	}
 }
 
 template<class T>
@@ -920,7 +945,7 @@ CBaseEntityList<T>::CBaseEntityList()
 		m_EntPtrArray[i].m_SerialNumber = (rand() & SERIAL_MASK); // generate random starting serial number
 		m_EntPtrArray[i].m_pEntity = NULL;
 	}
-
+	m_EntPtrArray[0].m_SerialNumber = 0;
 	for (i = 0; i < MAX_EDICTS; i++) {
 		CEntInfo<T>* pList = &m_EntPtrArray[i];
 		m_freeNetworkableList.AddToTail(pList);
@@ -939,7 +964,7 @@ CBaseEntityList<T>::CBaseEntityList()
 template<class T>
 CBaseEntityList<T>::~CBaseEntityList()
 {
-	Clear();
+	FreeReservedSlot();
 	m_DirtyEntities.Purge();
 }
 
@@ -1033,7 +1058,9 @@ void CBaseEntityList<T>::RemoveEntity(T* pEnt)
 
 	// Increment the serial # so ehandles go invalid.
 	pInfo->m_pEntity = NULL;
-	pInfo->m_SerialNumber = (pInfo->m_SerialNumber + 1) & SERIAL_MASK;
+	if (iSlot != 0) {
+		pInfo->m_SerialNumber = (pInfo->m_SerialNumber + 1) & SERIAL_MASK;
+	}
 
 	m_activeList.Unlink(pInfo);
 
@@ -1191,31 +1218,6 @@ void CBaseEntityList<T>::OnAddEntity(T* pEnt, CBaseHandle handle)
 template<class T>
 void CBaseEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 {
-}
-
-template<class T>
-void CBaseEntityList<T>::Clear(void) {
-	CEntInfo<T>* pList = m_activeList.Head();
-	if (pList) {
-		Error("entity must been cleared by sub class");
-	}
-	//while (pList)
-	//{
-	//	CEntInfo<T>* pNext = pList->m_pNext;
-	//	RemoveEntityAtSlot(GetEntInfoIndex(pList));
-	//	pList = pNext;
-	//}
-
-	pList = m_ReservedNetworkableList.Head();
-
-	while (pList)
-	{
-		CEntInfo<T>* pNext = pList->m_pNext;
-		pList->m_bReserved = false;
-		m_ReservedNetworkableList.Unlink(pList);
-		m_freeNetworkableList.AddToTail(pList);
-		pList = pNext;
-	}
 }
 
 template<class T>

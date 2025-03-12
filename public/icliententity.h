@@ -1094,9 +1094,13 @@ public:
 	virtual bool Init() = 0;
 	virtual void Shutdown() = 0;
 
+	virtual void LevelInit() = 0;
+
 	// Level init, shutdown
 	virtual void LevelInitPreEntity() = 0;
 	virtual void LevelInitPostEntity() = 0;
+
+	virtual void LevelShutdown() = 0;// clears everything and releases entities
 
 	// Gets called each frame
 	virtual void Update(float frametime) = 0;
@@ -1138,7 +1142,6 @@ public:
 
 	virtual IClientEntity* CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
-	virtual void Release() = 0;		// clears everything and releases entities
 
 	// add a class that gets notified of entity events
 	virtual void AddListenerEntity(IClientEntityListener* pListener) = 0;

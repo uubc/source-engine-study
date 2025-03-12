@@ -3009,9 +3009,13 @@ public:
 	virtual bool Init();
 	virtual void Shutdown();
 
+	virtual void LevelInit();
+
 	// Level init, shutdown
 	virtual void LevelInitPreEntity();
 	virtual void LevelInitPostEntity();
+
+	virtual void LevelShutdown();		// clears everything and releases entities
 
 	// Gets called each frame
 	virtual void Update(float frametime);
@@ -3030,7 +3034,6 @@ public:
 	virtual void ReportEntitySizes();
 	virtual void DumpEntityFactories();
 
-	void						Release();		// clears everything and releases entities
 
 	virtual const char*			GetBlockName();
 
@@ -3562,6 +3565,7 @@ private:
 	int m_nTouchDepth = 0;
 	CCallQueue m_PostTouchQueue;
 	IClientWorld* m_pWorld = NULL;
+	bool    m_bLockWorld = false;
 };
 
 template<class T>
@@ -3949,11 +3953,15 @@ inline IClientEntity* CClientEntityList<T>::CreateEntityByName(const char* class
 		iSerialNum = BaseClass::GetNetworkSerialNumber(iForceEdictIndex);
 	}
 	else {
-		iForceEdictIndex = BaseClass::AllocateFreeSlot(true, iForceEdictIndex);
 		if (iSerialNum == -1) {
 			Error("iSerialNum == -1");
 		}
+		if (iForceEdictIndex == 0 && m_bLockWorld) {
+			return GetBaseEntity(0);
+		}
+		iForceEdictIndex = BaseClass::AllocateFreeSlot(true, iForceEdictIndex);
 	}
+	
 	if (m_EngineObjectArray[iForceEdictIndex]) {
 		Error("slot not free!");
 	}
@@ -4004,6 +4012,12 @@ inline IClientEntity* CClientEntityList<T>::CreateEntityByName(const char* class
 
 template<class T>
 inline void	CClientEntityList<T>::DestroyEntity(IHandleEntity* pEntity) {
+	if (!pEntity) {
+		return;
+	}
+	if (pEntity->entindex() == 0 && m_bLockWorld) {
+		return;
+	}
 	m_EntityFactoryDictionary.Destroy(pEntity);
 }
 
@@ -4052,7 +4066,7 @@ CClientEntityList<T>::CClientEntityList(void) :
 	m_iMaxRagdolls = -1;
 	m_LRUImportantRagdolls.RemoveAll();
 	m_LRU.RemoveAll();
-	Release();
+	//LevelShutdown();
 }
 
 //-----------------------------------------------------------------------------
@@ -4061,7 +4075,7 @@ CClientEntityList<T>::CClientEntityList(void) :
 template<class T>
 CClientEntityList<T>::~CClientEntityList(void)
 {
-	Release();
+	//LevelShutdown();
 }
 
 template<class T>
@@ -4098,12 +4112,23 @@ bool CClientEntityList<T>::Init()
 	//AddDataAccessor(PHYSICSPUSHLIST, new CEntityDataInstantiator<IClientEntity, physicspushlist_t >);
 	//AddDataAccessor(VPHYSICSUPDATEAI, new CEntityDataInstantiator<IClientEntity, vphysicsupdateai_t >);
 	AddDataAccessor(VPHYSICSWATCHER, new CEntityDataInstantiator<IClientEntity, C_WatcherList >);
+
+	IHandleEntity* pWorld = CreateEntityByName("worldspawn", 0, 0);
+	if (!pWorld)
+	{
+		Error("Failed to create worldspawn entity!\n");
+	}
+	m_bLockWorld = true;
 	return true;
 }
 
 template<class T>
 void CClientEntityList<T>::Shutdown()
 {
+	m_bLockWorld = false;
+	IHandleEntity* pWorld = GetBaseEntity(0);
+	DestroyEntity(pWorld);
+
 	BaseClass::Shutdown();
 	RemoveDataAccessor(TOUCHLINK);
 	RemoveDataAccessor(GROUNDLINK);
@@ -4114,6 +4139,15 @@ void CClientEntityList<T>::Shutdown()
 	RemoveDataAccessor(VPHYSICSUPDATEAI);
 	RemoveDataAccessor(VPHYSICSWATCHER);
 	m_StaticCollisionPolyhedronCache.Shutdown();
+}
+
+template<class T>
+void CClientEntityList<T>::LevelInit()
+{
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
+	}
+	m_pWorld->LevelInit();
 }
 
 // Level init, shutdown
@@ -4201,13 +4235,17 @@ void CClientEntityList<T>::LevelShutdownPostEntity()
 
 	m_pPhysenv = NULL;
 	m_PhysWorldObject = NULL;
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
+	}
+	m_pWorld->LevelShutdownPostEntity();
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Clears all entity lists and releases entities
 //-----------------------------------------------------------------------------
 template<class T>
-void CClientEntityList<T>::Release(void)
+void CClientEntityList<T>::LevelShutdown(void)
 {
 	for (int i = 1; i < NUM_ENT_ENTRIES; i++) {
 		
@@ -4216,15 +4254,15 @@ void CClientEntityList<T>::Release(void)
 			DestroyEntity(pClientEntity);
 		}
 	}
-	IClientEntity* pClientEntity = GetBaseEntity(0);
-	if (pClientEntity) {
-		DestroyEntity(pClientEntity);
+	
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
 	}
-
-	m_iNumServerEnts = 0;
-	m_iMaxServerEnts = 0;
-	m_iNumClientNonNetworkable = 0;
-	m_iMaxUsedServerIndex = -1;
+	m_pWorld->LevelShutdown();
+	//m_iNumServerEnts = 0;
+	//m_iMaxServerEnts = 0;
+	//m_iNumClientNonNetworkable = 0;
+	//m_iMaxUsedServerIndex = -1;
 	m_iPreviousBoneCounter = (unsigned)-1;
 	if (m_PreviousBoneSetups.Count() != 0)
 	{
@@ -4547,10 +4585,10 @@ void CClientEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 		m_entityListeners[i]->OnEntityDeleted(pBaseEntity);
 	}
 
-	if (pBaseEntity->IsWorld()) {
+	//if (pBaseEntity->IsWorld()) {
 		//pBaseEntity->AsHandleWorld()->LevelShutdown();
-		pBaseEntity->AsHandleWorld()->LevelShutdownPostEntity();
-	}
+		//pBaseEntity->AsHandleWorld()->LevelShutdownPostEntity();
+	//}
 
 	// If this is a PVS notifier, remove it.
 	RemovePVSNotifier(pBaseEntity);

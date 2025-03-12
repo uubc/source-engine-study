@@ -219,6 +219,8 @@ public:
 	CDODGameWorld();
 	virtual ~CDODGameWorld();
 	void PostConstructor(const char* szClassname, int iForceEdictIndex);
+	virtual void LevelInit();
+	virtual void LevelShutdownPreEntity();
 	virtual void LevelShutdown( void );
 	void UploadLevelStats( void );
 

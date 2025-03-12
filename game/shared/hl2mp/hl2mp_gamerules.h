@@ -88,6 +88,11 @@ public:
 	CHL2MPWorld();
 	virtual ~CHL2MPWorld();
 
+#ifdef GAME_DLL
+	virtual void	LevelInit();
+	virtual void	LevelShutdown();
+#endif // GAME_DLL
+
 	virtual void Precache( void );
 	virtual bool ShouldCollide( int collisionGroup0, int collisionGroup1 );
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );

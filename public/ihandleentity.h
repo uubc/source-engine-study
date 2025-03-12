@@ -396,11 +396,13 @@ public:
 abstract_class IHandleWorld{
 public:
 	// Level init, shutdown
+	virtual void	LevelInit() = 0;
 	virtual void	LevelInitPreEntity() = 0;
 	virtual void	LevelInitPostEntity() = 0;
 	// The level is shutdown in two parts
 	virtual void	LevelShutdownPreEntity() = 0;
 	virtual void	LevelShutdownPostEntity() = 0;
+	virtual void	LevelShutdown() = 0;
 	// Damage Queries - these need to be implemented by the various subclasses (single-player, multi-player, etc).
 	// The queries represent queries against damage types and properties.
 	virtual bool	Damage_IsTimeBased(int iDmgType) = 0;			// Damage types that are time-based.

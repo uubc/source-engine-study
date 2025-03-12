@@ -3463,11 +3463,13 @@ public:
 
 	// Level init, shutdown
 	virtual void LevelInitPreEntity();
+	virtual void LevelInit(void);
 	virtual void LevelInitPostEntity();
 
 	// The level is shutdown in two parts
 	virtual void LevelShutdownPreEntity();
-
+	// frees all entities in the game
+	virtual void LevelShutdown(void);
 	virtual void LevelShutdownPostEntity();
 
 	virtual void FrameUpdatePreEntityThink();
@@ -3503,7 +3505,6 @@ public:
 	virtual int	CreateEntityTransitionList(IRestore* pRestore, int) OVERRIDE;
 	virtual void BuildAdjacentMapList(ISave* pSave) OVERRIDE;
 
-	void ReserveSlot(int index);
 	int AllocateFreeSlot(bool bNetworkable = true, int index = -1);
 	IServerEntity* CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1);
 	// calls the spawn functions for an entity
@@ -3545,9 +3546,6 @@ public:
 	// call this before and after each frame to delete all of the marked entities.
 	void CleanupDeleteList(void);
 	int ResetDeleteList(void);
-
-	// frees all entities in the game
-	void Clear(void);
 
 	// Returns true while in the Clear() call.
 	bool	IsClearingEntities() { return m_bClearingEntities; }
@@ -4762,6 +4760,7 @@ private:
 	float	m_lastchecktime;
 	bool	m_bClientPVSIsExpanded;
 	IServerWorld* m_pWorld = NULL;
+	bool    m_bLockWorld = false;
 };
 
 template<class T>
@@ -4796,12 +4795,28 @@ bool CGlobalEntityList<T>::Init()
 	AddDataAccessor(PHYSICSPUSHLIST, new CEntityDataInstantiator<IServerEntity, physicspushlist_t >);
 	AddDataAccessor(VPHYSICSUPDATEAI, new CEntityDataInstantiator<IServerEntity, vphysicsupdateai_t >);
 	AddDataAccessor(VPHYSICSWATCHER, new CEntityDataInstantiator<IServerEntity, CWatcherList >);
+
+	IHandleEntity* pWorld = CreateEntityByName("worldspawn");
+	if (!pWorld)
+	{
+		Error("Failed to create worldspawn entity!\n");
+	}
+	m_bLockWorld = true;
 	return true;
 }
 
 template<class T>
 void CGlobalEntityList<T>::Shutdown()
 {
+	m_bLockWorld = false;
+	IHandleEntity* pWorld = GetBaseEntity(0);
+	DestroyEntity(pWorld);
+	CleanupDeleteList();
+
+	if (m_iHighestEnt != 0 || m_iNumEnts != 0 || m_iHighestEdicts != 0 || m_iNumEdicts != 0 || m_iNumReservedEdicts != 0) {
+		Error("data error");
+	}
+	
 	BaseClass::Shutdown();
 	RemoveDataAccessor(TOUCHLINK);
 	RemoveDataAccessor(GROUNDLINK);
@@ -4811,6 +4826,9 @@ void CGlobalEntityList<T>::Shutdown()
 	RemoveDataAccessor(PHYSICSPUSHLIST);
 	RemoveDataAccessor(VPHYSICSUPDATEAI);
 	RemoveDataAccessor(VPHYSICSWATCHER);
+
+	// free the memory
+	m_DeleteList.Purge();
 }
 
 // Level init, shutdown
@@ -4874,6 +4892,23 @@ void CGlobalEntityList<T>::LevelInitPreEntity()
 }
 
 template<class T>
+void CGlobalEntityList<T>::LevelInit(void)
+{
+	if (m_iHighestEnt != 0 || m_iNumEnts != 1 || m_iHighestEdicts != 0 || m_iNumEdicts != 1 || m_iNumReservedEdicts != 0) {
+		Error("data error");
+	}
+	// Assume no entities beyond world and client slots
+	//num_edicts = GetMaxClients()+1;
+	for (int i = 1; i <= gpGlobals->maxClients; i++) {
+		BaseClass::ReserveSlot(i);
+	}
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
+	}
+	m_pWorld->LevelInit();
+}
+
+template<class T>
 void CGlobalEntityList<T>::LevelInitPostEntity()
 {
 	m_bPaused = false;
@@ -4894,6 +4929,33 @@ void CGlobalEntityList<T>::LevelShutdownPreEntity()
 		Error("m_pWorld not inited!\n");
 	}
 	m_pWorld->LevelShutdownPreEntity();
+}
+
+template<class T>
+void CGlobalEntityList<T>::LevelShutdown(void)
+{
+	m_bClearingEntities = true;
+
+	for (int i = 1; i < NUM_ENT_ENTRIES; i++) {
+		IServerEntity* pServerEntity = GetBaseEntity(i);
+		if (pServerEntity) {
+			MDLCACHE_CRITICAL_SECTION();
+			DestroyEntity(pServerEntity);
+		}
+	}
+	CleanupDeleteList();
+
+	if (m_iHighestEnt != 0 || m_iNumEnts != 1 || m_iHighestEdicts != 0 || m_iNumEdicts != 1 || m_iNumReservedEdicts != 0) {
+		Error("data error");
+	}
+
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
+	}
+	m_pWorld->LevelShutdown();
+
+	m_bClearingEntities = false;
+	BaseClass::FreeReservedSlot();
 }
 
 template<class T>
@@ -4923,6 +4985,10 @@ void CGlobalEntityList<T>::LevelShutdownPostEntity()
 	m_breakSounds.RemoveAll();
 	m_massCenterOverrides.Purge();
 	FlushVehicleScripts();
+	if (!m_pWorld) {
+		Error("m_pWorld not inited!\n");
+	}
+	m_pWorld->LevelShutdownPostEntity();
 }
 
 
@@ -6293,11 +6359,6 @@ void CGlobalEntityList<T>::BuildAdjacentMapList(ISave* pSave)
 //}
 
 template<class T>
-inline void CGlobalEntityList<T>::ReserveSlot(int index) {
-	BaseClass::ReserveSlot(index);
-}
-
-template<class T>
 inline int CGlobalEntityList<T>::AllocateFreeSlot(bool bNetworkable, int index) {
 	return BaseClass::AllocateFreeSlot(bNetworkable, index);
 }
@@ -6306,6 +6367,9 @@ template<class T>
 inline IServerEntity* CGlobalEntityList<T>::CreateEntityByName(const char* className, int iForceEdictIndex, int iSerialNum) {
 	if (m_EntityFactoryDictionary.RequiredEdictIndex(className) != -1) {
 		iForceEdictIndex = m_EntityFactoryDictionary.RequiredEdictIndex(className);
+	}
+	if (iForceEdictIndex == 0 && m_bLockWorld) {
+		return GetBaseEntity(0);
 	}
 	iForceEdictIndex = BaseClass::AllocateFreeSlot(m_EntityFactoryDictionary.IsNetworkable(className), iForceEdictIndex);
 	iSerialNum = BaseClass::GetNetworkSerialNumber(iForceEdictIndex);
@@ -6454,6 +6518,12 @@ int CGlobalEntityList<T>::DispatchSpawn(IServerEntity* pEntity)
 template<class T>
 void CGlobalEntityList<T>::DestroyEntity(IHandleEntity* oldObj)
 {
+	if (!oldObj) {
+		return;
+	}
+	if (oldObj->entindex() == 0 && m_bLockWorld) {
+		return;
+	}
 	IServerEntity* pEntity = dynamic_cast<IServerEntity*>(oldObj);
 	//CServerNetworkProperty* pProp = static_cast<CServerNetworkProperty*>(oldObj);
 	if (!pEntity || pEntity->GetEngineObject()->IsMarkedForDeletion())
@@ -6748,39 +6818,6 @@ int CGlobalEntityList<T>::ResetDeleteList(void)
 	int result = m_DeleteList.Count();
 	m_DeleteList.RemoveAll();
 	return result;
-}
-
-
-template<class T>
-void CGlobalEntityList<T>::Clear(void)
-{
-	m_bClearingEntities = true;
-
-	for (int i = 1; i < NUM_ENT_ENTRIES; i++) {
-
-		IServerEntity* pServerEntity = GetBaseEntity(i);
-		if (pServerEntity) {
-			MDLCACHE_CRITICAL_SECTION();
-			DestroyEntity(pServerEntity);
-		}
-	}
-	IServerEntity* pServerEntity = GetBaseEntity(0);
-	if (pServerEntity) {
-		DestroyEntity(pServerEntity);
-	}
-
-	CleanupDeleteList();
-	// free the memory
-	m_DeleteList.Purge();
-
-	m_iHighestEnt = 0;
-	m_iNumEnts = 0;
-	m_iHighestEdicts = 0;
-	m_iNumEdicts = 0;
-	m_iNumReservedEdicts = 0;
-
-	m_bClearingEntities = false;
-	BaseClass::Clear();
 }
 
 template<class T>
@@ -7616,16 +7653,40 @@ void CGlobalEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 		BaseClass::m_entityListeners[i]->OnEntityDeleted(pEnt);
 	}
 
-	if (pBaseEnt->IsWorld()) {
-		pBaseEnt->AsHandleWorld()->LevelShutdown();
-		pBaseEnt->AsHandleWorld()->LevelShutdownPostEntity();
+	//if (pBaseEnt->IsWorld()) {
+		//pBaseEnt->AsHandleWorld()->LevelShutdown();
+		//pBaseEnt->AsHandleWorld()->LevelShutdownPostEntity();
+	//}
+
+	if (pBaseEnt->entindex() == m_iHighestEnt) {
+		for (int i = m_iHighestEnt - 1; i > 0; i--) {
+			if (m_EngineObjectArray[i]) {
+				m_iHighestEnt = i;
+				break;
+			}
+		}
+		if (pBaseEnt->entindex() == m_iHighestEnt) {
+			m_iHighestEnt = 0;
+		}
 	}
 
 	if (pBaseEnt->IsNetworkable()) {
-		if (pBaseEnt->entindex() != -1)
+		if (pBaseEnt->entindex() != -1) {
 			m_iNumEdicts--;
+		}
 		if (BaseClass::IsReservedSlot(pBaseEnt->entindex())) {
 			m_iNumReservedEdicts--;
+		}
+		if (pBaseEnt->entindex() == m_iHighestEdicts) {
+			for (int i = m_iHighestEdicts - 1; i > 0; i--) {
+				if (m_EngineObjectArray[i]) {
+					m_iHighestEdicts = i;
+					break;
+				}
+			}
+			if (pBaseEnt->entindex() == m_iHighestEdicts) {
+				m_iHighestEdicts = 0;
+			}
 		}
 	}
 

@@ -20,6 +20,27 @@
 #include "iachievementmgr.h"
 #include "usermessages.h"
 #include "engine/ivdebugoverlay.h"
+#ifdef CSTRIKE_DLL
+#include "cs_gamerules.h"
+#endif // CSTRIKE_DLL
+#ifdef DOD_DLL
+#include "dod_gamerules.h"
+#endif // DOD_DLL
+#if defined(HL1_CLIENT_DLL) && !defined(HL1MP_CLIENT_DLL)
+#include "hl1_gamerules.h"
+#endif // HL1_DLL
+#ifdef HL1MP_CLIENT_DLL
+#include "hl1mp_gamerules.h"
+#endif // HL1MP_DLL
+#if defined(HL2_CLIENT_DLL) && !defined(HL2MP) && !defined(PORTAL)
+#include "hl2_gamerules.h"
+#endif
+#ifdef HL2MP
+#include "hl2mp_gamerules.h"
+#endif
+#ifdef PORTAL
+#include "portal_gamerules.h"
+#endif // PORTAL
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -88,6 +109,27 @@ BEGIN_RECV_TABLE( C_World, DT_World )
 	RecvPropInt(RECVINFO(m_bColdWorld)),
 END_RECV_TABLE()
 
+#ifdef CSTRIKE_DLL
+LINK_ENTITY_TO_CLASS(worldspawn, C_CSGameWorld);
+#endif
+#ifdef DOD_DLL
+LINK_ENTITY_TO_CLASS(worldspawn, C_DODGameWorld);
+#endif // DOD_DLL
+#if defined(HL1_CLIENT_DLL) && !defined(HL1MP_CLIENT_DLL)
+LINK_ENTITY_TO_CLASS(worldspawn, C_HalfLife1World);
+#endif // HL1_DLL
+#ifdef HL1MP_CLIENT_DLL
+LINK_ENTITY_TO_CLASS(worldspawn, C_HL1MPWorld);
+#endif // HL1MP_DLL
+#if defined(HL2_CLIENT_DLL) && !defined(HL2MP) && !defined(PORTAL)
+LINK_ENTITY_TO_CLASS(worldspawn, C_HalfLife2World);
+#endif
+#ifdef HL2MP
+LINK_ENTITY_TO_CLASS(worldspawn, C_HL2MPWorld);
+#endif
+#ifdef PORTAL
+LINK_ENTITY_TO_CLASS(worldspawn, C_PortalGameWorld);
+#endif // PORTAL
 
 C_World::C_World( void )
 {
@@ -106,22 +148,12 @@ C_World::~C_World( void )
 bool C_World::Init( int entnum, int iSerialNum )
 {
 	m_flWaveHeight = 0.0f;
-	if (!mdlcache->ActivityList_Inited()) {
-		mdlcache->ActivityList_Init();
-		mdlcache->EventList_Init();
-		m_bActivityInitedByMe = true;
-	}
-
 	return BaseClass::Init( entnum, iSerialNum );
 }
 
 void C_World::UpdateOnRemove()
 {
-	if (m_bActivityInitedByMe) {
-		mdlcache->ActivityList_Free();
-		mdlcache->EventList_Free();
-		m_bActivityInitedByMe = false;
-	}
+
 	//Term();
 	BaseClass::UpdateOnRemove();
 }
@@ -207,24 +239,7 @@ void W_Precache(void)
 
 void C_World::Precache( void )
 {
-	// UNDONE: Make most of these things server systems or precache_registers
-	// =================================================
-	//	Activities
-	// =================================================
-	if (m_bActivityInitedByMe) {
-		mdlcache->ActivityList_Clear();
-		mdlcache->EventList_Clear();
 
-		RegisterSharedActivities();
-	}
-
-	EntityList()->LevelInitPreEntity();
-	g_pClientShadowMgr->LevelInitPreEntity();
-	g_pClientLeafSystem->LevelInitPreEntity();
-	g_pDetailObjectSystem->LevelInitPreEntity();
-	g_pViewRender->LevelInitPreEntity();
-
-	IGameSystem::LevelInitPreEntityAllSystems();//pMapName
 
 	// Get weapon precaches
 	W_Precache();	
@@ -238,7 +253,7 @@ void C_World::Precache( void )
 
 void C_World::Spawn( void )
 {
-	Precache();
+	
 }
 
 
@@ -247,6 +262,21 @@ C_World *GetClientWorldEntity()
 {
 	//Assert( g_pClientWorld != NULL );
 	return (C_World*)EntityList()->GetBaseEntity(0);
+}
+
+void C_World::LevelInit()
+{
+	// UNDONE: Make most of these things server systems or precache_registers
+// =================================================
+//	Activities
+// =================================================
+	if (!mdlcache->ActivityList_Inited()) {
+		mdlcache->ActivityList_Init();
+		mdlcache->EventList_Init();
+		RegisterSharedActivities();
+		m_bActivityInitedByMe = true;
+	}
+	Precache();
 }
 
 // Level init, shutdown
@@ -269,6 +299,15 @@ void C_World::LevelShutdownPreEntity()
 void C_World::LevelShutdownPostEntity()
 {
 
+}
+
+void C_World::LevelShutdown()
+{
+	if (m_bActivityInitedByMe) {
+		mdlcache->ActivityList_Free();
+		mdlcache->EventList_Free();
+		m_bActivityInitedByMe = false;
+	}
 }
 
 bool C_World::IsBonusChallengeTimeBased(void)

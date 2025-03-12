@@ -27,6 +27,11 @@ public:
 	CHL1MPWorld();
 	virtual ~CHL1MPWorld();
 
+#ifdef GAME_DLL
+	virtual void	LevelInit();
+	virtual void	LevelShutdown();
+#endif // GAME_DLL
+
 	virtual void CreateStandardEntities( void );
 
 	virtual bool IsTeamplay( void )

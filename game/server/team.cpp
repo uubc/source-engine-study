@@ -89,6 +89,7 @@ CTeam::~CTeam( void )
 {
 	m_aSpawnPoints.Purge();
 	m_aPlayers.Purge();
+	g_Teams.FindAndRemove(this);
 }
 
 //-----------------------------------------------------------------------------

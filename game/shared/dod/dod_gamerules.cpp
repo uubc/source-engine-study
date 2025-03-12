@@ -409,11 +409,7 @@ static CDODViewVectors g_DODViewVectors(
 
 	CDODGameWorld::CDODGameWorld()
 	{
-
-		ResetMapTime();
-
 		m_GamePlayRules.Reset();
-
 
 		m_bInWarmup = false;
 		m_bAwaitingReadyRestart = false;
@@ -438,15 +434,7 @@ static CDODViewVectors g_DODViewVectors(
 
 		Q_memset( m_vecPlayerPositions,0, sizeof(m_vecPlayerPositions) );
 
-		// Lets execute a map specific cfg file
-		// Matt - execute this after server.cfg!
-		char szCommand[256] = { 0 };
-		// Map names cannot contain quotes or control characters so this is safe but silly that we have to do it.
-		Q_snprintf( szCommand, sizeof(szCommand), "exec \"%s.cfg\"\n", STRING(gpGlobals->mapname) );
-		engine->ServerCommand( szCommand );
-
 		m_pCurStateInfo = NULL;
-		State_Transition( STATE_PREGAME );
 
 		// stats
 		memset( m_iStatsKillsPerClass_Allies, 0, sizeof(m_iStatsKillsPerClass_Allies) );
@@ -505,22 +493,122 @@ static CDODViewVectors g_DODViewVectors(
 	//-----------------------------------------------------------------------------
 	CDODGameWorld::~CDODGameWorld()
 	{
-		// Note, don't delete each team since they are in the gEntList and will 
-		// automatically be deleted from there, instead.
-		g_Teams.Purge();
+		
 	}
 
 	void CDODGameWorld::PostConstructor(const char* szClassname, int iForceEdictIndex)
 	{
 		BaseClass::PostConstructor(szClassname, iForceEdictIndex);
+	}
+
+	void CDODGameWorld::LevelInit()
+	{
+		ResetMapTime();
+
+		m_GamePlayRules.Reset();
+
+
+		m_bInWarmup = false;
+		m_bAwaitingReadyRestart = false;
+		m_flRestartRoundTime = -1;
+
+		m_iAlliesRespawnHead = 0;
+		m_iAlliesRespawnTail = 0;
+		m_iAxisRespawnHead = 0;
+		m_iAxisRespawnTail = 0;
+		m_iNumAlliesRespawnWaves = 0;
+		m_iNumAxisRespawnWaves = 0;
+
+		for (int i = 0; i < DOD_RESPAWN_QUEUE_SIZE; i++)
+		{
+			m_AlliesRespawnQueue.Set(i, 0);
+			m_AxisRespawnQueue.Set(i, 0);
+		}
+
+		m_bLevelInitialized = false;
+		m_iSpawnPointCount_Allies = 0;
+		m_iSpawnPointCount_Axis = 0;
+
+		Q_memset(m_vecPlayerPositions, 0, sizeof(m_vecPlayerPositions));
+
+		// Lets execute a map specific cfg file
+		// Matt - execute this after server.cfg!
+		char szCommand[256] = { 0 };
+		// Map names cannot contain quotes or control characters so this is safe but silly that we have to do it.
+		Q_snprintf(szCommand, sizeof(szCommand), "exec \"%s.cfg\"\n", STRING(gpGlobals->mapname));
+		engine->ServerCommand(szCommand);
+
+		m_pCurStateInfo = NULL;
+		State_Transition(STATE_PREGAME);
+
+		// stats
+		memset(m_iStatsKillsPerClass_Allies, 0, sizeof(m_iStatsKillsPerClass_Allies));
+		memset(m_iStatsKillsPerClass_Axis, 0, sizeof(m_iStatsKillsPerClass_Axis));
+
+		memset(m_iStatsSpawnsPerClass_Allies, 0, sizeof(m_iStatsSpawnsPerClass_Allies));
+		memset(m_iStatsSpawnsPerClass_Axis, 0, sizeof(m_iStatsSpawnsPerClass_Axis));
+
+		memset(m_iStatsCapsPerClass_Allies, 0, sizeof(m_iStatsCapsPerClass_Allies));
+		memset(m_iStatsCapsPerClass_Axis, 0, sizeof(m_iStatsCapsPerClass_Axis));
+
+		memset(m_iStatsDefensesPerClass_Allies, 0, sizeof(m_iStatsDefensesPerClass_Allies));
+		memset(m_iStatsDefensesPerClass_Axis, 0, sizeof(m_iStatsDefensesPerClass_Axis));
+
+		memset(&m_iWeaponShotsFired, 0, sizeof(m_iWeaponShotsFired));
+		memset(&m_iWeaponShotsHit, 0, sizeof(m_iWeaponShotsHit));
+		memset(&m_iWeaponDistanceBuckets, 0, sizeof(m_iWeaponDistanceBuckets));
+
+		memset(&m_flSecondsPlayedPerClass_Allies, 0, sizeof(m_flSecondsPlayedPerClass_Allies));
+		memset(&m_flSecondsPlayedPerClass_Axis, 0, sizeof(m_flSecondsPlayedPerClass_Axis));
+
+		m_bUsingTimer = false;
+		m_pRoundTimer = NULL;	// created on first round spawn that requires a timer
+
+		m_bAlliesAreBombing = false;
+		m_bAxisAreBombing = false;
+
+		m_flNextFailSafeWaveCheckTime = 0;
+
+		// Init the holiday
+		int day = 0, month = 0, year = 0;
+
+#ifdef WIN32
+		GetCurrentDate(&day, &month, &year);
+#elif POSIX
+		time_t now = time(NULL);
+		struct tm* tm = localtime(&now);
+
+		day = tm->tm_mday + 1;
+		month = tm->tm_mon;
+		year = tm->tm_year + 1900;
+#endif
+
+		if ((month == 12 && day >= 1) || (month == 1 && day <= 2))
+		{
+			m_bWinterHolidayActive = true;
+		}
+		else
+		{
+			m_bWinterHolidayActive = false;
+		}
+
 		InitTeams();
 		ResetScores();
+
+		BaseClass::LevelInit();
+	}
+
+	void CDODGameWorld::LevelShutdownPreEntity()
+	{
+		UploadLevelStats();
+		BaseClass::LevelShutdownPreEntity();
 	}
 
 	void CDODGameWorld::LevelShutdown( void )
 	{
-		UploadLevelStats();
-
+		// Note, don't delete each team since they are in the gEntList and will 
+		// automatically be deleted from there, instead.
+		g_Teams.Purge();
 		BaseClass::LevelShutdown();
 	}
 

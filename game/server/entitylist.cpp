@@ -5810,8 +5810,11 @@ void CEngineObjectInternal::PhysicsCheckForEntityUntouch(void)
 			// system that will add/delete them as necessary (vphysics in this case)
 			if (link->touchStamp == TOUCHSTAMP_EVENT_DRIVEN)
 			{
-				// refresh the touch call
-				PhysicsTouch((gEntList.GetBaseEntityFromHandle(link->entityTouched))->GetEngineObject());
+				IServerEntity* pEntityTouched = gEntList.GetBaseEntityFromHandle(link->entityTouched);
+				if (pEntityTouched) {
+					// refresh the touch call
+					PhysicsTouch(pEntityTouched->GetEngineObject());
+				}
 			}
 			else
 			{

@@ -47,6 +47,8 @@ public:
 	float GetWaveHeight() const;
 	const char *GetDetailSpriteMaterial() const;
 
+	virtual void	LevelInit();
+
 	//gamerule
 	virtual void LevelInitPreEntity();
 	virtual void LevelInitPostEntity();
@@ -55,6 +57,7 @@ public:
 	virtual void LevelShutdownPreEntity();
 
 	virtual void LevelShutdownPostEntity();
+	virtual void LevelShutdown();
 
 	// Damage Queries - these need to be implemented by the various subclasses (single-player, multi-player, etc).
 // The queries represent queries against damage types and properties.

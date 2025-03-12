@@ -153,13 +153,31 @@ char *sTeamNames[] =
 CHL2MPWorld::CHL2MPWorld()
 {
 #ifndef CLIENT_DLL
-	// Create the team managers
-	for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
-	{
-		CTeam *pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName( "team_manager" ));
-		pTeam->Init( sTeamNames[i], i );
+	m_bTeamPlayEnabled = teamplay.GetBool();
+	m_flIntermissionEndTime = 0.0f;
+	m_flGameStartTime = 0;
 
-		g_Teams.AddToTail( pTeam );
+	m_hRespawnableItemsAndWeapons.RemoveAll();
+	m_tmNextPeriodicThink = 0;
+	m_flRestartGameTime = 0;
+	m_bCompleteReset = false;
+	m_bHeardAllPlayersReady = false;
+	m_bAwaitingReadyRestart = false;
+	m_bChangelevelDone = false;
+#endif
+}
+
+#ifdef GAME_DLL
+void CHL2MPWorld::LevelInit()
+{
+	BaseClass::LevelInit();
+	// Create the team managers
+	for (int i = 0; i < ARRAYSIZE(sTeamNames); i++)
+	{
+		CTeam* pTeam = static_cast<CTeam*>(EntityList()->CreateEntityByName("team_manager"));
+		pTeam->Init(sTeamNames[i], i);
+
+		g_Teams.AddToTail(pTeam);
 	}
 
 	m_bTeamPlayEnabled = teamplay.GetBool();
@@ -173,8 +191,20 @@ CHL2MPWorld::CHL2MPWorld()
 	m_bHeardAllPlayersReady = false;
 	m_bAwaitingReadyRestart = false;
 	m_bChangelevelDone = false;
+}
 
-#endif
+void CHL2MPWorld::LevelShutdown()
+{
+	// Note, don't delete each team since they are in the gEntList and will 
+	// automatically be deleted from there, instead.
+	g_Teams.Purge();
+	BaseClass::LevelShutdown();
+}
+#endif // GAME_DLL
+
+CHL2MPWorld::~CHL2MPWorld(void)
+{
+
 }
 
 const CViewVectors* CHL2MPWorld::GetViewVectors()const
@@ -185,15 +215,6 @@ const CViewVectors* CHL2MPWorld::GetViewVectors()const
 const HL2MPViewVectors* CHL2MPWorld::GetHL2MPViewVectors()const
 {
 	return &g_HL2MPViewVectors;
-}
-	
-CHL2MPWorld::~CHL2MPWorld( void )
-{
-#ifndef CLIENT_DLL
-	// Note, don't delete each team since they are in the gEntList and will 
-	// automatically be deleted from there, instead.
-	g_Teams.Purge();
-#endif
 }
 
 void CHL2MPWorld::CreateStandardEntities( void )
