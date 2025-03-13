@@ -89,14 +89,20 @@ public:
 	virtual ~CHL2MPWorld();
 
 #ifdef GAME_DLL
+	virtual void	Precache(void);
 	virtual void	LevelInit();
 	virtual void	LevelShutdown();
+
+	virtual void	ClientActive(int pEdict, bool bLoadGame);
+	virtual void	ClientPutInServer(int pEdict, const char* playername);
+	virtual void	RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
+	virtual void	StartGameFrame(void);
+
 #endif // GAME_DLL
 
-	virtual void Precache( void );
+	//virtual void Precache( void );
 	virtual bool ShouldCollide( int collisionGroup0, int collisionGroup1 );
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
-
 	virtual float FlWeaponRespawnTime( CBaseCombatWeapon *pWeapon );
 	virtual float FlWeaponTryRespawn( CBaseCombatWeapon *pWeapon );
 	virtual Vector VecWeaponRespawnSpot( CBaseCombatWeapon *pWeapon );

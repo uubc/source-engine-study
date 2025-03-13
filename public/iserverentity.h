@@ -909,6 +909,7 @@ public:
 	virtual void FrameUpdatePostEntityThink() = 0;
 	virtual void Think(void) = 0;// GR_Think - runs every server frame, should handle any timer tasks, periodic events, etc.
 	virtual bool IsAllowedToSpawn(CBaseEntity* pEntity) = 0;  // Can this item spawn (eg NPCs don't spawn in deathmatch).
+	virtual void StartGameFrame(void) = 0;
 	// Called at the end of GameFrame (i.e. after all game logic has run this frame)
 	virtual void EndGameFrame(void) = 0;
 	virtual bool IsSkillLevel(int iLevel) = 0;
@@ -924,6 +925,8 @@ public:
 	virtual const char* GetGameDescription(void) = 0;  // this is the game name that gets seen in the server browser
 	// Client connection/disconnection
 	virtual bool ClientConnected(int pEntity, const char* pszName, const char* pszAddress, char* reject, int maxrejectlen) = 0;// a client just connected to the server (player hasn't spawned yet)
+	virtual void ClientActive(int pEdict, bool bLoadGame) = 0;
+	virtual void ClientPutInServer(int pEdict, const char* playername) = 0;
 	virtual void InitHUD(CBasePlayer* pl) = 0;		// the client dll is ready for updating
 	virtual void ClientDisconnected(int pClient) = 0;// a client just disconnected from the server
 	virtual bool IsConnectedUserInfoChangeAllowed(CBasePlayer* pPlayer) = 0;
@@ -939,7 +942,8 @@ public:
 	virtual bool  FlPlayerFallDeathDoesScreenFade(CBasePlayer* pl) = 0;
 	virtual bool AllowDamage(CBaseEntity* pVictim, const ITakeDamageInfo& info) = 0;
 	// Client spawn/respawn control
-	virtual void PlayerSpawn(CBasePlayer* pPlayer) = 0;// called by CBasePlayer::Spawn just before releasing player into the game
+	virtual void RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse) = 0;
+	virtual void AfterPlayerSpawn(CBasePlayer* pPlayer) = 0;// called by CBasePlayer::Spawn just before releasing player into the game
 	virtual void PlayerThink(CBasePlayer* pPlayer) = 0; // called by CBasePlayer::PreThink every frame, before physics are run and after keys are accepted
 	virtual bool FPlayerCanRespawn(CBasePlayer* pPlayer) = 0;// is this player allowed to respawn now?
 	virtual float FlPlayerSpawnTime(CBasePlayer* pPlayer) = 0;// When in the future will this player be able to spawn?

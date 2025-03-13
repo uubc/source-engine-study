@@ -62,14 +62,23 @@ private:
 	CPortalGameWorld();
 	virtual ~CPortalGameWorld() {}
 
+	virtual void			Precache(void);
+	virtual void			LevelInit();
+	virtual void			LevelShutdown();
+
+	virtual void			ClientActive(int pEdict, bool bLoadGame);
+	virtual void			ClientPutInServer(int pEdict, const char* playername);
+
 	virtual void			Think( void );
 
 	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
-	virtual void			PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void			RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
+	virtual void			AfterPlayerSpawn( CBasePlayer *pPlayer );
 
 	virtual void			InitDefaultAIRelationships( void );
 	virtual const char*		AIClassText(int classType);
 	virtual const char *GetGameDescription( void ) { return "Portal"; }
+	virtual void			StartGameFrame(void);
 
 	// Ammo
 	virtual void			PlayerThink( CBasePlayer *pPlayer );

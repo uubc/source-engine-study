@@ -203,12 +203,7 @@ CPortalSimulator::~CPortalSimulator( void )
 
 bool CPortalSimulator::ShouldCollide(int collisionGroup, int contentsMask) const
 {
-#ifdef GAME_DLL
-	return GetWorldEntity()->ShouldCollide(collisionGroup, contentsMask);
-#endif // GAME_DLL
-#ifdef CLIENT_DLL
-	return GetClientWorldEntity()->ShouldCollide(collisionGroup, contentsMask);
-#endif // CLIENT_DLL
+	return GetEntityList()->GetWorld()->ShouldCollide(collisionGroup, contentsMask);
 }
 
 void CPortalSimulator::MoveTo( const Vector &ptCenter, const QAngle &angles )

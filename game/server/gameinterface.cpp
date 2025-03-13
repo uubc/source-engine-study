@@ -1279,7 +1279,6 @@ void CServerGameDLL::GameFrame( bool simulating )
 	g_bUseNetworkVars = s_UseNetworkVars.GetBool();
 #endif
 
-	extern void GameStartFrame( void );
 	extern void ServiceEventQueue( void );
 	extern void Physics_RunThinkFunctions( bool simulating );
 
@@ -1289,7 +1288,10 @@ void CServerGameDLL::GameFrame( bool simulating )
 
 	EntityList()->FrameUpdatePreEntityThink();
 	IGameSystem::FrameUpdatePreEntityThinkAllSystems();
-	GameStartFrame();
+	if (g_pGameRules)
+	{
+		g_pGameRules->StartGameFrame();
+	}
 
 #ifndef _XBOX
 #ifdef USE_NAV_MESH
@@ -1495,7 +1497,7 @@ IEntityFactory* CServerGameDLL::GetAllEntityFactories(void)
 
 const char *CServerGameDLL::GetGameDescription( void )
 {
-	return ::GetGameDescription();
+	return g_pGameRules ? g_pGameRules->GetGameDescription() : "gamedll not inited";
 }
 
 void CServerGameDLL::CreateNetworkStringTables( void )
@@ -3002,7 +3004,7 @@ void CServerGameClients::ClientActive( int pEdict, bool bLoadGame )
 {
 	MDLCACHE_CRITICAL_SECTION();
 	
-	::ClientActive( pEdict, bLoadGame );
+	g_pGameRules->ClientActive( pEdict, bLoadGame );
 
 	// If we just loaded from a save file, call OnRestore on valid entities
 	EndRestoreEntities();
@@ -3124,13 +3126,25 @@ void CServerGameClients::ClientPutInServer( int pEntity, const char *playername 
 	if ( g_pClientPutInServerOverride )
 		g_pClientPutInServerOverride( pEntity, playername );
 	else
-		::ClientPutInServer( pEntity, playername );
+		g_pGameRules->ClientPutInServer( pEntity, playername );
 }
 
 void CServerGameClients::ClientCommand( int pEntity, const CCommand &args )
 {
 	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetBaseEntity( pEntity ) );
-	::ClientCommand( pPlayer, args );
+	if (!g_pGameRules->ClientCommand(pPlayer, args))
+	{
+		const char* pCmd = args[0];
+		if (Q_strlen(pCmd) > 128)
+		{
+			ClientPrint(pPlayer, HUD_PRINTCONSOLE, "Console command too long.\n");
+		}
+		else
+		{
+			// tell the user they entered an unknown command
+			ClientPrint(pPlayer, HUD_PRINTCONSOLE, UTIL_VarArgs("Unknown command: %s\n", pCmd));
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

@@ -298,7 +298,7 @@ bool CSingleplayWorld::Damage_ShouldNotBleed( int iDmgType )
 
 	//=========================================================
 	//=========================================================
-	void CSingleplayWorld::PlayerSpawn( CBasePlayer *pPlayer )
+	void CSingleplayWorld::AfterPlayerSpawn( CBasePlayer *pPlayer )
 	{
 		// Player no longer gets all weapons to start.
 		// He has to pick them up now.  Use impulse 101

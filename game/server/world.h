@@ -205,7 +205,7 @@ public:
 
 
 	// Client spawn/respawn control
-	virtual void PlayerSpawn(CBasePlayer* pPlayer) = 0;// called by CBasePlayer::Spawn just before releasing player into the game
+	virtual void AfterPlayerSpawn(CBasePlayer* pPlayer) = 0;// called by CBasePlayer::Spawn just before releasing player into the game
 	virtual void PlayerThink(CBasePlayer* pPlayer) = 0; // called by CBasePlayer::PreThink every frame, before physics are run and after keys are accepted
 	virtual bool FPlayerCanRespawn(CBasePlayer* pPlayer) = 0;// is this player allowed to respawn now?
 	virtual float FlPlayerSpawnTime(CBasePlayer* pPlayer) = 0;// When in the future will this player be able to spawn?

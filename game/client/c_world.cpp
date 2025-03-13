@@ -94,9 +94,9 @@ IClientWorld* g_pGameRules = NULL;
 //}
 
 
-IMPLEMENT_CLIENTCLASS_NO_FACTORY( C_World, DT_World, CWorld );//, ClientWorldFactory
+IMPLEMENT_CLIENTCLASS_NO_FACTORY( C_World, DT_WORLD, CWorld );//, ClientWorldFactory
 
-BEGIN_RECV_TABLE( C_World, DT_World )
+BEGIN_RECV_TABLE( C_World, DT_WORLD)
 	RecvPropFloat(RECVINFO(m_flWaveHeight)),
 	RecvPropVector(RECVINFO(m_WorldMins)),
 	RecvPropVector(RECVINFO(m_WorldMaxs)),
@@ -266,6 +266,7 @@ C_World *GetClientWorldEntity()
 
 void C_World::LevelInit()
 {
+	m_flWaveHeight = 0.0f;
 	// UNDONE: Make most of these things server systems or precache_registers
 // =================================================
 //	Activities

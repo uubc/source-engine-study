@@ -160,6 +160,79 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 #endif // !CLIENT_DLL
 	}
 
+	void CPortalGameWorld::Precache(void)
+	{
+		BaseClass::Precache();
+		engine->PrecacheModel("models/player.mdl");
+		engine->PrecacheModel("models/gibs/agibs.mdl");
+		engine->PrecacheModel("models/weapons/v_hands.mdl");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowAmmo");
+		g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowHealth");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("Missile.ShotDown");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.DefaultNearmiss");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.GunshipNearmiss");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.StriderNearmiss");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepHigh");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepLow");
+
+		engine->PrecacheModel("models/portals/portal1.mdl");
+		engine->PrecacheModel("models/portals/portal2.mdl");
+	}
+
+	void CPortalGameWorld::LevelInit()
+	{
+		BaseClass::LevelInit();
+	}
+
+	void CPortalGameWorld::LevelShutdown()
+	{
+		BaseClass::LevelShutdown();
+	}
+
+	/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+	void CPortalGameWorld::ClientPutInServer(int pEdict, const char* playername)
+	{
+		// Allocate a CBasePlayer for pev, and call spawn
+		CPortal_Player* pPlayer = (CPortal_Player*)EntityList()->GetBaseEntity(pEdict);
+		if (pPlayer == NULL) {
+			pPlayer = CPortal_Player::CreatePlayer("player", pEdict);
+		}
+		else {
+			if (pPlayer->m_hViewEntity)
+			{
+				engine->SetView(pEdict, pPlayer->m_hViewEntity);
+			}
+			else
+			{
+				engine->SetView(pEdict, pPlayer);
+			}
+		}
+		pPlayer->PlayerData()->netname = AllocPooledString(playername);
+	}
+
+
+	void CPortalGameWorld::ClientActive(int pEdict, bool bLoadGame)
+	{
+		CPortal_Player* pPlayer = dynamic_cast<CPortal_Player*>(EntityList()->GetBaseEntity(pEdict));
+		Assert(pPlayer);
+
+		pPlayer->InitialSpawn();
+
+		if (!bLoadGame)
+		{
+			pPlayer->Spawn();
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: called each time a player uses a "cmd" command
 	// Input  : *pEdict - the player who issued the command
@@ -179,10 +252,30 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 		return false;
 	}
 
+	// called by ClientKill and DeadThink
+	void CPortalGameWorld::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+	{
+		if (gpGlobals->coop || gpGlobals->deathmatch)
+		{
+			if (fCopyCorpse)
+			{
+				// make a copy of the dead body for appearances sake
+				((CPortal_Player*)pEdict)->CreateCorpse();
+			}
+
+			// respawn player
+			pEdict->Spawn();
+		}
+		else
+		{       // restart the entire server
+			engine->ServerCommand("reload\n");
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Player has just spawned. Equip them.
 	//-----------------------------------------------------------------------------
-	void CPortalGameWorld::PlayerSpawn( CBasePlayer *pPlayer )
+	void CPortalGameWorld::AfterPlayerSpawn( CBasePlayer *pPlayer )
 	{
 	}
 
@@ -1036,6 +1129,15 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 
 			default:					return "MISSING CLASS in ClassifyText()";
 		}
+	}
+
+	void CPortalGameWorld::StartGameFrame(void)
+	{
+		VPROF("StartGameFrame()");
+		if (g_fGameOver)
+			return;
+
+		gpGlobals->teamplay = (teamplay.GetInt() != 0);
 	}
 
 	void CPortalGameWorld::PlayerThink( CBasePlayer *pPlayer )

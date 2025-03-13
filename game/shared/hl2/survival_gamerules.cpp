@@ -70,7 +70,7 @@ public:
 	virtual ~CHalfLife2Survival() {}
 
 	virtual void Think( void );
-	virtual void PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void AfterPlayerSpawn( CBasePlayer *pPlayer );
 	virtual bool IsAllowedToSpawn( CBaseEntity *pEntity );
 	virtual void CreateStandardEntities();
 
@@ -129,9 +129,9 @@ bool CHalfLife2Survival::IsAllowedToSpawn( CBaseEntity *pEntity )
 	return false;
 }
 
-void CHalfLife2Survival::PlayerSpawn( CBasePlayer *pPlayer )
+void CHalfLife2Survival::AfterPlayerSpawn( CBasePlayer *pPlayer )
 {
-	BaseClass::PlayerSpawn( pPlayer );
+	BaseClass::AfterPlayerSpawn( pPlayer );
 
 	if ( !m_bActive )
 		return;

@@ -330,7 +330,7 @@ void ClientPrecache( void )
 	g_pSoundEmitterSystem->PrecacheScriptSound( "Bounce.Shell" );
 	g_pSoundEmitterSystem->PrecacheScriptSound( "Bounce.Concrete" );
 
-	ClientGamePrecache();
+	//ClientGamePrecache();
 }
 
 CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
@@ -452,47 +452,6 @@ void SetDebugBits( CBasePlayer* pPlayer, const char *name, int bit )
 #endif//AI_MONITOR_FOR_OSCILLATION
 		}
 	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pKillTargetName - 
-//-----------------------------------------------------------------------------
-void KillTargets( const char *pKillTargetName )
-{
-	IServerEntity *pentKillTarget = NULL;
-
-	DevMsg( 2, "KillTarget: %s\n", pKillTargetName );
-	pentKillTarget = EntityList()->FindEntityByName( NULL, pKillTargetName );
-	while ( pentKillTarget )
-	{
-		EntityList()->DestroyEntity( pentKillTarget );
-
-		DevMsg( 2, "killing %s\n", STRING( pentKillTarget->GetEngineObject()->GetClassname() ) );
-		pentKillTarget = EntityList()->FindEntityByName( pentKillTarget, pKillTargetName );
-	}
-}
-
-
-//------------------------------------------------------------------------------
-// Purpose:
-//------------------------------------------------------------------------------
-void ConsoleKillTarget( CBasePlayer *pPlayer, const char *name )
-{
-	// If no name was given use the picker
-	if (FStrEq(name,"")) 
-	{
-		IServerEntity *pEntity = EntityList()->FindPickerEntity( pPlayer );
-		if ( pEntity )
-		{
-			EntityList()->DestroyEntity( pEntity );
-			Msg( "killing %s\n", pEntity->GetDebugName() );
-			return;
-		}
-	}
-	// Otherwise use name or classname
-	KillTargets( name );
 }
 
 //-----------------------------------------------------------------------------
@@ -1444,89 +1403,4 @@ void CC_GroundList_f(const CCommand &args)
 
 static ConCommand groundlist("groundlist", CC_GroundList_f, "Display ground entity list <index>" );
 
-//-----------------------------------------------------------------------------
-// Purpose: called each time a player uses a "cmd" command
-// Input  : *pEdict - the player who issued the command
-//-----------------------------------------------------------------------------
-void ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
-{
-	const char *pCmd = args[0];
 
-	// Is the client spawned yet?
-	if ( !pPlayer )
-		return;
-
-	MDLCACHE_CRITICAL_SECTION();
-
-	/*
-	const char *pstr;
-
-	if (((pstr = strstr(pcmd, "weapon_")) != NULL)  && (pstr == pcmd))
-	{
-		// Subtype may be specified
-		if ( args.ArgC() == 2 )
-		{
-			pPlayer->SelectItem( pcmd, atoi( args[1] ) );
-		}
-		else
-		{
-			pPlayer->SelectItem(pcmd);
-		}
-	}
-	*/
-	
-	if ( FStrEq( pCmd, "killtarget" ) )
-	{
-		ConVarRef developer("developer");
-		if ( developer.GetBool() && sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin() )
-		{
-			ConsoleKillTarget( pPlayer, args[1] );
-		}
-	}
-	else if ( FStrEq( pCmd, "demorestart" ) ) 
-	{
-		pPlayer->ForceClientDllUpdate(); 
-	}
-	else if ( FStrEq( pCmd, "fade" ) )
-	{
-		color32 black = {32,63,100,200};
-		UTIL_ScreenFade( pPlayer, black, 3, 3, FFADE_OUT  );
-	} 
-	else if ( FStrEq( pCmd, "te" ) )
-	{
-		if ( sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin() )
-		{
-			if ( FStrEq( args[1], "stop" ) )
-			{
-				// Destroy it
-				//
-				IServerEntity *ent = EntityList()->FindEntityByClassname( NULL, "te_tester" );
-				while ( ent )
-				{
-					IServerEntity *next = EntityList()->FindEntityByClassname( ent, "te_tester" );
-					EntityList()->DestroyEntity( ent );
-					ent = next;
-				}
-			}
-			else
-			{
-				CTempEntTester::Create( pPlayer->WorldSpaceCenter(), pPlayer->EyeAngles(), args[1], args[2] );
-			}
-		}
-	}
-	else 
-	{
-		if ( !g_pGameRules->ClientCommand( pPlayer, args ) )
-		{
-			if ( Q_strlen( pCmd ) > 128 )
-			{
-				ClientPrint( pPlayer, HUD_PRINTCONSOLE, "Console command too long.\n" );
-			}
-			else
-			{
-				// tell the user they entered an unknown command
-				ClientPrint( pPlayer, HUD_PRINTCONSOLE, UTIL_VarArgs( "Unknown command: %s\n", pCmd ) );
-			}
-		}
-	}
-}

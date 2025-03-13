@@ -28,8 +28,13 @@ public:
 	virtual ~CHL1MPWorld();
 
 #ifdef GAME_DLL
+	virtual void	Precache(void);
 	virtual void	LevelInit();
 	virtual void	LevelShutdown();
+
+	virtual void	ClientActive(int pEdict, bool bLoadGame);
+	virtual void	ClientPutInServer(int pEdict, const char* playername);
+	
 #endif // GAME_DLL
 
 	virtual void CreateStandardEntities( void );
@@ -52,6 +57,8 @@ public:
 #else
 	virtual const char *GetGameDescription( void ) { return "Half-Life Deathmatch: Source"; }  // this is the game name that gets seen in the server browser
 
+	virtual void StartGameFrame(void);
+
 	virtual void Think ( void );
 
 	virtual void GoToIntermission( void );
@@ -65,7 +72,7 @@ public:
 	virtual void InitHUD( CBasePlayer *pPlayer );
 	virtual void ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTeamName, bool bKill, bool bGib );
 	virtual void ClientSettingsChanged( CBasePlayer *pPlayer );
-
+	virtual void RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
 	virtual int GetTeamIndex( const char * pName );
 #endif
 

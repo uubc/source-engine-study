@@ -219,9 +219,15 @@ public:
 	CDODGameWorld();
 	virtual ~CDODGameWorld();
 	void PostConstructor(const char* szClassname, int iForceEdictIndex);
+
+	virtual void Precache(void);
 	virtual void LevelInit();
 	virtual void LevelShutdownPreEntity();
 	virtual void LevelShutdown( void );
+
+	virtual void ClientActive(int pEdict, bool bLoadGame);
+	virtual void ClientPutInServer(int pEdict, const char* playername);
+
 	void UploadLevelStats( void );
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
@@ -244,7 +250,9 @@ public:
 	
 	IServerEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );
 	bool IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer );
-	virtual void PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void AfterPlayerSpawn( CBasePlayer *pPlayer );
+
+	virtual void StartGameFrame(void);
 
 	int DODPointsForKill( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 
@@ -296,6 +304,7 @@ public:
 	void CleanUpMap( void );
 	void ResetScores( void );
 
+	virtual void RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
 	// Respawn everyone regardless of state - round reset
 	inline void RespawnAllPlayers( void ) { RespawnPlayers( true ); }
 

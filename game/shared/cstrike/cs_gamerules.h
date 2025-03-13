@@ -151,10 +151,14 @@ public:
 	CCSGameWorld();
 	virtual ~CCSGameWorld();
 
+	virtual void	Precache(void);
+
 	virtual void	LevelInit();
 	virtual void	LevelShutdown();
 
-
+	virtual void	ClientActive(int pEdict, bool bLoadGame);
+	virtual void	ClientPutInServer(int pEdict, const char* playername);
+	
 	void DumpTimers( void ) const;	// debugging to help track down a stuck server (rare?)
 
 	IServerEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );
@@ -164,11 +168,13 @@ public:
 	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 	virtual void Think();
 
+	virtual void StartGameFrame(void);
 	// Called at the end of GameFrame (i.e. after all game logic has run this frame)
 	virtual void EndGameFrame( void );
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
-	virtual void PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
+	virtual void AfterPlayerSpawn( CBasePlayer *pPlayer );
 			void ShowSpawnPoints();
 
 	virtual void ClientCommandKeyValues( int pEntity, KeyValues *pKeyValues );

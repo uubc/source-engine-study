@@ -1667,8 +1667,8 @@ public:
 			if (nPlayerIndex >= 0)
 			{
 				IServerEntity* pEdict = EntityList()->GetBaseEntity(nPlayerIndex);
-				ClientPutInServer(nPlayerIndex, "unnamed");
-				ClientActive(nPlayerIndex, false);
+				g_pGameRules->ClientPutInServer(nPlayerIndex, "unnamed");
+				g_pGameRules->ClientActive(nPlayerIndex, false);
 
 				CBasePlayer* pPlayer = (CBasePlayer*)pEdict;
 				SceneManager_ClientActive(pPlayer);

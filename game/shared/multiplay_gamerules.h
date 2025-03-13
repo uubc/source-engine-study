@@ -146,7 +146,7 @@ public:
 	virtual bool AllowDamage( CBaseEntity *pVictim, const ITakeDamageInfo&info );
 
 // Client spawn/respawn control
-	virtual void PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void AfterPlayerSpawn( CBasePlayer *pPlayer );
 	virtual void PlayerThink( CBasePlayer *pPlayer );
 	virtual bool FPlayerCanRespawn( CBasePlayer *pPlayer );
 	virtual float FlPlayerSpawnTime( CBasePlayer *pPlayer );

@@ -105,6 +105,25 @@ CHL1MPWorld::CHL1MPWorld()
 }
 
 #ifdef GAME_DLL
+
+void CHL1MPWorld::Precache(void)
+{
+	BaseClass::Precache();
+	engine->PrecacheModel("models/player/mp/barney/barney.mdl");
+	engine->PrecacheModel("models/player/mp/gina/gina.mdl");
+	engine->PrecacheModel("models/player/mp/gman/gman.mdl");
+	engine->PrecacheModel("models/player/mp/gordon/gordon.mdl");
+	engine->PrecacheModel("models/player/mp/helmet/helmet.mdl");
+	engine->PrecacheModel("models/player/mp/hgrunt/hgrunt.mdl");
+	engine->PrecacheModel("models/player/mp/robo/robo.mdl");
+	engine->PrecacheModel("models/player/mp/scientist/scientist.mdl");
+	engine->PrecacheModel("models/player/mp/zombie/zombie.mdl");
+	engine->PrecacheModel("models/player.mdl");
+	engine->PrecacheModel("models/gibs/agibs.mdl");
+
+	g_pSoundEmitterSystem->PrecacheScriptSound("Player.UseDeny");
+}
+
 void CHL1MPWorld::LevelInit()
 {
 	BaseClass::LevelInit();
@@ -162,6 +181,9 @@ void CHL1MPWorld::LevelInit()
 		}
 
 	}
+
+	//engine->ServerCommand("exec game.cfg\n");
+	//engine->ServerExecute();
 }
 void CHL1MPWorld::LevelShutdown()
 {
@@ -170,6 +192,51 @@ void CHL1MPWorld::LevelShutdown()
 	g_Teams.Purge();
 	BaseClass::LevelShutdown();
 }
+
+
+/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+void CHL1MPWorld::ClientPutInServer(int pEdict, const char* playername)
+{
+	CHL1_Player* pPlayer = (CHL1_Player*)EntityList()->GetBaseEntity(pEdict);
+	if (pPlayer == NULL) {
+		// Allocate a CBasePlayer for pev, and call spawn
+		if (g_pGameRules->IsMultiplayer())
+			pPlayer = CHL1_Player::CreatePlayer("player_mp", pEdict);
+		else
+			pPlayer = CHL1_Player::CreatePlayer("player", pEdict);
+	}
+	else {
+		if (pPlayer->m_hViewEntity)
+		{
+			engine->SetView(pEdict, pPlayer->m_hViewEntity);
+		}
+		else
+		{
+			engine->SetView(pEdict, pPlayer);
+		}
+	}
+	pPlayer->SetPlayerName(playername);
+}
+
+
+void CHL1MPWorld::ClientActive(int pEdict, bool bLoadGame)
+{
+	CHL1_Player* pPlayer = dynamic_cast<CHL1_Player*>(CBaseEntity::Instance(pEdict));
+
+	pPlayer->InitialSpawn();
+
+	if (!bLoadGame)
+	{
+		pPlayer->Spawn();
+	}
+}
+
 #endif // GAME_DLL
 
 CHL1MPWorld::~CHL1MPWorld( void )
@@ -227,6 +294,20 @@ bool CHL1MPWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
 #ifdef CLIENT_DLL
 #else
 
+void CHL1MPWorld::StartGameFrame(void)
+{
+	VPROF("StartGameFrame()");
+
+	if (g_fGameOver)
+		return;
+
+	gpGlobals->teamplay = (teamplay.GetInt() != 0);
+
+#ifdef DEBUG
+	extern void Bot_RunAll();
+	Bot_RunAll();
+#endif
+}
 
 void CHL1MPWorld::Think ( void )
 {
@@ -429,6 +510,25 @@ void CHL1MPWorld::ClientSettingsChanged( CBasePlayer *pPlayer )
 	BaseClass::ClientSettingsChanged( pPlayer );
 }
 
+// called by ClientKill and DeadThink
+void CHL1MPWorld::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+{
+	if (gpGlobals->coop || gpGlobals->deathmatch)
+	{
+		if (fCopyCorpse)
+		{
+			// make a copy of the dead body for appearances sake
+			((CHL1MP_Player*)pEdict)->CreateCorpse();
+		}
+
+		// respawn player
+		pEdict->Spawn();
+	}
+	else
+	{       // restart the entire server
+		engine->ServerCommand("reload\n");
+	}
+}
 
 int CHL1MPWorld::GetTeamIndex( const char * pName )
 {

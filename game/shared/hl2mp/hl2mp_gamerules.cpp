@@ -35,8 +35,6 @@
 	#include "hl2mp_bot_temp.h"
 #endif
 
-extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
-
 extern bool FindInList( const char **pStrings, const char *pToFind );
 
 ConVar sv_hl2mp_weapon_respawn_time( "sv_hl2mp_weapon_respawn_time", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY );
@@ -168,6 +166,29 @@ CHL2MPWorld::CHL2MPWorld()
 }
 
 #ifdef GAME_DLL
+
+void CHL2MPWorld::Precache(void)
+{
+	BaseClass::Precache();
+	engine->PrecacheModel("models/player.mdl");
+	engine->PrecacheModel("models/gibs/agibs.mdl");
+	engine->PrecacheModel("models/weapons/v_hands.mdl");
+
+	g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowAmmo");
+	g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowHealth");
+
+	g_pSoundEmitterSystem->PrecacheScriptSound("FX_AntlionImpact.ShellImpact");
+	g_pSoundEmitterSystem->PrecacheScriptSound("Missile.ShotDown");
+	g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.DefaultNearmiss");
+	g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.GunshipNearmiss");
+	g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.StriderNearmiss");
+
+	g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepHigh");
+	g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepLow");
+	g_pSoundEmitterSystem->PrecacheScriptSound("AlyxEmp.Charge");
+
+}
+
 void CHL2MPWorld::LevelInit()
 {
 	BaseClass::LevelInit();
@@ -200,6 +221,117 @@ void CHL2MPWorld::LevelShutdown()
 	g_Teams.Purge();
 	BaseClass::LevelShutdown();
 }
+
+/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+void CHL2MPWorld::ClientPutInServer(int pEdict, const char* playername)
+{
+	// Allocate a CBaseTFPlayer for pev, and call spawn
+	CHL2MP_Player* pPlayer = (CHL2MP_Player*)EntityList()->GetBaseEntity(pEdict);
+	if (pPlayer == NULL) {
+		pPlayer = CHL2MP_Player::CreatePlayer("player", pEdict);
+	}
+	else {
+		if (pPlayer->m_hViewEntity)
+		{
+			engine->SetView(pEdict, pPlayer->m_hViewEntity);
+		}
+		else
+		{
+			engine->SetView(pEdict, pPlayer);
+		}
+	}
+	pPlayer->SetPlayerName(playername);
+}
+
+ConVar sv_motd_unload_on_dismissal("sv_motd_unload_on_dismissal", "0", 0, "If enabled, the MOTD contents will be unloaded when the player closes the MOTD.");
+
+void FinishClientPutInServer(CHL2MP_Player* pPlayer)
+{
+	pPlayer->InitialSpawn();
+	pPlayer->Spawn();
+
+
+	char sName[128];
+	Q_strncpy(sName, pPlayer->GetPlayerName(), sizeof(sName));
+
+	// First parse the name and remove any %'s
+	for (char* pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++)
+	{
+		// Replace it with a space
+		if (*pApersand == '%')
+			*pApersand = ' ';
+	}
+
+	// notify other clients of player joining the game
+	UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_connected", sName[0] != 0 ? sName : "<unconnected>");
+
+	if (HL2MPRules()->IsTeamplay() == true)
+	{
+		ClientPrint(pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName());
+	}
+
+	const ConVar* hostname = cvar->FindVar("hostname");
+	const char* title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY";
+
+	KeyValues* data = new KeyValues("data");
+	data->SetString("title", title);		// info panel title
+	data->SetString("type", "1");			// show userdata from stringtable entry
+	data->SetString("msg", "motd");		// use this stringtable entry
+	data->SetBool("unload", sv_motd_unload_on_dismissal.GetBool());
+
+	pPlayer->ShowViewPortPanel(PANEL_INFO, true, data);
+
+	data->deleteThis();
+}
+
+void CHL2MPWorld::ClientActive(int pEdict, bool bLoadGame)
+{
+	// Can't load games in CS!
+	Assert(!bLoadGame);
+
+	CHL2MP_Player* pPlayer = ToHL2MPPlayer(CBaseEntity::Instance(pEdict));
+	FinishClientPutInServer(pPlayer);
+}
+
+// called by ClientKill and DeadThink
+void CHL2MPWorld::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+{
+	CHL2MP_Player* pPlayer = ToHL2MPPlayer(pEdict);
+
+	if (pPlayer)
+	{
+		if (gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME)
+		{
+			// respawn player
+			pPlayer->Spawn();
+		}
+		else
+		{
+			pPlayer->GetEngineObject()->SetNextThink(gpGlobals->curtime + 0.1f);
+		}
+	}
+}
+
+void CHL2MPWorld::StartGameFrame(void)
+{
+	VPROF("StartGameFrame()");
+	if (g_fGameOver)
+		return;
+
+	gpGlobals->teamplay = (teamplay.GetInt() != 0);
+
+#ifdef DEBUG
+	extern void Bot_RunAll();
+	Bot_RunAll();
+#endif
+}
+
 #endif // GAME_DLL
 
 CHL2MPWorld::~CHL2MPWorld(void)
@@ -867,11 +999,10 @@ float CHL2MPWorld::GetMapRemainingTime()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHL2MPWorld::Precache( void )
-{
-	BaseClass::Precache();
-	g_pSoundEmitterSystem->PrecacheScriptSound( "AlyxEmp.Charge" );
-}
+//void CHL2MPWorld::Precache( void )
+//{
+//	BaseClass::Precache();
+//}
 
 bool CHL2MPWorld::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 {
@@ -1027,7 +1158,7 @@ void CHL2MPWorld::RestartGame()
 			pPlayer->GetActiveWeapon()->Holster();
 		}
 		pPlayer->RemoveAllItems( true );
-		respawn( pPlayer, false );
+		g_pGameRules->RespawnPlayer( pPlayer, false );
 		pPlayer->Reset();
 	}
 

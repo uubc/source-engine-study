@@ -666,6 +666,39 @@ ConVar cl_autohelp(
 	//	SetBlackMarketPrices( false );
 	//}
 
+	void CCSGameWorld::Precache(void)
+	{
+		BaseClass::Precache();
+		// Materials used by the client effects
+		engine->PrecacheModel("sprites/white.vmt");
+		engine->PrecacheModel("sprites/physbeam.vmt");
+
+		// Legacy temp ents sounds
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bounce.PistolShell");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bounce.RifleShell");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bounce.ShotgunShell");
+
+		// Moved to pure_server_minimal.txt
+		//	// Flashbang-related files
+		//	engine->ForceExactFile( "sprites/white.vmt" );
+		//	engine->ForceExactFile( "sprites/white.vtf" );
+		//	engine->ForceExactFile( "vgui/white.vmt" );
+		//	engine->ForceExactFile( "vgui/white.vtf" );
+		//	engine->ForceExactFile( "effects/flashbang.vmt" );
+		//	engine->ForceExactFile( "effects/flashbang_white.vmt" );
+		//
+		//	// Smoke grenade-related files
+		//	engine->ForceExactFile( "particle/particle_smokegrenade1.vmt" );
+		//	engine->ForceExactFile( "particle/particle_smokegrenade.vtf" );
+		//
+		//	// Sniper scope
+		//	engine->ForceExactFile( "sprites/scope_arc.vmt" );
+		//	engine->ForceExactFile( "sprites/scope_arc.vtf" );
+		//
+		//	// DSP presets - don't want people avoiding the deafening + ear ring
+		//	engine->ForceExactFile( "scripts/dsp_presets.txt" );
+	}
+
 	void CCSGameWorld::LevelInit() 
 	{
 		BaseClass::LevelInit();
@@ -797,6 +830,9 @@ ConVar cl_autohelp(
 			g_flGameStatsUpdateTime = CS_GAME_STATS_UPDATE; //Next update is between 22 and 24 hours.
 		}
 #endif	
+
+		//CreateGameRulesObject( "CCSGameRules" );
+		SetBlackMarketPrices(true);
 	}
 
 	void CCSGameWorld::LevelShutdown() 
@@ -828,6 +864,92 @@ ConVar cl_autohelp(
 	{
 		
 	}
+
+	/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+	void CCSGameWorld::ClientPutInServer(int pEdict, const char* playername)
+	{
+		// Allocate a CBaseTFPlayer for pev, and call spawn
+		CCSPlayer* pPlayer = (CCSPlayer*)EntityList()->GetBaseEntity(pEdict);
+		if (pPlayer == NULL) {
+			pPlayer = CCSPlayer::CreatePlayer("player", pEdict);
+		}
+		else {
+			if (pPlayer->m_hViewEntity)
+			{
+				engine->SetView(pEdict, pPlayer->m_hViewEntity);
+			}
+			else
+			{
+				engine->SetView(pEdict, pPlayer);
+			}
+		}
+		pPlayer->SetPlayerName(playername);
+	}
+
+	void FinishClientPutInServer(CCSPlayer* pPlayer)
+	{
+		pPlayer->InitialSpawn();
+		pPlayer->Spawn();
+
+		if (!pPlayer->IsBot())
+		{
+			// When the player first joins the server, they
+			pPlayer->m_iNumSpawns = 0;
+			pPlayer->m_takedamage = DAMAGE_NO;
+			pPlayer->pl.deadflag = true;
+			pPlayer->m_lifeState = LIFE_DEAD;
+			pPlayer->GetEngineObject()->AddEffects(EF_NODRAW);
+			pPlayer->ChangeTeam(TEAM_UNASSIGNED);
+			pPlayer->SetThink(NULL);
+			pPlayer->AddAccount(CSGameRules()->GetStartMoney());
+
+			// Move them to the first intro camera.
+			pPlayer->MoveToNextIntroCamera();
+			pPlayer->GetEngineObject()->SetMoveType(MOVETYPE_NONE);
+		}
+
+
+		char sName[128];
+		Q_strncpy(sName, pPlayer->GetPlayerName(), sizeof(sName));
+
+		// First parse the name and remove any %'s
+		for (char* pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++)
+		{
+			// Replace it with a space
+			if (*pApersand == '%')
+				*pApersand = ' ';
+		}
+
+		// notify other clients of player joining the game
+		UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_connected", sName[0] != 0 ? sName : "<unconnected>");
+	}
+
+	void CCSGameWorld::ClientActive(int pEdict, bool bLoadGame)
+	{
+		// Can't load games in CS!
+		Assert(!bLoadGame);
+
+		CCSPlayer* pPlayer = ToCSPlayer(EntityList()->GetBaseEntity(pEdict));
+		FinishClientPutInServer(pPlayer);
+
+		CSingleUserRecipientFilter user(pPlayer);
+		user.MakeReliable();
+
+		// send the 4 end of match conditions.  long frag limit, long max rounds, long rounds needed won, and long time
+		UserMessageBegin(user, "MatchEndConditions");
+		WRITE_LONG(fraglimit.GetInt());
+		WRITE_LONG(mp_maxrounds.GetInt());
+		WRITE_LONG(mp_winlimit.GetInt());
+		WRITE_LONG(mp_timelimit.GetInt());
+		MessageEnd();
+	}
+
 
 	//-----------------------------------------------------------------------------
 	// Purpose: 
@@ -921,14 +1043,34 @@ ConVar cl_autohelp(
 		BaseClass::ClientCommandKeyValues( pEntity, pKeyValues );
 	}
 
+	// called by ClientKill and DeadThink
+	void CCSGameWorld::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+	{
+		if (gpGlobals->coop || gpGlobals->deathmatch)
+		{
+			if (fCopyCorpse)
+			{
+				// make a copy of the dead body for appearances sake
+				dynamic_cast<CBasePlayer*>(pEdict)->CreateCorpse();
+			}
+
+			// respawn player
+			pEdict->Spawn();
+		}
+		else
+		{       // restart the entire server
+			engine->ServerCommand("reload\n");
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Player has just spawned. Equip them.
 	//-----------------------------------------------------------------------------
-	void CCSGameWorld::PlayerSpawn( CBasePlayer *pBasePlayer )
+	void CCSGameWorld::AfterPlayerSpawn( CBasePlayer *pBasePlayer )
 	{
 		CCSPlayer *pPlayer = ToCSPlayer( pBasePlayer );
 		if ( !pPlayer )
-			Error( "PlayerSpawn" );
+			Error( "AfterPlayerSpawn" );
 
 		if ( pPlayer->State_Get() != STATE_ACTIVE )
 			return;
@@ -3094,6 +3236,15 @@ ConVar cl_autohelp(
 		}
 	}
 
+	void CCSGameWorld::StartGameFrame(void)
+	{
+		VPROF("StartGameFrame");
+
+		if (g_fGameOver)
+			return;
+
+		gpGlobals->teamplay = teamplay.GetInt() ? true : false;
+	}
 
 	// The bots do their processing after physics simulation etc so their visibility checks don't recompute
 	// bone positions multiple times a frame.

@@ -156,7 +156,6 @@ int				gEvilImpulse101;
 
 bool gInitHUD = true;
 
-extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 int MapTextureTypeStepType(char chTextureType);
 extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 extern void AddMultiDamage( const ITakeDamageInfo&info, IHandleEntity *pEntity );
@@ -2205,7 +2204,7 @@ void CBasePlayer::PlayerDeathThink(void)
 
 	//Msg( "Respawn\n");
 
-	respawn( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
+	g_pGameRules->RespawnPlayer( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
 	GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
 }
 
@@ -5023,7 +5022,7 @@ void CBasePlayer::Spawn( void )
 	color32 nothing = {0,0,0,255};
 	UTIL_ScreenFade( this, nothing, 0, 0, FFADE_IN | FFADE_PURGE );
 
-	g_pGameRules->PlayerSpawn( this );
+	g_pGameRules->AfterPlayerSpawn( this );
 
 	m_flLaggedMovementValue = 1.0f;
 	m_vecSmoothedVelocity = vec3_origin;

@@ -2772,7 +2772,7 @@ void CCSPlayer::RoundRespawn()
 		// Put them back into the game.
 		StopObserverMode();
 		State_Transition( STATE_ACTIVE );
-		respawn( this, false );
+		g_pGameRules->RespawnPlayer( this, false );
 		m_nButtons = 0;
 		GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
 	}

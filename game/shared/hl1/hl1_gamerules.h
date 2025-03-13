@@ -48,9 +48,18 @@ public:
 	CHalfLife1World();
 	virtual ~CHalfLife1World() {}
 
-	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
-	virtual void			PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void			Precache(void);
+	virtual void			LevelInit();
+	virtual void			LevelShutdown();
 
+	virtual void			ClientActive(int pEdict, bool bLoadGame);
+	virtual void			ClientPutInServer(int pEdict, const char* playername);
+
+	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual void			RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
+	virtual void			AfterPlayerSpawn( CBasePlayer *pPlayer );
+
+	virtual void			StartGameFrame(void);
 	virtual void			InitDefaultAIRelationships( void );
 	virtual const char *	AIClassText(int classType);
 	virtual const char *	GetGameDescription( void );

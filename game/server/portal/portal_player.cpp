@@ -40,8 +40,6 @@
 
 extern IServerEntity	*g_pLastSpawn;
 
-extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
-
 
 // -------------------------------------------------------------------------------- //
 // Player animation event. Sent to the client when a player fires, jumps, reloads, etc..
@@ -753,7 +751,7 @@ void CPortal_Player::PlayerDeathThink(void)
 
 	//Msg( "Respawn\n");
 
-	respawn( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
+	g_pGameRules->RespawnPlayer( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
 	GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
 }
 

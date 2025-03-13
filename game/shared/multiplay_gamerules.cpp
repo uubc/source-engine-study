@@ -656,7 +656,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 
 	//=========================================================
 	//=========================================================
-	void CMultiplayWorld::PlayerSpawn( CBasePlayer *pPlayer )
+	void CMultiplayWorld::AfterPlayerSpawn( CBasePlayer *pPlayer )
 	{
 		bool		addDefault;
 		IServerEntity	*pWeaponEntity = NULL;

@@ -56,7 +56,7 @@
 #ifdef PORTAL
 #include "portal_gamerules.h"
 #endif // PORTAL
-
+#include "event_tempentity_tester.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -531,11 +531,7 @@ extern bool	g_fGameOver;
 
 CWorld::CWorld( )
 {
-
 	m_bColdWorld = false;
-	GetVoiceGameMgr()->Init(g_pVoiceGameMgrHelper, gpGlobals->maxClients);
-	ClearMultiDamage();
-
 	m_flNextVerboseLogOutput = 0.0f;
 }
 
@@ -545,6 +541,7 @@ void CWorld::PostConstructor(const char* szClassname, int iForceEdictIndex)
 	BaseClass::PostConstructor(szClassname, iForceEdictIndex);
 	GetEngineObject()->SetSolid(SOLID_BSP);
 	GetEngineObject()->SetMoveType(MOVETYPE_NONE);
+	g_WorldEntity = this;
 	g_pGameRules = this;
 }
 
@@ -649,49 +646,18 @@ const char *GetDefaultLightstyleString( int styleIndex )
 	return "m";
 }
 
-void InstallGameRules();
+//void InstallGameRules();
 void CWorld::Precache( void )
 {
-	g_WorldEntity = this;
-	g_fGameOver = false;
-	g_pLastSpawn = NULL;
-
-	ConVarRef stepsize( "sv_stepsize" );
-	stepsize.SetValue( 18 );
-
-	ConVarRef roomtype( "room_type" );
-	roomtype.SetValue( 0 );
-
-	InstallGameRules();
+	//InstallGameRules();
 	//Assert( g_pGameRules );
 	//g_pGameRules->Init();
-
-	CSoundEnt::InitSoundEnt();
 
 	// Only allow precaching between LevelInitPreEntity and PostEntity
 	engine->SetAllowPrecache( true );//CBaseEntity::
 
-	EntityList()->LevelInitPreEntity();
-	IGameSystem::LevelInitPreEntityAllSystems();// STRING(GetEngineObject()->GetModelName() ) 
-
-	// Create the player resource
-	g_pGameRules->CreateStandardEntities();
-
-	// UNDONE: Make most of these things server systems or precache_registers
-	// =================================================
-	//	Activities
-	// =================================================
-	UTIL_UnLoadActivityRemapFile();
-	mdlcache->ActivityList_Clear();
-	RegisterSharedActivities();
-
-	mdlcache->EventList_Clear();
-	RegisterSharedEvents();
-
-	InitBodyQue();
 // init sentence group playback stuff from sentences.txt.
 // ok to call this multiple times, calls after first are ignored.
-
 	SENTENCEG_Init();
 
 	// Precache standard particle systems
@@ -733,38 +699,8 @@ void CWorld::Precache( void )
 	// 63 testing
 	engine->LightStyle(63, "a");
 
-	// =================================================
-	//	Load and Init AI Networks
-	// =================================================
-	CAI_NetworkManager::InitializeAINetworks();
-	// =================================================
-	//	Load and Init AI Schedules
-	// =================================================
-	g_AI_SchedulesManager.LoadAllSchedules();
-	// =================================================
-	//	Initialize NPC Relationships
-	// =================================================
-	g_pGameRules->InitDefaultAIRelationships();
-	CBaseCombatCharacter::InitInteractionSystem();
-
 	// Call all registered precachers.
 	CPrecacheRegister::Precache();	
-
-	if ( m_iszChapterTitle != NULL_STRING )
-	{
-		DevMsg( 2, "Chapter title: %s\n", STRING(m_iszChapterTitle) );
-		CMessage *pMessage = (CMessage *)CBaseEntity::Create( "env_message", vec3_origin, vec3_angle, NULL );
-		if ( pMessage )
-		{
-			pMessage->SetMessage( m_iszChapterTitle );
-			m_iszChapterTitle = NULL_STRING;
-
-			// send the message entity a play message command, delayed by 1 second
-			pMessage->GetEngineObject()->AddSpawnFlags( SF_MESSAGE_ONCE );
-			pMessage->SetThink( &CMessage::SUB_CallUseToggle );
-			pMessage->GetEngineObject()->SetNextThink( gpGlobals->curtime + 1.0f );
-		}
-	}
 
 	g_iszFuncBrushClassname = AllocPooledString("func_brush");
 }
@@ -1199,23 +1135,24 @@ void CWorld::RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrcIn, f
 	}
 }
 
-
-bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
-{
-	if (pEdict->IsPlayer())
-	{
-		if (GetVoiceGameMgr()->ClientCommand(static_cast<CBasePlayer*>(pEdict), args))
-			return true;
-	}
-
-	return false;
-}
-
 void CWorld::LevelInit()
 {
+	Precache();
+
 	//NetworkProp()->AttachEdict( RequiredEdictIndex() );
 	mdlcache->ActivityList_Init();
 	mdlcache->EventList_Init();
+
+	// UNDONE: Make most of these things server systems or precache_registers
+// =================================================
+//	Activities
+// =================================================
+	UTIL_UnLoadActivityRemapFile();
+	mdlcache->ActivityList_Clear();
+	RegisterSharedActivities();
+
+	mdlcache->EventList_Clear();
+	RegisterSharedEvents();
 
 	GetEngineObject()->SetLocalOrigin(vec3_origin);
 	GetEngineObject()->SetLocalAngles(vec3_angle);
@@ -1226,9 +1163,64 @@ void CWorld::LevelInit()
 	GetEngineObject()->AddFlag(FL_WORLDBRUSH);
 
 	g_EventQueue.Init();
-	Precache();
+
+	g_fGameOver = false;
+	g_pLastSpawn = NULL;
+
+	ConVarRef stepsize("sv_stepsize");
+	stepsize.SetValue(18);
+
+	ConVarRef roomtype("room_type");
+	roomtype.SetValue(0);
+
 	engine->GlobalEntity_Add("is_console", STRING(gpGlobals->mapname), (IsConsole()) ? GLOBAL_ON : GLOBAL_OFF);
 	engine->GlobalEntity_Add("is_pc", STRING(gpGlobals->mapname), (!IsConsole()) ? GLOBAL_ON : GLOBAL_OFF);
+
+	CSoundEnt::InitSoundEnt();
+
+	EntityList()->LevelInitPreEntity();
+	IGameSystem::LevelInitPreEntityAllSystems();// STRING(GetEngineObject()->GetModelName() ) 
+
+	// Create the player resource
+	CreateStandardEntities();
+
+	InitBodyQue();
+
+	// =================================================
+	//	Load and Init AI Networks
+	// =================================================
+	CAI_NetworkManager::InitializeAINetworks();
+	// =================================================
+	//	Load and Init AI Schedules
+	// =================================================
+	g_AI_SchedulesManager.LoadAllSchedules();
+	// =================================================
+	//	Initialize NPC Relationships
+	// =================================================
+	g_pGameRules->InitDefaultAIRelationships();
+	CBaseCombatCharacter::InitInteractionSystem();
+
+	if (m_iszChapterTitle != NULL_STRING)
+	{
+		DevMsg(2, "Chapter title: %s\n", STRING(m_iszChapterTitle));
+		CMessage* pMessage = (CMessage*)CBaseEntity::Create("env_message", vec3_origin, vec3_angle, NULL);
+		if (pMessage)
+		{
+			pMessage->SetMessage(m_iszChapterTitle);
+			m_iszChapterTitle = NULL_STRING;
+
+			// send the message entity a play message command, delayed by 1 second
+			pMessage->GetEngineObject()->AddSpawnFlags(SF_MESSAGE_ONCE);
+			pMessage->SetThink(&CMessage::SUB_CallUseToggle);
+			pMessage->GetEngineObject()->SetNextThink(gpGlobals->curtime + 1.0f);
+		}
+	}
+
+	m_bColdWorld = false;
+	GetVoiceGameMgr()->Init(g_pVoiceGameMgrHelper, gpGlobals->maxClients);
+	ClearMultiDamage();
+
+	m_flNextVerboseLogOutput = 0.0f;
 }
 
 // Level init, shutdown
@@ -1256,8 +1248,8 @@ void CWorld::LevelShutdownPostEntity()
 void CWorld::LevelShutdown()
 {
 	mdlcache->EventList_Free();
-	UTIL_UnLoadActivityRemapFile();
 	mdlcache->ActivityList_Free();
+	UTIL_UnLoadActivityRemapFile();
 }
 
 void CWorld::FrameUpdatePreEntityThink()
@@ -1488,6 +1480,137 @@ float CWorld::GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, in
 	}
 
 	return flDamage;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : pKillTargetName - 
+//-----------------------------------------------------------------------------
+void KillTargets(const char* pKillTargetName)
+{
+	IServerEntity* pentKillTarget = NULL;
+
+	DevMsg(2, "KillTarget: %s\n", pKillTargetName);
+	pentKillTarget = EntityList()->FindEntityByName(NULL, pKillTargetName);
+	while (pentKillTarget)
+	{
+		EntityList()->DestroyEntity(pentKillTarget);
+
+		DevMsg(2, "killing %s\n", STRING(pentKillTarget->GetEngineObject()->GetClassname()));
+		pentKillTarget = EntityList()->FindEntityByName(pentKillTarget, pKillTargetName);
+	}
+}
+
+
+//------------------------------------------------------------------------------
+// Purpose:
+//------------------------------------------------------------------------------
+void ConsoleKillTarget(CBasePlayer* pPlayer, const char* name)
+{
+	// If no name was given use the picker
+	if (FStrEq(name, ""))
+	{
+		IServerEntity* pEntity = EntityList()->FindPickerEntity(pPlayer);
+		if (pEntity)
+		{
+			EntityList()->DestroyEntity(pEntity);
+			Msg("killing %s\n", pEntity->GetDebugName());
+			return;
+		}
+	}
+	// Otherwise use name or classname
+	KillTargets(name);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: called each time a player uses a "cmd" command
+// Input  : *pEdict - the player who issued the command
+//-----------------------------------------------------------------------------
+bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
+{
+	const char* pCmd = args[0];
+
+	// Is the client spawned yet?
+	if (!pEdict)
+		return false;
+
+	MDLCACHE_CRITICAL_SECTION();
+
+	/*
+	const char *pstr;
+
+	if (((pstr = strstr(pcmd, "weapon_")) != NULL)  && (pstr == pcmd))
+	{
+		// Subtype may be specified
+		if ( args.ArgC() == 2 )
+		{
+			pPlayer->SelectItem( pcmd, atoi( args[1] ) );
+		}
+		else
+		{
+			pPlayer->SelectItem(pcmd);
+		}
+	}
+	*/
+
+	if (FStrEq(pCmd, "killtarget"))
+	{
+		ConVarRef developer("developer");
+		if (pEdict->IsPlayer() && developer.GetBool() && sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin())
+		{
+			ConsoleKillTarget((CBasePlayer*)pEdict, args[1]);
+			return true;
+		}
+		return false;
+	}
+	else if (FStrEq(pCmd, "demorestart"))
+	{
+		if (pEdict->IsPlayer()) {
+			((CBasePlayer*)pEdict)->ForceClientDllUpdate();
+			return true;
+		}
+		return false;
+	}
+	else if (FStrEq(pCmd, "fade"))
+	{
+		color32 black = { 32,63,100,200 };
+		UTIL_ScreenFade(pEdict, black, 3, 3, FFADE_OUT);
+		return true;
+	}
+	else if (FStrEq(pCmd, "te"))
+	{
+		if (sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin())
+		{
+			if (FStrEq(args[1], "stop"))
+			{
+				// Destroy it
+				//
+				IServerEntity* ent = EntityList()->FindEntityByClassname(NULL, "te_tester");
+				while (ent)
+				{
+					IServerEntity* next = EntityList()->FindEntityByClassname(ent, "te_tester");
+					EntityList()->DestroyEntity(ent);
+					ent = next;
+				}
+			}
+			else
+			{
+				CTempEntTester::Create(pEdict->WorldSpaceCenter(), pEdict->EyeAngles(), args[1], args[2]);
+			}
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		if (pEdict->IsPlayer())
+		{
+			if (GetVoiceGameMgr()->ClientCommand((CBasePlayer*)pEdict, args))
+				return true;
+		}
+
+		return false;
+	}
 }
 
 const char* CWorld::GetChatPrefix(bool bTeamOnly, CBasePlayer* pPlayer)

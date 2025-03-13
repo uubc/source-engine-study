@@ -221,6 +221,83 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		m_flLastGrenadeDropTime = 0.0f;
 	}
 
+	void CHalfLife2World::Precache(void)
+	{
+		BaseClass::Precache();
+		engine->PrecacheModel("models/player.mdl");
+		engine->PrecacheModel("models/gibs/agibs.mdl");
+		engine->PrecacheModel("models/weapons/v_hands.mdl");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowAmmo");
+		g_pSoundEmitterSystem->PrecacheScriptSound("HUDQuickInfo.LowHealth");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("FX_AntlionImpact.ShellImpact");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Missile.ShotDown");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.DefaultNearmiss");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.GunshipNearmiss");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Bullets.StriderNearmiss");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepHigh");
+		g_pSoundEmitterSystem->PrecacheScriptSound("Geiger.BeepLow");
+	}
+
+	void CHalfLife2World::LevelInit()
+	{
+		BaseClass::LevelInit();
+	}
+
+	void CHalfLife2World::LevelShutdown()
+	{
+		BaseClass::LevelShutdown();
+	}
+
+	/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+	void CHalfLife2World::ClientPutInServer(int pEdict, const char* playername)
+	{
+		// Allocate a CBasePlayer for pev, and call spawn
+		CHL2_Player* pPlayer = ToHL2Player(EntityList()->GetBaseEntity(pEdict));
+		if (pPlayer == NULL) {
+			pPlayer = CHL2_Player::CreatePlayer("player", pEdict);
+		}
+		else {
+			if (pPlayer->m_hViewEntity)
+			{
+				engine->SetView(pEdict, pPlayer->m_hViewEntity);
+			}
+			else
+			{
+				engine->SetView(pEdict, pPlayer);
+			}
+		}
+		pPlayer->SetPlayerName(playername);
+
+	}
+
+
+	void CHalfLife2World::ClientActive(int pEdict, bool bLoadGame)
+	{
+		CHL2_Player* pPlayer = ToHL2Player(CBaseEntity::Instance(pEdict));
+		Assert(pPlayer);
+
+		if (!pPlayer)
+		{
+			return;
+		}
+
+		pPlayer->InitialSpawn();
+
+		if (!bLoadGame)
+		{
+			pPlayer->Spawn();
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: called each time a player uses a "cmd" command
 	// Input  : *pEdict - the player who issued the command
@@ -240,10 +317,30 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		return false;
 	}
 
+	// called by ClientKill and DeadThink
+	void CHalfLife2World::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+	{
+		if (gpGlobals->coop || gpGlobals->deathmatch)
+		{
+			if (fCopyCorpse)
+			{
+				// make a copy of the dead body for appearances sake
+				ToHL2Player(pEdict)->CreateCorpse();
+			}
+
+			// respawn player
+			pEdict->Spawn();
+		}
+		else
+		{       // restart the entire server
+			engine->ServerCommand("reload\n");
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Player has just spawned. Equip them.
 	//-----------------------------------------------------------------------------
-	void CHalfLife2World::PlayerSpawn( CBasePlayer *pPlayer )
+	void CHalfLife2World::AfterPlayerSpawn( CBasePlayer *pPlayer )
 	{
 	}
 
@@ -1283,6 +1380,15 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 
 			default:					return "MISSING CLASS in ClassifyText()";
 		}
+	}
+
+	void CHalfLife2World::StartGameFrame(void)
+	{
+		VPROF("StartGameFrame()");
+		if (g_fGameOver)
+			return;
+
+		gpGlobals->teamplay = (teamplay.GetInt() != 0);
 	}
 
 	void CHalfLife2World::PlayerThink( CBasePlayer *pPlayer )

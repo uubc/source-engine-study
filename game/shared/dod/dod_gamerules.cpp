@@ -155,6 +155,8 @@ static CDODViewVectors g_DODViewVectors(
 
 #else
 
+	int g_iHelmetModels[NUM_HELMETS];
+
 	void ParseEntKVBlock( CBaseEntity *pNode, KeyValues *pkvNode )
 	{
 		KeyValues *pkvNodeData = pkvNode->GetFirstSubKey();
@@ -501,6 +503,77 @@ static CDODViewVectors g_DODViewVectors(
 		BaseClass::PostConstructor(szClassname, iForceEdictIndex);
 	}
 
+	void CDODGameWorld::Precache(void)
+	{
+		BaseClass::Precache();
+		// Materials used by the client effects
+		engine->PrecacheModel("sprites/white.vmt");
+		engine->PrecacheModel("sprites/physbeam.vmt");
+
+		for (int i = 0; i < NUM_HELMETS; i++)
+		{
+			g_iHelmetModels[i] = engine->PrecacheModel(m_pszHelmetModels[i]);
+		}
+
+		// Moved to pure_server_minimal.txt
+		//	// Sniper scope
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ul.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ul.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ur.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ur.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ll.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_ll.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_lr.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_spring_lr.vtf" );
+		//
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ul.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ul.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ur.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ur.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ll.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_ll.vtf" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_lr.vmt" );
+		//	engine->ForceExactFile( "sprites/scopes/scope_k43_lr.vtf" );
+		//
+		//	// Smoke grenade-related files
+		//	engine->ForceExactFile( "particle/particle_smokegrenade1.vmt" );
+		//	engine->ForceExactFile( "particle/particle_smokegrenade.vtf" );
+		//	engine->ForceExactFile( "effects/stun.vmt" );
+		//
+		//	// DSP presets - don't want people avoiding the deafening + ear ring
+		//	engine->ForceExactFile( "scripts/dsp_presets.txt" );
+		//
+		//	// force weapon scripts because people are dirty cheaters
+		//	engine->ForceExactFile( "scripts/weapon_30cal.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_amerknife.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_bar.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_bazooka.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_c96.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_colt.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_frag_ger.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_frag_ger_live.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_frag_us.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_frag_us_live.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_garand.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_k98.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_k98_scoped.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_m1carbine.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_mg42.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_mp40.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_mp44.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_p38.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_pschreck.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_riflegren_ger.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_riflegren_ger_live.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_riflegren_us.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_riflegren_us_live.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_smoke_ger.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_smoke_us.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_spade.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_spring.ctx");
+		//	engine->ForceExactFile( "scripts/weapon_thompson.ctx");
+	}
+
 	void CDODGameWorld::LevelInit()
 	{
 		ResetMapTime();
@@ -753,6 +826,82 @@ static CDODViewVectors g_DODViewVectors(
 			}
 #endif
 		}
+	}
+
+	/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+	void CDODGameWorld::ClientPutInServer(int pEdict, const char* playername)
+	{
+		// Allocate a CBaseTFPlayer for pev, and call spawn
+		CDODPlayer* pPlayer = (CDODPlayer*)EntityList()->GetBaseEntity(pEdict);
+		if (pPlayer == NULL) {
+			pPlayer = CDODPlayer::CreatePlayer("player", pEdict);
+		}
+		else {
+			if (pPlayer->m_hViewEntity)
+			{
+				engine->SetView(pEdict, pPlayer->m_hViewEntity);
+			}
+			else
+			{
+				engine->SetView(pEdict, pPlayer);
+			}
+		}
+		pPlayer->SetPlayerName(playername);
+	}
+
+	void FinishClientPutInServer(CDODPlayer* pPlayer)
+	{
+		pPlayer->InitialSpawn();
+		pPlayer->Spawn();
+
+		if (!pPlayer->IsBot())
+		{
+			// When the player first joins the server, they
+			pPlayer->m_takedamage = DAMAGE_NO;
+			pPlayer->pl.deadflag = true;
+			pPlayer->m_lifeState = LIFE_DEAD;
+			pPlayer->GetEngineObject()->AddEffects(EF_NODRAW);
+			pPlayer->SetThink(NULL);
+
+			if (1)
+			{
+				pPlayer->ChangeTeam(TEAM_UNASSIGNED);
+
+				// Move them to the first intro camera.
+				pPlayer->MoveToNextIntroCamera();
+				pPlayer->GetEngineObject()->SetMoveType(MOVETYPE_NONE);
+			}
+		}
+
+
+		char sName[128];
+		Q_strncpy(sName, pPlayer->GetPlayerName(), sizeof(sName));
+
+		// First parse the name and remove any %'s
+		for (char* pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++)
+		{
+			// Replace it with a space
+			if (*pApersand == '%')
+				*pApersand = ' ';
+		}
+
+		// notify other clients of player joining the game
+		UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_connected", sName[0] != 0 ? sName : "<unconnected>");
+	}
+
+	void CDODGameWorld::ClientActive(int pEdict, bool bLoadGame)
+	{
+		// Can't load games in CS!
+		Assert(!bLoadGame);
+
+		CDODPlayer* pPlayer = ToDODPlayer(CBaseEntity::Instance(pEdict));
+		FinishClientPutInServer(pPlayer);
 	}
 
 	void CDODGameWorld::Stats_PlayerKill( int team, int cls )
@@ -1859,7 +2008,7 @@ static CDODViewVectors g_DODViewVectors(
 		return UTIL_IsSpaceEmpty( pPlayer, vTestMins, vTestMaxs );
 	}
 
-	void CDODGameWorld::PlayerSpawn( CBasePlayer *p )
+	void CDODGameWorld::AfterPlayerSpawn( CBasePlayer *p )
 	{	
 		CDODPlayer *pPlayer = ToDODPlayer( p );
 
@@ -1996,6 +2145,19 @@ static CDODViewVectors g_DODViewVectors(
 				pPlayer->SetModel( NULL );
 			}
 		}
+	}
+
+	void CDODGameWorld::StartGameFrame(void)
+	{
+		VPROF("StartGameFrame");
+
+		if (g_fGameOver)
+			return;
+
+		gpGlobals->teamplay = teamplay.GetInt() ? true : false;
+
+		extern void Bot_RunAll();
+		Bot_RunAll();
 	}
 
 	const char *CDODGameWorld::GetPlayerClassName( int cls, int team )
@@ -3714,6 +3876,26 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 		}
 	}
 	ConCommand dod_test_winpanel( "dod_test_winpanel", TestWinpanel, "", FCVAR_CHEAT );
+
+	// called by ClientKill and DeadThink
+	void CDODGameWorld::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+	{
+		if (gpGlobals->coop || gpGlobals->deathmatch)
+		{
+			if (fCopyCorpse)
+			{
+				// make a copy of the dead body for appearances sake
+				dynamic_cast<CBasePlayer*>(pEdict)->CreateCorpse();
+			}
+
+			// respawn player
+			pEdict->Spawn();
+		}
+		else
+		{       // restart the entire server
+			engine->ServerCommand("reload\n");
+		}
+	}
 
 	// bForceRespawn - respawn player even if dead or dying
 	// bTeam - if true, only respawn the passed team

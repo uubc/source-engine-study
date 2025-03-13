@@ -127,6 +127,70 @@ int	CHalfLife1World::Damage_GetShowOnHud( void )
 	{
 	}
 
+	void CHalfLife1World::Precache(void)
+	{
+		BaseClass::Precache();
+		engine->PrecacheModel("models/player.mdl");
+		engine->PrecacheModel("models/gibs/agibs.mdl");
+
+		g_pSoundEmitterSystem->PrecacheScriptSound("Player.UseDeny");
+	}
+
+	void CHalfLife1World::LevelInit()
+	{
+		BaseClass::LevelInit();
+		//engine->ServerCommand("exec game.cfg\n");
+		//engine->ServerExecute();
+	}
+
+	void CHalfLife1World::LevelShutdown()
+	{
+		BaseClass::LevelShutdown();
+	}
+
+	/*
+===========
+ClientPutInServer
+
+called each time a player is spawned into the game
+============
+*/
+	void CHalfLife1World::ClientPutInServer(int pEdict, const char* playername)
+	{
+		CHL1_Player* pPlayer = (CHL1_Player*)EntityList()->GetBaseEntity(pEdict);
+		if (pPlayer == NULL) {
+			// Allocate a CBasePlayer for pev, and call spawn
+			if (g_pGameRules->IsMultiplayer())
+				pPlayer = CHL1_Player::CreatePlayer("player_mp", pEdict);
+			else
+				pPlayer = CHL1_Player::CreatePlayer("player", pEdict);
+		}
+		else {
+			if (pPlayer->m_hViewEntity)
+			{
+				engine->SetView(pEdict, pPlayer->m_hViewEntity);
+			}
+			else
+			{
+				engine->SetView(pEdict, pPlayer);
+			}
+		}
+		pPlayer->SetPlayerName(playername);
+	}
+
+
+	void CHalfLife1World::ClientActive(int pEdict, bool bLoadGame)
+	{
+		CHL1_Player* pPlayer = dynamic_cast<CHL1_Player*>(CBaseEntity::Instance(pEdict));
+
+		pPlayer->InitialSpawn();
+
+		if (!bLoadGame)
+		{
+			pPlayer->Spawn();
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: called each time a player uses a "cmd" command
 	// Input  : *pEdict - the player who issued the command
@@ -146,12 +210,47 @@ int	CHalfLife1World::Damage_GetShowOnHud( void )
 		return false;
 	}
 
+	// called by ClientKill and DeadThink
+	void CHalfLife1World::RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse)
+	{
+		if (gpGlobals->coop || gpGlobals->deathmatch)
+		{
+			if (fCopyCorpse)
+			{
+				// make a copy of the dead body for appearances sake
+				((CHL1_Player*)pEdict)->CreateCorpse();
+			}
+
+			// respawn player
+			pEdict->Spawn();
+		}
+		else
+		{       // restart the entire server
+			engine->ServerCommand("reload\n");
+		}
+	}
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Player has just spawned. Equip them.
 	//-----------------------------------------------------------------------------
-	void CHalfLife1World::PlayerSpawn( CBasePlayer *pPlayer )
+	void CHalfLife1World::AfterPlayerSpawn( CBasePlayer *pPlayer )
 	{
 	//	pPlayer->EquipSuit();
+	}
+
+	void CHalfLife1World::StartGameFrame(void)
+	{
+		VPROF("StartGameFrame()");
+
+		if (g_fGameOver)
+			return;
+
+		gpGlobals->teamplay = (teamplay.GetInt() != 0);
+
+#ifdef DEBUG
+		extern void Bot_RunAll();
+		Bot_RunAll();
+#endif
 	}
 
 

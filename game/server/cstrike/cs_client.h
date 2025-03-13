@@ -12,7 +12,6 @@
 class CBaseEntity;
 class CCSPlayer;
 
-void respawn( CBaseEntity *pEdict, bool fCopyCorpse );
 
 void FinishClientPutInServer( CCSPlayer *pPlayer );
 
