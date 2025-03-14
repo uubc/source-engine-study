@@ -758,6 +758,10 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 
 	sv_maxreplay = g_pCVar->FindVar( "sv_maxreplay" );
 
+	if (!EntityList()->Init()) {
+		return false;
+	}
+
 	//engine->AddBlockHandler( GetEntitySaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetAISaveRestoreBlockHandler() );
@@ -829,10 +833,6 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 
 	g_pClosecaption = cvar->FindVar("closecaption");
 	Assert(g_pClosecaption);
-
-	if (!EntityList()->Init()) {
-		return false;
-	}
 
 	return true;
 }

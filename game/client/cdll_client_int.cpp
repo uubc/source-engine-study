@@ -1038,6 +1038,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	vgui::VGui_InitMatSysInterfacesList( "ClientDLL", &appSystemFactory, 1 );
 
+	if (!EntityList()->Init())
+		return false;
 	// Add the client systems.	
 	
 	// Client Leaf System has to be initialized first, since DetailObjectSystem uses it
@@ -1115,9 +1117,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 		vgui::VPANEL parent = enginevgui->GetPanel( PANEL_CLIENTDLL );
 		GetClientVoiceMgr()->Init( &g_VoiceStatusHelper, parent );
 	}
-
-	if ( !EntityList()->Init() )
-		return false;
 
 	//engine->AddBlockHandler( GetEntitySaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );

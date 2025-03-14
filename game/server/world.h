@@ -62,7 +62,10 @@ public:
 
 	bool IsColdWorld( void );
 
-	virtual void	LevelInit();
+	virtual void Init();
+	virtual void Shutdown();
+
+	virtual void LevelInit();
 	//gamerule
 		// Level init, shutdown
 	virtual void LevelInitPreEntity();

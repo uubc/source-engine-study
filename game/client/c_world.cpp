@@ -264,6 +264,16 @@ C_World *GetClientWorldEntity()
 	return (C_World*)EntityList()->GetBaseEntity(0);
 }
 
+void C_World::Init()
+{
+
+}
+
+void C_World::Shutdown()
+{
+
+}
+
 void C_World::LevelInit()
 {
 	m_flWaveHeight = 0.0f;

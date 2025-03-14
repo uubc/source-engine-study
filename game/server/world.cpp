@@ -1135,6 +1135,16 @@ void CWorld::RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrcIn, f
 	}
 }
 
+void CWorld::Init()
+{
+
+}
+
+void CWorld::Shutdown()
+{
+
+}
+
 void CWorld::LevelInit()
 {
 	Precache();

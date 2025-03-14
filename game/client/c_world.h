@@ -47,7 +47,9 @@ public:
 	float GetWaveHeight() const;
 	const char *GetDetailSpriteMaterial() const;
 
-	virtual void	LevelInit();
+	virtual void Init();
+	virtual void Shutdown();
+	virtual void LevelInit();
 
 	//gamerule
 	virtual void LevelInitPreEntity();

@@ -4114,10 +4114,11 @@ bool CClientEntityList<T>::Init()
 	AddDataAccessor(VPHYSICSWATCHER, new CEntityDataInstantiator<IClientEntity, C_WatcherList >);
 
 	IHandleEntity* pWorld = CreateEntityByName("worldspawn", 0, 0);
-	if (!pWorld)
+	if (!pWorld || !pWorld->AsHandleWorld())
 	{
 		Error("Failed to create worldspawn entity!\n");
 	}
+	pWorld->AsHandleWorld()->Init();
 	m_bLockWorld = true;
 	return true;
 }
@@ -4127,6 +4128,7 @@ void CClientEntityList<T>::Shutdown()
 {
 	m_bLockWorld = false;
 	IHandleEntity* pWorld = GetBaseEntity(0);
+	pWorld->AsHandleWorld()->Shutdown();
 	DestroyEntity(pWorld);
 
 	BaseClass::Shutdown();
