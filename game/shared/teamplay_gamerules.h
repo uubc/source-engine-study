@@ -63,6 +63,8 @@ public:
 	virtual ~CTeamplayWorld() {};
 
 	virtual void Precache( void );
+	virtual void LevelInit();
+	virtual void LevelShutdown();
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void ClientSettingsChanged( CBasePlayer *pPlayer );

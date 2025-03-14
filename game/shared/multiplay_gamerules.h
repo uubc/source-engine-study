@@ -105,6 +105,9 @@ public:
 	CMultiplayWorld();
 	virtual ~CMultiplayWorld() {}
 
+	virtual void LevelInit();
+	virtual void LevelShutdown();
+
 	void LoadVoiceCommandScript( void );
 
 	virtual bool ShouldDrawHeadLabels()

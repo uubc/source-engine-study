@@ -61,6 +61,9 @@ public:
 	CSingleplayWorld();
 	virtual ~CSingleplayWorld() {}
 
+	virtual void LevelInit();
+	virtual void LevelShutdown();
+
 // GR_Think
 	virtual void Think( void );
 	virtual bool IsAllowedToSpawn( CBaseEntity *pEntity );

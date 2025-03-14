@@ -145,7 +145,17 @@ bool CSingleplayWorld::Damage_ShouldNotBleed( int iDmgType )
 	//=========================================================
 	CSingleplayWorld::CSingleplayWorld( void )
 	{
-		RefreshSkillData( true );
+	}
+
+	void CSingleplayWorld::LevelInit()
+	{
+		BaseClass::LevelInit();
+		RefreshSkillData(true);
+	}
+
+	void CSingleplayWorld::LevelShutdown()
+	{
+		BaseClass::LevelShutdown();
 	}
 
 	//=========================================================

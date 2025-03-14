@@ -252,10 +252,15 @@ bool CMultiplayWorld::Damage_ShouldNotBleed( int iDmgType )
 //*********************************************************
 CMultiplayWorld::CMultiplayWorld()
 {
+}
+
+void CMultiplayWorld::LevelInit()
+{
+	BaseClass::LevelInit();
 #ifndef CLIENT_DLL
 	m_flTimeLastMapChangeOrPlayerWasConnected = 0.0f;
 
-	RefreshSkillData( true );
+	RefreshSkillData(true);
 
 	// 11/8/98
 	// Modified by YWB:  Server .cfg file is now a cvar, so that 
@@ -266,41 +271,46 @@ CMultiplayWorld::CMultiplayWorld()
 	// 3/31/99
 	// Added lservercfg file cvar, since listen and dedicated servers should not
 	// share a single config file. (sjb)
-	if ( engine->IsDedicatedServer() )
+	if (engine->IsDedicatedServer())
 	{
 		// dedicated server
-		const char *cfgfile = servercfgfile.GetString();
+		const char* cfgfile = servercfgfile.GetString();
 
-		if ( cfgfile && cfgfile[0] )
+		if (cfgfile && cfgfile[0])
 		{
 			char szCommand[256];
 
-			Log( "Executing dedicated server config file %s\n", cfgfile );
-			Q_snprintf( szCommand,sizeof(szCommand), "exec %s\n", cfgfile );
-			engine->ServerCommand( szCommand );
+			Log("Executing dedicated server config file %s\n", cfgfile);
+			Q_snprintf(szCommand, sizeof(szCommand), "exec %s\n", cfgfile);
+			engine->ServerCommand(szCommand);
 		}
 	}
 	else
 	{
 		// listen server
-		const char *cfgfile = lservercfgfile.GetString();
+		const char* cfgfile = lservercfgfile.GetString();
 
-		if ( cfgfile && cfgfile[0] )
+		if (cfgfile && cfgfile[0])
 		{
 			char szCommand[256];
 
-			Log( "Executing listen server config file %s\n", cfgfile );
-			Q_snprintf( szCommand,sizeof(szCommand), "exec %s\n", cfgfile );
-			engine->ServerCommand( szCommand );
+			Log("Executing listen server config file %s\n", cfgfile);
+			Q_snprintf(szCommand, sizeof(szCommand), "exec %s\n", cfgfile);
+			engine->ServerCommand(szCommand);
 		}
 	}
 
-	nextlevel.SetValue( "" );
+	nextlevel.SetValue("");
 	LoadMapCycleFile();
 
 #endif
 
 	LoadVoiceCommandScript();
+}
+
+void CMultiplayWorld::LevelShutdown()
+{
+	BaseClass::LevelShutdown();
 }
 
 //bool CMultiplayWorld::Init()

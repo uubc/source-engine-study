@@ -41,8 +41,6 @@ CTeamplayWorld::CTeamplayWorld()
 
 	// Copy over the team from the server config
 	m_szTeamList[0] = 0;
-
-	RecountTeams();
 }
 
 //-----------------------------------------------------------------------------
@@ -57,6 +55,29 @@ void CTeamplayWorld::Precache( void )
 		CTeam *pTeam = GetGlobalTeam( i );
 		pTeam->Precache();
 	}
+}
+
+void CTeamplayWorld::LevelInit()
+{
+	BaseClass::LevelInit();
+	m_DisableDeathMessages = false;
+	m_DisableDeathPenalty = false;
+	m_bSwitchTeams = false;
+	m_bScrambleTeams = false;
+
+	memset(team_names, 0, sizeof(team_names));
+	memset(team_scores, 0, sizeof(team_scores));
+	num_teams = 0;
+
+	// Copy over the team from the server config
+	m_szTeamList[0] = 0;
+
+	RecountTeams();
+}
+
+void CTeamplayWorld::LevelShutdown()
+{
+	BaseClass::LevelShutdown();
 }
 
 //-----------------------------------------------------------------------------
