@@ -101,10 +101,10 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 	//-----------------------------------------------------------------------------
 // Purpose: this is the viewport that contains all the hud elements
 //-----------------------------------------------------------------------------
-	class CHudViewport : public CBaseViewport
+	class CHl1MPHudViewport : public CBaseViewport
 	{
 	private:
-		DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
+		DECLARE_CLASS_SIMPLE(CHl1MPHudViewport, CBaseViewport);
 
 	protected:
 		virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
@@ -124,7 +124,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 		virtual IViewPortPanel* CreatePanelByName(const char* szPanelName);
 	};
 
-	IViewPortPanel* CHudViewport::CreatePanelByName(const char* szPanelName)
+	IViewPortPanel* CHl1MPHudViewport::CreatePanelByName(const char* szPanelName)
 	{
 
 #ifdef HL1MP_CLIENT_DLL
@@ -149,7 +149,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 CHL1MPWorld::CHL1MPWorld()
 {
 #ifdef CLIENT_DLL
-	m_pViewport = new CHudViewport();
+	m_pViewport = new CHl1MPHudViewport();
 	m_pViewport->Start(gameuifuncs, gameeventmanager);
 #endif // CLIENT_DLL
 }
