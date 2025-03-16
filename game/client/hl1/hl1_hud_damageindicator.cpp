@@ -75,7 +75,7 @@ DECLARE_HUD_MESSAGE( CHudDamageIndicator, Damage );
 //-----------------------------------------------------------------------------
 CHudDamageIndicator::CHudDamageIndicator( const char *pElementName ) : CHudElement( pElementName ), BaseClass(NULL, "HudDamageIndicator")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_HEALTH );

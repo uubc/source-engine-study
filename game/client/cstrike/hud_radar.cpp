@@ -46,7 +46,7 @@ CUtlVector<CPlayerRadarFlash> g_RadarFlashes;
 
 CHudRadar::CHudRadar( const char *pName ) :	vgui::Panel( NULL, "HudRadar" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pBackground = NULL;
 	m_pBackgroundTrans = NULL;
@@ -458,7 +458,7 @@ DECLARE_HUDELEMENT( CHudLocation );
 
 CHudLocation::CHudLocation( const char *pName ) :	vgui::Label( NULL, "HudLocation", "" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 }
 
 void CHudLocation::Init()

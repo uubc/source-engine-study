@@ -34,7 +34,7 @@ DECLARE_HUDELEMENT( CHudHostageRescueZone );
 CHudHostageRescueZone::CHudHostageRescueZone( const char *pName ) :
 	vgui::Panel( NULL, "HudHostageRescueZone" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	m_pIcon = NULL;
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

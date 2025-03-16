@@ -183,7 +183,7 @@ ITextMessage *textmessage = NULL;
 CHudMessage::CHudMessage( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudMessage" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	textmessage = this;
 	m_hFont = g_hFontTrebuchet24;

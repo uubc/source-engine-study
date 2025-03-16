@@ -55,7 +55,7 @@ using namespace vgui;
 CTargetID::CTargetID( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "TargetID" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_hFont = g_hFontTrebuchet24;

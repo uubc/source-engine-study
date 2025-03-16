@@ -53,7 +53,7 @@ DECLARE_HUD_MESSAGE( CHudTrain, Train )
 CHudTrain::CHudTrain( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudTrain" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	
 	SetHiddenBits( HIDEHUD_MISCSTATUS );

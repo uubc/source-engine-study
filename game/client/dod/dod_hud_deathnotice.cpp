@@ -16,7 +16,7 @@
 #include <KeyValues.h>
 #include "c_baseplayer.h"
 #include "c_team.h"
-
+#include "dod_gamerules.h"
 #include "dod_shareddefs.h"
 #include "clientmode_dod.h"
 #include "c_dod_player.h"
@@ -146,7 +146,7 @@ DECLARE_HUDELEMENT( CHudDeathNotice );
 CHudDeathNotice::CHudDeathNotice( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudDeathNotice" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_iconD_skull = NULL;
@@ -221,7 +221,7 @@ void CHudDeathNotice::SetColorForNoticePlayer( int iTeamNumber )
 //-----------------------------------------------------------------------------
 void CHudDeathNotice::Paint()
 {
-	int yStart = GetClientModeDODNormal()->GetDeathMessageStartHeight();
+	int yStart = DODGameRules()->GetDeathMessageStartHeight();
 
 	surface()->DrawSetTextFont( m_hTextFont );
 

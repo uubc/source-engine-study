@@ -40,7 +40,7 @@ DECLARE_HUDELEMENT( CHudShoppingCart );
 CHudShoppingCart::CHudShoppingCart( const char *pName ) :
 	vgui::Panel( NULL, "HudShoppingCart" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	m_pCartIcon = NULL;
 	
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

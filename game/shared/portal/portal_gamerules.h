@@ -25,6 +25,10 @@
 
 #ifdef CLIENT_DLL
 	#define CPortalGameWorld C_PortalGameWorld
+	namespace vgui
+	{
+		typedef unsigned long HScheme;
+	}
 #endif
 
 #if defined ( CLIENT_DLL )
@@ -55,7 +59,20 @@ private:
 
 	DECLARE_CLIENTCLASS(); // This makes datatables able to access our private vars.
 
+	CPortalGameWorld();
+
+	virtual void	Init();
+	virtual void	LevelInit();
+
+
+	int GetKillCamMode() const { return m_nKillCamMode; }
+	int GetKillCamTarget1() const { return m_nKillCamTarget1; }
+
+	int m_nKillCamMode = OBS_MODE_NONE;
+	int m_nKillCamTarget1 = 0;
+	int m_nKillCamTarget2 = 0;
 #else
+public:
 
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.
 
@@ -108,6 +125,11 @@ inline CPortalGameWorld* PortalGameRules()
 {
 	return (CPortalGameWorld*)EntityList()->GetBaseEntity(0);
 }
+
+#ifdef CLIENT_DLL
+#define SCREEN_FILE		"scripts/vgui_screens.txt"
+#endif // CLIENT_DLL
+
 
 #endif // PORTAL_GAMERULES_H
 #endif

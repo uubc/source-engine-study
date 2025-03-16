@@ -220,7 +220,7 @@ ShadowType_t C_BaseCombatWeapon::ShadowCastType()
 //-----------------------------------------------------------------------------
 void C_BaseCombatWeapon::Redraw()
 {
-	if ( g_pClientMode->ShouldDrawCrosshair() )
+	if (g_pGameRules->ShouldDrawCrosshair() )
 	{
 		DrawCrosshair();
 	}

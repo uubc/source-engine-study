@@ -34,7 +34,7 @@ DECLARE_HUDELEMENT( CHudFlashbang );
 CHudFlashbang::CHudFlashbang( const char *pName ) :
 	vgui::Panel( NULL, "HudFlashbang" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	
 	m_iAdditiveWhiteID = 0;
 

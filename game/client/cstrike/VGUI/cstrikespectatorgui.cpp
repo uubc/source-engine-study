@@ -1965,7 +1965,7 @@ void CCSMapOverview::SetMode(int mode)
 		// We want the _output_ of the radar to be consistant, so we need to take the map scale in to account.
 		float desiredZoom = (DESIRED_RADAR_RESOLUTION * m_fMapScale) / (OVERVIEW_MAP_SIZE * m_fFullZoom);
 
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0, 0, vgui::AnimationController::INTERPOLATOR_LINEAR );
+		g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0, 0, vgui::AnimationController::INTERPOLATOR_LINEAR );
 
 		if((C_BasePlayer*)EntityList()->GetLocalPlayer() )
 			SetFollowEntity(EntityList()->GetLocalPlayer()->entindex() );
@@ -1979,7 +1979,7 @@ void CCSMapOverview::SetMode(int mode)
 
 		float desiredZoom = (overview_preferred_view_size.GetFloat() * m_fMapScale) / (OVERVIEW_MAP_SIZE * m_fFullZoom);
 
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR );
+		g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR );
 	}
 	else 
 	{
@@ -1987,7 +1987,7 @@ void CCSMapOverview::SetMode(int mode)
 
 		float desiredZoom = 1.0f;
 
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR );
+		g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( this, "zoom", desiredZoom, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR );
 	}
 
 	BaseClass::SetMode(mode);

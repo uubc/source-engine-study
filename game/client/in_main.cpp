@@ -562,8 +562,8 @@ int CUserInput::KeyEvent( int down, ButtonCode_t code, const char *pszCurrentBin
 			return 0;
 	}
 
-	if ( g_pClientMode )
-		return g_pClientMode->KeyInput(down, code, pszCurrentBinding);
+	if ( g_pGameRules )
+		return g_pGameRules->KeyInput(down, code, pszCurrentBinding);
 
 	return 1;
 }
@@ -1070,7 +1070,7 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 	}
 
 	// Let the move manager override anything it wants to.
-	if ( g_pClientMode->CreateMove( frametime, cmd ) )
+	if ( g_pGameRules->CreateMove( frametime, cmd ) )
 	{
 		// Get current view angles after the client mode tweaks with it
 		engine->SetViewAngles( cmd->viewangles );
@@ -1078,7 +1078,7 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 	}
 
 	// Let the headtracker override the view at the very end of the process so
-	// that vehicles and other stuff in g_pClientMode->CreateMove can override 
+	// that vehicles and other stuff in g_pGameRules->CreateMove can override 
 	// first
 	if ( active && UseVR() )
 	{
@@ -1222,7 +1222,7 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 	}
 
 	// Let the move manager override anything it wants to.
-	if ( g_pClientMode->CreateMove( input_sample_frametime, cmd ) )
+	if ( g_pGameRules->CreateMove( input_sample_frametime, cmd ) )
 	{
 		// Get current view angles after the client mode tweaks with it
 #ifdef SIXENSE

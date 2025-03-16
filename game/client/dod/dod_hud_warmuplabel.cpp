@@ -57,7 +57,7 @@ DECLARE_HUDELEMENT( CDODHudWarmupLabel );
 //-----------------------------------------------------------------------------
 CDODHudWarmupLabel::CDODHudWarmupLabel( const char *pElementName ) : BaseClass(NULL, "WarmupLabel"), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 0 );
@@ -79,7 +79,7 @@ CDODHudWarmupLabel::CDODHudWarmupLabel( const char *pElementName ) : BaseClass(N
 //-----------------------------------------------------------------------------
 void CDODHudWarmupLabel::Reset()
 {
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "WarmupLabelHide" );
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "WarmupLabelHide" );
 
 	m_bInWarmup = false;
 }
@@ -140,7 +140,7 @@ void CDODHudWarmupLabel::OnThink()
 	{
 		if( bInWarmup )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "WarmupLabelShow" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "WarmupLabelShow" );
 			InvalidateLayout();
 		}
 

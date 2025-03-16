@@ -1255,11 +1255,11 @@ void CDODPlayerShared::SetCPIndex( int index )
 		if ( index == -1 )
 		{
 			// just left an area
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconShrink" ); 
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconShrink" );
 		}
 		else
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconGrow" ); 
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconGrow" );
 		}
 	}
 

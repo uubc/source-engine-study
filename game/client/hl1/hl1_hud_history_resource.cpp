@@ -33,7 +33,7 @@ DECLARE_HUD_MESSAGE( CHudHistoryResource, ItemPickup );
 CHudHistoryResource::CHudHistoryResource( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudHistoryResource" )
 {	
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetHiddenBits( HIDEHUD_MISCSTATUS );
 }

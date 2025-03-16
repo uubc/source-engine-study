@@ -674,7 +674,7 @@ void CUserInput::MouseMove( CUserCmd *cmd )
 		ScaleMouse( &mouse_x, &mouse_y );
 
 		// Let the client mode at the mouse input before it's used
-		g_pClientMode->OverrideMouseInput( &mouse_x, &mouse_y );
+		g_pGameRules->OverrideMouseInput( &mouse_x, &mouse_y );
 
 		// Add mouse X/Y movement to cmd
 		ApplyMouse( viewangles, cmd, mouse_x, mouse_y );

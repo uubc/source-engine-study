@@ -44,7 +44,7 @@ DECLARE_HUDELEMENT( CHudCrosshair );
 CHudCrosshair::CHudCrosshair( const char *pElementName ) :
 		CHudElement( pElementName ), BaseClass( NULL, "HudCrosshair" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_pCrosshair = 0;
@@ -111,7 +111,7 @@ bool CHudCrosshair::ShouldDraw( void )
 			!engine->IsDrawingLoadingImage() &&
 			!engine->IsPaused() && 
 			( !pPlayer->IsSuitEquipped() || g_pGameRules->IsMultiplayer() ) &&
-			g_pClientMode->ShouldDrawCrosshair() &&
+			g_pGameRules->ShouldDrawCrosshair() &&
 			!( pPlayer->GetEngineObject()->GetFlags() & FL_FROZEN ) &&
 			( pPlayer->entindex() == render->GetViewEntity() ) &&
 			( pPlayer->IsAlive() ||	( pPlayer->GetObserverMode() == OBS_MODE_IN_EYE ) || ( cl_observercrosshair.GetBool() && pPlayer->GetObserverMode() == OBS_MODE_ROAMING ) );
@@ -122,7 +122,7 @@ bool CHudCrosshair::ShouldDraw( void )
 			crosshair.GetInt() &&
 			!engine->IsDrawingLoadingImage() &&
 			!engine->IsPaused() && 
-			g_pClientMode->ShouldDrawCrosshair() &&
+			g_pGameRules->ShouldDrawCrosshair() &&
 			!( pPlayer->GetEngineObject()->GetFlags() & FL_FROZEN ) &&
 			( pPlayer->entindex() == render->GetViewEntity() ) &&
 			!pPlayer->IsInVGuiInputMode() &&

@@ -179,17 +179,17 @@ void CHudAmmo::SetAmmo(int ammo, bool playAnimation)
 	{
 		if (ammo == 0)
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoEmpty");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoEmpty");
 		}
 		else if (ammo < m_iAmmo)
 		{
 			// ammo has decreased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoDecrement");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoDecrement");
 		}
 		else
 		{
 			// ammunition has increased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoIncrement");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("PrimaryAmmoIncrement");
 		}
 
 		m_iAmmo = ammo;
@@ -207,17 +207,17 @@ void CHudAmmo::SetAmmo2(int ammo2, bool playAnimation)
 	{
 		if (ammo2 == 0)
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoEmpty");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoEmpty");
 		}
 		else if (ammo2 < m_iAmmo2)
 		{
 			// ammo has decreased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoDecrement");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoDecrement");
 		}
 		else
 		{
 			// ammunition has increased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoIncrement");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SecondaryAmmoIncrement");
 		}
 
 		m_iAmmo2 = ammo2;

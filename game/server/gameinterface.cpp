@@ -844,8 +844,6 @@ void CServerGameDLL::PostInit()
 
 void CServerGameDLL::DLLShutdown( void )
 {
-
-	EntityList()->Shutdown();
 	// Due to dependencies, these are not autogamesystems
 	ModelSoundsCacheShutdown();
 
@@ -870,6 +868,8 @@ void CServerGameDLL::DLLShutdown( void )
 #ifdef CSTRIKE_DLL // BOTPORT: TODO: move these ifdefs out
 	RemoveBotControl();
 #endif
+
+	EntityList()->Shutdown();
 
 #ifndef _XBOX
 #ifdef USE_NAV_MESH
@@ -1157,7 +1157,7 @@ void CServerGameDLL::ServerActivate( IServerEntity *pEdictList, int edictCount, 
 	if (IsRestoring())
 		return;
 
-	if (EntityList()->ResetDeleteList() != 0 )
+	if (EntityList()->CountDeleteList() != 0 )
 	{
 		Msg( "%s", "ERROR: Entity delete queue not empty on level start!\n" );
 	}

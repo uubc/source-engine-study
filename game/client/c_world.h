@@ -12,15 +12,19 @@
 
 #include "gamerules.h"
 #include "c_baseentity.h"
+#include <baseviewport.h>
 
 #if defined( CLIENT_DLL )
 #define CWorld C_World
 #endif
 
+class CBaseHudChat;
+class CBaseHudWeaponSelection;
+
 extern ConVar g_Language;
 extern ConVar sk_autoaim_mode;
 
-class C_World : public C_BaseEntity, public IClientWorld
+class C_World : public C_BaseEntity, public IClientWorld, public CGameEventListener
 {
 public:
 	DECLARE_CLASS( C_World, C_BaseEntity );
@@ -48,6 +52,7 @@ public:
 	const char *GetDetailSpriteMaterial() const;
 
 	virtual void Init();
+	virtual void VGui_Shutdown();
 	virtual void Shutdown();
 	virtual void LevelInit();
 
@@ -137,6 +142,91 @@ public:
 
 	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const { return false; }
 	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration);
+
+
+	virtual int		GetKillCamMode() const { return OBS_MODE_NONE; }
+	virtual int		GetKillCamTarget1() const { return 0; }
+	virtual void	Enable();
+	virtual void	Disable();
+	virtual void	ReloadScheme(void);
+	virtual void	Layout();
+	virtual void	OverrideView(CViewSetup* pSetup);
+	virtual bool	ShouldDrawDetailObjects();
+	virtual bool	ShouldDrawEntity(C_BaseEntity* pEnt);
+	virtual bool	ShouldDrawLocalPlayer(C_BasePlayer* pPlayer);
+	virtual bool	ShouldDrawViewModel();
+	virtual bool	ShouldDrawParticles();
+	virtual bool	ShouldDrawCrosshair(void);
+	virtual bool	ShouldBlackoutAroundHUD() OVERRIDE;
+	virtual HeadtrackMovementMode_t ShouldOverrideHeadtrackControl() OVERRIDE;
+	virtual void	AdjustEngineViewport(int& x, int& y, int& width, int& height);
+	virtual void	PreRender(CViewSetup* pSetup);
+	virtual void	PostRender();
+	virtual void	PostRenderVGui();
+	virtual void	ProcessInput(bool bActive);
+	virtual bool	CreateMove(float flInputSampleTime, CUserCmd* cmd);
+	virtual void	Update();
+
+	// Input
+	virtual int		KeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding);
+	virtual int		HudElementKeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding);
+	virtual void	OverrideMouseInput(float* x, float* y);
+	virtual void	StartMessageMode(int iMessageModeType);
+	virtual vgui::Panel* GetMessagePanel();
+
+	virtual void	ActivateInGameVGuiContext(vgui::Panel* pPanel);
+	virtual void	DeactivateInGameVGuiContext();
+
+	// The mode can choose to not draw fog
+	virtual bool	ShouldDrawFog(void);
+
+	virtual float	GetViewModelFOV(void);
+	virtual vgui::Panel* GetViewport();
+	// Gets at the viewports vgui panel animation controller, if there is one...
+	virtual vgui::AnimationController* GetViewportAnimationController()
+	{
+		return m_pViewport->GetAnimationController();
+	}
+
+	virtual void FireGameEvent(IGameEvent* event);
+
+	virtual bool CanRecordDemo(char* errorMsg, int length) const { return true; }
+
+	virtual int HandleSpectatorKeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding);
+
+	virtual void	ComputeVguiResConditions(KeyValues* pkvConditions) OVERRIDE;
+
+	//=============================================================================
+	// HPE_BEGIN:
+	// [menglish] Save server information shown to the client in a persistent place
+	//=============================================================================
+
+	virtual wchar_t* GetServerName() { return NULL; }
+	virtual void SetServerName(wchar_t* name) {};
+	virtual wchar_t* GetMapName() { return NULL; }
+	virtual void SetMapName(wchar_t* name) {};
+
+	//=============================================================================
+	// HPE_END
+	//=============================================================================
+
+	virtual bool	DoPostScreenSpaceEffects(const CViewSetup* pSetup);
+
+	virtual void	DisplayReplayMessage(const char* pLocalizeName, float flDuration, bool bUrgent,
+		const char* pSound, bool bDlg);
+
+	virtual bool	IsInfoPanelAllowed() OVERRIDE { return true; }
+	virtual void	InfoPanelDisplayed() OVERRIDE {}
+	virtual bool	IsHTMLInfoPanelAllowed() OVERRIDE { return true; }
+
+protected:
+
+	void			DisplayReplayReminder();
+
+private:
+	virtual void	UpdateReplayMessages();
+
+	void			ClearReplayMessageList();
 public:
 	enum
 	{
@@ -156,6 +246,21 @@ public:
 private:
 	void	RegisterSharedActivities( void );
 	char	m_iszDetailSpriteMaterial[MAX_DETAIL_SPRITE_MATERIAL_NAME_LENGTH];
+
+#if defined( REPLAY_ENABLED )
+	float					m_flReplayStartRecordTime;
+	float					m_flReplayStopRecordTime;
+	CReplayReminderPanel* m_pReplayReminderPanel;
+#endif
+
+protected:
+	CBaseViewport* m_pViewport;
+	// Message mode handling
+	// All modes share a common chat interface
+	CBaseHudChat* m_pChatElement;
+	vgui::HCursor			m_CursorNone;
+	CBaseHudWeaponSelection* m_pWeaponSelection;
+	int						m_nRootSize[2];
 };
 
 inline float C_World::GetWaveHeight() const
@@ -171,5 +276,9 @@ inline const char *C_World::GetDetailSpriteMaterial() const
 //void ClientWorldFactoryInit();
 //void ClientWorldFactoryShutdown();
 C_World* GetClientWorldEntity();
+
+#define USERID2PLAYER(i) ToBasePlayer( EntityList()->GetEnt( engine->GetPlayerForUserID( i ) ) )	
+#define ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME 10
+
 
 #endif // C_WORLD_H

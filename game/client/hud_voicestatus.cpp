@@ -46,7 +46,7 @@ DECLARE_HUDELEMENT( CHudVoiceSelfStatus );
 CHudVoiceSelfStatus::CHudVoiceSelfStatus( const char *pName ) :
 	vgui::Panel( NULL, "HudVoiceSelfStatus" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pVoiceIcon = NULL;
 
@@ -163,7 +163,7 @@ DECLARE_HUDELEMENT( CHudVoiceStatus );
 CHudVoiceStatus::CHudVoiceStatus( const char *pName ) :
 	vgui::Panel( NULL, "HudVoiceStatus" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pVoiceIcon = NULL;
 

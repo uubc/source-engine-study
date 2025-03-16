@@ -80,7 +80,7 @@ DECLARE_HUDELEMENT( CHUDAutoAim );
 CHUDAutoAim::CHUDAutoAim( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HUDAutoAim" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetHiddenBits( HIDEHUD_CROSSHAIR );
 

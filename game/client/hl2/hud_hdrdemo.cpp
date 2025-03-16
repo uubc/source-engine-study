@@ -60,7 +60,7 @@ DECLARE_HUDELEMENT( CHudHDRDemo );
 //-----------------------------------------------------------------------------
 CHudHDRDemo::CHudHDRDemo( const char *name ) : vgui::Panel( NULL, "HudHDRDemo" ), CHudElement( name )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetPaintBorderEnabled( false );

@@ -65,7 +65,7 @@ CHudRoundTimer::CHudRoundTimer( const char *pName ) :
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );
 
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 }
 

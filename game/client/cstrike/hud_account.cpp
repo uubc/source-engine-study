@@ -58,7 +58,7 @@ int	CHudAccount::GetPlayerAccount( void )
 
 vgui::AnimationController *CHudAccount::GetAnimationController( void )
 {
-	vgui::AnimationController *pController = g_pClientMode->GetViewportAnimationController();
+	vgui::AnimationController *pController = g_pGameRules->GetViewportAnimationController();
 
 	Assert( pController );
 

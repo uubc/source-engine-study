@@ -1177,7 +1177,7 @@ void CHud::UpdateHud( bool bActive )
 	// clear the weapon bits.
 	gHUD.m_iKeyBits &= (~(IN_WEAPON1|IN_WEAPON2));
 
-	g_pClientMode->Update();
+	g_pGameRules->Update();
 
 	gLCD.Update();
 }
@@ -1193,6 +1193,6 @@ CON_COMMAND_F( testhudanim, "Test a hud element animation.\n\tArguments: <anim n
 		return;
 	}
 
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( args[1] );
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( args[1] );
 }
 

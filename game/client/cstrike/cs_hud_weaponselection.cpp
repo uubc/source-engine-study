@@ -126,7 +126,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 CHudWeaponSelection::CHudWeaponSelection( const char *pElementName ) : CBaseHudWeaponSelection(pElementName), BaseClass(NULL, "HudWeaponSelection")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_WEAPONSELECTION | HIDEHUD_PLAYERDEAD );
@@ -424,7 +424,7 @@ void CHudWeaponSelection::OpenSelection( void )
 	Assert(!IsInSelectionMode());
 
 	CBaseHudWeaponSelection::OpenSelection();
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("OpenWeaponSelectionMenu");
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("OpenWeaponSelectionMenu");
 }
 
 //-----------------------------------------------------------------------------
@@ -433,7 +433,7 @@ void CHudWeaponSelection::OpenSelection( void )
 void CHudWeaponSelection::HideSelection( void )
 {
 	CBaseHudWeaponSelection::HideSelection();
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("CloseWeaponSelectionMenu");
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("CloseWeaponSelectionMenu");
 }
 
 //-----------------------------------------------------------------------------

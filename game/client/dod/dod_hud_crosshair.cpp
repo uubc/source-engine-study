@@ -35,7 +35,7 @@ DECLARE_HUDELEMENT( CHudDODCrosshair );
 CHudDODCrosshair::CHudDODCrosshair( const char *pName ) :
 	vgui::Panel( NULL, "HudDODCrosshair" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );
 

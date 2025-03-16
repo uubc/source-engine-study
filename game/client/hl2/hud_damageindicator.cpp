@@ -122,7 +122,7 @@ static DamageAnimation_t g_DamageAnimations[] =
 //-----------------------------------------------------------------------------
 CHudDamageIndicator::CHudDamageIndicator( const char *pElementName ) : CHudElement( pElementName ), BaseClass(NULL, "HudDamageIndicator")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_WhiteAdditiveMaterial.Init( "vgui/white_additive", TEXTURE_GROUP_VGUI ); 
@@ -344,7 +344,7 @@ void CHudDamageIndicator::MsgFunc_Damage( bf_read &msg )
 	// player has just died, just run the dead damage animation
 	if ( pPlayer->GetHealth() <= 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HudPlayerDeath" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HudPlayerDeath" );
 		return;
 	}
 
@@ -397,7 +397,7 @@ void CHudDamageIndicator::MsgFunc_Damage( bf_read &msg )
 
 		if ( dmgAnim->name )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( dmgAnim->name );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( dmgAnim->name );
 		}
 	}
 }

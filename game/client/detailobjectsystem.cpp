@@ -607,7 +607,7 @@ bool CDetailModel::IsTransparent( void )
 bool CDetailModel::ShouldDraw()
 {
 	// Don't draw in commander mode
-	return g_pClientMode->ShouldDrawDetailObjects();
+	return entitylist->GetWorld()->ShouldDrawDetailObjects();
 }
 
 void CDetailModel::GetRenderBounds( Vector& mins, Vector& maxs )
@@ -2802,7 +2802,7 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 {
 	VPROF_BUDGET( "CDetailObjectSystem::BuildDetailObjectRenderLists", VPROF_BUDGETGROUP_DETAILPROP_RENDERING );
 	
-	if (!g_pClientMode->ShouldDrawDetailObjects() || (r_DrawDetailProps.GetInt() == 0))
+	if (!entitylist->GetWorld()->ShouldDrawDetailObjects() || (r_DrawDetailProps.GetInt() == 0))
 		return;
 
 	// Don't bother doing any of this if the level doesn't have detail props.

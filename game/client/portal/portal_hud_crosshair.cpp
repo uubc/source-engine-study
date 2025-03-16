@@ -30,7 +30,7 @@ DECLARE_HUDELEMENT( CHudPortalCrosshair );
 CHudPortalCrosshair::CHudPortalCrosshair( const char *pElementName ) :
 CHudElement( pElementName ), BaseClass( NULL, "HudPortalCrosshair" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_pCrosshair = 0;
@@ -73,7 +73,7 @@ bool CHudPortalCrosshair::ShouldDraw()
 			crosshair.GetInt() &&
 			!engine->IsDrawingLoadingImage() &&
 			!engine->IsPaused() && 
-			g_pClientMode->ShouldDrawCrosshair() &&
+			g_pGameRules->ShouldDrawCrosshair() &&
 			!( pPlayer->GetEngineObject()->GetFlags() & FL_FROZEN ) &&
 			( pPlayer->entindex() == render->GetViewEntity() ) &&
 			!pPlayer->IsInVGuiInputMode() &&

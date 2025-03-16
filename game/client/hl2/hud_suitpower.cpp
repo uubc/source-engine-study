@@ -29,7 +29,7 @@ DECLARE_HUDELEMENT( CHudSuitPower );
 //-----------------------------------------------------------------------------
 CHudSuitPower::CHudSuitPower( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudSuitPower" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
@@ -91,12 +91,12 @@ void CHudSuitPower::OnThink( void )
 	if ( flCurrentPower >= 100.0f && m_flSuitPower < 100.0f )
 	{
 		// we've reached max power
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerMax");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerMax");
 	}
 	else if ( flCurrentPower < 100.0f && (m_flSuitPower >= 100.0f || m_flSuitPower == SUITPOWER_INIT) )
 	{
 		// we've lost power
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerNotMax");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerNotMax");
 	}
 
 	bool flashlightActive = pPlayer->IsFlashlightActive();
@@ -112,16 +112,16 @@ void CHudSuitPower::OnThink( void )
 		{
 		default:
 		case 3:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerThreeItemsActive");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerThreeItemsActive");
 			break;
 		case 2:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerTwoItemsActive");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerTwoItemsActive");
 			break;
 		case 1:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerOneItemActive");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerOneItemActive");
 			break;
 		case 0:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerNoItemsActive");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerNoItemsActive");
 			break;
 		}
 	}
@@ -154,11 +154,11 @@ void CHudSuitPower::Paint()
 		{
 			if (lowPower)
 			{
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerDecreasedBelow25");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerDecreasedBelow25");
 			}
 			else
 			{
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerIncreasedAbove25");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("SuitAuxPowerIncreasedAbove25");
 			}
 			m_nSuitPowerLow = lowPower;
 		}

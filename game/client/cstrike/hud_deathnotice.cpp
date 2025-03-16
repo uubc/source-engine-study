@@ -16,7 +16,7 @@
 #include <KeyValues.h>
 #include "c_baseplayer.h"
 #include "c_team.h"
-
+#include "cs_gamerules.h"
 #include "cs_shareddefs.h"
 #include "clientmode_csnormal.h"
 #include "c_cs_player.h"
@@ -110,7 +110,7 @@ DECLARE_HUDELEMENT( CHudDeathNotice );
 CHudDeathNotice::CHudDeathNotice( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudDeathNotice" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_iconD_headshot = NULL;
@@ -197,7 +197,7 @@ void CHudDeathNotice::Paint()
 	if ( !m_iconD_headshot || !m_iconD_skull )
 		return;
 
-	int yStart = GetClientModeCSNormal()->GetDeathMessageStartHeight();
+	int yStart = CSGameRules()->GetDeathMessageStartHeight();
 
 	surface()->DrawSetTextFont( m_hTextFont );
 	surface()->DrawSetTextColor( m_clrCTText );

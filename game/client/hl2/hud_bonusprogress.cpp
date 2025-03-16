@@ -143,7 +143,7 @@ void CHudBonusProgress::OnThink()
 		SetChallengeLabel();
 	}
 
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BonusProgressFlash");
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("BonusProgressFlash");
 
 	if ( pGameRules->IsBonusChallengeTimeBased() )
 	{

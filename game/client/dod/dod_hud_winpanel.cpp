@@ -71,7 +71,7 @@ void CDODWinPanel_Axis::ApplySchemeSettings( vgui::IScheme *pScheme )
 CDODWinPanel::CDODWinPanel( const char *pElementName, int iTeam )
 	: EditablePanel( NULL, pElementName ), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 0 );

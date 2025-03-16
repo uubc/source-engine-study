@@ -733,7 +733,7 @@ bool C_BaseEntity::ShouldDraw()
 // Only test this in tf2
 #if defined( INVASION_CLIENT_DLL )
 	// Let the client mode (like commander mode) reject drawing entities.
-	if (g_pClientMode && !g_pClientMode->ShouldDrawEntity(this) )
+	if (g_pGameRules && !g_pGameRules->ShouldDrawEntity(this) )
 		return false;
 #endif
 

@@ -46,7 +46,7 @@ WinPanel_Round::WinPanel_Round( const char *pElementName ) :
 	m_fFadeBeginTime(0.0f)
 {
 	SetSize( 10, 10 ); // Quiet "parent not sized yet" spew
-	SetParent(g_pClientMode->GetViewport());	
+	SetParent(g_pGameRules->GetViewport());
 
 	SetScheme( "ClientScheme" );
 

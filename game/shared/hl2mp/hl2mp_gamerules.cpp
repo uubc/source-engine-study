@@ -12,6 +12,17 @@
 #include "ammodef.h"
 
 #ifdef CLIENT_DLL
+
+	#include "vgui_int.h"
+	#include "hud.h"
+	#include <vgui/IInput.h>
+	#include <vgui/IPanel.h>
+	#include <vgui/ISurface.h>
+	#include <vgui_controls/AnimationController.h>
+	#include "iinput.h"
+	#include "hl2mpclientscoreboard.h"
+	#include "hl2mptextwindow.h"
+	#include "ienginevgui.h"
 	#include "c_hl2mp_player.h"
 #else
 
@@ -148,6 +159,54 @@ char *sTeamNames[] =
 	"Rebels",
 };
 
+#ifdef CLIENT_DLL
+//-----------------------------------------------------------------------------
+// Purpose: this is the viewport that contains all the hud elements
+//-----------------------------------------------------------------------------
+class CHudViewport : public CBaseViewport
+{
+private:
+	DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
+
+protected:
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
+	{
+		BaseClass::ApplySchemeSettings(pScheme);
+
+		gHUD.InitColors(pScheme);
+
+		SetPaintBackgroundEnabled(false);
+	}
+
+	virtual IViewPortPanel* CreatePanelByName(const char* szPanelName);
+};
+
+IViewPortPanel* CHudViewport::CreatePanelByName(const char* szPanelName)
+{
+	IViewPortPanel* newpanel = NULL;
+
+	if (Q_strcmp(PANEL_SCOREBOARD, szPanelName) == 0)
+	{
+		newpanel = new CHL2MPClientScoreBoardDialog(this);
+		return newpanel;
+	}
+	else if (Q_strcmp(PANEL_INFO, szPanelName) == 0)
+	{
+		newpanel = new CHL2MPTextWindow(this);
+		return newpanel;
+	}
+	else if (Q_strcmp(PANEL_SPECGUI, szPanelName) == 0)
+	{
+		newpanel = new CHL2MPSpectatorGUI(this);
+		return newpanel;
+	}
+
+
+	return BaseClass::CreatePanelByName(szPanelName);
+}
+#endif // CLIENT_DLL
+
+
 CHL2MPWorld::CHL2MPWorld()
 {
 #ifndef CLIENT_DLL
@@ -163,7 +222,41 @@ CHL2MPWorld::CHL2MPWorld()
 	m_bAwaitingReadyRestart = false;
 	m_bChangelevelDone = false;
 #endif
+#ifdef CLIENT_DLL
+	m_pViewport = new CHudViewport();
+	m_pViewport->Start(gameuifuncs, gameeventmanager);
+#endif // CLIENT_DLL
 }
+
+#ifdef CLIENT_DLL
+
+//-----------------------------------------------------------------------------
+// Globals
+//-----------------------------------------------------------------------------
+vgui::HScheme g_hVGuiCombineScheme = 0;
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CHL2MPWorld::Init()
+{
+	BaseClass::Init();
+
+	// Load up the combine control panel scheme
+	g_hVGuiCombineScheme = vgui::scheme()->LoadSchemeFromFileEx(enginevgui->GetPanel(PANEL_CLIENTDLL), "resource/CombinePanelScheme.res", "CombineScheme");
+	if (!g_hVGuiCombineScheme)
+	{
+		Warning("Couldn't load combine panel scheme!\n");
+	}
+}
+
+int CHL2MPWorld::GetDeathMessageStartHeight(void)
+{
+	return m_pViewport->GetDeathMessageStartHeight();
+}
+
+#endif // CLIENT_DLL
+
 
 #ifdef GAME_DLL
 

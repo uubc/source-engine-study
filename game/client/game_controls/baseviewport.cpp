@@ -71,9 +71,9 @@ ConVar hud_autoreloadscript("hud_autoreloadscript", "0", FCVAR_NONE, "Automatica
 
 void hud_autoreloadscript_callback( IConVar *var, const char *pOldValue, float flOldValue )
 {
-	if ( g_pClientMode && g_pClientMode->GetViewportAnimationController() )
+	if ( g_pGameRules && g_pGameRules->GetViewportAnimationController() )
 	{
-		g_pClientMode->GetViewportAnimationController()->SetAutoReloadScript( hud_autoreloadscript.GetBool() );
+		g_pGameRules->GetViewportAnimationController()->SetAutoReloadScript( hud_autoreloadscript.GetBool() );
 	}
 }
 
@@ -645,7 +645,7 @@ void CBaseViewport::OnThink()
 	{
 		m_OldSize[ 0 ] = w;
 		m_OldSize[ 1 ] = h;
-		g_pClientMode->Layout();
+		g_pGameRules->Layout();
 	}
 
 	BaseClass::OnThink();
@@ -737,7 +737,7 @@ void CBaseViewport::ReloadScheme(const char *fromFile)
 	SetProportional( true );
 	
 	KeyValuesAD pConditions( "conditions" );
-	g_pClientMode->ComputeVguiResConditions( pConditions );
+	g_pGameRules->ComputeVguiResConditions( pConditions );
 
 	// reload the .res file from disk
 	LoadControlSettings( "scripts/HudLayout.res", NULL, NULL, pConditions );

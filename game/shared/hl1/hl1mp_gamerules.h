@@ -27,6 +27,16 @@ public:
 	CHL1MPWorld();
 	virtual ~CHL1MPWorld();
 
+#ifdef CLIENT_DLL
+
+	virtual float	GetViewModelFOV(void);
+
+	virtual int		GetDeathMessageStartHeight(void);
+
+	int GetKillCamMode() const { return OBS_MODE_NONE; }
+	int GetKillCamTarget1() const { return 0; }
+#endif // CLIENT_DLL
+
 #ifdef GAME_DLL
 	virtual void	Precache(void);
 	virtual void	LevelInit();

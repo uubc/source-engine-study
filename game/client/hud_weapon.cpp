@@ -40,7 +40,7 @@ DECLARE_HUDELEMENT( CHudWeapon );
 CHudWeapon::CHudWeapon( const char *pElementName ) :
   CHudElement( pElementName ), BaseClass( NULL, "HudWeapon" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_pCrosshair = NULL;

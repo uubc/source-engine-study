@@ -57,7 +57,7 @@ DECLARE_HUDELEMENT( CDODRestartRoundLabel );
 //-----------------------------------------------------------------------------
 CDODRestartRoundLabel::CDODRestartRoundLabel( const char *pElementName ) : BaseClass(NULL, "RestartRoundLabel"), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 0 );
@@ -82,7 +82,7 @@ CDODRestartRoundLabel::CDODRestartRoundLabel( const char *pElementName ) : BaseC
 //-----------------------------------------------------------------------------
 void CDODRestartRoundLabel::Reset()
 {
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "RestartRoundLabelHide" );
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "RestartRoundLabelHide" );
 
 	m_flLastRestartTime = 0;
 }
@@ -140,7 +140,7 @@ void CDODRestartRoundLabel::OnThink()
 	{
 		if( flRoundRestartTime > 0 )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "RestartRoundLabelShow" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "RestartRoundLabelShow" );
 		}
 		m_flLastRestartTime = flRoundRestartTime;
 	}

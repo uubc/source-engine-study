@@ -34,6 +34,7 @@
 
 #ifdef CLIENT_DLL
 	#define CDODGameWorld C_DODGameWorld
+	class CDODFreezePanel;
 #else
 	extern IVoiceGameMgrHelper *g_pVoiceGameMgrHelper;
 	extern IUploadGameStats *gamestatsuploader;
@@ -209,9 +210,40 @@ public:
 
 	DECLARE_CLIENTCLASS(); // This makes datatables able to access our private vars.
 
+	CDODGameWorld();
+	virtual ~CDODGameWorld();
+
 	void SetRoundState( int iRoundState );
 	float m_flLastRoundStateChangeTime;
 
+	virtual void	Init();
+	virtual void	LevelInit();
+
+	virtual float	GetViewModelFOV(void);
+
+	int				GetDeathMessageStartHeight(void);
+
+	virtual void	FireGameEvent(IGameEvent* event);
+	virtual void	PostRenderVGui();
+
+	virtual bool	ShouldDrawViewModel(void);
+
+	virtual int		HudElementKeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding);
+
+	int GetKillCamMode() const { return m_nKillCamMode; }
+	int GetKillCamTarget1() const { return m_nKillCamTarget1; }
+
+	int m_nKillCamMode = OBS_MODE_NONE;
+	int m_nKillCamTarget1 = 0;
+	int m_nKillCamTarget2 = 0;
+private:
+
+	//	void	UpdateSpectatorMode( void );
+
+	void RadioMessage(const char* pszSoundName, const char* pszSubtitle, const char* pszSender = NULL, int iSenderIndex = 0);
+	char m_szLastRadioSound[128];
+
+	CDODFreezePanel* m_pFreezePanel;
 #else
 
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.
@@ -520,7 +552,7 @@ inline CDODGameWorld* DODGameRules()
 }
 
 #ifdef CLIENT_DLL
-
+	#define SCREEN_FILE		"scripts/vgui_screens.txt"
 #else	
 	bool EntityPlacementTest( CBaseEntity *pMainEnt, const Vector &vOrigin, Vector &outPos, bool bDropToGround );
 #endif //CLIENT_DLL

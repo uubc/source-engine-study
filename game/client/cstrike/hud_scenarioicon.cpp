@@ -39,7 +39,7 @@ DECLARE_HUDELEMENT( CHudScenarioIcon );
 CHudScenarioIcon::CHudScenarioIcon( const char *pName ) :
 	vgui::Panel( NULL, "HudScenarioIcon" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	m_pC4Icon = NULL;
 	m_pHostageIcon = NULL;
 

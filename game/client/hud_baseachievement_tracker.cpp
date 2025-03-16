@@ -68,7 +68,7 @@ ConVar hud_achievement_tracker("hud_achievement_tracker", "1", FCVAR_NONE, "Show
 CHudBaseAchievementTracker::CHudBaseAchievementTracker( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudAchievementTracker" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD );

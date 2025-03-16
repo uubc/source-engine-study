@@ -77,7 +77,7 @@ private:
 //-----------------------------------------------------------------------------
 CHudAmmo::CHudAmmo( const char *pElementName ) : vgui::Panel( NULL, "HudAmmo" ), CHudElement( pElementName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent( g_pGameRules->GetViewport() );
 
 	m_iAdditiveWhiteID = vgui::surface()->CreateNewTextureID();
 	vgui::surface()->DrawSetTextureFile( m_iAdditiveWhiteID, "vgui/white_additive" , true, false);

@@ -366,7 +366,7 @@ DECLARE_HUDELEMENT( CHudCommentary );
 //-----------------------------------------------------------------------------
 CHudCommentary::CHudCommentary( const char *name ) : vgui::Panel( NULL, "HudCommentary" ), CHudElement( name )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetPaintBorderEnabled( false );
@@ -399,7 +399,7 @@ void CHudCommentary::Paint()
 		if ( !m_bHiding )
 		{
 			m_bHiding = true;
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HideCommentary" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HideCommentary" );
 
 			CHudCloseCaption *pHudCloseCaption = (CHudCloseCaption *)GET_HUDELEMENT( CHudCloseCaption );
 			if ( pHudCloseCaption )
@@ -414,7 +414,7 @@ void CHudCommentary::Paint()
 		if ( flPercentage >= 1 && m_hActiveNode )
 		{
 			m_hActiveNode = NULL;
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HideCommentary" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HideCommentary" );
 
 			engine->ServerCmd( "commentary_finishnode\n" );
 		}
@@ -546,7 +546,7 @@ void CHudCommentary::StartCommentary( C_PointCommentaryNode *pNode, char *pszSpe
 	// If the commentary just started, play the commentary fade in.
 	if ( fabs(flStartTime - gpGlobals->curtime) < 1.0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ShowCommentary" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ShowCommentary" );
 	}
 	else
 	{

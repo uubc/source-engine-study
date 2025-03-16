@@ -3545,7 +3545,7 @@ public:
 
 	// call this before and after each frame to delete all of the marked entities.
 	void CleanupDeleteList(void);
-	int ResetDeleteList(void);
+	int CountDeleteList(void);
 
 	// Returns true while in the Clear() call.
 	bool	IsClearingEntities() { return m_bClearingEntities; }
@@ -6815,10 +6815,10 @@ void CGlobalEntityList<T>::CleanupDeleteList(void)
 }
 
 template<class T>
-int CGlobalEntityList<T>::ResetDeleteList(void)
+int CGlobalEntityList<T>::CountDeleteList(void)
 {
 	int result = m_DeleteList.Count();
-	m_DeleteList.RemoveAll();
+	//m_DeleteList.RemoveAll();
 	return result;
 }
 

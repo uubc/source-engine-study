@@ -351,11 +351,11 @@ void CDODMapOverview::ToggleZoom( void )
 	switch( _cl_minimapzoom.GetInt() )
 	{
 	case 0:
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel1" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel1" );
 		break;
 	case 1:
 	default:
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel2" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel2" );
 		break;
 	}
 }
@@ -368,21 +368,21 @@ void CDODMapOverview::SetMode(int mode)
 	{
 		ShowPanel( false );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapOff" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapOff" );
 	}
 	else if ( mode == MAP_MODE_INSET )
 	{
 		switch( _cl_minimapzoom.GetInt() )
 		{
 		case 0:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel1" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel1" );
 			break;
 		case 1:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel2" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel2" );
 			break;
 		case 2:
 		default:
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel3" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomLevel3" );
 			break;
 		}
 
@@ -394,9 +394,9 @@ void CDODMapOverview::SetMode(int mode)
 		ShowPanel( true );
 
 		if ( m_nMode == MAP_MODE_FULL )
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapScaleToSmall" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapScaleToSmall" );
 		else
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SnapToSmall" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SnapToSmall" );
 	}
 	else if ( mode == MAP_MODE_FULL )
 	{
@@ -405,9 +405,9 @@ void CDODMapOverview::SetMode(int mode)
 		ShowPanel( true );
 
 		if ( m_nMode == MAP_MODE_INSET )
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ZoomToLarge" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ZoomToLarge" );
 		else
-            g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SnapToLarge" );
+            g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SnapToLarge" );
 	}
 
 	// finally set mode

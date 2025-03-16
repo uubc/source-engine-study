@@ -1466,7 +1466,7 @@ void CViewRender::SetUpViews()
 			// If we are looking through another entities eyes, then override the angles/origin for view
 			int viewentity = render->GetViewEntity();
 
-			if (!modemanager->GetKillCamMode() && (pPlayer->entindex() != viewentity))
+			if (!entitylist->GetWorld()->GetKillCamMode() && (pPlayer->entindex() != viewentity))
 			{
 				IClientEntity* ve = EntityList()->GetEnt(viewentity);
 				if (ve)
@@ -1489,7 +1489,7 @@ void CViewRender::SetUpViews()
 
 		// Even if the engine is paused need to override the view
 		// for keeping the camera control during pause.
-		g_pClientMode->OverrideView(&view);
+		entitylist->GetWorld()->OverrideView(&view);
 	}
 
 	// give the toolsystem a chance to override the view
@@ -1514,7 +1514,7 @@ void CViewRender::SetUpViews()
 	float flFOVOffset = fDefaultFov - view.fov;
 
 	//Adjust the viewmodel's FOV to move with any FOV offsets on the viewer's end
-	view.fovViewmodel = fabs(g_pClientMode->GetViewModelFOV() - flFOVOffset);
+	view.fovViewmodel = fabs(entitylist->GetWorld()->GetViewModelFOV() - flFOVOffset);
 
 	if (UseVR())
 	{
@@ -1529,7 +1529,7 @@ void CViewRender::SetUpViews()
 			g_ClientVirtualReality.ProcessCurrentTrackingState(view.fov);
 		}
 
-		HeadtrackMovementMode_t hmmOverrideMode = g_pClientMode->ShouldOverrideHeadtrackControl();
+		HeadtrackMovementMode_t hmmOverrideMode = entitylist->GetWorld()->ShouldOverrideHeadtrackControl();
 		g_ClientVirtualReality.OverrideView(&m_View, &ViewModelOrigin, &ViewModelAngles, hmmOverrideMode);
 
 		// left and right stereo views should default to being the same as the mono/middle view
@@ -1863,7 +1863,7 @@ void CViewRender::Render(vrect_t* rect)
 				if (targetFOV == 0)
 				{
 					// FOV of 0 means use the default FOV
-					targetFOV = g_pGameRules->DefaultFOV();
+					targetFOV = entitylist->GetWorld()->DefaultFOV();
 				}
 
 				float deltaFOV = view.fov - m_flLastFOV;
@@ -1901,9 +1901,9 @@ void CViewRender::Render(vrect_t* rect)
 		view.fovViewmodel = ScaleFOVByWidthRatio(view.fovViewmodel, aspectRatio);
 
 		// Let the client mode hook stuff.
-		g_pClientMode->PreRender(&view);
+		entitylist->GetWorld()->PreRender(&view);
 
-		g_pClientMode->AdjustEngineViewport(vr.x, vr.y, vr.width, vr.height);
+		entitylist->GetWorld()->AdjustEngineViewport(vr.x, vr.y, vr.width, vr.height);
 
 		ToolFramework_AdjustEngineViewport(vr.x, vr.y, vr.width, vr.height);
 
@@ -1984,7 +1984,7 @@ void CViewRender::Render(vrect_t* rect)
 		}
 
 		// Determine if we should draw view model ( client mode override )
-		bool drawViewModel = g_pClientMode->ShouldDrawViewModel();
+		bool drawViewModel = entitylist->GetWorld()->ShouldDrawViewModel();
 
 		if (cl_leveloverview.GetFloat() > 0)
 		{
@@ -2039,14 +2039,14 @@ void CViewRender::Render(vrect_t* rect)
 			{
 				// TODO - a bit of a shonky test - basically trying to catch the main menu, the briefing screen, the loadout screen, etc.
 				bool bTranslucent = !g_pMatSystemSurface->IsCursorVisible();
-				g_ClientVirtualReality.OverlayHUDQuadWithUndistort(view, bDoUndistort, g_pClientMode->ShouldBlackoutAroundHUD(), bTranslucent);
+				g_ClientVirtualReality.OverlayHUDQuadWithUndistort(view, bDoUndistort, entitylist->GetWorld()->ShouldBlackoutAroundHUD(), bTranslucent);
 			}
 		}
 	}
 
 
 	// TODO: should these be inside or outside the stereo eye stuff?
-	g_pClientMode->PostRender();
+	entitylist->GetWorld()->PostRender();
 	engine->EngineStats_EndFrame();
 
 #if !defined( _X360 )
@@ -2817,7 +2817,7 @@ static bool GetFogEnable( fogparams_t *pFogParams )
 		return false;
 
 	// Ask the clientmode
-	if ( g_pClientMode->ShouldDrawFog() == false )
+	if ( entitylist->GetWorld()->ShouldDrawFog() == false )
 		return false;
 
 	if( fog_override.GetInt() )
@@ -2850,7 +2850,7 @@ static float GetFogMaxDensity( fogparams_t *pFogParams )
 		return 1.0f;
 
 	// Ask the clientmode
-	if ( !g_pClientMode->ShouldDrawFog() )
+	if ( !entitylist->GetWorld()->ShouldDrawFog() )
 		return 1.0f;
 
 	if ( fog_override.GetInt() )
@@ -2981,7 +2981,7 @@ static float GetSkyboxFogMaxDensity()
 		return 1.0f;
 
 	// Ask the clientmode
-	if ( !g_pClientMode->ShouldDrawFog() )
+	if ( !entitylist->GetWorld()->ShouldDrawFog() )
 		return 1.0f;
 
 	if ( fog_override.GetInt() )
@@ -3268,7 +3268,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 			}
 		}
 
-		GetClientModeNormal()->DoPostScreenSpaceEffects( &view );
+		entitylist->GetWorld()->DoPostScreenSpaceEffects(&view);
 
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
@@ -3522,7 +3522,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 		VGui_PostRender();
 
-		g_pClientMode->PostRenderVGui();
+		entitylist->GetWorld()->PostRenderVGui();
 		pRenderContext = materials->GetRenderContext();
 		if (pTexture)
 		{
@@ -3546,7 +3546,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 				// TODO - a bit of a shonky test - basically trying to catch the main menu, the briefing screen, the loadout screen, etc.
 				bool bTranslucent = !g_pMatSystemSurface->IsCursorVisible();
-				g_ClientVirtualReality.RenderHUDQuad( g_pClientMode->ShouldBlackoutAroundHUD(), bTranslucent );
+				g_ClientVirtualReality.RenderHUDQuad( entitylist->GetWorld()->ShouldBlackoutAroundHUD(), bTranslucent );
 				CleanupMain3DView( view );
 			}
 		}
@@ -4611,7 +4611,7 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 		setupInfo.m_nRenderFrame = m_pMainView->BuildRenderablesListsNumber();	// only one incremented?
 		setupInfo.m_nDetailBuildFrame = m_pMainView->BuildWorldListsNumber();	//
 		setupInfo.m_pRenderList = m_pRenderablesList;
-		setupInfo.m_bDrawDetailObjects = g_pClientMode->ShouldDrawDetailObjects() && r_DrawDetailProps.GetInt();
+		setupInfo.m_bDrawDetailObjects = entitylist->GetWorld()->ShouldDrawDetailObjects() && r_DrawDetailProps.GetInt();
 		setupInfo.m_bDrawTranslucentObjects = (viewID != VIEW_SHADOW_DEPTH_TEXTURE);
 
 		setupInfo.m_vecRenderOrigin = origin;

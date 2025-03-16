@@ -54,7 +54,7 @@ DECLARE_HUD_MESSAGE( CHudGeiger, Geiger );
 CHudGeiger::CHudGeiger( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudGeiger" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	m_flLastSoundTestTime = -9999;
 

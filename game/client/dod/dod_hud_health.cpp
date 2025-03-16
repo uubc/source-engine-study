@@ -63,7 +63,7 @@ private:
 //-----------------------------------------------------------------------------
 CHudHealth::CHudHealth( const char *pElementName ) : CHudElement( pElementName ), BaseClass(NULL, "HudHealth") 
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD );
 }
 
@@ -136,7 +136,7 @@ void CHudHealth::OnThink()
 	}
 
 #ifdef _DEBUG
-	g_pClientMode->GetViewportAnimationController()->SetAutoReloadScript(true);
+	g_pGameRules->GetViewportAnimationController()->SetAutoReloadScript(true);
 #endif
 
 	m_iHealth = realHealth;

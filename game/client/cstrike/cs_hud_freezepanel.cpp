@@ -124,7 +124,7 @@ CCSFreezePanel::CCSFreezePanel( const char *pElementName ) :
 	m_pDominationIcon(NULL)
 {
 	SetSize( 10, 10 ); // Quiet "parent not sized yet" spew
-	SetParent(g_pClientMode->GetViewport());
+	SetParent(g_pGameRules->GetViewport());
 	m_bShouldBeVisible = false;
 	SetScheme( "ClientScheme" );
 	RegisterForRenderGroup( "hide_for_scoreboard" );

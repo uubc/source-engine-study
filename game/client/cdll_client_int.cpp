@@ -178,7 +178,6 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "tier0/memdbgon.h"
 
 #define CRecipientFilter C_RecipientFilter
-extern IClientMode *GetClientModeNormal();
 
 // IF YOU ADD AN INTERFACE, EXTERN IT IN THE HEADER FILE.
 IVEngineClient	*engine = NULL;
@@ -1073,14 +1072,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	//IGameSystem::Add( GetPredictionCopyTester() );
 #endif
 
-	modemanager->Init( );
-
-	g_pClientMode->InitViewport();
-
-	gHUD.Init();
 	gTouch.Init();
-
-	g_pClientMode->Init();
 
 	g_pClientShadowMgr->Init();
 	g_pClientLeafSystem->Init();
@@ -1089,7 +1081,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if ( !IGameSystem::InitAllSystems() )
 		return false;
 
-	g_pClientMode->Enable();
+	g_pGameRules->Enable();
 
 	if ( !g_pViewRender)
 	{
@@ -1101,7 +1093,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	C_BaseTempEntity::PrecacheTempEnts();
 
-	input->Init_All();
+	::input->Init_All();
 
 	VGui_CreateGlobalPanels();
 
@@ -1222,7 +1214,6 @@ void CHLClient::Shutdown( void )
 #endif
 
 	EntityList()->ShutdownBoneSetupThreadPool();
-	EntityList()->Shutdown();
 	//ClientWorldFactoryShutdown();
 
 	engine->RemoveBlockHandler( GetViewEffectsRestoreBlockHandler() );
@@ -1233,10 +1224,10 @@ void CHLClient::Shutdown( void )
 
 	//Initializer::FreeAllObjects();
 
-	g_pClientMode->Disable();
-	g_pClientMode->Shutdown();
+	g_pGameRules->Disable();
+	//g_pClientMode->Shutdown();
 
-	input->Shutdown_All();
+	::input->Shutdown_All();
 	C_BaseTempEntity::ClearDynamicTempEnts();
 	TermSmokeFogOverlay();
 	g_pViewRender->Shutdown();
@@ -1249,12 +1240,13 @@ void CHLClient::Shutdown( void )
 	g_pClientShadowMgr->Shutdown();
 	g_pClientLeafSystem->Shutdown();
 	
-	gHUD.Shutdown();
 	VGui_Shutdown();
 	gTouch.Shutdown();
 
 	ParticleMgr()->Term();
 	
+	EntityList()->Shutdown();
+
 	ClearKeyValuesCache();
 
 #ifndef NO_STEAM
@@ -1304,7 +1296,7 @@ int CHLClient::HudVidInit( void )
 //-----------------------------------------------------------------------------
 void CHLClient::HudProcessInput( bool bActive )
 {
-	g_pClientMode->ProcessInput( bActive );
+	g_pGameRules->ProcessInput( bActive );
 }
 
 //-----------------------------------------------------------------------------
@@ -1403,7 +1395,7 @@ IEntityFactory* CHLClient::GetAllEntityFactories(void)
 //-----------------------------------------------------------------------------
 void CHLClient::IN_ActivateMouse( void )
 {
-	input->ActivateMouse();
+	::input->ActivateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1411,7 +1403,7 @@ void CHLClient::IN_ActivateMouse( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_DeactivateMouse( void )
 {
-	input->DeactivateMouse();
+	::input->DeactivateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1419,7 +1411,7 @@ void CHLClient::IN_DeactivateMouse( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_Accumulate ( void )
 {
-	input->AccumulateMouse();
+	::input->AccumulateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1427,7 +1419,7 @@ void CHLClient::IN_Accumulate ( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_ClearStates ( void )
 {
-	input->ClearStates();
+	::input->ClearStates();
 }
 
 //-----------------------------------------------------------------------------
@@ -1436,7 +1428,7 @@ void CHLClient::IN_ClearStates ( void )
 //-----------------------------------------------------------------------------
 bool CHLClient::IN_IsKeyDown( const char *name, bool& isdown )
 {
-	kbutton_t *key = input->FindKey( name );
+	kbutton_t *key = ::input->FindKey( name );
 	if ( !key )
 	{
 		return false;
@@ -1473,7 +1465,7 @@ void CHLClient::IN_OnMouseWheeled( int nDelta )
 //-----------------------------------------------------------------------------
 int CHLClient::IN_KeyEvent( int eventcode, ButtonCode_t keynum, const char *pszCurrentBinding )
 {
-	return input->KeyEvent( eventcode, keynum, pszCurrentBinding );
+	return ::input->KeyEvent( eventcode, keynum, pszCurrentBinding );
 }
 
 void CHLClient::ExtraMouseSample( float frametime, bool active )
@@ -1484,14 +1476,14 @@ void CHLClient::ExtraMouseSample( float frametime, bool active )
 	EntityList()->PushAllowBoneAccess(true, false, (char const*)1);
 
 	MDLCACHE_CRITICAL_SECTION();
-	input->ExtraMouseSample( frametime, active );
+	::input->ExtraMouseSample( frametime, active );
 	EntityList()->PopBoneAccess((char const*)1);
 }
 
 void CHLClient::IN_SetSampleTime( float frametime )
 {
-	input->Joystick_SetSampleTime( frametime );
-	input->IN_SetSampleTime( frametime );
+	::input->Joystick_SetSampleTime( frametime );
+	::input->IN_SetSampleTime( frametime );
 
 #ifdef SIXENSE
 	g_pSixenseInput->ResetFrameTime( frametime );
@@ -1512,7 +1504,7 @@ void CHLClient::CreateMove ( int sequence_number, float input_sample_frametime, 
 	EntityList()->PushAllowBoneAccess(true, false, (char const*)1);
 
 	MDLCACHE_CRITICAL_SECTION();
-	input->CreateMove( sequence_number, input_sample_frametime, active );
+	::input->CreateMove( sequence_number, input_sample_frametime, active );
 	EntityList()->PopBoneAccess((char const*)1);
 }
 
@@ -1524,7 +1516,7 @@ void CHLClient::CreateMove ( int sequence_number, float input_sample_frametime, 
 //-----------------------------------------------------------------------------
 bool CHLClient::WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool isnewcommand )
 {
-	return input->WriteUsercmdDeltaToBuffer( buf, from, to, isnewcommand );
+	return ::input->WriteUsercmdDeltaToBuffer( buf, from, to, isnewcommand );
 }
 
 //-----------------------------------------------------------------------------
@@ -1535,7 +1527,7 @@ bool CHLClient::WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool
 //-----------------------------------------------------------------------------
 void CHLClient::EncodeUserCmdToBuffer( bf_write& buf, int slot )
 {
-	input->EncodeUserCmdToBuffer( buf, slot );
+	::input->EncodeUserCmdToBuffer( buf, slot );
 }
 
 //-----------------------------------------------------------------------------
@@ -1546,7 +1538,7 @@ void CHLClient::EncodeUserCmdToBuffer( bf_write& buf, int slot )
 //-----------------------------------------------------------------------------
 void CHLClient::DecodeUserCmdFromBuffer( bf_read& buf, int slot )
 {
-	input->DecodeUserCmdFromBuffer( buf, slot );
+	::input->DecodeUserCmdFromBuffer( buf, slot );
 }
 
 //-----------------------------------------------------------------------------
@@ -1653,15 +1645,13 @@ void CHLClient::LevelInitPreEntity()
 		return;
 	g_bLevelInitialized = true;
 
-	input->LevelInit();
+	::input->LevelInit();
 
 	vieweffects->LevelInit();
 	
 	//Tony; loadup per-map manifests.
 	ParseParticleEffectsMap( gpGlobals->mapname.ToCStr(), true);
 	
-	// Tell mode manager that map is changing
-	modemanager->LevelInit(gpGlobals->mapname.ToCStr());
 	ParticleMgr()->LevelInit();
 
 	hudlcd->SetGlobalStat( "(mapname)", gpGlobals->mapname.ToCStr());
@@ -1786,8 +1776,6 @@ void CHLClient::LevelShutdown( void )
 	IGameSystem::LevelShutdownPreEntityAllSystems();
 
 	C_PhysPropClientside::DestroyAll();
-
-	modemanager->LevelShutdown();
 
 	// Remove temporary entities before removing entities from the client entity list so that the te_* may
 	// clean up before hand.
@@ -2242,7 +2230,7 @@ void OnRenderStart()
 
 	// Make sure the camera simulation happens before OnRenderStart, where it's used.
 	// NOTE: the only thing that happens in CAM_Think is thirdperson related code.
-	input->CAM_Think();
+	::input->CAM_Think();
 
 	// This will place the player + the view models + all parent
 	// entities	at the correct abs position so that their attachment points
@@ -2761,9 +2749,9 @@ CStandardRecvProxies* CHLClient::GetStandardRecvProxies()
 
 bool CHLClient::CanRecordDemo( char *errorMsg, int length ) const
 {
-	if ( GetClientModeNormal() )
+	if ( g_pGameRules )
 	{
-		return GetClientModeNormal()->CanRecordDemo( errorMsg, length );
+		return g_pGameRules->CanRecordDemo( errorMsg, length );
 	}
 
 	return true;

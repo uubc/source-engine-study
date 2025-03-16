@@ -71,7 +71,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 CHudSquadStatus::CHudSquadStatus( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudSquadStatus" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
@@ -142,12 +142,12 @@ void CHudSquadStatus::OnThink( void )
 	if ( squadMembers > 0)
 	{
 		// we have squad members, show the display
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 255.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
+		g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 255.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
 	}
 	else
 	{
 		// no squad members, hide the display
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 0.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
+		g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 0.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
 	}
 
 	if ( squadMembers > m_iSquadMembers )
@@ -157,7 +157,7 @@ void CHudSquadStatus::OnThink( void )
 		m_LastMemberColor = m_SquadIconColor;
 		m_LastMemberColor[3] = 0;
 		m_bSquadMemberAdded = true;
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberAdded" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberAdded" ); 
 	}
 	else if ( squadMembers < m_iSquadMembers )
 	{
@@ -167,12 +167,12 @@ void CHudSquadStatus::OnThink( void )
 		m_bSquadMemberAdded = false;
 		if (m_bSquadMemberJustDied)
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberDied" ); 
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberDied" ); 
 			m_bSquadMemberJustDied = false;
 		}
 		else
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberLeft" ); 
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberLeft" ); 
 		}
 	}
 
@@ -181,12 +181,12 @@ void CHudSquadStatus::OnThink( void )
 		if ( following )
 		{
 			// flash the squad area to indicate they are following
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersFollowing" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersFollowing" );
 		}
 		else
 		{
 			// flash the crosshair to indicate the targeted order is in effect
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersStationed" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersStationed" );
 		}
 	}
 

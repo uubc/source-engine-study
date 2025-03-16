@@ -11,7 +11,15 @@
 #include "hl2_shareddefs.h"
 
 #ifdef CLIENT_DLL
-
+	#include "vgui_int.h"
+	#include "hud.h"
+	#include <vgui/IInput.h>
+	#include <vgui/IPanel.h>
+	#include <vgui/ISurface.h>
+	#include <vgui_controls/AnimationController.h>
+	#include "iinput.h"
+	#include "ienginevgui.h"
+	#include "panelmetaclassmgr.h"
 #else
 	#include "player.h"
 	#include "game.h"
@@ -190,6 +198,64 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 
 #ifdef CLIENT_DLL //{
 
+	// default FOV for HL2
+	ConVar default_fov("default_fov", "75", FCVAR_CHEAT);
+	ConVar fov_desired("fov_desired", "75", FCVAR_ARCHIVE | FCVAR_USERINFO, "Sets the base field-of-view.", true, 75.0, true, 110.0);
+
+	extern bool g_bRollingCredits;
+//-----------------------------------------------------------------------------
+// Globals
+//-----------------------------------------------------------------------------
+	vgui::HScheme g_hVGuiCombineScheme = 0;
+
+	//-----------------------------------------------------------------------------
+// Purpose: this is the viewport that contains all the hud elements
+//-----------------------------------------------------------------------------
+	class CHudViewport : public CBaseViewport
+	{
+	private:
+		DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
+
+	protected:
+		virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
+		{
+			BaseClass::ApplySchemeSettings(pScheme);
+
+			gHUD.InitColors(pScheme);
+
+			SetPaintBackgroundEnabled(false);
+		}
+
+		virtual void CreateDefaultPanels(void) { /* don't create any panels yet*/ };
+	};
+
+	CHalfLife2World::CHalfLife2World()
+	{
+		m_pViewport = new CHudViewport();
+		m_pViewport->Start(gameuifuncs, gameeventmanager);
+	}
+
+	//-----------------------------------------------------------------------------
+	// Purpose: 
+	//-----------------------------------------------------------------------------
+	void CHalfLife2World::Init()
+	{
+		BaseClass::Init();
+
+		// Load up the combine control panel scheme
+		g_hVGuiCombineScheme = vgui::scheme()->LoadSchemeFromFileEx(enginevgui->GetPanel(PANEL_CLIENTDLL), IsXbox() ? "resource/ClientScheme.res" : "resource/CombinePanelScheme.res", "CombineScheme");
+		if (!g_hVGuiCombineScheme)
+		{
+			Warning("Couldn't load combine panel scheme!\n");
+		}
+
+		PanelMetaClassMgr()->LoadMetaClassDefinitionFile(SCREEN_FILE);
+	}
+
+	bool CHalfLife2World::ShouldDrawCrosshair(void)
+	{
+		return (g_bRollingCredits == false);
+	}
 
 #else //}{
 

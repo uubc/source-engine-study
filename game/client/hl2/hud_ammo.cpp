@@ -174,15 +174,15 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 		if (wpn->UsesClipsForAmmo1())
 		{
 			SetShouldDisplaySecondaryValue(true);
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesClips");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesClips");
 		}
 		else
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseClips");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseClips");
 			SetShouldDisplaySecondaryValue(false);
 		}
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
 		m_hCurrentActiveWeapon = wpn;
 	}
 }
@@ -233,15 +233,15 @@ void CHudAmmo::UpdateVehicleAmmo( C_BasePlayer *player, IClientVehicle *pVehicle
 		if (pVehicle->PrimaryAmmoUsesClips())
 		{
 			SetShouldDisplaySecondaryValue(true);
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesClips");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesClips");
 		}
 		else
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseClips");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseClips");
 			SetShouldDisplaySecondaryValue(false);
 		}
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
 		m_hCurrentVehicle = pVehicleEnt;
 	}
 }
@@ -281,17 +281,17 @@ void CHudAmmo::SetAmmo(int ammo, bool playAnimation)
 	{
 		if (ammo == 0)
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
 		}
 		else if (ammo < m_iAmmo)
 		{
 			// ammo has decreased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoDecreased");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoDecreased");
 		}
 		else
 		{
 			// ammunition has increased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoIncreased");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoIncreased");
 		}
 
 		m_iAmmo = ammo;
@@ -309,17 +309,17 @@ void CHudAmmo::SetAmmo2(int ammo2, bool playAnimation)
 	{
 		if (ammo2 == 0)
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Empty");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("Ammo2Empty");
 		}
 		else if (ammo2 < m_iAmmo2)
 		{
 			// ammo has decreased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Decreased");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("Ammo2Decreased");
 		}
 		else
 		{
 			// ammunition has increased
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Increased");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("Ammo2Increased");
 		}
 
 		m_iAmmo2 = ammo2;
@@ -391,17 +391,17 @@ public:
 		{
 			if (ammo == 0)
 			{
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryEmpty");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryEmpty");
 			}
 			else if (ammo < m_iAmmo)
 			{
 				// ammo has decreased
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreased");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreased");
 			}
 			else
 			{
 				// ammunition has increased
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreased");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreased");
 			}
 
 			m_iAmmo = ammo;
@@ -478,12 +478,12 @@ protected:
 			if ( wpn->UsesSecondaryAmmo() )
 			{
 				// we've changed to a weapon that uses secondary ammo
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmo");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmo");
 			}
 			else 
 			{
 				// we've changed away from a weapon that uses secondary ammo
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseSecondaryAmmo");
+				g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("WeaponDoesNotUseSecondaryAmmo");
 			}
 			m_hCurrentActiveWeapon = wpn;
 			

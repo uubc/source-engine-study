@@ -13089,6 +13089,7 @@ C_EngineRopeInternal::~C_EngineRopeInternal()
 		m_pBackMaterial->DecrementReferenceCount();
 		m_pBackMaterial = NULL;
 	}
+	s_RopeManager.RemoveRopeFromQueuedRenderCaches(this);
 }
 
 void C_EngineRopeInternal::OnDataChanged(DataUpdateType_t updateType)

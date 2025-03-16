@@ -35,7 +35,7 @@ DECLARE_HUDELEMENT( CHudProgressBar );
 CHudProgressBar::CHudProgressBar( const char *name ) :
 	vgui::Panel( NULL, "HudProgressBar" ), CHudElement( name )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetPaintBorderEnabled( false );

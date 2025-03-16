@@ -968,7 +968,7 @@ bool C_Portal_Player::ShouldDraw( void )
 
 const QAngle& C_Portal_Player::EyeAngles()
 {
-	if ( IsLocalPlayer() && modemanager->GetKillCamMode() == OBS_MODE_NONE )
+	if ( IsLocalPlayer() && g_pGameRules->GetKillCamMode() == OBS_MODE_NONE )
 	{
 		return BaseClass::EyeAngles();
 	}
@@ -1395,7 +1395,7 @@ void C_Portal_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNe
 
 	if ( m_lifeState != LIFE_ALIVE )
 	{
-		if (modemanager->GetKillCamMode() != 0 )
+		if (g_pGameRules->GetKillCamMode() != 0 )
 		{
 			return;
 		}

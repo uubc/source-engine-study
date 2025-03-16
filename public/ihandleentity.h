@@ -20,6 +20,7 @@
 #include "engine/ICollideable.h"
 #include "model_types.h"
 #include "gamerules.h"
+#include "iclientvirtualreality.h"
 
 class IEngineObjectServer;
 class IEngineObjectClient;

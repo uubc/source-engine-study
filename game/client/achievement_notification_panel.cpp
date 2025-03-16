@@ -40,7 +40,7 @@ DECLARE_HUDELEMENT_DEPTH( CAchievementNotificationPanel, 100 );
 //-----------------------------------------------------------------------------
 CAchievementNotificationPanel::CAchievementNotificationPanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "AchievementNotificationPanel" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_flHideTime = 0;

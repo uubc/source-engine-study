@@ -18,7 +18,7 @@
 #include <KeyValues.h>
 #include "c_baseplayer.h"
 #include "c_team.h"
-
+#include "hl1mp_gamerules.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -93,7 +93,7 @@ DECLARE_HUDELEMENT( CHudDeathNotice );
 CHudDeathNotice::CHudDeathNotice( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudDeathNotice" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_iconD_headshot = NULL;
@@ -152,7 +152,7 @@ void CHudDeathNotice::Paint()
 	if ( !m_iconD_skull )
 		return;
 
-	int yStart = GetClientModeHL1Normal()->GetDeathMessageStartHeight();//GetClientModeHL2MPNormal()->GetDeathMessageStartHeight();
+	int yStart = HL1MPRules()->GetDeathMessageStartHeight();//GetClientModeHL2MPNormal()->GetDeathMessageStartHeight();
 
 	surface()->DrawSetTextFont( m_hTextFont );
 	surface()->DrawSetTextColor( GameResources()->GetTeamColor( 0 ) );

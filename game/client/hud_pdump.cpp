@@ -40,7 +40,7 @@ CPDumpPanel::CPDumpPanel( const char *pElementName ) :
 {
 	g_pPDumpPanel = this;
 
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetProportional( false );

@@ -247,9 +247,9 @@ void VGui_Shutdown()
 	loadingdisc->Destroy();
 	internalCenterPrint->Destroy();
 
-	if ( g_pClientMode )
+	if (g_pGameRules)
 	{
-		g_pClientMode->VGui_Shutdown();
+		g_pGameRules->VGui_Shutdown();
 	}
 
 	// Make sure anything "marked for deletion"

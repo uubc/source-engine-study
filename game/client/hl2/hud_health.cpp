@@ -129,12 +129,12 @@ void CHudHealth::OnThink()
 
 	if ( m_iHealth >= 20 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedAbove20");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedAbove20");
 	}
 	else if ( m_iHealth > 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedBelow20");
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedBelow20");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
 	}
 
 	SetDisplayValue(m_iHealth);
@@ -163,7 +163,7 @@ void CHudHealth::MsgFunc_Damage( bf_read &msg )
 		if ( damageTaken > 0 )
 		{
 			// start the animation
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthDamageTaken");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthDamageTaken");
 		}
 	}
 }

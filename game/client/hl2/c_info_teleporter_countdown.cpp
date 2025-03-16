@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
-
+#include "hl2_gamerules.h"
 #include "c_vguiscreen.h"
 #include <vgui/IVGui.h>
 #include <vgui_controls/Controls.h>

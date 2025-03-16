@@ -28,7 +28,7 @@ DECLARE_HUDELEMENT( CHudSpecCrosshair );
 CHudSpecCrosshair::CHudSpecCrosshair( const char *pElementName ) :
   CHudElement( pElementName ), BaseClass( NULL, "HudSpecCrosshair" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_pCrosshair = 0;
@@ -49,7 +49,7 @@ void CHudSpecCrosshair::ApplySchemeSettings( IScheme *scheme )
 
 void CHudSpecCrosshair::Paint( void )
 {
-	if ( !g_pClientMode->ShouldDrawCrosshair() )
+	if ( !g_pGameRules->ShouldDrawCrosshair() )
 		return;
 
 	if ( !m_pCrosshair )

@@ -15,8 +15,21 @@
 
 #ifdef CLIENT_DLL
 
+	#include "engine/IEngineSound.h"
+	#include "dodviewport.h"
 	#include "precache_register.h"
 	#include "c_dod_player.h"
+	#include "prediction.h"
+	#include "usermessages.h"
+	#include "physpropclientside.h"
+	#include "hud.h"
+	#include "hud_basechat.h"
+	#include "dod_hud_freezepanel.h"
+	#include "dod_hud_chat.h"
+	#include "c_playerresource.h"
+	#include "panelmetaclassmgr.h"
+
+
 
 #else
 	
@@ -5410,12 +5423,470 @@ void CDODGameWorld::GetTaggedConVarList( KeyValues *pCvarTagList )
 
 #ifdef CLIENT_DLL
 
+ConVar default_fov("default_fov", "90", FCVAR_CHEAT);
+ConVar dod_playwinmusic("dod_playwinmusic", "1", FCVAR_ARCHIVE);
+ConVar r_viewmodelfov("r_viewmodelfov", "0", FCVAR_CHEAT);
+
+CDODGameWorld::CDODGameWorld() 
+{
+	m_pFreezePanel = NULL;
+	m_pViewport = new DODViewport();
+	m_pViewport->Start(gameuifuncs, gameeventmanager);
+}
+
+CDODGameWorld::~CDODGameWorld() 
+{
+	
+}
+
+void MsgFunc_KillCam(bf_read& msg)
+{
+	C_DODPlayer* pPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+	if (!pPlayer)
+		return;
+
+	int newMode = msg.ReadByte();
+
+	if (newMode != DODGameRules()->m_nKillCamMode)
+	{
+#if !defined( NO_ENTITY_PREDICTION )
+		if (DODGameRules()->m_nKillCamMode == OBS_MODE_NONE)
+		{
+			// kill cam is switch on, turn off prediction
+			g_bForceCLPredictOff = true;
+		}
+		else if (newMode == OBS_MODE_NONE)
+		{
+			// kill cam is switched off, restore old prediction setting is we switch back to normal mode
+			g_bForceCLPredictOff = false;
+		}
+#endif
+		DODGameRules()->m_nKillCamMode = newMode;
+	}
+
+	DODGameRules()->m_nKillCamTarget1 = msg.ReadByte();
+	DODGameRules()->m_nKillCamTarget2 = msg.ReadByte();
+}
+
+void CDODGameWorld::Init()
+{
+	BaseClass::Init();
+
+	ListenForGameEvent("dod_round_start");
+	ListenForGameEvent("dod_broadcast_audio");
+	ListenForGameEvent("player_team");
+	ListenForGameEvent("dod_bomb_planted");
+	ListenForGameEvent("dod_bomb_defused");
+	ListenForGameEvent("dod_timer_flash");
+
+	usermessages->HookMessage("KillCam", MsgFunc_KillCam);
+
+	m_szLastRadioSound[0] = '\0';
+
+	m_pFreezePanel = (CDODFreezePanel*)GET_HUDELEMENT(CDODFreezePanel);
+	Assert(m_pFreezePanel);
+
+	PanelMetaClassMgr()->LoadMetaClassDefinitionFile(SCREEN_FILE);
+
+}
+
+void CDODGameWorld::LevelInit()
+{
+	BaseClass::LevelInit();
+#if !defined( NO_ENTITY_PREDICTION )
+	if (m_nKillCamMode > OBS_MODE_NONE)
+	{
+		g_bForceCLPredictOff = false;
+	}
+#endif
+
+	m_nKillCamMode = OBS_MODE_NONE;
+	m_nKillCamTarget1 = 0;
+	m_nKillCamTarget2 = 0;
+}
+
 void CDODGameWorld::SetRoundState( int iRoundState )
 {
 	m_iRoundState = DODRoundState(iRoundState);
 
 	m_flLastRoundStateChangeTime = gpGlobals->curtime;
 }
+
+float CDODGameWorld::GetViewModelFOV(void)
+{
+	float flFov = 90.0f;
+
+	if (r_viewmodelfov.GetFloat() > 0)
+		return r_viewmodelfov.GetFloat();
+
+	C_DODPlayer* pPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+	if (!pPlayer)
+		return flFov;
+
+	CWeaponDODBase* pWpn = pPlayer->GetActiveDODWeapon();
+
+	if (pWpn)
+	{
+		flFov = pWpn->GetDODWpnData().m_flViewModelFOV;
+	}
+
+	return flFov;
+}
+
+int CDODGameWorld::GetDeathMessageStartHeight(void)
+{
+	return m_pViewport->GetDeathMessageStartHeight();
+}
+
+void CDODGameWorld::FireGameEvent(IGameEvent* event)
+{
+	const char* eventname = event->GetName();
+
+	if (!eventname || !eventname[0])
+		return;
+
+	if (Q_strcmp("dod_round_start", eventname) == 0)
+	{
+		// Just tell engine to clear decals
+		engine->ClientCmd("r_cleardecals\n");
+
+		// recreate all client side physics props
+		// check for physenv, because we sometimes crash on changelevel
+		// if we get this message before fully connecting
+		if (EntityList()->PhysGetEnv())
+		{
+			C_PhysPropClientside::RecreateAll();
+		}
+	}
+	else if (Q_strcmp("dod_broadcast_audio", eventname) == 0)
+	{
+		CLocalPlayerFilter filter;
+		const char* pszSoundName = event->GetString("sound");
+
+		if (dod_playwinmusic.GetBool() == false)
+		{
+			if (FStrEq(pszSoundName, "Game.USWin") || FStrEq(pszSoundName, "Game.GermanWin"))
+			{
+				return;
+			}
+		}
+		g_pSoundEmitterSystem->EmitSound(filter, SOUND_FROM_LOCAL_PLAYER, pszSoundName);//C_BaseEntity::
+	}
+	else if (Q_strcmp("dod_bomb_planted", eventname) == 0)
+	{
+		int defendingTeam = event->GetInt("team");
+
+		C_DODPlayer* pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+		if (!pLocalPlayer)
+			return;
+
+		const char* pszSound = "";
+		const char* pszMessage = "";
+
+		int localTeam = pLocalPlayer->GetTeamNumber();
+
+		const char* pPlanterName = NULL;
+
+		int iPlanterIndex = 0;
+
+		if (defendingTeam == localTeam)
+		{
+			// play defend sound
+			switch (localTeam)
+			{
+			case TEAM_ALLIES:
+			{
+				pszSound = "Voice.US_C4EnemyPlanted";
+				pszMessage = "#dod_bomb_us_enemy_planted";
+			}
+			break;
+			case TEAM_AXIS:
+			{
+				pszSound = "Voice.German_C4EnemyPlanted";
+				pszMessage = "#dod_bomb_ger_enemy_planted";
+			}
+			break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			// play planting sound
+			switch (localTeam)
+			{
+			case TEAM_ALLIES:
+			{
+				pszSound = "Voice.US_C4TeamPlanted";
+				pszMessage = "#dod_bomb_us_team_planted";
+			}
+			break;
+			case TEAM_AXIS:
+			{
+				pszSound = "Voice.German_C4TeamPlanted";
+				pszMessage = "#dod_bomb_ger_team_planted";
+			}
+			break;
+			default:
+				break;
+			}
+
+			// Only show the planter name if its a team plant, not enemy plant
+			iPlanterIndex = engine->GetPlayerForUserID(event->GetInt("userid"));
+			pPlanterName = g_PR->GetPlayerName(iPlanterIndex);
+		}
+
+		RadioMessage(pszSound, pszMessage, pPlanterName, iPlanterIndex);
+	}
+	else if (Q_strcmp("dod_bomb_defused", eventname) == 0)
+	{
+		int defusingTeam = event->GetInt("team");
+
+		C_DODPlayer* pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+		if (!pLocalPlayer)
+			return;
+
+		const char* pszSound = "";
+		const char* pszMessage = "";
+
+		int localTeam = pLocalPlayer->GetTeamNumber();
+
+		if (defusingTeam == localTeam)
+		{
+			// play defused sound
+			switch (localTeam)
+			{
+			case TEAM_ALLIES:
+			{
+				pszSound = "Voice.US_C4Defused";
+				pszMessage = "#dod_bomb_us_defused";
+			}
+			break;
+			case TEAM_AXIS:
+			{
+				pszSound = "Voice.German_C4Defused";
+				pszMessage = "#dod_bomb_ger_defused";
+			}
+			break;
+			default:
+				break;
+			}
+
+			int iDefuser = engine->GetPlayerForUserID(event->GetInt("userid"));
+			const char* pDefuserName = g_PR->GetPlayerName(iDefuser);
+
+			RadioMessage(pszSound, pszMessage, pDefuserName, iDefuser);
+		}
+	}
+	else if (Q_strcmp("player_team", eventname) == 0)
+	{
+		C_BasePlayer* pPlayer = USERID2PLAYER(event->GetInt("userid"));
+
+		if (!pPlayer)
+			return;
+
+		bool bDisconnected = event->GetBool("disconnect");
+
+		if (bDisconnected)
+			return;
+
+		int team = event->GetInt("team");
+
+		if (pPlayer->IsLocalPlayer())
+		{
+			// that's me
+			pPlayer->TeamChange(team);
+		}
+
+		CBaseHudChat* hudChat = (CBaseHudChat*)GET_HUDELEMENT(CHudChat);
+
+		if (!hudChat)
+			return;
+
+		const char* pTemplate = NULL;
+
+		if (team == TEAM_ALLIES)
+		{
+			pTemplate = "#game_joined_allies";
+		}
+		else if (team == TEAM_AXIS)
+		{
+			pTemplate = "#game_joined_axis";
+		}
+		else
+		{
+			pTemplate = "#game_joined_spectators";
+		}
+
+		wchar_t szPlayerName[MAX_PLAYER_NAME_LENGTH];
+		g_pVGuiLocalize->ConvertANSIToUnicode(pPlayer->GetPlayerName(), szPlayerName, sizeof(szPlayerName));
+
+		wchar_t wszPrint[128];
+		char szPrint[128];
+
+		g_pVGuiLocalize->ConstructString(wszPrint, sizeof(wszPrint), g_pVGuiLocalize->Find(pTemplate), 1, szPlayerName);
+		g_pVGuiLocalize->ConvertUnicodeToANSI(wszPrint, szPrint, sizeof(szPrint));
+
+		hudChat->Printf(CHAT_FILTER_TEAMCHANGE, "%s", szPrint);
+	}
+	else if (Q_strcmp("dod_timer_flash", eventname) == 0)
+	{
+		C_DODPlayer* pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+		if (!pLocalPlayer)
+			return;
+
+		const char* pszSound = "";
+		const char* pszMessage = "";
+
+		int localTeam = pLocalPlayer->GetTeamNumber();
+
+		int iTimeRemaining = event->GetInt("time_remaining", 0);
+
+		switch (iTimeRemaining)
+		{
+		case 60:
+			switch (localTeam)
+			{
+			case TEAM_ALLIES:
+			{
+				pszSound = "Voice.US_OneMinute";
+				pszMessage = "#dod_time_remaining_us_1_min";
+			}
+			break;
+			case TEAM_AXIS:
+			{
+				pszSound = "Voice.German_OneMinute";
+				pszMessage = "#dod_time_remaining_ger_1_min";
+			}
+			break;
+			default:
+				break;
+			}
+			break;
+		case 120:
+			switch (localTeam)
+			{
+			case TEAM_ALLIES:
+			{
+				pszSound = "Voice.US_TwoMinute";
+				pszMessage = "#dod_time_remaining_us_2_min";
+			}
+			break;
+			case TEAM_AXIS:
+			{
+				pszSound = "Voice.German_TwoMinute";
+				pszMessage = "#dod_time_remaining_ger_2_min";
+			}
+			break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+
+		RadioMessage(pszSound, pszMessage);
+	}
+	else
+		BaseClass::FireGameEvent(event);
+}
+
+
+void CDODGameWorld::PostRenderVGui()
+{
+}
+
+bool CDODGameWorld::ShouldDrawViewModel()
+{
+	C_DODPlayer* pPlayer = C_DODPlayer::GetLocalDODPlayer();
+
+	CWeaponDODBase* pWpn = pPlayer->GetActiveDODWeapon();
+
+	if (pWpn && pWpn->ShouldDrawViewModel() == false)
+	{
+		return false;
+	}
+
+	return BaseClass::ShouldDrawViewModel();
+}
+
+void CDODGameWorld::RadioMessage(const char* pszSoundName, const char* pszSubtitle, const char* pszSender /* = NULL */, int iSenderIndex /* = 0 */)
+{
+	C_DODPlayer* pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
+	if (!pLocalPlayer)
+	{
+		return;
+	}
+
+	int color = COLOR_PLAYERNAME;
+
+	// stop the last played radio message
+	if (Q_strlen(m_szLastRadioSound) > 0)
+	{
+		C_DODPlayer* pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
+		if (pLocalPlayer)
+		{
+			g_pSoundEmitterSystem->StopSound(pLocalPlayer, m_szLastRadioSound);//pLocalPlayer->
+		}
+	}
+
+	Q_strncpy(m_szLastRadioSound, pszSoundName, sizeof(m_szLastRadioSound));
+
+	// Play the radio alert
+	char szCmd[128];
+	Q_snprintf(szCmd, sizeof(szCmd), "playgamesound %s", pszSoundName);
+
+	engine->ClientCmd(szCmd);
+
+	// Print a message to chat
+	wchar_t wszPrint[128];
+	char szPrint[128];
+
+	g_pVGuiLocalize->ConstructString(wszPrint, sizeof(wszPrint), g_pVGuiLocalize->Find(pszSubtitle), 0);
+	g_pVGuiLocalize->ConvertUnicodeToANSI(wszPrint, szPrint, sizeof(szPrint));
+
+	CBaseHudChat* hudChat = (CBaseHudChat*)GET_HUDELEMENT(CHudChat);
+
+	if (!hudChat)
+		return;
+
+	wchar_t* pwLoc = g_pVGuiLocalize->Find("#dod_radio_prefix");
+	char szPrefix[16];
+	g_pVGuiLocalize->ConvertUnicodeToANSI(pwLoc, szPrefix, sizeof(szPrefix));
+
+	pwLoc = g_pVGuiLocalize->Find(pszSubtitle);
+	char szSuffix[512];
+	g_pVGuiLocalize->ConvertUnicodeToANSI(pwLoc, szSuffix, sizeof(szSuffix));
+
+	if (pszSender)
+	{
+		hudChat->ChatPrintf(iSenderIndex, CHAT_FILTER_NONE, "%c%s %s %c: %s", COLOR_PLAYERNAME, szPrefix, g_PR->GetPlayerName(iSenderIndex), COLOR_NORMAL, szSuffix);
+	}
+	else
+	{
+		hudChat->Printf(CHAT_FILTER_NONE, "%c%s %c: %s", color, szPrefix, COLOR_NORMAL, szSuffix);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: See if hud elements want key input. Return 0 if the key is swallowed
+//-----------------------------------------------------------------------------
+int	CDODGameWorld::HudElementKeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding)
+{
+	if (m_pFreezePanel)
+	{
+		m_pFreezePanel->HudElementKeyInput(down, keynum, pszCurrentBinding);
+	}
+
+	return BaseClass::HudElementKeyInput(down, keynum, pszCurrentBinding);
+}
+
 
 #endif // CLIENT_DLL
 

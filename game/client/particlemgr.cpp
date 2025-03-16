@@ -310,7 +310,7 @@ int CParticleEffectBinding::DrawModel( int flags )
 	// here as a sort of hack: the SFM currently plays back Tempents, which create
 	// old-style particle systems back during playback, which means we want
 	// them to display always
-	if( !g_pClientMode->ShouldDrawParticles() )
+	if( !g_pGameRules->ShouldDrawParticles() )
 		return 0;
 
 	//Avoid drawing particles while building depth textures. Perf win.

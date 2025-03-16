@@ -410,7 +410,7 @@ void C_VGuiScreen::ClientThink( void )
 		return;
 
 	// This will cause our panel to grab all input!
-	g_pClientMode->ActivateInGameVGuiContext( pPanel );
+	g_pGameRules->ActivateInGameVGuiContext( pPanel );
 
 	// Convert (u,v) into (px,py)
 	int px = (int)(u * m_nPixelWidth + 0.5f);
@@ -451,7 +451,7 @@ void C_VGuiScreen::ClientThink( void )
 		SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 
-	g_pClientMode->DeactivateInGameVGuiContext( );
+	g_pGameRules->DeactivateInGameVGuiContext( );
 }
 
 

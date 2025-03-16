@@ -255,7 +255,7 @@ void CommentaryShowModelViewer( const CCommand &args )
 		return;
 	}
 
-	CBaseViewport *pViewport = dynamic_cast<CBaseViewport *>( g_pClientMode->GetViewport() );
+	CBaseViewport *pViewport = dynamic_cast<CBaseViewport *>(g_pGameRules->GetViewport() );
 	if ( pViewport )
 	{
 		IViewPortPanel *pCommentaryPanel = pViewport->FindPanelByName( PANEL_COMMENTARY_MODELVIEWER );

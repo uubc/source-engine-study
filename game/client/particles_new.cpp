@@ -507,7 +507,7 @@ int CNewParticleEffect::DrawModel( int flags )
 	if ( r_DrawParticles.GetBool() == false )
 		return 0;
 
-	if ( !g_pClientMode->ShouldDrawParticles() || !ParticleMgr()->ShouldRenderParticleSystems() )
+	if ( !g_pGameRules->ShouldDrawParticles() || !ParticleMgr()->ShouldRenderParticleSystems() )
 		return 0;
 	
 	if ( ( flags & ( STUDIO_SHADOWDEPTHTEXTURE | STUDIO_SSAODEPTHTEXTURE ) ) != 0 )

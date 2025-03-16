@@ -16,23 +16,7 @@
 #include "iclientvirtualreality.h"
 #include "view_shared.h"
 
-enum HeadtrackMovementMode_t
-{
-	HMM_SHOOTFACE_MOVEFACE = 0,		// Shoot from your face, move along your face.
-	HMM_SHOOTFACE_MOVETORSO,		// Shoot from your face, move the direction your torso is facing.
-	HMM_SHOOTMOUSE_MOVEFACE,		// Shoot from the mouse cursor which moves within the HUD, move along your face.
-	HMM_SHOOTBOUNDEDMOUSE_LOOKFACE_MOVEFACE,	// Shoot from the mouse cursor which moves, bounded within the HUD, move along your face.
-	HMM_SHOOTBOUNDEDMOUSE_LOOKFACE_MOVEMOUSE,	// Shoot from the mouse cursor which moves, bounded within the HUD, move along your weapon (the "mouse")
 
-	// The following are not intended to be user-selectable modes, they are used by e.g. followcam stuff.
-	HMM_SHOOTMOVELOOKMOUSEFACE,		// Shoot & move & look along the mouse cursor (i.e. original unchanged gameplay), face just looks on top of that.
-	HMM_SHOOTMOVEMOUSE_LOOKFACE,	// Shoot & move along the mouse cursor (i.e. original unchanged gameplay), face just looks.
-	HMM_SHOOTMOVELOOKMOUSE,			// Shoot, move and look along the mouse cursor - HMD orientation is completely ignored!
-
-	HMM_LAST,
-
-	HMM_NOOVERRIDE = HMM_LAST		// Used as a retrun from ShouldOverrideHeadtrackControl(), not an actual mode.
-};
 
 
 //-----------------------------------------------------------------------------

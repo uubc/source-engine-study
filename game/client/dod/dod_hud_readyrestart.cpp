@@ -63,7 +63,7 @@ DECLARE_HUDELEMENT( CDODReadyRestartLabel );
 //-----------------------------------------------------------------------------
 CDODReadyRestartLabel::CDODReadyRestartLabel( const char *pElementName ) : BaseClass(NULL, "ReadyRestartLabel"), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 0 );
@@ -91,7 +91,7 @@ CDODReadyRestartLabel::CDODReadyRestartLabel( const char *pElementName ) : BaseC
 //-----------------------------------------------------------------------------
 void CDODReadyRestartLabel::Reset()
 {
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ void CDODReadyRestartLabel::Init()
 	ListenForGameEvent( "dod_allies_ready" );
 	ListenForGameEvent( "dod_axis_ready" );
 
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
 }
 
 //-----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ void CDODReadyRestartLabel::OnThink()
 	{
 		if( flRoundRestartTime > 0 )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
 		}
 		m_flLastRestartTime = flRoundRestartTime;
 	}
@@ -181,11 +181,11 @@ void CDODReadyRestartLabel::FireGameEvent( IGameEvent * event)
 {
 	if( Q_strcmp( "dod_round_start", event->GetName() ) == 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelHide" );
 	}
 	else if( Q_strcmp( "dod_ready_restart", event->GetName() ) == 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelShow" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ReadyRestartLabelShow" );
 
 		m_pAlliesReady->SetText( g_pVGuiLocalize->Find( "#clan_allies_not_ready" ) );
 		m_pAlliesReady->SizeToContents();

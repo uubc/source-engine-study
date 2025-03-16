@@ -80,7 +80,7 @@ DECLARE_HUD_MESSAGE( CHudDamageTiles, Damage );
 //-----------------------------------------------------------------------------
 CHudDamageTiles::CHudDamageTiles( const char *pElementName ) : CHudElement( pElementName ), BaseClass(NULL, "HudDamageTiles")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );

@@ -57,7 +57,7 @@ DECLARE_HUDELEMENT( CTeamPlayHud );
 //-----------------------------------------------------------------------------
 CTeamPlayHud::CTeamPlayHud( const char *pElementName ) : BaseClass(NULL, "TeamDisplay"), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 255 );
@@ -148,7 +148,7 @@ void CTeamPlayHud::OnThink()
 	{
 		if ( m_bSuitAuxPowerUsed == false )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("FadeOutTeamLine");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("FadeOutTeamLine");
 			m_bSuitAuxPowerUsed = true;
 		}
 	}
@@ -156,7 +156,7 @@ void CTeamPlayHud::OnThink()
 	{
 		if ( m_bSuitAuxPowerUsed == true )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("FadeInTeamLine");
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("FadeInTeamLine");
 			m_bSuitAuxPowerUsed = false;
 		}
 	}

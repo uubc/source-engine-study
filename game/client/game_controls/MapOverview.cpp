@@ -84,7 +84,7 @@ CON_COMMAND( overview_zoom, "Sets overview map zoom: <zoom> [<time>] [rel]" )
 			return;// In the death cam spiral counts as alive
 	}
 
-	g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( g_pMapOverview->GetAsPanel(), "zoom", zoom, 0.0, time, vgui::AnimationController::INTERPOLATOR_LINEAR );
+	g_pGameRules->GetViewportAnimationController()->RunAnimationCommand( g_pMapOverview->GetAsPanel(), "zoom", zoom, 0.0, time, vgui::AnimationController::INTERPOLATOR_LINEAR );
 }
 
 CON_COMMAND( overview_mode, "Sets overview map mode off,small,large: <0|1|2>" )
@@ -132,7 +132,7 @@ using namespace vgui;
 
 CMapOverview::CMapOverview( const char *pElementName ) : BaseClass( NULL, pElementName ), CHudElement( pElementName )
 {
-	SetParent( g_pClientMode->GetViewport()->GetVPanel() );
+	SetParent( g_pGameRules->GetViewport()->GetVPanel() );
 
 	SetBounds( 0,0, 256, 256 );
 	SetBgColor( Color( 0,0,0,100 ) );
@@ -1019,7 +1019,7 @@ void CMapOverview::SetMode(int mode)
 	{
 		ShowPanel( false );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapOff" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapOff" );
 	}
 	else if ( mode == MAP_MODE_INSET )
 	{
@@ -1041,7 +1041,7 @@ void CMapOverview::SetMode(int mode)
 
 		if ( mode != m_nMode && RunHudAnimations() )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomToSmall" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomToSmall" );
 		}
 	}
 	else if ( mode == MAP_MODE_FULL )
@@ -1061,7 +1061,7 @@ void CMapOverview::SetMode(int mode)
 
 		if ( mode != m_nMode && RunHudAnimations() )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "MapZoomToLarge" );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "MapZoomToLarge" );
 		}
 	}
 

@@ -13,6 +13,10 @@
 #include "portal_shareddefs.h"
 
 #ifdef CLIENT_DLL
+
+	#include "panelmetaclassmgr.h"
+	#include "prediction.h"
+
 #else
 	#include "player.h"
 	#include "game.h"
@@ -136,6 +140,81 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 
 #ifdef CLIENT_DLL //{
 
+	// default FOV for HL2
+	//ConVar default_fov("default_fov", "75", FCVAR_CHEAT);
+	//ConVar fov_desired("fov_desired", "75", FCVAR_ARCHIVE | FCVAR_USERINFO, "Sets the base field-of-view.", true, 75.0, true, 110.0);
+
+	vgui::HScheme g_hVGuiCombineScheme = 0;
+
+	//-----------------------------------------------------------------------------
+	// Purpose: this is the viewport that contains all the hud elements
+	//-----------------------------------------------------------------------------
+	class CHudViewport : public CBaseViewport
+	{
+	private:
+		DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
+
+	protected:
+		virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
+		{
+			BaseClass::ApplySchemeSettings(pScheme);
+
+			gHUD.InitColors(pScheme);
+
+			SetPaintBackgroundEnabled(false);
+		}
+
+		virtual IViewPortPanel* CreatePanelByName(const char* szPanelName);
+	};
+
+	IViewPortPanel* CHudViewport::CreatePanelByName(const char* szPanelName)
+	{
+		/*IViewPortPanel* newpanel = NULL;
+
+		if ( Q_strcmp( PANEL_SCOREBOARD, szPanelName) == 0 )
+		{
+			newpanel = new CHL2MPClientScoreBoardDialog( this );
+			return newpanel;
+		}
+		else if ( Q_strcmp(PANEL_INFO, szPanelName) == 0 )
+		{
+			newpanel = new CHL2MPTextWindow( this );
+			return newpanel;
+		}*/
+
+		return BaseClass::CreatePanelByName(szPanelName);
+	}
+
+	CPortalGameWorld::CPortalGameWorld()
+	{
+		if (m_pViewport) {
+			delete m_pViewport;
+		}
+		m_pViewport = new CHudViewport();
+		m_pViewport->Start(gameuifuncs, gameeventmanager);
+	}
+
+	void CPortalGameWorld::Init()
+	{
+		BaseClass::Init();
+
+		//usermessages->HookMessage( "KillCam", MsgFunc_KillCam );
+		PanelMetaClassMgr()->LoadMetaClassDefinitionFile(SCREEN_FILE);
+	}
+
+	void CPortalGameWorld::LevelInit()
+	{
+		BaseClass::LevelInit();
+
+		if (m_nKillCamMode > OBS_MODE_NONE)
+		{
+			g_bForceCLPredictOff = false;
+		}
+
+		m_nKillCamMode = OBS_MODE_NONE;
+		//m_nKillCamTarget1	= 0;
+		//m_nKillCamTarget2	= 0;
+	}
 	
 #else //}{
 

@@ -16,7 +16,7 @@
 
 CHL1HudNumbers::CHL1HudNumbers( vgui::Panel *parent, const char *name ) : BaseClass( parent, name )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 }
 

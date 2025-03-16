@@ -9,6 +9,7 @@
 #ifdef CLIENT_DLL
 
 #include "hl1/c_hl1mp_player.h"
+#include "hl1_clientscoreboard.h"
 
 #else
 
@@ -96,13 +97,78 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 
 #endif
 
+#ifdef CLIENT_DLL
+	//-----------------------------------------------------------------------------
+// Purpose: this is the viewport that contains all the hud elements
+//-----------------------------------------------------------------------------
+	class CHudViewport : public CBaseViewport
+	{
+	private:
+		DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
 
+	protected:
+		virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
+		{
+			BaseClass::ApplySchemeSettings(pScheme);
 
+			gHUD.InitColors(pScheme);
+
+			SetPaintBackgroundEnabled(false);
+		}
+
+		virtual void CreateDefaultPanels(void)
+		{
+			CBaseViewport::CreateDefaultPanels();
+		}
+
+		virtual IViewPortPanel* CreatePanelByName(const char* szPanelName);
+	};
+
+	IViewPortPanel* CHudViewport::CreatePanelByName(const char* szPanelName)
+	{
+
+#ifdef HL1MP_CLIENT_DLL
+		IViewPortPanel* newpanel = NULL;
+		if (Q_strcmp(PANEL_SCOREBOARD, szPanelName) == 0)
+		{
+			newpanel = new CHL1MPClientScoreBoardDialog(this);
+			return newpanel;
+		}
+#endif
+		/*	else if ( Q_strcmp(PANEL_INFO, szPanelName) == 0 )
+		{
+			newpanel = new CHL2MPTextWindow( this );
+			return newpanel;
+		}*/
+
+		return BaseClass::CreatePanelByName(szPanelName);
+	}
+
+#endif // CLIENT_DLL
 
 CHL1MPWorld::CHL1MPWorld()
 {
-
+#ifdef CLIENT_DLL
+	m_pViewport = new CHudViewport();
+	m_pViewport->Start(gameuifuncs, gameeventmanager);
+#endif // CLIENT_DLL
 }
+
+#ifdef CLIENT_DLL
+
+float CHL1MPWorld::GetViewModelFOV(void)
+{
+	return 90.0f;
+}
+
+
+int	CHL1MPWorld::GetDeathMessageStartHeight(void)
+{
+	return m_pViewport->GetDeathMessageStartHeight();
+}
+
+#endif // CLIENT_DLL
+
 
 #ifdef GAME_DLL
 

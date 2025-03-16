@@ -16,6 +16,10 @@
 
 #ifdef CLIENT_DLL
 	#define CHalfLife2World C_HalfLife2World
+	namespace vgui
+	{
+		typedef unsigned long HScheme;
+	}
 #endif
 
 class CHalfLife2World : public CSingleplayWorld
@@ -44,6 +48,13 @@ private:
 #ifdef CLIENT_DLL
 
 	DECLARE_CLIENTCLASS(); // This makes datatables able to access our private vars.
+
+	CHalfLife2World();
+
+	virtual void	Init();
+	virtual bool	ShouldDrawCrosshair(void);
+	int GetKillCamMode() const { return OBS_MODE_NONE; }
+	int GetKillCamTarget1() const { return 0; }
 
 #else
 
@@ -108,6 +119,10 @@ inline CHalfLife2World* HL2GameRules()
 	return (CHalfLife2World*)EntityList()->GetBaseEntity(0);
 }
 
+#ifdef CLIENT_DLL
+extern vgui::HScheme g_hVGuiCombineScheme;
+#define SCREEN_FILE		"scripts/vgui_screens.txt"
+#endif // CLIENT_DLL
 
 
 #endif // HL2_GAMERULES_H

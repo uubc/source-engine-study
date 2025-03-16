@@ -1835,7 +1835,7 @@ int C_CSPlayer::DrawModel(int flags)
 
 const QAngle& C_CSPlayer::EyeAngles()
 {
-	if ( IsLocalPlayer() && !modemanager->GetKillCamMode() )
+	if ( IsLocalPlayer() && !g_pGameRules->GetKillCamMode() )
 	{
 		return BaseClass::EyeAngles();
 	}

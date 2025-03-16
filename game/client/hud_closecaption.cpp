@@ -817,7 +817,7 @@ CHudCloseCaption::CHudCloseCaption( const char *pElementName )
 	m_CurrentLanguage( UTL_INVAL_SYMBOL ),
 	m_bPaintDebugInfo( false )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetProportional( true );

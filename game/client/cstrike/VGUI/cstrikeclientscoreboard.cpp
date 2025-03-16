@@ -125,10 +125,10 @@ CCSClientScoreBoardDialog::CCSClientScoreBoardDialog( IViewPort *pViewPort ) : C
 
     m_gameOver = false;
 
-    if ( g_pClientMode &&
-		 g_pClientMode->GetMapName() )
+    if (g_pGameRules &&
+		g_pGameRules->GetMapName() )
     {
-		V_wcsncpy( m_pMapName, g_pClientMode->GetMapName(), sizeof( m_pMapName ) );
+		V_wcsncpy( m_pMapName, g_pGameRules->GetMapName(), sizeof( m_pMapName ) );
         SetDialogVariable( "mapname", m_pMapName );
         m_pLabelMapName->SetVisible( true );
     }
@@ -251,9 +251,9 @@ void CCSClientScoreBoardDialog::ApplySchemeSettings( vgui::IScheme *pScheme )
 
 	// Set the server name (in the case of a resolution change).
 	if ( m_pServerName[0] == L'\0' &&
-		 g_pClientMode->GetServerName() != NULL )
+		 g_pGameRules->GetServerName() != NULL )
 	{
-		V_wcsncpy( m_pServerName, g_pClientMode->GetServerName(), sizeof( m_pServerName ) );
+		V_wcsncpy( m_pServerName, g_pGameRules->GetServerName(), sizeof( m_pServerName ) );
 	}
 
 	// Cache the stats enabled string.
@@ -1264,9 +1264,9 @@ void CCSClientScoreBoardDialog::FireGameEvent( IGameEvent *event )
 			}
 
 			// Save the server name for use after this panel is reconstructed
-			if ( g_pClientMode )
+			if ( g_pGameRules )
 			{
-				g_pClientMode->SetServerName( m_pServerName );
+				g_pGameRules->SetServerName( m_pServerName );
 			}
 		}
     }
@@ -1284,9 +1284,9 @@ void CCSClientScoreBoardDialog::FireGameEvent( IGameEvent *event )
 			}
 
 			// Save the map name for use after this panel is reconstructed
-			if ( g_pClientMode )
+			if ( g_pGameRules )
 			{
-				g_pClientMode->SetMapName( m_pMapName );
+				g_pGameRules->SetMapName( m_pMapName );
 			}
 		}
     }

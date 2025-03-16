@@ -2216,7 +2216,7 @@ Vector C_DODPlayer::GetChaseCamViewOffset( CBaseEntity *target )
 
 const QAngle& C_DODPlayer::EyeAngles()
 {
-	if ( IsLocalPlayer() && modemanager->GetKillCamMode() == OBS_MODE_NONE )
+	if ( IsLocalPlayer() && g_pGameRules->GetKillCamMode() == OBS_MODE_NONE )
 	{
 		return BaseClass::EyeAngles();
 	}

@@ -788,8 +788,8 @@ void C_BasePlayer::PostDataUpdate( DataUpdateType_t updateType )
 
 		int iLocalPlayerIndex = engine->GetLocalPlayer();
 
-		if (modemanager->GetKillCamMode())
-			iLocalPlayerIndex = modemanager->GetKillCamTarget1();
+		if (g_pGameRules->GetKillCamMode())
+			iLocalPlayerIndex = g_pGameRules->GetKillCamTarget1();
 
 		if ( iLocalPlayerIndex == entindex())
 		{
@@ -1261,7 +1261,7 @@ void C_BasePlayer::AddEntity( void )
 
 	// If set to invisible, skip. Do this before resetting the entity pointer so it has 
 	// valid data to decide whether it's visible.
-	if ( !IsVisible() || !g_pClientMode->ShouldDrawLocalPlayer( this ) )
+	if ( !IsVisible() || !g_pGameRules->ShouldDrawLocalPlayer( this ) )
 	{
 		return;
 	}

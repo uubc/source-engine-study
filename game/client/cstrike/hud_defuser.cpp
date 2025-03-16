@@ -34,7 +34,7 @@ DECLARE_HUDELEMENT( CHudDefuser );
 CHudDefuser::CHudDefuser( const char *pName ) :
 	vgui::Panel( NULL, "HudDefuser" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	m_pIcon = NULL;
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

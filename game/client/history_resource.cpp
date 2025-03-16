@@ -30,7 +30,7 @@ DECLARE_HUD_MESSAGE( CHudHistoryResource, AmmoDenied );
 CHudHistoryResource::CHudHistoryResource( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudHistoryResource" )
 {	
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	m_bDoNotDraw = true;
 	m_wcsAmmoFullMsg[0] = 0;
@@ -176,7 +176,7 @@ void CHudHistoryResource::AddIconToHistory( int iType, int iId, C_BaseCombatWeap
 	// If the history resource is appearing, slide the hint message element down
 	if ( m_iCurrentHistorySlot == 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageLower" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageLower" );
 	}
 
 	// ensure the size 
@@ -270,7 +270,7 @@ void CHudHistoryResource::CheckClearHistory( void )
 	m_iCurrentHistorySlot = 0;
 
 	// Slide the hint message element back up
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageRaise" ); 
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageRaise" );
 }
 
 //-----------------------------------------------------------------------------

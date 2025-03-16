@@ -144,7 +144,47 @@ public:
 	DECLARE_CLIENTCLASS(); // This makes datatables able to access our private vars.
 	CCSGameWorld();
 
+	virtual void	Init();
+	virtual void	LevelInit();
+	virtual void	LevelShutdown();
+
+	virtual void	Update();
+
+	virtual int		KeyInput(int down, ButtonCode_t keynum, const char* pszCurrentBinding);
+
+	virtual float	GetViewModelFOV(void);
+
+	int				GetDeathMessageStartHeight(void);
+
+	virtual void	FireGameEvent(IGameEvent* event);
+	virtual void	PostRenderVGui();
+
+	virtual bool	ShouldDrawViewModel(void);
+
+	virtual bool	CanRecordDemo(char* errorMsg, int length) const;
+
+	//=============================================================================
+	// HPE_BEGIN:
+	// [menglish] Save server information shown to the client in a persistent place
+	//=============================================================================
+
+	virtual wchar_t* GetServerName() { return m_pServerName; }
+	virtual void SetServerName(wchar_t* name);
+	virtual wchar_t* GetMapName() { return m_pMapName; }
+	virtual void SetMapName(wchar_t* name);
+
+	int GetKillCamMode() const { return m_nKillCamMode; }
+	int GetKillCamTarget1() const { return m_nKillCamTarget1; }
+
+	int m_nKillCamMode = OBS_MODE_NONE;
+	int m_nKillCamTarget1 = 0;
+	int m_nKillCamTarget2 = 0;
+private:
+	wchar_t			m_pServerName[256];
+	wchar_t			m_pMapName[256];
 #else
+
+public:
 
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.
 
@@ -528,7 +568,7 @@ int UTIL_HumansInGame( bool ignoreSpectators = false );
 // Purpose: Useful utility functions
 //-----------------------------------------------------------------------------
 #ifdef CLIENT_DLL
-
+	#define SCREEN_FILE		"scripts/vgui_screens.txt"
 #else
 
 	class CTFTeam;

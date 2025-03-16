@@ -56,7 +56,7 @@ bool IsTakingAFreezecamScreenshot( void )
 CDODFreezePanel::CDODFreezePanel( const char *pElementName )
 : EditablePanel( NULL, "FreezePanel" ), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetScheme( "ClientScheme" );
@@ -370,7 +370,7 @@ CDODFreezePanelCallout *CDODFreezePanel::TestAndAddCallout( Vector &origin, Vect
 
 					if ( bClear )
 					{
-						CDODFreezePanelCallout *pCallout = new CDODFreezePanelCallout( g_pClientMode->GetViewport(), "FreezePanelCallout" );
+						CDODFreezePanelCallout *pCallout = new CDODFreezePanelCallout(g_pGameRules->GetViewport(), "FreezePanelCallout" );
 						m_pCalloutPanels.AddToTail( vgui::SETUP_PANEL(pCallout) );
 						vecCalloutsTL->AddToTail( vecCalloutTL );
 						vecCalloutsBR->AddToTail( vecCalloutBR );
@@ -541,7 +541,7 @@ void CDODFreezePanel::ShowSnapshotPanel( bool bShow )
 
 		m_pScreenshotPanel->SetDialogVariable( "text", wLabel );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( this, "HudSnapShotReminderIn" );
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( this, "HudSnapShotReminderIn" );
 	}
 
 	m_pScreenshotPanel->SetVisible( bShow );

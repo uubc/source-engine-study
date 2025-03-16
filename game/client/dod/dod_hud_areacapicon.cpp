@@ -35,7 +35,7 @@ private:
 CHudAreaCapIcon::CHudAreaCapIcon( const char *pName ) :
 	vgui::Panel( NULL, "HudAreaCapIcon" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_clrIcon = Color(255,255,255,255);
 

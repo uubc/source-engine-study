@@ -63,7 +63,7 @@ using namespace vgui;
 CTargetID::CTargetID( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "TargetID" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_hFont = g_hFontTrebuchet24;
@@ -100,7 +100,7 @@ void CTargetID::VidInit()
 	CHudElement::VidInit();
 
 	// set our size to the current viewport size
-	SetSize(g_pClientMode->GetViewport()->GetWide(), g_pClientMode->GetViewport()->GetTall());
+	SetSize(g_pGameRules->GetViewport()->GetWide(), g_pGameRules->GetViewport()->GetTall());
 
 	m_flLastChangeTime = 0;
 	m_iLastEntIndex = 0;

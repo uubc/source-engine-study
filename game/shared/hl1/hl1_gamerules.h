@@ -32,6 +32,15 @@ public:
 
 #ifdef CLIENT_DLL
 	DECLARE_CLIENTCLASS(); // This makes datatables able to access our private vars.
+
+	CHalfLife1World();
+
+	virtual float	GetViewModelFOV(void);
+
+	virtual int		GetDeathMessageStartHeight(void);
+
+	int GetKillCamMode() const { return OBS_MODE_NONE; }
+	int GetKillCamTarget1() const { return 0; }
 #else
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.
 #endif

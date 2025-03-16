@@ -103,7 +103,7 @@ void CUserInput::TouchMove( CUserCmd *cmd )
 	TouchScale( dx, dy );
 
 	// Let the client mode at the mouse input before it's used
-	g_pClientMode->OverrideMouseInput( &dx, &dy );
+	g_pGameRules->OverrideMouseInput( &dx, &dy );
 
 	// Add mouse X/Y movement to cmd
 	ApplyTouch( viewangles, cmd, dx, dy );

@@ -66,7 +66,7 @@ DECLARE_HUD_MESSAGE( CDODHudHintDisplay, HintText );
 //-----------------------------------------------------------------------------
 CDODHudHintDisplay::CDODHudHintDisplay( const char *pElementName ) : BaseClass(NULL, "HudHintDisplay"), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetAlpha( 0 );
@@ -326,13 +326,13 @@ void CDODHudHintDisplay::MsgFunc_HintText( bf_read &msg )
 	{
 		SetVisible( true );
 		//SetAlpha( 255 );
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageShow" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageShow" ); 
 	}
 	else
 	{
 		// it's being cleared, hide the panel
 		//SetAlpha( 0 );
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageHide" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageHide" ); 
 	}
 }
 
@@ -375,12 +375,12 @@ void CDODHudHintDisplay::FireGameEvent( IGameEvent * event)
 	if ( SetHintText( pszBuf ) )
 	{
 		SetVisible( true );
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageShow" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageShow" ); 
 	}
 	else
 	{
 		// it's being cleared, hide the panel
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageHide" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HintMessageHide" ); 
 	}
 }
 

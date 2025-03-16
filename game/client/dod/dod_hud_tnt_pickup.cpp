@@ -24,7 +24,7 @@ ConVar hud_c4pickuppanel( "hud_c4pickuppanel", "1", FCVAR_CLIENTDLL | FCVAR_ARCH
 //-----------------------------------------------------------------------------
 CDODHudTNTPickupPanel::CDODHudTNTPickupPanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudTNTPickupPanel" ) 
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pBackground = new vgui::Panel( this, "CapturePanelBackground" );
 	m_pTNTImage = new CIconPanel( this, "TNTImage" );

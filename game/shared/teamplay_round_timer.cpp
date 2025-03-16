@@ -91,7 +91,7 @@ static void RecvProxy_TimerPaused( const CRecvProxyData *pData, void *pStruct, v
 
 	if ( bTimerPaused == false )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
 	}
 
 	if ( pTimer )

@@ -70,7 +70,7 @@ DECLARE_HUDELEMENT( CHudAnimationInfo );
 CHudAnimationInfo::CHudAnimationInfo( const char *pElementName )
  : CHudElement( pElementName ), BaseClass( NULL, "HudAnimationInfo" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	SetActive( true );

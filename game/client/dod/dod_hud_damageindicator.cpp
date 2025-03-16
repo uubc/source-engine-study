@@ -114,7 +114,7 @@ static DamageAnimation_t g_DamageAnimations[] =
 //-----------------------------------------------------------------------------
 CHudDODDamageIndicator::CHudDODDamageIndicator( const char *pElementName ) : CHudElement( pElementName ), BaseClass(NULL, "HudDamageIndicator")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 
 	m_WhiteAdditiveMaterial.Init( "vgui/white_additive", TEXTURE_GROUP_VGUI ); 
@@ -365,7 +365,7 @@ void CHudDODDamageIndicator::MsgFunc_Damage( bf_read &msg )
 
 		if ( dmgAnim->name )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( dmgAnim->name );
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( dmgAnim->name );
 		}
 	}
 }

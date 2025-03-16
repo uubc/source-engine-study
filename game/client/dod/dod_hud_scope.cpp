@@ -60,7 +60,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 CHudScope::CHudScope( const char *pElementName ) : CHudElement(pElementName), BaseClass(NULL, "HudScope")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

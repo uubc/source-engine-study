@@ -31,7 +31,7 @@
 
 		if ( bTimerPaused == false )
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+			g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" );
 		}
 
 		pTimer->InternalSetPaused( bTimerPaused );

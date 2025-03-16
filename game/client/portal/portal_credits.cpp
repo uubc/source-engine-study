@@ -242,7 +242,7 @@ DECLARE_HUD_MESSAGE( CHudPortalCredits, LogoTimeMsg );
 //-----------------------------------------------------------------------------
 CHudPortalCredits::CHudPortalCredits( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudCredits" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 }
 

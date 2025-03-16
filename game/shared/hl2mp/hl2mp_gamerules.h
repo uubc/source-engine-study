@@ -35,6 +35,10 @@ enum
 
 #ifdef CLIENT_DLL
 	#define CHL2MPWorld C_HL2MPWorld
+	namespace vgui
+	{
+		typedef unsigned long HScheme;
+	}
 #endif
 
 class HL2MPViewVectors : public CViewVectors
@@ -87,6 +91,11 @@ public:
 	
 	CHL2MPWorld();
 	virtual ~CHL2MPWorld();
+
+#ifdef CLIENT_DLL
+	virtual void	Init();
+	virtual int		GetDeathMessageStartHeight(void);
+#endif // CLIENT_DLL
 
 #ifdef GAME_DLL
 	virtual void	Precache(void);
@@ -171,5 +180,10 @@ inline CHL2MPWorld* HL2MPRules()
 {
 	return (CHL2MPWorld*)EntityList()->GetBaseEntity(0);
 }
+
+#ifdef CLIENT_DLL
+extern vgui::HScheme g_hVGuiCombineScheme;
+#endif // CLIENT_DLL
+
 
 #endif //HL2MP_GAMERULES_H

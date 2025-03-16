@@ -318,7 +318,7 @@ void CDoDCapturePanelIcon::Paint()
 //-----------------------------------------------------------------------------
 CDoDHudCapturePanel::CDoDHudCapturePanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudCapturePanel" ) 
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pBackground = new vgui::Panel( this, "CapturePanelBackground" );
 	m_pProgressBar = new CDoDCapturePanelProgressBar( this, "CapturePanelProgressBar" );

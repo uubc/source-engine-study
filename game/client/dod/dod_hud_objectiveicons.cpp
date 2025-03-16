@@ -97,7 +97,7 @@ DECLARE_HUDELEMENT( CHudObjectiveIcons );
 //-----------------------------------------------------------------------------
 CHudObjectiveIcons::CHudObjectiveIcons( const char *pName ) : vgui::Panel( NULL, "HudObjectiveIcons" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent( g_pGameRules->GetViewport() );
 	SetHiddenBits( 0 );
 
 	m_pTimer = new vgui::Label( this, "HudObjectivesRoundTimer", " " );
@@ -183,9 +183,9 @@ void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 		// show time added under the timer, flash
 		m_iSecondsAdded = event->GetInt( "seconds_added" );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ShowTimeAdded" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "ShowTimeAdded" ); 
 
 		if ( !m_pTimeAdded->IsVisible() )
 		{
@@ -211,7 +211,7 @@ void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 	else if ( FStrEq( "dod_timer_flash", eventname ) )
 	{
 		// generic flash, used for 5, 2, 1 minute warnings
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
 	}
 }
 
@@ -284,7 +284,7 @@ void CHudObjectiveIcons::Paint()
 	// Hide the time added if it is time to do so
 	if ( m_flDrawTimeAddedUntil > 0 && m_flDrawTimeAddedUntil < gpGlobals->curtime )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HideTimeAdded" ); 
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence( "HideTimeAdded" ); 
 
 		m_flDrawTimeAddedUntil = -1;
 	}

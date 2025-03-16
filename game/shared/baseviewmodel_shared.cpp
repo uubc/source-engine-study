@@ -451,7 +451,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	{
 		const float max_gun_pitch = 20.0f;
 
-		float viewmodel_fov_ratio = g_pClientMode->GetViewModelFOV()/owner->GetFOV();
+		float viewmodel_fov_ratio = g_pGameRules->GetViewModelFOV()/owner->GetFOV();
 		QAngle gun_angles = g_pSixenseInput->GetViewAngleOffset() * -viewmodel_fov_ratio;
 
 		// Clamp pitch a bit to minimize seeing back of viewmodel

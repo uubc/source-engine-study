@@ -58,7 +58,7 @@ DECLARE_HUDELEMENT( CDoDHudPlayerStatusPanel );
 //-----------------------------------------------------------------------------
 CDoDHudPlayerStatusPanel::CDoDHudPlayerStatusPanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudPlayerStatusPanel" ) 
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 
 	m_pMainBar = new CDoDCutEditablePanel( this, "PlayerStatusMainBackground" );
 	m_pAlliesIcon = new ImagePanel( this, "PlayerStatusAlliesIcon" );

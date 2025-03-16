@@ -6,6 +6,7 @@
 //=============================================================================//
 
 #include "cbase.h"
+#include "c_world.h"
 #include "vguitextwindow.h"
 #include <networkstringtabledefs.h>
 #include <cdll_client_int.h>
@@ -166,8 +167,8 @@ void CTextWindow::ShowURL( const char *URL, bool bAllowUserToDisable )
 		Msg( "CTextWindow::ShowURL( %s )\n", URL );
 	#endif
 
-	ClientModeShared *mode = ( ClientModeShared * )GetClientModeNormal();
-	if ( ( bAllowUserToDisable && cl_disablehtmlmotd.GetBool() ) || !mode->IsHTMLInfoPanelAllowed() )
+	C_World *pWorld = ( C_World * )GetClientWorldEntity();
+	if ( ( bAllowUserToDisable && cl_disablehtmlmotd.GetBool() ) || !pWorld->IsHTMLInfoPanelAllowed() )
 	{
 		Warning( "Blocking HTML info panel '%s'; Using plaintext instead.\n", URL );
 

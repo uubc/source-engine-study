@@ -76,7 +76,7 @@ namespace Interpolators
 CCSAchievementAnnouncePanel::CCSAchievementAnnouncePanel( const char *pElementName )
 : EditablePanel( NULL, "AchievementAnnouncePanel" ), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pGameRules->GetViewport();
 	SetParent( pParent );
 	m_bShouldBeVisible = false;
 	SetScheme( "ClientScheme" );

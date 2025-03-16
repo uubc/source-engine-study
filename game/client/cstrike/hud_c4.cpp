@@ -42,7 +42,7 @@ DECLARE_HUDELEMENT( CHudC4 );
 CHudC4::CHudC4( const char *pName ) :
 	vgui::Panel( NULL, "HudC4" ), CHudElement( pName )
 {
-	SetParent( g_pClientMode->GetViewport() );
+	SetParent(g_pGameRules->GetViewport() );
 	m_pIcon = NULL;
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

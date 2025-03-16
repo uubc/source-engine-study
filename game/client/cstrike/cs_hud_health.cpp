@@ -112,7 +112,7 @@ void CHudHealth::ApplySchemeSettings( IScheme *scheme )
 //-----------------------------------------------------------------------------
 void CHudHealth::Reset()
 {
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthRestored");
+	g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthRestored");
 }
 
 //-----------------------------------------------------------------------------
@@ -144,17 +144,17 @@ void CHudHealth::OnThink()
 	if( realHealth > m_iHealth)
 	{
 		// round restarted, we have 100 again
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthRestored");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthRestored");
 	}
 	else if ( realHealth <= 25 )
 	{
 		// we are badly injured
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
 	}
 	else if( realHealth < m_iHealth )
 	{
 		// took a hit
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthTookDamage");
+		g_pGameRules->GetViewportAnimationController()->StartAnimationSequence("HealthTookDamage");
 	}
 
 	m_iHealth = realHealth;

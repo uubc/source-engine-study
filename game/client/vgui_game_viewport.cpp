@@ -28,7 +28,7 @@ public:
 	// Init, shutdown
 	virtual bool Init()
 	{
-		g_pClientMode->Layout();
+		g_pGameRules->Layout();
 		return true;
 	}
 	virtual void PostInit() {}

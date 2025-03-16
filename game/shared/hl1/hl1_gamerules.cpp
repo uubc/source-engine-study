@@ -91,6 +91,69 @@ int	CHalfLife1World::Damage_GetShowOnHud( void )
 	return iDamage;
 }
 
+#ifdef CLIENT_DLL
+
+// default FOV for HL1
+ConVar default_fov("default_fov", "90", FCVAR_CHEAT);
+ConVar fov_desired("fov_desired", "90", FCVAR_ARCHIVE | FCVAR_USERINFO, "Sets the base field-of-view.", true, 75.0, true, 110.0);
+
+//-----------------------------------------------------------------------------
+// Purpose: this is the viewport that contains all the hud elements
+//-----------------------------------------------------------------------------
+class CHudViewport : public CBaseViewport
+{
+private:
+	DECLARE_CLASS_SIMPLE(CHudViewport, CBaseViewport);
+
+protected:
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme)
+	{
+		BaseClass::ApplySchemeSettings(pScheme);
+
+		gHUD.InitColors(pScheme);
+
+		SetPaintBackgroundEnabled(false);
+	}
+
+	virtual void CreateDefaultPanels(void)
+	{
+		CBaseViewport::CreateDefaultPanels();
+	}
+
+	virtual IViewPortPanel* CreatePanelByName(const char* szPanelName);
+};
+
+IViewPortPanel* CHudViewport::CreatePanelByName(const char* szPanelName)
+{
+	/*	else if ( Q_strcmp(PANEL_INFO, szPanelName) == 0 )
+	{
+		newpanel = new CHL2MPTextWindow( this );
+		return newpanel;
+	}*/
+
+	return BaseClass::CreatePanelByName(szPanelName);
+}
+
+CHalfLife1World::CHalfLife1World()
+{
+	m_pViewport = new CHudViewport();
+	m_pViewport->Start(gameuifuncs, gameeventmanager);
+}
+
+float CHalfLife1World::GetViewModelFOV(void)
+{
+	return 90.0f;
+}
+
+
+int	CHalfLife1World::GetDeathMessageStartHeight(void)
+{
+	return m_pViewport->GetDeathMessageStartHeight();
+}
+
+#endif // CLIENT_DLL
+
+
 #ifndef CLIENT_DLL
 
 	extern bool		g_fGameOver;

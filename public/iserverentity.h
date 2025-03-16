@@ -1463,7 +1463,7 @@ public:
 	virtual int NumberOfReservedEdicts(void) = 0;
 	virtual int IndexOfHighestEdict(void) = 0;
 	virtual void CleanupDeleteList(void) = 0;
-	virtual int ResetDeleteList(void) = 0;
+	virtual int CountDeleteList(void) = 0;
 
 	virtual CBaseHandle GetNetworkableHandle(int iEntity) const = 0;
 	virtual IHandleEntity* LookupEntityByNetworkIndex(int edictIndex) const = 0;
