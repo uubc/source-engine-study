@@ -35,7 +35,6 @@
 //#include "sharedInterface.h"
 //#include "cdll_client_int.h"
 #include "iviewrender.h"
-#include "clientmode.h"
 #include "detailobjectsystem.h"
 //#include "c_baseplayer.h"
 //#include "c_world.h"
