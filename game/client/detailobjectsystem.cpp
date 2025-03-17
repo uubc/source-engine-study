@@ -523,6 +523,8 @@ private:
 //-----------------------------------------------------------------------------
 static CDetailObjectSystem s_DetailObjectSystem;
 IDetailObjectSystem* g_pDetailObjectSystem = &s_DetailObjectSystem;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CDetailObjectSystem, IDetailObjectSystem, DETAILOBJECTSYSTEM_INTERFACE_VERSION, s_DetailObjectSystem);
+
 IDetailObjectSystem* DetailObjectSystem()
 {
 	return g_pDetailObjectSystem;

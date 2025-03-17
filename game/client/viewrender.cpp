@@ -231,7 +231,7 @@ extern ConVar sensitivity;
 
 CViewRender g_DefaultViewRender;
 IViewRender* g_pViewRender = NULL;	// set in cldll_client_init.cpp if no mod creates their own
-
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CViewRender, IViewRender, VIEWRENDER_INTERFACE_VERSION, g_DefaultViewRender);
 //-----------------------------------------------------------------------------
 
 

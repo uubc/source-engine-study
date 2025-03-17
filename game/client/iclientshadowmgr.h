@@ -35,6 +35,7 @@ enum ShadowReceiver_t
 	SHADOW_RECEIVER_STUDIO_MODEL,
 };
 
+#define CLIENTSHADOW_INTERFACE_VERSION	"ClientShadow001"
 
 //-----------------------------------------------------------------------------
 // The class responsible for dealing with shadows on the client side

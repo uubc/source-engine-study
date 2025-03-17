@@ -987,7 +987,7 @@ private:
 //-----------------------------------------------------------------------------
 static CClientShadowMgr s_ClientShadowMgr;
 IClientShadowMgr* g_pClientShadowMgr = &s_ClientShadowMgr;
-
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CClientShadowMgr, IClientShadowMgr, CLIENTSHADOW_INTERFACE_VERSION, s_ClientShadowMgr);
 
 //-----------------------------------------------------------------------------
 // Builds a list of potential shadows that lie within our PVS + view frustum

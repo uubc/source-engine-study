@@ -155,6 +155,8 @@ struct ViewCustomVisibility_t
 
 typedef CPortalRenderable* (*PortalRenderableCreationFunc)(void);
 
+#define VIEWRENDER_INTERFACE_VERSION	"ViewRender001"
+
 abstract_class IViewRender
 {
 public:

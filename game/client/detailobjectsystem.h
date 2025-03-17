@@ -19,6 +19,7 @@
 
 struct model_t;
 
+#define DETAILOBJECTSYSTEM_INTERFACE_VERSION	"DetailObjectSystem001"
 
 //-----------------------------------------------------------------------------
 // Responsible for managing detail objects
