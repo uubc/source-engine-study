@@ -12,16 +12,17 @@
 #endif
 
 #include "utlvector.h"
-#include "ehandle.h"
+#include "basehandle.h"
 #include "ispatialpartition.h"
 
 class CPlayerEnumerator : public IPartitionEnumerator
 {
-	DECLARE_CLASS_NOBASE( CPlayerEnumerator );
+	typedef CPlayerEnumerator ThisClass;;
 public:
 	//Forced constructor
-	CPlayerEnumerator( float radius, Vector vecOrigin )
+	CPlayerEnumerator(IEntityList* pEntityList, float radius, Vector vecOrigin )
 	{
+		m_pEntityList = pEntityList;
 		m_flRadiusSquared = radius * radius;
 		m_vecOrigin = vecOrigin;
 		m_Objects.RemoveAll();
@@ -34,7 +35,7 @@ public:
 		if ( index < 0 || index >= GetObjectCount() )
 			return NULL;
 
-		return m_Objects[ index ];
+		return m_pEntityList->GetBaseEntityFromHandle(m_Objects[ index ]);
 	}
 
 	//Actual work code
@@ -51,7 +52,7 @@ public:
 		if ( deltaPos.LengthSqr() > m_flRadiusSquared )
 			return ITERATION_CONTINUE;
 
-		CHandle< IHandleEntity > h;
+		CBaseHandle h;
 		h = pEnt;
 		m_Objects.AddToTail( h );
 
@@ -62,8 +63,8 @@ public:
 	//Data members
 	float	m_flRadiusSquared;
 	Vector m_vecOrigin;
-
-	CUtlVector< CHandle< IHandleEntity > > m_Objects;
+	IEntityList* m_pEntityList = NULL;
+	CUtlVector<CBaseHandle> m_Objects;
 };
 
 #endif // PLAYERENUm_ObjectsMERATOR_H

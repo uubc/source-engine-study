@@ -1340,7 +1340,7 @@ void CDetailModel::UpdatePlayerAvoid( void )
 	float flMaxForce = 0;
 	Vector vecMaxAvoid(0,0,0);
 
-	CPlayerEnumerator avoid( flRadius, m_Origin );
+	CPlayerEnumerator avoid(entitylist, flRadius, m_Origin );
 	::partition->EnumerateElementsInSphere( PARTITION_CLIENT_SOLID_EDICTS, m_Origin, flRadius, false, &avoid );
 
 	// Okay, decide how to avoid if there's anything close by
