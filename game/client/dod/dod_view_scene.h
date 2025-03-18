@@ -12,22 +12,25 @@
 #endif
 
 #include "viewrender.h"
-
 #include "colorcorrectionmgr.h"
+#include "igamesystem.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Implements the interview to view rendering for the client .dll
 //-----------------------------------------------------------------------------
-class CDODViewRender : public CViewRender
+class CDODViewRender : CAutoGameSystem, public IViewRenderCallBack
 {
 public:
 	CDODViewRender();
 
-	void Init( );
+	bool Init( );
 	void Shutdown( );
-
-	void RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw );
+	void PreRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw);
+	void GetScreenFadeDistances(float* min, float* max);
+	void Render2DEffectsPreHUD(const CViewSetup& view) {}
+	void Render2DEffectsPostHUD(const CViewSetup& view) {}
 	void RenderPlayerSprites();
+	void PostRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw);
 
 	void PerformStunEffect( const CViewSetup &view );
 

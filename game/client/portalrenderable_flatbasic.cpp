@@ -1308,4 +1308,4 @@ CPortalRenderable *CreatePortal_FlatBasic_Fn( void )
 	return (CPortalRenderable*)EntityList()->CreateEntityByName( "CPortalRenderable_FlatBasic");
 }
 
-static CPortalRenderableCreator CreatePortal_FlatBasic( "flatBasic", CreatePortal_FlatBasic_Fn );
+//static CPortalRenderableCreator CreatePortal_FlatBasic( "flatBasic", CreatePortal_FlatBasic_Fn );

@@ -157,6 +157,16 @@ typedef CPortalRenderable* (*PortalRenderableCreationFunc)(void);
 
 #define VIEWRENDER_INTERFACE_VERSION	"ViewRender001"
 
+class IViewRenderCallBack {
+public:
+	virtual void PreRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw) = 0;
+	virtual void GetScreenFadeDistances(float* min, float* max) = 0;
+	virtual void RenderPlayerSprites() = 0;
+	virtual void Render2DEffectsPreHUD(const CViewSetup& view) = 0;
+	virtual void Render2DEffectsPostHUD(const CViewSetup& view) = 0;
+	virtual void PostRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw) = 0;
+};
+
 abstract_class IViewRender
 {
 public:
@@ -173,6 +183,8 @@ public:
 
 	// Shutdown
 	virtual void		Shutdown( void ) = 0;
+
+	virtual void		InstallCallBack(IViewRenderCallBack* pViewRenderCallBack) = 0;
 
 	// RENDERING
 	// Called right before simulation. It must setup the view model origins and angles here so 
@@ -228,8 +240,6 @@ public:
 	// Returns znear and zfar
 	virtual float		GetZNear() = 0;
 	virtual float		GetZFar() = 0;
-
-	virtual void		GetScreenFadeDistances( float *min, float *max ) = 0;
 
 	virtual IClientEntity *GetCurrentlyDrawingEntity() = 0;
 	virtual void		SetCurrentlyDrawingEntity( IClientEntity *pEnt ) = 0;

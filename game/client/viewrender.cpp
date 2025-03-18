@@ -229,9 +229,9 @@ extern ConVar sensitivity;
 #endif
 
 
-CViewRender g_DefaultViewRender;
-IViewRender* g_pViewRender = NULL;	// set in cldll_client_init.cpp if no mod creates their own
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CViewRender, IViewRender, VIEWRENDER_INTERFACE_VERSION, g_DefaultViewRender);
+static CViewRender s_ViewRender;
+IViewRender* g_pViewRender = &s_ViewRender;	// set in cldll_client_init.cpp if no mod creates their own
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CViewRender, IViewRender, VIEWRENDER_INTERFACE_VERSION, s_ViewRender);
 //-----------------------------------------------------------------------------
 
 
@@ -951,7 +951,14 @@ void CViewRender::SetupCurrentView( const Vector &vecOrigin, const QAngle &angle
 
 	// Cache off fade distances
 	float flScreenFadeMinSize, flScreenFadeMaxSize;
-	GetScreenFadeDistances( &flScreenFadeMinSize, &flScreenFadeMaxSize );
+	if (m_pViewRenderCallBack) 
+	{
+		m_pViewRenderCallBack->GetScreenFadeDistances(&flScreenFadeMinSize, &flScreenFadeMaxSize);
+	}
+	else 
+	{
+		GetScreenFadeDistances(&flScreenFadeMinSize, &flScreenFadeMaxSize);
+	}
 	modelinfo->SetViewScreenFadeRange( flScreenFadeMinSize, flScreenFadeMaxSize );
 
 	CMatRenderContextPtr pRenderContext( materials );
@@ -3142,6 +3149,10 @@ extern ConVar building_cubemaps;
 // This renders the entire 3D view.
 void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw )
 {
+	if (m_pViewRenderCallBack) {
+		m_pViewRenderCallBack->PreRenderView(view, nClearFlags, whatToDraw);
+	}
+
 	m_UnderWaterOverlayMaterial.Shutdown();					// underwater view will set
 
 	m_CurrentView = view;
@@ -3252,7 +3263,14 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		// Draw lightsources if enabled
 		render->DrawLights();
 
-		RenderPlayerSprites();
+		if (m_pViewRenderCallBack) 
+		{
+			m_pViewRenderCallBack->RenderPlayerSprites();
+		}
+		else 
+		{
+			RenderPlayerSprites();
+		}
 
 		// Image-space motion blur
 		if ( !building_cubemaps.GetBool() && view.m_bDoBloomAndToneMapping ) // We probably should use a different view. variable here
@@ -3411,7 +3429,9 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 	// Draw the 2D graphics
 	render->Push2DView( view, 0, saveRenderTarget, GetFrustum() );
 
-	Render2DEffectsPreHUD( view );
+	if (m_pViewRenderCallBack) {
+		m_pViewRenderCallBack->Render2DEffectsPreHUD(view);
+	}
 
 	if ( whatToDraw & RENDERVIEW_DRAWHUD )
 	{
@@ -3557,7 +3577,9 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 	CDebugViewRender::Draw2DDebuggingInfo( view );
 
-	Render2DEffectsPostHUD( view );
+	if (m_pViewRenderCallBack) {
+		m_pViewRenderCallBack->Render2DEffectsPostHUD(view);
+	}
 
 	g_bRenderingView = false;
 
@@ -3571,20 +3593,10 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 	render->PopView( GetFrustum() );
 	g_WorldListCache.Flush();
-}
 
-//-----------------------------------------------------------------------------
-// Purpose: Renders extra 2D effects in derived classes while the 2D view is on the stack
-//-----------------------------------------------------------------------------
-void CViewRender::Render2DEffectsPreHUD( const CViewSetup &view )
-{
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Renders extra 2D effects in derived classes while the 2D view is on the stack
-//-----------------------------------------------------------------------------
-void CViewRender::Render2DEffectsPostHUD( const CViewSetup &view )
-{
+	if (m_pViewRenderCallBack) {
+		m_pViewRenderCallBack->PostRenderView(view, nClearFlags, whatToDraw);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -4615,7 +4627,7 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 		setupInfo.m_bDrawTranslucentObjects = (viewID != VIEW_SHADOW_DEPTH_TEXTURE);
 
 		setupInfo.m_vecRenderOrigin = origin;
-		setupInfo.m_vecRenderForward = g_DefaultViewRender.CurrentViewForward();
+		setupInfo.m_vecRenderForward = m_pMainView->CurrentViewForward();
 
 		float fMaxDist = cl_maxrenderable_dist.GetFloat();
 

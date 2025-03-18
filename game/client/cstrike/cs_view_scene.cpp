@@ -47,7 +47,6 @@ static CCSViewRender g_ViewRender;
 
 CCSViewRender::CCSViewRender()
 {
-	g_pViewRender = ( IViewRender * )&g_ViewRender;
 	m_pFlashTexture = NULL;
 }
 
@@ -64,7 +63,7 @@ ConVarFlags s_flaggedConVars[] =
 	{ "developer", FCVAR_CHEAT },
 };
 
-void CCSViewRender::Init( void )
+bool CCSViewRender::Init( void )
 {
 	for ( int i=0; i<ARRAYSIZE( s_flaggedConVars ); ++i )
 	{
@@ -75,7 +74,9 @@ void CCSViewRender::Init( void )
 		}
 	}
 
-	CViewRender::Init();
+	CAutoGameSystem::Init();
+	g_pViewRender->InstallCallBack(&g_ViewRender);
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -318,9 +319,10 @@ void CCSViewRender::Render2DEffectsPostHUD( const CViewSetup &view )
 //-----------------------------------------------------------------------------
 void CCSViewRender::RenderPlayerSprites()
 {
-	GetClientVoiceMgr()->SetHeadLabelOffset( 40 );
+	tmZone(TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__);
 
-	CViewRender::RenderPlayerSprites();
+	GetClientVoiceMgr()->SetHeadLabelOffset( 40 );
+	GetClientVoiceMgr()->DrawHeadLabels();
 	RadioManager()->DrawHeadLabels();
 }
 

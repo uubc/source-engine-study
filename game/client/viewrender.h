@@ -226,6 +226,11 @@ public:
 	virtual void	Init( void );
 	virtual void	Shutdown( void );
 
+	virtual void	InstallCallBack(IViewRenderCallBack* pViewRenderCallBack) 
+	{
+		m_pViewRenderCallBack = pViewRenderCallBack;
+	}
+
 	const CViewSetup *GetPlayerViewSetup( ) const;
 
 	virtual void	StartPitchDrift( void );
@@ -286,8 +291,6 @@ public:
 	virtual	void	Render( vrect_t *rect );
 	virtual void	RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw );
 	virtual void	RenderPlayerSprites();
-	virtual void	Render2DEffectsPreHUD( const CViewSetup &view );
-	virtual void	Render2DEffectsPostHUD( const CViewSetup &view );
 	virtual void	CopyToCurrentView(const CViewSetup& viewSetup);
 
 	void			DisableFog( void );
@@ -670,7 +673,7 @@ private:
 
 	int g_viewscene_refractUpdateFrame = 0;
 	bool g_bAllowMultipleRefractUpdatesPerScenePerFrame = false;
-
+	IViewRenderCallBack* m_pViewRenderCallBack = NULL;
 };
 
 #endif // VIEWRENDER_H

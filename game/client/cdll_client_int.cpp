@@ -1077,19 +1077,13 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	g_pClientShadowMgr->Init();
 	g_pClientLeafSystem->Init();
 	g_pDetailObjectSystem->Init();
+	g_pViewRender->Init();
+	vieweffects->Init();
 
 	if ( !IGameSystem::InitAllSystems() )
 		return false;
 
 	g_pGameRules->Enable();
-
-	if ( !g_pViewRender)
-	{
-		g_pViewRender = ( IViewRender * )&g_DefaultViewRender;
-	}
-
-	g_pViewRender->Init();
-	vieweffects->Init();
 
 	C_BaseTempEntity::PrecacheTempEnts();
 

@@ -21,7 +21,7 @@
 #include "materialsystem/imaterialvar.h"
 #include "colorcorrectionmgr.h"
 #include "materialsystem/imaterialsystemhardwareconfig.h"
-
+#include "voice_status.h"
 #include "ScreenSpaceEffects.h"
 #include "dod_view_scene.h"
 #include "KeyValues.h"
@@ -42,8 +42,8 @@ ConVar cl_deatheffect_force_on( "cl_deatheffect_always_on", "0", FCVAR_CLIENTDLL
 // Console variables to define lookup maps
 static void UpdateCameraLookups( IConVar *var, char const *pOldString, float flOldValue )
 {
-	CDODViewRender *pView = static_cast<CDODViewRender*>(g_pViewRender);
-	pView->InitColorCorrection();
+	//CDODViewRender *pView = static_cast<CDODViewRender*>(g_pViewRender);
+	g_ViewRender.InitColorCorrection();
 }
 
 static void SetSpectatorLookup( ConVar *var, char const *pOldString );
@@ -56,8 +56,6 @@ CLIENTEFFECT_REGISTER_END()
 
 CDODViewRender::CDODViewRender()
 {
-	g_pViewRender = ( IViewRender * )this;
-
 	m_SpectatorLookupHandle = (ClientCCHandle_t)0;
 	m_DeathLookupHandle = (ClientCCHandle_t)0;
 	m_bLookupActive = false;
@@ -75,7 +73,7 @@ ConVarFlags s_flaggedConVars[] =
 	{ "r_screenfademaxsize", FCVAR_CHEAT },
 };
 
-void CDODViewRender::Init()
+bool CDODViewRender::Init()
 {
 	for ( int i=0; i<ARRAYSIZE( s_flaggedConVars ); ++i )
 	{
@@ -86,17 +84,39 @@ void CDODViewRender::Init()
 		}
 	}
 
-	CViewRender::Init();
+	CAutoGameSystem::Init();
 
 	InitColorCorrection();
+
+	g_pViewRender->InstallCallBack(&g_ViewRender);
+	return true;
 }
 
 void CDODViewRender::Shutdown()
 {
-	CViewRender::Shutdown();
+	CAutoGameSystem::Shutdown();
 
 	ShutdownColorCorrection();
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: Returns the min/max fade distances
+//-----------------------------------------------------------------------------
+void CDODViewRender::GetScreenFadeDistances(float* min, float* max)
+{
+	if (min)
+	{
+		ConVarRef r_screenfademinsize("r_screenfademinsize");
+		*min = r_screenfademinsize.GetFloat();
+	}
+
+	if (max)
+	{
+		ConVarRef r_screenfademaxsize("r_screenfademaxsize");
+		*max = r_screenfademaxsize.GetFloat();
+	}
+}
+
 
 void CDODViewRender::PerformStunEffect( const CViewSetup &view )
 {
@@ -309,15 +329,16 @@ void CDODViewRender::SetupColorCorrection( )
 	}
 }
 
-void CDODViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw )
+void CDODViewRender::PreRenderView( const CViewSetup &view, int nClearFlags, int whatToDraw )
 {
 	// Setup the necessary parameters for color correction
 	SetupColorCorrection( );
+}
 
-	CViewRender::RenderView( view, nClearFlags, whatToDraw );
-
+void CDODViewRender::PostRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw)
+{
 	// Draw screen effects here
-	PerformStunEffect( view );
+	PerformStunEffect(view);
 }
 
 //-----------------------------------------------------------------------------
@@ -326,8 +347,9 @@ void CDODViewRender::RenderView( const CViewSetup &view, int nClearFlags, int wh
 //-----------------------------------------------------------------------------
 void CDODViewRender::RenderPlayerSprites()
 {
-	CViewRender::RenderPlayerSprites();
+	tmZone(TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__);
 
+	GetClientVoiceMgr()->DrawHeadLabels();
 	// Draw head icons here
 	HeadIconManager()->DrawHeadIcons();
 }
