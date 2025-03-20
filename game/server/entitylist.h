@@ -73,6 +73,8 @@ class CAimTargetManager;
 extern CAimTargetManager g_AimManager;
 class CSimThinkManager;
 extern CSimThinkManager g_SimThinkManager;
+class CEntityTouchManager;
+extern CEntityTouchManager g_TouchManager;
 inline string_t AllocPooledStringInEntityList(const char* pStr) {
 	return serverGameDLL->AllocPooledString(pStr);
 }

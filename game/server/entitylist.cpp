@@ -16724,7 +16724,7 @@ private:
 	CUtlVector<IServerEntity*>	m_updateList;
 };
 
-static CEntityTouchManager g_TouchManager;
+CEntityTouchManager g_TouchManager;
 
 void EntityTouch_Add(IServerEntity* pEntity)
 {
