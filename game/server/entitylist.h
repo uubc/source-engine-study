@@ -130,6 +130,23 @@ private:
 	CUtlVector<simthinkentry_t>	m_simThinkList;
 };
 
+class CEntityTouchManager : public IEntityListener<IServerEntity>
+{
+public:
+	// called by CEntityListSystem
+	void LevelInitPreEntity();
+	void LevelShutdownPostEntity();
+	void FrameUpdatePostEntityThink();
+	void Clear();
+	// IEntityListener
+	virtual void OnEntityCreated(IServerEntity* pEntity) {}
+	virtual void OnEntityDeleted(IServerEntity* pEntity);
+	void AddEntity(IServerEntity* pEntity);
+
+private:
+	CUtlVector<IServerEntity*>	m_updateList;
+};
+
 class CEngineObjectInternal;
 
 class CEngineObjectNetworkProperty : public CServerNetworkProperty {

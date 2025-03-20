@@ -5346,8 +5346,6 @@ void CEngineObjectInternal::WorldToEntitySpace(const Vector& in, Vector* pOut) c
 	}
 }
 
-void EntityTouch_Add(IServerEntity* pEntity);
-
 void CEngineObjectInternal::SetCheckUntouch(bool check)
 {
 	// Invalidate touchstamp
@@ -5357,7 +5355,7 @@ void CEngineObjectInternal::SetCheckUntouch(bool check)
 		if (!IsEFlagSet(EFL_CHECK_UNTOUCH))
 		{
 			AddEFlags(EFL_CHECK_UNTOUCH);
-			EntityTouch_Add(this->GetOuter());
+			g_TouchManager.AddEntity(this->GetOuter());
 		}
 	}
 	else
@@ -16655,81 +16653,68 @@ void CSimThinkManager::EntityChanged(IServerEntity* pEntity)
 
 CSimThinkManager g_SimThinkManager;
 
-class CEntityTouchManager : public IEntityListener<IServerEntity>
+// called by CEntityListSystem
+void CEntityTouchManager::LevelInitPreEntity()
 {
-public:
-	// called by CEntityListSystem
-	void LevelInitPreEntity()
-	{
-		gEntList.AddListenerEntity(this);
-		Clear();
-	}
-	void LevelShutdownPostEntity()
-	{
-		gEntList.RemoveListenerEntity(this);
-		Clear();
-	}
-	void FrameUpdatePostEntityThink()
-	{
-		VPROF("CEntityTouchManager::FrameUpdatePostEntityThink");
-		// Loop through all entities again, checking their untouch if flagged to do so
+	gEntList.AddListenerEntity(this);
+	Clear();
+}
+void CEntityTouchManager::LevelShutdownPostEntity()
+{
+	gEntList.RemoveListenerEntity(this);
+	Clear();
+}
+void CEntityTouchManager::FrameUpdatePostEntityThink()
+{
+	VPROF("CEntityTouchManager::FrameUpdatePostEntityThink");
+	// Loop through all entities again, checking their untouch if flagged to do so
 
-		int count = m_updateList.Count();
-		if (count)
+	int count = m_updateList.Count();
+	if (count)
+	{
+		// copy off the list
+		IServerEntity** ents = (IServerEntity**)stackalloc(sizeof(IServerEntity*) * count);
+		memcpy(ents, m_updateList.Base(), sizeof(IServerEntity*) * count);
+		// clear it
+		m_updateList.RemoveAll();
+
+		// now update those ents
+		for (int i = 0; i < count; i++)
 		{
-			// copy off the list
-			IServerEntity** ents = (IServerEntity**)stackalloc(sizeof(IServerEntity*) * count);
-			memcpy(ents, m_updateList.Base(), sizeof(IServerEntity*) * count);
-			// clear it
-			m_updateList.RemoveAll();
-
-			// now update those ents
-			for (int i = 0; i < count; i++)
+			//Assert( ents[i]->GetCheckUntouch() );
+			if (ents[i]->GetEngineObject()->GetCheckUntouch())
 			{
-				//Assert( ents[i]->GetCheckUntouch() );
-				if (ents[i]->GetEngineObject()->GetCheckUntouch())
-				{
-					ents[i]->GetEngineObject()->PhysicsCheckForEntityUntouch();
-				}
+				ents[i]->GetEngineObject()->PhysicsCheckForEntityUntouch();
 			}
-			stackfree(ents);
 		}
+		stackfree(ents);
 	}
+}
 
-	void Clear()
-	{
-		m_updateList.Purge();
-	}
+void CEntityTouchManager::Clear()
+{
+	m_updateList.Purge();
+}
 
-	// IEntityListener
-	virtual void OnEntityCreated(IServerEntity* pEntity) {}
-	virtual void OnEntityDeleted(IServerEntity* pEntity)
+// IEntityListener
+void CEntityTouchManager::OnEntityDeleted(IServerEntity* pEntity)
+{
+	if (!pEntity->GetEngineObject()->GetCheckUntouch())
+		return;
+	int index = m_updateList.Find(pEntity);
+	if (m_updateList.IsValidIndex(index))
 	{
-		if (!pEntity->GetEngineObject()->GetCheckUntouch())
-			return;
-		int index = m_updateList.Find(pEntity);
-		if (m_updateList.IsValidIndex(index))
-		{
-			m_updateList.FastRemove(index);
-		}
+		m_updateList.FastRemove(index);
 	}
-	void AddEntity(IServerEntity* pEntity)
-	{
-		if (pEntity->GetEngineObject()->IsMarkedForDeletion())
-			return;
-		m_updateList.AddToTail(pEntity);
-	}
-
-private:
-	CUtlVector<IServerEntity*>	m_updateList;
-};
+}
+void CEntityTouchManager::AddEntity(IServerEntity* pEntity)
+{
+	if (pEntity->GetEngineObject()->IsMarkedForDeletion())
+		return;
+	m_updateList.AddToTail(pEntity);
+}
 
 CEntityTouchManager g_TouchManager;
-
-void EntityTouch_Add(IServerEntity* pEntity)
-{
-	g_TouchManager.AddEntity(pEntity);
-}
 
 class CSortedEntityList
 {
