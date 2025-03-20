@@ -18,7 +18,6 @@
 #include "iclientrenderable.h"
 #include "gamebspfile.h"
 #include "engine/ivmodelrender.h"
-#include "engine/IClientLeafSystem.h"
 #include "ispatialpartitioninternal.h"
 #include "utlbuffer.h"
 #include "utlvector.h"
@@ -46,7 +45,9 @@
 #include "generichash.h"
 #include "tier2/renderutils.h"
 #include "ipooledvballocator.h"
+#ifndef SWDS
 #include "clientleafsystem.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
