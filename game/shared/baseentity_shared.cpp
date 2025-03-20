@@ -21,6 +21,7 @@
 #include "vphysics/performance.h"
 #include "isaverestore.h"
 #include "saverestoretypes.h"
+#include "IEffects.h"
 
 #ifdef CLIENT_DLL
 	#include "c_te_effect_dispatch.h"
@@ -712,11 +713,11 @@ void CBaseEntity::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCu
 	// Send it on its way
 	if ( !pCustomImpactName )
 	{
-		DispatchEffect( "Impact", data );
+		g_pEffects->DispatchEffect( "Impact", data );
 	}
 	else
 	{
-		DispatchEffect( pCustomImpactName, data );
+		g_pEffects->DispatchEffect( pCustomImpactName, data );
 	}
 }
 
@@ -1265,7 +1266,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 					data.m_vOrigin = tr.endpos;
 					data.m_nDamageType = nDamageType;
 					
-					DispatchEffect( "RagdollImpact", data );
+					g_pEffects->DispatchEffect( "RagdollImpact", data );
 				}
 	
 #ifdef GAME_DLL
@@ -1418,7 +1419,7 @@ bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info,
 		{
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}
-		DispatchEffect( "gunshotsplash", data );
+		g_pEffects->DispatchEffect( "gunshotsplash", data );
 	}
 
 #ifdef GAME_DLL
@@ -1433,7 +1434,7 @@ bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info,
 			tracerData.m_vStart = waterTrace.endpos;
 			tracerData.m_vOrigin = waterTrace.endpos + info.m_vecDirShooting * 400.0f;
 			tracerData.m_fFlags = TRACER_TYPE_WATERBULLET;
-			DispatchEffect( "TracerSound", tracerData );
+			g_pEffects->DispatchEffect( "TracerSound", tracerData );
 		}
 	}
 #endif

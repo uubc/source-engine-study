@@ -12,6 +12,7 @@
 #include "mathlib/mathlib.h"
 #include "in_buttons.h"
 #include "animation.h"
+#include "IEffects.h"
 
 #if defined( CLIENT_DLL )
 	#include "c_hl2mp_player.h"
@@ -256,7 +257,7 @@ bool CBaseHL2MPBludgeonWeapon::ImpactWater( const Vector &start, const Vector &e
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}
 
-		DispatchEffect( "watersplash", data );			
+		g_pEffects->DispatchEffect( "watersplash", data );
 #endif
 	}
 

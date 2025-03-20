@@ -188,7 +188,7 @@ void CNPC_Portal_GroundTurret::Shoot()
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "eyes" );
 	data.m_flScale = 1.0f;
 	data.m_fFlags = MUZZLEFLASH_COMBINE;
-	DispatchEffect( "MuzzleFlash", data );
+	g_pEffects->DispatchEffect( "MuzzleFlash", data );
 
 	const char* soundname = "NPC_FloorTurret.ShotSounds";
 	CPASAttenuationFilter filter(this, soundname);

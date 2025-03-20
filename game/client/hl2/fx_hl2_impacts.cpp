@@ -24,7 +24,7 @@ void ImpactJeepCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 	{
@@ -57,7 +57,7 @@ void ImpactGaussCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 	{
@@ -91,7 +91,7 @@ void ImpactCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 	{
@@ -209,7 +209,7 @@ void ImpactAirboatGunCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 	{
@@ -245,7 +245,7 @@ void ImpactHelicopterCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 	{

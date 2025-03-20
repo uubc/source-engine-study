@@ -10,6 +10,7 @@
 #include "ammodef.h"
 #include "c_te_effect_dispatch.h"
 #include "shot_manipulator.h"
+#include "IEffects.h"
 
 class C_TEHL2MPFireBullets : public C_BaseTempEntity
 {
@@ -111,11 +112,11 @@ void C_TEHL2MPFireBullets::CreateEffects( void )
 
 						if ( pTracerName )
 						{
-							DispatchEffect( pTracerName, data );
+							g_pEffects->DispatchEffect( pTracerName, data );
 						}
 						else
 						{
-							DispatchEffect( "Tracer", data );
+							g_pEffects->DispatchEffect( "Tracer", data );
 						}
 					}
 					

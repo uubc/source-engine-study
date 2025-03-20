@@ -27,6 +27,7 @@
 #include "hl2_shareddefs.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 #ifdef PORTAL
 	#include "portal_util_shared.h"
@@ -330,7 +331,7 @@ void CMissile::ShotDown( void )
 	CEffectData	data;
 	data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
 
-	DispatchEffect( "RPGShotDown", data );
+	g_pEffects->DispatchEffect( "RPGShotDown", data );
 
 	if ( m_hRocketTrail != NULL )
 	{
@@ -1175,7 +1176,7 @@ void CAPCMissile::DoExplosion( void )
 		data.m_flMagnitude = 128;
 		data.m_flScale = 128;
 		data.m_fFlags = 0;
-		DispatchEffect( "WaterSurfaceExplosion", data );
+		g_pEffects->DispatchEffect( "WaterSurfaceExplosion", data );
 	}
 	else
 	{

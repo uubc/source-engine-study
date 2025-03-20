@@ -484,7 +484,7 @@ void MuzzleFlashCallback( const CEffectData &data )
 		}
 	}
 
-	tempents->MuzzleFlash( vecOrigin, vecAngles, data.m_fFlags & (~MUZZLEFLASH_FIRSTPERSON), data.m_hEntity, (data.m_fFlags & MUZZLEFLASH_FIRSTPERSON) != 0 );	
+	tempents->MuzzleFlash( vecOrigin, vecAngles, data.m_fFlags & (~MUZZLEFLASH_FIRSTPERSON), data.GetEntity(), (data.m_fFlags & MUZZLEFLASH_FIRSTPERSON) != 0);
 }
 
 DECLARE_CLIENT_EFFECT( "MuzzleFlash", MuzzleFlashCallback );
@@ -601,7 +601,7 @@ class CSmokeEmitter : public CSimpleEmitter
 {
 	typedef CSimpleEmitter BaseClass;
 public:
-	CSmokeEmitter( C_BaseEntity* hEntity, int nAttachment, const char *pDebugName ) : CSimpleEmitter( pDebugName ) 
+	CSmokeEmitter(IClientEntity* hEntity, int nAttachment, const char *pDebugName ) : CSimpleEmitter( pDebugName )
 	{
 		m_hEntity = hEntity;
 		m_nAttachmentIndex = nAttachment;
@@ -610,7 +610,7 @@ public:
 	}
 	
 	// Create
-	static CSmokeEmitter *Create( C_BaseEntity* hEntity, int nAttachment, const char *pDebugName="smoke" )
+	static CSmokeEmitter *Create(IClientEntity* hEntity, int nAttachment, const char *pDebugName="smoke" )
 	{
 		return new CSmokeEmitter( hEntity, nAttachment, pDebugName );
 	}
@@ -720,7 +720,7 @@ private:
 	float		m_flSpawnRate;
 	Vector		m_vecSpurtForward;
 	Vector4D	m_SpurtColor;
-	EHANDLE		m_hEntity;
+	CHandle<IClientEntity> m_hEntity;
 	int			m_nAttachmentIndex;
 
 	CSmokeEmitter( const CSmokeEmitter & ); // not defined, not accessible
@@ -729,7 +729,7 @@ private:
 //-----------------------------------------------------------------------------
 // Purpose: Small hose gas spurt
 //-----------------------------------------------------------------------------
-void FX_BuildSmoke( Vector &vecOrigin, QAngle &vecAngles, C_BaseEntity* hEntity, int nAttachment, float flLifeTime, const Vector4D &pColor )
+void FX_BuildSmoke( Vector &vecOrigin, QAngle &vecAngles, IClientEntity* hEntity, int nAttachment, float flLifeTime, const Vector4D &pColor )
 {
 	CSmartPtr<CSmokeEmitter> pSimple = CSmokeEmitter::Create( hEntity, nAttachment, "FX_Smoke" );
 	pSimple->SetSortOrigin( vecOrigin );
@@ -749,7 +749,7 @@ void SmokeCallback( const CEffectData &data )
 	QAngle vecAngles = data.m_vAngles;
 
 	Vector4D color( 50,50,50,255 );
-	FX_BuildSmoke( vecOrigin, vecAngles, data.m_hEntity, data.m_nAttachmentIndex, 100.0, color ); 
+	FX_BuildSmoke( vecOrigin, vecAngles, data.GetEntity(), data.m_nAttachmentIndex, 100.0, color);
 }
 
 DECLARE_CLIENT_EFFECT( "Smoke", SmokeCallback );
@@ -1291,7 +1291,7 @@ DECLARE_CLIENT_EFFECT( "TeslaHitboxes", FX_BuildTeslaHitbox );
 void FX_BuildTeslaZap( const CEffectData &data )
 {
 	// Build the tesla, only works on entities
-	C_BaseEntity *pEntity = data.GetEntity();
+	IClientEntity *pEntity = data.GetEntity();
 	if ( !pEntity )
 		return;
 

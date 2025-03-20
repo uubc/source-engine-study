@@ -3427,7 +3427,7 @@ void CBaseEntity::InputDispatchEffect( inputdata_t &inputdata )
 		{
 			sEffect++;
 		}
-		DispatchEffect( sEffect, data );
+		g_pEffects->DispatchEffect( sEffect, data );
 	}
 }
 

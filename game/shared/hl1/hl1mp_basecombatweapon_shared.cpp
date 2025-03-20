@@ -6,7 +6,7 @@
 //=============================================================================//
 #include "cbase.h"
 #include "hl1mp_basecombatweapon_shared.h"
-
+#include "IEffects.h"
 #include "effect_dispatch_data.h"
 
 #ifdef CLIENT_DLL
@@ -89,7 +89,7 @@ void CBaseHL1MPCombatWeapon::EjectShell( CBaseEntity *pPlayer, int iType )
 	data.m_vAngles	= angShellAngles;
 	data.m_fFlags	= iType;
 
-	DispatchEffect( "HL1ShellEject", data );
+	g_pEffects->DispatchEffect( "HL1ShellEject", data );
 }
 
 

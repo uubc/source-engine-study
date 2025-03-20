@@ -669,23 +669,23 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ICl
 	if (!bInSlime)
 	{
 		// Get our lighting information
-		FX_GetSplashLighting(centerPoint + (normal * 8.0f), &color, &luminosity);
+		g_pEffects->GetSplashLighting(centerPoint + (normal * 8.0f), &color, &luminosity);
 	}
 
 	if (impactSpeed > 150)
 	{
 		if (bInSlime)
 		{
-			FX_GunshotSlimeSplash(centerPoint, normal, random->RandomFloat(8, 10));
+			g_pEffects->GunshotSlimeSplash(centerPoint, normal, random->RandomFloat(8, 10));
 		}
 		else
 		{
-			FX_GunshotSplash(centerPoint, normal, random->RandomFloat(8, 10));
+			g_pEffects->GunshotSplash(centerPoint, normal, random->RandomFloat(8, 10));
 		}
 	}
 	else if (!bInSlime)
 	{
-		FX_WaterRipple(centerPoint, 1.5f, &color, 1.5f, luminosity);
+		g_pEffects->WaterRipple(centerPoint, 1.5f, &color, 1.5f, luminosity);
 	}
 
 	int		splashes = 4;
@@ -702,16 +702,16 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ICl
 		{
 			if (bInSlime)
 			{
-				FX_GunshotSlimeSplash(centerPoint, normal, random->RandomFloat(4, 6));
+				g_pEffects->GunshotSlimeSplash(centerPoint, normal, random->RandomFloat(4, 6));
 			}
 			else
 			{
-				FX_GunshotSplash(centerPoint, normal, random->RandomFloat(4, 6));
+				g_pEffects->GunshotSplash(centerPoint, normal, random->RandomFloat(4, 6));
 			}
 		}
 		else if (!bInSlime)
 		{
-			FX_WaterRipple(point, random->RandomFloat(0.25f, 0.5f), &color, luminosity, random->RandomFloat(0.5f, 1.0f));
+			g_pEffects->WaterRipple(point, random->RandomFloat(0.25f, 0.5f), &color, luminosity, random->RandomFloat(0.5f, 1.0f));
 		}
 	}
 }
@@ -2617,7 +2617,7 @@ void C_EngineObjectInternal::PreDataUpdate(DataUpdateType_t updateType)
 	VPROF("IClientEntity::PreDataUpdate");
 
 	// Register for an OnDataChanged call and call OnPreDataChanged().
-	if (AddDataChangeEvent(this, updateType, &m_DataChangeEventRef))
+	if (g_EntityList.AddDataChangeEvent(this, updateType, &m_DataChangeEventRef))
 	{
 		OnPreDataChanged(updateType);
 	}
@@ -2662,7 +2662,7 @@ void C_EngineObjectInternal::PreDataUpdate(DataUpdateType_t updateType)
 
 	if (GetRenderHandle() != INVALID_CLIENT_RENDER_HANDLE)
 	{
-		ClientLeafSystem()->EnableAlternateSorting(GetRenderHandle(), m_bAlternateSorting);
+		g_pClientLeafSystem->EnableAlternateSorting(GetRenderHandle(), m_bAlternateSorting);
 	}
 	m_ubOldInterpolationFrame = m_ubInterpolationFrame;
 	m_nOldRenderMode = m_nRenderMode;
@@ -3986,7 +3986,7 @@ void C_EngineObjectInternal::PostEntityPacketReceived(void)
 	Assert(cl_predict.GetInt());
 
 	// Always mark as changed
-	AddDataChangeEvent(this, DATA_UPDATE_DATATABLE_CHANGED, &m_DataChangeEventRef);
+	g_EntityList.AddDataChangeEvent(this, DATA_UPDATE_DATATABLE_CHANGED, &m_DataChangeEventRef);
 
 	// Save networked fields into "original data" store
 	SaveData("PostEntityPacketReceived", SLOT_ORIGINALDATA, PC_NETWORKED_ONLY);
@@ -9238,14 +9238,14 @@ void C_EngineObjectInternal::AddToLeafSystem(RenderGroup_t group)
 	if (GetRenderHandle() == INVALID_CLIENT_RENDER_HANDLE)
 	{
 		// create new renderer handle
-		ClientLeafSystem()->AddRenderable(this, group);
-		ClientLeafSystem()->EnableAlternateSorting(GetRenderHandle(), m_bAlternateSorting);
+		g_pClientLeafSystem->AddRenderable(this, group);
+		g_pClientLeafSystem->EnableAlternateSorting(GetRenderHandle(), m_bAlternateSorting);
 	}
 	else
 	{
 		// handle already exists, just update group & origin
-		ClientLeafSystem()->SetRenderGroup(GetRenderHandle(), group);
-		ClientLeafSystem()->RenderableChanged(GetRenderHandle());
+		g_pClientLeafSystem->SetRenderGroup(GetRenderHandle(), group);
+		g_pClientLeafSystem->RenderableChanged(GetRenderHandle());
 	}
 }
 
@@ -9258,7 +9258,7 @@ void C_EngineObjectInternal::MarkRenderHandleDirty()
 	ClientRenderHandle_t handle = GetRenderHandle();
 	if (handle != INVALID_CLIENT_RENDER_HANDLE)
 	{
-		ClientLeafSystem()->RenderableChanged(handle);
+		g_pClientLeafSystem->RenderableChanged(handle);
 	}
 }
 
@@ -9270,7 +9270,7 @@ void C_EngineObjectInternal::RemoveFromLeafSystem()
 	// Detach from the leaf lists.
 	if (GetRenderHandle() != INVALID_CLIENT_RENDER_HANDLE)
 	{
-		ClientLeafSystem()->RemoveRenderable(GetRenderHandle());
+		g_pClientLeafSystem->RemoveRenderable(GetRenderHandle());
 		m_hRender = INVALID_CLIENT_RENDER_HANDLE;
 	}
 	DestroyShadow();

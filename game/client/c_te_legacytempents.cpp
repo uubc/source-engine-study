@@ -426,7 +426,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 				{
 					bool bIsDynamicProp = ( NULL != dynamic_cast<CDynamicProp *>( trace.m_pEnt ) );
 					bool bIsDoor = ( NULL != dynamic_cast<CBaseDoor *>( trace.m_pEnt ) );
-					if ( !bIsDynamicProp && !bIsDoor && !((C_BaseEntity*)trace.m_pEnt)->IsWorld() ) // Die on props, doors, and the world.
+					if ( !bIsDynamicProp && !bIsDoor && !((IClientEntity*)trace.m_pEnt)->IsWorld() ) // Die on props, doors, and the world.
 						return true;
 				}
 
@@ -512,7 +512,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 
 			//	if ( trace.m_pEnt )
 			//	{
-			//		data.m_hEntity = EntityList()->EntIndexToHandle(((C_BaseEntity*)trace.m_pEnt)->entindex() );
+			//		data.m_hEntity = EntityList()->EntIndexToHandle(((IClientEntity*)trace.m_pEnt)->entindex() );
 			//	}
 			//	DispatchEffect( m_pszImpactEffect, data );
 			//}
@@ -789,7 +789,7 @@ CTempEnts::~CTempEnts( void )
 //			modelIndex - 
 //			density - 
 //-----------------------------------------------------------------------------
-void CTempEnts::FizzEffect( C_BaseEntity *pent, int modelIndex, int density, int current )
+void CTempEnts::FizzEffect( IClientEntity *pent, int modelIndex, int density, int current )
 {
 	C_LocalTempEntity		*pTemp;
 	const model_t	*model;
@@ -1407,7 +1407,7 @@ void CTempEnts::AttachTentToPlayer( int client, int modelIndex, float zoffset, f
 		return;
 	}
 
-	C_BaseEntity *clientClass = (C_BaseEntity*)EntityList()->GetBaseEntity( client );
+	IClientEntity *clientClass = EntityList()->GetBaseEntity( client );
 	if ( !clientClass )
 	{
 		Warning("Couldn't get IClientEntity for %i\n", client );
@@ -1725,7 +1725,7 @@ C_LocalTempEntity * CTempEnts::SpawnTempModel( const model_t *pModel, const Vect
 //			attachmentIndex - 
 //			firstPerson - 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash( int type, C_BaseEntity* hEntity, int attachmentIndex, bool firstPerson )
+void CTempEnts::MuzzleFlash( int type, IClientEntity* hEntity, int attachmentIndex, bool firstPerson )
 {
 	switch( type )
 	{
@@ -1802,7 +1802,7 @@ void CTempEnts::MuzzleFlash( int type, C_BaseEntity* hEntity, int attachmentInde
 // Input  : *pos1 - 
 //			type - 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type, C_BaseEntity* hEntity, bool firstPerson )
+void CTempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type, IClientEntity* hEntity, bool firstPerson )
 {
 #ifdef CSTRIKE_DLL
 
@@ -2234,7 +2234,7 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 	}
 
 	CSoundParameters params;
-	if ( !g_pSoundEmitterSystem->GetParametersForSound( soundname, params, NULL ) )//C_BaseEntity::
+	if ( !g_pSoundEmitterSystem->GetParametersForSound( soundname, params, NULL ) )
 		return;
 
 	fvol = params.volume;
@@ -2271,7 +2271,7 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 		ep.m_nPitch = pitch;
 		ep.m_pOrigin = &pTemp->GetEngineObject()->GetAbsOrigin();
 
-		g_pSoundEmitterSystem->EmitSound( filter, SOUND_FROM_WORLD, ep );//C_BaseEntity::
+		g_pSoundEmitterSystem->EmitSound( filter, SOUND_FROM_WORLD, ep );
 	}
 }
 					
@@ -2526,7 +2526,7 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 // Input  : entityIndex - 
 //			attachmentIndex - 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash_Combine_Player( C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Combine_Player( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Combine_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CLocalSpaceEmitter> pSimple = CLocalSpaceEmitter::Create( "MuzzleFlash", hEntity, attachmentIndex, FLE_VIEWMODEL );
@@ -2599,7 +2599,7 @@ void CTempEnts::MuzzleFlash_Combine_Player( C_BaseEntity* hEntity, int attachmen
 //			&angles - 
 //			entityIndex - 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash_Combine_NPC( C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Combine_NPC( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Combine_NPC", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -2782,7 +2782,7 @@ void CTempEnts::MuzzleFlash_Combine_NPC( C_BaseEntity* hEntity, int attachmentIn
 
 	if ( muzzleflash_light.GetBool() )
 	{
-		C_BaseEntity *pEnt = hEntity;//EntityList()->GetBaseEntityFromHandle( 
+		IClientEntity *pEnt = hEntity;//EntityList()->GetBaseEntityFromHandle( 
 		if ( pEnt )
 		{
 			dlight_t *el = effects->CL_AllocElight( LIGHT_INDEX_MUZZLEFLASH + pEnt->entindex() );
@@ -2806,7 +2806,7 @@ void CTempEnts::MuzzleFlash_Combine_NPC( C_BaseEntity* hEntity, int attachmentIn
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_AR2_NPC( const Vector &origin, const QAngle &angles, C_BaseEntity* hEntity )
+void CTempEnts::MuzzleFlash_AR2_NPC( const Vector &origin, const QAngle &angles, IClientEntity* hEntity )
 {
 	//Draw the cloud of fire
 	FX_MuzzleEffect( origin, angles, 1.0f, hEntity );
@@ -2815,7 +2815,7 @@ void CTempEnts::MuzzleFlash_AR2_NPC( const Vector &origin, const QAngle &angles,
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash_SMG1_NPC(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_SMG1_NPC(IClientEntity* hEntity, int attachmentIndex )
 {
 	//Draw the cloud of fire
 	FX_MuzzleEffectAttached( 1.0f, hEntity, attachmentIndex, NULL, true );
@@ -2824,7 +2824,7 @@ void CTempEnts::MuzzleFlash_SMG1_NPC(C_BaseEntity* hEntity, int attachmentIndex 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTempEnts::MuzzleFlash_SMG1_Player(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_SMG1_Player(IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_SMG1_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CLocalSpaceEmitter> pSimple = CLocalSpaceEmitter::Create( "MuzzleFlash_SMG1_Player", hEntity, attachmentIndex, FLE_VIEWMODEL );
@@ -2872,7 +2872,7 @@ void CTempEnts::MuzzleFlash_SMG1_Player(C_BaseEntity* hEntity, int attachmentInd
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_Shotgun_Player(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Shotgun_Player(IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Shotgun_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CSimpleEmitter> pSimple = CSimpleEmitter::Create( "MuzzleFlash_Shotgun_Player" );
@@ -2931,7 +2931,7 @@ void CTempEnts::MuzzleFlash_Shotgun_Player(C_BaseEntity* hEntity, int attachment
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_Shotgun_NPC(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Shotgun_NPC(IClientEntity* hEntity, int attachmentIndex )
 {
 	//Draw the cloud of fire
 	FX_MuzzleEffectAttached( 0.75f, hEntity, attachmentIndex );
@@ -3045,7 +3045,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC(C_BaseEntity* hEntity, int attachmentInd
 //==================================================
 // Purpose: 
 //==================================================
-void CTempEnts::MuzzleFlash_357_Player(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_357_Player(IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_357_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CSimpleEmitter> pSimple = CSimpleEmitter::Create( "MuzzleFlash_357_Player" );
@@ -3132,7 +3132,7 @@ void CTempEnts::MuzzleFlash_357_Player(C_BaseEntity* hEntity, int attachmentInde
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_Pistol_Player(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Pistol_Player(IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Pistol_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CSimpleEmitter> pSimple = CSimpleEmitter::Create( "MuzzleFlash_Pistol_Player" );
@@ -3221,7 +3221,7 @@ void CTempEnts::MuzzleFlash_Pistol_Player(C_BaseEntity* hEntity, int attachmentI
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_Pistol_NPC(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_Pistol_NPC(IClientEntity* hEntity, int attachmentIndex )
 {
 	FX_MuzzleEffectAttached( 0.5f, hEntity, attachmentIndex, NULL, true );
 }
@@ -3234,7 +3234,7 @@ void CTempEnts::MuzzleFlash_Pistol_NPC(C_BaseEntity* hEntity, int attachmentInde
 // Input: 
 //==================================================
 
-void CTempEnts::MuzzleFlash_RPG_NPC(C_BaseEntity* hEntity, int attachmentIndex )
+void CTempEnts::MuzzleFlash_RPG_NPC(IClientEntity* hEntity, int attachmentIndex )
 {
 	//Draw the cloud of fire
 	FX_MuzzleEffectAttached( 1.5f, hEntity, attachmentIndex );

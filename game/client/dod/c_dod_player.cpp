@@ -1049,7 +1049,7 @@ void C_DODPlayer::FireEvent( const Vector& origin, const QAngle& angles, int eve
 			data.m_nHitBox = shellType;
 			data.m_vOrigin = vecOrigin;
 			data.m_vAngles = angAngles;
-			DispatchEffect( "DOD_EjectBrass", data );
+			g_pEffects->DispatchEffect( "DOD_EjectBrass", data );
 		}
 	}
 	else
@@ -1081,7 +1081,7 @@ void C_DODPlayer::FireEvent( const Vector& origin, const QAngle& angles, int eve
 			
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 5.0f );
-			DispatchEffect( "watersplash", data );
+			g_pEffects->DispatchEffect( "watersplash", data );
 		}		
 	}
 	else if( event == 7002 )
@@ -1108,7 +1108,7 @@ void C_DODPlayer::FireEvent( const Vector& origin, const QAngle& angles, int eve
 	
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 7.0f );
-			DispatchEffect( "waterripple", data );
+			g_pEffects->DispatchEffect( "waterripple", data );
 		}
 	}
 	*/
@@ -1806,7 +1806,7 @@ void C_DODPlayer::ProcessMuzzleFlashEvent()
 			data.m_nHitBox = shellType;
 			data.m_vOrigin = vecOrigin;
 			data.m_vAngles = angAngles;
-			DispatchEffect( "DOD_EjectBrass", data );
+			g_pEffects->DispatchEffect( "DOD_EjectBrass", data );
 		}
 	}
 

@@ -28,6 +28,7 @@
 #include "iviewrender.h"
 #include "ixboxsystem.h"
 #include "cdll_util.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -365,11 +366,11 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex, i
 	// Fire it off
 	if ( pCustomTracerName )
 	{
-		DispatchEffect( pCustomTracerName, data );
+		g_pEffects->DispatchEffect( pCustomTracerName, data );
 	}
 	else
 	{
-		DispatchEffect( "Tracer", data );
+		g_pEffects->DispatchEffect( "Tracer", data );
 	}
 }
 

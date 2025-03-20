@@ -9,6 +9,7 @@
 #include "takedamageinfo.h"
 #include "dod_shareddefs.h"
 #include "effect_dispatch_data.h"
+#include "IEffects.h"
 
 #include "weapon_dodbase.h"
 #include "weapon_dodbipodgun.h"
@@ -42,8 +43,6 @@
 
 ConVar dod_bonusround( "dod_bonusround", "1", FCVAR_REPLICATED, "If true, the winners of the round can attack in the intermission." );
 ConVar sv_showimpacts("sv_showimpacts", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Shows client (red) and server (blue) bullet impact point" );
-
-void DispatchEffect( const char *pName, const CEffectData &data );
 
 bool CDODPlayer::CanMove( void ) const
 {
@@ -324,7 +323,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 					data.m_fFlags |= FX_WATER_IN_SLIME;
 				}
 
-				DispatchEffect( "gunshotsplash", data );
+				g_pEffects->DispatchEffect( "gunshotsplash", data );
 			}
 		}
 		else

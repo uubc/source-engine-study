@@ -9,6 +9,7 @@
 #include <KeyValues.h>
 #include "particle_parse.h"
 #include "particles/particles.h"
+#include "IEffects.h"
 
 #ifdef GAME_DLL
 #include "te_effect_dispatch.h"
@@ -260,7 +261,7 @@ void PrecacheStandardParticleSystems( )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, bool bResetAllParticlesOnEntity )
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity, const char *pszAttachmentName, bool bResetAllParticlesOnEntity )
 {
 	int iAttachment = -1;
 	if ( pEntity && pEntity->GetEngineObject()->GetModelPtr() )
@@ -282,7 +283,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, int iAttachmentPoint, bool bResetAllParticlesOnEntity )
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity, int iAttachmentPoint, bool bResetAllParticlesOnEntity )
 {
 	CEffectData	data;
 
@@ -310,12 +311,12 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 		 ( iAttachType == PATTACH_ABSORIGIN_FOLLOW || iAttachType == PATTACH_POINT_FOLLOW || iAttachType == PATTACH_ROOTBONE_FOLLOW ) )
 	{
 		CBroadcastRecipientFilter filter;
-		DispatchEffect( "ParticleEffect", data, filter );
+		g_pEffects->DispatchEffect( "ParticleEffect", data, filter );
 	}
 	else
 #endif
 	{
-		DispatchEffect( "ParticleEffect", data );
+		g_pEffects->DispatchEffect( "ParticleEffect", data );
 	}
 }
 
@@ -323,7 +324,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, Vector vecColor1, Vector vecColor2, bool bUseColors, bool bResetAllParticlesOnEntity )
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity, const char *pszAttachmentName, Vector vecColor1, Vector vecColor2, bool bUseColors, bool bResetAllParticlesOnEntity )
 {
 	int iAttachment = -1;
 	if ( pEntity && pEntity->GetEngineObject()->GetModelPtr() )
@@ -370,12 +371,12 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 		 ( iAttachType == PATTACH_ABSORIGIN_FOLLOW || iAttachType == PATTACH_POINT_FOLLOW || iAttachType == PATTACH_ROOTBONE_FOLLOW ) )
 	{
 		CReliableBroadcastRecipientFilter filter;
-		DispatchEffect( "ParticleEffect", data, filter );
+		g_pEffects->DispatchEffect( "ParticleEffect", data, filter );
 	}
 	else
 #endif
 	{
-		DispatchEffect( "ParticleEffect", data );
+		g_pEffects->DispatchEffect( "ParticleEffect", data );
 	}
 }
 
@@ -383,7 +384,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart, QAngle vecAngles, CBaseEntity *pEntity )
+void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart, QAngle vecAngles, IHandleEntity *pEntity )
 {
 	CEffectData	data;
 
@@ -411,14 +412,14 @@ void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart
 #endif
 	}
 
-	DispatchEffect( "ParticleEffect", data );
+	g_pEffects->DispatchEffect( "ParticleEffect", data );
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, Vector vecColor1, Vector vecColor2, bool bUseColors, CBaseEntity *pEntity, int iAttachType )
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, Vector vecColor1, Vector vecColor2, bool bUseColors, IHandleEntity *pEntity, int iAttachType )
 {
 	int iEffectIndex = GetParticleSystemIndex( pszParticleName );
 
@@ -454,14 +455,14 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAng
 		data.m_CustomColors.m_vecColor2 = vecColor2;
 	}
 
-	DispatchEffect( "ParticleEffect", data );
+	g_pEffects->DispatchEffect( "ParticleEffect", data );
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, CBaseEntity *pEntity )
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, IHandleEntity *pEntity )
 {
 	int iIndex = GetParticleSystemIndex( pszParticleName );
 	DispatchParticleEffect( iIndex, vecOrigin, vecOrigin, vecAngles, pEntity );
@@ -470,7 +471,7 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAng
 //-----------------------------------------------------------------------------
 // Purpose: Yet another overload, lets us supply vecStart
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vector vecStart, QAngle vecAngles, CBaseEntity *pEntity )
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vector vecStart, QAngle vecAngles, IHandleEntity *pEntity )
 {
 	int iIndex = GetParticleSystemIndex( pszParticleName );
 	DispatchParticleEffect( iIndex, vecOrigin, vecStart, vecAngles, pEntity );
@@ -479,7 +480,7 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vect
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void StopParticleEffects( CBaseEntity *pEntity )
+void StopParticleEffects( IHandleEntity *pEntity )
 {
 	CEffectData	data;
 
@@ -494,9 +495,9 @@ void StopParticleEffects( CBaseEntity *pEntity )
 
 #ifdef GAME_DLL
 	CReliableBroadcastRecipientFilter filter;
-	DispatchEffect( "ParticleEffectStop", data, filter );
+	g_pEffects->DispatchEffect( "ParticleEffectStop", data, filter );
 #else
-	DispatchEffect( "ParticleEffectStop", data );
+	g_pEffects->DispatchEffect( "ParticleEffectStop", data );
 #endif
 }
 
@@ -535,7 +536,7 @@ void StopParticleEffects( CBaseEntity *pEntity )
 			DispatchParticleEffect( 
 				pszParticleFile,
 				(ParticleAttachment_t)iAttachType,
-				(CBaseEntity*)pEntity,
+				pEntity,
 				iAttachmentIndex,
 				true );				// stops existing particle systems
 		}
@@ -557,7 +558,7 @@ void StopParticleEffects( CBaseEntity *pEntity )
 		while ( (pEntity = GetNextCommandEntity( pPlayer, name, pEntity )) != NULL )
 		{
 			//Stop all particle systems on the selected entity
-			DispatchParticleEffect( "", PATTACH_ABSORIGIN, (CBaseEntity*)pEntity, 0, true );
+			DispatchParticleEffect( "", PATTACH_ABSORIGIN, pEntity, 0, true );
 		}
 	}
 

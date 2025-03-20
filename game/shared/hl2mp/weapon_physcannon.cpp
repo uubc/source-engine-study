@@ -2950,7 +2950,7 @@ extern void FX_GaussExplosion( const Vector &pos, const Vector &dir, int type );
 
 void CallbackPhyscannonImpact( const CEffectData &data )
 {
-	C_BaseEntity *pEnt = data.GetEntity();
+	IClientEntity *pEnt = data.GetEntity();
 	if ( pEnt == NULL )
 		return;
 

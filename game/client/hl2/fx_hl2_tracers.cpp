@@ -404,7 +404,7 @@ DECLARE_CLIENT_EFFECT( "AR2Impact", AR2ImpactCallback );
 //-----------------------------------------------------------------------------
 // Creates a muzzleflash elight
 //-----------------------------------------------------------------------------
-void CreateMuzzleflashELight( const Vector &origin, int exponent, int nMinRadius, int nMaxRadius, C_BaseEntity* hEntity )
+void CreateMuzzleflashELight( const Vector &origin, int exponent, int nMinRadius, int nMaxRadius, IClientEntity* hEntity )
 {
 	if ( muzzleflash_light.GetInt() )
 	{
@@ -431,7 +431,7 @@ void CreateMuzzleflashELight( const Vector &origin, int exponent, int nMinRadius
 //-----------------------------------------------------------------------------
 // Airboat muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Airboat( C_BaseEntity* hEntity, int attachmentIndex )
+void MuzzleFlash_Airboat( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Airboat", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -521,7 +521,7 @@ void MuzzleFlash_Airboat( C_BaseEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void AirboatMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Airboat( data.m_hEntity, data.m_nAttachmentIndex );
+	MuzzleFlash_Airboat( data.GetEntity(), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "AirboatMuzzleFlash", AirboatMuzzleFlashCallback );
@@ -530,7 +530,7 @@ DECLARE_CLIENT_EFFECT( "AirboatMuzzleFlash", AirboatMuzzleFlashCallback );
 //-----------------------------------------------------------------------------
 // Chopper muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Chopper( C_BaseEntity* hEntity, int attachmentIndex )
+void MuzzleFlash_Chopper( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Chopper", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -586,7 +586,7 @@ void MuzzleFlash_Chopper( C_BaseEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void ChopperMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Chopper( data.m_hEntity, data.m_nAttachmentIndex );
+	MuzzleFlash_Chopper( data.GetEntity(), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "ChopperMuzzleFlash", ChopperMuzzleFlashCallback );
@@ -595,7 +595,7 @@ DECLARE_CLIENT_EFFECT( "ChopperMuzzleFlash", ChopperMuzzleFlashCallback );
 //-----------------------------------------------------------------------------
 // Gunship muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Gunship( C_BaseEntity* hEntity, int attachmentIndex )
+void MuzzleFlash_Gunship( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Gunship", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -647,7 +647,7 @@ void MuzzleFlash_Gunship( C_BaseEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void GunshipMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Gunship( data.m_hEntity, data.m_nAttachmentIndex );
+	MuzzleFlash_Gunship( data.GetEntity(), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "GunshipMuzzleFlash", GunshipMuzzleFlashCallback );
@@ -656,7 +656,7 @@ DECLARE_CLIENT_EFFECT( "GunshipMuzzleFlash", GunshipMuzzleFlashCallback );
 //-----------------------------------------------------------------------------
 // Hunter muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Hunter( C_BaseEntity* hEntity, int attachmentIndex )
+void MuzzleFlash_Hunter( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Hunter", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -688,7 +688,7 @@ void MuzzleFlash_Hunter( C_BaseEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void HunterMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Hunter( data.m_hEntity, data.m_nAttachmentIndex );
+	MuzzleFlash_Hunter( data.GetEntity(), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "HunterMuzzleFlash", HunterMuzzleFlashCallback );

@@ -1079,7 +1079,7 @@ void CNPC_CombineGunship::DoBellyBlastDamage( trace_t &tr, Vector vMins, Vector 
 			data.m_vNormal	= groundTrace.plane.normal;
 			data.m_vOrigin	= groundTrace.endpos;
 
-			DispatchEffect( "AR2Explosion", data );
+			g_pEffects->DispatchEffect( "AR2Explosion", data );
 		}
 
 		// If the creature was killed, then dissolve it
@@ -1152,7 +1152,7 @@ void CNPC_CombineGunship::DoGroundAttackExplosion( void )
 		data.m_vNormal	= tr.plane.normal;
 		data.m_vOrigin	= tr.endpos;
 		
-		DispatchEffect( "AR2Explosion", data );
+		g_pEffects->DispatchEffect( "AR2Explosion", data );
 	}
 
 	float flZLength = vecAttachmentOrigin.z - tr.endpos.z;
@@ -1794,7 +1794,7 @@ void CNPC_CombineGunship::DoMuzzleFlash( void )
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "muzzle" );
 	data.m_nEntIndex = entindex();
-	DispatchEffect( "GunshipMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "GunshipMuzzleFlash", data );
 }
 
 //-----------------------------------------------------------------------------
@@ -2839,7 +2839,7 @@ void CNPC_CombineGunship::DoImpactEffect( trace_t &tr, int nDamageType )
 	data.m_vNormal = vec3_origin;
 	data.m_vAngles = vec3_angle;
 
-	DispatchEffect( "GunshipImpact", data );
+	g_pEffects->DispatchEffect( "GunshipImpact", data );
 #endif
 }
 

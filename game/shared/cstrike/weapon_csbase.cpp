@@ -11,6 +11,7 @@
 #include "weapon_csbase.h"
 #include "ammodef.h"
 #include "cs_gamerules.h"
+#include "IEffects.h"
 
 #define ALLOW_WEAPON_SPREAD_DISPLAY	0
 
@@ -1344,14 +1345,14 @@ void CWeaponCSBase::DefaultTouch(IServerEntity *pOther)
 
 			case CS_MUZZLEFLASH_X:
 				{
-					DispatchEffect( "CS_MuzzleFlash_X", data );
+					g_pEffects->DispatchEffect( "CS_MuzzleFlash_X", data );
 				}
 				break;
 
 			case CS_MUZZLEFLASH_NORM:
 			default:
 				{
-					DispatchEffect( "CS_MuzzleFlash", data );
+					g_pEffects->DispatchEffect( "CS_MuzzleFlash", data );
 				}
 				break;
 			}
@@ -1789,7 +1790,7 @@ bool CWeaponCSBase::PhysicsSplash( const Vector &centerPoint, const Vector &norm
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}
 
-		DispatchEffect( "gunshotsplash", data );
+		g_pEffects->DispatchEffect( "gunshotsplash", data );
 
 		return true;
 	}

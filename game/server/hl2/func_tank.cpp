@@ -2227,7 +2227,7 @@ void CFuncTank::DoMuzzleFlash( void )
 			data.m_nEntIndex = pAnim->entindex();
 			
 			// FIXME: Create a custom entry here!
-			DispatchEffect( "ChopperMuzzleFlash", data );
+			g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );
 		}
 		else
 		{
@@ -2237,7 +2237,7 @@ void CFuncTank::DoMuzzleFlash( void )
 			data.m_flScale = 1.0f;
 			data.m_fFlags = MUZZLEFLASH_COMBINE;
 
-			DispatchEffect( "MuzzleFlash", data );
+			g_pEffects->DispatchEffect( "MuzzleFlash", data );
 		}
 	}
 }
@@ -3049,7 +3049,7 @@ void CFuncTankAirboatGun::DoMuzzleFlash( void )
 		data.m_nEntIndex = m_hAirboatGunModel->entindex();
 		data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 		data.m_flScale = 1.0f;
-		DispatchEffect( "AirboatMuzzleFlash", data );
+		g_pEffects->DispatchEffect( "AirboatMuzzleFlash", data );
 	}
 }
 
@@ -3731,7 +3731,7 @@ void CMortarShell::Impact( void )
 		data.m_vNormal	= tr.plane.normal;
 		data.m_vOrigin	= tr.endpos;
 		
-		DispatchEffect( "AR2Explosion", data );
+		g_pEffects->DispatchEffect( "AR2Explosion", data );
 	}
 
 	//Shockring

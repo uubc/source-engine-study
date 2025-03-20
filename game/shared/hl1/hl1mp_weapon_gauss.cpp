@@ -11,6 +11,7 @@
 //#include "basecombatcharacter.h"
 //#include "AI_BaseNPC.h"
 #include "takedamageinfo.h"
+#include "IEffects.h"
 #ifdef CLIENT_DLL
 #include "hl1/hl1_c_player.h"
 #else
@@ -534,7 +535,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 				data1.m_vOrigin		= tr.endpos;
 				data1.m_vNormal		= tr.plane.normal;
 				data1.m_flMagnitude	= flDamage * n;
-				DispatchEffect( "HL1GaussReflect", data1 );
+				g_pEffects->DispatchEffect( "HL1GaussReflect", data1 );
 
 				// lose energy
 				if (n == 0)
@@ -550,7 +551,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 				CEffectData	data4;
 				data4.m_vOrigin		= tr.endpos;
 				data4.m_flMagnitude	= flDamage;
-				DispatchEffect( "HL1GaussWallImpact1", data4 );
+				g_pEffects->DispatchEffect( "HL1GaussWallImpact1", data4 );
 
 				// limit it to one hole punch
 				if ( fHasPunched )
@@ -582,7 +583,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 							CEffectData	data2;
 							data2.m_vOrigin		= tr.endpos;
 							data2.m_vNormal		= vecDir;
-							DispatchEffect( "HL1GaussWallPunchEnter", data2 );
+							g_pEffects->DispatchEffect( "HL1GaussWallPunchEnter", data2 );
 
 							UTIL_ImpactTrace( &exit_tr, DMG_ENERGYBEAM );
 
@@ -590,7 +591,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 							data3.m_vOrigin		= exit_tr.endpos;
 							data3.m_vNormal		= vecDir;
 							data3.m_flMagnitude	= flDamage;
-							DispatchEffect( "HL1GaussWallPunchExit", data3 );
+							g_pEffects->DispatchEffect( "HL1GaussWallPunchExit", data3 );
 
 							// ALERT( at_console, "punch %f\n", n );
 
@@ -631,7 +632,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 						CEffectData	data5;
 						data5.m_vOrigin		= tr.endpos;
 						data5.m_vNormal		= tr.plane.normal;
-						DispatchEffect( "HL1GaussWallImpact2", data5 );
+						g_pEffects->DispatchEffect( "HL1GaussWallImpact2", data5 );
 #if !defined( CLIENT_DLL)
 						CSoundEnt::InsertSound( SOUND_COMBAT, GetEngineObject()->GetAbsOrigin(), 600, 0.5 );
 #endif

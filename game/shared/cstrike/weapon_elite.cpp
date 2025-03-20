@@ -7,7 +7,7 @@
 #include "cbase.h"
 #include "weapon_csbase.h"
 #include "fx_cs_shared.h"
-
+#include "IEffects.h"
 
 #if defined( CLIENT_DLL )
 
@@ -303,7 +303,7 @@ void CWeaponElite::WeaponIdle()
 			data.m_nAttachmentIndex = FiringLeft() ? 1 : 2; // toggle muzzle flash
 			data.m_flScale = GetCSWpnData().m_flMuzzleScale;
 		
-			DispatchEffect( "CS_MuzzleFlash", data );
+			g_pEffects->DispatchEffect( "CS_MuzzleFlash", data );
 
 			return true;
 		}

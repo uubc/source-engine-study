@@ -98,7 +98,7 @@ DECLARE_CLIENT_EFFECT( "RagdollImpact", RagdollImpactCallback );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType, int iHitbox, C_BaseEntity *pEntity, trace_t &tr, int nFlags, int maxLODToDecal )
+bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType, int iHitbox, IClientEntity *pEntity, trace_t &tr, int nFlags, int maxLODToDecal )
 {
 	VPROF( "Impact" );
 
@@ -188,7 +188,7 @@ bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-char const *GetImpactDecal( C_BaseEntity *pEntity, int iMaterial, int iDamageType )
+char const *GetImpactDecal( IClientEntity *pEntity, int iMaterial, int iDamageType )
 {
 	char const *decalName;
 	if ( !pEntity )
@@ -365,7 +365,7 @@ void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &s
 // Purpose: Play a sound for an impact. If tr contains a valid hit, use that. 
 //			If not, use the passed in origin & surface.
 //-----------------------------------------------------------------------------
-void PlayImpactSound( CBaseEntity *pEntity, trace_t &tr, Vector &vecServerOrigin, int nServerSurfaceProp )
+void PlayImpactSound( IClientEntity *pEntity, trace_t &tr, Vector &vecServerOrigin, int nServerSurfaceProp )
 {
 	VPROF( "PlayImpactSound" );
 	surfacedata_t *pdata;
@@ -428,10 +428,10 @@ void SetImpactSoundRoute( ImpactSoundRouteFn fn )
 //			*iHitbox - 
 //			*iEntIndex - 
 //-----------------------------------------------------------------------------
-C_BaseEntity *ParseImpactData( const CEffectData &data, Vector *vecOrigin, Vector *vecStart, 
+IClientEntity *ParseImpactData( const CEffectData &data, Vector *vecOrigin, Vector *vecStart, 
 	Vector *vecShotDir, short &nSurfaceProp, int &iMaterial, int &iDamageType, int &iHitbox )
 {
-	C_BaseEntity *pEntity = data.GetEntity( );
+	IClientEntity *pEntity = data.GetEntity( );
 	*vecOrigin = data.m_vOrigin;
 	*vecStart = data.m_vStart;
 	nSurfaceProp = data.m_nSurfaceProp;

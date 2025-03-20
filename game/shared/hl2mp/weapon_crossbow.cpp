@@ -7,6 +7,7 @@
 #include "cbase.h"
 #include "npcevent.h"
 #include "in_buttons.h"
+#include "IEffects.h"
 
 #ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
@@ -14,7 +15,6 @@
 #else
 	#include "hl2mp_player.h"
 	#include "te_effect_dispatch.h"
-	#include "IEffects.h"
 	#include "Sprite.h"
 	#include "SpriteTrail.h"
 	#include "beam_shared.h"
@@ -267,7 +267,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = tr2.fraction != 1.0f;
 			
-				DispatchEffect( "BoltImpact", data );
+				g_pEffects->DispatchEffect( "BoltImpact", data );
 			}
 		}
 		
@@ -335,7 +335,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = 0;
 			
-				DispatchEffect( "BoltImpact", data );
+				g_pEffects->DispatchEffect( "BoltImpact", data );
 				
 				UTIL_ImpactTrace( &tr, DMG_BULLET );
 
@@ -824,7 +824,7 @@ void CWeaponCrossbow::DoLoadEffect( void )
 #endif
 	data.m_nAttachmentIndex = 1;
 
-	DispatchEffect( "CrossbowLoad", data );
+	g_pEffects->DispatchEffect( "CrossbowLoad", data );
 
 #ifndef CLIENT_DLL
 

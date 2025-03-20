@@ -25,6 +25,7 @@
 #include "particle_parse.h"
 #include "gameweaponmanager.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 extern ConVar hunter_hate_held_striderbusters;
 extern ConVar hunter_hate_thrown_striderbusters;
@@ -559,14 +560,14 @@ void CWeaponStriderBuster::CreateDestroyedEffect( void )
 		data.m_vNormal.z = 0.0f;
 		data.m_flScale = ( random->RandomInt( 0, 5 ) == 0 ) ? 1 : 2;
 
-		DispatchEffect( "StriderBlood", data );
+		g_pEffects->DispatchEffect( "StriderBlood", data );
 	}
 
 	// More effects
 	UTIL_ScreenShake(GetEngineObject()->GetAbsOrigin(), 20.0f, 150.0, 1.0, 1250.0f, SHAKE_START );
 
 	data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
-	DispatchEffect( "cball_explode", data );
+	g_pEffects->DispatchEffect( "cball_explode", data );
 }
 
 //-----------------------------------------------------------------------------

@@ -26,6 +26,7 @@
 #include "eventqueue.h"
 #include "physics_collisionevent.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1067,7 +1068,7 @@ void CPropCombineBall::DoExplosion( )
 
 		data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
 
-		DispatchEffect( "cball_explode", data );
+		g_pEffects->DispatchEffect( "cball_explode", data );
 
 		te->BeamRingPoint( filter2, 0, GetEngineObject()->GetAbsOrigin(),	//origin
 			m_flRadius,	//start radius
@@ -1365,7 +1366,7 @@ void CPropCombineBall::DoImpactEffect( const Vector &preVelocity, int index, gam
 		data.m_vNormal	= tr.plane.normal;
 		data.m_vOrigin	= tr.endpos + tr.plane.normal * 1.0f;
 
-		DispatchEffect( "cball_bounce", data );
+		g_pEffects->DispatchEffect( "cball_bounce", data );
 	}
 
 	if ( hl2_episodic.GetBool() )

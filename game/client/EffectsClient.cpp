@@ -8,6 +8,8 @@
 #include "IEffects.h"
 #include "fx.h"
 #include "c_te_legacytempents.h"
+#include "fx_water.h"
+#include "effect_dispatch_data.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -15,7 +17,7 @@
 //-----------------------------------------------------------------------------
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
-class CEffectsClient : public IEffects
+class CEffectsClient : public IEffects, public IPredictionSystem
 {
 public:
 	CEffectsClient();
@@ -41,6 +43,16 @@ public:
 	virtual bool IsServer();
 	virtual void SuppressEffectsSounds( bool bSuppress );
 
+	virtual void WaterRipple(const Vector& origin, float scale, Vector* pColor, float flLifetime = 1.5, float flAlpha = 1);
+	virtual void GunshotSplash(const Vector& origin, const Vector& normal, float scale);
+	virtual void GunshotSlimeSplash(const Vector& origin, const Vector& normal, float scale);
+	virtual void GetSplashLighting(Vector position, Vector* color, float* luminosity);
+
+	virtual void DispatchEffect(const char* pName, const CEffectData& data);
+	virtual void DispatchEffect(const char* pName, const CEffectData& data, IRecipientFilter& filter) 
+	{
+		DispatchEffect(pName, data);
+	}
 private:
 	//-----------------------------------------------------------------------------
 	// Purpose: Returning true means don't even call TE func
@@ -228,4 +240,29 @@ bool CEffectsClient::IsServer()
 	return false;
 }
 
+void CEffectsClient::WaterRipple(const Vector& origin, float scale, Vector* pColor, float flLifetime, float flAlpha)
+{
+	FX_WaterRipple(origin, scale, pColor, flLifetime, flAlpha);
+}
 
+void CEffectsClient::GunshotSplash(const Vector& origin, const Vector& normal, float scale)
+{
+	FX_GunshotSplash(origin, normal, scale);
+}
+
+void CEffectsClient::GunshotSlimeSplash(const Vector& origin, const Vector& normal, float scale)
+{
+	FX_GunshotSlimeSplash(origin, normal, scale);
+}
+
+void CEffectsClient::GetSplashLighting(Vector position, Vector* color, float* luminosity)
+{
+	FX_GetSplashLighting(position, color, luminosity);
+}
+
+// Client version of dispatch effect, for predicted weapons
+void CEffectsClient::DispatchEffect(const char* pName, const CEffectData& data)
+{
+	CPASFilter filter(data.m_vOrigin);
+	te->DispatchEffect(filter, 0.0, data.m_vOrigin, pName, data);
+}

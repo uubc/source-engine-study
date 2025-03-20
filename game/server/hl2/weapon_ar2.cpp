@@ -26,6 +26,7 @@
 #include "npc_combine.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -190,7 +191,7 @@ void CWeaponAR2::DoImpactEffect( trace_t &tr, int nDamageType )
 	data.m_vOrigin = tr.endpos + ( tr.plane.normal * 1.0f );
 	data.m_vNormal = tr.plane.normal;
 
-	DispatchEffect( "AR2Impact", data );
+	g_pEffects->DispatchEffect( "AR2Impact", data );
 
 	BaseClass::DoImpactEffect( tr, nDamageType );
 }

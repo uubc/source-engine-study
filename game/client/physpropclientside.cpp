@@ -14,7 +14,7 @@
 #include "datacache/imdlcache.h"
 #include "iviewrender.h"
 #include "tier0/vprof.h"
-
+#include "IEffects.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -599,11 +599,11 @@ void C_PhysPropClientside::ImpactTrace( trace_t *pTrace, int iDamageType, const 
 		// Send it on its way
 		if ( !pCustomImpactName )
 		{
-			DispatchEffect( "Impact", data );
+			g_pEffects->DispatchEffect( "Impact", data );
 		}
 		else
 		{
-			DispatchEffect( pCustomImpactName, data );
+			g_pEffects->DispatchEffect( pCustomImpactName, data );
 		}
 	}
 

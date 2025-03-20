@@ -238,7 +238,7 @@ void CWeaponStunStick::ImpactEffect( trace_t &traceHit )
 	data.m_vNormal = traceHit.plane.normal;
 	data.m_vOrigin = traceHit.endpos + ( data.m_vNormal * 4.0f );
 
-	DispatchEffect( "StunstickImpact", data );
+	g_pEffects->DispatchEffect( "StunstickImpact", data );
 
 //#endif
 

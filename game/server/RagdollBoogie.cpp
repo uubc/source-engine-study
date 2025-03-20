@@ -116,7 +116,7 @@ void CRagdollBoogie::ZapThink()
 		data.m_flMagnitude = 4;
 		data.m_flScale = GetEngineObject()->HasSpawnFlags(SF_RAGDOLL_BOOGIE_ELECTRICAL_NARROW_BEAM) ? 1.0f : 2.0f;
 
-		DispatchEffect( "TeslaHitboxes", data );	
+		g_pEffects->DispatchEffect( "TeslaHitboxes", data );
 	}
 
 #ifdef HL2_EPISODIC

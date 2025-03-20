@@ -6,6 +6,7 @@
 
 #include "cbase.h"
 #include "basecsgrenade_projectile.h"
+#include "IEffects.h"
 
 float GetCurrentGravity( void );
 
@@ -340,7 +341,7 @@ END_NETWORK_TABLE()
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}
 
-		DispatchEffect( "gunshotsplash", data );
+		g_pEffects->DispatchEffect( "gunshotsplash", data );
 	}
 
 #endif // !CLIENT_DLL

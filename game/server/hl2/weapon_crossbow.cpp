@@ -297,7 +297,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = tr2.fraction != 1.0f;
 			
-				DispatchEffect( "BoltImpact", data );
+				g_pEffects->DispatchEffect( "BoltImpact", data );
 			}
 		}
 		
@@ -368,7 +368,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = 0;
 			
-				DispatchEffect( "BoltImpact", data );
+				g_pEffects->DispatchEffect( "BoltImpact", data );
 				
 				UTIL_ImpactTrace( &tr, DMG_BULLET );
 
@@ -832,7 +832,7 @@ void CWeaponCrossbow::DoLoadEffect( void )
 	data.m_nEntIndex = pViewModel->entindex();
 	data.m_nAttachmentIndex = 1;
 
-	DispatchEffect( "CrossbowLoad", data );
+	g_pEffects->DispatchEffect( "CrossbowLoad", data );
 
 	CSprite *pBlast = CSprite::SpriteCreate( CROSSBOW_GLOW_SPRITE2, GetEngineObject()->GetAbsOrigin(), false );
 

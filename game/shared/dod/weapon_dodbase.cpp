@@ -11,6 +11,7 @@
 #include "weapon_dodbase.h"
 #include "ammodef.h"
 #include "dod_gamerules.h"
+#include "IEffects.h"
 
 #ifdef CLIENT_DLL
 extern IVModelInfoClient* modelinfo;
@@ -1329,7 +1330,7 @@ void CWeaponDODBase::Smack()
 			data.m_hEntity = GetPlayerOwner() ? GetPlayerOwner() : NULL;
 			pViewModel->GetEngineObject()->GetAttachment( 2, data.m_vOrigin, data.m_vAngles );
 
-			DispatchEffect( "DOD_EjectBrass", data );
+			g_pEffects->DispatchEffect( "DOD_EjectBrass", data );
 			return true;
 		}
 

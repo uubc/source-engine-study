@@ -191,7 +191,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 			data.m_vNormal = vForward;
 			data.m_nEntIndex = tr2.fraction != 1.0f;
 		
-			DispatchEffect( "BoltImpact", data );
+			g_pEffects->DispatchEffect( "BoltImpact", data );
 		}
 
         if ( !g_pGameRules->IsMultiplayer() || !m_bExplode )
@@ -226,7 +226,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 			data.m_vNormal = vForward;
 			data.m_nEntIndex = 0;
 
-			DispatchEffect( "BoltImpact", data );
+			g_pEffects->DispatchEffect( "BoltImpact", data );
 		}
 
 		if (  UTIL_PointContents(EntityList(), GetEngineObject()->GetAbsOrigin() ) != CONTENTS_WATER)

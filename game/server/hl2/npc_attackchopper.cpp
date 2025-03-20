@@ -2028,7 +2028,7 @@ void CNPC_AttackHelicopter::DoMuzzleFlash( void )
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "muzzle" );
 	data.m_nEntIndex = entindex();
-	DispatchEffect( "ChopperMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );
 }
 
 //------------------------------------------------------------------------------
@@ -2543,7 +2543,7 @@ void CNPC_AttackHelicopter::CreateZapBeam( const Vector &vecTargetPos )
 	data.m_nAttachmentIndex = 0; // m_nGunTipAttachment;
 	data.m_vOrigin = vecTargetPos;
 	data.m_flScale = 5;
-	DispatchEffect( "TeslaZap", data ); 
+	g_pEffects->DispatchEffect( "TeslaZap", data );
 }
 
 void CNPC_AttackHelicopter::CreateEntityZapEffect( CBaseEntity *pEnt )
@@ -2552,7 +2552,7 @@ void CNPC_AttackHelicopter::CreateEntityZapEffect( CBaseEntity *pEnt )
 	data.m_nEntIndex = pEnt->entindex();
 	data.m_flMagnitude = 10;
 	data.m_flScale = 1.0f;
-	DispatchEffect( "TeslaHitboxes", data );
+	g_pEffects->DispatchEffect( "TeslaHitboxes", data );
 }
 
 
@@ -3439,7 +3439,7 @@ void CNPC_AttackHelicopter::ExplodeAndThrowChunk( const Vector &vecExplosionPos 
 {
 	CEffectData data;
 	data.m_vOrigin = vecExplosionPos;
-	DispatchEffect( "HelicopterMegaBomb", data );
+	g_pEffects->DispatchEffect( "HelicopterMegaBomb", data );
 
 	const char* soundname = "BaseExplosionEffect.Sound";
 	CPASAttenuationFilter filter(this, soundname);
@@ -5442,13 +5442,13 @@ void CGrenadeHelicopter::DoExplosion( const Vector &vecOrigin, const Vector &vec
 		data.m_flMagnitude = 128;
 		data.m_flScale = 128;
 		data.m_fFlags = 0;
-		DispatchEffect( "WaterSurfaceExplosion", data );
+		g_pEffects->DispatchEffect( "WaterSurfaceExplosion", data );
 	}
 	else
 	{
 		// Otherwise do a normal explosion
 		data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
-		DispatchEffect( "HelicopterMegaBomb", data );
+		g_pEffects->DispatchEffect( "HelicopterMegaBomb", data );
 	}
 
 	EntityList()->DestroyEntity( this );
@@ -6022,7 +6022,7 @@ void CHelicopterChunk::FallThink( void )
 	{
 		CEffectData data;
 		data.m_vOrigin = GetEngineObject()->GetAbsOrigin() + RandomVector( -64, 64 );
-		DispatchEffect( "HelicopterMegaBomb", data );
+		g_pEffects->DispatchEffect( "HelicopterMegaBomb", data );
 
 		const char* soundname = "BaseExplosionEffect.Sound";
 		CPASAttenuationFilter filter(this, soundname);

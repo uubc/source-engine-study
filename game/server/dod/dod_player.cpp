@@ -43,6 +43,7 @@
 #include "gameinterface.h"
 #include "holiday_gift.h"
 #include "physics_prop_ragdoll.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1509,7 +1510,7 @@ void CDODPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, 
 		data.m_nEntIndex = ptr->m_pEnt ? ptr->m_pEnt->entindex() : 0;
 		data.m_flMagnitude = flDamage;
 
-		DispatchEffect( "dodblood", data );
+		g_pEffects->DispatchEffect( "dodblood", data );
 
 		CTakeDamageInfo subInfo = info;
 

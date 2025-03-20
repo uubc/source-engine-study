@@ -16,7 +16,7 @@
 #include "vstdlib/random.h"
 #include "engine/IEngineSound.h"
 #include "npcevent.h"
-
+#include "IEffects.h"
 #include "effect_dispatch_data.h"
 #include "te_effect_dispatch.h"
 #include "cplane.h"
@@ -175,7 +175,7 @@ bool CHL1BaseNPC::CorpseGib( const ITakeDamageInfo&info )
 	
 	data.m_nColor = BloodColor();
 
-	DispatchEffect( "HL1Gib", data );
+	g_pEffects->DispatchEffect( "HL1Gib", data );
 
 	CSoundEnt::InsertSound( SOUND_MEAT, GetEngineObject()->GetAbsOrigin(), 256, 0.5f, this );
 
@@ -197,7 +197,7 @@ void CHL1BaseNPC::EjectShell( const Vector &vecOrigin, const Vector &vecVelocity
 	data.m_vAngles	= QAngle( 0, rotation, 0 );
 	data.m_fFlags	= iType;
 
-	DispatchEffect( "HL1ShellEject", data );
+	g_pEffects->DispatchEffect( "HL1ShellEject", data );
 }
 
 // HL1 version - never return Ragdoll as the automatic schedule at the end of a 

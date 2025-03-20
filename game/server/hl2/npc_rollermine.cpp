@@ -39,6 +39,7 @@
 #include "RagdollBoogie.h"
 #include "physics_collisionevent.h"
 #include "gameinterface.h"
+#include "IEffects.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -2628,7 +2629,7 @@ void CNPC_RollerMine::Explode( void )
 		data.m_flMagnitude = expDamage;
 		data.m_flScale = 128;
 		data.m_fFlags = ( SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE );
-		DispatchEffect( "WaterSurfaceExplosion", data );
+		g_pEffects->DispatchEffect( "WaterSurfaceExplosion", data );
 	}
 	else
 	{

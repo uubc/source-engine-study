@@ -11,6 +11,7 @@
 #include "weapon_c4.h"
 #include "in_buttons.h"
 #include "datacache/imdlcache.h"
+#include "IEffects.h"
 
 #ifdef CLIENT_DLL
 	#include "c_cs_player.h"
@@ -36,9 +37,6 @@ ConVar sv_showimpacts("sv_showimpacts", "0", FCVAR_REPLICATED, "Shows client (re
 ConVar sv_showplayerhitboxes( "sv_showplayerhitboxes", "0", FCVAR_REPLICATED, "Show lag compensated hitboxes for the specified player index whenever a player fires." );
 
 #define	CS_MASK_SHOOT (MASK_SOLID|CONTENTS_DEBRIS)
-
-void DispatchEffect( const char *pName, const CEffectData &data );
-
 
 #ifdef _DEBUG
 
@@ -539,7 +537,7 @@ void CCSPlayer::FireBullet(
 						data.m_fFlags |= FX_WATER_IN_SLIME;
 					}
 
-					DispatchEffect( "gunshotsplash", data );
+					g_pEffects->DispatchEffect( "gunshotsplash", data );
 				}
 			}
 			else

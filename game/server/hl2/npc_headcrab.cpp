@@ -32,6 +32,7 @@
 #include "physics_npc_solver.h"
 #include "hl2_gamerules.h"
 #include "decals.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -2412,7 +2413,7 @@ void CBaseHeadcrab::CreateDust( bool placeDecal )
 			//CEffectData data;
 			//data.m_vOrigin = GetAbsOrigin();
 			//data.m_vNormal = tr.plane.normal;
-			//DispatchEffect( "headcrabdust", data );
+			//g_pEffects->DispatchEffect( "headcrabdust", data );
 			
 			if ( placeDecal )
 			{

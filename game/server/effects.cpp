@@ -1159,7 +1159,7 @@ void UTIL_BloodSpray( const Vector &pos, const Vector &dir, int color, int amoun
 	data.m_fFlags = flags;
 	data.m_nColor = color;
 
-	DispatchEffect( "bloodspray", data );
+	g_pEffects->DispatchEffect( "bloodspray", data );
 }
 
 //-----------------------------------------------------------------------------
@@ -2019,7 +2019,7 @@ void CEnvSplash::InputSplash( inputdata_t &inputdata )
 	data.m_vNormal = Vector( 0, 0, 1 );
 	data.m_flScale = scale;
 
-	DispatchEffect( "watersplash", data );
+	g_pEffects->DispatchEffect( "watersplash", data );
 }
 
 

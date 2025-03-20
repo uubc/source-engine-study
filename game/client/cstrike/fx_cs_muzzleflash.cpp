@@ -22,14 +22,14 @@ void TE_DynamicLight( IRecipientFilter& filter, float delay,
 void CS_MuzzleFlashCallback( const CEffectData &data )
 {
 	CSmartPtr<CLocalSpaceEmitter> pEmitter = 
-		CLocalSpaceEmitter::Create( "CS_MuzzleFlash", data.m_hEntity, data.m_nAttachmentIndex, 0 );
+		CLocalSpaceEmitter::Create( "CS_MuzzleFlash", data.GetEntity(), data.m_nAttachmentIndex, 0);
 
 	if ( !pEmitter )
 		return;
 
 	// SetBBox() manually on the particle system so it doesn't have to be recalculated more than once.
 	Vector vCenter( 0.0f, 0.0f, 0.0f );
-	C_BaseEntity *pEnt = data.GetEntity();
+	IClientEntity *pEnt = data.GetEntity();
 	if ( pEnt )
 	{
 		vCenter = pEnt->WorldSpaceCenter();
@@ -95,7 +95,7 @@ DECLARE_CLIENT_EFFECT( "CS_MuzzleFlash", CS_MuzzleFlashCallback );
 void CS_MuzzleFlashXCallback( const CEffectData &data )
 {
 	CSmartPtr<CLocalSpaceEmitter> pEmitter = 
-		CLocalSpaceEmitter::Create( "CS_MuzzleFlashX", data.m_hEntity, data.m_nAttachmentIndex, 0 );
+		CLocalSpaceEmitter::Create( "CS_MuzzleFlashX", data.GetEntity(), data.m_nAttachmentIndex, 0);
 
 	Assert( pEmitter );
 

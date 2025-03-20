@@ -308,27 +308,11 @@ C_BaseEntityClassList::~C_BaseEntityClassList()
 {
 }
 
-// Any entities that want an OnDataChanged during simulation register for it here.
-class CDataChangedEvent
-{
-public:
-	CDataChangedEvent() = default;
-	CDataChangedEvent( IEngineObjectClient *ent, DataUpdateType_t updateType, int *pStoredEvent )
-	{
-		m_pEntity = ent;
-		m_UpdateType = updateType;
-		m_pStoredEvent = pStoredEvent;
-	}
 
-	IEngineObjectClient	*m_pEntity;
-	DataUpdateType_t	m_UpdateType;
-	int					*m_pStoredEvent;
-};
 
 //ISaveRestoreBlockHandler *GetEntitySaveRestoreBlockHandler();
 ISaveRestoreBlockHandler *GetViewEffectsRestoreBlockHandler();
 
-CUtlLinkedList<CDataChangedEvent, unsigned short> g_DataChangedEvents;
 ClientFrameStage_t g_CurFrameStage = FRAME_UNDEFINED;
 
 
@@ -2075,54 +2059,7 @@ void SimulateEntities()
 }
 
 
-bool AddDataChangeEvent( IEngineObjectClient *ent, DataUpdateType_t updateType, int *pStoredEvent )
-{
-	VPROF( "AddDataChangeEvent" );
 
-	Assert( ent );
-	// Make sure we don't already have an event queued for this guy.
-	if ( *pStoredEvent >= 0 )
-	{
-		Assert( g_DataChangedEvents[*pStoredEvent].m_pEntity == ent );
-
-		// DATA_UPDATE_CREATED always overrides DATA_UPDATE_CHANGED.
-		if ( updateType == DATA_UPDATE_CREATED )
-			g_DataChangedEvents[*pStoredEvent].m_UpdateType = updateType;
-	
-		return false;
-	}
-	else
-	{
-		*pStoredEvent = g_DataChangedEvents.AddToTail( CDataChangedEvent( ent, updateType, pStoredEvent ) );
-		return true;
-	}
-}
-
-
-void ClearDataChangedEvent( int iStoredEvent )
-{
-	if ( iStoredEvent != -1 )
-		g_DataChangedEvents.Remove( iStoredEvent );
-}
-
-
-void ProcessOnDataChangedEvents()
-{
-	VPROF_("ProcessOnDataChangedEvents", 1, VPROF_BUDGETGROUP_CLIENT_SIM, false, BUDGETFLAG_CLIENT);
-	FOR_EACH_LL( g_DataChangedEvents, i )
-	{
-		CDataChangedEvent *pEvent = &g_DataChangedEvents[i];
-
-		// Reset their stored event identifier.		
-		*pEvent->m_pStoredEvent = -1;
-
-		// Send the event.
-		IEngineObjectClient *pNetworkable = pEvent->m_pEntity;
-		pNetworkable->OnDataChanged( pEvent->m_UpdateType );
-	}
-
-	g_DataChangedEvents.Purge();
-}
 
 
 void UpdateClientRenderableInPVSStatus()
@@ -2248,7 +2185,7 @@ void OnRenderStart()
 	partition->SuppressLists( PARTITION_ALL_CLIENT_EDICTS, false );
 
 	// Process OnDataChanged events.
-	ProcessOnDataChangedEvents();
+	EntityList()->ProcessOnDataChangedEvents();
 
 	// Reset the overlay alpha. Entities can change the state of this in their think functions.
 	g_SmokeFogOverlayAlpha = 0;	

@@ -30,7 +30,7 @@ typedef CGameTrace trace_t;
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
 #define IEFFECTS_INTERFACE_VERSION	"IEffects001"
-abstract_class IEffects : public IPredictionSystem
+abstract_class IEffects
 {
 public:
 	//
@@ -70,6 +70,14 @@ public:
 
 	// Used by the playback system to suppress sounds
 	virtual void SuppressEffectsSounds( bool bSuppress ) = 0;
+
+	virtual void WaterRipple(const Vector& origin, float scale, Vector* pColor, float flLifetime = 1.5, float flAlpha = 1) = 0;
+	virtual void GunshotSplash(const Vector& origin, const Vector& normal, float scale) = 0;
+	virtual void GunshotSlimeSplash(const Vector& origin, const Vector& normal, float scale) = 0;
+	virtual void GetSplashLighting(Vector position, Vector* color, float* luminosity) = 0;
+
+	virtual void DispatchEffect(const char* pName, const CEffectData& data) = 0;
+	virtual void DispatchEffect(const char* pName, const CEffectData& data, IRecipientFilter& filter) = 0;
 };
 
 

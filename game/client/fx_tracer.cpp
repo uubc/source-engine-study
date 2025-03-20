@@ -35,7 +35,7 @@ Vector GetTracerOrigin( const CEffectData &data )
 		if ( !pRenderable )
 			return vecStart;
 
-		C_BaseEntity *pEnt = data.GetEntity();
+		IClientEntity *pEnt = data.GetEntity();
 
 // This check should probably be for all multiplayer games, investigate later
 #if defined( HL2MP ) || defined( TF_CLIENT_DLL )
@@ -125,7 +125,7 @@ void ParticleTracerCallback( const CEffectData &data )
 	Vector vecEnd = data.m_vOrigin;
 
 	// Adjust view model tracers
-	C_BaseEntity *pEntity = data.GetEntity();
+	IClientEntity *pEntity = data.GetEntity();
 	if ( data.entindex() && data.entindex() == player->entindex())
 	{
 		QAngle	vangles;

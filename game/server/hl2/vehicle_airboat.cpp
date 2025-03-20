@@ -1592,7 +1592,7 @@ void CPropAirboat::DoMuzzleFlash( void )
 	data.m_nEntIndex = entindex();
 	data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 	data.m_flScale = 1.0f;
-	DispatchEffect( "AirboatMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "AirboatMuzzleFlash", data );
 
 	GetEngineObject()->DoMuzzleFlash();
 }
@@ -2075,8 +2075,8 @@ void CPropAirboat::CreateSplash( int nSplashType )
 			VectorNormalize( vecSplashDir );
 			data.m_vNormal = vecSplashDir;
 			data.m_flScale = 10.0f + random->RandomFloat( 0, 10.0f * 0.25 );
-			//DispatchEffect( "waterripple", data );
-			DispatchEffect( "watersplash", data );
+			//g_pEffects->DispatchEffect( "waterripple", data );
+			g_pEffects->DispatchEffect( "watersplash", data );
 		}
 		case AIRBOAT_SPLASH_RIPPLE:
 		{
@@ -2085,7 +2085,7 @@ void CPropAirboat::CreateSplash( int nSplashType )
 			vecSplashDir = vecUp;
 			data.m_vNormal = vecSplashDir;
 			data.m_flScale = AIRBOAT_SPLASH_RIPPLE_SIZE + random->RandomFloat( 0, AIRBOAT_SPLASH_RIPPLE_SIZE * 0.25 );
-			DispatchEffect( "waterripple", data );
+			g_pEffects->DispatchEffect( "waterripple", data );
 			*/
 		}
 		default:

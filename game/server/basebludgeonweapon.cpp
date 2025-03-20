@@ -20,6 +20,7 @@
 #include "te_effect_dispatch.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -264,7 +265,7 @@ bool CBaseHLBludgeonWeapon::ImpactWater( const Vector &start, const Vector &end 
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}
 
-		DispatchEffect( "watersplash", data );			
+		g_pEffects->DispatchEffect( "watersplash", data );
 	}
 
 	return true;

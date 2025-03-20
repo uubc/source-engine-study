@@ -1573,7 +1573,7 @@ void CProtoSniper::OnListened()
 						data.m_vAngles = vec3_angle;
 						data.m_nColor = COMMAND_POINT_YELLOW;
 
-						DispatchEffect( "CommandPointer", data );
+						g_pEffects->DispatchEffect( "CommandPointer", data );
 					}
 				}
 			}
@@ -1895,7 +1895,7 @@ void CProtoSniper::ScopeGlint()
 	data.m_vAngles = vec3_angle;
 	data.m_nColor = COMMAND_POINT_BLUE;
 
-	DispatchEffect( "CommandPointer", data );
+	g_pEffects->DispatchEffect( "CommandPointer", data );
 }
 
 

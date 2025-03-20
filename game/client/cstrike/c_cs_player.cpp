@@ -2164,7 +2164,7 @@ void C_CSPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 5.0f );
-			DispatchEffect( "watersplash", data );
+			g_pEffects->DispatchEffect( "watersplash", data );
 		}
 	}
 	else if( event == 7002 )
@@ -2193,7 +2193,7 @@ void C_CSPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 7.0f );
-			DispatchEffect( "waterripple", data );
+			g_pEffects->DispatchEffect( "waterripple", data );
 		}
 	}
 	else

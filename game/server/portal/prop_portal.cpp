@@ -32,6 +32,7 @@
 #include "env_debughistory.h"
 #include "tier1/callqueue.h"
 #include "mathlib/polyhedron.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -425,7 +426,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 	switch ( iEffect )
 	{
 		case PORTAL_FIZZLE_CANT_FIT:
-			//DispatchEffect( "PortalFizzleCantFit", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleCantFit", fxData );
 			//ep.m_pSoundName = "Portal.fizzle_invalid_surface";
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_nofit" ) : ( "portal_1_nofit" ) ), fxData.m_vOrigin, fxData.m_vAngles, this );
@@ -441,7 +442,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 				fxData.m_vStart = pLink3edPortal->GetAbsOrigin() + vLinkedForward * 5.0f;
 			}*/
 
-			//DispatchEffect( "PortalFizzleOverlappedLinked", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleOverlappedLinked", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_overlap" ) : ( "portal_1_overlap" ) ), fxData.m_vOrigin, fxData.m_vAngles, this );
 			ep.m_pSoundName = "Portal.fizzle_invalid_surface";
@@ -449,35 +450,35 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 		}
 
 		case PORTAL_FIZZLE_BAD_VOLUME:
-			//DispatchEffect( "PortalFizzleBadVolume", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleBadVolume", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_badvolume" ) : ( "portal_1_badvolume" ) ), fxData.m_vOrigin, fxData.m_vAngles );
 			ep.m_pSoundName = "Portal.fizzle_invalid_surface";
 			break;
 
 		case PORTAL_FIZZLE_BAD_SURFACE:
-			//DispatchEffect( "PortalFizzleBadSurface", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleBadSurface", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_badsurface" ) : ( "portal_1_badsurface" ) ), fxData.m_vOrigin, fxData.m_vAngles );
 			ep.m_pSoundName = "Portal.fizzle_invalid_surface";
 			break;
 
 		case PORTAL_FIZZLE_KILLED:
-			//DispatchEffect( "PortalFizzleKilled", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleKilled", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_close" ) : ( "portal_1_close" ) ), fxData.m_vOrigin, fxData.m_vAngles );
 			ep.m_pSoundName = "Portal.fizzle_moved";
 			break;
 
 		case PORTAL_FIZZLE_CLEANSER:
-			//DispatchEffect( "PortalFizzleCleanser", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleCleanser", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_cleanser" ) : ( "portal_1_cleanser" ) ), fxData.m_vOrigin, fxData.m_vAngles, this );
 			ep.m_pSoundName = "Portal.fizzle_invalid_surface";
 			break;
 
 		case PORTAL_FIZZLE_CLOSE:
-			//DispatchEffect( "PortalFizzleKilled", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleKilled", fxData );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( ( GetEnginePortal()->IsPortal2() ) ? ( "portal_2_close" ) : ( "portal_1_close" ) ), fxData.m_vOrigin, fxData.m_vAngles );
 			ep.m_pSoundName = ( ( GetEnginePortal()->IsPortal2() ) ? ( "Portal.close_red" ) : ( "Portal.close_blue" ) );
@@ -499,7 +500,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 				fxData.m_vAngles = GetEngineObject()->GetAbsAngles();
 			}
 
-			//DispatchEffect( "PortalFizzleNear", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleNear", fxData );
 			AngleVectors( fxData.m_vAngles, &vForward, &vUp, NULL );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( (GetEnginePortal()->IsPortal2()) ? ( "portal_2_near" ) : ( "portal_1_near" ) ), fxData.m_vOrigin, fxData.m_vAngles );
@@ -523,7 +524,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 				fxData.m_vAngles = GetEngineObject()->GetAbsAngles();
 			}
 
-			//DispatchEffect( "PortalFizzleNear", fxData );
+			//g_pEffects->DispatchEffect( "PortalFizzleNear", fxData );
 			AngleVectors( fxData.m_vAngles, &vForward, &vUp, NULL );
 			VectorAngles( vUp, vForward, fxData.m_vAngles );
 			DispatchParticleEffect( ( (GetEnginePortal()->IsPortal2()) ? ( "portal_2_near" ) : ( "portal_1_near" ) ), fxData.m_vOrigin, fxData.m_vAngles );

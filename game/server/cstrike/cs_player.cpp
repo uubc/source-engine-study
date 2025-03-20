@@ -2447,7 +2447,7 @@ void CCSPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, t
 		if ( ptr->hitgroup == HITGROUP_HEAD && bShouldSpark )
 			data.m_flMagnitude *= 0.5;
 
-		DispatchEffect( "csblood", data );
+		g_pEffects->DispatchEffect( "csblood", data );
 	}
 	if ( ( ptr->hitgroup == HITGROUP_HEAD || bHitShield ) && bShouldSpark ) // they hit a helmet
 	{

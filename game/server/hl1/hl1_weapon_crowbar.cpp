@@ -280,7 +280,7 @@ void ImpactCrowbarCallback( const CEffectData &data )
 	Vector vecOrigin, vecStart, vecShotDir;
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	bool bIsWorld = ( pEntity->entindex() == 0 );
 

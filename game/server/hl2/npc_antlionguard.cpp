@@ -2316,7 +2316,7 @@ int CNPC_AntlionGuard::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 		data.m_vOrigin = dInfo.GetDamagePosition();
 		data.m_vNormal = -dInfo.GetDamageForce();
 		VectorNormalize( data.m_vNormal );
-		DispatchEffect( "HunterDamage", data );
+		g_pEffects->DispatchEffect( "HunterDamage", data );
 
 		// Play a sound for a physics impact
 		if ( dInfo.GetDamageType() & DMG_CRUSH )

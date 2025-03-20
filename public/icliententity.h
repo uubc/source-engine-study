@@ -1017,6 +1017,7 @@ public:
 	virtual IServerEntity* AsServerEntity() { return NULL; }
 	virtual bool IsClientEntity() { return true; }
 	virtual IClientEntity* AsClientEntity() { return this; }
+	virtual bool IsNetworkable(void) = 0;
 	virtual int entindex() const { return IClientUnknown::entindex(); }
 	virtual char const* GetClassname(void) const = 0;
 	virtual char const* GetDebugName(void) const = 0;
@@ -1156,6 +1157,9 @@ public:
 	virtual int GetHealth() const = 0;
 	virtual const char& GetTakeDamage() const = 0;
 	virtual float GetAttackDamageScale(IHandleEntity* pVictim) = 0;
+	virtual char const* DamageDecal(int bitsDamageType, int gameMaterial) = 0;
+	virtual void AddDecal(const Vector& rayStart, const Vector& rayEnd,
+		const Vector& decalCenter, int hitbox, int decalIndex, bool doTrace, trace_t& tr, int maxLODToDecal = ADDDECAL_TO_ALL_LODS) = 0;
 	virtual int GetWaterLevel() const = 0;
 	virtual int GetTeamNumber(void) const = 0;
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
@@ -1328,6 +1332,9 @@ public:
 	virtual unsigned long GetPreviousBoneCounter() = 0;
 	virtual CUtlVector<IEngineObjectClient*>& GetPreviousBoneSetups() = 0;
 	virtual unsigned long GetModelBoneCounter() = 0;
+	virtual bool AddDataChangeEvent(IEngineObjectClient* ent, DataUpdateType_t updateType, int* pStoredEvent) = 0;
+	virtual void ClearDataChangedEvent(int iStoredEvent) = 0;
+	virtual void ProcessOnDataChangedEvents() = 0;
 
 	virtual int GetPredictionRandomSeed(void) = 0;
 	virtual void SetPredictionRandomSeed(const CUserCmd* cmd) = 0;

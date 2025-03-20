@@ -18,7 +18,7 @@
 #include "npcevent.h"
 #include "ai_interactions.h"
 #include "doors.h"
-
+#include "IEffects.h"
 #include "effect_dispatch_data.h"
 #include "te_effect_dispatch.h"
 #include "hl1_ai_basenpc.h"
@@ -584,7 +584,7 @@ bool CHL1NPCTalker::CorpseGib( const ITakeDamageInfo&info )
 
 	data.m_nColor = BloodColor();
 
-	DispatchEffect( "HL1Gib", data );
+	g_pEffects->DispatchEffect( "HL1Gib", data );
 
 	BaseClass::CorpseGib( info );
 

@@ -759,7 +759,7 @@ void C_Strider::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 //-----------------------------------------------------------------------------
 // Strider muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Strider( C_BaseEntity* hEntity, int attachmentIndex )
+void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Strider", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -953,7 +953,7 @@ void MuzzleFlash_Strider( C_BaseEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void StriderMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Strider( data.m_hEntity, data.m_nAttachmentIndex );
+	MuzzleFlash_Strider( data.GetEntity(), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "StriderMuzzleFlash", StriderMuzzleFlashCallback );

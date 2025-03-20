@@ -14,13 +14,15 @@
 
 #include "ragdoll_shared.h"
 
+#include "cdll_int.h"
+#include "clientleafsystem.h"
 #include "recvproxy.h"
 #include "iclientshadowmgr.h"
 #include "client_factorylist.h"
 #include "interpolatedvar.h"
 #include "bone_merge_cache.h"
 #include "tier2/beamsegdraw.h"
-#include "fx_water.h"
+//#include "fx_water.h"
 #include "mouthinfo.h"
 #include "prediction.h"
 
@@ -38,7 +40,17 @@ extern ConVar cl_extrapolate;
 extern ConVar g_ragdoll_important_maxcount;
 extern ConVar g_ragdoll_maxcount;
 extern ConVar g_debug_ragdoll_removal;
+extern IFileSystem* filesystem;
+extern IVEngineClient* engine;
+extern IBaseClientDLL* clientdll;
+extern IMDLCache* mdlcache;
+extern IVDebugOverlay* debugoverlay;
+extern IVModelInfoClient* modelinfo;
+extern IEngineTrace* enginetrace;
+extern IClientLeafSystem* g_pClientLeafSystem;
 extern IStaticPropMgrClient* staticpropmgr;
+extern IVModelRender* modelrender;
+extern IClientTools* clienttools;
 #ifdef POSIX
 #define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
 #endif
@@ -342,7 +354,7 @@ public:
 	virtual ~C_EngineObjectInternal()
 	{
 		RemoveFromClientSideAnimationList();
-		ClearDataChangedEvent(m_DataChangeEventRef);
+		m_pClientEntityList->ClearDataChangedEvent(m_DataChangeEventRef);
 		// Are we in the partition?
 		DestroyPartitionHandle();
 		InvalidateMdlCache();
@@ -359,7 +371,8 @@ public:
 		m_pOuter = NULL;
 	}
 
-	
+
+
 
 	virtual void Init(IClientEntity* pOuter) {
 		m_pOuter = pOuter;
@@ -2978,6 +2991,22 @@ private:
 	unsigned short m_list;
 };
 
+// Any entities that want an OnDataChanged during simulation register for it here.
+class CDataChangedEvent
+{
+public:
+	CDataChangedEvent() = default;
+	CDataChangedEvent(IEngineObjectClient* ent, DataUpdateType_t updateType, int* pStoredEvent)
+	{
+		m_pEntity = ent;
+		m_UpdateType = updateType;
+		m_pStoredEvent = pStoredEvent;
+	}
+
+	IEngineObjectClient* m_pEntity;
+	DataUpdateType_t	m_UpdateType;
+	int* m_pStoredEvent;
+};
 
 //
 // This is the IClientEntityList implemenation. It serves two functions:
@@ -3446,6 +3475,56 @@ public:
 	void AddDirtyEntity(IEngineObject* pEntity) {
 		BaseClass::AddDirtyEntity(pEntity);
 	}
+
+	bool AddDataChangeEvent(IEngineObjectClient* ent, DataUpdateType_t updateType, int* pStoredEvent)
+	{
+		VPROF("AddDataChangeEvent");
+
+		Assert(ent);
+		// Make sure we don't already have an event queued for this guy.
+		if (*pStoredEvent >= 0)
+		{
+			Assert(g_DataChangedEvents[*pStoredEvent].m_pEntity == ent);
+
+			// DATA_UPDATE_CREATED always overrides DATA_UPDATE_CHANGED.
+			if (updateType == DATA_UPDATE_CREATED)
+				g_DataChangedEvents[*pStoredEvent].m_UpdateType = updateType;
+
+			return false;
+		}
+		else
+		{
+			*pStoredEvent = g_DataChangedEvents.AddToTail(CDataChangedEvent(ent, updateType, pStoredEvent));
+			return true;
+		}
+	}
+
+
+	void ClearDataChangedEvent(int iStoredEvent)
+	{
+		if (iStoredEvent != -1)
+			g_DataChangedEvents.Remove(iStoredEvent);
+	}
+
+
+	void ProcessOnDataChangedEvents()
+	{
+		VPROF_("ProcessOnDataChangedEvents", 1, VPROF_BUDGETGROUP_CLIENT_SIM, false, BUDGETFLAG_CLIENT);
+		FOR_EACH_LL(g_DataChangedEvents, i)
+		{
+			CDataChangedEvent* pEvent = &g_DataChangedEvents[i];
+
+			// Reset their stored event identifier.		
+			*pEvent->m_pStoredEvent = -1;
+
+			// Send the event.
+			IEngineObjectClient* pNetworkable = pEvent->m_pEntity;
+			pNetworkable->OnDataChanged(pEvent->m_UpdateType);
+		}
+
+		g_DataChangedEvents.Purge();
+	}
+
 private:
 	void AddPVSNotifier(IClientUnknown* pUnknown);
 	void RemovePVSNotifier(IClientUnknown* pUnknown);
@@ -3566,6 +3645,7 @@ private:
 	CCallQueue m_PostTouchQueue;
 	IClientWorld* m_pWorld = NULL;
 	bool    m_bLockWorld = false;
+	CUtlLinkedList<CDataChangedEvent, unsigned short> g_DataChangedEvents;
 };
 
 template<class T>
@@ -5095,10 +5175,11 @@ void CClientEntityList<T>::InterpolateServerEntities()
 		}
 	}
 
-	if (IsSimulatingOnAlternateTicks() != m_bWasSkipping || IsEngineThreaded() != m_bWasThreaded)
+	ConVarRef host_thread_mode("host_thread_mode");
+	if (IsSimulatingOnAlternateTicks() != m_bWasSkipping || host_thread_mode.GetBool() != m_bWasThreaded)
 	{
 		m_bWasSkipping = IsSimulatingOnAlternateTicks();
-		m_bWasThreaded = IsEngineThreaded();
+		m_bWasThreaded = host_thread_mode.GetBool();
 
 		for (CBaseHandle handle = FirstHandle(); handle != InvalidHandle(); handle = NextHandle(handle))
 		{

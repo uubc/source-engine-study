@@ -20,6 +20,7 @@
 #include "explode.h"
 #include "particle_smokegrenade.h"
 #include "te_effect_dispatch.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -570,7 +571,7 @@ void CPropCannon::Think( void )
 
 			data.m_vOrigin = m_vCrashPoint;
 			data.m_flScale = 512;
-			DispatchEffect( "ThumperDust", data );
+			g_pEffects->DispatchEffect( "ThumperDust", data );
 
 			m_flFlyTime = 0.0f;
 		}

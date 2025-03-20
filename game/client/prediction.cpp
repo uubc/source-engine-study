@@ -1303,7 +1303,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		//	continue;
 		//}
 
-		if ( AddDataChangeEvent( entity->GetEngineObject(), DATA_UPDATE_DATATABLE_CHANGED, &entity->GetEngineObject()->DataChangeEventRef()))
+		if ( EntityList()->AddDataChangeEvent( entity->GetEngineObject(), DATA_UPDATE_DATATABLE_CHANGED, &entity->GetEngineObject()->DataChangeEventRef()))
 		{
 			entity->OnPreDataChanged( DATA_UPDATE_DATATABLE_CHANGED );
 		}

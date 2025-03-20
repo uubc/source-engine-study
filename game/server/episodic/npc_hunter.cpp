@@ -623,7 +623,7 @@ void CHunterFlechette::StickTo( CBaseEntity *pOther, trace_t &tr )
 	//data.m_vOrigin = tr.endpos;
 	//data.m_vNormal = vForward;
 	//data.m_nEntIndex = 0;
-	//DispatchEffect( "BoltImpact", data );
+	//g_pEffects->DispatchEffect( "BoltImpact", data );
 	
 	Vector vecVelocity = GetEngineObject()->GetAbsVelocity();
 	bool bAttachedToBuster = StriderBuster_OnFlechetteAttach( pOther, vecVelocity );
@@ -743,7 +743,7 @@ void CHunterFlechette::FlechetteTouch( IServerEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = tr2.fraction != 1.0f;
 			
-				//DispatchEffect( "BoltImpact", data );
+				//g_pEffects->DispatchEffect( "BoltImpact", data );
 			}
 		}
 
@@ -4285,7 +4285,7 @@ void CNPC_Hunter::Explode()
 	data.m_vNormal = Vector( 0, 0, 1 );
 	data.m_flScale = 4.0f;
 
-	DispatchEffect( "StriderBlood", data );
+	g_pEffects->DispatchEffect( "StriderBlood", data );
 	
 	// Go away
 	m_lifeState = LIFE_DEAD;
@@ -5552,7 +5552,7 @@ void CNPC_Hunter::PhysicsDamageEffect( const Vector &vecPos, const Vector &vecDi
 	CEffectData data;
 	data.m_vOrigin = vecPos;
 	data.m_vNormal = vecDir;
-	DispatchEffect( "HunterDamage", data );
+	g_pEffects->DispatchEffect( "HunterDamage", data );
 
 	if ( random->RandomInt( 0, 1 ) == 0 )
 	{
@@ -5572,7 +5572,7 @@ void CNPC_Hunter::TeslaThink()
 	data.m_nEntIndex = entindex();
 	data.m_flMagnitude = 3;
 	data.m_flScale = 0.5f;
-	DispatchEffect( "TeslaHitboxes", data );
+	g_pEffects->DispatchEffect( "TeslaHitboxes", data );
 
 	const char* soundname = "RagdollBoogie.Zap";
 	CPASAttenuationFilter filter(this, soundname);
@@ -6121,7 +6121,7 @@ void CNPC_Hunter::DoMuzzleFlash( int nAttachment )
 	CEffectData data;
 	data.m_nAttachmentIndex = nAttachment;
 	data.m_nEntIndex = entindex();
-	DispatchEffect( "HunterMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "HunterMuzzleFlash", data );
 }
 
 

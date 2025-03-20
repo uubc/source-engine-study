@@ -20,6 +20,7 @@
 #include "physics_impact_damage.h"
 #include "te_effect_dispatch.h"
 #include "gameinterface.h"
+#include "IEffects.h"
 
 //=============================================================================
 // HPE_BEGIN
@@ -1288,7 +1289,7 @@ void CBreakableSurface::VPhysicsCollision( int index, gamevcollisionevent_t *pEv
 					data.m_nEntIndex = entindex();
 
 					// Send it on its way
-					DispatchEffect( "Impact", data );
+					g_pEffects->DispatchEffect( "Impact", data );
 				}
 			}
 		}

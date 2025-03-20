@@ -29,6 +29,7 @@
 #include "particle_parse.h"
 #include "ai_tacticalservices.h"
 #include "basecombatweapon.h"
+#include "IEffects.h"
 
 #ifdef HL2_EPISODIC
 #include "grenade_spit.h"
@@ -1863,7 +1864,7 @@ void CNPC_Antlion::RunTask( const Task_t *pTask )
 			data.m_vNormal = Vector( 0, 0, 1 );
 			data.m_flScale = random->RandomFloat( 12.0, 16.0 );
 
-			DispatchEffect( "watersplash", data );
+			g_pEffects->DispatchEffect( "watersplash", data );
 			
 			m_flTimeDrownSplash = gpGlobals->curtime + random->RandomFloat( 0.5, 2.5 );
 		}
@@ -2349,7 +2350,7 @@ void CNPC_Antlion::ZapThink( void )
 	data.m_flMagnitude = 4;
 	data.m_flScale = random->RandomFloat( 0.25f, 1.0f );
 
-	DispatchEffect( "TeslaHitboxes", data );
+	g_pEffects->DispatchEffect( "TeslaHitboxes", data );
 	
 	if ( m_flZapDuration > gpGlobals->curtime )
 	{
@@ -4563,7 +4564,7 @@ void CNPC_Antlion::DoPoisonBurst()
 		data.m_flScale = 128;
 		data.m_fFlags = ( SF_ENVEXPLOSION_NODAMAGE | SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE );
 
-		DispatchEffect( "WaterSurfaceExplosion", data );
+		g_pEffects->DispatchEffect( "WaterSurfaceExplosion", data );
 	}
 
 	const char* soundname = "NPC_Antlion.PoisonBurstExplode";

@@ -12,6 +12,7 @@
 #include "engine/IEngineSound.h"
 #include "npc_antlion.h"
 #include "te_effect_dispatch.h"
+#include "IEffects.h"
 
 #if HL2_EPISODIC
 #define THUMPER_RADIUS m_iEffectRadius // this const is only used inside the thumper anyway
@@ -205,7 +206,7 @@ void CPropThumper::Thump ( void )
 		data.m_nEntIndex = entindex();
 		data.m_vOrigin = vOrigin;
 		data.m_flScale = m_iDustScale * GetEngineObject()->GetPlaybackRate();
-		DispatchEffect( "ThumperDust", data );
+		g_pEffects->DispatchEffect( "ThumperDust", data );
 		UTIL_ScreenShake( vOrigin, 10.0 * GetEngineObject()->GetPlaybackRate(), GetEngineObject()->GetPlaybackRate(), GetEngineObject()->GetPlaybackRate() / 2, THUMPER_RADIUS * GetEngineObject()->GetPlaybackRate(), SHAKE_START, false);
 	}
 

@@ -926,7 +926,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 			
 			data.m_flScale = 4;
 
-			DispatchEffect( "AntlionGib", data );
+			g_pEffects->DispatchEffect( "AntlionGib", data );
 		}
 
 		// Stagger the next time we can attack
@@ -2552,7 +2552,7 @@ void CNPC_Vortigaunt::DispelAntlions( const Vector &vecOrigin, float flRadius, b
 		CEffectData	data;
 		data.m_vOrigin = vecOrigin;
 
-		DispatchEffect( "VortDispel", data );
+		g_pEffects->DispatchEffect( "VortDispel", data );
 	}
 
 	// Make antlions flip all around us!

@@ -20,6 +20,7 @@
 #include "soundenvelope.h"
 #include "ai_utils.h"
 #include "te_effect_dispatch.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -158,7 +159,7 @@ void CGrenadeSpit::GrenadeSpitTouch( IServerEntity *pOther )
 		data.m_vNormal = Vector( 0, 0, 1 );
 		data.m_flScale = 8.0f;
 
-		DispatchEffect( "watersplash", data );
+		g_pEffects->DispatchEffect( "watersplash", data );
 	}
 	else
 	{

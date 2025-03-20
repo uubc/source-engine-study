@@ -299,6 +299,7 @@ public:
 	virtual bool IsRagdoll() const = 0;
 	virtual IEngineObject* GetOwnerEntity(void) const = 0;
 	virtual IEngineObject* GetEffectEntity(void) const = 0;
+	virtual int	LookupAttachment(const char* pAttachmentName) = 0;
 
 	virtual bool IsEngineObjectServer() const = 0;
 	virtual IEngineObjectServer* AsEngineObjectServer() = 0;

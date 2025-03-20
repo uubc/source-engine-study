@@ -11,6 +11,7 @@
 #include "prop_portal.h"			// Special case code for passing through portals. We need the class definition.
 #include "soundenvelope.h"
 #include "physicsshadowclone.h"
+#include "IEffects.h"
 
 // resource file names
 #define IMPACT_DECAL_NAME	"decals/smscorch1model"
@@ -231,7 +232,7 @@ void CPropEnergyBall::VPhysicsCollision( int index, gamevcollisionevent_t *pEven
 			data.m_vOrigin	= tr.endpos + tr.plane.normal * 1.0f;
 
 
-			DispatchEffect( "cball_bounce", data );
+			g_pEffects->DispatchEffect( "cball_bounce", data );
 
 			if ( tr.m_pEnt )
 			{
@@ -353,7 +354,7 @@ void CPropEnergyBall::ExplodeThink( )
 	CBroadcastRecipientFilter filter2;
 	CEffectData data;
 	data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
-	DispatchEffect( "ManhackSparks", data );
+	g_pEffects->DispatchEffect( "ManhackSparks", data );
 	const char* soundname = "EnergyBall.Explosion";
 	CPASAttenuationFilter filter(this, soundname);
 

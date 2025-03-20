@@ -634,7 +634,7 @@ void CPropJeep::CreateSplash( const Vector &vecPosition )
 	data.m_flScale = 10.0f + random->RandomFloat( 0, 2 );
 
 	// Create the splash..
-	DispatchEffect( "watersplash", data );
+	g_pEffects->DispatchEffect( "watersplash", data );
 }
 
 //-----------------------------------------------------------------------------
@@ -655,7 +655,7 @@ void CPropJeep::CreateRipple( const Vector &vecPosition )
 	}
 
 	// Create the ripple.
-	DispatchEffect( "waterripple", data );
+	g_pEffects->DispatchEffect( "waterripple", data );
 }
 
 //-----------------------------------------------------------------------------

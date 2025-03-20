@@ -3869,7 +3869,7 @@ void CNPC_Strider::DoMuzzleFlash( void )
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "MiniGun" );
 	data.m_nEntIndex = entindex();
-	DispatchEffect( "StriderMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "StriderMuzzleFlash", data );
 }
 
 //---------------------------------------------------------
@@ -4481,7 +4481,7 @@ void CNPC_Strider::FootFX( const Vector &origin )
 		data.m_vNormal = Vector( 0, 0, 1 );
 		data.m_flScale = random->RandomFloat( 10.0, 14.0 );
 
-		DispatchEffect( "watersplash", data );
+		g_pEffects->DispatchEffect( "watersplash", data );
 	}
 	else
 	{

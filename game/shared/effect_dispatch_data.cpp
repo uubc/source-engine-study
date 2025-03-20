@@ -142,18 +142,18 @@
 
 IClientRenderable *CEffectData::GetRenderable() const
 {
-	return m_hEntity->GetEngineObject();//EntityList()->GetClientRenderableFromHandle( 
+	return EntityList()->GetClientRenderableFromHandle(m_hEntity);//
 }
 
-C_BaseEntity *CEffectData::GetEntity() const
+IClientEntity *CEffectData::GetEntity() const
 {
-	return m_hEntity;//EntityList()->GetBaseEntityFromHandle( 
+	return  EntityList()->GetBaseEntityFromHandle(m_hEntity);
 }
 
 int CEffectData::entindex() const
 {
 	//C_BaseEntity *pEnt = EntityList()->GetBaseEntityFromHandle( m_hEntity );
-	return m_hEntity ? m_hEntity->entindex() : -1;
+	return EntityList()->GetBaseEntityFromHandle(m_hEntity) ? EntityList()->GetBaseEntityFromHandle(m_hEntity)->entindex() : -1;
 }
 
 #endif

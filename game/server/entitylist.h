@@ -17,10 +17,10 @@
 #include "ragdoll_shared.h"
 
 #include "sendproxy.h"
-#include "env_debughistory.h"
+//#include "env_debughistory.h"
 #include "init_factory.h"
 #include "gameinterface.h"
-#include "te_effect_dispatch.h"
+//#include "te_effect_dispatch.h"
 #include "ServerNetworkProperty.h"
 #include "variant_t.h"
 
@@ -2232,6 +2232,7 @@ public:
 	void UpdateCorners(void);			// Updates the four corners of this portal on spawn and placement
 	const Vector& GetPortalCorners(int iCorner) const { return m_vPortalCorners[iCorner]; }
 	unsigned int m_EntFlags[MAX_EDICTS]; //flags maintained for every entity in the world based on its index
+	void ConvertBrushListToClippedPolyhedronList(const int* pBrushes, int iBrushCount, const float* pOutwardFacingClipPlanes, int iClipPlaneCount, float fClipEpsilon, CUtlVector<CPolyhedron*>* pPolyhedronList);
 private:
 	int					m_iPortalSimulatorGUID;
 	//IPhysicsEnvironment* pPhysicsEnvironment = NULL;
@@ -3394,6 +3395,39 @@ struct ShadowCloneLLEntryManager
 	{
 		m_pFreeShadowCloneLLEntries[--m_iUsedEntryIndex] = pFree;
 	}
+};
+
+class CStaticCollisionPolyhedronCache
+{
+public:
+	CStaticCollisionPolyhedronCache(void);
+	~CStaticCollisionPolyhedronCache(void);
+
+	void LevelInitPreEntity(void);
+	void Shutdown(void);
+
+	const CPolyhedron* GetBrushPolyhedron(int iBrushNumber);
+	int GetStaticPropPolyhedrons(ICollideable* pStaticProp, CPolyhedron** pOutputPolyhedronArray, int iOutputArraySize);
+
+private:
+	// See comments in LevelInitPreEntity for why these members are commented out
+//	CUtlString	m_CachedMap;
+
+	CUtlVector<CPolyhedron*> m_BrushPolyhedrons;
+
+	struct StaticPropPolyhedronCacheInfo_t
+	{
+		int iStartIndex;
+		int iNumPolyhedrons;
+		int iStaticPropIndex; //helps us remap ICollideable pointers when the map is restarted
+	};
+
+	CUtlVector<CPolyhedron*> m_StaticPropPolyhedrons;
+	CUtlMap<ICollideable*, StaticPropPolyhedronCacheInfo_t> m_CollideableIndicesMap;
+
+
+	void Clear(void);
+	void Update(void);
 };
 
 class CWatcherList : public IWatcherList
@@ -4759,6 +4793,7 @@ private:
 	int		m_lastcheck;
 	float	m_lastchecktime;
 	bool	m_bClientPVSIsExpanded;
+	CStaticCollisionPolyhedronCache m_StaticCollisionPolyhedronCache;
 	IServerWorld* m_pWorld = NULL;
 	bool    m_bLockWorld = false;
 };
@@ -4828,7 +4863,7 @@ void CGlobalEntityList<T>::Shutdown()
 	RemoveDataAccessor(PHYSICSPUSHLIST);
 	RemoveDataAccessor(VPHYSICSUPDATEAI);
 	RemoveDataAccessor(VPHYSICSWATCHER);
-
+	m_StaticCollisionPolyhedronCache.Shutdown();
 	// free the memory
 	m_DeleteList.Purge();
 }
@@ -4891,6 +4926,10 @@ void CGlobalEntityList<T>::LevelInitPreEntity()
 		Error("m_pWorld not inited!\n");
 	}
 	m_pWorld->LevelInitPreEntity();
+	m_StaticCollisionPolyhedronCache.LevelInitPreEntity();
+	g_TouchManager.LevelInitPreEntity();
+	g_AimManager.LevelInitPreEntity();
+	g_SimThinkManager.LevelInitPreEntity();
 }
 
 template<class T>
@@ -4987,6 +5026,11 @@ void CGlobalEntityList<T>::LevelShutdownPostEntity()
 	m_breakSounds.RemoveAll();
 	m_massCenterOverrides.Purge();
 	FlushVehicleScripts();
+
+	g_TouchManager.LevelShutdownPostEntity();
+	g_AimManager.LevelShutdownPostEntity();
+	g_SimThinkManager.LevelShutdownPostEntity();
+
 	if (!m_pWorld) {
 		Error("m_pWorld not inited!\n");
 	}
@@ -5244,6 +5288,9 @@ void CGlobalEntityList<T>::FrameUpdatePostEntityThink()
 		Error("m_pWorld not inited!\n");
 	}
 	m_pWorld->FrameUpdatePostEntityThink();
+	//This is pretty hacky, it's only called on the server so it just calls the update method.
+	UpdateRagdolls(0);
+	g_TouchManager.FrameUpdatePostEntityThink();
 }
 
 template<class T>

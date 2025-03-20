@@ -21,7 +21,7 @@
 #include "weapon_portalgun_shared.h"
 #include "physicsshadowclone.h"
 #include "particle_parse.h"
-
+#include "IEffects.h"
 
 #define BLAST_SPEED_NON_PLAYER 1000.0f
 #define BLAST_SPEED 3000.0f
@@ -165,7 +165,7 @@ void CWeaponPortalgun::DoEffectBlast( bool bPortal2, int iPlacedBy, const Vector
 	fxData.m_vAngles = qStartAngles;
 	fxData.m_nColor = ( ( bPortal2 ) ? ( 2 ) : ( 1 ) );
 	fxData.m_nDamageType = iPlacedBy;
-	DispatchEffect( "PortalBlast", fxData );
+	g_pEffects->DispatchEffect( "PortalBlast", fxData );
 }
 
 //-----------------------------------------------------------------------------

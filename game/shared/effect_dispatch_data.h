@@ -19,8 +19,6 @@
 	#include "client_class.h"
 
 	EXTERN_RECV_TABLE( DT_EffectData );
-	class C_BaseEntity;
-	typedef CHandle<C_BaseEntity> EHANDLE;
 #else
 
 	#include "dt_send.h"
@@ -48,7 +46,7 @@ public:
 	QAngle m_vAngles;
 	int		m_fFlags;
 #ifdef CLIENT_DLL
-	EHANDLE m_hEntity;
+	CBaseHandle m_hEntity;
 #else
 	int		m_nEntIndex;
 #endif
@@ -113,7 +111,7 @@ public:
 
 #ifdef CLIENT_DLL
 	IClientRenderable *GetRenderable() const;
-	C_BaseEntity *GetEntity() const;
+	IClientEntity *GetEntity() const;
 	int entindex() const;
 #endif
 

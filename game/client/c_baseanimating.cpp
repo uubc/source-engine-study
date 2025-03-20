@@ -1891,7 +1891,7 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 				data.m_nAttachmentIndex = iAttachment + 1;
 				data.m_fFlags = iParam;
 
-				DispatchEffect( effectFunc, data );
+				g_pEffects->DispatchEffect( effectFunc, data );
 			}
 		}
 		break;
@@ -1966,7 +1966,7 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 				data.m_hEntity = this;
 				data.m_nAttachmentIndex = iAttachment + 1;
 
-				DispatchEffect( options, data );
+				g_pEffects->DispatchEffect( options, data );
 			}
 		}
 		break;

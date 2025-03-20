@@ -1488,7 +1488,7 @@ void CBaseEntity::HandleShotImpactingGlass( const FireBulletsInfo_t &info,
 	data.m_vNormal = tr.plane.normal;
 	data.m_vOrigin = tr.endpos;
 
-	DispatchEffect( "GlassImpact", data );
+	g_pEffects->DispatchEffect( "GlassImpact", data );
 
 	trace_t	penetrationTrace;
 
@@ -1508,7 +1508,7 @@ void CBaseEntity::HandleShotImpactingGlass( const FireBulletsInfo_t &info,
 	data.m_vNormal = penetrationTrace.plane.normal;
 	data.m_vOrigin = penetrationTrace.endpos;
 	
-	DispatchEffect( "GlassImpact", data );
+	g_pEffects->DispatchEffect( "GlassImpact", data );
 
 	// Refire the round, as if starting from behind the glass
 	FireBulletsInfo_t behindGlassInfo;

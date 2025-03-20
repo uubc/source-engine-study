@@ -11,6 +11,7 @@
 #include "sendproxy.h"
 #include "rope_helpers.h"
 #include "te_effect_dispatch.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -195,7 +196,7 @@ void CRopeKeyframe::ShakeRopes( const Vector &vCenter, float flRadius, float flM
 	shakeData.m_vOrigin = vCenter;
 	shakeData.m_flRadius = flRadius;
 	shakeData.m_flMagnitude = flMagnitude;
-	DispatchEffect( "ShakeRopes", shakeData );
+	g_pEffects->DispatchEffect( "ShakeRopes", shakeData );
 }
 
 

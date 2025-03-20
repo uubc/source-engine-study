@@ -8,7 +8,7 @@
 //#include "cbase.h"
 #include "entitylist.h"
 //#include "vphysics/collision_set.h"
-#include "igamesystem.h"
+//#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -906,7 +906,7 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ISe
 		VectorAngles( normal, data.m_vAngles );
 		data.m_flScale = random->RandomFloat( 8, 10 );
 
-		DispatchEffect( "watersplash", data );
+		g_pEffects->DispatchEffect( "watersplash", data );
 
 		int		splashes = 4;
 		Vector	point;
@@ -923,7 +923,7 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ISe
 			VectorAngles( normal, data.m_vAngles );
 			data.m_flScale = random->RandomFloat( 4, 6 );
 
-			DispatchEffect( "watersplash", data );
+			g_pEffects->DispatchEffect( "watersplash", data );
 		}
 		*/
 
@@ -978,11 +978,11 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ISe
 
 	if (bRippleOnly)
 	{
-		DispatchEffect("waterripple", data);
+		g_pEffects->DispatchEffect("waterripple", data);
 	}
 	else
 	{
-		DispatchEffect("watersplash", data);
+		g_pEffects->DispatchEffect("watersplash", data);
 	}
 
 	if (radius > 500.0f)
@@ -1008,11 +1008,11 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ISe
 
 			if (bRippleOnly)
 			{
-				DispatchEffect("waterripple", data);
+				g_pEffects->DispatchEffect("waterripple", data);
 			}
 			else
 			{
-				DispatchEffect("watersplash", data);
+				g_pEffects->DispatchEffect("watersplash", data);
 			}
 		}
 	}
@@ -1030,7 +1030,7 @@ void PhysicsSplash(IPhysicsFluidController* pFluid, IPhysicsObject* pObject, ISe
 		VectorAngles( normal, data.m_vAngles );
 		data.m_flScale = size + random->RandomFloat( -2, 4 );
 
-		DispatchEffect( "watersplash", data );
+		g_pEffects->DispatchEffect( "watersplash", data );
 	}
 	*/
 }
@@ -11651,39 +11651,6 @@ void CEnginePortalInternal::ClearPhysicsEnvironment()
 	m_pPhysicsEnvironment = NULL;
 }
 
-class CStaticCollisionPolyhedronCache : public CAutoGameSystem
-{
-public:
-	CStaticCollisionPolyhedronCache(void);
-	~CStaticCollisionPolyhedronCache(void);
-
-	void LevelInitPreEntity(void);
-	void Shutdown(void);
-
-	const CPolyhedron* GetBrushPolyhedron(int iBrushNumber);
-	int GetStaticPropPolyhedrons(ICollideable* pStaticProp, CPolyhedron** pOutputPolyhedronArray, int iOutputArraySize);
-
-private:
-	// See comments in LevelInitPreEntity for why these members are commented out
-//	CUtlString	m_CachedMap;
-
-	CUtlVector<CPolyhedron*> m_BrushPolyhedrons;
-
-	struct StaticPropPolyhedronCacheInfo_t
-	{
-		int iStartIndex;
-		int iNumPolyhedrons;
-		int iStaticPropIndex; //helps us remap ICollideable pointers when the map is restarted
-	};
-
-	CUtlVector<CPolyhedron*> m_StaticPropPolyhedrons;
-	CUtlMap<ICollideable*, StaticPropPolyhedronCacheInfo_t> m_CollideableIndicesMap;
-
-
-	void Clear(void);
-	void Update(void);
-};
-
 class CPolyhedron_LumpedMemory : public CPolyhedron //we'll be allocating one big chunk of memory for all our polyhedrons. No individual will own any memory.
 {
 public:
@@ -12148,11 +12115,7 @@ int CStaticCollisionPolyhedronCache::GetStaticPropPolyhedrons(ICollideable* pSta
 	return iOutputArraySize;
 }
 
-CStaticCollisionPolyhedronCache g_StaticCollisionPolyhedronCache;
-
-
-
-static void ConvertBrushListToClippedPolyhedronList(const int* pBrushes, int iBrushCount, const float* pOutwardFacingClipPlanes, int iClipPlaneCount, float fClipEpsilon, CUtlVector<CPolyhedron*>* pPolyhedronList)
+void CEnginePortalInternal::ConvertBrushListToClippedPolyhedronList(const int* pBrushes, int iBrushCount, const float* pOutwardFacingClipPlanes, int iClipPlaneCount, float fClipEpsilon, CUtlVector<CPolyhedron*>* pPolyhedronList)
 {
 	if (pPolyhedronList == NULL)
 		return;
@@ -12162,7 +12125,7 @@ static void ConvertBrushListToClippedPolyhedronList(const int* pBrushes, int iBr
 
 	for (int i = 0; i != iBrushCount; ++i)
 	{
-		CPolyhedron* pPolyhedron = ClipPolyhedron(g_StaticCollisionPolyhedronCache.GetBrushPolyhedron(pBrushes[i]), pOutwardFacingClipPlanes, iClipPlaneCount, fClipEpsilon);
+		CPolyhedron* pPolyhedron = ClipPolyhedron(gEntList.m_StaticCollisionPolyhedronCache.GetBrushPolyhedron(pBrushes[i]), pOutwardFacingClipPlanes, iClipPlaneCount, fClipEpsilon);
 		if (pPolyhedron)
 			pPolyhedronList->AddToTail(pPolyhedron);
 	}
@@ -12282,7 +12245,7 @@ void CEnginePortalInternal::CreatePolyhedrons(void)
 				ICollideable* pProp = StaticProps[i];
 
 				CPolyhedron* PolyhedronArray[1024];
-				int iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons(pProp, PolyhedronArray, 1024);
+				int iPolyhedronCount = gEntList.m_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons(pProp, PolyhedronArray, 1024);
 
 				StaticPropPolyhedronGroups_t indices;
 				indices.iStartIndex = m_InternalData.Simulation.Static.World.StaticProps.Polyhedrons.Count();
@@ -15118,7 +15081,7 @@ void CEngineVehicleInternal::PlaceWheelDust(int wheelIndex, bool ignoreSpeed)
 		data.m_vNormal = vecVel;
 		data.m_flScale = flSize;
 
-		DispatchEffect("WheelDust", data);
+		g_pEffects->DispatchEffect("WheelDust", data);
 	}
 }
 
@@ -16767,48 +16730,6 @@ void EntityTouch_Add(IServerEntity* pEntity)
 {
 	g_TouchManager.AddEntity(pEntity);
 }
-
-// One hook to rule them all...
-// Since most of the little list managers in here only need one or two of the game
-// system callbacks, this hook is a game system that passes them the appropriate callbacks
-class CEntityListSystem : public CAutoGameSystemPerFrame
-{
-public:
-	CEntityListSystem(char const* name) : CAutoGameSystemPerFrame(name)
-	{
-
-	}
-	void LevelInitPreEntity()
-	{
-		g_TouchManager.LevelInitPreEntity();
-		g_AimManager.LevelInitPreEntity();
-		g_SimThinkManager.LevelInitPreEntity();
-	}
-	void LevelShutdownPreEntity()
-	{
-
-	}
-	void LevelShutdownPostEntity()
-	{
-		g_TouchManager.LevelShutdownPostEntity();
-		g_AimManager.LevelShutdownPostEntity();
-		g_SimThinkManager.LevelShutdownPostEntity();
-	}
-
-	void Update(float frametime)
-	{
-		gEntList.UpdateRagdolls(frametime);
-	}
-
-	void FrameUpdatePostEntityThink()
-	{
-		//This is pretty hacky, it's only called on the server so it just calls the update method.
-		gEntList.UpdateRagdolls(0);
-		g_TouchManager.FrameUpdatePostEntityThink();
-	}
-};
-
-static CEntityListSystem g_EntityListSystem("CEntityListSystem");
 
 class CSortedEntityList
 {

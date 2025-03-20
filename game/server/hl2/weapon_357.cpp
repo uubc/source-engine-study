@@ -18,6 +18,7 @@
 #include "engine/IEngineSound.h"
 #include "te_effect_dispatch.h"
 #include "gamestats.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -81,7 +82,7 @@ void CWeapon357::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 					data.m_vAngles = QAngle( 90, random->RandomInt( 0, 360 ), 0 );
 					data.m_nEntIndex = entindex();
 
-					DispatchEffect( "ShellEject", data );
+					g_pEffects->DispatchEffect( "ShellEject", data );
 				}
 
 				break;

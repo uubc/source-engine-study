@@ -19,7 +19,7 @@ void ImpactCallback( const CEffectData &data )
 	int iMaterial, iDamageType, iHitbox;
 	short nSurfaceProp;
 
-	C_BaseEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
+	IClientEntity *pEntity = ParseImpactData( data, &vecOrigin, &vecStart, &vecShotDir, nSurfaceProp, iMaterial, iDamageType, iHitbox );
 
 	if ( !pEntity )
 		return;

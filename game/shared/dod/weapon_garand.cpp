@@ -7,6 +7,7 @@
 #include "cbase.h"
 #include "weapon_dodsniper.h"
 #include "dod_shareddefs.h"
+#include "IEffects.h"
 
 #ifndef CLIENT_DLL
 	#include "te_effect_dispatch.h"
@@ -185,7 +186,7 @@ void CWeaponGarand::PrimaryAttack( void )
 		data.m_vAngles.y = 0;
 		data.m_vAngles.z = 0;
 
-		DispatchEffect( "DOD_EjectBrass", data );
+		g_pEffects->DispatchEffect( "DOD_EjectBrass", data );
 #endif
 	}
 }

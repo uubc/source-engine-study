@@ -12,6 +12,7 @@
 #include "weapon_rpg.h"
 #include "effect_color_tables.h"
 #include "te_effect_dispatch.h"
+#include "IEffects.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -795,7 +796,7 @@ void CNPC_Combine_Cannon::ScopeGlint( void )
 	data.m_vAngles = vec3_angle;
 	data.m_nColor = COMMAND_POINT_BLUE;
 
-	DispatchEffect( "CommandPointer", data );
+	g_pEffects->DispatchEffect( "CommandPointer", data );
 }
 
 //-----------------------------------------------------------------------------

@@ -28,6 +28,7 @@ class IStudioHdr;
 #include "tier1/memstack.h"
 #include "tier1/utlpriorityqueue.h"
 #include "tier1/KeyValues.h"
+#include "tier2/tier2.h"
 #ifdef _WIN32
 #include "typeinfo"
 // BUGBUG: typeinfo stomps some of the warning settings (in yvals.h)
@@ -88,6 +89,7 @@ class IStudioHdr;
 #include "ai_activity.h"
 #include "shareddefs.h"
 
+#include "effect_dispatch_data.h"
 #include "IEffects.h"
 //#include "sharedInterface.h"
 #include "collisionproperty.h"

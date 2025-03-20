@@ -42,6 +42,7 @@
 #include "gamestats.h"
 #include "filters.h"
 #include "tier0/icommandline.h"
+#include "IEffects.h"
 
 #ifdef HL2_EPISODIC
 #include "npc_alyx_episodic.h"
@@ -3806,12 +3807,12 @@ void CHL2_Player::Splash( void )
 	if ( flSpeed < 300 )
 	{
 		data.m_flScale = random->RandomFloat( 10, 12 );
-		DispatchEffect( "waterripple", data );
+		g_pEffects->DispatchEffect( "waterripple", data );
 	}
 	else
 	{
 		data.m_flScale = random->RandomFloat( 6, 8 );
-		DispatchEffect( "watersplash", data );
+		g_pEffects->DispatchEffect( "watersplash", data );
 	}
 }
 

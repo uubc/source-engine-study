@@ -70,17 +70,17 @@ void ReloadParticleEffectsInList( IFileList *pFilesToReload );
 //-----------------------------------------------------------------------------
 // Particle spawning methods
 //-----------------------------------------------------------------------------
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, bool bResetAllParticlesOnEntity = false );
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity = NULL, int iAttachmentPoint = -1, bool bResetAllParticlesOnEntity = false );
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, CBaseEntity *pEntity = NULL );
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vector vecStart, QAngle vecAngles, CBaseEntity *pEntity = NULL );
-void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart, QAngle vecAngles, CBaseEntity *pEntity = NULL );
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity, const char *pszAttachmentName, bool bResetAllParticlesOnEntity = false );
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity = NULL, int iAttachmentPoint = -1, bool bResetAllParticlesOnEntity = false );
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, IHandleEntity *pEntity = NULL );
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vector vecStart, QAngle vecAngles, IHandleEntity *pEntity = NULL );
+void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart, QAngle vecAngles, IHandleEntity *pEntity = NULL );
 
-void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, Vector vecColor1, Vector vecColor2, bool bUseColors=true, bool bResetAllParticlesOnEntity = false );
-void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, Vector vecColor1, Vector vecColor2, bool bUseColors=true, CBaseEntity *pEntity = NULL, int iAttachType = PATTACH_CUSTOMORIGIN );
+void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, IHandleEntity *pEntity, const char *pszAttachmentName, Vector vecColor1, Vector vecColor2, bool bUseColors=true, bool bResetAllParticlesOnEntity = false );
+void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, Vector vecColor1, Vector vecColor2, bool bUseColors=true, IHandleEntity *pEntity = NULL, int iAttachType = PATTACH_CUSTOMORIGIN );
 
 
-void StopParticleEffects( CBaseEntity *pEntity );
+void StopParticleEffects( IHandleEntity *pEntity );
 
 
 #endif // PARTICLE_PARSE_H

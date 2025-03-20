@@ -10,6 +10,7 @@
 #include "shake.h"
 #include "decals.h"
 #include "IEffects.h"
+#include "effect_dispatch_data.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -22,7 +23,7 @@ extern short		g_sModelIndexBloodSpray;	// (in combatweapon.cpp) holds the sprite
 //-----------------------------------------------------------------------------
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
-class CEffectsServer : public IEffects
+class CEffectsServer : public IEffects, public IPredictionSystem
 {
 public:
 	CEffectsServer();
@@ -48,6 +49,13 @@ public:
 	virtual bool IsServer();
 	virtual void SuppressEffectsSounds( bool bSuppress ) { Assert(0); }
 
+	virtual void WaterRipple(const Vector& origin, float scale, Vector* pColor, float flLifetime = 1.5, float flAlpha = 1) {}
+	virtual void GunshotSplash(const Vector& origin, const Vector& normal, float scale) {}
+	virtual void GunshotSlimeSplash(const Vector& origin, const Vector& normal, float scale) {}
+	virtual void GetSplashLighting(Vector position, Vector* color, float* luminosity) {}
+
+	virtual void DispatchEffect(const char* pName, const CEffectData& data);
+	virtual void DispatchEffect(const char* pName, const CEffectData& data, IRecipientFilter& filter);
 private:
 	//-----------------------------------------------------------------------------
 	// Purpose: Returning true means don't even call TE func
@@ -195,4 +203,18 @@ float CEffectsServer::Time()
 bool CEffectsServer::IsServer()
 {
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CEffectsServer::DispatchEffect(const char* pName, const CEffectData& data)
+{
+	CPASFilter filter(data.m_vOrigin);
+	DispatchEffect(pName, data, filter);
+}
+
+void CEffectsServer::DispatchEffect(const char* pName, const CEffectData& data, IRecipientFilter& filter)
+{
+	te->DispatchEffect(filter, 0.0, data.m_vOrigin, pName, data);
 }

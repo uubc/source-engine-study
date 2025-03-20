@@ -276,11 +276,11 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex,
 	// Fire it off
 	if ( pCustomTracerName )
 	{
-		DispatchEffect( pCustomTracerName, data );
+		g_pEffects->DispatchEffect( pCustomTracerName, data );
 	}
 	else
 	{
-		DispatchEffect( "Tracer", data );
+		g_pEffects->DispatchEffect( "Tracer", data );
 	}
 }
 
@@ -410,7 +410,7 @@ void UTIL_BloodImpact( const Vector &pos, const Vector &dir, int color, int amou
 	data.m_flScale = (float)amount;
 	data.m_nColor = (unsigned char)color;
 
-	DispatchEffect( "bloodimpact", data );
+	g_pEffects->DispatchEffect( "bloodimpact", data );
 }
 
 bool UTIL_IsSpaceEmpty( CBaseEntity *pMainEnt, const Vector &vMin, const Vector &vMax )

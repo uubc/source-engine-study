@@ -817,7 +817,7 @@ void CPropAPC::DoMuzzleFlash( void )
 	data.m_nEntIndex = entindex();
 	data.m_nAttachmentIndex = m_nMachineGunMuzzleAttachment;
 	data.m_flScale = 1.0f;
-	DispatchEffect( "ChopperMuzzleFlash", data );
+	g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );
 
 	GetEngineObject()->DoMuzzleFlash();
 }

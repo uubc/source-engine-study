@@ -7,6 +7,7 @@
 
 #include "cbase.h"
 #include "npcevent.h"
+#include "IEffects.h"
 
 #ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
@@ -153,7 +154,7 @@ void CWeaponAR2::DoImpactEffect( trace_t &tr, int nDamageType )
 	data.m_vOrigin = tr.endpos + ( tr.plane.normal * 1.0f );
 	data.m_vNormal = tr.plane.normal;
 
-	DispatchEffect( "AR2Impact", data );
+	g_pEffects->DispatchEffect( "AR2Impact", data );
 
 	BaseClass::DoImpactEffect( tr, nDamageType );
 }

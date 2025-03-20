@@ -1407,7 +1407,7 @@ void CNPC_Manhack::Splash( const Vector &vecSplashPos )
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}
 
-	DispatchEffect( "watersplash", data );
+	g_pEffects->DispatchEffect( "watersplash", data );
 }
 
 //-----------------------------------------------------------------------------
@@ -1539,7 +1539,7 @@ void CNPC_Manhack::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr
 		
 		data.m_vNormal = ( tr.plane.normal + velocity ) * 0.5;;
 
-		DispatchEffect( "ManhackSparks", data );
+		g_pEffects->DispatchEffect( "ManhackSparks", data );
 
 		const char* soundname = "NPC_Manhack.Grind";
 		CPASAttenuationFilter filter(this, soundname);
@@ -1636,7 +1636,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 			
 			data.m_vNormal = ( tr.plane.normal + velocity ) * 0.5;;
 
-			DispatchEffect( "ManhackSparks", data );
+			g_pEffects->DispatchEffect( "ManhackSparks", data );
 
 			CBroadcastRecipientFilter filter;
 
