@@ -60,7 +60,6 @@ public:
 //-----------------------------------------------------------------------------
 // System for dealing with detail objects
 //-----------------------------------------------------------------------------
-IDetailObjectSystem* DetailObjectSystem();
 extern IDetailObjectSystem* g_pDetailObjectSystem;
 
 #endif // DETAILOBJECTSYSTEM_H

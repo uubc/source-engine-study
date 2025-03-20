@@ -612,7 +612,7 @@ bool R_CullNode( Frustum_t *pAreaFrustum, mnode_t *pNode, int& nClipMask )
 
 
 static ConVar r_portalscloseall( "r_portalscloseall", "0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
-static ConVar r_portalsopenall( "r_portalsopenall", "0", FCVAR_CHEAT, "Open all portals" );
+ConVar r_portalsopenall( "r_portalsopenall", "0", FCVAR_CHEAT, "Open all portals" );
 static ConVar r_ShowViewerArea( "r_ShowViewerArea", "0" );
 
 void R_SetupAreaBits( int iForceViewLeaf /* = -1 */, const VisOverrideData_t* pVisData /* = NULL */, float *pWaterReflectionHeight /* = NULL */ )

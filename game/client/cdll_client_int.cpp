@@ -195,6 +195,9 @@ ISpatialPartition* partition = NULL;
 IFileSystem *filesystem = NULL;
 IShadowMgr *shadowmgr = NULL;
 IStaticPropMgrClient *staticpropmgr = NULL;
+IClientLeafSystem* g_pClientLeafSystem = NULL;
+IClientShadowMgr* g_pClientShadowMgr = NULL;
+IDetailObjectSystem* g_pDetailObjectSystem = NULL;
 IEngineSound *enginesound = NULL;
 IUniformRandomStream *random = NULL;
 static CGaussianRandomStream s_GaussianRandomStream;
@@ -946,6 +949,12 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if ( (shadowmgr = (IShadowMgr *)appSystemFactory(ENGINE_SHADOWMGR_INTERFACE_VERSION, NULL)) == NULL )
 		return false;
 	if ( (staticpropmgr = (IStaticPropMgrClient *)appSystemFactory(INTERFACEVERSION_STATICPROPMGR_CLIENT, NULL)) == NULL )
+		return false;
+	if ((g_pClientLeafSystem = (IClientLeafSystem*)appSystemFactory(CLIENTLEAFSYSTEM_INTERFACE_VERSION, NULL)) == NULL)
+		return false;
+	if ((g_pClientShadowMgr = (IClientShadowMgr*)appSystemFactory(CLIENTSHADOW_INTERFACE_VERSION, NULL)) == NULL)
+		return false;
+	if ((g_pDetailObjectSystem = (IDetailObjectSystem*)appSystemFactory(DETAILOBJECTSYSTEM_INTERFACE_VERSION, NULL)) == NULL)
 		return false;
 	if ( (enginesound = (IEngineSound *)appSystemFactory(IENGINESOUND_CLIENT_INTERFACE_VERSION, NULL)) == NULL )
 		return false;

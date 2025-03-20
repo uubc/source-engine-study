@@ -622,6 +622,7 @@ public:
 
 static CVRenderView s_RenderView;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CVRenderView, IVRenderView, VENGINE_RENDERVIEW_INTERFACE_VERSION, s_RenderView );
+IVRenderView* render = &s_RenderView;
 
 
 

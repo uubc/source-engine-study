@@ -5907,10 +5907,10 @@ ConVar cl_rebuy(
 // HACK: the detail sway convars are archive, and default to 0.  Existing CS:S players thus have no detail
 // prop sway.  We'll force them to DoD's default values for now.  What we really need in the long run is
 // a system to apply changes to archived convars' defaults to existing players.
-extern ConVar cl_detail_max_sway;
-extern ConVar cl_detail_avoid_radius;
-extern ConVar cl_detail_avoid_force;
-extern ConVar cl_detail_avoid_recover_speed;
+//extern ConVar cl_detail_max_sway;
+//extern ConVar cl_detail_avoid_radius;
+//extern ConVar cl_detail_avoid_force;
+//extern ConVar cl_detail_avoid_recover_speed;
 
 void __MsgFunc_MatchEndConditions(bf_read& msg);
 
@@ -6103,6 +6103,10 @@ void CCSGameWorld::LevelInit()
 
 	// HACK: the detail sway convars are archive, and default to 0.  Existing CS:S players thus have no detail
 	// prop sway.  We'll force them to DoD's default values for now.
+	ConVarRef cl_detail_max_sway("cl_detail_max_sway");
+	ConVarRef cl_detail_avoid_radius("cl_detail_avoid_radius");
+	ConVarRef cl_detail_avoid_force("cl_detail_avoid_force");
+	ConVarRef cl_detail_avoid_recover_speed("cl_detail_avoid_recover_speed");
 	if (!cl_detail_max_sway.GetFloat() &&
 		!cl_detail_avoid_radius.GetFloat() &&
 		!cl_detail_avoid_force.GetFloat() &&

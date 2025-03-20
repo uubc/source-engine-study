@@ -91,6 +91,8 @@
 #include "cl_check_process.h"
 #include "enginethreads.h"
 #include "ModelInfo.h"
+#include "iviewrender.h"
+#include "iclientshadowmgr.h"
 
 #if defined( REPLAY_ENABLED )
 #include "replay_internal.h"
@@ -1682,10 +1684,10 @@ IPrediction	*g_pClientSidePrediction = NULL;
 IClientRenderTargets *g_pClientRenderTargets = NULL;
 IClientEntityList *entitylist = NULL;
 ICenterPrint *centerprint = NULL;
-IClientLeafSystemEngine *clientleafsystem = NULL;
-bool g_bClientLeafSystemV1;
 ClientClass *g_pClientClassHead = NULL;
 IClientReplay *g_pClientReplay = NULL;
+//IClientShadowMgr* g_pClientShadowMgr = NULL;
+IViewRender* g_pViewRender = NULL;
 
 ClientClass *ClientDLL_GetAllClasses( void )
 {
@@ -1783,23 +1785,17 @@ bool ClientDLL_Load()
 				Sys_Error("Could not get centerprint interface from library client");
 			}
 
-			clientleafsystem = (IClientLeafSystemEngine*)g_ClientFactory(CLIENTLEAFSYSTEM_INTERFACE_VERSION, NULL);
-			if (clientleafsystem)
+			g_pViewRender= (IViewRender*)g_ClientFactory(VIEWRENDER_INTERFACE_VERSION, NULL);
+			if (!g_pViewRender) 
 			{
-				g_bClientLeafSystemV1 = false;
+				Sys_Error("Could not get g_pViewRender interface from library client");
 			}
-			else if (!clientleafsystem)
-			{
-				clientleafsystem = (IClientLeafSystemEngine*)g_ClientFactory(CLIENTLEAFSYSTEM_INTERFACE_VERSION_1, NULL);
-				if (!clientleafsystem)
-				{
-					Sys_Error("Could not get client leaf system interface from library client");
-				}
-				else
-				{
-					g_bClientLeafSystemV1 = true;
-				}
-			}
+
+			//g_pClientShadowMgr = (IClientShadowMgr*)g_ClientFactory(CLIENTSHADOW_INTERFACE_VERSION, NULL);
+			//if (!g_pClientShadowMgr) 
+			//{
+			//	Sys_Error("Could not get g_pClientShadowMgr interface from library client");
+			//}
 
 			if( g_pSourceVR )
 			{

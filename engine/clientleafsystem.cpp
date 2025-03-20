@@ -33,13 +33,13 @@ class VMatrix;  // forward decl
 
 static ConVar cl_drawleaf("cl_drawleaf", "-1", FCVAR_CHEAT );
 static ConVar r_PortalTestEnts( "r_PortalTestEnts", "1", FCVAR_CHEAT, "Clip entities against portal frustums." );
-static ConVar r_portalsopenall( "r_portalsopenall", "0", FCVAR_CHEAT, "Open all portals" );
+//static ConVar r_portalsopenall( "r_portalsopenall", "0", FCVAR_CHEAT, "Open all portals" );
+extern ConVar r_portalsopenall;
 static ConVar cl_threaded_client_leaf_system("cl_threaded_client_leaf_system", "0"  );
-extern IVEngineClient* engine;
-extern IVModelInfoClient* modelinfo;
-extern CGlobalVarsBase* gpGlobals;
+extern IVEngineClient* engineClient;
+extern IVModelInfoClient* modelinfoclient;
+extern CGlobalVarsBase g_ClientGlobalVariables;
 
-DEFINE_FIXEDSIZE_ALLOCATOR( CClientRenderablesList, 1, CUtlMemoryPool::GROW_SLOW );
 
 //-----------------------------------------------------------------------------
 // Threading helpers
@@ -479,7 +479,7 @@ void CClientLeafSystem::LevelInitPreEntity()
 	m_DirtyRenderables.EnsureCapacity( 256 );
 
 	// Add all the leaves we'll need
-	int leafCount = engine->LevelLeafCount();
+	int leafCount = engineClient->LevelLeafCount();
 	m_Leaf.EnsureCapacity( leafCount );
 
 	ClientLeaf_t newLeaf;
@@ -609,7 +609,7 @@ void CClientLeafSystem::NewRenderable( IClientRenderable* pRenderable, RenderGro
 	RenderableInfo_t &info = m_Renderables[handle];
 
 	// We need to know if it's a brush model for shadows
-	int modelType = modelinfo->GetModelType( pRenderable->GetModel() );
+	int modelType = modelinfoclient->GetModelType( pRenderable->GetModel() );
 	if (modelType == mod_brush)
 	{
 		flags |= RENDER_FLAGS_BRUSH_MODEL;
@@ -859,7 +859,7 @@ short CClientLeafSystem::GetRenderableArea( ClientRenderHandle_t handle )
 		return 0;
 
 	// Now ask the 
-	return engine->GetLeavesArea( leaves, nLeaves );
+	return engineClient->GetLeavesArea( leaves, nLeaves );
 }
 
 
@@ -1167,7 +1167,7 @@ void CClientLeafSystem::InsertIntoTree( ClientRenderHandle_t &handle )
 	CalcRenderableWorldSpaceAABB_Fast( pRenderable, absMins, absMaxs );
 	Assert( absMins.IsValid() && absMaxs.IsValid() );
 
-	ISpatialQuery* pQuery = engine->GetBSPTreeQuery();
+	ISpatialQuery* pQuery = engineClient->GetBSPTreeQuery();
 	pQuery->EnumerateLeavesInBox( absMins, absMaxs, this, (intp)&list );
 
 	if ( list.pHead )
@@ -1332,7 +1332,7 @@ void CClientLeafSystem::ComputeTranslucentRenderLeaf( int count, const LeafIndex
 	// For better sorting, we're gonna choose the leaf that is closest to the camera.
 	// The leaf list passed in here is sorted front to back
 	bool bThreaded = false;//( cl_threaded_client_leaf_system.GetBool() && g_pThreadPool->NumThreads() );
-	int globalFrameCount = gpGlobals->framecount;
+	int globalFrameCount = g_ClientGlobalVariables.framecount;
 	int i;
 
 	static CUtlVector<RenderableInfo_t *> orderedList; // @MULTICORE (toml 8/30/2006): will need to make non-static if thread this function
@@ -1435,7 +1435,7 @@ inline void AddRenderableToRenderList( CClientRenderablesList &renderList, IClie
 	}
 	else
 	{
-		engine->Con_NPrintf( 10, "Warning: overflowed CClientRenderablesList group %d", group );
+		engineClient->Con_NPrintf( 10, "Warning: overflowed CClientRenderablesList group %d", group );
 	}
 }
 
@@ -1570,21 +1570,21 @@ void CClientLeafSystem::CollateRenderablesInLeaf( int leaf, int worldListLeafInd
 		if ( portalTestEnts && renderable.m_Area != -1 )
 		{
 			VPROF( "r_PortalTestEnts" );
-			if ( !engine->DoesBoxTouchAreaFrustum( absMins, absMaxs, renderable.m_Area ) )
+			if ( !engineClient->DoesBoxTouchAreaFrustum( absMins, absMaxs, renderable.m_Area ) )
 				continue;
 		}
 		else
 		{
 			// cull with main frustum
-			if ( engine->CullBox( absMins, absMaxs ) )
+			if ( engineClient->CullBox( absMins, absMaxs ) )
 				continue;
 		}
 
 		// UNDONE: Investigate speed tradeoffs of occlusion culling brush models too?
 		if ( renderable.m_Flags & RENDER_FLAGS_STUDIO_MODEL )
 		{
-			// test to see if this renderable is occluded by the engine's occlusion system
-			if ( engine->IsOccluded( absMins, absMaxs ) )
+			// test to see if this renderable is occluded by the engineClient's occlusion system
+			if ( engineClient->IsOccluded( absMins, absMaxs ) )
 				continue;
 		}
 
@@ -1655,7 +1655,7 @@ void CClientLeafSystem::CollateRenderablesInLeaf( int leaf, int worldListLeafInd
 		int count = m_Leaf[leaf].m_DetailPropCount;
 		while( --count >= 0 )
 		{
-			IClientRenderable* pRenderable = DetailObjectSystem()->GetDetailModel(idx);
+			IClientRenderable* pRenderable = g_pDetailObjectSystem->GetDetailModel(idx);
 
 			// FIXME: This if check here is necessary because the detail object system also maintains lists of sprites...
 			if (pRenderable)

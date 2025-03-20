@@ -59,11 +59,11 @@ ConVar cl_detail_avoid_radius( "cl_detail_avoid_radius", "0", FCVAR_ARCHIVE, "ra
 ConVar cl_detail_avoid_force( "cl_detail_avoid_force", "0", FCVAR_ARCHIVE, "force with which to avoid players ( in units, percentage of the width of the detail sprite )" );
 ConVar cl_detail_avoid_recover_speed( "cl_detail_avoid_recover_speed", "0", FCVAR_ARCHIVE, "how fast to recover position after avoiding players" );
 #endif
-extern IVModelInfoClient* modelinfo;
+extern IVModelInfoClient* modelinfoclient;
 extern IVModelRender* modelrender;
-extern IVEngineClient* engine;
-extern IBaseClientDLL* clientdll;
-extern CGlobalVarsBase* gpGlobals;
+extern IVEngineClient* engineClient;
+extern IBaseClientDLL* g_ClientDLL;
+extern CGlobalVarsBase g_ClientGlobalVariables;
 #ifdef POSIX
 #define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
 #endif
@@ -280,8 +280,10 @@ protected:
 #endif
 };
 
-static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT ); // hook into engine's cvars..
-extern ConVar r_DrawDetailProps;
+//static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT ); // hook into engine's cvars..
+extern ConVar mat_fullbright;
+// FIXME: This is not static because we needed to turn it off for TF2 playtests
+ConVar r_DrawDetailProps("r_DrawDetailProps", "1", FCVAR_NONE, "0=Off, 1=Normal, 2=Wireframe");
 
 
 //-----------------------------------------------------------------------------
@@ -602,7 +604,7 @@ bool CDetailModel::GetAttachment( int number, Vector &origin, QAngle &angles )
 
 bool CDetailModel::IsTransparent( void )
 {
-	return (m_Alpha < 255) || modelinfo->IsTranslucent(m_pModel);
+	return (m_Alpha < 255) || modelinfoclient->IsTranslucent(m_pModel);
 }
 
 bool CDetailModel::ShouldDraw()
@@ -613,10 +615,10 @@ bool CDetailModel::ShouldDraw()
 
 void CDetailModel::GetRenderBounds( Vector& mins, Vector& maxs )
 {
-	int nModelType = modelinfo->GetModelType( m_pModel );
+	int nModelType = modelinfoclient->GetModelType( m_pModel );
 	if (nModelType == mod_studio || nModelType == mod_brush)
 	{
-		modelinfo->GetModelRenderBounds( GetModel(), mins, maxs );
+		modelinfoclient->GetModelRenderBounds( GetModel(), mins, maxs );
 	}
 	else
 	{
@@ -630,7 +632,7 @@ IPVSNotify* CDetailModel::GetPVSNotifyInterface()
 	return NULL;
 }
 
-void CDetailModel::GetRenderBoundsWorldspace( Vector& mins, Vector& maxs )
+void CDetailModel::GetRenderBoundsWorldspace( Vector& mins, Vector& maxs)
 {
 	DefaultRenderBoundsWorldspace( this, mins, maxs );
 }
@@ -690,7 +692,7 @@ bool CDetailModel::SetupBones( matrix3x4_t *pBoneToWorldOut, int nMaxBones, int 
 	parentTransform[2][3] = vRenderOrigin.z;
 
 	// Just copy it on down baby
-	IStudioHdr *pStudioHdr = modelinfo->GetStudiomodel( m_pModel );
+	IStudioHdr *pStudioHdr = modelinfoclient->GetStudiomodel( m_pModel );
 	for (int i = 0; i < pStudioHdr->numbones(); i++) 
 	{
 		MatrixCopy( parentTransform, pBoneToWorldOut[i] );
@@ -920,9 +922,9 @@ void CDetailModel::GetColorModulation( float *color )
 
 	Vector tmp;
 	Vector normal( 1, 0, 0);
-	engine->ComputeDynamicLighting( m_Origin, &normal, tmp );
+	engineClient->ComputeDynamicLighting( m_Origin, &normal, tmp );
 
-	float val = engine->LightStyleValue( 0 );
+	float val = engineClient->LightStyleValue( 0 );
 	color[0] = tmp[0] + val * TexLightToLinear( m_Color.r, m_Color.exponent );
 	color[1] = tmp[1] + val * TexLightToLinear( m_Color.g, m_Color.exponent );
 	color[2] = tmp[2] + val * TexLightToLinear( m_Color.b, m_Color.exponent );
@@ -939,7 +941,7 @@ void CDetailModel::GetColorModulation( float *color )
 			for (int i = 0; i < nLightStyles; ++i)
 			{
 				DetailPropLightstylesLump_t& lighting = s_DetailObjectSystem.DetailLighting( iLightStyle + i );
-				val = engine->LightStyleValue( lighting.m_Style );
+				val = engineClient->LightStyleValue( lighting.m_Style );
 				if (val != 0)
 				{
 					color[0] += val * TexLightToLinear( lighting.m_Lighting.r, lighting.m_Lighting.exponent ); 
@@ -951,7 +953,7 @@ void CDetailModel::GetColorModulation( float *color )
 	}
 
 	// Gamma correct....
-	engine->LinearToGamma( color, color );
+	engineClient->LinearToGamma( color, color );
 }
 
 
@@ -964,7 +966,7 @@ bool CDetailModel::IsDetailModelTranslucent()
 	if (m_Type >= DETAIL_PROP_TYPE_SPRITE)
 		return true;
 
-	return modelinfo->IsTranslucent(GetModel());
+	return modelinfoclient->IsTranslucent(GetModel());
 }
 
 
@@ -1063,7 +1065,7 @@ void CDetailModel::DrawTypeSprite( CMeshBuilder &meshBuilder )
 		if ( flSwayAmplitude > 0 )
 		{
 			// sway based on time plus a random seed that is constant for this instance of the sprite
-			vecSway += dx * sin(gpGlobals->curtime+m_Origin.x) * flSwayAmplitude;
+			vecSway += dx * sin(g_ClientGlobalVariables.curtime+m_Origin.x) * flSwayAmplitude;
 		}
 	}
 #endif
@@ -1171,7 +1173,7 @@ void CDetailModel::DrawTypeShapeCross( CMeshBuilder &meshBuilder )
 	float flSwayAmplitude = m_pAdvInfo->m_flSwayAmount * cl_detail_max_sway.GetFloat();
 	if ( flSwayAmplitude > 0 )
 	{
-		vecSway += UTIL_YawToVector( m_pAdvInfo->m_flSwayYaw ) * sin(gpGlobals->curtime+m_Origin.x) * flSwayAmplitude;
+		vecSway += UTIL_YawToVector( m_pAdvInfo->m_flSwayYaw ) * sin(g_ClientGlobalVariables.curtime+m_Origin.x) * flSwayAmplitude;
 	}
 
 	Vector vecOrigin;
@@ -1305,7 +1307,7 @@ void CDetailModel::DrawTypeShapeTri( CMeshBuilder &meshBuilder )
 
 		// sway is calculated per side so they don't sway exactly the same
 		Vector vecSway = ( m_pAdvInfo->m_vecCurrentAvoid * flWidth ) + 
-			vecSwayYaw * sin(gpGlobals->curtime+m_Origin.x+iBranch) * flSwayAmplitude;
+			vecSwayYaw * sin(g_ClientGlobalVariables.curtime+m_Origin.x+iBranch) * flSwayAmplitude;
 
 		DrawSwayingQuad( meshBuilder, vecOrigin, vecSway, texul, texlr, color, vecWidth, vecHeight );
 		
@@ -1470,7 +1472,7 @@ void CDetailObjectSystem::LevelInitPreEntity()
 	m_DetailWireframeMaterial.Init( "debug/debugspritewireframe", TEXTURE_GROUP_OTHER );
 
 	// Version check
-	if (engine->GameLumpVersion( GAMELUMP_DETAIL_PROPS ) < 4)
+	if (engineClient->GameLumpVersion( GAMELUMP_DETAIL_PROPS ) < 4)
 	{
 		Warning("Map uses old detail prop file format.. ignoring detail props\n");
 		return;
@@ -1479,15 +1481,15 @@ void CDetailObjectSystem::LevelInitPreEntity()
 	MEM_ALLOC_CREDIT();
 
 	// Unserialize
-	int size = engine->GameLumpSize( GAMELUMP_DETAIL_PROPS );
+	int size = engineClient->GameLumpSize( GAMELUMP_DETAIL_PROPS );
 	CUtlMemory<unsigned char> fileMemory;
 	fileMemory.EnsureCapacity( size );
-	if (engine->LoadGameLump( GAMELUMP_DETAIL_PROPS, fileMemory.Base(), size ))
+	if (engineClient->LoadGameLump( GAMELUMP_DETAIL_PROPS, fileMemory.Base(), size ))
 	{
 		CUtlBuffer buf( fileMemory.Base(), size, CUtlBuffer::READ_ONLY );
 		UnserializeModelDict( buf );
 
-		switch (engine->GameLumpVersion( GAMELUMP_DETAIL_PROPS ) )
+		switch (engineClient->GameLumpVersion( GAMELUMP_DETAIL_PROPS ) )
 		{
 		case 4:
 			UnserializeDetailSprites( buf );
@@ -1499,7 +1501,7 @@ void CDetailObjectSystem::LevelInitPreEntity()
 	if ( m_DetailObjects.Count() || m_DetailSpriteDict.Count() )
 	{
 		// There are detail objects in the level, so precache the material
-		clientdll->PrecacheMaterial( DETAIL_SPRITE_MATERIAL );
+		g_ClientDLL->PrecacheMaterial( DETAIL_SPRITE_MATERIAL );
 		IMaterial *pMat = m_DetailSpriteMaterial;
 		// adjust for non-square textures (cropped)
 		float flRatio = (float)( pMat->GetMappingWidth() ) / pMat->GetMappingHeight();
@@ -1524,10 +1526,10 @@ void CDetailObjectSystem::LevelInitPreEntity()
 	{
 		detailPropLightingLump = GAMELUMP_DETAIL_PROP_LIGHTING;
 	}
-	size = engine->GameLumpSize( detailPropLightingLump );
+	size = engineClient->GameLumpSize( detailPropLightingLump );
 
 	fileMemory.EnsureCapacity( size );
-	if (engine->LoadGameLump( detailPropLightingLump, fileMemory.Base(), size ))
+	if (engineClient->LoadGameLump( detailPropLightingLump, fileMemory.Base(), size ))
 	{
 		CUtlBuffer buf( fileMemory.Base(), size, CUtlBuffer::READ_ONLY );
 		UnserializeModelLighting( buf );
@@ -1617,13 +1619,13 @@ void CDetailObjectSystem::UnserializeModelDict( CUtlBuffer& buf )
 		buf.Get( &lump, sizeof(DetailObjectDictLump_t) );
 		
 		DetailModelDict_t dict;
-		dict.m_pModel = (model_t *)engine->LoadModel( lump.m_Name, true );
+		dict.m_pModel = (model_t *)engineClient->LoadModel( lump.m_Name, true );
 
 		// Don't allow vertex-lit models
-		if (modelinfo->IsModelVertexLit(dict.m_pModel))
+		if (modelinfoclient->IsModelVertexLit(dict.m_pModel))
 		{
 			Warning("Detail prop model %s is using vertex-lit materials!\nIt must use unlit materials!\n", lump.m_Name );
-			dict.m_pModel = (model_t *)engine->LoadModel( "models/error.mdl" );
+			dict.m_pModel = (model_t *)engineClient->LoadModel( "models/error.mdl" );
 		}
 
 		m_DetailObjectDict.AddToTail( dict );
@@ -1960,7 +1962,7 @@ void CDetailObjectSystem::UnserializeFastSprite( FastSpriteX4_t *pSpritex4, int 
 	color[1] = TexLightToLinear( rgbcolor.g, rgbcolor.exponent );
 	color[2] = TexLightToLinear( rgbcolor.b, rgbcolor.exponent );
 	color[3] = 255;
-	engine->LinearToGamma( color, color );
+	engineClient->LinearToGamma( color, color );
 	pSpritex4->m_RGBColor[nSubField][0] = 255.0 * color[0];
 	pSpritex4->m_RGBColor[nSubField][1] = 255.0 * color[1];
 	pSpritex4->m_RGBColor[nSubField][2] = 255.0 * color[2];
@@ -2817,9 +2819,9 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 	// We need to recompute translucency information for all detail props
 	for (int i = m_DetailObjectDict.Size(); --i >= 0; )
 	{
-		if (modelinfo->ModelHasMaterialProxy( m_DetailObjectDict[i].m_pModel ))
+		if (modelinfoclient->ModelHasMaterialProxy( m_DetailObjectDict[i].m_pModel ))
 		{
-			modelinfo->RecomputeTranslucency( m_DetailObjectDict[i].m_pModel, 0, 0, NULL );
+			modelinfoclient->RecomputeTranslucency( m_DetailObjectDict[i].m_pModel, 0, 0, NULL );
 		}
 	}
 
@@ -2849,7 +2851,7 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 	m_flCurFalloffFactor = 255.0f / ( m_flCurMaxSqDist - m_flCurFadeSqDist );
 
 
-	ISpatialQuery* pQuery = engine->GetBSPTreeQuery();
+	ISpatialQuery* pQuery = engineClient->GetBSPTreeQuery();
 	pQuery->EnumerateLeavesInSphere(g_pViewRender->CurrentViewOrigin(),
 									 cl_detaildist.GetFloat(), this, (intp)&ctx );
 }

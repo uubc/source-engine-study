@@ -24,6 +24,8 @@
 // Forward decls
 //-----------------------------------------------------------------------------
 struct FlashlightState_t;
+class ITexture;
+struct ShadowInfo_t;
 
 //-----------------------------------------------------------------------------
 // Handles to a client shadow
@@ -109,6 +111,11 @@ public:
 
 	virtual void PreRender() = 0;
 
+	// Returns the shadow texture
+	virtual ITexture* GetShadowTexture(unsigned short h) = 0;
+
+	// Returns shadow information
+	virtual const ShadowInfo_t& GetShadowInfo(ClientShadowHandle_t h) = 0;
 };
 
 

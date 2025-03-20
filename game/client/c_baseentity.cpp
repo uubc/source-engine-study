@@ -960,6 +960,100 @@ void C_BaseEntity::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 	}
 }
 
+// Figure out a world space bounding box that encloses the entity's local render bounds in world space.
+inline void CalcRenderableWorldSpaceAABB(
+	IClientRenderable* pRenderable,
+	Vector& absMins,
+	Vector& absMaxs)
+{
+	pRenderable->GetRenderBoundsWorldspace(absMins, absMaxs);
+}
+
+// This gets an AABB for the renderable, but it doesn't cause a parent's bones to be setup.
+// This is used for placement in the leaves, but the more expensive version is used for culling.
+void CalcRenderableWorldSpaceAABB_Fast(IClientRenderable* pRenderable, Vector& absMin, Vector& absMax)
+{
+	IClientEntity* pEnt = pRenderable->GetIClientUnknown()->GetBaseEntity();
+	if (pEnt && pEnt->GetEngineObject()->IsFollowingEntity())
+	{
+		IEngineObjectClient* pParent = pEnt->GetEngineObject()->GetMoveParent();
+		Assert(pParent);
+
+		// Get the parent's abs space world bounds.
+		CalcRenderableWorldSpaceAABB_Fast(pParent, absMin, absMax);
+
+		// Add the maximum of our local render bounds. This is making the assumption that we can be at any
+		// point and at any angle within the parent's world space bounds.
+		Vector vAddMins, vAddMaxs;
+		pEnt->GetRenderBounds(vAddMins, vAddMaxs);
+		// if our origin is actually farther away than that, expand again
+		float radius = pEnt->GetEngineObject()->GetLocalOrigin().Length();
+
+		float flBloatSize = MAX(vAddMins.Length(), vAddMaxs.Length());
+		flBloatSize = MAX(flBloatSize, radius);
+		absMin -= Vector(flBloatSize, flBloatSize, flBloatSize);
+		absMax += Vector(flBloatSize, flBloatSize, flBloatSize);
+	}
+	else
+	{
+		// Start out with our own render bounds. Since we don't have a parent, this won't incur any nasty 
+		CalcRenderableWorldSpaceAABB(pRenderable, absMin, absMax);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Helper functions.
+//-----------------------------------------------------------------------------
+void DefaultRenderBoundsWorldspace(IClientRenderable* pRenderable, Vector& absMins, Vector& absMaxs)
+{
+	// Tracker 37433:  This fixes a bug where if the stunstick is being wielded by a combine soldier, the fact that the stick was
+	//  attached to the soldier's hand would move it such that it would get frustum culled near the edge of the screen.
+	IClientEntity* pEnt = pRenderable->GetIClientUnknown()->GetBaseEntity();
+	if (pEnt && pEnt->GetEngineObject()->IsFollowingEntity())
+	{
+		IEngineObjectClient* pParent = pEnt->GetEngineObject()->GetFollowedEntity();
+		if (pParent)
+		{
+			// Get the parent's abs space world bounds.
+			CalcRenderableWorldSpaceAABB_Fast(pParent, absMins, absMaxs);
+
+			// Add the maximum of our local render bounds. This is making the assumption that we can be at any
+			// point and at any angle within the parent's world space bounds.
+			Vector vAddMins, vAddMaxs;
+			pEnt->GetRenderBounds(vAddMins, vAddMaxs);
+			// if our origin is actually farther away than that, expand again
+			float radius = pEnt->GetEngineObject()->GetLocalOrigin().Length();
+
+			float flBloatSize = MAX(vAddMins.Length(), vAddMaxs.Length());
+			flBloatSize = MAX(flBloatSize, radius);
+			absMins -= Vector(flBloatSize, flBloatSize, flBloatSize);
+			absMaxs += Vector(flBloatSize, flBloatSize, flBloatSize);
+			return;
+		}
+	}
+
+	Vector mins, maxs;
+	pRenderable->GetRenderBounds(mins, maxs);
+
+	// FIXME: Should I just use a sphere here?
+	// Another option is to pass the OBB down the tree; makes for a better fit
+	// Generate a world-aligned AABB
+	const QAngle& angles = pRenderable->GetRenderAngles();
+	const Vector& origin = pRenderable->GetRenderOrigin();
+	if (angles == vec3_angle)
+	{
+		VectorAdd(mins, origin, absMins);
+		VectorAdd(maxs, origin, absMaxs);
+	}
+	else
+	{
+		matrix3x4_t	boxToWorld;
+		AngleMatrix(angles, origin, boxToWorld);
+		TransformAABB(boxToWorld, mins, maxs, absMins, absMaxs);
+	}
+	Assert(absMins.IsValid() && absMaxs.IsValid());
+}
+
 void C_BaseEntity::GetRenderBoundsWorldspace( Vector& mins, Vector& maxs )
 {
 	DefaultRenderBoundsWorldspace( this->GetEngineObject(), mins, maxs );

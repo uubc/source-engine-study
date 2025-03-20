@@ -381,6 +381,12 @@ $Project "engine"
 		$File	"xboxsystem.cpp" [!$DEDICATED]
 		$File	"$SRCDIR\common\SourceAppInfo.cpp"
 		$File	"$SRCDIR\public\usercmd.cpp"
+		$File	"$SRCDIR\public\clientleafsystem.h"
+		$File	"clientleafsystem.cpp"
+		$File	"$SRCDIR\public\iclientshadowmgr.h"
+		$File	"clientshadowmgr.cpp"
+		$File	"$SRCDIR\public\detailobjectsystem.h"
+		$File	"detailobjectsystem.cpp"
 	}
 	
 	$Folder	"Audio"

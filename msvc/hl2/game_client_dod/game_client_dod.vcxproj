@@ -40,9 +40,7 @@
     <ClCompile Include="..\..\..\game\client\cdll_util.cpp" />
     <ClCompile Include="..\..\..\game\client\clienteffectprecachesystem.cpp" />
     <ClCompile Include="..\..\..\game\client\cliententitylist.cpp" />
-    <ClCompile Include="..\..\..\game\client\clientleafsystem.cpp" />
     <ClCompile Include="..\..\..\game\client\clientmode_shared.cpp" />
-    <ClCompile Include="..\..\..\game\client\clientshadowmgr.cpp" />
     <ClCompile Include="..\..\..\game\client\clientsideeffects.cpp" />
     <ClCompile Include="..\..\..\game\client\clientsideeffects_test.cpp" />
     <ClCompile Include="..\..\..\game\client\clientsteamcontext.cpp" />
@@ -178,7 +176,6 @@
     <ClCompile Include="..\..\..\game\client\c_vote_controller.cpp" />
     <ClCompile Include="..\..\..\game\client\C_WaterLODControl.cpp" />
     <ClCompile Include="..\..\..\game\client\c_world.cpp" />
-    <ClCompile Include="..\..\..\game\client\detailobjectsystem.cpp" />
     <ClCompile Include="..\..\..\game\client\dod\clientmode_dod.cpp" />
     <ClCompile Include="..\..\..\game\client\dod\c_dod_basegrenade.cpp" />
     <ClCompile Include="..\..\..\game\client\dod\c_dod_baserocket.cpp" />

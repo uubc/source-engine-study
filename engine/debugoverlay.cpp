@@ -1301,4 +1301,4 @@ static CIVDebugOverlay g_DebugOverlay;
 
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CIVDebugOverlay, IVDebugOverlay, VDEBUG_OVERLAY_INTERFACE_VERSION, g_DebugOverlay );
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CIVDebugOverlay, IVPhysicsDebugOverlay, VPHYSICS_DEBUG_OVERLAY_INTERFACE_VERSION, g_DebugOverlay );
-
+IVDebugOverlay* debugoverlay = &g_DebugOverlay;

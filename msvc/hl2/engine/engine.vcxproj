@@ -205,6 +205,8 @@
     <ClCompile Include="..\..\..\engine\checksum_engine.cpp" />
     <ClCompile Include="..\..\..\engine\client.cpp" />
     <ClCompile Include="..\..\..\engine\clientframe.cpp" />
+    <ClCompile Include="..\..\..\engine\clientleafsystem.cpp" />
+    <ClCompile Include="..\..\..\engine\clientshadowmgr.cpp" />
     <ClCompile Include="..\..\..\engine\client_pch.cpp" />
     <ClCompile Include="..\..\..\engine\clockdriftmgr.cpp" />
     <ClCompile Include="..\..\..\engine\cl_bounded_cvars.cpp" />
@@ -243,6 +245,7 @@
     <ClCompile Include="..\..\..\engine\decals.cpp" />
     <ClCompile Include="..\..\..\engine\decal_clip.cpp" />
     <ClCompile Include="..\..\..\engine\demofile.cpp" />
+    <ClCompile Include="..\..\..\engine\detailobjectsystem.cpp" />
     <ClCompile Include="..\..\..\engine\DevShotGenerator.cpp" />
     <ClCompile Include="..\..\..\engine\disp.cpp" />
     <ClCompile Include="..\..\..\engine\disp_defs.cpp" />

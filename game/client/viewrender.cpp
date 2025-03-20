@@ -101,7 +101,6 @@ static ConCommand test_freezeframe( "test_freezeframe", testfreezeframe_f, "Test
 //-----------------------------------------------------------------------------
 
 static ConVar r_visocclusion( "r_visocclusion", "0", FCVAR_CHEAT );
-extern ConVar r_flashlightdepthtexture;
 extern ConVar vcollide_wireframe;
 extern ConVar mat_motion_blur_enabled;
 //extern ConVar mat_viewportscale;
@@ -129,8 +128,7 @@ static ConVar r_drawtranslucentrenderables( "r_drawtranslucentrenderables", "1",
 static ConVar r_drawopaquerenderables( "r_drawopaquerenderables", "1", FCVAR_CHEAT );
 static ConVar r_threaded_renderables( "r_threaded_renderables", "0" );
 
-// FIXME: This is not static because we needed to turn it off for TF2 playtests
-ConVar r_DrawDetailProps( "r_DrawDetailProps", "1", FCVAR_NONE, "0=Off, 1=Normal, 2=Wireframe" );
+
 
 ConVar r_worldlistcache( "r_worldlistcache", "1" );
 
@@ -235,7 +233,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CViewRender, IViewRender, VIEWRENDER_INTERFACE
 //-----------------------------------------------------------------------------
 
 
-
+DEFINE_FIXEDSIZE_ALLOCATOR(CClientRenderablesList, 1, CUtlMemoryPool::GROW_SLOW);
 
 
 //-----------------------------------------------------------------------------
@@ -2559,6 +2557,7 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 	g_pClientShadowMgr->PreRender();
 
 	// Shadowed flashlights supported on ps_2_b and up...
+	ConVarRef r_flashlightdepthtexture("r_flashlightdepthtexture");
 	if ( r_flashlightdepthtexture.GetBool() && (viewID == VIEW_MAIN) )
 	{
 		g_pClientShadowMgr->ComputeShadowDepthTextures( view );
@@ -4191,6 +4190,7 @@ void CViewRender::ViewDrawScene_Intro( const CViewSetup &view, int nClearFlags, 
 	// NOTE: We only increment this once since time doesn't move forward.
 	ParticleMgr()->IncrementFrameCode();
 
+	ConVarRef r_flashlightdepthtexture("r_flashlightdepthtexture");
 	if( introData.m_bDrawPrimary  )
 	{
 		CViewSetup playerView( view );
@@ -4623,6 +4623,7 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 		setupInfo.m_nRenderFrame = m_pMainView->BuildRenderablesListsNumber();	// only one incremented?
 		setupInfo.m_nDetailBuildFrame = m_pMainView->BuildWorldListsNumber();	//
 		setupInfo.m_pRenderList = m_pRenderablesList;
+		ConVarRef r_DrawDetailProps("r_DrawDetailProps");
 		setupInfo.m_bDrawDetailObjects = entitylist->GetWorld()->ShouldDrawDetailObjects() && r_DrawDetailProps.GetInt();
 		setupInfo.m_bDrawTranslucentObjects = (viewID != VIEW_SHADOW_DEPTH_TEXTURE);
 
@@ -4637,6 +4638,11 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 
 		ClientLeafSystem()->BuildRenderablesList( setupInfo );
 	}
+}
+
+IDetailObjectSystem* DetailObjectSystem()
+{
+	return g_pDetailObjectSystem;
 }
 
 //-----------------------------------------------------------------------------

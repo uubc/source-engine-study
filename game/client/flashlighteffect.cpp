@@ -326,7 +326,9 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	state.m_Color[3] = r_flashlightambient.GetFloat();
 	state.m_NearZ = r_flashlightnear.GetFloat() + m_flDistMod;	// Push near plane out so that we don't clip the world when the flashlight pulls back 
 	state.m_FarZ = r_flashlightfar.GetFloat();
+	ConVarRef r_flashlightdepthtexture("r_flashlightdepthtexture");
 	state.m_bEnableShadows = r_flashlightdepthtexture.GetBool();
+	ConVarRef r_flashlightdepthres("r_flashlightdepthres");
 	state.m_flShadowMapResolution = r_flashlightdepthres.GetInt();
 
 	state.m_pSpotlightTexture = m_FlashlightTexture;

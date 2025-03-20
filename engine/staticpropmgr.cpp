@@ -46,6 +46,7 @@
 #include "generichash.h"
 #include "tier2/renderutils.h"
 #include "ipooledvballocator.h"
+#include "clientleafsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -449,7 +450,7 @@ private:
 static CStaticPropMgr	s_StaticPropMgr;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CStaticPropMgr, IStaticPropMgrClient, INTERFACEVERSION_STATICPROPMGR_CLIENT, s_StaticPropMgr);
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CStaticPropMgr, IStaticPropMgrServer, INTERFACEVERSION_STATICPROPMGR_SERVER, s_StaticPropMgr);
-
+IStaticPropMgrClient* staticpropmgr = &s_StaticPropMgr;
 
 //-----------------------------------------------------------------------------
 //
@@ -733,7 +734,7 @@ void CStaticProp::CleanUpRenderHandle( )
 	if ( m_RenderHandle != INVALID_CLIENT_RENDER_HANDLE )
 	{
 #ifndef SWDS
-		clientleafsystem->RemoveRenderable( m_RenderHandle );
+		g_pClientLeafSystem->RemoveRenderable( m_RenderHandle );
 #endif
 		m_RenderHandle = INVALID_CLIENT_RENDER_HANDLE;
 	}
@@ -1516,7 +1517,7 @@ void CStaticPropMgr::LevelInitClient()
 	for ( int i = 0; i < nCount; ++i )
 	{
 		CStaticProp* prop = m_StaticProps[i];
-		clientleafsystem->CreateRenderableHandle( m_StaticProps[i], true );
+		g_pClientLeafSystem->CreateRenderableHandle( m_StaticProps[i], true );
 		if ( !prop->ShouldDraw() )
 			continue;
 
@@ -1524,7 +1525,7 @@ void CStaticPropMgr::LevelInitClient()
 		if ( prop->LeafCount() > 0 )
 		{
 			// Add the prop to all the leaves it lies in
-			clientleafsystem->AddRenderableToLeaves( handle, prop->LeafCount(), (unsigned short*)&m_StaticPropLeaves[prop->FirstLeaf()] ); 
+			g_pClientLeafSystem->AddRenderableToLeaves( handle, prop->LeafCount(), (unsigned short*)&m_StaticPropLeaves[prop->FirstLeaf()] ); 
 		}
 		else
 		{
@@ -2058,21 +2059,21 @@ unsigned char CStaticPropMgr::ComputeScreenFade( CStaticProp &prop, float flMinS
 void CStaticPropMgr::ChangeRenderGroup( CStaticProp &prop )
 {
 #ifndef SWDS
-	static RenderGroup_t opaqueRenderGroup = ( g_bClientLeafSystemV1 ) ? RENDER_GROUP_OPAQUE_ENTITY : RENDER_GROUP_OPAQUE_STATIC;
+	static RenderGroup_t opaqueRenderGroup = RENDER_GROUP_OPAQUE_STATIC;
 	ClientRenderHandle_t renderHandle = prop.GetRenderHandle();
 	Assert( renderHandle != INVALID_CLIENT_RENDER_HANDLE );
 	if ( prop.GetFxBlend() == 0 )
 	{
-		clientleafsystem->ChangeRenderableRenderGroup( renderHandle, opaqueRenderGroup );
+		g_pClientLeafSystem->ChangeRenderableRenderGroup( renderHandle, opaqueRenderGroup );
 	}
 	else if ( prop.GetFxBlend() == 255 )
 	{
 		RenderGroup_t nRenderGroup = prop.IsTransparent() ? RENDER_GROUP_TRANSLUCENT_ENTITY : opaqueRenderGroup;
-		clientleafsystem->ChangeRenderableRenderGroup( renderHandle, nRenderGroup );
+		g_pClientLeafSystem->ChangeRenderableRenderGroup( renderHandle, nRenderGroup );
 	}
 	else
 	{
-		clientleafsystem->ChangeRenderableRenderGroup( renderHandle, RENDER_GROUP_TRANSLUCENT_ENTITY ); 
+		g_pClientLeafSystem->ChangeRenderableRenderGroup( renderHandle, RENDER_GROUP_TRANSLUCENT_ENTITY ); 
 	}
 #endif
 }

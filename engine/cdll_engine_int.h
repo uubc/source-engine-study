@@ -15,7 +15,7 @@
 #include "cdll_int.h"
 
 class IVModelRender;
-class IClientLeafSystemEngine;
+class IClientLeafSystem;
 class ClientClass;
 class IClientReplay;
 
@@ -41,8 +41,7 @@ extern IBaseClientDLL *g_ClientDLL;
 #endif
 
 extern IVModelRender* modelrender;
-extern IClientLeafSystemEngine* clientleafsystem;
-extern bool g_bClientLeafSystemV1;
+extern IClientLeafSystem* g_pClientLeafSystem;
 extern ClientClass *g_pClientClasses;
 extern bool scr_drawloading;
 extern IClientReplay *g_pClientReplay;

@@ -27,6 +27,11 @@ IMaterialProxy *CMaterialProxyFactory::CreateProxy( const char *proxyName )
 		materialProxy = toolframework->LookupProxy( proxyName );
 	}
 
+	if (!materialProxy)
+	{
+		materialProxy = LookupProxy(proxyName, Sys_GetFactoryThis());
+	}
+
 	if( !materialProxy )
 	{
 		ConDMsg( "Can't find material proxy \"%s\"\n", proxyName );
