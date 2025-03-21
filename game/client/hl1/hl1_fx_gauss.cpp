@@ -35,7 +35,7 @@ PRECACHE_REGISTER_FN(PrecacheGaussEffects);
 void HL1GaussBeam( const CEffectData &data )
 {
 	// beam expects ent + attach to be encoded in the entity index (legacy system)
-	int		nStartEntity	= data.entindex() | ((1 & 0xF)<<12);
+	int		nStartEntity	= data.m_hEntity.GetEntryIndex() | ((1 & 0xF) << 12);
 
 	C_BaseEntity * pEnt = (C_BaseEntity*)EntityList()->GetEnt( BEAMENT_ENTITY(nStartEntity) );
 

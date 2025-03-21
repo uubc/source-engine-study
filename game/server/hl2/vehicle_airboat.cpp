@@ -1589,7 +1589,7 @@ const char *CPropAirboat::GetTracerType( void )
 void CPropAirboat::DoMuzzleFlash( void )
 {
 	CEffectData data;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 	data.m_flScale = 1.0f;
 	g_pEffects->DispatchEffect( "AirboatMuzzleFlash", data );

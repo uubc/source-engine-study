@@ -466,9 +466,9 @@ void MuzzleFlashCallback( const CEffectData &data )
 {
 	Vector vecOrigin = data.m_vOrigin;
 	QAngle vecAngles = data.m_vAngles;
-	if ( data.entindex() > 0 )
+	if ( data.m_hEntity.GetEntryIndex() > 0)
 	{
-		IClientRenderable *pRenderable = data.GetRenderable();
+		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 		if ( !pRenderable )
 			return;
 
@@ -484,7 +484,7 @@ void MuzzleFlashCallback( const CEffectData &data )
 		}
 	}
 
-	tempents->MuzzleFlash( vecOrigin, vecAngles, data.m_fFlags & (~MUZZLEFLASH_FIRSTPERSON), data.GetEntity(), (data.m_fFlags & MUZZLEFLASH_FIRSTPERSON) != 0);
+	tempents->MuzzleFlash( vecOrigin, vecAngles, data.m_fFlags & (~MUZZLEFLASH_FIRSTPERSON), EntityList()->GetBaseEntityFromHandle(data.m_hEntity), (data.m_fFlags & MUZZLEFLASH_FIRSTPERSON) != 0);
 }
 
 DECLARE_CLIENT_EFFECT( "MuzzleFlash", MuzzleFlashCallback );
@@ -749,7 +749,7 @@ void SmokeCallback( const CEffectData &data )
 	QAngle vecAngles = data.m_vAngles;
 
 	Vector4D color( 50,50,50,255 );
-	FX_BuildSmoke( vecOrigin, vecAngles, data.GetEntity(), data.m_nAttachmentIndex, 100.0, color);
+	FX_BuildSmoke( vecOrigin, vecAngles, EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex, 100.0, color);
 }
 
 DECLARE_CLIENT_EFFECT( "Smoke", SmokeCallback );
@@ -1129,14 +1129,14 @@ void FX_Tesla( const CTeslaInfo &teslaInfo )
 //-----------------------------------------------------------------------------
 void BuildTeslaCallback( const CEffectData &data )
 {
-	if ( data.entindex() < 0 )
+	if ( data.m_hEntity.GetEntryIndex() < 0)
 		return;
 
 	CTeslaInfo teslaInfo;
 
 	teslaInfo.m_vPos = data.m_vOrigin;
 	teslaInfo.m_vAngles = data.m_vAngles;
-	teslaInfo.m_nEntIndex = data.entindex();
+	teslaInfo.m_nEntIndex = data.m_hEntity.GetEntryIndex();
 	teslaInfo.m_flBeamWidth = 5;
 	teslaInfo.m_vColor.Init( 1, 1, 1 );
 	teslaInfo.m_flTimeVisible = 0.3;
@@ -1256,7 +1256,7 @@ void FX_BuildTeslaHitbox( const CEffectData &data )
 {
 	Vector vColor( 1, 1, 1 );
 
-	C_BaseEntity *pEntity = (C_BaseEntity*)EntityList()->GetEnt( data.entindex() );
+	C_BaseEntity *pEntity = (C_BaseEntity*)EntityList()->GetEnt( data.m_hEntity.GetEntryIndex());
 	//C_BaseAnimating *pAnimating = pEntity ? pEntity->GetBaseAnimating() : NULL;
 	if (!pEntity->GetEngineObject()->GetModelPtr())
 		return;
@@ -1291,7 +1291,7 @@ DECLARE_CLIENT_EFFECT( "TeslaHitboxes", FX_BuildTeslaHitbox );
 void FX_BuildTeslaZap( const CEffectData &data )
 {
 	// Build the tesla, only works on entities
-	IClientEntity *pEntity = data.GetEntity();
+	IClientEntity *pEntity = EntityList()->GetBaseEntityFromHandle(data.m_hEntity);
 	if ( !pEntity )
 		return;
 

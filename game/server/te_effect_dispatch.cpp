@@ -32,7 +32,7 @@ public:
 	DECLARE_SERVERCLASS();
 
 public:
-	CEffectData m_EffectData;
+	CEffectDataShared m_EffectData;
 };
 
 //-----------------------------------------------------------------------------

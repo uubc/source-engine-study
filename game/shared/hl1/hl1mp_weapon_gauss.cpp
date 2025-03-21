@@ -479,11 +479,7 @@ void CWeaponGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 	
 			data6.m_vOrigin		= tr.endpos;
 //			data6.m_nEntIndex	= pPlayer->GetViewModel()->entindex();
-#ifdef CLIENT_DLL
 			data6.m_hEntity	= pPlayer;
-#else
-			data6.m_nEntIndex	= pPlayer->entindex();
-#endif
 			data6.m_fFlags		= m_bPrimaryFire;
 			te->DispatchEffect( filter, 0.0, data6.m_vOrigin, "HL1GaussBeam", data6 );
 		}

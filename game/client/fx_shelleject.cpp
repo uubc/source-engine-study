@@ -17,7 +17,7 @@
 void ShellEjectCallback( const CEffectData &data )
 {
 	// Use the gun angles to orient the shell
-	IClientRenderable *pRenderable = data.GetRenderable();
+	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 	if ( pRenderable )
 	{
 		tempents->EjectBrass( data.m_vOrigin, data.m_vAngles, pRenderable->GetRenderAngles(), 0 );
@@ -32,7 +32,7 @@ DECLARE_CLIENT_EFFECT( "ShellEject", ShellEjectCallback );
 void RifleShellEjectCallback( const CEffectData &data )
 {
 	// Use the gun angles to orient the shell
-	IClientRenderable *pRenderable = data.GetRenderable();
+	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 	if ( pRenderable )
 	{
 		tempents->EjectBrass( data.m_vOrigin, data.m_vAngles, pRenderable->GetRenderAngles(), 1 );
@@ -47,7 +47,7 @@ DECLARE_CLIENT_EFFECT( "RifleShellEject", RifleShellEjectCallback );
 void ShotgunShellEjectCallback( const CEffectData &data )
 {
 	// Use the gun angles to orient the shell
-	IClientRenderable *pRenderable = data.GetRenderable();
+	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 	if ( pRenderable )
 	{
 		tempents->EjectBrass( data.m_vOrigin, data.m_vAngles, pRenderable->GetRenderAngles(), 2 );

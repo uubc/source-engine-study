@@ -253,11 +253,7 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex,
 	CEffectData data;
 	data.m_vStart = vecStart;
 	data.m_vOrigin = vecEnd;
-#ifdef CLIENT_DLL
-	data.m_hEntity = (C_BaseEntity*)EntityList()->GetBaseEntity( iEntIndex );
-#else
-	data.m_nEntIndex = iEntIndex;
-#endif
+	data.m_hEntity = EntityList()->GetBaseEntity( iEntIndex );
 	data.m_flScale = flVelocity;
 	data.m_nHitBox = iParticleID;
 

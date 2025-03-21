@@ -1286,7 +1286,7 @@ void CBreakableSurface::VPhysicsCollision( int index, gamevcollisionevent_t *pEv
 					data.m_nSurfaceProp = tr.surface.surfaceProps;
 					data.m_nDamageType = DMG_CLUB;
 					data.m_nHitBox = tr.hitbox;
-					data.m_nEntIndex = entindex();
+					data.m_hEntity = this;
 
 					// Send it on its way
 					g_pEffects->DispatchEffect( "Impact", data );

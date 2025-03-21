@@ -892,7 +892,7 @@ void CC_Player_TestDispatchEffect( const CCommand &args )
 		data.m_vAngles = vecAngles;
 		AngleVectors( vecAngles, &data.m_vNormal );
 	}
-	data.m_nEntIndex = pPlayer->entindex();
+	data.m_hEntity = pPlayer;
 	data.m_fFlags = flags;
 	data.m_flMagnitude = magnitude;
 	data.m_flScale = scale;

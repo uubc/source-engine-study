@@ -267,7 +267,7 @@ void AR2TracerCallback( const CEffectData &data )
 	Vector vecStart = GetTracerOrigin( data );
 	float flVelocity = data.m_flScale;
 	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
-	int iEntIndex = data.entindex();
+	int iEntIndex = data.m_hEntity.GetEntryIndex();
 
 	if ( iEntIndex && iEntIndex == player->entindex())
 	{
@@ -521,7 +521,7 @@ void MuzzleFlash_Airboat( IClientEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void AirboatMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Airboat( data.GetEntity(), data.m_nAttachmentIndex);
+	MuzzleFlash_Airboat( EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "AirboatMuzzleFlash", AirboatMuzzleFlashCallback );
@@ -586,7 +586,7 @@ void MuzzleFlash_Chopper( IClientEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void ChopperMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Chopper( data.GetEntity(), data.m_nAttachmentIndex);
+	MuzzleFlash_Chopper( EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "ChopperMuzzleFlash", ChopperMuzzleFlashCallback );
@@ -647,7 +647,7 @@ void MuzzleFlash_Gunship( IClientEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void GunshipMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Gunship( data.GetEntity(), data.m_nAttachmentIndex);
+	MuzzleFlash_Gunship( EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "GunshipMuzzleFlash", GunshipMuzzleFlashCallback );
@@ -688,7 +688,7 @@ void MuzzleFlash_Hunter( IClientEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void HunterMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Hunter( data.GetEntity(), data.m_nAttachmentIndex);
+	MuzzleFlash_Hunter( EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "HunterMuzzleFlash", HunterMuzzleFlashCallback );

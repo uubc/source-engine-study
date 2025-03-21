@@ -3868,7 +3868,7 @@ void CNPC_Strider::DoMuzzleFlash( void )
 	CEffectData data;
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "MiniGun" );
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	g_pEffects->DispatchEffect( "StriderMuzzleFlash", data );
 }
 

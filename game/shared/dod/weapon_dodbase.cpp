@@ -1117,11 +1117,7 @@ void CWeaponDODBase::Smack()
 	data.m_vStart = m_trHit.startpos;
 	data.m_nSurfaceProp = m_trHit.surface.surfaceProps;
 	data.m_nHitBox = m_trHit.hitbox;
-#ifdef CLIENT_DLL
-	data.m_hEntity = (C_BaseEntity*)m_trHit.m_pEnt;
-#else
-	data.m_nEntIndex = m_trHit.m_pEnt->entindex();
-#endif
+	data.m_hEntity = m_trHit.m_pEnt;
 
 	CPASFilter effectfilter( data.m_vOrigin );
 

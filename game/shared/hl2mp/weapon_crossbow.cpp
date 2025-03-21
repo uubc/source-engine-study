@@ -265,7 +265,8 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 				data.m_vOrigin = tr2.endpos;
 				data.m_vNormal = vForward;
-				data.m_nEntIndex = tr2.fraction != 1.0f;
+				//data.m_nEntIndex = tr2.fraction != 1.0f;
+				data.m_hEntity = GetWorldEntity();//need check
 			
 				g_pEffects->DispatchEffect( "BoltImpact", data );
 			}
@@ -333,7 +334,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 				data.m_vOrigin = tr.endpos;
 				data.m_vNormal = vForward;
-				data.m_nEntIndex = 0;
+				data.m_hEntity = EntityList()->GetBaseEntity(0);
 			
 				g_pEffects->DispatchEffect( "BoltImpact", data );
 				
@@ -817,11 +818,7 @@ void CWeaponCrossbow::DoLoadEffect( void )
 
 	CEffectData	data;
 
-#ifdef CLIENT_DLL
 	data.m_hEntity = pViewModel;
-#else
-	data.m_nEntIndex = pViewModel->entindex();
-#endif
 	data.m_nAttachmentIndex = 1;
 
 	g_pEffects->DispatchEffect( "CrossbowLoad", data );

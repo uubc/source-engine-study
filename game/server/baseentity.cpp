@@ -3420,7 +3420,7 @@ void CBaseEntity::InputDispatchEffect( inputdata_t &inputdata )
 		GetInputDispatchEffectPosition( sEffect, data.m_vOrigin, data.m_vAngles );
 		AngleVectors( data.m_vAngles, &data.m_vNormal );
 		data.m_vStart = data.m_vOrigin;
-		data.m_nEntIndex = entindex();
+		data.m_hEntity = this;
 
 		// Clip off leading attachment point numbers
 		while ( sEffect[0] >= '0' && sEffect[0] <= '9' )

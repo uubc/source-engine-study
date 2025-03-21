@@ -2626,11 +2626,7 @@ void CWeaponPhysCannon::DoEffectLaunch( Vector *pos )
 	// Do an impact hit
 	CEffectData	data;
 	data.m_vOrigin = endPos;
-#ifdef CLIENT_DLL
 	data.m_hEntity = this;
-#else
-	data.m_nEntIndex = entindex();
-#endif
 
 	te->DispatchEffect( filter, 0.0, data.m_vOrigin, "PhyscannonImpact", data );
 
@@ -2950,7 +2946,7 @@ extern void FX_GaussExplosion( const Vector &pos, const Vector &dir, int type );
 
 void CallbackPhyscannonImpact( const CEffectData &data )
 {
-	IClientEntity *pEnt = data.GetEntity();
+	IClientEntity *pEnt = EntityList()->GetBaseEntityFromHandle(data.m_hEntity);
 	if ( pEnt == NULL )
 		return;
 

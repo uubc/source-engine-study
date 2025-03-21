@@ -2346,7 +2346,7 @@ int CNPC_Antlion::ChooseMoveSchedule( void )
 void CNPC_Antlion::ZapThink( void )
 {
 	CEffectData	data;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	data.m_flMagnitude = 4;
 	data.m_flScale = random->RandomFloat( 0.25f, 1.0f );
 

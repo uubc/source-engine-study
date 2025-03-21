@@ -2027,7 +2027,7 @@ void CNPC_AttackHelicopter::DoMuzzleFlash( void )
 	CEffectData data;
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "muzzle" );
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );
 }
 
@@ -2539,7 +2539,7 @@ bool CNPC_AttackHelicopter::IsValidZapTarget( CBaseEntity *pTarget )
 void CNPC_AttackHelicopter::CreateZapBeam( const Vector &vecTargetPos )
 {
 	CEffectData	data;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	data.m_nAttachmentIndex = 0; // m_nGunTipAttachment;
 	data.m_vOrigin = vecTargetPos;
 	data.m_flScale = 5;
@@ -2549,7 +2549,7 @@ void CNPC_AttackHelicopter::CreateZapBeam( const Vector &vecTargetPos )
 void CNPC_AttackHelicopter::CreateEntityZapEffect( CBaseEntity *pEnt )
 {
 	CEffectData	data;
-	data.m_nEntIndex = pEnt->entindex();
+	data.m_hEntity = pEnt;
 	data.m_flMagnitude = 10;
 	data.m_flScale = 1.0f;
 	g_pEffects->DispatchEffect( "TeslaHitboxes", data );

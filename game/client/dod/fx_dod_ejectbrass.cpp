@@ -86,7 +86,7 @@ void DOD_EjectBrassCallback( const CEffectData &data )
 	pTemp->flags = flags;
 
 	// don't collide with owner
-	pTemp->clientIndex = data.entindex();
+	pTemp->clientIndex = data.m_hEntity.GetEntryIndex();
 	if ( pTemp->clientIndex < 0 )
 	{
 		pTemp->clientIndex = 0;

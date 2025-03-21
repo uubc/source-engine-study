@@ -348,7 +348,7 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex, i
 	CEffectData data;
 	data.m_vStart = vecStart;
 	data.m_vOrigin = vecEnd;
-	data.m_hEntity = (C_BaseEntity*)EntityList()->GetBaseEntity( iEntIndex );
+	data.m_hEntity = EntityList()->GetBaseEntity( iEntIndex );
 	data.m_flScale = flVelocity;
 
 	// Flags

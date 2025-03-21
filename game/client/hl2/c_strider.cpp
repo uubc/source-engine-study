@@ -953,7 +953,7 @@ void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 //-----------------------------------------------------------------------------
 void StriderMuzzleFlashCallback( const CEffectData &data )
 {
-	MuzzleFlash_Strider( data.GetEntity(), data.m_nAttachmentIndex);
+	MuzzleFlash_Strider( EntityList()->GetBaseEntityFromHandle(data.m_hEntity), data.m_nAttachmentIndex);
 }
 
 DECLARE_CLIENT_EFFECT( "StriderMuzzleFlash", StriderMuzzleFlashCallback );

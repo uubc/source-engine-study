@@ -8,11 +8,6 @@
 #include "cbase.h"
 #include "effect_dispatch_data.h"
 #include "coordsize.h"
-
-#ifdef CLIENT_DLL
-//#include "cliententitylist.h"
-#endif
-
 #include "qlimits.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -28,10 +23,10 @@
 	static void RecvProxy_EntIndex( const CRecvProxyData *pData, void *pStruct, void *pOut )
 	{
 		int nEntIndex = pData->m_Value.m_Int;
-		((CEffectData*)pStruct)->m_hEntity = (nEntIndex < 0) ? NULL : (C_BaseEntity*)EntityList()->GetBaseEntity( nEntIndex );
+		((CEffectDataShared*)pStruct)->m_hEntity = (nEntIndex < 0) ? NULL : EntityList()->GetBaseEntity( nEntIndex );
 	}
 
-	BEGIN_RECV_TABLE_NOBASE( CEffectData, DT_EffectData )
+	BEGIN_RECV_TABLE_NOBASE( CEffectDataShared, DT_EffectData )
 
 		RecvPropFloat( RECVINFO( m_vOrigin[0] ) ),
 		RecvPropFloat( RECVINFO( m_vOrigin[1] ) ),
@@ -56,8 +51,8 @@
 		RecvPropInt( RECVINFO( m_nDamageType ) ),
 		RecvPropInt( RECVINFO( m_nHitBox ) ),
 
-		RecvPropInt( "entindex", 0, SIZEOF_IGNORE, 0, RecvProxy_EntIndex ),
-
+		//RecvPropInt( "entindex", 0, SIZEOF_IGNORE, 0, RecvProxy_EntIndex ),
+		RecvPropEHandle(RECVINFO(m_hEntity)),
 		RecvPropInt( RECVINFO( m_nColor ) ),
 
 		RecvPropFloat( RECVINFO( m_flRadius ) ),
@@ -78,7 +73,7 @@
 
 	#include "dt_send.h"
 
-	BEGIN_SEND_TABLE_NOBASE( CEffectData, DT_EffectData )
+	BEGIN_SEND_TABLE_NOBASE(CEffectDataShared, DT_EffectData )
 
 		// Everything uses _NOCHECK here since this is not an entity and we don't need
 		// the functionality of CNetworkVars.
@@ -118,8 +113,8 @@
 		SendPropInt( SENDINFO_NOCHECK( m_nDamageType ), 32, SPROP_UNSIGNED ),
 		SendPropInt( SENDINFO_NOCHECK( m_nHitBox ), 11, SPROP_UNSIGNED ),
 
-		SendPropInt( SENDINFO_NAME( m_nEntIndex, entindex ), MAX_EDICT_BITS, SPROP_UNSIGNED ),
-
+		//SendPropInt( SENDINFO_NAME( m_nEntIndex, entindex ), MAX_EDICT_BITS, SPROP_UNSIGNED ),
+		SendPropEHandle(SENDINFO(m_hEntity)),
 		SendPropInt( SENDINFO_NOCHECK( m_nColor ), 8, SPROP_UNSIGNED ),
 
 		SendPropFloat( SENDINFO_NOCHECK( m_flRadius ), 10, SPROP_ROUNDDOWN, 0.0f, 1023.0f ),
@@ -135,26 +130,6 @@
 		SendPropFloat( SENDINFO_NOCHECK( m_ControlPoint1.m_vecOffset[2] ), -1, SPROP_COORD ),
 
 	END_SEND_TABLE()
-
-#endif
-
-#ifdef CLIENT_DLL
-
-IClientRenderable *CEffectData::GetRenderable() const
-{
-	return EntityList()->GetClientRenderableFromHandle(m_hEntity);//
-}
-
-IClientEntity *CEffectData::GetEntity() const
-{
-	return  EntityList()->GetBaseEntityFromHandle(m_hEntity);
-}
-
-int CEffectData::entindex() const
-{
-	//C_BaseEntity *pEnt = EntityList()->GetBaseEntityFromHandle( m_hEntity );
-	return EntityList()->GetBaseEntityFromHandle(m_hEntity) ? EntityList()->GetBaseEntityFromHandle(m_hEntity)->entindex() : -1;
-}
 
 #endif
 

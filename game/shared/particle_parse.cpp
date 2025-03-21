@@ -290,11 +290,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 	data.m_nHitBox = GetParticleSystemIndex( pszParticleName );
 	if ( pEntity )
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
-#else
-		data.m_nEntIndex = pEntity->entindex();
-#endif
 		data.m_fFlags |= PARTICLE_DISPATCH_FROM_ENTITY;
 		data.m_vOrigin = pEntity->GetEngineObject()->GetAbsOrigin();
 	}
@@ -343,11 +339,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 	data.m_nHitBox = GetParticleSystemIndex( pszParticleName );
 	if ( pEntity )
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
-#else
-		data.m_nEntIndex = pEntity->entindex();
-#endif
 		data.m_fFlags |= PARTICLE_DISPATCH_FROM_ENTITY;
 		data.m_vOrigin = pEntity->GetEngineObject()->GetAbsOrigin();
 	}
@@ -395,21 +387,13 @@ void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart
 
 	if ( pEntity )
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
-#else
-		data.m_nEntIndex = pEntity->entindex();
-#endif
 		data.m_fFlags |= PARTICLE_DISPATCH_FROM_ENTITY;
 		data.m_nDamageType = PATTACH_CUSTOMORIGIN;
 	}
 	else
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = NULL;
-#else
-		data.m_nEntIndex = 0;
-#endif
 	}
 
 	g_pEffects->DispatchEffect( "ParticleEffect", data );
@@ -431,21 +415,13 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAng
 
 	if ( pEntity )
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
-#else
-		data.m_nEntIndex = pEntity->entindex();
-#endif
 		data.m_fFlags |= PARTICLE_DISPATCH_FROM_ENTITY;
 		data.m_nDamageType = PATTACH_CUSTOMORIGIN;
 	}
 	else
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = NULL;
-#else
-		data.m_nEntIndex = 0;
-#endif
 	}
 
 	if ( bUseColors )
@@ -486,11 +462,7 @@ void StopParticleEffects( IHandleEntity *pEntity )
 
 	if ( pEntity )
 	{
-#ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
-#else
-		data.m_nEntIndex = pEntity->entindex();
-#endif
 	}
 
 #ifdef GAME_DLL

@@ -31,11 +31,11 @@ Vector GetTracerOrigin( const CEffectData &data )
 		C_BaseViewModel *pViewModel = NULL;
 
 		// If the entity specified is a weapon being carried by this player, use the viewmodel instead
-		IClientRenderable *pRenderable = data.GetRenderable();
+		IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 		if ( !pRenderable )
 			return vecStart;
 
-		IClientEntity *pEnt = data.GetEntity();
+		IClientEntity *pEnt = EntityList()->GetBaseEntityFromHandle(data.m_hEntity);
 
 // This check should probably be for all multiplayer games, investigate later
 #if defined( HL2MP ) || defined( TF_CLIENT_DLL )
@@ -81,7 +81,7 @@ void TracerCallback( const CEffectData &data )
 	Vector vecStart = GetTracerOrigin( data );
 	float flVelocity = data.m_flScale;
 	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
-	int iEntIndex = data.entindex();
+	int iEntIndex = data.m_hEntity.GetEntryIndex();
 
 	if ( iEntIndex && iEntIndex == player->entindex())
 	{
@@ -125,8 +125,8 @@ void ParticleTracerCallback( const CEffectData &data )
 	Vector vecEnd = data.m_vOrigin;
 
 	// Adjust view model tracers
-	IClientEntity *pEntity = data.GetEntity();
-	if ( data.entindex() && data.entindex() == player->entindex())
+	IClientEntity *pEntity = EntityList()->GetBaseEntityFromHandle(data.m_hEntity);
+	if ( data.m_hEntity.GetEntryIndex() && data.m_hEntity.GetEntryIndex() == player->entindex())
 	{
 		QAngle	vangles;
 		Vector	vforward, vright, vup;

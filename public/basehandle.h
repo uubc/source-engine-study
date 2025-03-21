@@ -116,7 +116,7 @@ inline bool CBaseHandle::IsValid() const
 
 inline int CBaseHandle::GetEntryIndex() const
 {
-	return m_Index & ENT_ENTRY_MASK;
+	return m_Index == INVALID_EHANDLE_INDEX ? -1 : m_Index & ENT_ENTRY_MASK;
 }
 
 inline int CBaseHandle::GetSerialNumber() const

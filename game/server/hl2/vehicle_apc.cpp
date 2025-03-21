@@ -814,7 +814,7 @@ void CPropAPC::DoImpactEffect( trace_t &tr, int nDamageType )
 void CPropAPC::DoMuzzleFlash( void )
 {
 	CEffectData data;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	data.m_nAttachmentIndex = m_nMachineGunMuzzleAttachment;
 	data.m_flScale = 1.0f;
 	g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );

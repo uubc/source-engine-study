@@ -1507,7 +1507,7 @@ void CDODPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, 
 		data.m_vNormal = vecDir * -1;
 		data.m_flScale = 4;
 		data.m_fFlags = FX_BLOODSPRAY_ALL;
-		data.m_nEntIndex = ptr->m_pEnt ? ptr->m_pEnt->entindex() : 0;
+		data.m_hEntity = ptr->m_pEnt ? ptr->m_pEnt : GetWorldEntity();
 		data.m_flMagnitude = flDamage;
 
 		g_pEffects->DispatchEffect( "dodblood", data );

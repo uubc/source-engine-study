@@ -1793,7 +1793,7 @@ void CNPC_CombineGunship::DoMuzzleFlash( void )
 	CEffectData data;
 
 	data.m_nAttachmentIndex = GetEngineObject()->LookupAttachment( "muzzle" );
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	g_pEffects->DispatchEffect( "GunshipMuzzleFlash", data );
 }
 

@@ -2436,7 +2436,7 @@ void CCSPlayer::TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, t
 		CEffectData	data;
 		data.m_vOrigin = ptr->endpos;
 		data.m_vNormal = vecDir * -1;
-		data.m_nEntIndex = ptr->m_pEnt ? ptr->m_pEnt->entindex() : 0;
+		data.m_hEntity = ptr->m_pEnt ? ptr->m_pEnt : GetWorldEntity();
 		data.m_flMagnitude = flDamage;
 
 		// reduce blood effect if target has armor

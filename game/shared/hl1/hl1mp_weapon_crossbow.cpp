@@ -189,7 +189,8 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 			data.m_vOrigin = tr2.endpos;
 			data.m_vNormal = vForward;
-			data.m_nEntIndex = tr2.fraction != 1.0f;
+			//data.m_nEntIndex = tr2.fraction != 1.0f;
+			data.m_hEntity = EntityList()->GetBaseEntity(0);//need check
 		
 			g_pEffects->DispatchEffect( "BoltImpact", data );
 		}
@@ -224,7 +225,7 @@ void CCrossbowBolt::BoltTouch( IServerEntity *pOther )
 
 			data.m_vOrigin = GetEngineObject()->GetAbsOrigin();
 			data.m_vNormal = vForward;
-			data.m_nEntIndex = 0;
+			data.m_hEntity = EntityList()->GetBaseEntity(0);
 
 			g_pEffects->DispatchEffect( "BoltImpact", data );
 		}

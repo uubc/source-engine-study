@@ -431,7 +431,7 @@ void SetImpactSoundRoute( ImpactSoundRouteFn fn )
 IClientEntity *ParseImpactData( const CEffectData &data, Vector *vecOrigin, Vector *vecStart, 
 	Vector *vecShotDir, short &nSurfaceProp, int &iMaterial, int &iDamageType, int &iHitbox )
 {
-	IClientEntity *pEntity = data.GetEntity( );
+	IClientEntity *pEntity = EntityList()->GetBaseEntityFromHandle(data.m_hEntity);
 	*vecOrigin = data.m_vOrigin;
 	*vecStart = data.m_vStart;
 	nSurfaceProp = data.m_nSurfaceProp;

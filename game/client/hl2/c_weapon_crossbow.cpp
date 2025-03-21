@@ -142,7 +142,7 @@ void C_CrossbowBolt::ClientThink( void )
 //-----------------------------------------------------------------------------
 void CrosshairLoadCallback( const CEffectData &data )
 {
-	IClientRenderable *pRenderable = data.GetRenderable( );
+	IClientRenderable *pRenderable = EntityList()->GetClientRenderableFromHandle(data.m_hEntity);
 	if ( !pRenderable )
 		return;
 	

@@ -741,7 +741,8 @@ void CHunterFlechette::FlechetteTouch( IServerEntity *pOther )
 
 				data.m_vOrigin = tr2.endpos;
 				data.m_vNormal = vForward;
-				data.m_nEntIndex = tr2.fraction != 1.0f;
+				//data.m_nEntIndex = tr2.fraction != 1.0f;
+				data.m_hEntity = EntityList()->GetBaseEntity(0);//need check
 			
 				//g_pEffects->DispatchEffect( "BoltImpact", data );
 			}
@@ -5569,7 +5570,7 @@ void CNPC_Hunter::PhysicsDamageEffect( const Vector &vecPos, const Vector &vecDi
 void CNPC_Hunter::TeslaThink()
 {
 	CEffectData data;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	data.m_flMagnitude = 3;
 	data.m_flScale = 0.5f;
 	g_pEffects->DispatchEffect( "TeslaHitboxes", data );
@@ -6120,7 +6121,7 @@ void CNPC_Hunter::DoMuzzleFlash( int nAttachment )
 	// Dispatch the elight	
 	CEffectData data;
 	data.m_nAttachmentIndex = nAttachment;
-	data.m_nEntIndex = entindex();
+	data.m_hEntity = this;
 	g_pEffects->DispatchEffect( "HunterMuzzleFlash", data );
 }
 

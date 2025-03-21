@@ -203,7 +203,7 @@ void CPropThumper::Thump ( void )
 
 		CEffectData	data;
 
-		data.m_nEntIndex = entindex();
+		data.m_hEntity = this;
 		data.m_vOrigin = vOrigin;
 		data.m_flScale = m_iDustScale * GetEngineObject()->GetPlaybackRate();
 		g_pEffects->DispatchEffect( "ThumperDust", data );

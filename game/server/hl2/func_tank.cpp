@@ -2224,7 +2224,7 @@ void CFuncTank::DoMuzzleFlash( void )
 		{
 			CEffectData data;
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
-			data.m_nEntIndex = pAnim->entindex();
+			data.m_hEntity = pAnim->GetServerEntity();
 			
 			// FIXME: Create a custom entry here!
 			g_pEffects->DispatchEffect( "ChopperMuzzleFlash", data );
@@ -2232,7 +2232,7 @@ void CFuncTank::DoMuzzleFlash( void )
 		else
 		{
 			CEffectData data;
-			data.m_nEntIndex = pAnim->entindex();
+			data.m_hEntity = pAnim->GetServerEntity();
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_flScale = 1.0f;
 			data.m_fFlags = MUZZLEFLASH_COMBINE;
@@ -3046,7 +3046,7 @@ void CFuncTankAirboatGun::DoMuzzleFlash( void )
 	if ( m_hAirboatGunModel && (m_nGunBarrelAttachment != 0) )
 	{
 		CEffectData data;
-		data.m_nEntIndex = m_hAirboatGunModel->entindex();
+		data.m_hEntity = m_hAirboatGunModel;
 		data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 		data.m_flScale = 1.0f;
 		g_pEffects->DispatchEffect( "AirboatMuzzleFlash", data );

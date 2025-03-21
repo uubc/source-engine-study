@@ -48,7 +48,7 @@ public:
 	virtual void	PostDataUpdate( DataUpdateType_t updateType );
 
 public:
-	CEffectData m_EffectData;
+	CEffectDataShared m_EffectData;
 };
 
 //-----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ static void RecordEffect( const char *pEffectName, const CEffectData &data )
  		msg->SetInt( "attachmentindex", data.m_nAttachmentIndex );
 
 		// NOTE: Ptrs are our way of indicating it's an entindex
-		msg->SetPtr( "entindex", (void*)(intp)data.entindex() );
+		msg->SetPtr( "entindex", (void*)(intp)data.m_hEntity.GetEntryIndex() );
 
 		ToolFramework_PostToolMessage( HTOOLHANDLE_INVALID, msg );
 		msg->deleteThis();
@@ -208,7 +208,7 @@ void TE_DispatchEffect( IRecipientFilter& filter, float delay, KeyValues *pKeyVa
 
 	// NOTE: Ptrs are our way of indicating it's an entindex
 	ClientEntityHandle_t hWorld = EntityList()->GetBaseEntity(0)->GetRefEHandle();
-	data.m_hEntity = (C_BaseEntity*)EntityList()->GetBaseEntity((intp)pKeyValues->GetPtr( "entindex", (void*)(intp)hWorld.ToInt() ));
+	data.m_hEntity = EntityList()->GetBaseEntity((intp)pKeyValues->GetPtr( "entindex", (void*)(intp)hWorld.ToInt() ));
 
 	const char *pEffectName = pKeyValues->GetString( "effectname" );
 
