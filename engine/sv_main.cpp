@@ -73,6 +73,7 @@
 #include "host_state.h"
 #include "voice.h"
 #include "cbenchmark.h"
+#include "entitylist_base.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -923,6 +924,8 @@ void SV_InitGameDLL( void )
 #if !defined(SWDS)
 	g_pServerGameSaveRestoreBlockSet->AddBlockHandler(serverGameDLL);
 	g_pServerGameSaveRestoreBlockSet->AddBlockHandler(serverEntitylist);
+	g_pServerGameSaveRestoreBlockSet->AddBlockHandler(serverEntitylist->PhysSaveRestoreBlockHandler());
+
 #endif
 	// Tell the game DLL to start up
 	if(!serverGameDLL->DLLInit(g_AppSystemFactory, g_AppSystemFactory, g_AppSystemFactory, &g_ServerGlobalVariables))
@@ -1004,6 +1007,7 @@ void SV_ShutdownGameDLL( void )
 	g_pServerPluginHandler->UnloadPlugins();
 	serverGameDLL->DLLShutdown();
 #if !defined(SWDS)
+	g_pServerGameSaveRestoreBlockSet->RemoveBlockHandler(serverEntitylist->PhysSaveRestoreBlockHandler());
 	g_pServerGameSaveRestoreBlockSet->RemoveBlockHandler(serverEntitylist);
 	g_pServerGameSaveRestoreBlockSet->RemoveBlockHandler(serverGameDLL);
 #endif

@@ -14,16 +14,16 @@
 #include "iservernetworkable.h"
 #include "server_class.h"
 #include "edict.h"
-#include "timedeventmgr.h"
+//#include "timedeventmgr.h"
 
 //
 // Lightweight base class for networkable data on the server.
 //
-class CServerNetworkProperty : public IServerNetworkable, public IEventRegisterCallback
+class CServerNetworkProperty : public IServerNetworkable//, public IEventRegisterCallback
 {
 public:
-	DECLARE_CLASS_NOBASE(CServerNetworkProperty);
-	DECLARE_DATADESC();
+	typedef CServerNetworkProperty ThisClass;;
+	//DECLARE_DATADESC();
 
 public:
 	CServerNetworkProperty();
@@ -90,7 +90,7 @@ public:
 	// - If you turn it on and manual mode is off, it will autodetect changes every N seconds.
 	// - If you turn it on and manual mode is on, then every N seconds it will only say there
 	//   is a change if you've called NetworkStateChanged.
-	void			SetUpdateInterval(float N);
+	//void			SetUpdateInterval(float N);
 
 	// You can use this to override any entity's ShouldTransmit behavior.
 	// void SetTransmitProxy( CBaseTransmitProxy *pProxy );
@@ -98,7 +98,7 @@ public:
 
 
 	// Called by the timed event manager when it's time to detect a state change.
-	virtual void FireEvent();
+	//virtual void FireEvent();
 
 	
 
@@ -131,8 +131,8 @@ private:
 	//EHANDLE m_hParent;
 
 	// Counters for SetUpdateInterval.
-	CEventRegister	m_TimerEvent;
-	bool m_bPendingStateChange : 1;
+	//CEventRegister	m_TimerEvent;
+	//bool m_bPendingStateChange : 1;
 
 	//	friend class CBaseTransmitProxy;
 };
@@ -190,33 +190,33 @@ inline void CServerNetworkProperty::NetworkStateForceUpdate()
 inline void CServerNetworkProperty::NetworkStateChanged()
 {
 	// If we're using the timer, then ignore this call.
-	if (m_TimerEvent.IsRegistered())
-	{
+	//if (m_TimerEvent.IsRegistered())
+	//{
 		// If we're waiting for a timer event, then queue the change so it happens
 		// when the timer goes off.
-		m_bPendingStateChange = true;
-	}
-	else
-	{
+	//	m_bPendingStateChange = true;
+	//}
+	//else
+	//{
 		//if (m_entindex != -1)
 			StateChanged();
-	}
+	//}
 }
 
 inline void CServerNetworkProperty::NetworkStateChanged(unsigned short varOffset)
 {
 	// If we're using the timer, then ignore this call.
-	if (m_TimerEvent.IsRegistered())
-	{
+	//if (m_TimerEvent.IsRegistered())
+	//{
 		// If we're waiting for a timer event, then queue the change so it happens
 		// when the timer goes off.
-		m_bPendingStateChange = true;
-	}
-	else
-	{
+	//	m_bPendingStateChange = true;
+	//}
+	//else
+	//{
 		//if (m_entindex != -1)
 			StateChanged(varOffset);
-	}
+	//}
 }
 
 

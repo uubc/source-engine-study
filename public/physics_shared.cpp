@@ -6,10 +6,10 @@
 //#include "cbase.h"
 #include "ragdoll_shared.h"
 #ifdef CLIENT_DLL
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
 #endif
 #ifdef GAME_DLL
-#include "enginecallback.h"
+//#include "enginecallback.h"
 #endif // GAME_DLL
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -27,6 +27,14 @@
 // UNDONE: This hash holds both entity & IPhysicsObject pointer pairs
 // UNDONE: Split into separate hashes?
 //IPhysicsObjectPairHash *g_EntityCollisionHash = NULL;
+
+#ifdef CLIENT_DLL
+extern IVModelInfoClient* modelinfo;
+#endif // CLIENT_DLL
+#ifdef GAME_DLL
+extern IVModelInfo* modelinfo;
+#endif // GAME_DLL
+
 
 
 const char *SURFACEPROP_MANIFEST_FILE = "scripts/surfaceproperties_manifest.txt";
@@ -84,7 +92,7 @@ IVPhysicsKeyHandler* g_pSolidSetup = &g_SolidSetup;
 //			&maxs - 
 // Output : CPhysCollide
 //-----------------------------------------------------------------------------
-CPhysCollide *PhysCreateBbox( const Vector &minsIn, const Vector &maxsIn )
+CPhysCollide *PhysCreateBbox(IEntityList* pEntityList, const Vector &minsIn, const Vector &maxsIn )
 {
 	// UNDONE: Track down why this causes errors for the player controller and adjust/enable
 	//float radius = 0.5 - DIST_EPSILON;
@@ -92,9 +100,9 @@ CPhysCollide *PhysCreateBbox( const Vector &minsIn, const Vector &maxsIn )
 	Vector maxs = maxsIn;// - Vector(radius, radius, radius);
 
 	// VPHYSICS caches/cleans up these
-	CPhysCollide *pResult = EntityList()->PhysGetCollision()->BBoxToCollide(mins, maxs);
+	CPhysCollide *pResult = pEntityList->PhysGetCollision()->BBoxToCollide(mins, maxs);
 
-	g_pPhysSaveRestoreManager->NoteBBox( mins, maxs, pResult );
+	pEntityList->PhysSaveRestoreBlockHandler()->NoteBBox(mins, maxs, pResult);
 	
 	return pResult;
 }
@@ -134,7 +142,7 @@ IPhysicsObject *PhysModelCreateBox( IHandleEntity *pEntity, const Vector &mins, 
 	}
 	Q_strncpy( solid.surfaceprop, pSurfaceProps, sizeof( solid.surfaceprop ) );
 
-	CPhysCollide *pCollide = PhysCreateBbox( mins, maxs );
+	CPhysCollide *pCollide = PhysCreateBbox(pEntity->GetEntityList(), mins, maxs );
 	if ( !pCollide )
 		return NULL;
 	
@@ -174,7 +182,7 @@ IPhysicsObject *PhysModelCreateOBB( IHandleEntity *pEntity, const Vector &mins, 
 	}
 	Q_strncpy( solid.surfaceprop, pSurfaceProps, sizeof( solid.surfaceprop ) );
 
-	CPhysCollide *pCollide = PhysCreateBbox( mins, maxs );
+	CPhysCollide *pCollide = PhysCreateBbox(pEntity->GetEntityList(), mins, maxs );
 	if ( !pCollide )
 		return NULL;
 	
@@ -201,7 +209,7 @@ bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, int mod
 	memset( &solid, 0, sizeof(solid) );
 	solid.params = g_PhysDefaultObjectParams;
 
-	IVPhysicsKeyParser *pParse = EntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pCollide->pKeyValues );
+	IVPhysicsKeyParser *pParse = pEntity->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pCollide->pKeyValues );
 	while ( !pParse->Finished() )
 	{
 		const char *pBlock = pParse->GetCurrentBlockName();
@@ -227,7 +235,7 @@ bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, int mod
 			pParse->SkipBlock();
 		}
 	}
-	EntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
+	pEntity->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
 
 	// collisions are off by default
 	solid.params.enableCollisions = true;
@@ -264,7 +272,7 @@ bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, vcollid
 	memset( &solid, 0, sizeof(solid) );
 	solid.params = g_PhysDefaultObjectParams;
 
-	IVPhysicsKeyParser *pParse = EntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pCollide->pKeyValues );
+	IVPhysicsKeyParser *pParse = pEntity->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pCollide->pKeyValues );
 	while ( !pParse->Finished() )
 	{
 		const char *pBlock = pParse->GetCurrentBlockName();
@@ -290,7 +298,7 @@ bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, vcollid
 			pParse->SkipBlock();
 		}
 	}
-	EntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
+	pEntity->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
 
 	// collisions are off by default
 	solid.params.enableCollisions = true;
@@ -311,7 +319,7 @@ bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, vcollid
 //-----------------------------------------------------------------------------
 IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const Vector &origin, const QAngle &angles, solid_t *pSolid )
 {
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
 	vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
@@ -329,9 +337,9 @@ IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const V
 	int surfaceProp = -1;
 	if ( pSolid->surfaceprop[0] )
 	{
-		surfaceProp = EntityList()->PhysGetProps()->GetSurfaceIndex( pSolid->surfaceprop );
+		surfaceProp = pEntity->GetEntityList()->PhysGetProps()->GetSurfaceIndex( pSolid->surfaceprop );
 	}
-	IPhysicsObject *pObject = EntityList()->PhysGetEnv()->CreatePolyObject( pCollide->solids[pSolid->index], surfaceProp, origin, angles, &pSolid->params );
+	IPhysicsObject *pObject = pEntity->GetEntityList()->PhysGetEnv()->CreatePolyObject( pCollide->solids[pSolid->index], surfaceProp, origin, angles, &pSolid->params );
 	//PhysCheckAdd( pObject, STRING(pEntity->m_iClassname) );
 
 	if ( pObject )
@@ -353,7 +361,7 @@ IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const V
 			}
 		}
 
-		g_pPhysSaveRestoreManager->AssociateModel( pObject, modelIndex);
+		pEntity->GetEntityList()->PhysSaveRestoreBlockHandler()->AssociateModel(pObject, modelIndex);
 	}
 
 	return pObject;
@@ -369,7 +377,7 @@ IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const V
 //-----------------------------------------------------------------------------
 IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelIndex, const Vector &origin, const QAngle &angles )
 {
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
 	vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
@@ -387,11 +395,11 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 	int surfaceProp = -1;
 	if ( solid.surfaceprop[0] )
 	{
-		surfaceProp = EntityList()->PhysGetProps()->GetSurfaceIndex( solid.surfaceprop );
+		surfaceProp = pEntity->GetEntityList()->PhysGetProps()->GetSurfaceIndex( solid.surfaceprop );
 	}
 	solid.params.pGameData = static_cast<void *>(pEntity);
 	solid.params.pName = STRING(pEntity->GetEngineObject()->GetModelName());
-	IPhysicsObject *pObject = EntityList()->PhysGetEnv()->CreatePolyObjectStatic( pCollide->solids[0], surfaceProp, origin, angles, &solid.params );
+	IPhysicsObject *pObject = pEntity->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic( pCollide->solids[0], surfaceProp, origin, angles, &solid.params );
 
 	//PhysCheckAdd( pObject, STRING(pEntity->m_iClassname) );
 	if ( pObject )
@@ -406,7 +414,7 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 				pObject->RecheckCollisionFilter();
 			}
 		}
-		g_pPhysSaveRestoreManager->AssociateModel( pObject, modelIndex);
+		pEntity->GetEntityList()->PhysSaveRestoreBlockHandler()->AssociateModel(pObject, modelIndex);
 	}
 
 	return pObject;
@@ -426,7 +434,7 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 //-----------------------------------------------------------------------------
 IPhysicsObject *PhysModelCreateCustom( IHandleEntity *pEntity, const CPhysCollide *pModel, const Vector &origin, const QAngle &angles, const char *pName, bool isStatic, solid_t *pSolid )
 {
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
 	solid_t tmpSolid;
@@ -435,21 +443,21 @@ IPhysicsObject *PhysModelCreateCustom( IHandleEntity *pEntity, const CPhysCollid
 		PhysGetDefaultAABBSolid( tmpSolid );
 		pSolid = &tmpSolid;
 	}
-	int surfaceProp = EntityList()->PhysGetProps()->GetSurfaceIndex( pSolid->surfaceprop );
+	int surfaceProp = pEntity->GetEntityList()->PhysGetProps()->GetSurfaceIndex( pSolid->surfaceprop );
 	pSolid->params.pGameData = static_cast<void *>(pEntity);
 	pSolid->params.pName = pName;
 	IPhysicsObject *pObject = NULL;
 	if ( isStatic )
 	{
-		pObject = EntityList()->PhysGetEnv()->CreatePolyObjectStatic( pModel, surfaceProp, origin, angles, &pSolid->params );
+		pObject = pEntity->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic( pModel, surfaceProp, origin, angles, &pSolid->params );
 	}
 	else
 	{
-		pObject = EntityList()->PhysGetEnv()->CreatePolyObject( pModel, surfaceProp, origin, angles, &pSolid->params );
+		pObject = pEntity->GetEntityList()->PhysGetEnv()->CreatePolyObject( pModel, surfaceProp, origin, angles, &pSolid->params );
 	}
 
 	if ( pObject )
-		g_pPhysSaveRestoreManager->AssociateModel( pObject, pModel);
+		pEntity->GetEntityList()->PhysSaveRestoreBlockHandler()->AssociateModel(pObject, pModel);
 
 	return pObject;
 }
@@ -464,17 +472,17 @@ IPhysicsObject *PhysModelCreateCustom( IHandleEntity *pEntity, const CPhysCollid
 //-----------------------------------------------------------------------------
 IPhysicsObject *PhysSphereCreate( IHandleEntity *pEntity, float radius, const Vector &origin, solid_t &solid )
 {
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
 	int surfaceProp = -1;
 	if ( solid.surfaceprop[0] )
 	{
-		surfaceProp = EntityList()->PhysGetProps()->GetSurfaceIndex( solid.surfaceprop );
+		surfaceProp = pEntity->GetEntityList()->PhysGetProps()->GetSurfaceIndex( solid.surfaceprop );
 	}
 
 	solid.params.pGameData = static_cast<void *>(pEntity);
-	IPhysicsObject *pObject = EntityList()->PhysGetEnv()->CreateSphereObject( radius, surfaceProp, origin, vec3_angle, &solid.params, false );
+	IPhysicsObject *pObject = pEntity->GetEntityList()->PhysGetEnv()->CreateSphereObject( radius, surfaceProp, origin, vec3_angle, &solid.params, false );
 
 	return pObject;
 }
@@ -494,23 +502,23 @@ void PhysGetDefaultAABBSolid( solid_t &solid )
 // Purpose: Destroy a physics object
 // Input  : *pObject - 
 //-----------------------------------------------------------------------------
-void PhysDestroyObject( IPhysicsObject *pObject, IHandleEntity *pEntity )
+void PhysDestroyObject(IEntityList* pEntityList, IPhysicsObject *pObject, IHandleEntity *pEntity )
 {
-	g_pPhysSaveRestoreManager->ForgetModel( pObject );
+	pEntityList->PhysSaveRestoreBlockHandler()->ForgetModel(pObject);
 
 	
 	if ( pObject )
 		pObject->SetGameData( NULL );
 
-	EntityList()->PhysGetEntityCollisionHash()->RemoveAllPairsForObject( pObject );
+	pEntityList->PhysGetEntityCollisionHash()->RemoveAllPairsForObject( pObject );
 	if ( pEntity && pEntity->GetEngineObject()->IsMarkedForDeletion() )
 	{
-		EntityList()->PhysGetEntityCollisionHash()->RemoveAllPairsForObject( pEntity );
+		pEntityList->PhysGetEntityCollisionHash()->RemoveAllPairsForObject( pEntity );
 	}
 
-	if (EntityList()->PhysGetEnv())
+	if (pEntityList->PhysGetEnv())
 	{
-		EntityList()->PhysGetEnv()->DestroyObject( pObject );
+		pEntityList->PhysGetEnv()->DestroyObject( pObject );
 	}
 }
 
@@ -570,7 +578,7 @@ void PhysParseSurfaceData( IPhysicsSurfaceProps *pProps, IFileSystem *pFileSyste
 
 void PhysCreateVirtualTerrain( IHandleEntity *pWorld, const objectparams_t &defaultParams )
 {
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pWorld->GetEntityList()->PhysGetEnv())
 		return;
 
 	char nameBuf[1024];
@@ -585,9 +593,9 @@ void PhysCreateVirtualTerrain( IHandleEntity *pWorld, const objectparams_t &defa
 			solid.params.pGameData = static_cast<void *>(pWorld);
 			Q_snprintf(nameBuf, sizeof(nameBuf), "vdisp_%04d", i );
 			solid.params.pName = nameBuf;
-			int surfaceData = EntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
+			int surfaceData = pWorld->GetEntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
 			// create this as part of the world
-			IPhysicsObject *pObject = EntityList()->PhysGetEnv()->CreatePolyObjectStatic( pCollide, surfaceData, vec3_origin, vec3_angle, &solid.params );
+			IPhysicsObject *pObject = pWorld->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic( pCollide, surfaceData, vec3_origin, vec3_angle, &solid.params );
 			pObject->SetCallbackFlags( pObject->GetCallbackFlags() | CALLBACK_NEVER_DELETED );
 		}
 	}
@@ -598,16 +606,16 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 	solid_t solid;
 	fluid_t fluid;
 
-	if ( !EntityList()->PhysGetEnv())
+	if ( !pWorld->GetEntityList()->PhysGetEnv())
 		return NULL;
 
-	int surfaceData = EntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
+	int surfaceData = pWorld->GetEntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
 
 	objectparams_t params = defaultParams;
 	params.pGameData = static_cast<void *>(pWorld);
 	params.pName = "world";
 
-	IPhysicsObject *pWorldPhysics = EntityList()->PhysGetEnv()->CreatePolyObjectStatic(
+	IPhysicsObject *pWorldPhysics = pWorld->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic(
 		pWorldCollide->solids[0], surfaceData, vec3_origin, vec3_angle, &params );
 
 	// hint - saves vphysics some work
@@ -615,7 +623,7 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 
 	//PhysCheckAdd( world, "World" );
 	// walk the world keys in case there are some fluid volumes to create
-	IVPhysicsKeyParser *pParse = EntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pWorldCollide->pKeyValues );
+	IVPhysicsKeyParser *pParse = pWorld->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pWorldCollide->pKeyValues );
 
 	bool bCreateVirtualTerrain = false;
 	while ( !pParse->Finished() )
@@ -629,7 +637,7 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 			solid.params.enableCollisions = true;
 			solid.params.pGameData = static_cast<void *>(pWorld);
 			solid.params.pName = "world";
-			int surfaceData = EntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
+			int surfaceData = pWorld->GetEntityList()->PhysGetProps()->GetSurfaceIndex( "default" );
 
 			// already created world above
 			if ( solid.index == 0 )
@@ -642,7 +650,7 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 				continue;
 			}
 			// create this as part of the world
-			IPhysicsObject *pObject = EntityList()->PhysGetEnv()->CreatePolyObjectStatic( pWorldCollide->solids[solid.index],
+			IPhysicsObject *pObject = pWorld->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic( pWorldCollide->solids[solid.index],
 				surfaceData, vec3_origin, vec3_angle, &solid.params );
 
 			// invalid collision model or can't create, ignore
@@ -670,13 +678,13 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 				solid.params.pName = "fluid";
 				solid.params.pGameData = static_cast<void *>(pWorld);
 				fluid.params.pGameData = static_cast<void *>(pWorld);
-				int surfaceData = EntityList()->PhysGetProps()->GetSurfaceIndex( fluid.surfaceprop );
+				int surfaceData = pWorld->GetEntityList()->PhysGetProps()->GetSurfaceIndex( fluid.surfaceprop );
 				// create this as part of the world
-				IPhysicsObject *pWater = EntityList()->PhysGetEnv()->CreatePolyObjectStatic( pWorldCollide->solids[fluid.index],
+				IPhysicsObject *pWater = pWorld->GetEntityList()->PhysGetEnv()->CreatePolyObjectStatic( pWorldCollide->solids[fluid.index],
 					surfaceData, vec3_origin, vec3_angle, &solid.params );
 
 				pWater->SetCallbackFlags( pWater->GetCallbackFlags() | CALLBACK_NEVER_DELETED );
-				EntityList()->PhysGetEnv()->CreateFluidController( pWater, &fluid.params );
+				pWorld->GetEntityList()->PhysGetEnv()->CreateFluidController( pWater, &fluid.params );
 			}
 		}
 		else if ( !strcmpi( pBlock, "materialtable" ) )
@@ -685,7 +693,7 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 			memset( surfaceTable, 0, sizeof(surfaceTable) );
 
 			pParse->ParseSurfaceTable( surfaceTable, NULL );
-			EntityList()->PhysGetProps()->SetWorldMaterialIndexTable( surfaceTable, 128 );
+			pWorld->GetEntityList()->PhysGetProps()->SetWorldMaterialIndexTable( surfaceTable, 128 );
 		}
 		else if ( !strcmpi(pBlock, "virtualterrain" ) )
 		{
@@ -698,9 +706,9 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 			pParse->SkipBlock();
 		}
 	}
-	EntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
+	pWorld->GetEntityList()->PhysGetCollision()->VPhysicsKeyParserDestroy( pParse );
 
-	if ( bCreateVirtualTerrain && EntityList()->PhysGetCollision()->SupportsVirtualMesh() )
+	if ( bCreateVirtualTerrain && pWorld->GetEntityList()->PhysGetCollision()->SupportsVirtualMesh() )
 	{
 		PhysCreateVirtualTerrain( pWorld, defaultParams );
 	}
@@ -718,7 +726,7 @@ public:
 
 	void VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace_t *pTrace );
 	void VehicleTraceRayWithWater( const Ray_t &ray, void *pVehicle, trace_t *pTrace );
-	bool VehiclePointInWater( const Vector &vecPoint );
+	bool VehiclePointInWater( const Vector &vecPoint, void* pVehicle);
 };
 
 CPhysicsGameTrace g_PhysGameTrace;
@@ -730,7 +738,7 @@ IPhysicsGameTrace *physgametrace = &g_PhysGameTrace;
 void CPhysicsGameTrace::VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace_t *pTrace )
 {
 	IHandleEntity *pBaseEntity = static_cast<IHandleEntity*>( pVehicle );
-	UTIL_TraceRay(EntityList(), ray, MASK_SOLID, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
+	UTIL_TraceRay(pBaseEntity->GetEntityList(), ray, MASK_SOLID, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
 }
 
 //-----------------------------------------------------------------------------
@@ -739,15 +747,16 @@ void CPhysicsGameTrace::VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace
 void CPhysicsGameTrace::VehicleTraceRayWithWater( const Ray_t &ray, void *pVehicle, trace_t *pTrace )
 {
 	IHandleEntity *pBaseEntity = static_cast<IHandleEntity*>( pVehicle );
-	UTIL_TraceRay(EntityList(), ray, MASK_SOLID|MASK_WATER, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
+	UTIL_TraceRay(pBaseEntity->GetEntityList(), ray, MASK_SOLID|MASK_WATER, pBaseEntity, COLLISION_GROUP_NONE, pTrace );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Test to see if a vehicle point is in water.
 //-----------------------------------------------------------------------------
-bool CPhysicsGameTrace::VehiclePointInWater( const Vector &vecPoint )
+bool CPhysicsGameTrace::VehiclePointInWater( const Vector &vecPoint, void* pVehicle)
 {
-	return ( ( UTIL_PointContents(EntityList(), vecPoint ) & MASK_WATER ) != 0 );
+	IHandleEntity* pBaseEntity = static_cast<IHandleEntity*>(pVehicle);
+	return ( ( UTIL_PointContents(pBaseEntity->GetEntityList(), vecPoint ) & MASK_WATER ) != 0 );
 }
 
 
@@ -799,13 +808,13 @@ void PhysForceClearVelocity( IPhysicsObject *pPhys )
 }
 
 
-void PhysFrictionEffect( Vector &vecPos, Vector vecVel, float energy, int surfaceProps, int surfacePropsHit )
+void PhysFrictionEffect(IEntityList* pEntityList, Vector &vecPos, Vector vecVel, float energy, int surfaceProps, int surfacePropsHit )
 {
 	Vector invVecVel = -vecVel;
 	VectorNormalize( invVecVel );
 
-	surfacedata_t *psurf = EntityList()->PhysGetProps()->GetSurfaceData( surfaceProps );
-	surfacedata_t *phit = EntityList()->PhysGetProps()->GetSurfaceData( surfacePropsHit );
+	surfacedata_t *psurf = pEntityList->PhysGetProps()->GetSurfaceData( surfaceProps );
+	surfacedata_t *phit = pEntityList->PhysGetProps()->GetSurfaceData( surfacePropsHit );
 
 	switch ( phit->game.material )
 	{
@@ -849,12 +858,12 @@ void PhysFrictionEffect( Vector &vecPos, Vector vecVel, float energy, int surfac
 // Input  : idx - 
 // Output : static void
 //-----------------------------------------------------------------------------
-static HSOUNDSCRIPTHANDLE PrecachePhysicsSoundByStringIndex( int idx )
+static HSOUNDSCRIPTHANDLE PrecachePhysicsSoundByStringIndex(IEntityList* pEntityList, int idx )
 {
 	// Only precache if a value was set in the script file...
 	if ( idx != 0 )
 	{
-		return g_pSoundEmitterSystem->PrecacheScriptSound(EntityList()->PhysGetProps()->GetString( idx ) );
+		return g_pSoundEmitterSystem->PrecacheScriptSound(pEntityList->PhysGetProps()->GetString( idx ) );
 	}
 
 	return SOUNDEMITTER_INVALID_HANDLE;
@@ -864,24 +873,24 @@ static HSOUNDSCRIPTHANDLE PrecachePhysicsSoundByStringIndex( int idx )
 // Purpose: Iterates all surfacedata sounds and precaches them
 // Output : static void
 //-----------------------------------------------------------------------------
-void PrecachePhysicsSounds()
+void PrecachePhysicsSounds(IEntityList* pEntityList)
 {
 	// precache the surface prop sounds
-	for ( int i = 0; i < EntityList()->PhysGetProps()->SurfacePropCount(); i++ )
+	for ( int i = 0; i < pEntityList->PhysGetProps()->SurfacePropCount(); i++ )
 	{
-		surfacedata_t *pprop = EntityList()->PhysGetProps()->GetSurfaceData( i );
+		surfacedata_t *pprop = pEntityList->PhysGetProps()->GetSurfaceData( i );
 		Assert( pprop );
 
-		pprop->soundhandles.stepleft = PrecachePhysicsSoundByStringIndex( pprop->sounds.stepleft );
-		pprop->soundhandles.stepright = PrecachePhysicsSoundByStringIndex( pprop->sounds.stepright );
-		pprop->soundhandles.impactSoft = PrecachePhysicsSoundByStringIndex( pprop->sounds.impactSoft );
-		pprop->soundhandles.impactHard = PrecachePhysicsSoundByStringIndex( pprop->sounds.impactHard );
-		pprop->soundhandles.scrapeSmooth = PrecachePhysicsSoundByStringIndex( pprop->sounds.scrapeSmooth );
-		pprop->soundhandles.scrapeRough = PrecachePhysicsSoundByStringIndex( pprop->sounds.scrapeRough );
-		pprop->soundhandles.bulletImpact = PrecachePhysicsSoundByStringIndex( pprop->sounds.bulletImpact );
-		pprop->soundhandles.rolling = PrecachePhysicsSoundByStringIndex( pprop->sounds.rolling );
-		pprop->soundhandles.breakSound = PrecachePhysicsSoundByStringIndex( pprop->sounds.breakSound );
-		pprop->soundhandles.strainSound = PrecachePhysicsSoundByStringIndex( pprop->sounds.strainSound );
+		pprop->soundhandles.stepleft = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.stepleft );
+		pprop->soundhandles.stepright = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.stepright );
+		pprop->soundhandles.impactSoft = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.impactSoft );
+		pprop->soundhandles.impactHard = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.impactHard );
+		pprop->soundhandles.scrapeSmooth = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.scrapeSmooth );
+		pprop->soundhandles.scrapeRough = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.scrapeRough );
+		pprop->soundhandles.bulletImpact = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.bulletImpact );
+		pprop->soundhandles.rolling = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.rolling );
+		pprop->soundhandles.breakSound = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.breakSound );
+		pprop->soundhandles.strainSound = PrecachePhysicsSoundByStringIndex(pEntityList, pprop->sounds.strainSound );
 	}
 }
 

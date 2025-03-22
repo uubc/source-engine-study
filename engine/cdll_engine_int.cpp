@@ -93,6 +93,7 @@
 #include "ModelInfo.h"
 #include "iviewrender.h"
 #include "iclientshadowmgr.h"
+#include "entitylist_base.h"
 
 #if defined( REPLAY_ENABLED )
 #include "replay_internal.h"
@@ -1772,6 +1773,7 @@ bool ClientDLL_Load()
 				Sys_Error("Could not get client entity list interface from library client");
 			}
 			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist);
+			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist->PhysSaveRestoreBlockHandler());
 
 			IEntityFactory* pEntityFactory = g_ClientDLL->GetAllEntityFactories();
 			while (pEntityFactory) {
@@ -1983,6 +1985,7 @@ void ClientDLL_Shutdown( void )
 		entitylist->UninstallEntityFactory(pEntityFactory);
 		pEntityFactory = pEntityFactory->m_pNext;
 	}
+	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist->PhysSaveRestoreBlockHandler());
 	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist);
 	entitylist = NULL;
 	g_pClientSidePrediction = NULL;

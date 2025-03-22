@@ -331,7 +331,7 @@ abstract_class IPhysicsGameTrace
 public:
 	virtual void VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace_t *pTrace ) = 0;
 	virtual	void VehicleTraceRayWithWater( const Ray_t &ray, void *pVehicle, trace_t *pTrace ) = 0;
-	virtual bool VehiclePointInWater( const Vector &vecPoint ) = 0;
+	virtual bool VehiclePointInWater( const Vector &vecPoint, void* pVehicle ) = 0;
 };
 
 // The caller should implement this to return contents masks per convex on a collide

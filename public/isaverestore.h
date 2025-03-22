@@ -213,7 +213,8 @@ public:
 	virtual CGameSaveRestoreInfo *GetGameSaveRestoreInfo() = 0;
 	virtual int				EntityIndex(const IHandleEntity* pEntity) = 0;
 	virtual int				EntityFlagsSet(int entityIndex, int flags) = 0;
-
+	virtual IEntityList*	GetEntityList() = 0;
+	virtual bool			IsValidEntityPointer(void* ptr) = 0;
 protected:
 	virtual ~ISave() {};
 };
@@ -310,7 +311,8 @@ public:
 	//---------------------------------
 	// Back door to support somewhat awkward ownership of game save/restore data
 	virtual CGameSaveRestoreInfo *GetGameSaveRestoreInfo() = 0;
-
+	virtual IEntityList* GetEntityList() = 0;
+	virtual bool IsValidEntityPointer(void* ptr) = 0;
 protected:
 	virtual ~IRestore() {};
 };

@@ -42,7 +42,7 @@ class IVPhysicsKeyHandler;
 
 
 //void PhysFrictionSound( IHandleEntity *pEntity, IPhysicsObject *pObject, float energy, int surfaceProps, int surfacePropsHit );
-void PhysFrictionEffect( Vector &vecPos, Vector vecVel, float energy, int surfaceProps, int surfacePropsHit );
+void PhysFrictionEffect(IEntityList* pEntityList, Vector &vecPos, Vector vecVel, float energy, int surfaceProps, int surfacePropsHit );
 
 // Create a vphysics object based on a model
 IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const Vector &origin, const QAngle &angles, solid_t *pSolid = NULL );
@@ -57,13 +57,13 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 IPhysicsObject *PhysModelCreateCustom( IHandleEntity *pEntity, const CPhysCollide *pModel, const Vector &origin, const QAngle &angles, const char *pName, bool isStatic, solid_t *pSolid = NULL );
 
 // Create a bbox collision model (these may be shared among entities, they are auto-deleted at end of level. do not manage)
-CPhysCollide *PhysCreateBbox( const Vector &mins, const Vector &maxs );
+CPhysCollide *PhysCreateBbox(IEntityList* pEntityList, const Vector &mins, const Vector &maxs );
 
 // Create a vphysics sphere object
 IPhysicsObject *PhysSphereCreate( IHandleEntity *pEntity, float radius, const Vector &origin, solid_t &solid );
 
 // Destroy a physics object created using PhysModelCreate...()
-void PhysDestroyObject( IPhysicsObject *pObject, IHandleEntity *pEntity = NULL );
+void PhysDestroyObject(IEntityList* pEntityList, IPhysicsObject *pObject, IHandleEntity *pEntity = NULL );
 
 
 
@@ -85,7 +85,7 @@ void PhysGetDefaultAABBSolid( solid_t &solid );
 void PhysForceClearVelocity( IPhysicsObject *pPhys );
 bool PhysHasContactWithOtherInDirection( IPhysicsObject *pPhysics, const Vector &dir );
 
-void PrecachePhysicsSounds(void);
+void PrecachePhysicsSounds(IEntityList* pEntityList);
 //-----------------------------------------------------------------------------
 // Singleton access
 //-----------------------------------------------------------------------------

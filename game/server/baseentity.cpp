@@ -1495,7 +1495,7 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 
 	//DEFINE_CUSTOM_FIELD_INVALID( m_iName, engineObjectFuncs),
 	//DEFINE_EMBEDDED( m_Collision ),
-	DEFINE_EMBEDDED( m_Network ),
+	//DEFINE_EMBEDDED( m_Network ),
 
 	//DEFINE_FIELD( m_MoveType, FIELD_CHARACTER ),
 	//DEFINE_FIELD( m_MoveCollide, FIELD_CHARACTER ),

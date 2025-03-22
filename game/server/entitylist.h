@@ -16,13 +16,15 @@
 
 #include "ragdoll_shared.h"
 
+#include "eiface.h"
 #include "sendproxy.h"
 //#include "env_debughistory.h"
 #include "init_factory.h"
-#include "gameinterface.h"
+//#include "gameinterface.h"
 //#include "te_effect_dispatch.h"
 #include "ServerNetworkProperty.h"
 #include "variant_t.h"
+#include "recipientfilter.h"
 
 //class IServerEntity;
 // We can only ever move 512 entities across a transition
@@ -49,7 +51,6 @@ extern IStaticPropMgrServer* staticpropmgr;
 extern ISpatialPartition* partition;
 extern IDataCache* datacache;
 extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger, IEngineObjectServer* pEntity);
-extern ISaveRestoreBlockHandler* GetPhysSaveRestoreBlockHandler();
 extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
 extern IServerGameDLL* serverGameDLL;
 extern ISoundEnvelopeController* g_pSoundEnvelopeController;
@@ -1073,7 +1074,7 @@ private:
 	void CalcRagdollSize(void);
 	void RagdollSolveSeparation(ragdoll_t& ragdoll, IHandleEntity* pEntity);
 
-private:
+protected:
 
 	friend class IServerEntity;
 	friend class CCollisionProperty;
@@ -3510,6 +3511,7 @@ public:
 	//}
 public:
 	CGlobalEntityList();
+	~CGlobalEntityList();
 
 	virtual bool Init();
 	virtual void Shutdown();
@@ -3783,6 +3785,10 @@ public:
 		return m_pPhyscollision;
 	}
 
+	IPhysSaveRestoreBlockHandler* PhysSaveRestoreBlockHandler() {
+		return &m_PhysSaveRestoreBlockHandler;
+	}
+
 	IPhysicsObjectPairHash* PhysGetEntityCollisionHash() {
 		return m_EntityCollisionHash;
 	}
@@ -3832,7 +3838,7 @@ public:
 
 	void PhysicsImpactSound(IServerEntity* pEntity, IPhysicsObject* pPhysObject, int channel, int surfaceProps, int surfacePropsHit, float volume, float impactSpeed)
 	{
-		physicssound::AddImpactSound(m_impactSounds, pEntity, pEntity->entindex(), channel, pPhysObject, surfaceProps, surfacePropsHit, volume, impactSpeed);
+		AddImpactSound(m_impactSounds, pEntity, pEntity->entindex(), channel, pPhysObject, surfaceProps, surfacePropsHit, volume, impactSpeed);
 	}
 
 	void PhysCollisionSound(IServerEntity* pEntity, IPhysicsObject* pPhysObject, int channel, int surfaceProps, int surfacePropsHit, float deltaTime, float speed)
@@ -3852,7 +3858,7 @@ public:
 		if (!pPhysObject)
 			return;
 
-		physicssound::AddBreakSound(m_breakSounds, vecOrigin, pPhysObject->GetMaterialIndex());
+		AddBreakSound(m_breakSounds, vecOrigin, pPhysObject->GetMaterialIndex());
 	}
 
 	void PhysFrictionSound(IHandleEntity* pEntity, IPhysicsObject* pObject, float energy, int surfaceProps, int surfacePropsHit)
@@ -4729,6 +4735,137 @@ protected:
 	{
 		return PARTITION_SERVER_GAME_EDICTS;
 	}
+
+	void PlayImpactSounds(soundlist_t& list)
+	{
+		for (int i = list.Count() - 1; i >= 0; --i)
+		{
+			impactsound_t& sound = list.GetElement(i);
+			const surfacedata_t* psurf = PhysGetProps()->GetSurfaceData(sound.surfaceProps);
+			if (psurf->sounds.impactHard)
+			{
+				const surfacedata_t* pHit = PhysGetProps()->GetSurfaceData(sound.surfacePropsHit);
+				unsigned short soundName = psurf->sounds.impactHard;
+				if (pHit && psurf->sounds.impactSoft)
+				{
+					if (pHit->audio.hardnessFactor < psurf->audio.hardThreshold ||
+						(psurf->audio.hardVelocityThreshold > 0 && psurf->audio.hardVelocityThreshold > sound.impactSpeed))
+					{
+						soundName = psurf->sounds.impactSoft;
+					}
+				}
+				const char* pSound = PhysGetProps()->GetString(soundName);
+
+				CSoundParameters params;
+				if (!g_pSoundEmitterSystem->GetParametersForSound(pSound, params, NULL))//CBaseEntity::
+					break;
+
+				if (sound.volume > 1)
+					sound.volume = 1;
+				CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+				// JAY: If this entity gets deleted, the sound comes out at the world origin
+				// this sounds bad!  Play on ent 0 for now.
+				EmitSound_t ep;
+				ep.m_nChannel = sound.soundChannel;
+				ep.m_pSoundName = params.soundname;
+				ep.m_flVolume = params.volume * sound.volume;
+				ep.m_SoundLevel = params.soundlevel;
+				ep.m_nPitch = params.pitch;
+				ep.m_pOrigin = &sound.origin;
+
+				g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+			}
+		}
+		list.RemoveAll();
+	}
+
+	void AddImpactSound(soundlist_t& list, void* pGameData, int entityIndex, int soundChannel, IPhysicsObject* pObject, int surfaceProps, int surfacePropsHit, float volume, float impactSpeed)
+	{
+		impactSpeed += 1e-4;
+		for (int i = list.Count() - 1; i >= 0; --i)
+		{
+			impactsound_t& sound = list.GetElement(i);
+			// UNDONE: Compare entity or channel somehow?
+			// UNDONE: Doing one slot per entity is too noisy.  So now we use one slot per material
+
+			// heuristic - after 4 impacts sounds in one frame, start merging everything
+			if (surfaceProps == sound.surfaceProps || list.Count() > 4)
+			{
+				// UNDONE: Store instance volume separate from aggregate volume and compare that?
+				if (volume > sound.volume)
+				{
+					pObject->GetPosition(&sound.origin, NULL);
+					sound.pGameData = pGameData;
+					sound.entityIndex = entityIndex;
+					sound.soundChannel = soundChannel;
+					sound.surfacePropsHit = surfacePropsHit;
+				}
+				sound.volume += volume;
+				sound.impactSpeed = MAX(impactSpeed, sound.impactSpeed);
+				return;
+			}
+		}
+
+		impactsound_t& sound = list.AddElement();
+		sound.pGameData = pGameData;
+		sound.entityIndex = entityIndex;
+		sound.soundChannel = soundChannel;
+		pObject->GetPosition(&sound.origin, NULL);
+		sound.surfaceProps = surfaceProps;
+		sound.surfacePropsHit = surfacePropsHit;
+		sound.volume = volume;
+		sound.impactSpeed = impactSpeed;
+	}
+
+	void AddBreakSound(CUtlVector<breaksound_t>& list, const Vector& origin, unsigned short surfaceProps)
+	{
+		const surfacedata_t* psurf = PhysGetProps()->GetSurfaceData(surfaceProps);
+		if (!psurf->sounds.breakSound)
+			return;
+
+		for (int i = list.Count() - 1; i >= 0; --i)
+		{
+			breaksound_t& sound = list.Element(i);
+			// Allow 3 break sounds before you start merging anything.
+			if (list.Count() > 2 && surfaceProps == sound.surfacePropsBreak)
+			{
+				sound.origin = (sound.origin + origin) * 0.5f;
+				return;
+			}
+		}
+		breaksound_t sound;
+		sound.origin = origin;
+		sound.surfacePropsBreak = surfaceProps;
+		list.AddToTail(sound);
+
+	}
+
+	void PlayBreakSounds(CUtlVector<breaksound_t>& list)
+	{
+		for (int i = list.Count() - 1; i >= 0; --i)
+		{
+			breaksound_t& sound = list.Element(i);
+
+			const surfacedata_t* psurf = PhysGetProps()->GetSurfaceData(sound.surfacePropsBreak);
+			const char* pSound = PhysGetProps()->GetString(psurf->sounds.breakSound);
+			CSoundParameters params;
+			if (!g_pSoundEmitterSystem->GetParametersForSound(pSound, params, NULL))//CBaseEntity::
+				return;
+
+			// Play from the world, because the entity is breaking, so it'll be destroyed soon
+			CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+			EmitSound_t ep;
+			ep.m_nChannel = CHAN_STATIC;
+			ep.m_pSoundName = params.soundname;
+			ep.m_flVolume = params.volume;
+			ep.m_SoundLevel = params.soundlevel;
+			ep.m_nPitch = params.pitch;
+			ep.m_pOrigin = &sound.origin;
+			g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+		}
+		list.RemoveAll();
+	}
+
 private:
 	CEntityFactoryDictionary m_EntityFactoryDictionary;
 	int m_iHighestEnt; // the topmost used array index
@@ -4777,6 +4914,7 @@ private:
 	IPhysicsEnvironment* m_pPhysenv = NULL;
 	IPhysicsSurfaceProps* m_pPhysprops = NULL;
 	IPhysicsCollision* m_pPhyscollision = NULL;
+	CPhysSaveRestoreBlockHandler m_PhysSaveRestoreBlockHandler;
 	IPhysicsObjectPairHash* m_EntityCollisionHash = NULL;
 	IPhysicsObject* m_PhysWorldObject = NULL;
 	bool		m_isFinalTick;
@@ -4786,8 +4924,8 @@ private:
 	// local variables
 	float m_PhysAverageSimTime;
 	CEntityList* m_pShadowEntities = NULL;
-	physicssound::soundlist_t m_impactSounds;
-	CUtlVector<physicssound::breaksound_t> m_breakSounds;
+	soundlist_t m_impactSounds;
+	CUtlVector<breaksound_t> m_breakSounds;
 	CUtlVector<masscenteroverride_t>	m_massCenterOverrides;
 	CPortal_CollisionEvent m_Collisions;
 	CPhysConstraintEvents m_Constraintevents;
@@ -4933,7 +5071,7 @@ void CGlobalEntityList<T>::LevelInitPreEntity()
 //	g_pShadowEntities_Main = g_pShadowEntities;
 //#endif
 
-	PrecachePhysicsSounds();
+	PrecachePhysicsSounds(this);
 
 	m_bPaused = true;
 
@@ -5025,7 +5163,7 @@ void CGlobalEntityList<T>::LevelShutdownPostEntity()
 	if (!m_pPhysenv)
 		return;
 
-	g_pPhysSaveRestoreManager->ForgetAllModels();
+	m_PhysSaveRestoreBlockHandler.ForgetAllModels();
 
 	m_Collisions.LevelShutdown();
 
@@ -5986,11 +6124,11 @@ int	CGlobalEntityList<T>::CreateEntityTransitionList(IRestore* pRestore, int a)
 	int movedCount = CreateEntityTransitionListInternal(pRestore, a);
 	if (movedCount)
 	{
-		engine->CallBlockHandlerRestore(GetPhysSaveRestoreBlockHandler(), base, pRestore, false);
+		engine->CallBlockHandlerRestore(&m_PhysSaveRestoreBlockHandler, base, pRestore, false);
 		engine->CallBlockHandlerRestore(GetAISaveRestoreBlockHandler(), base, pRestore, false);
 	}
 
-	GetPhysSaveRestoreBlockHandler()->PostRestore();
+	m_PhysSaveRestoreBlockHandler.PostRestore();
 	GetAISaveRestoreBlockHandler()->PostRestore();
 	this->PostRestore();
 	return movedCount;
@@ -6839,6 +6977,7 @@ IServerEntity* CGlobalEntityList<T>::GetLocalPlayer(void)
 
 template<class T>
 CGlobalEntityList<T>::CGlobalEntityList()
+	:m_PhysSaveRestoreBlockHandler(this)
 {
 	m_iHighestEnt = m_iNumEnts = m_iHighestEdicts = m_iNumEdicts = m_iNumReservedEdicts = 0;
 	m_bClearingEntities = false;
@@ -6849,6 +6988,13 @@ CGlobalEntityList<T>::CGlobalEntityList()
 	m_iMaxRagdolls = -1;
 	m_LRUImportantRagdolls.RemoveAll();
 	m_LRU.RemoveAll();
+	AddListenerEntity(&m_PhysSaveRestoreBlockHandler);
+}
+
+template<class T>
+CGlobalEntityList<T>::~CGlobalEntityList()
+{
+	RemoveListenerEntity(&m_PhysSaveRestoreBlockHandler);
 }
 
 // mark an entity as deleted
@@ -8161,9 +8307,9 @@ void CGlobalEntityList<T>::PreClientUpdate()
 	m_impactSoundTime += gpGlobals->frametime;
 	if (m_impactSoundTime > 0.05f)
 	{
-		physicssound::PlayImpactSounds(m_impactSounds);
+		PlayImpactSounds(m_impactSounds);
 		m_impactSoundTime = 0.0f;
-		physicssound::PlayBreakSounds(m_breakSounds);
+		PlayBreakSounds(m_breakSounds);
 	}
 }
 

@@ -1236,7 +1236,7 @@ void CCollisionEvent::Friction(IPhysicsObject* pObject, float energy, int surfac
 		pEntity->VPhysicsFriction(pObject, energy, surfaceProps, surfacePropsHit);
 	}
 
-	PhysFrictionEffect(vecPos, vecVel, energy, surfaceProps, surfacePropsHit);
+	PhysFrictionEffect(&gEntList, vecPos, vecVel, energy, surfaceProps, surfacePropsHit);
 }
 
 
@@ -4412,7 +4412,7 @@ void CEngineObjectInternal::OnRestore()
 		m_ragdoll.list[0].parentIndex = -1;
 		m_ragdoll.list[0].originParentSpace.Init();
 		// JAY: Reset collision relationships
-		RagdollSetupCollisions(m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex());
+		RagdollSetupCollisions(m_pServerEntityList, m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex());
 	}
 	m_flEstIkFloor = GetLocalOrigin().z;
 	m_grabController.OnRestore();
@@ -8540,7 +8540,7 @@ void CEngineObjectInternal::VPhysicsDestroyObject(void)
 	if (m_pPhysicsObject && !m_ragdoll.listCount)
 	{
 		gEntList.PhysRemoveShadow(this->m_pOuter);
-		PhysDestroyObject(m_pPhysicsObject, this->m_pOuter);
+		PhysDestroyObject(m_pServerEntityList, m_pPhysicsObject, this->m_pOuter);
 		m_pPhysicsObject = NULL;
 	}
 }
@@ -8829,7 +8829,7 @@ void CEngineObjectInternal::ClearRagdoll() {
 		{
 			if (m_ragdoll.list[i].pObject)
 			{
-				g_pPhysSaveRestoreManager->ForgetModel(m_ragdoll.list[i].pObject);
+				m_pServerEntityList->PhysSaveRestoreBlockHandler()->ForgetModel(m_ragdoll.list[i].pObject);
 				m_ragdoll.list[i].pObject->EnableCollisions(false);
 			}
 		}
@@ -8838,7 +8838,7 @@ void CEngineObjectInternal::ClearRagdoll() {
 		//  m_pObjects[ 0 ] twice since that's the physics object for the prop
 		VPhysicsSetObject(NULL);
 
-		RagdollDestroy(m_ragdoll);
+		RagdollDestroy(m_pServerEntityList, m_ragdoll);
 	}
 }
 
@@ -9061,7 +9061,7 @@ void CEngineObjectInternal::InitRagdoll(const Vector& forceVector, int forceBone
 	params.jointFrictionScale = 1.0;
 	params.allowStretch = HasSpawnFlags(SF_RAGDOLLPROP_ALLOW_STRETCH);
 	params.fixedConstraints = false;
-	RagdollCreate(m_ragdoll, params, gEntList.PhysGetEnv());
+	RagdollCreate(m_pServerEntityList, m_ragdoll, params, gEntList.PhysGetEnv());
 	RagdollApplyAnimationAsVelocity(m_ragdoll, pPrevBones, pBoneToWorld, dt);
 	if (m_anglesOverrideString != NULL_STRING && Q_strlen(m_anglesOverrideString.ToCStr()) > 0)
 	{
@@ -9107,13 +9107,13 @@ void CEngineObjectInternal::InitRagdoll(const Vector& forceVector, int forceBone
 	if (activateRagdoll)
 	{
 		MEM_ALLOC_CREDIT();
-		RagdollActivate(m_ragdoll, params.pCollide, GetModelIndex(), bWakeRagdoll);
+		RagdollActivate(m_pServerEntityList, m_ragdoll, params.pCollide, GetModelIndex(), bWakeRagdoll);
 	}
 
 	for (int i = 0; i < m_ragdoll.listCount; i++)
 	{
 		UpdateNetworkDataFromVPhysics(i);
-		g_pPhysSaveRestoreManager->AssociateModel(m_ragdoll.list[i].pObject, GetModelIndex());
+		m_pServerEntityList->PhysSaveRestoreBlockHandler()->AssociateModel(m_ragdoll.list[i].pObject, GetModelIndex());
 		gEntList.PhysGetCollision()->CollideGetAABB(&m_ragdollMins[i], &m_ragdollMaxs[i], m_ragdoll.list[i].pObject->GetCollide(), vec3_origin, vec3_angle);
 	}
 	VPhysicsSetObject(m_ragdoll.list[0].pObject);
@@ -9212,7 +9212,7 @@ bool CEngineObjectInternal::IsRagdoll() const
 void CEngineObjectInternal::ActiveRagdoll()
 {
 	//RagdollActivate(*GetEngineObject()->GetRagdoll(), modelinfo->GetVCollide(GetEngineObject()->GetModelIndex()), GetEngineObject()->GetModelIndex());
-	RagdollActivate(m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex());
+	RagdollActivate(m_pServerEntityList, m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex());
 }
 
 void CEngineObjectInternal::ApplyAnimationAsVelocityToRagdoll(const matrix3x4_t* pPrevBones, const matrix3x4_t* pCurrentBones, float dt)
@@ -10225,7 +10225,7 @@ public:
 	{
 		m_pRootParent = pEntity->GetEngineObject()->GetRootMoveParent() ? pEntity->GetEngineObject()->GetRootMoveParent()->GetOuter() : NULL;
 		m_pEntity = pEntity;
-		m_checkHash = EntityList()->PhysGetEntityCollisionHash()->IsObjectInHash(pEntity);
+		m_checkHash = gEntList.PhysGetEntityCollisionHash()->IsObjectInHash(pEntity);
 	}
 
 	bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
@@ -10243,7 +10243,7 @@ public:
 
 		if (m_checkHash)
 		{
-			if (EntityList()->PhysGetEntityCollisionHash()->IsObjectPairInHash(m_pEntity, pEntity))
+			if (gEntList.PhysGetEntityCollisionHash()->IsObjectPairInHash(m_pEntity, pEntity))
 				return false;
 		}
 
@@ -10351,7 +10351,7 @@ void CEngineWorldInternal::TraceLineFilterEntity(IEngineObjectServer* pEntity, c
 	unsigned int mask, int nCollisionGroup, trace_t* ptr)
 {
 	CTraceFilterEntity traceFilter(pEntity->GetOuter(), nCollisionGroup);
-	UTIL_TraceLine(EntityList(), vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
+	UTIL_TraceLine(&gEntList, vecAbsStart, vecAbsEnd, mask, &traceFilter, ptr);
 }
 
 BEGIN_SEND_TABLE(CEnginePlayerInternal, DT_EnginePlayer)
@@ -10402,13 +10402,13 @@ void CEnginePlayerInternal::VPhysicsDestroyObject()
 	if (m_pShadowStand)
 	{
 		m_pShadowStand->EnableCollisions(false);
-		PhysDestroyObject(m_pShadowStand);
+		PhysDestroyObject(m_pServerEntityList, m_pShadowStand);
 		m_pShadowStand = NULL;
 	}
 	if (m_pShadowCrouch)
 	{
 		m_pShadowCrouch->EnableCollisions(false);
-		PhysDestroyObject(m_pShadowCrouch);
+		PhysDestroyObject(m_pServerEntityList, m_pShadowCrouch);
 		m_pShadowCrouch = NULL;
 	}
 
@@ -10426,12 +10426,12 @@ void CEnginePlayerInternal::SetupVPhysicsShadow(const Vector& vHullMin, const Ve
 	//disable drag
 	solid.params.dragCoefficient = 0;
 	// create standing hull
-	CPhysCollide* pStandModel = PhysCreateBbox(vHullMin, vHullMax);
+	CPhysCollide* pStandModel = PhysCreateBbox(m_pServerEntityList, vHullMin, vHullMax);
 	m_pShadowStand = PhysModelCreateCustom(this->m_pOuter, pStandModel, GetLocalOrigin(), GetLocalAngles(), "player_stand", false, &solid);
 	m_pShadowStand->SetCallbackFlags(CALLBACK_GLOBAL_COLLISION | CALLBACK_SHADOW_COLLISION);
 
 	// create crouchig hull
-	CPhysCollide* pCrouchModel = PhysCreateBbox(vDuckHullMin, vDuckHullMax);
+	CPhysCollide* pCrouchModel = PhysCreateBbox(m_pServerEntityList, vDuckHullMin, vDuckHullMax);
 	m_pShadowCrouch = PhysModelCreateCustom(this->m_pOuter, pCrouchModel, GetLocalOrigin(), GetLocalAngles(), "player_crouch", false, &solid);
 	m_pShadowCrouch->SetCallbackFlags(CALLBACK_GLOBAL_COLLISION | CALLBACK_SHADOW_COLLISION);
 
@@ -14557,7 +14557,7 @@ CEngineShadowCloneInternal* CEngineShadowCloneInternal::CreateShadowClone(IPhysi
 		pClone->SetCloneTransformationMatrix(*pTransformationMatrix);
 	}
 
-	EntityList()->DispatchSpawn(pClone->AsEngineObject()->GetOuter());
+	gEntList.DispatchSpawn(pClone->AsEngineObject()->GetOuter());
 
 	return pClone;
 }

@@ -1424,6 +1424,37 @@ IEngineObject* CSaveClient::GetEngineObject(int entnum) {
 	return entitylist->GetEngineObject(entnum);
 }
 
+IEntityList* CSaveServer::GetEntityList()
+{
+	return serverEntitylist;
+}
+
+IEntityList* CSaveClient::GetEntityList()
+{
+	return entitylist;
+}
+
+bool CSaveServer::IsValidEntityPointer(void* ptr)
+{
+	return serverEntitylist->IsEntityPtr(ptr);
+}
+
+bool CSaveClient::IsValidEntityPointer(void* ptr)
+{
+	// Walk entities looking for pointer
+	int c = entitylist->GetHighestEntityIndex();
+	for (int i = 0; i <= c; i++)
+	{
+		IClientEntity* e = entitylist->GetBaseEntity(i);
+		if (!e)
+			continue;
+
+		if (e == ptr)
+			return true;
+	}
+	return false;
+}
+
 //-------------------------------------
 // Purpose:	Writes all the fields that are not client neutral. In the event of 
 //			a librarization of save/restore, these would not reside in the library
@@ -2279,6 +2310,38 @@ IEngineObject* CRestoreServer::GetEngineObject(int entnum) {
 IEngineObject* CRestoreClient::GetEngineObject(int entnum) {
 	return entitylist->GetEngineObject(entnum);
 }
+
+IEntityList* CRestoreServer::GetEntityList()
+{
+	return serverEntitylist;
+}
+
+IEntityList* CRestoreClient::GetEntityList()
+{
+	return entitylist;
+}
+
+bool CRestoreServer::IsValidEntityPointer(void* ptr)
+{
+	return serverEntitylist->IsEntityPtr(ptr);
+}
+
+bool CRestoreClient::IsValidEntityPointer(void* ptr)
+{
+	// Walk entities looking for pointer
+	int c = entitylist->GetHighestEntityIndex();
+	for (int i = 0; i <= c; i++)
+	{
+		IClientEntity* e = entitylist->GetBaseEntity(i);
+		if (!e)
+			continue;
+
+		if (e == ptr)
+			return true;
+	}
+	return false;
+}
+
 //-------------------------------------
 
 int CRestore::ReadEntityPtr(IHandleEntity * *ppEntity, int count, int nBytesAvailable)

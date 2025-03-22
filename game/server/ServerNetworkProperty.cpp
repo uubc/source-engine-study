@@ -5,21 +5,21 @@
 // $NoKeywords: $
 //===========================================================================//
 
-#include "cbase.h"
+//#include "cbase.h"
 #include "ServerNetworkProperty.h"
 #include "tier0/dbg.h"
-#include "gameinterface.h"
+//#include "gameinterface.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern CTimedEventMgr g_NetworkPropertyEventMgr;
+//extern CTimedEventMgr g_NetworkPropertyEventMgr;
 
 
 //-----------------------------------------------------------------------------
 // Save/load
 //-----------------------------------------------------------------------------
-BEGIN_DATADESC_NO_BASE( CServerNetworkProperty )
+//BEGIN_DATADESC_NO_BASE( CServerNetworkProperty )
 //	DEFINE_FIELD( m_pOuter, FIELD_CLASSPTR ),
 //	DEFINE_FIELD( m_pPev, FIELD_CLASSPTR ),
 //	DEFINE_FIELD( m_PVSInfo, PVSInfo_t ),
@@ -27,7 +27,7 @@ BEGIN_DATADESC_NO_BASE( CServerNetworkProperty )
 //	DEFINE_GLOBAL_FIELD( m_hParent, FIELD_EHANDLE ),
 //	DEFINE_FIELD( m_TimerEvent, CEventRegister ),
 //	DEFINE_FIELD( m_bPendingStateChange, FIELD_BOOLEAN ),
-END_DATADESC()
+//END_DATADESC()
 
 
 //-----------------------------------------------------------------------------
@@ -63,8 +63,8 @@ void CServerNetworkProperty::Init()
 	//m_pOuter = pEntity;
 	//m_pServerClass = NULL;
 //	m_pTransmitProxy = NULL;
-	m_bPendingStateChange = false;
-	m_TimerEvent.Init( &g_NetworkPropertyEventMgr, this );
+//	m_bPendingStateChange = false;
+	//m_TimerEvent.Init( &g_NetworkPropertyEventMgr, this );
 	ClearStateChanged();
 }
 
@@ -183,24 +183,24 @@ void CServerNetworkProperty::SetTransmitProxy( CBaseTransmitProxy *pProxy )
 
 
 
-void CServerNetworkProperty::SetUpdateInterval( float val )
-{
-	if ( val == 0 )
-		m_TimerEvent.StopUpdates();
-	else
-		m_TimerEvent.SetUpdateInterval( val );
-}
+//void CServerNetworkProperty::SetUpdateInterval( float val )
+//{
+//	if ( val == 0 )
+//		m_TimerEvent.StopUpdates();
+//	else
+//		m_TimerEvent.SetUpdateInterval( val );
+//}
 
 
-void CServerNetworkProperty::FireEvent()
-{
+//void CServerNetworkProperty::FireEvent()
+//{
 	// Our timer went off. If our state has changed in the background, then 
 	// trigger a state change in the edict.
-	if ( m_bPendingStateChange )
-	{
+//	if ( m_bPendingStateChange )
+//	{
 		//if (m_entindex != -1)
-			StateChanged();
-		m_bPendingStateChange = false;
-	}
-}
+//			StateChanged();
+//		m_bPendingStateChange = false;
+//	}
+//}
 

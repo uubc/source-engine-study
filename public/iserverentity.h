@@ -1383,6 +1383,7 @@ public:
 	virtual IPhysicsEnvironment* PhysGetEnv() = 0;
 	virtual IPhysicsSurfaceProps* PhysGetProps() = 0;
 	virtual IPhysicsCollision* PhysGetCollision() = 0;
+	virtual IPhysSaveRestoreBlockHandler* PhysSaveRestoreBlockHandler() = 0;
 	virtual IPhysicsObjectPairHash* PhysGetEntityCollisionHash() = 0;
 	virtual const objectparams_t& PhysGetDefaultObjectParams() = 0;
 	virtual IPhysicsObject* PhysGetWorldObject() = 0;

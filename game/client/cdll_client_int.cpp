@@ -1098,7 +1098,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	}
 
 	//engine->AddBlockHandler( GetEntitySaveRestoreBlockHandler() );
-	engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );
+	//engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetViewEffectsRestoreBlockHandler() );
 
 	//ClientWorldFactoryInit();
@@ -1204,7 +1204,7 @@ void CHLClient::Shutdown( void )
 	//ClientWorldFactoryShutdown();
 
 	engine->RemoveBlockHandler( GetViewEffectsRestoreBlockHandler() );
-	engine->RemoveBlockHandler( GetPhysSaveRestoreBlockHandler() );
+	//engine->RemoveBlockHandler( GetPhysSaveRestoreBlockHandler() );
 	//engine->RemoveBlockHandler( GetEntitySaveRestoreBlockHandler() );
 
 	ClientVoiceMgr_Shutdown();

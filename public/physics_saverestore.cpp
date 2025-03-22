@@ -19,19 +19,7 @@
 
 static short PHYS_SAVE_RESTORE_VERSION = 5;
 
-struct PhysBlockHeader_t
-{
-	int				nSaved;
-	IPhysicsObject	*pWorldObject;
 
-	inline void Clear()
-	{
-		nSaved = 0;
-		pWorldObject = 0;
-	}
-
-	DECLARE_SIMPLE_DATADESC();
-};
 BEGIN_SIMPLE_DATADESC( PhysBlockHeader_t )
 	DEFINE_FIELD( nSaved,	FIELD_INTEGER ),
 	// NOTE: We want to save the actual address here for remapping, so use an integer
@@ -56,36 +44,6 @@ const char *g_ppszPhysTypeNames[PIID_NUM_TYPES] =
 
 //-----------------------------------------------------------------------------
 
-struct BBox_t
-{
-	Vector mins, maxs;
-};
-
-struct Sphere_t
-{
-	float radius;
-};
-
-
-struct PhysObjectHeader_t
-{
-	PhysObjectHeader_t()
-	{
-		memset( this, 0, sizeof(*this) );
-	}
-
-	PhysInterfaceId_t 	type;
-	CBaseHandle			hEntity;
-	string_t			fieldName;
-	int 				nObjects;
-	string_t			modelName;
-	BBox_t				bbox;
-	Sphere_t			sphere;
-	int					iCollide;
-	
-	DECLARE_SIMPLE_DATADESC();
-};
-
 BEGIN_SIMPLE_DATADESC( PhysObjectHeader_t )
   	DEFINE_FIELD( type,			FIELD_INTEGER ),
   	DEFINE_FIELD( hEntity,		FIELD_EHANDLE ),
@@ -108,420 +66,408 @@ END_DATADESC()
 //
 extern IPhysicsGameTrace* physgametrace;
 
-class CPhysSaveRestoreBlockHandler : public CDefSaveRestoreBlockHandler, 
-									 public IPhysSaveRestoreManager
-#if !defined( CLIENT_DLL )
-									 , public IEntityListener<IServerEntity>
-#endif
+
+CPhysSaveRestoreBlockHandler::CPhysSaveRestoreBlockHandler(IEntityList* pEntityList)
 {
-	struct QueuedItem_t;
-public:
-	CPhysSaveRestoreBlockHandler()
-	{
-		m_QueuedSaves.SetLessFunc( SaveQueueFunc );
-		SetDefLessFunc( m_QueuedRestores );
-		SetDefLessFunc( m_PhysObjectModels );
-		SetDefLessFunc( m_PhysObjectCustomModels );
-		SetDefLessFunc( m_PhysCollideBBoxModels );
-	}
+	m_pEntityList = pEntityList;
+	m_QueuedSaves.SetLessFunc( SaveQueueFunc );
+	SetDefLessFunc( m_QueuedRestores );
+	SetDefLessFunc( m_PhysObjectModels );
+	SetDefLessFunc( m_PhysObjectCustomModels );
+	SetDefLessFunc( m_PhysCollideBBoxModels );
+}
 
-	const char *GetBlockName()
-	{
-		return "Physics";
-	}
+const char * CPhysSaveRestoreBlockHandler::GetBlockName()
+{
+	return "Physics";
+}
 
 	//---------------------------------
 
-	virtual void PreSave( CSaveRestoreData * ) 
-	{
-		m_blockHeader.Clear();
-	}
+void CPhysSaveRestoreBlockHandler::PreSave( CSaveRestoreData * )
+{
+	m_blockHeader.Clear();
+}
 	
 	//---------------------------------
 
-	virtual void Save( ISave *pSave ) 
-	{
-		m_blockHeader.pWorldObject = EntityList()->PhysGetWorldObject();
-		m_blockHeader.nSaved = m_QueuedSaves.Count();
+void CPhysSaveRestoreBlockHandler::Save( ISave *pSave )
+{
+	m_blockHeader.pWorldObject = m_pEntityList->PhysGetWorldObject();
+	m_blockHeader.nSaved = m_QueuedSaves.Count();
 
-		while ( m_QueuedSaves.Count() )
+	while ( m_QueuedSaves.Count() )
+	{
+		const QueuedItem_t &item = m_QueuedSaves.ElementAtHead();
+			
+		IHandleEntity *pOwner = m_pEntityList->GetBaseEntityFromHandle(item.header.hEntity);
+			
+		if ( pOwner )
 		{
-			const QueuedItem_t &item = m_QueuedSaves.ElementAtHead();
-			
-			IHandleEntity *pOwner = EntityList()->GetBaseEntityFromHandle(item.header.hEntity);
-			
-			if ( pOwner )
+			pSave->WriteAll( &item.header );
+			pSave->StartBlock(); //  Need block here in case entity is NULL on load
+			if ( item.header.nObjects )
 			{
-				pSave->WriteAll( &item.header );
-				pSave->StartBlock(); //  Need block here in case entity is NULL on load
-				if ( item.header.nObjects )
+				for ( int i = 0; i < item.header.nObjects; i++ )
 				{
-					for ( int i = 0; i < item.header.nObjects; i++ )
-					{
-						// Starting a block here allows the implementation of any individual physics
-						// class save/load to change non-trivially while retaining the overall
-						// integrity of the savefile.
-						pSave->StartBlock();
-						SavePhysicsObject( pSave, pOwner, item.ppPhysObj[i], item.header.type );
-						pSave->EndBlock();
-					}
+					// Starting a block here allows the implementation of any individual physics
+					// class save/load to change non-trivially while retaining the overall
+					// integrity of the savefile.
+					pSave->StartBlock();
+					SavePhysicsObject( pSave, pOwner, item.ppPhysObj[i], item.header.type );
+					pSave->EndBlock();
 				}
-				// else, it will simply be recreated on restore
-				pSave->EndBlock();
 			}
-			m_QueuedSaves.RemoveAtHead();
+			// else, it will simply be recreated on restore
+			pSave->EndBlock();
 		}
+		m_QueuedSaves.RemoveAtHead();
 	}
+}
 	
 	//---------------------------------
 
-	virtual void WriteSaveHeaders( ISave *pSave )
-	{
-		pSave->WriteShort( &PHYS_SAVE_RESTORE_VERSION );
-		pSave->WriteAll( &m_blockHeader );
-	}
+void CPhysSaveRestoreBlockHandler::WriteSaveHeaders( ISave *pSave )
+{
+	pSave->WriteShort( &PHYS_SAVE_RESTORE_VERSION );
+	pSave->WriteAll( &m_blockHeader );
+}
 	
 	//---------------------------------
 
-	virtual void PostSave() 
-	{
-		m_QueuedSaves.Purge();
-	}
+void CPhysSaveRestoreBlockHandler::PostSave()
+{
+	m_QueuedSaves.Purge();
+}
 	
 	//---------------------------------
 
-	virtual void PreRestore() 
+void CPhysSaveRestoreBlockHandler::PreRestore()
+{
+	// UNDONE: This never runs!!!!
+	if (m_pEntityList->PhysGetEnv())
 	{
-#if !defined( CLIENT_DLL )
-		EntityList()->AddListenerEntity( this );
-#endif
+		physprerestoreparams_t params;
+		params.recreatedObjectCount = 0;
+		m_pEntityList->PhysGetEnv()->PreRestore( params );
+	}
+}
+	
+	//---------------------------------
 
-		// UNDONE: This never runs!!!!
-		if (EntityList()->PhysGetEnv())
+void CPhysSaveRestoreBlockHandler::ReadRestoreHeaders( IRestore *pRestore )
+{
+	// No reason why any future version shouldn't try to retain backward compatability. The default here is to not do so.
+	short version = pRestore->ReadShort();
+	m_fDoLoad = ( version == PHYS_SAVE_RESTORE_VERSION );
+
+	pRestore->ReadAll( &m_blockHeader );
+}
+
+	//---------------------------------
+	
+void CPhysSaveRestoreBlockHandler::Restore( IRestore *pRestore, bool )
+{
+	if ( m_fDoLoad )
+	{
+		if (m_pEntityList->PhysGetEnv())
 		{
 			physprerestoreparams_t params;
-			params.recreatedObjectCount = 0;
-			EntityList()->PhysGetEnv()->PreRestore( params );
+			params.recreatedObjectCount = 1;
+			params.recreatedObjectList[0].pNewObject = m_pEntityList->PhysGetWorldObject();
+			params.recreatedObjectList[0].pOldObject = m_blockHeader.pWorldObject;
+			m_pEntityList->PhysGetEnv()->PreRestore( params );
 		}
-	}
-	
-	//---------------------------------
 
-	virtual void ReadRestoreHeaders( IRestore *pRestore )
-	{
-		// No reason why any future version shouldn't try to retain backward compatability. The default here is to not do so.
-		short version = pRestore->ReadShort();
-		m_fDoLoad = ( version == PHYS_SAVE_RESTORE_VERSION );
+		PhysObjectHeader_t header;
 
-		pRestore->ReadAll( &m_blockHeader );
-	}
-
-	//---------------------------------
-	
-	virtual void Restore( IRestore *pRestore, bool ) 
-	{
-		if ( m_fDoLoad )
+		while ( m_blockHeader.nSaved-- )
 		{
-			if (EntityList()->PhysGetEnv())
-			{
-				physprerestoreparams_t params;
-				params.recreatedObjectCount = 1;
-				params.recreatedObjectList[0].pNewObject = EntityList()->PhysGetWorldObject();
-				params.recreatedObjectList[0].pOldObject = m_blockHeader.pWorldObject;
-				EntityList()->PhysGetEnv()->PreRestore( params );
-			}
-
-			PhysObjectHeader_t header;
-
-			while ( m_blockHeader.nSaved-- )
-			{
-				pRestore->ReadAll( &header );
-				pRestore->StartBlock();
+			pRestore->ReadAll( &header );
+			pRestore->StartBlock();
 				
-				if ( header.hEntity != NULL )
-				{
-					RestoreBlock( pRestore, header );
-				}
-
-				pRestore->EndBlock();
+			if ( header.hEntity != NULL )
+			{
+				RestoreBlock( pRestore, header );
 			}
+
+			pRestore->EndBlock();
 		}
 	}
+}
 	
 	//---------------------------------
 	
-	void RestoreBlock( IRestore *pRestore, const PhysObjectHeader_t &header ) 
-	{
-		IHandleEntity *  pOwner  = EntityList()->GetBaseEntityFromHandle(header.hEntity);
-		unsigned short iQueued = m_QueuedRestores.Find( pOwner );
+void CPhysSaveRestoreBlockHandler::RestoreBlock( IRestore *pRestore, const PhysObjectHeader_t &header )
+{
+	IHandleEntity *  pOwner  = m_pEntityList->GetBaseEntityFromHandle(header.hEntity);
+	unsigned short iQueued = m_QueuedRestores.Find( pOwner );
 		
-		if ( iQueued != m_QueuedRestores.InvalidIndex() )
+	if ( iQueued != m_QueuedRestores.InvalidIndex() )
+	{
+		MDLCACHE_CRITICAL_SECTION();
+		if ( pOwner->ShouldSavePhysics() && header.nObjects > 0 )
 		{
-			MDLCACHE_CRITICAL_SECTION();
-			if ( pOwner->ShouldSavePhysics() && header.nObjects > 0 )
-			{
-				QueuedItem_t *pItem = m_QueuedRestores[iQueued]->FindItem( header.fieldName );
+			QueuedItem_t *pItem = m_QueuedRestores[iQueued]->FindItem( header.fieldName );
 				
-				if ( pItem )
+			if ( pItem )
+			{
+				int nObjects = MIN( header.nObjects, pItem->header.nObjects );
+				if ( pItem->header.type == PIID_IPHYSICSOBJECT && nObjects == 1 )
 				{
-					int nObjects = MIN( header.nObjects, pItem->header.nObjects );
-					if ( pItem->header.type == PIID_IPHYSICSOBJECT && nObjects == 1 )
-					{
-						RestorePhysicsObjectAndModel( pRestore, header, pItem, nObjects );
-					}
-					else
-					{
-						void **ppPhysObj = pItem->ppPhysObj;
+					RestorePhysicsObjectAndModel( pRestore, header, pItem, nObjects );
+				}
+				else
+				{
+					void **ppPhysObj = pItem->ppPhysObj;
 						
-						for ( int i = 0; i < nObjects; i++ )
+					for ( int i = 0; i < nObjects; i++ )
+					{
+						pRestore->StartBlock();
+						RestorePhysicsObject( pRestore, header, ppPhysObj + i );
+						pRestore->EndBlock();
+						if ( header.type == PIID_IPHYSICSMOTIONCONTROLLER )
 						{
-							pRestore->StartBlock();
-							RestorePhysicsObject( pRestore, header, ppPhysObj + i );
-							pRestore->EndBlock();
-							if ( header.type == PIID_IPHYSICSMOTIONCONTROLLER )
+							void *pObj = ppPhysObj[i];
+							IPhysicsMotionController *pController = (IPhysicsMotionController *)pObj;
+							if ( pController )
 							{
-								void *pObj = ppPhysObj[i];
-								IPhysicsMotionController *pController = (IPhysicsMotionController *)pObj;
-								if ( pController )
+								// If the entity is the motion callback handler, then automatically set it
+								// NOTE: This is usually the case
+								IMotionEvent *pEvent = dynamic_cast<IMotionEvent *>(pOwner);
+								if ( pEvent )
 								{
-									// If the entity is the motion callback handler, then automatically set it
-									// NOTE: This is usually the case
-									IMotionEvent *pEvent = dynamic_cast<IMotionEvent *>(pOwner);
-									if ( pEvent )
-									{
-										pController->SetEventHandler( pEvent );
-									}
+									pController->SetEventHandler( pEvent );
 								}
 							}
 						}
 					}
 				}
 			}
-			else
-				pOwner->CreateVPhysics();
 		}
+		else
+			pOwner->CreateVPhysics();
 	}
+}
 	
 	
 	//---------------------------------
 
-	void RestorePhysicsObjectAndModel( IRestore *pRestore, const PhysObjectHeader_t &header, CPhysSaveRestoreBlockHandler::QueuedItem_t *pItem, int nObjects )
+void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRestore, const PhysObjectHeader_t &header, CPhysSaveRestoreBlockHandler::QueuedItem_t *pItem, int nObjects )
+{
+	if ( nObjects == 1 )
 	{
-		if ( nObjects == 1 )
+		pRestore->StartBlock();
+			
+		CPhysCollide *pPhysCollide   = NULL;
+		int 		  modelIndex 	 = -1;
+		bool 		  fCustomCollide = false;
+			
+		if ( header.modelName != NULL_STRING )
 		{
-			pRestore->StartBlock();
-			
-			CPhysCollide *pPhysCollide   = NULL;
-			int 		  modelIndex 	 = -1;
-			bool 		  fCustomCollide = false;
-			
-			if ( header.modelName != NULL_STRING )
-			{
-				IHandleEntity *pGlobalEntity = EntityList()->GetBaseEntityFromHandle(header.hEntity);
+			IHandleEntity *pGlobalEntity = m_pEntityList->GetBaseEntityFromHandle(header.hEntity);
 #if !defined( CLIENT_DLL )
-				if ( NULL_STRING != pGlobalEntity->GetEngineObject()->GetGlobalname() )
-				{
-					modelIndex = pGlobalEntity->GetEngineObject()->GetModelIndex();
-				}
-				else
+			if ( NULL_STRING != pGlobalEntity->GetEngineObject()->GetGlobalname() )
+			{
+				modelIndex = pGlobalEntity->GetEngineObject()->GetModelIndex();
+			}
+			else
 #endif
-				{
-					modelIndex = modelinfo->GetModelIndex( STRING( header.modelName ) );
-					pGlobalEntity = NULL;
-				}
+			{
+				modelIndex = modelinfo->GetModelIndex( STRING( header.modelName ) );
+				pGlobalEntity = NULL;
+			}
 
-				if ( modelIndex != -1 )
+			if ( modelIndex != -1 )
+			{
+				vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
+				if ( pCollide )
 				{
-					vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
-					if ( pCollide )
-					{
-						if ( pCollide->solidCount > 0 && pCollide->solids && header.iCollide < pCollide->solidCount )
-							pPhysCollide = pCollide->solids[header.iCollide];
-					}
+					if ( pCollide->solidCount > 0 && pCollide->solids && header.iCollide < pCollide->solidCount )
+						pPhysCollide = pCollide->solids[header.iCollide];
 				}
 			}
-			else if ( header.bbox.mins != vec3_origin || header.bbox.maxs != vec3_origin )
+		}
+		else if ( header.bbox.mins != vec3_origin || header.bbox.maxs != vec3_origin )
+		{
+			pPhysCollide = PhysCreateBbox(m_pEntityList, header.bbox.mins, header.bbox.maxs );
+			fCustomCollide = true;
+		}
+		else if ( header.sphere.radius != 0 )
+		{
+			// HACKHACK: Handle spheres here!!!
+			if ( !(*pItem->ppPhysObj) )
 			{
-				pPhysCollide = PhysCreateBbox( header.bbox.mins, header.bbox.maxs );
-				fCustomCollide = true;
+				RestorePhysicsObject( pRestore, header, pItem->ppPhysObj, NULL );
 			}
-			else if ( header.sphere.radius != 0 )
-			{
-				// HACKHACK: Handle spheres here!!!
-				if ( !(*pItem->ppPhysObj) )
-				{
-					RestorePhysicsObject( pRestore, header, pItem->ppPhysObj, NULL );
-				}
-				return;
-			}
+			return;
+		}
 			
-			if ( pPhysCollide )
+		if ( pPhysCollide )
+		{
+			if ( !(*pItem->ppPhysObj) )
 			{
-				if ( !(*pItem->ppPhysObj) )
+				RestorePhysicsObject( pRestore, header, pItem->ppPhysObj, pPhysCollide );
+				if ( (*pItem->ppPhysObj) )
 				{
-					RestorePhysicsObject( pRestore, header, pItem->ppPhysObj, pPhysCollide );
-					if ( (*pItem->ppPhysObj) )
+					IPhysicsObject *pObject = (IPhysicsObject *)(*pItem->ppPhysObj);
+					if ( !fCustomCollide )
 					{
-						IPhysicsObject *pObject = (IPhysicsObject *)(*pItem->ppPhysObj);
-						if ( !fCustomCollide )
-						{
-							AssociateModel( pObject, modelIndex );
-						}
-						else
-						{
-							AssociateModel( pObject, pPhysCollide );
-						}
+						AssociateModel( pObject, modelIndex );
 					}
 					else
-						DevMsg( "Failed to restore physics object\n" );
+					{
+						AssociateModel( pObject, pPhysCollide );
+					}
 				}
 				else
-					DevMsg( "Physics object pointer unexpectedly non-null before restore. Should be creating physics object in CreatePhysics()?\n" );
+					DevMsg( "Failed to restore physics object\n" );
 			}
 			else
-				DevMsg( "Failed to reestablish collision model for object\n" );
-				
-			pRestore->EndBlock();
+				DevMsg( "Physics object pointer unexpectedly non-null before restore. Should be creating physics object in CreatePhysics()?\n" );
 		}
 		else
-			DevMsg( "Don't know how to reconsitite models for physobj array \n" );
+			DevMsg( "Failed to reestablish collision model for object\n" );
+				
+		pRestore->EndBlock();
 	}
+	else
+		DevMsg( "Don't know how to reconsitite models for physobj array \n" );
+}
 	
 	//---------------------------------
 	
-	virtual void PostRestore() 
-	{
-		if (EntityList()->PhysGetEnv())
-			EntityList()->PhysGetEnv()->PostRestore();
+void CPhysSaveRestoreBlockHandler::PostRestore()
+{
+	if (m_pEntityList->PhysGetEnv())
+		m_pEntityList->PhysGetEnv()->PostRestore();
 
-		unsigned short i = m_QueuedRestores.FirstInorder();
-		while ( i != m_QueuedRestores.InvalidIndex() )
-		{
-			delete m_QueuedRestores[i];
-			i = m_QueuedRestores.NextInorder( i );
-		}
-		
-		m_QueuedRestores.RemoveAll();
-#if !defined( CLIENT_DLL )
-		EntityList()->RemoveListenerEntity( this );
-#endif
+	unsigned short i = m_QueuedRestores.FirstInorder();
+	while ( i != m_QueuedRestores.InvalidIndex() )
+	{
+		delete m_QueuedRestores[i];
+		i = m_QueuedRestores.NextInorder( i );
 	}
+		
+	m_QueuedRestores.RemoveAll();
+}
 	
 	//---------------------------------
 	
-	void QueueSave( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
+void CPhysSaveRestoreBlockHandler::QueueSave( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
+{
+	if ( !pOwner )
+		return;
+
+	bool fOnlyNotingExistence = !pOwner->ShouldSavePhysics();
+		
+	QueuedItem_t item;
+		
+	item.pEntityList = m_pEntityList;
+	item.ppPhysObj		= ppPhysObj;
+	item.header.hEntity = pOwner;
+	item.header.type	= type;
+	item.header.nObjects = ( !fOnlyNotingExistence ) ? pTypeDesc->fieldSize : 0;
+	item.header.fieldName = AllocPooledStringInEntityList( pTypeDesc->fieldName );
+																// A pooled string is used here because there is no way
+																// right now to save a non-string_t string and have it 
+																// compressed in the save symbol tables. Furthermore,
+																// the field name would normally be in the string
+																// pool anyway. (toml 12-10-02)
+	item.header.modelName = NULL_STRING;
+	memset( &item.header.bbox, 0, sizeof( item.header.bbox ) );
+	item.header.sphere.radius = 0;
+		
+	if ( !fOnlyNotingExistence && type == PIID_IPHYSICSOBJECT )
 	{
-		if ( !pOwner )
-			return;
+		// Don't doing the box thing for things like wheels on cars
+		IPhysicsObject *pPhysObj = (IPhysicsObject *)(*ppPhysObj);
 
-		bool fOnlyNotingExistence = !pOwner->ShouldSavePhysics();
-		
-		QueuedItem_t item;
-		
-		item.ppPhysObj		= ppPhysObj;
-		item.header.hEntity = pOwner;
-		item.header.type	= type;
-		item.header.nObjects = ( !fOnlyNotingExistence ) ? pTypeDesc->fieldSize : 0;
-		item.header.fieldName = AllocPooledStringInEntityList( pTypeDesc->fieldName );
-																	// A pooled string is used here because there is no way
-																	// right now to save a non-string_t string and have it 
-																	// compressed in the save symbol tables. Furthermore,
-																	// the field name would normally be in the string
-																	// pool anyway. (toml 12-10-02)
-		item.header.modelName = NULL_STRING;
-		memset( &item.header.bbox, 0, sizeof( item.header.bbox ) );
-		item.header.sphere.radius = 0;
-		
-		if ( !fOnlyNotingExistence && type == PIID_IPHYSICSOBJECT )
+		if ( pPhysObj )
 		{
-			// Don't doing the box thing for things like wheels on cars
-			IPhysicsObject *pPhysObj = (IPhysicsObject *)(*ppPhysObj);
-
-			if ( pPhysObj )
+			item.header.modelName = GetModelName( pPhysObj );
+			item.header.iCollide = m_pEntityList->PhysGetCollision()->CollideIndex( pPhysObj->GetCollide() );
+			if ( item.header.modelName == NULL_STRING )
 			{
-				item.header.modelName = GetModelName( pPhysObj );
-				item.header.iCollide = EntityList()->PhysGetCollision()->CollideIndex( pPhysObj->GetCollide() );
-				if ( item.header.modelName == NULL_STRING )
+				BBox_t *pBBox = GetBBox( pPhysObj );
+				if ( pBBox != NULL )
 				{
-					BBox_t *pBBox = GetBBox( pPhysObj );
-					if ( pBBox != NULL )
+					item.header.bbox = *pBBox;
+				}
+				else 
+				{
+					if ( pPhysObj && pPhysObj->GetSphereRadius() != 0 )
 					{
-						item.header.bbox = *pBBox;
+						item.header.sphere.radius = pPhysObj->GetSphereRadius();
 					}
-					else 
+					else
 					{
-						if ( pPhysObj && pPhysObj->GetSphereRadius() != 0 )
-						{
-							item.header.sphere.radius = pPhysObj->GetSphereRadius();
-						}
-						else
-						{
-							DevMsg( "Don't know how to save model for physics object (class \"%s\")\n", pOwner->GetClassname() );
-						}
+						DevMsg( "Don't know how to save model for physics object (class \"%s\")\n", pOwner->GetClassname() );
 					}
 				}
 			}
 		}
-
-		m_QueuedSaves.Insert( item );
 	}
+
+	m_QueuedSaves.Insert( item );
+}
 
 	//---------------------------------
 	
-	void QueueRestore( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
-	{
-		CEntityRestoreSet *pEntitySet = NULL;
-		unsigned short 	   iEntitySet = m_QueuedRestores.Find( pOwner );
+void CPhysSaveRestoreBlockHandler::QueueRestore( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
+{
+	CEntityRestoreSet *pEntitySet = NULL;
+	unsigned short 	   iEntitySet = m_QueuedRestores.Find( pOwner );
 		
-		if ( iEntitySet != m_QueuedRestores.InvalidIndex() )
-		{
-			pEntitySet = m_QueuedRestores[iEntitySet];
-		}
-		else
-		{
-			pEntitySet = new CEntityRestoreSet;
-			m_QueuedRestores.Insert( pOwner, pEntitySet );
-		}
+	if ( iEntitySet != m_QueuedRestores.InvalidIndex() )
+	{
+		pEntitySet = m_QueuedRestores[iEntitySet];
+	}
+	else
+	{
+		pEntitySet = new CEntityRestoreSet;
+		m_QueuedRestores.Insert( pOwner, pEntitySet );
+	}
 		
-		pEntitySet->Add( pOwner, pTypeDesc, ppPhysObj, type );
+	pEntitySet->Add( pOwner, pTypeDesc, ppPhysObj, type );
 
-		memset( ppPhysObj, 0, pTypeDesc->fieldSize * sizeof( void * ) );
-	}
+	memset( ppPhysObj, 0, pTypeDesc->fieldSize * sizeof( void * ) );
+}
 
 	//---------------------------------
 	
-	void SavePhysicsObject( ISave *pSave, IHandleEntity *pOwner, void *pObject, PhysInterfaceId_t type )
+void CPhysSaveRestoreBlockHandler::SavePhysicsObject( ISave *pSave, IHandleEntity *pOwner, void *pObject, PhysInterfaceId_t type )
+{
+	if (m_pEntityList->PhysGetEnv())
 	{
-		if (EntityList()->PhysGetEnv())
-		{
-			if ( !pObject )
-				return;
-			physsaveparams_t params = { pSave, pObject, type };
-			EntityList()->PhysGetEnv()->Save( params );
-		}
+		if ( !pObject )
+			return;
+		physsaveparams_t params = { pSave, pObject, type };
+		m_pEntityList->PhysGetEnv()->Save( params );
 	}
+}
 	
 	//---------------------------------
 	
-	void RestorePhysicsObject( IRestore *pRestore, const PhysObjectHeader_t &header, void **ppObject, const CPhysCollide *pCollide = NULL )
+void CPhysSaveRestoreBlockHandler::RestorePhysicsObject( IRestore *pRestore, const PhysObjectHeader_t &header, void **ppObject, const CPhysCollide *pCollide )
+{
+	if (m_pEntityList->PhysGetEnv())
 	{
-		if (EntityList()->PhysGetEnv())
-		{
-			physrestoreparams_t params = { pRestore, ppObject, header.type, EntityList()->GetBaseEntityFromHandle(header.hEntity), STRING(header.modelName), pCollide, EntityList()->PhysGetEnv(), physgametrace };
-			EntityList()->PhysGetEnv()->Restore( params );
-		}
+		physrestoreparams_t params = { pRestore, ppObject, header.type, m_pEntityList->GetBaseEntityFromHandle(header.hEntity), STRING(header.modelName), pCollide, m_pEntityList->PhysGetEnv(), physgametrace };
+		m_pEntityList->PhysGetEnv()->Restore( params );
 	}
+}
 #if !defined( CLIENT_DLL )	
 	//-----------------------------------------------------
 	// IEntityListener methods
 	// This object is only a listener during restore	
-	virtual void OnEntityCreated( IServerEntity *pEntity )
+	void CPhysSaveRestoreBlockHandler::OnEntityCreated( IServerEntity *pEntity )
 	{
 	}
 
 	//---------------------------------
 	
-	virtual void OnEntityDeleted( IServerEntity *pEntity )
+	void CPhysSaveRestoreBlockHandler::OnEntityDeleted( IServerEntity *pEntity )
 	{
 		unsigned short iEntitySet = m_QueuedRestores.Find( pEntity );
 		
@@ -536,180 +482,120 @@ public:
 	//-----------------------------------------------------
 	// IPhysSaveRestoreManager methods
 	
-	virtual void NoteBBox( const Vector &mins, const Vector &maxs, CPhysCollide *pCollide )
+void CPhysSaveRestoreBlockHandler::NoteBBox( const Vector &mins, const Vector &maxs, CPhysCollide *pCollide )
+{
+	if ( pCollide && m_PhysCollideBBoxModels.Find( pCollide ) == m_PhysCollideBBoxModels.InvalidIndex() )
 	{
-		if ( pCollide && m_PhysCollideBBoxModels.Find( pCollide ) == m_PhysCollideBBoxModels.InvalidIndex() )
-		{
-			BBox_t box;
-			box.mins = mins;
-			box.maxs = maxs;
-			m_PhysCollideBBoxModels.Insert( pCollide, box );
-		}
+		BBox_t box;
+		box.mins = mins;
+		box.maxs = maxs;
+		m_PhysCollideBBoxModels.Insert( pCollide, box );
 	}
+}
 
 	//---------------------------------
 	
-	virtual void AssociateModel( IPhysicsObject *pObject, int modelIndex )
-	{
-		Assert( m_PhysObjectModels.Find( pObject ) == m_PhysObjectModels.InvalidIndex() );
-		m_PhysObjectModels.Insert( pObject, modelIndex );
-	}
+void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, int modelIndex )
+{
+	Assert( m_PhysObjectModels.Find( pObject ) == m_PhysObjectModels.InvalidIndex() );
+	m_PhysObjectModels.Insert( pObject, modelIndex );
+}
 
 	//---------------------------------
 	
-	virtual void AssociateModel( IPhysicsObject *pObject, const CPhysCollide *pModel )
-	{
-		Assert( m_PhysObjectCustomModels.Find( pObject ) == m_PhysObjectCustomModels.InvalidIndex() );
-		m_PhysObjectCustomModels.Insert( pObject, pModel );
-	}
+void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, const CPhysCollide *pModel )
+{
+	Assert( m_PhysObjectCustomModels.Find( pObject ) == m_PhysObjectCustomModels.InvalidIndex() );
+	m_PhysObjectCustomModels.Insert( pObject, pModel );
+}
 
 	//---------------------------------
 	
-	virtual void ForgetModel( IPhysicsObject *pObject )
-	{
-		if ( !m_PhysObjectModels.Remove( pObject ) )
-			m_PhysObjectCustomModels.Remove( pObject );
-	}
+void CPhysSaveRestoreBlockHandler::ForgetModel( IPhysicsObject *pObject )
+{
+	if ( !m_PhysObjectModels.Remove( pObject ) )
+		m_PhysObjectCustomModels.Remove( pObject );
+}
 
 	//---------------------------------
 
-	virtual void ForgetAllModels()
-	{
-		m_PhysObjectModels.RemoveAll();
-		m_PhysObjectCustomModels.RemoveAll();
-		m_PhysCollideBBoxModels.RemoveAll();
-	}
+void CPhysSaveRestoreBlockHandler::ForgetAllModels()
+{
+	m_PhysObjectModels.RemoveAll();
+	m_PhysObjectCustomModels.RemoveAll();
+	m_PhysCollideBBoxModels.RemoveAll();
+}
 
 	//---------------------------------
 	
-	string_t GetModelName( IPhysicsObject *pObject )
-	{
-		int i = m_PhysObjectModels.Find( pObject );
-		if ( i == m_PhysObjectModels.InvalidIndex() )
-			return NULL_STRING;
-		return AllocPooledStringInEntityList( modelinfo->GetModelName( modelinfo->GetModel( m_PhysObjectModels[i] ) ) );
-	}
+string_t CPhysSaveRestoreBlockHandler::GetModelName( IPhysicsObject *pObject )
+{
+	int i = m_PhysObjectModels.Find( pObject );
+	if ( i == m_PhysObjectModels.InvalidIndex() )
+		return NULL_STRING;
+	return AllocPooledStringInEntityList( modelinfo->GetModelName( modelinfo->GetModel( m_PhysObjectModels[i] ) ) );
+}
 	
 	//---------------------------------
 	
-	BBox_t * GetBBox( IPhysicsObject *pObject )
-	{
-		int i = m_PhysObjectCustomModels.Find( pObject );
-		if ( i == m_PhysObjectCustomModels.InvalidIndex() )
-			return NULL;
-		i = m_PhysCollideBBoxModels.Find( m_PhysObjectCustomModels[i] );
-		if ( i == m_PhysCollideBBoxModels.InvalidIndex() )
-			return NULL;
-		return &(m_PhysCollideBBoxModels[i]);
-	}
+BBox_t * CPhysSaveRestoreBlockHandler::GetBBox( IPhysicsObject *pObject )
+{
+	int i = m_PhysObjectCustomModels.Find( pObject );
+	if ( i == m_PhysObjectCustomModels.InvalidIndex() )
+		return NULL;
+	i = m_PhysCollideBBoxModels.Find( m_PhysObjectCustomModels[i] );
+	if ( i == m_PhysCollideBBoxModels.InvalidIndex() )
+		return NULL;
+	return &(m_PhysCollideBBoxModels[i]);
+}
 
-	//---------------------------------
 	
-private:
-	struct QueuedItem_t
-	{
-		PhysObjectHeader_t	  header;
-	 	void **				  ppPhysObj;
-	};
 	
-	class CEntityRestoreSet : public CUtlVector<QueuedItem_t>
-	{
-	public:
-		int Add( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
-		{
-			int i = AddToTail();
+	
+int CPhysSaveRestoreBlockHandler::CEntityRestoreSet::Add( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
+{
+	int i = AddToTail();
 			
-			Assert( ppPhysObj );
-			Assert( *ppPhysObj == NULL ); // expected field to have been cleared
-			Assert( pOwner );
+	Assert( ppPhysObj );
+	Assert( *ppPhysObj == NULL ); // expected field to have been cleared
+	Assert( pOwner );
 
-			QueuedItem_t &item = Element( i );
-
-			item.ppPhysObj			= ppPhysObj;
-			item.header.hEntity 	= pOwner;
-			item.header.type		= type;
-			item.header.nObjects 	= pTypeDesc->fieldSize;
-			item.header.fieldName 	= AllocPooledStringInEntityList( pTypeDesc->fieldName ); 	// See comment in CPhysSaveRestoreBlockHandler::QueueSave()
+	QueuedItem_t &item = Element( i );
+	item.pEntityList		= pOwner->GetEntityList();
+	item.ppPhysObj			= ppPhysObj;
+	item.header.hEntity 	= pOwner;
+	item.header.type		= type;
+	item.header.nObjects 	= pTypeDesc->fieldSize;
+	item.header.fieldName 	= AllocPooledStringInEntityList( pTypeDesc->fieldName ); 	// See comment in CPhysSaveRestoreBlockHandler::QueueSave()
 			
-			return i;
-		}
+	return i;
+}
 		
-		QueuedItem_t *FindItem( string_t itemFieldName )
-		{
-			// generally, the set is very small, usually one, so linear search is not too gruesome;
-			for ( int i = 0; i < Count(); i++ )
-			{
-				string_t testName = Element(i).header.fieldName;
-				Assert( ( testName == itemFieldName && strcmp( STRING( testName ), STRING( itemFieldName ) ) == 0 ) ||
-						( testName != itemFieldName && strcmp( STRING( testName ), STRING( itemFieldName ) ) != 0 ) );
+CPhysSaveRestoreBlockHandler::QueuedItem_t * CPhysSaveRestoreBlockHandler::CEntityRestoreSet::FindItem( string_t itemFieldName )
+{
+	// generally, the set is very small, usually one, so linear search is not too gruesome;
+	for ( int i = 0; i < Count(); i++ )
+	{
+		string_t testName = Element(i).header.fieldName;
+		Assert( ( testName == itemFieldName && strcmp( STRING( testName ), STRING( itemFieldName ) ) == 0 ) ||
+				( testName != itemFieldName && strcmp( STRING( testName ), STRING( itemFieldName ) ) != 0 ) );
 				
-				if ( testName == itemFieldName )
-					return &(Element(i));
-			}
-			return NULL;
-		}
-	};
-	
-	//---------------------------------
-	
-	static bool SaveQueueFunc( const QueuedItem_t &left, const QueuedItem_t &right )
-	{
-		if ( left.header.type == right.header.type )
-			return (EntityList()->GetBaseEntityFromHandle(left.header.hEntity)->entindex() > EntityList()->GetBaseEntityFromHandle(right.header.hEntity)->entindex() );
-
-		return ( left.header.type > right.header.type );
+		if ( testName == itemFieldName )
+			return &(Element(i));
 	}
+	return NULL;
+}
 	
 	//---------------------------------
-
-	CUtlPriorityQueue<QueuedItem_t> 			m_QueuedSaves;
-	CUtlMap<IHandleEntity*, CEntityRestoreSet *>	m_QueuedRestores;
-	bool 										m_fDoLoad;
-
-	//---------------------------------
 	
-	CUtlMap<IPhysicsObject *, int>					m_PhysObjectModels;
-	CUtlMap<IPhysicsObject *, const CPhysCollide *>	m_PhysObjectCustomModels;
-	CUtlMap<const CPhysCollide *, BBox_t>			m_PhysCollideBBoxModels;
-
-	//---------------------------------
-	
-	PhysBlockHeader_t							m_blockHeader;
-	IEntityList*								pEntityList = NULL;
-};
-
-//-----------------------------------------------------------------------------
-
-CPhysSaveRestoreBlockHandler g_PhysSaveRestoreBlockHandler;
-
-IPhysSaveRestoreManager *g_pPhysSaveRestoreManager = &g_PhysSaveRestoreBlockHandler;
-
-//-------------------------------------
-
-ISaveRestoreBlockHandler *GetPhysSaveRestoreBlockHandler()
+bool CPhysSaveRestoreBlockHandler::SaveQueueFunc( const CPhysSaveRestoreBlockHandler::QueuedItem_t &left, const CPhysSaveRestoreBlockHandler::QueuedItem_t &right )
 {
-	return &g_PhysSaveRestoreBlockHandler;
+	if ( left.header.type == right.header.type )
+		return (left.pEntityList->GetBaseEntityFromHandle(left.header.hEntity)->entindex() > right.pEntityList->GetBaseEntityFromHandle(right.header.hEntity)->entindex() );
+
+	return ( left.header.type > right.header.type );
 }
 
-static bool IsValidEntityPointer( void *ptr )
-{
-#if !defined( CLIENT_DLL )
-	return EntityList()->IsEntityPtr( ptr );
-#else
-	// Walk entities looking for pointer
-	int c = EntityList()->GetHighestEntityIndex();
-	for ( int i = 0; i <= c; i++ )
-	{
-		IClientEntity *e = EntityList()->GetBaseEntity( i );
-		if ( !e )
-			continue;
-
-		if ( e == ptr )
-			return true;
-	}
-	return false;
-#endif
-}
 
 //-----------------------------------------------------------------------------
 // Purpose:	Classifies field and queues it up for physics save/restore.
@@ -724,12 +610,12 @@ public:
 
 		bool bFoundEntity = true;
 		
-		if ( IsValidEntityPointer(pOwnerEntity) == false )
+		if (pSave->IsValidEntityPointer(pOwnerEntity) == false)
 		{
 			bFoundEntity = false;
 
 #if defined( CLIENT_DLL )
-			pOwnerEntity = EntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
+			pOwnerEntity = pSave->GetEntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
 
 			if ( pOwnerEntity  )
 			{
@@ -745,7 +631,7 @@ public:
 			AssertMsg( 0, "Unknown physics save/load type");
 			return;
 		}
-		g_PhysSaveRestoreBlockHandler.QueueSave( pOwnerEntity, fieldInfo.pTypeDesc, (void **)fieldInfo.pField, m_type );
+		pSave->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueSave(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
 	}
 	
 	virtual void Restore( const SaveRestoreFieldInfo_t &fieldInfo, IRestore *pRestore )
@@ -754,12 +640,12 @@ public:
 
 		bool bFoundEntity = true;
 		
-		if ( IsValidEntityPointer(pOwnerEntity) == false )
+		if (pRestore->IsValidEntityPointer(pOwnerEntity) == false)
 		{
 			bFoundEntity = false;
 
 #if defined( CLIENT_DLL )
-			pOwnerEntity = EntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
+			pOwnerEntity = pRestore->GetEntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
 
 			if ( pOwnerEntity  )
 			{
@@ -776,7 +662,7 @@ public:
 			return;
 		}
 		
-		g_PhysSaveRestoreBlockHandler.QueueRestore( pOwnerEntity, fieldInfo.pTypeDesc, (void **)fieldInfo.pField, m_type );
+		pRestore->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueRestore(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
 	}
 	
 	virtual void MakeEmpty( const SaveRestoreFieldInfo_t &fieldInfo )

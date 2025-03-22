@@ -89,11 +89,9 @@ class IStudioHdr;
 #include "ai_activity.h"
 #include "shareddefs.h"
 
-#include "effect_dispatch_data.h"
 #include "IEffects.h"
 //#include "sharedInterface.h"
 #include "collisionproperty.h"
-
 #include "vphysics_sound.h"
 
 
@@ -112,11 +110,11 @@ struct ragdollparams_t
 	bool		fixedConstraints;
 };
 
-bool RagdollCreate( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsEnvironment *pPhysEnv );
+bool RagdollCreate(IEntityList* pEntityList, ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsEnvironment *pPhysEnv );
 
-void RagdollActivate( ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex, bool bForceWake = true );
-void RagdollSetupCollisions( ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex );
-void RagdollDestroy( ragdoll_t &ragdoll );
+void RagdollActivate(IEntityList* pEntityList, ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex, bool bForceWake = true );
+void RagdollSetupCollisions(IEntityList* pEntityList, ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex );
+void RagdollDestroy(IEntityList* pEntityList, ragdoll_t &ragdoll );
 
 // Gets the bone matrix for a ragdoll object
 // NOTE: This is different than the object's position because it is
@@ -125,12 +123,12 @@ bool RagdollGetBoneMatrix( const ragdoll_t &ragdoll, CBoneAccessor &pBoneToWorld
 
 // Parse the ragdoll and obtain the mapping from each physics element index to a bone index
 // returns num phys elements
-int RagdollExtractBoneIndices( int *boneIndexOut, IStudioHdr *pStudioHdr, vcollide_t *pCollide );
+int RagdollExtractBoneIndices(IEntityList* pEntityList, int *boneIndexOut, IStudioHdr *pStudioHdr, vcollide_t *pCollide );
 
 // computes an exact bbox of the ragdoll's physics objects
-void RagdollComputeExactBbox( const ragdoll_t &ragdoll, const Vector &origin, Vector &outMins, Vector &outMaxs );
+void RagdollComputeExactBbox(IEntityList* pEntityList, const ragdoll_t &ragdoll, const Vector &origin, Vector &outMins, Vector &outMaxs );
 bool RagdollIsAsleep( const ragdoll_t &ragdoll );
-void RagdollSetupAnimatedFriction( IPhysicsEnvironment *pPhysEnv, ragdoll_t *ragdoll, int iModelIndex );
+void RagdollSetupAnimatedFriction(IEntityList* pEntityList, IPhysicsEnvironment *pPhysEnv, ragdoll_t *ragdoll, int iModelIndex );
 
 void RagdollApplyAnimationAsVelocity( ragdoll_t &ragdoll, const matrix3x4_t *pBoneToWorld );
 void RagdollApplyAnimationAsVelocity( ragdoll_t &ragdoll, const matrix3x4_t *pPrevBones, const matrix3x4_t *pCurrentBones, float dt );

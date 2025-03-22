@@ -51,7 +51,7 @@
 #include "engine/ivdebugoverlay.h"
 #include "shareddefs.h"
 #include "props.h"
-#include "timedeventmgr.h"
+//#include "timedeventmgr.h"
 #include "gameinterface.h"
 #include "eventqueue.h"
 #include "hltvdirector.h"
@@ -151,7 +151,7 @@ IUploadGameStats *gamestatsuploader = NULL;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-CTimedEventMgr g_NetworkPropertyEventMgr;
+//CTimedEventMgr g_NetworkPropertyEventMgr;
 
 ISaveRestoreBlockHandler *GetEventQueueSaveRestoreBlockHandler();
 ISaveRestoreBlockHandler *GetCommentarySaveRestoreBlockHandler();
@@ -763,7 +763,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	}
 
 	//engine->AddBlockHandler( GetEntitySaveRestoreBlockHandler() );
-	engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );
+	//engine->AddBlockHandler( GetPhysSaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetAISaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetTemplateSaveRestoreBlockHandler() );
 	engine->AddBlockHandler( GetDefaultResponseSystemSaveRestoreBlockHandler() );
@@ -853,7 +853,7 @@ void CServerGameDLL::DLLShutdown( void )
 	engine->RemoveBlockHandler( GetDefaultResponseSystemSaveRestoreBlockHandler() );
 	engine->RemoveBlockHandler( GetTemplateSaveRestoreBlockHandler() );
 	engine->RemoveBlockHandler( GetAISaveRestoreBlockHandler() );
-	engine->RemoveBlockHandler( GetPhysSaveRestoreBlockHandler() );
+	//engine->RemoveBlockHandler( GetPhysSaveRestoreBlockHandler() );
 	//engine->RemoveBlockHandler( GetEntitySaveRestoreBlockHandler() );
 
 	char *pFilename = g_TextStatsMgr.GetStatsFilename();
@@ -1346,7 +1346,7 @@ void CServerGameDLL::GameFrame( bool simulating )
 	}
 
 	// Any entities that detect network state changes on a timer do it here.
-	g_NetworkPropertyEventMgr.FireEvents();
+	//g_NetworkPropertyEventMgr.FireEvents();
 
 	gpGlobals->frametime = oldframetime;
 }

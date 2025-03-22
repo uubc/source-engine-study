@@ -11,11 +11,19 @@
 #pragma once
 #endif
 
+#ifdef ENGINE_DLL
+#define TICK_INTERVAL			(host_state.interval_per_tick)
+#endif // ENGINE_DLL
+#if defined( GAME_DLL) || defined( CLIENT_DLL )
 #define TICK_INTERVAL			(gpGlobals->interval_per_tick)
-
+#endif // GAME_DLL) || defined( CLIENT_DLL )
 
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 #define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
+
+//#define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / host_state.interval_per_tick ) )
+//#define TICKS_TO_TIME( dt )		( host_state.interval_per_tick * (float)(dt) )
+
 #define ROUND_TO_TICKS( t )		( TICK_INTERVAL * TIME_TO_TICKS( t ) )
 #define TICK_NEVER_THINK		(-1)
 

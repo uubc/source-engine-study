@@ -25,6 +25,7 @@
 #include "tier0/threadtools.h"
 #include "tier0/tslist.h"
 #include "shareddefs.h"
+#include "isaverestore.h"
 
 class CPhysCollide;
 
@@ -1908,5 +1909,20 @@ inline float ClampCycle(float flCycle, bool isLooping)
 	}
 	return flCycle;
 }
+
+
+class IPhysSaveRestoreBlockHandler : public CDefSaveRestoreBlockHandler
+{
+public:
+	virtual void NoteBBox(const Vector& mins, const Vector& maxs, CPhysCollide*) = 0;
+
+	virtual void AssociateModel(IPhysicsObject*, int modelIndex) = 0;
+	virtual void AssociateModel(IPhysicsObject*, const CPhysCollide* pModel) = 0;
+	virtual void ForgetModel(IPhysicsObject*) = 0;
+
+	virtual void ForgetAllModels() = 0;
+	virtual void QueueSave(IHandleEntity* pOwner, typedescription_t* pTypeDesc, void** ppPhysObj, PhysInterfaceId_t type) = 0;
+	virtual void QueueRestore(IHandleEntity* pOwner, typedescription_t* pTypeDesc, void** ppPhysObj, PhysInterfaceId_t type) = 0;
+};
 
 #endif // ENTITYLIST_BASE_H

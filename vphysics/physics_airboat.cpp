@@ -251,7 +251,8 @@ void CPhysics_Airboat::pre_raycasts_gameside( int nRaycastCount, IVP_Ray_Solver_
 
 		// Check to see if that point is in water.
 		pImpacts[iRaycast].bInWater = IVP_FALSE;
-		if ( m_pGameTrace->VehiclePointInWater( vecStart[iRaycast] ) )
+		IPhysicsObject* pPhysAirboat = static_cast<IPhysicsObject*>(m_pAirboatBody->client_data);
+		if ( m_pGameTrace->VehiclePointInWater( vecStart[iRaycast], pPhysAirboat->GetGameData()) )
 		{
 			vecDirection[iRaycast].Negate();
 			pImpacts[iRaycast].bInWater = IVP_TRUE;
@@ -260,7 +261,7 @@ void CPhysics_Airboat::pre_raycasts_gameside( int nRaycastCount, IVP_Ray_Solver_
 		Vector vecEnd = vecStart[iRaycast] + ( vecDirection[iRaycast] * flRayLength );
 
 		// Adjust the trace if the pontoon is in the water.
-		if ( m_pGameTrace->VehiclePointInWater( vecEnd ) )
+		if ( m_pGameTrace->VehiclePointInWater( vecEnd, pPhysAirboat->GetGameData()) )
 		{
 			// Reduce the ray length in the water.
 			pRays[iRaycast].ray_length = AIRBOAT_RAYCAST_DIST_WATER_LOW;

@@ -47,14 +47,14 @@ void FX_GunshipTracer( Vector& start, Vector& end, int velocity, bool makeWhiz =
 void FX_StriderTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
 void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
 void FX_PlayerTracer( Vector& start, Vector& end );
-void FX_BulletPass( Vector& start, Vector& end );
+//void FX_BulletPass( Vector& start, Vector& end );
 void FX_MetalSpark( const Vector &position, const Vector &direction, const Vector &surfaceNormal, int iScale = 1 );
 void FX_MetalScrape( Vector &position, Vector &normal );
 void FX_Sparks( const Vector &pos, int nMagnitude, int nTrailLength, const Vector &vecDir, float flWidth, float flMinSpeed, float flMaxSpeed, char *pSparkMaterial = NULL );
 void FX_ElectricSpark( const Vector &pos, int nMagnitude, int nTrailLength, const Vector *vecDir );
 void FX_BugBlood( Vector &pos, Vector &dir, Vector &vWorldMins, Vector &vWorldMaxs );
 void FX_Blood( Vector &pos, Vector &dir, float r, float g, float b, float a );
-void FX_CreateImpactDust( Vector &origin, Vector &normal );
+//void FX_CreateImpactDust( Vector &origin, Vector &normal );
 void FX_EnergySplash( const Vector &pos, const Vector &normal, int nFlags = FX_ENERGYSPLASH_DEFAULT );
 void FX_MicroExplosion( Vector &position, Vector &normal );
 void FX_Explosion( Vector& origin, Vector& normal, char materialType );
@@ -68,7 +68,7 @@ void FX_GunshipMuzzleEffect( const Vector &origin, const QAngle &angles, float s
 CSmartPtr<CSimpleEmitter> FX_Smoke( const Vector &origin, const Vector &velocity, float scale, int numParticles, float flDietime, unsigned char *pColor, int iAlpha, const char *pMaterial, float flRoll, float flRollDelta );
 void FX_Smoke( const Vector &origin, const QAngle &angles, float scale, int numParticles, unsigned char *pColor = NULL, int iAlpha = -1 );
 void FX_Dust( const Vector &vecOrigin, const Vector &vecDirection, float flSize, float flSpeed );
-void FX_CreateGaussExplosion( const Vector &pos, const Vector &dir, int type );
+//void FX_CreateGaussExplosion( const Vector &pos, const Vector &dir, int type );
 void FX_GaussTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
 void FX_TracerSound( const Vector &start, const Vector &end, int iTracerType );
 

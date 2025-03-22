@@ -128,7 +128,8 @@ public:
 	int				EntityFlagsSet(int entityIndex, int flags);
 
 	CGameSaveRestoreInfo* GetGameSaveRestoreInfo() { return m_pGameInfo; }
-
+	virtual IEntityList* GetEntityList() = 0;
+	virtual bool IsValidEntityPointer(void* ptr) = 0;
 protected:
 	virtual const model_t* GetModel(int modelindex) = 0;
 	virtual const char* GetModelName(const model_t* model) const = 0;
@@ -189,6 +190,8 @@ public:
 	virtual const char* GetMaterialNameFromIndex(int nMateralIndex);
 	virtual string_t AllocPooledString(const char* pszValue);
 	virtual IEngineObject* GetEngineObject(int entnum);
+	virtual IEntityList* GetEntityList();
+	virtual bool IsValidEntityPointer(void* ptr);
 };
 
 class CSaveClient : public CSave {
@@ -201,6 +204,8 @@ public:
 	virtual const char* GetMaterialNameFromIndex(int nMateralIndex);
 	virtual string_t AllocPooledString(const char* pszValue);
 	virtual IEngineObject* GetEngineObject(int entnum);
+	virtual IEntityList* GetEntityList();
+	virtual bool IsValidEntityPointer(void* ptr);
 };
 
 //-----------------------------------------------------------------------------
@@ -289,7 +294,8 @@ public:
 	bool			GetPrecacheMode(void) { return m_precache; }
 
 	CGameSaveRestoreInfo* GetGameSaveRestoreInfo() { return m_pGameInfo; }
-
+	virtual IEntityList* GetEntityList() = 0;
+	virtual bool IsValidEntityPointer(void* ptr) = 0;
 protected:
 	virtual int	GetModelIndex(const char* name) = 0;
 	virtual void PrecacheModel(const char* pModelName) = 0;
@@ -373,6 +379,8 @@ public:
 	virtual string_t AllocPooledString(const char* pszValue);
 	virtual IHandleEntity* EntityFromIndex(int entityIndex);
 	virtual IEngineObject* GetEngineObject(int entnum);
+	virtual IEntityList* GetEntityList();
+	virtual bool IsValidEntityPointer(void* ptr);
 };
 
 class CRestoreClient : public CRestore {
@@ -387,6 +395,8 @@ public:
 	virtual string_t AllocPooledString(const char* pszValue);
 	virtual IHandleEntity* EntityFromIndex(int entityIndex);
 	virtual IEngineObject* GetEngineObject(int entnum);
+	virtual IEntityList* GetEntityList();
+	virtual bool IsValidEntityPointer(void* ptr);
 };
 
 template <int FIELD_TYPE>

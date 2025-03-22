@@ -36,9 +36,14 @@ struct PS_SD_Static_SurfaceProperties_t;
 class CTraceListData;
 class CPhysCollide;
 class IStudioHdr;
+class IPhysics;
+class IPhysicsEnvironment;
+class IPhysicsSurfaceProps;
 class IPhysicsObject;
-struct EmitSound_t;
 class IPhysicsCollision;
+class IPhysSaveRestoreBlockHandler;
+class IPhysicsObjectPairHash;
+struct EmitSound_t;
 
 //-----------------------------------------------------------------------------
 // A ray...
@@ -568,7 +573,13 @@ public:
 	virtual int GetPortalCount() = 0;
 	virtual IEnginePortal* GetPortal(int index) = 0;
 	virtual void AddDirtyEntity(IEngineObject* pEntity) = 0;
+	virtual IPhysics* Physics() = 0;
+	virtual IPhysicsEnvironment* PhysGetEnv() = 0;
+	virtual IPhysicsSurfaceProps* PhysGetProps() = 0;
+	virtual IPhysicsObject* PhysGetWorldObject() = 0;
 	virtual IPhysicsCollision* PhysGetCollision() = 0;
+	virtual IPhysSaveRestoreBlockHandler* PhysSaveRestoreBlockHandler() = 0;
+	virtual IPhysicsObjectPairHash* PhysGetEntityCollisionHash() = 0;
 	//-----------------------------------------------------------------------------
 // Shared random number generators for shared/predicted code:
 // whenever generating random numbers in shared/predicted code, these functions

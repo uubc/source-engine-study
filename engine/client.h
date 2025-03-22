@@ -33,7 +33,7 @@
 #ifndef SWDS
 #include "cl_ents_parse.h"
 #endif
-
+#include "shareddefs.h"
 
 struct model_t;
 struct SoundInfo_t;

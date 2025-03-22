@@ -16,6 +16,7 @@
 #include "inetmsghandler.h"
 #include "netmessages.h"
 #include "Session.h"
+#include "shareddefs.h"
 #include "engine/imatchmaking.h"
 
 enum MMPACKETS
@@ -101,8 +102,8 @@ enum eGameState
 #define VOICE_STATUS_TALKING		2
 
 // HACK: For simplicity, we know TF has two teams plus spectator.
-#define MAX_TEAMS		3
-#define MAX_PLAYERS		16
+//#define MAX_TEAMS		3
+//#define MAX_PLAYERS		16
 
 #define VOICE_ICON_BLINK_TIME 0.5
 

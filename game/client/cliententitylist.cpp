@@ -507,7 +507,7 @@ void CCollisionEvent::Friction(IPhysicsObject* pObject, float energy, int surfac
 		g_EntityList.PhysFrictionSound(pEntity, pObject, energy, surfaceProps, surfacePropsHit);
 	}
 
-	PhysFrictionEffect(vecPos, vecVel, energy, surfaceProps, surfacePropsHit);
+	PhysFrictionEffect(&g_EntityList, vecPos, vecVel, energy, surfaceProps, surfacePropsHit);
 }
 
 friction_t* CCollisionEvent::FindFriction(IClientEntity* pObject)
@@ -2589,8 +2589,8 @@ void C_EngineObjectInternal::OnRestore()
 		m_ragdoll.list[0].parentIndex = -1;
 		m_ragdoll.list[0].originParentSpace.Init();
 
-		RagdollActivate(m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex(), true);
-		RagdollSetupAnimatedFriction(g_EntityList.PhysGetEnv(), &m_ragdoll, GetModelIndex());
+		RagdollActivate(m_pClientEntityList, m_ragdoll, modelinfo->GetVCollide(GetModelIndex()), GetModelIndex(), true);
+		RagdollSetupAnimatedFriction(m_pClientEntityList, m_pClientEntityList->PhysGetEnv(), &m_ragdoll, GetModelIndex());
 
 		BuildRagdollBounds();
 
@@ -2846,7 +2846,7 @@ void C_EngineObjectInternal::PostDataUpdate(DataUpdateType_t updateType)
 		}
 		else
 		{
-			m_elementCount = RagdollExtractBoneIndices(m_boneIndex, GetModelPtr(), pCollide);
+			m_elementCount = RagdollExtractBoneIndices(m_pClientEntityList, m_boneIndex, GetModelPtr(), pCollide);
 		}
 		m_iv_ragPos.SetMaxCount(m_elementCount);
 		m_iv_ragAngles.SetMaxCount(m_elementCount);
@@ -7033,7 +7033,7 @@ void C_EngineObjectInternal::VPhysicsDestroyObject(void)
 	}
 	if (m_pPhysicsObject && !m_ragdoll.listCount)
 	{
-		PhysDestroyObject(m_pPhysicsObject, this->m_pOuter);
+		PhysDestroyObject(m_pClientEntityList, m_pPhysicsObject, this->m_pOuter);
 		m_pPhysicsObject = NULL;
 	}
 }
@@ -7265,14 +7265,14 @@ void C_EngineObjectInternal::InitRagdoll(
 	params.jointFrictionScale = 1.0;
 	params.allowStretch = false;
 	params.fixedConstraints = bFixedConstraints;
-	RagdollCreate(m_ragdoll, params, g_EntityList.PhysGetEnv());
+	RagdollCreate(m_pClientEntityList, m_ragdoll, params, g_EntityList.PhysGetEnv());
 	VPhysicsSetObject(NULL);
 	VPhysicsSetObject(m_ragdoll.list[0].pObject);
 	// Mark the ragdoll as debris.
 	SetCollisionGroup(COLLISION_GROUP_DEBRIS);
 
 	RagdollApplyAnimationAsVelocity(m_ragdoll, pDeltaBones0, pDeltaBones1, dt);
-	RagdollActivate(m_ragdoll, params.pCollide, GetModelIndex());
+	RagdollActivate(m_pClientEntityList, m_ragdoll, params.pCollide, GetModelIndex());
 
 	// It's moving now...
 	m_flLastOriginChangeTime = gpGlobals->curtime;
@@ -7287,7 +7287,7 @@ void C_EngineObjectInternal::InitRagdoll(
 
 	for (int i = 0; i < m_ragdoll.listCount; i++)
 	{
-		g_pPhysSaveRestoreManager->AssociateModel(m_ragdoll.list[i].pObject, GetModelIndex());
+		m_pClientEntityList->PhysSaveRestoreBlockHandler()->AssociateModel(m_ragdoll.list[i].pObject, GetModelIndex());
 	}
 
 #if RAGDOLL_VISUALIZE
@@ -7457,7 +7457,7 @@ void C_EngineObjectInternal::VPhysicsUpdate(IPhysicsObject* pPhysics)
 		// It's not always correct to use for culling, but it sure beats 
 		// using the radius box!
 		Vector origin = GetRagdollOrigin();
-		RagdollComputeExactBbox(m_ragdoll, origin, m_mins, m_maxs);
+		RagdollComputeExactBbox(m_pClientEntityList, m_ragdoll, origin, m_mins, m_maxs);
 		m_mins -= origin;
 		m_maxs -= origin;
 	}
@@ -7678,7 +7678,7 @@ void C_EngineObjectInternal::ClearRagdoll()
 			IPhysicsObject* pObject = m_ragdoll.list[i].pObject;
 			if (pObject)
 			{
-				g_pPhysSaveRestoreManager->ForgetModel(m_ragdoll.list[i].pObject);
+				m_pClientEntityList->PhysSaveRestoreBlockHandler()->ForgetModel(m_ragdoll.list[i].pObject);
 				// Disable collision on all ragdoll parts before calling RagdollDestroy
 				// (which might cause touch callbacks on the ragdoll otherwise, which is
 				// very bad for a half deleted ragdoll).
@@ -7686,7 +7686,7 @@ void C_EngineObjectInternal::ClearRagdoll()
 			}
 		}
 
-		RagdollDestroy(m_ragdoll);
+		RagdollDestroy(m_pClientEntityList, m_ragdoll);
 
 		// Set to null so that the destructor's call to DestroyObject won't destroy
 		//  m_pObjects[ 0 ] twice since that's the physics object for the prop
@@ -8142,7 +8142,7 @@ void C_EngineObjectInternal::UpdateIKLocks(float currentTime)
 
 		if (pTarget->GetOwner() != -1)
 		{
-			IClientEntity* pOwner = EntityList()->GetEnt(pTarget->GetOwner());
+			IClientEntity* pOwner = g_EntityList.GetEnt(pTarget->GetOwner());
 			if (pOwner != NULL)
 			{
 				pTarget->UpdateOwner(pOwner->entindex(), pOwner->GetEngineObject()->GetAbsOrigin(), pOwner->GetEngineObject()->GetAbsAngles());
@@ -9648,7 +9648,7 @@ public:
 	{
 		m_pRootParent = pEntity->GetEngineObject()->GetRootMoveParent() ? pEntity->GetEngineObject()->GetRootMoveParent()->GetOuter() : NULL;
 		m_pEntity = pEntity;
-		m_checkHash = EntityList()->PhysGetEntityCollisionHash()->IsObjectInHash(pEntity);
+		m_checkHash = g_EntityList.PhysGetEntityCollisionHash()->IsObjectInHash(pEntity);
 	}
 
 	bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
@@ -9665,7 +9665,7 @@ public:
 
 		if (m_checkHash)
 		{
-			if (EntityList()->PhysGetEntityCollisionHash()->IsObjectPairInHash(m_pEntity, pEntity))
+			if (g_EntityList.PhysGetEntityCollisionHash()->IsObjectPairInHash(m_pEntity, pEntity))
 				return false;
 		}
 

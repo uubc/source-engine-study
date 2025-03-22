@@ -2247,7 +2247,6 @@ void CL_Move(float accumulated_extra_samples, bool bFinalTick )
 
 }
 
-#define TICK_INTERVAL			(host_state.interval_per_tick)
 #define ROUND_TO_TICKS( t )		( TICK_INTERVAL * TIME_TO_TICKS( t ) )
 
 void CL_LatchInterpolationAmount()
