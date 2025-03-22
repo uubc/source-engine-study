@@ -3613,7 +3613,7 @@ protected:
 
 	void AddBreakSound(CUtlVector<breaksound_t>& list, const Vector& origin, unsigned short surfaceProps)
 	{
-		const surfacedata_t* psurf = EntityList()->PhysGetProps()->GetSurfaceData(surfaceProps);
+		const surfacedata_t* psurf = PhysGetProps()->GetSurfaceData(surfaceProps);
 		if (!psurf->sounds.breakSound)
 			return;
 
@@ -3640,8 +3640,8 @@ protected:
 		{
 			breaksound_t& sound = list.Element(i);
 
-			const surfacedata_t* psurf = EntityList()->PhysGetProps()->GetSurfaceData(sound.surfacePropsBreak);
-			const char* pSound = EntityList()->PhysGetProps()->GetString(psurf->sounds.breakSound);
+			const surfacedata_t* psurf = PhysGetProps()->GetSurfaceData(sound.surfacePropsBreak);
+			const char* pSound = PhysGetProps()->GetString(psurf->sounds.breakSound);
 			CSoundParameters params;
 			if (!g_pSoundEmitterSystem->GetParametersForSound(pSound, params, NULL))//CBaseEntity::
 				return;
