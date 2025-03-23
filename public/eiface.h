@@ -540,17 +540,17 @@ public:
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
-	virtual const char* GetBlockName() = 0;
+	virtual const char*		GetBlockName() = 0;
 
-	virtual void PreSave(CSaveRestoreData* pSaveData) = 0;
-	virtual void Save(ISave* pSave) = 0;
-	virtual void WriteSaveHeaders(ISave* pSave) = 0;
-	virtual void PostSave() = 0;
+	virtual void			PreSave(CSaveRestoreData* pSaveData) = 0;
+	virtual void			Save(ISave* pSave) = 0;
+	virtual void			WriteSaveHeaders(ISave* pSave) = 0;
+	virtual void			PostSave() = 0;
 
-	virtual void PreRestore() = 0;
-	virtual void ReadRestoreHeaders(IRestore* pRestore) = 0;
-	virtual void Restore(IRestore* pRestore, bool createPlayers) = 0;
-	virtual void PostRestore() = 0;
+	virtual void			PreRestore() = 0;
+	virtual void			ReadRestoreHeaders(IRestore* pRestore) = 0;
+	virtual void			Restore(IRestore* pRestore, bool createPlayers) = 0;
+	virtual void			PostRestore() = 0;
 
 	// Called any time a new level is started (after GameInit() also on level transitions within a game)
 	virtual bool			LevelInit( char const *pMapName, 
@@ -736,6 +736,8 @@ public:
 	virtual const char* GetMaterialNameFromIndex(int nMaterialIndex) = 0;
 
 	virtual string_t AllocPooledString(const char* pszValue) = 0;
+
+	virtual ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler() = 0;
 };
 
 typedef IServerGameDLL IServerGameDLL008;

@@ -491,7 +491,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		for (datamap_t* dmap = this->GetDataDescMap(); dmap != NULL; dmap = dmap->baseMap)
 		{
-			if (dmap->ParseKeyvalue(this, szKeyName, szValue, &AllocPooledString)) {
+			if (dmap->ParseKeyvalue(this, szKeyName, szValue, EntityList())) {
 				return true;
 				//break;
 			}
@@ -520,7 +520,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 				debugName = dmap->dataClassName;
 			}
 
-			if (dmap->ParseKeyvalue(this, szKeyName, szValue, &AllocPooledString))
+			if (dmap->ParseKeyvalue(this, szKeyName, szValue, EntityList()))
 			{
 				if (printKeyHits)
 					Msg("(%s) key: %-16s value: %s\n", debugName, szKeyName, szValue);

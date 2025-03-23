@@ -1137,18 +1137,6 @@ void CWorld::RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrcIn, f
 
 void CWorld::Init()
 {
-
-}
-
-void CWorld::Shutdown()
-{
-
-}
-
-void CWorld::LevelInit()
-{
-	Precache();
-
 	//NetworkProp()->AttachEdict( RequiredEdictIndex() );
 	mdlcache->ActivityList_Init();
 	mdlcache->EventList_Init();
@@ -1163,6 +1151,18 @@ void CWorld::LevelInit()
 
 	mdlcache->EventList_Clear();
 	RegisterSharedEvents();
+}
+
+void CWorld::Shutdown()
+{
+	mdlcache->EventList_Free();
+	mdlcache->ActivityList_Free();
+	UTIL_UnLoadActivityRemapFile();
+}
+
+void CWorld::LevelInit()
+{
+	Precache();
 
 	GetEngineObject()->SetLocalOrigin(vec3_origin);
 	GetEngineObject()->SetLocalAngles(vec3_angle);
@@ -1257,9 +1257,7 @@ void CWorld::LevelShutdownPostEntity()
 
 void CWorld::LevelShutdown()
 {
-	mdlcache->EventList_Free();
-	mdlcache->ActivityList_Free();
-	UTIL_UnLoadActivityRemapFile();
+
 }
 
 void CWorld::FrameUpdatePreEntityThink()
@@ -1702,4 +1700,14 @@ CTacticalMissionManager* CWorld::TacticalMissionManagerFactory(void)
 void CWorld::DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration)
 {
 	NDebugOverlay::Line(vecAbsStart + Vector(0, 0, 0.1), vecAbsEnd + Vector(0, 0, 0.1), r, g, b, test, duration);
+}
+
+IRecipientFilter* CWorld::CreatePASAttenuationFilter(IServerEntity* entity, float attenuation)
+{
+	return new CPASAttenuationFilter(entity, attenuation);
+}
+
+IRecipientFilter* CWorld::CreatePASAttenuationFilter(const Vector& origin, float attenuation)
+{
+	return new CPASAttenuationFilter(origin, attenuation);
 }

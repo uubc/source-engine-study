@@ -26,7 +26,7 @@
 #include "animation.h"
 #include "tier1/strtools.h"
 #include "engine/IEngineSound.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "saverestore_utlvector.h"
 #include "bone_setup.h"
 #include "vcollide_parse.h"

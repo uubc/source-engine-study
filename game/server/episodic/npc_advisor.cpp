@@ -19,7 +19,7 @@
 #include "gib.h"
 #include "ai_interactions.h"
 #include "ndebugoverlay.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "saverestore_utlvector.h"
 #include "soundent.h"
 #include "vstdlib/random.h"

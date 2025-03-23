@@ -218,7 +218,8 @@ public:
 	virtual bool	IsInfoPanelAllowed() OVERRIDE { return true; }
 	virtual void	InfoPanelDisplayed() OVERRIDE {}
 	virtual bool	IsHTMLInfoPanelAllowed() OVERRIDE { return true; }
-
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IClientEntity* entity, float attenuation);
+	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation);
 protected:
 
 	void			DisplayReplayReminder();

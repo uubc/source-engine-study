@@ -21,4 +21,5 @@ static CPrediction g_Prediction;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CPrediction, IPrediction, VCLIENT_PREDICTION_INTERFACE_VERSION, g_Prediction );
 
 CPrediction *prediction = &g_Prediction;
+IPrediction* g_pClientSidePrediction = &g_Prediction;
 

@@ -5395,7 +5395,7 @@ int C_EngineObjectInternal::RegisterThinkContext(const char* szContext)
 	Q_memset(&sNewFunc, 0, sizeof(sNewFunc));
 	sNewFunc.m_pfnThink = NULL;
 	sNewFunc.m_nNextThinkTick = 0;
-	sNewFunc.m_iszContext = AllocPooledStringInEntityList(szContext);
+	sNewFunc.m_iszContext = m_pClientEntityList->AllocPooledString(szContext);
 
 	// Insert it into our list
 	return m_aThinkFunctions.AddToTail(sNewFunc);
@@ -6591,7 +6591,7 @@ void C_EngineObjectInternal::MaintainSequenceTransitions(IBoneSetup& boneSetup, 
 	if (!boneSetup.GetStudioHdr())
 		return;
 
-	if (prediction->InPrediction())
+	if (g_pClientSidePrediction->InPrediction())
 	{
 		SetPrevNewSequenceParity(GetNewSequenceParity());
 		return;

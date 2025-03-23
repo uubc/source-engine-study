@@ -8,7 +8,7 @@
 #include "baseanimating.h"
 #include "studio.h"
 //#include "physics.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "ai_basenpc.h"
 #include "vphysics/constraints.h"
 #include "datacache/imdlcache.h"

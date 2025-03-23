@@ -95,7 +95,6 @@ extern IMatSystemSurface *g_pMatSystemSurface;
 extern IEngineTrace *enginetrace;
 extern IGameUIFuncs *gameuifuncs;
 extern IGameEventManager2 *gameeventmanager;
-extern IPhysicsGameTrace *physgametrace;
 extern CGlobalVarsBase *gpGlobals;
 extern IClientTools *clienttools;
 extern IInputSystem *inputsystem;

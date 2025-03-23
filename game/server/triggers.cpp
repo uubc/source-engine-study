@@ -16,7 +16,7 @@
 #include "hierarchy.h"
 #include "bspfile.h"
 #include "saverestore_utlvector.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "te_effect_dispatch.h"
 #include "ammodef.h"
 #include "game/server/iservervehicle.h"

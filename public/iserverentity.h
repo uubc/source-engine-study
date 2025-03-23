@@ -1034,6 +1034,8 @@ public:
 	virtual void ProcessVerboseLogOutput(void) = 0;
 	virtual bool	MegaPhyscannonActive(void) = 0;
 	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, float attenuation) = 0;
+	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation) = 0;
 };
 
 class IServerPlayer : public IHandlePlayer {
@@ -1384,6 +1386,7 @@ public:
 	virtual IPhysicsSurfaceProps* PhysGetProps() = 0;
 	virtual IPhysicsCollision* PhysGetCollision() = 0;
 	virtual IPhysSaveRestoreBlockHandler* PhysSaveRestoreBlockHandler() = 0;
+	virtual IPhysicsGameTrace* IPhysGameTrace() = 0;
 	virtual IPhysicsObjectPairHash* PhysGetEntityCollisionHash() = 0;
 	virtual const objectparams_t& PhysGetDefaultObjectParams() = 0;
 	virtual IPhysicsObject* PhysGetWorldObject() = 0;
@@ -1422,6 +1425,9 @@ public:
 	virtual void DumpEntityFactories() = 0;
 
 	virtual const char* GetBlockName() = 0;
+
+	virtual IVModelInfo* GetModelInfo() = 0;
+	virtual string_t AllocPooledString(const char* pStr) = 0;
 
 	virtual void PreSave(CSaveRestoreData* pSaveData) = 0;
 	virtual void Save(ISave* pSave) = 0;

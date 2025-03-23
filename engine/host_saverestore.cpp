@@ -5600,8 +5600,9 @@ void CSaveRestore::LoadAdjacentEnts( const char *pOldLevel, const char *pLandmar
 				flags |= 1<<index;
 			}
 			
-			if ( flags )
-				movedCount = serverEntitylist->CreateEntityTransitionList(&restoreHelper, flags );
+			if (flags) {
+				movedCount = serverEntitylist->CreateEntityTransitionList(&restoreHelper, flags);
+			}
 
 			// If ents were moved, rewrite entity table to save file
 			if ( movedCount )

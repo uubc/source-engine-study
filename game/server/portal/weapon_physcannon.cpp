@@ -23,7 +23,7 @@
 #include "Sprite.h"
 #include "util.h"
 #include "portal/weapon_physcannon.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "ai_basenpc.h"
 #include "player_pickup.h"
 #include "physics_prop_ragdoll.h"

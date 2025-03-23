@@ -26,7 +26,7 @@
 #include "vphysics/vehicles.h"
 #include "game/server/vehicle_sounds.h"
 #include "movevars_shared.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "tier0/vprof.h"
 #include "engine/IStaticPropMgr.h"
 #include "physics_prop_ragdoll.h"
@@ -51,7 +51,7 @@
 #include "prop_portal.h"
 #endif
 
-#include "physics_shared.h"
+//#include "physics_shared.h"
 #include "te_effect_dispatch.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

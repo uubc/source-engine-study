@@ -35,7 +35,7 @@
 #include "textstatsmgr.h"
 #include "bitbuf.h"
 #include "saverestoretypes.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "achievement_saverestore.h"
 #include "tier0/vprof.h"
 #include "effect_dispatch_data.h"
@@ -2466,6 +2466,10 @@ const char* CServerGameDLL::GetMaterialNameFromIndex(int nMaterialIndex)
 
 string_t CServerGameDLL::AllocPooledString(const char* pszValue) {
 	return ::AllocPooledString(pszValue);
+}
+
+ISaveRestoreBlockHandler* CServerGameDLL::GetAISaveRestoreBlockHandler() {
+	return ::GetAISaveRestoreBlockHandler();
 }
 
 // keeps track of which chapters the user has unlocked

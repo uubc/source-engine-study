@@ -430,6 +430,13 @@ static void __MsgFunc_VGUIMenu(bf_read& msg)
 
 void C_World::Init()
 {
+	if (!mdlcache->ActivityList_Inited()) {
+		mdlcache->ActivityList_Init();
+		mdlcache->EventList_Init();
+		RegisterSharedActivities();
+		m_bActivityInitedByMe = true;
+	}
+
 	gHUD.Init();
 
 	m_pChatElement = (CBaseHudChat*)GET_HUDELEMENT(CHudChat);
@@ -492,6 +499,11 @@ void C_World::VGui_Shutdown()
 void C_World::Shutdown()
 {
 	gHUD.Shutdown();
+	if (m_bActivityInitedByMe) {
+		mdlcache->ActivityList_Free();
+		mdlcache->EventList_Free();
+		m_bActivityInitedByMe = false;
+	}
 }
 
 void C_World::LevelInit()
@@ -501,12 +513,7 @@ void C_World::LevelInit()
 // =================================================
 //	Activities
 // =================================================
-	if (!mdlcache->ActivityList_Inited()) {
-		mdlcache->ActivityList_Init();
-		mdlcache->EventList_Init();
-		RegisterSharedActivities();
-		m_bActivityInitedByMe = true;
-	}
+
 	Precache();
 
 	m_pViewport->GetAnimationController()->StartAnimationSequence("LevelInit");
@@ -560,11 +567,6 @@ void C_World::LevelShutdownPostEntity()
 
 void C_World::LevelShutdown()
 {
-	if (m_bActivityInitedByMe) {
-		mdlcache->ActivityList_Free();
-		mdlcache->EventList_Free();
-		m_bActivityInitedByMe = false;
-	}
 	// Reset the third person camera so we don't crash
 	g_ThirdPersonManager.Init();
 
@@ -1712,6 +1714,15 @@ void C_World::DeactivateInGameVGuiContext()
 	vgui::ivgui()->ActivateContext(DEFAULT_VGUI_CONTEXT);
 }
 
+IRecipientFilter* C_World::CreatePASAttenuationFilter(IClientEntity* entity, float attenuation)
+{
+	return new CPASAttenuationFilter(entity, attenuation);
+}
+
+IRecipientFilter* C_World::CreatePASAttenuationFilter(const Vector& origin, float attenuation)
+{
+	return new CPASAttenuationFilter(origin, attenuation);
+}
 
 #ifdef VOICE_VOX_ENABLE
 void VoxCallback(IConVar* var, const char* oldString, float oldFloat)

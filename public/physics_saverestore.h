@@ -18,18 +18,7 @@
 class ISaveRestoreBlockHandler;
 class IPhysicsObject;
 class CPhysCollide;
-
-//-----------------------------------------------------------------------------
-
-ISaveRestoreOps *GetPhysObjSaveRestoreOps( PhysInterfaceId_t );
-
-//-------------------------------------
-
-#define DEFINE_PHYSPTR(name) \
-	{ FIELD_CUSTOM, #name, { offsetof(classNameTypedef,name), 0 }, 1, FTYPEDESC_SAVE, NULL, GetPhysObjSaveRestoreOps( GetPhysIID( &(((classNameTypedef *)0)->name) ) ), NULL }
-
-#define DEFINE_PHYSPTR_ARRAY(name) \
-	{ FIELD_CUSTOM, #name, { offsetof(classNameTypedef,name), 0 }, ARRAYSIZE(((classNameTypedef *)0)->name), FTYPEDESC_SAVE, NULL, GetPhysObjSaveRestoreOps( GetPhysIID( &(((classNameTypedef *)0)->name[0]) ) ), NULL }
+class IVModelInfo;
 
 //-----------------------------------------------------------------------------
 
@@ -78,9 +67,6 @@ struct PhysBlockHeader_t
 };
 
 class CPhysSaveRestoreBlockHandler : public IPhysSaveRestoreBlockHandler
-#if !defined( CLIENT_DLL )
-	, public IEntityListener<IServerEntity>
-#endif
 {
 	struct QueuedItem_t;
 public:
@@ -123,6 +109,8 @@ public:
 
 	//---------------------------------
 
+	virtual int GetModelIndexFromHeader(const PhysObjectHeader_t& header) = 0;
+
 	void RestorePhysicsObjectAndModel(IRestore* pRestore, const PhysObjectHeader_t& header, CPhysSaveRestoreBlockHandler::QueuedItem_t* pItem, int nObjects);
 
 	//---------------------------------
@@ -144,16 +132,14 @@ public:
 	//---------------------------------
 
 	void RestorePhysicsObject(IRestore* pRestore, const PhysObjectHeader_t& header, void** ppObject, const CPhysCollide* pCollide = NULL);
-#if !defined( CLIENT_DLL )	
 	//-----------------------------------------------------
-	// IEntityListener methods
-	// This object is only a listener during restore	
-	virtual void OnEntityCreated(IServerEntity* pEntity);
+// IEntityListener methods
+// This object is only a listener during restore	
+	virtual void OnEntityCreated(IHandleEntity* pEntity);
 
 	//---------------------------------
 
-	virtual void OnEntityDeleted(IServerEntity* pEntity);
-#endif
+	virtual void OnEntityDeleted(IHandleEntity* pEntity);
 
 	//-----------------------------------------------------
 	// IPhysSaveRestoreManager methods
@@ -185,7 +171,7 @@ public:
 	BBox_t* GetBBox(IPhysicsObject* pObject);
 
 	//---------------------------------
-
+	IEntityList* m_pEntityList = NULL;
 private:
 	struct QueuedItem_t
 	{
@@ -200,14 +186,13 @@ private:
 		int Add(IHandleEntity* pOwner, typedescription_t* pTypeDesc, void** ppPhysObj, PhysInterfaceId_t type);
 		QueuedItem_t* FindItem(string_t itemFieldName);
 	};
-
+	
 	//---------------------------------
 
 	static bool SaveQueueFunc(const QueuedItem_t& left, const QueuedItem_t& right);
 
 	//---------------------------------
 
-	IEntityList* m_pEntityList = NULL;
 	CUtlPriorityQueue<QueuedItem_t> 			m_QueuedSaves;
 	CUtlMap<IHandleEntity*, CEntityRestoreSet*>	m_QueuedRestores;
 	bool 										m_fDoLoad;
@@ -221,7 +206,37 @@ private:
 	//---------------------------------
 
 	PhysBlockHeader_t							m_blockHeader;
-	IEntityList* pEntityList = NULL;
+};
+
+class CServerPhysSaveRestoreBlockHandler : public CPhysSaveRestoreBlockHandler, public IEntityListener<IServerEntity>
+{
+public:
+	CServerPhysSaveRestoreBlockHandler(IEntityList* pEntityList) 
+		:CPhysSaveRestoreBlockHandler(pEntityList)
+	{
+	
+	}
+	//-----------------------------------------------------
+	// IEntityListener methods
+	// This object is only a listener during restore	
+	virtual void OnEntityCreated(IServerEntity* pEntity);
+
+	//---------------------------------
+
+	virtual void OnEntityDeleted(IServerEntity* pEntity);
+
+	virtual int GetModelIndexFromHeader(const PhysObjectHeader_t& header);
+};
+
+class CClientPhysSaveRestoreBlockHandler : public CPhysSaveRestoreBlockHandler 
+{
+public:
+	CClientPhysSaveRestoreBlockHandler(IEntityList* pEntityList)
+		:CPhysSaveRestoreBlockHandler(pEntityList)
+	{
+
+	}
+	virtual int GetModelIndexFromHeader(const PhysObjectHeader_t& header);
 };
 
 //=============================================================================

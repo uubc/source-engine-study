@@ -331,7 +331,6 @@ static int g_FieldSizes[FIELD_TYPECOUNT] =
 	FIELD_SIZE(FIELD_POINTER),
 };
 
-typedef string_t(*AllocStringFunc)(const char* pszValue);
 struct SaveRestoreFieldInfo_t
 {
 	void* pField;
@@ -544,7 +543,7 @@ public:
 //			char *szValue - value to set the variable to
 // Output : Returns true if the variable is found and set, false if the key is not found.
 //-----------------------------------------------------------------------------
-	bool ParseKeyvalue(void* pObject, const char* szKeyName, const char* szValue, AllocStringFunc func)//typedescription_t* pFields, int iNumFields, 
+	bool ParseKeyvalue(void* pObject, const char* szKeyName, const char* szValue, IPooledStringAllocer* pAllocer)//typedescription_t* pFields, int iNumFields, 
 	{
 		int i;
 		typedescription_t* pField;
@@ -561,7 +560,7 @@ public:
 				for (datamap_t* dmap = pField->td; dmap != NULL; dmap = dmap->baseMap)
 				{
 					void* pEmbeddedObject = (void*)((char*)pObject + fieldOffset);
-					if (dmap->ParseKeyvalue(pEmbeddedObject, szKeyName, szValue, func))
+					if (dmap->ParseKeyvalue(pEmbeddedObject, szKeyName, szValue, pAllocer))
 						return true;
 				}
 			}
@@ -573,7 +572,7 @@ public:
 				case FIELD_MODELNAME:
 				case FIELD_SOUNDNAME:
 				case FIELD_STRING:
-					(*(string_t*)((char*)pObject + fieldOffset)) = func(szValue);
+					(*(string_t*)((char*)pObject + fieldOffset)) = pAllocer->AllocPooledString(szValue);
 					return true;
 
 				case FIELD_TIME:

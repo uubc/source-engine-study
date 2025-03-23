@@ -24,8 +24,8 @@
 #include "tier2/beamsegdraw.h"
 //#include "fx_water.h"
 #include "mouthinfo.h"
-#include "prediction.h"
-#include "c_recipientfilter.h"
+#include "iprediction.h"
+//#include "c_recipientfilter.h"
 
 //class C_Beam;
 //class C_BaseViewModel;
@@ -52,6 +52,7 @@ extern IClientLeafSystem* g_pClientLeafSystem;
 extern IStaticPropMgrClient* staticpropmgr;
 extern IVModelRender* modelrender;
 extern IClientTools* clienttools;
+extern IPrediction* g_pClientSidePrediction;
 #ifdef POSIX
 #define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
 #endif
@@ -65,9 +66,7 @@ extern IUniformRandomStream* random;
 #endif
 extern ISoundEnvelopeController* g_pSoundEnvelopeController;
 extern bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll);
-inline string_t AllocPooledStringInEntityList(const char* pStr) {
-	return clientdll->AllocPooledString(pStr);
-}
+
 
 class CAttachmentData
 {
@@ -535,7 +534,7 @@ public:
 
 	void SetClassname(const char* className)
 	{
-		m_iClassname = AllocPooledStringInEntityList(className);
+		m_iClassname = m_pClientEntityList->AllocPooledString(className);
 	}
 	const string_t& GetClassname() const {
 		return 	m_iClassname;
@@ -3033,8 +3032,8 @@ class CClientEntityList : public CBaseEntityList<T>, public IClientEntityList, p
 	typedef CBaseEntityList<T> BaseClass;
 public:
 	// Constructor, destructor
-								CClientEntityList( void );
-	virtual 					~CClientEntityList( void );
+	CClientEntityList( void );
+	virtual ~CClientEntityList( void );
 
 	virtual bool Init();
 	virtual void Shutdown();
@@ -3064,7 +3063,12 @@ public:
 	virtual void ReportEntitySizes();
 	virtual void DumpEntityFactories();
 
-
+	IVModelInfo* GetModelInfo(){
+		return modelinfo;
+	}
+	string_t AllocPooledString(const char* pStr) {
+		return clientdll->AllocPooledString(pStr);
+	}
 	virtual const char*			GetBlockName();
 
 	virtual void				PreSave(CSaveRestoreData* pSaveData);
@@ -3235,6 +3239,10 @@ public:
 		return &m_PhysSaveRestoreBlockHandler;
 	}
 
+	IPhysicsGameTrace* IPhysGameTrace() {
+		return &m_PhysGameTrace;
+	}
+
 	IPhysicsObjectPairHash* PhysGetEntityCollisionHash() {
 		return m_EntityCollisionHash;
 	}
@@ -3315,7 +3323,7 @@ public:
 					return;
 
 				pFriction->pObject = pEntity;
-				CPASAttenuationFilter filter((IClientEntity*)pEntity, params.soundlevel);
+				IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter((IClientEntity*)pEntity, params.soundlevel);
 				int entindex = pEntity->entindex();
 
 				// clientside created entites doesn't have a valid entindex, let 'world' play the sound for them
@@ -3323,8 +3331,9 @@ public:
 					entindex = 0;
 
 				pFriction->patch = g_pSoundEnvelopeController->SoundCreate(
-					filter, entindex, CHAN_BODY, pSoundName, params.soundlevel);
+					*pFilter, entindex, CHAN_BODY, pSoundName, params.soundlevel);
 				g_pSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
+				delete pFilter;
 			}
 			else
 			{
@@ -3556,7 +3565,7 @@ protected:
 
 				if (sound.volume > 1)
 					sound.volume = 1;
-				CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+				IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
 				// JAY: If this entity gets deleted, the sound comes out at the world origin
 				// this sounds bad!  Play on ent 0 for now.
 				EmitSound_t ep;
@@ -3567,7 +3576,8 @@ protected:
 				ep.m_nPitch = params.pitch;
 				ep.m_pOrigin = &sound.origin;
 
-				g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+				g_pSoundEmitterSystem->EmitSound(*pFilter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+				delete pFilter;
 			}
 		}
 		list.RemoveAll();
@@ -3647,7 +3657,7 @@ protected:
 				return;
 
 			// Play from the world, because the entity is breaking, so it'll be destroyed soon
-			CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+			IRecipientFilter* filter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
 			EmitSound_t ep;
 			ep.m_nChannel = CHAN_STATIC;
 			ep.m_pSoundName = params.soundname;
@@ -3656,6 +3666,7 @@ protected:
 			ep.m_nPitch = params.pitch;
 			ep.m_pOrigin = &sound.origin;
 			g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+			delete filter;
 		}
 		list.RemoveAll();
 	}
@@ -3770,7 +3781,8 @@ private:
 	IPhysicsEnvironment* m_pPhysenv = NULL;
 	IPhysicsSurfaceProps* m_pPhysprops = NULL;
 	IPhysicsCollision* m_pPhyscollision = NULL;
-	CPhysSaveRestoreBlockHandler m_PhysSaveRestoreBlockHandler;
+	CClientPhysSaveRestoreBlockHandler m_PhysSaveRestoreBlockHandler;
+	CPhysicsGameTrace m_PhysGameTrace;
 	IPhysicsObjectPairHash* m_EntityCollisionHash = NULL;
 	IPhysicsObject* m_PhysWorldObject = NULL;
 	soundlist_t m_impactSounds;

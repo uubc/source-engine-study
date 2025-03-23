@@ -36,6 +36,7 @@ public:
 	virtual void	Init( void ) = 0;
 	virtual void	Shutdown( void ) = 0;
 
+	virtual bool	InPrediction(void) const = 0;
 	// Run prediction
 	virtual void	Update
 					( 

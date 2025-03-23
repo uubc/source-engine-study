@@ -5,13 +5,16 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifdef GAME_DLL
-#include "entitylist.h"
-#endif // GAME_DLL
-#ifdef CLIENT_DLL
-#include "cliententitylist.h"
-#endif // CLIENT_DLL
-
+#include "tier3/tier3.h"
+#include "datacache/imdlcache.h"
+#include "engine/ivmodelinfo.h"
+#include "datamap.h"
+#include "isaverestore.h"
+#include "saverestoretypes.h"
+#include "iserverentity.h"
+#include "icliententity.h"
+#include "physics_shared.h"
+#include "physics_saverestore.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -60,11 +63,6 @@ BEGIN_SIMPLE_DATADESC( PhysObjectHeader_t )
   	DEFINE_FIELD( sphere.radius, FIELD_FLOAT ),
   	DEFINE_FIELD( iCollide,		FIELD_INTEGER ),
 END_DATADESC()
-
-//-----------------------------------------------------------------------------
-// Purpose:	The central manager of physics save/load
-//
-extern IPhysicsGameTrace* physgametrace;
 
 
 CPhysSaveRestoreBlockHandler::CPhysSaveRestoreBlockHandler(IEntityList* pEntityList)
@@ -253,7 +251,7 @@ void CPhysSaveRestoreBlockHandler::RestoreBlock( IRestore *pRestore, const PhysO
 	
 	//---------------------------------
 
-void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRestore, const PhysObjectHeader_t &header, CPhysSaveRestoreBlockHandler::QueuedItem_t *pItem, int nObjects )
+void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRestore, const PhysObjectHeader_t &header, QueuedItem_t *pItem, int nObjects )
 {
 	if ( nObjects == 1 )
 	{
@@ -265,22 +263,10 @@ void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRest
 			
 		if ( header.modelName != NULL_STRING )
 		{
-			IHandleEntity *pGlobalEntity = m_pEntityList->GetBaseEntityFromHandle(header.hEntity);
-#if !defined( CLIENT_DLL )
-			if ( NULL_STRING != pGlobalEntity->GetEngineObject()->GetGlobalname() )
-			{
-				modelIndex = pGlobalEntity->GetEngineObject()->GetModelIndex();
-			}
-			else
-#endif
-			{
-				modelIndex = modelinfo->GetModelIndex( STRING( header.modelName ) );
-				pGlobalEntity = NULL;
-			}
-
+			modelIndex = GetModelIndexFromHeader(header);
 			if ( modelIndex != -1 )
 			{
-				vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
+				vcollide_t *pCollide = m_pEntityList->GetModelInfo()->GetVCollide( modelIndex );
 				if ( pCollide )
 				{
 					if ( pCollide->solidCount > 0 && pCollide->solids && header.iCollide < pCollide->solidCount )
@@ -368,7 +354,7 @@ void CPhysSaveRestoreBlockHandler::QueueSave( IHandleEntity *pOwner, typedescrip
 	item.header.hEntity = pOwner;
 	item.header.type	= type;
 	item.header.nObjects = ( !fOnlyNotingExistence ) ? pTypeDesc->fieldSize : 0;
-	item.header.fieldName = AllocPooledStringInEntityList( pTypeDesc->fieldName );
+	item.header.fieldName = m_pEntityList->AllocPooledString( pTypeDesc->fieldName );
 																// A pooled string is used here because there is no way
 																// right now to save a non-string_t string and have it 
 																// compressed in the save symbol tables. Furthermore,
@@ -453,31 +439,29 @@ void CPhysSaveRestoreBlockHandler::RestorePhysicsObject( IRestore *pRestore, con
 {
 	if (m_pEntityList->PhysGetEnv())
 	{
-		physrestoreparams_t params = { pRestore, ppObject, header.type, m_pEntityList->GetBaseEntityFromHandle(header.hEntity), STRING(header.modelName), pCollide, m_pEntityList->PhysGetEnv(), physgametrace };
+		physrestoreparams_t params = { pRestore, ppObject, header.type, m_pEntityList->GetBaseEntityFromHandle(header.hEntity), STRING(header.modelName), pCollide, m_pEntityList->PhysGetEnv(), m_pEntityList->IPhysGameTrace()};
 		m_pEntityList->PhysGetEnv()->Restore( params );
 	}
 }
-#if !defined( CLIENT_DLL )	
-	//-----------------------------------------------------
-	// IEntityListener methods
-	// This object is only a listener during restore	
-	void CPhysSaveRestoreBlockHandler::OnEntityCreated( IServerEntity *pEntity )
-	{
-	}
+//-----------------------------------------------------
+// IEntityListener methods
+// This object is only a listener during restore	
+void CPhysSaveRestoreBlockHandler::OnEntityCreated( IHandleEntity *pEntity )
+{
+}
 
-	//---------------------------------
-	
-	void CPhysSaveRestoreBlockHandler::OnEntityDeleted( IServerEntity *pEntity )
+//---------------------------------
+
+void CPhysSaveRestoreBlockHandler::OnEntityDeleted( IHandleEntity *pEntity )
+{
+	unsigned short iEntitySet = m_QueuedRestores.Find( pEntity );
+
+	if ( iEntitySet != m_QueuedRestores.InvalidIndex() )
 	{
-		unsigned short iEntitySet = m_QueuedRestores.Find( pEntity );
-		
-		if ( iEntitySet != m_QueuedRestores.InvalidIndex() )
-		{
-			delete m_QueuedRestores[iEntitySet];
-			m_QueuedRestores.RemoveAt( iEntitySet );
-		}
+		delete m_QueuedRestores[iEntitySet];
+		m_QueuedRestores.RemoveAt( iEntitySet );
 	}
-#endif
+}
 
 	//-----------------------------------------------------
 	// IPhysSaveRestoreManager methods
@@ -533,7 +517,7 @@ string_t CPhysSaveRestoreBlockHandler::GetModelName( IPhysicsObject *pObject )
 	int i = m_PhysObjectModels.Find( pObject );
 	if ( i == m_PhysObjectModels.InvalidIndex() )
 		return NULL_STRING;
-	return AllocPooledStringInEntityList( modelinfo->GetModelName( modelinfo->GetModel( m_PhysObjectModels[i] ) ) );
+	return m_pEntityList->AllocPooledString(m_pEntityList->GetModelInfo()->GetModelName(m_pEntityList->GetModelInfo()->GetModel( m_PhysObjectModels[i] ) ) );
 }
 	
 	//---------------------------------
@@ -566,7 +550,7 @@ int CPhysSaveRestoreBlockHandler::CEntityRestoreSet::Add( IHandleEntity *pOwner,
 	item.header.hEntity 	= pOwner;
 	item.header.type		= type;
 	item.header.nObjects 	= pTypeDesc->fieldSize;
-	item.header.fieldName 	= AllocPooledStringInEntityList( pTypeDesc->fieldName ); 	// See comment in CPhysSaveRestoreBlockHandler::QueueSave()
+	item.header.fieldName 	= pOwner->GetEntityList()->AllocPooledString(pTypeDesc->fieldName); 	// See comment in CPhysSaveRestoreBlockHandler::QueueSave()
 			
 	return i;
 }
@@ -597,112 +581,46 @@ bool CPhysSaveRestoreBlockHandler::SaveQueueFunc( const CPhysSaveRestoreBlockHan
 }
 
 
-//-----------------------------------------------------------------------------
-// Purpose:	Classifies field and queues it up for physics save/restore.
-//
-
-class CPhysObjSaveRestoreOps : public CDefSaveRestoreOps
+//-----------------------------------------------------
+// IEntityListener methods
+// This object is only a listener during restore	
+void CServerPhysSaveRestoreBlockHandler::OnEntityCreated(IServerEntity* pEntity)
 {
-public:
-	virtual void Save( const SaveRestoreFieldInfo_t &fieldInfo, ISave *pSave )
-	{
-		IHandleEntity *pOwnerEntity = pSave->GetGameSaveRestoreInfo()->GetCurrentEntityContext();
 
-		bool bFoundEntity = true;
-		
-		if (pSave->IsValidEntityPointer(pOwnerEntity) == false)
-		{
-			bFoundEntity = false;
-
-#if defined( CLIENT_DLL )
-			pOwnerEntity = pSave->GetEntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
-
-			if ( pOwnerEntity  )
-			{
-				bFoundEntity = true;
-			}
-#endif
-		}
-
-		AssertMsg( pOwnerEntity && bFoundEntity == true, "Physics save/load is only suitable for entities" );
-
-		if ( m_type == PIID_UNKNOWN )
-		{
-			AssertMsg( 0, "Unknown physics save/load type");
-			return;
-		}
-		pSave->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueSave(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
-	}
-	
-	virtual void Restore( const SaveRestoreFieldInfo_t &fieldInfo, IRestore *pRestore )
-	{
-		IHandleEntity *pOwnerEntity = pRestore->GetGameSaveRestoreInfo()->GetCurrentEntityContext();
-
-		bool bFoundEntity = true;
-		
-		if (pRestore->IsValidEntityPointer(pOwnerEntity) == false)
-		{
-			bFoundEntity = false;
-
-#if defined( CLIENT_DLL )
-			pOwnerEntity = pRestore->GetEntityList()->GetBaseEntityFromHandle( pOwnerEntity->GetRefEHandle() );
-
-			if ( pOwnerEntity  )
-			{
-				bFoundEntity = true;
-			}
-#endif
-		}
-
-		AssertMsg( pOwnerEntity && bFoundEntity == true, "Physics save/load is only suitable for entities" );
-
-		if ( m_type == PIID_UNKNOWN )
-		{
-			AssertMsg( 0, "Unknown physics save/load type");
-			return;
-		}
-		
-		pRestore->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueRestore(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
-	}
-	
-	virtual void MakeEmpty( const SaveRestoreFieldInfo_t &fieldInfo )
-	{
-		memset( fieldInfo.pField, 0, fieldInfo.pTypeDesc->fieldSize * sizeof( void * ) );
-	}
-	
-	virtual bool IsEmpty( const SaveRestoreFieldInfo_t &fieldInfo )
-	{
-		void **ppPhysObj = (void **)fieldInfo.pField;
-		int nObjects = fieldInfo.pTypeDesc->fieldSize;
-		for ( int i = 0; i < nObjects; i++ )
-		{
-			if ( ppPhysObj[i] != NULL )
-				return false;
-		}
-		return true;
-	}
-	
-	PhysInterfaceId_t m_type;
-};
-
-//-----------------------------------------------------------------------------
-
-CPhysObjSaveRestoreOps g_PhysObjSaveRestoreOps[PIID_NUM_TYPES];
-
-//-------------------------------------
-
-ISaveRestoreOps *GetPhysObjSaveRestoreOps( PhysInterfaceId_t type )
-{
-	static bool inited;
-	if ( !inited )
-	{
-		inited = true;
-		for ( int i = 0; i < PIID_NUM_TYPES; i++ )
-		{
-			g_PhysObjSaveRestoreOps[i].m_type = (PhysInterfaceId_t)i;
-		}
-	}
-	return &g_PhysObjSaveRestoreOps[type];
 }
+
+//---------------------------------
+
+void CServerPhysSaveRestoreBlockHandler::OnEntityDeleted(IServerEntity* pEntity)
+{
+	CPhysSaveRestoreBlockHandler::OnEntityDeleted(pEntity);
+	
+}
+
+int CServerPhysSaveRestoreBlockHandler::GetModelIndexFromHeader(const PhysObjectHeader_t& header)
+{
+	int modelIndex = -1;
+	IHandleEntity* pGlobalEntity = m_pEntityList->GetBaseEntityFromHandle(header.hEntity);
+	if (NULL_STRING != pGlobalEntity->GetEngineObject()->GetGlobalname())
+	{
+		modelIndex = pGlobalEntity->GetEngineObject()->GetModelIndex();
+	}
+	else
+	{
+		modelIndex = m_pEntityList->GetModelInfo()->GetModelIndex(STRING(header.modelName));
+		pGlobalEntity = NULL;
+	}
+	return modelIndex;
+}
+
+int CClientPhysSaveRestoreBlockHandler::GetModelIndexFromHeader(const PhysObjectHeader_t& header)
+{
+	int modelIndex = m_pEntityList->GetModelInfo()->GetModelIndex(STRING(header.modelName));
+	return modelIndex;
+}
+
+
+
+
 
 //=============================================================================

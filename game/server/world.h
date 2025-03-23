@@ -338,6 +338,8 @@ public:
 	virtual bool IsHolidayActive( /*EHoliday*/ int eHoliday) const { return false; }
 	virtual bool	MegaPhyscannonActive(void) { return false; }
 	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration);
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, float attenuation);
+	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation);
 private:
 	DECLARE_DATADESC();
 

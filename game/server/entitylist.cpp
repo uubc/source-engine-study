@@ -4202,7 +4202,7 @@ bool CEngineObjectInternal::KeyValue(const char* szKeyName, const char* szValue)
 
 	if (datamap_t::FStrEq(szKeyName, "targetname"))
 	{
-		m_iName = AllocPooledStringInEntityList(szValue);
+		m_iName = m_pServerEntityList->AllocPooledString(szValue);
 		return true;
 	}
 
@@ -4212,7 +4212,7 @@ bool CEngineObjectInternal::KeyValue(const char* szKeyName, const char* szValue)
 	{
 		for (datamap_t* dmap = GetDataDescMap(); dmap != NULL; dmap = dmap->baseMap)
 		{
-			if (dmap->ParseKeyvalue(this, szKeyName, szValue, &AllocPooledStringInEntityList))
+			if (dmap->ParseKeyvalue(this, szKeyName, szValue, m_pServerEntityList))
 				return true;
 		}
 	}
@@ -4239,7 +4239,7 @@ bool CEngineObjectInternal::KeyValue(const char* szKeyName, const char* szValue)
 				debugName = dmap->dataClassName;
 			}
 
-			if (dmap->ParseKeyvalue(this, szKeyName, szValue, &AllocPooledStringInEntityList))
+			if (dmap->ParseKeyvalue(this, szKeyName, szValue, m_pServerEntityList))
 			{
 				if (printKeyHits)
 					Msg("(%s) key: %-16s value: %s\n", debugName, szKeyName, szValue);
@@ -6298,7 +6298,7 @@ int CEngineObjectInternal::RegisterThinkContext(const char* szContext)
 	Q_memset(&sNewFunc, 0, sizeof(sNewFunc));
 	sNewFunc.m_pfnThink = NULL;
 	sNewFunc.m_nNextThinkTick = 0;
-	sNewFunc.m_iszContext = AllocPooledStringInEntityList(szContext);
+	sNewFunc.m_iszContext = m_pServerEntityList->AllocPooledString(szContext);
 
 	// Insert it into our list
 	return m_aThinkFunctions.AddToTail(sNewFunc);
@@ -14885,7 +14885,7 @@ bool CEngineVehicleInternal::Initialize(const char* pVehicleScript, unsigned int
 
 	IPhysicsObject* pBody = VPhysicsInitNormal(SOLID_VPHYSICS, 0, false, &solid);
 	PhysSetGameFlags(pBody, FVPHYSICS_NO_SELF_COLLISIONS | FVPHYSICS_MULTIOBJECT_ENTITY);
-	m_pVehicle = gEntList.PhysGetEnv()->CreateVehicleController(pBody, vehicle, nVehicleType, physgametrace);
+	m_pVehicle = m_pServerEntityList->PhysGetEnv()->CreateVehicleController(pBody, vehicle, nVehicleType, m_pServerEntityList->IPhysGameTrace());
 	m_wheelCount = m_pVehicle->GetWheelCount();
 	for (int i = 0; i < m_wheelCount; i++)
 	{
@@ -15140,7 +15140,7 @@ bool CEngineVehicleInternal::Think()
 			if (!m_bLastSkid)	// only play sound once
 			{
 				m_bLastSkid = true;
-				CPASAttenuationFilter filter(m_pOuter);
+				//CPASAttenuationFilter filter(m_pOuter);
 				m_pOuter->GetServerVehicle()->PlaySound(VS_SKID_FRICTION_NORMAL);
 			}
 
@@ -16128,7 +16128,7 @@ void CEngineRopeInternal::NotifyPositionChanged()
 
 void CEngineRopeInternal::SetMaterial(const char* pName)
 {
-	m_strRopeMaterialModel = AllocPooledStringInEntityList(pName);
+	m_strRopeMaterialModel = m_pServerEntityList->AllocPooledString(pName);
 	m_iRopeMaterialModelIndex = engine->PrecacheModel(STRING(m_strRopeMaterialModel));
 }
 

@@ -10,7 +10,7 @@
 #include "cbase.h"
 #include "props.h"
 #include "vphysics/constraints.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "model_types.h"
 #include "ai_utils.h"
 #include "particle_system.h"

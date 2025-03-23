@@ -13,7 +13,7 @@
 #include "ammodef.h"
 #include "hl2/hl2_player.h"
 #include "soundenvelope.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "IEffects.h"
 #include "basehlcombatweapon_shared.h"
 #include "phys_controller.h"

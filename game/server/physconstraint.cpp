@@ -10,7 +10,7 @@
 #include "entityoutput.h"
 #include "engine/IEngineSound.h"
 #include "igamesystem.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "vcollide_parse.h"
 #include "positionwatcher.h"
 #include "fmtstr.h"

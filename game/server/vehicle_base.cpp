@@ -13,7 +13,7 @@
 #include "soundenvelope.h"
 #include "in_buttons.h"
 #include "npc_vehicledriver.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "saverestore_utlvector.h"
 #include "func_break.h"
 #include "physics_impact_damage.h"

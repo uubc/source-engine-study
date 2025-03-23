@@ -215,6 +215,8 @@ public:
 	virtual int				EntityFlagsSet(int entityIndex, int flags) = 0;
 	virtual IEntityList*	GetEntityList() = 0;
 	virtual bool			IsValidEntityPointer(void* ptr) = 0;
+	virtual bool			IsServer() = 0;
+	virtual bool			IsClient() = 0;
 protected:
 	virtual ~ISave() {};
 };
@@ -313,6 +315,8 @@ public:
 	virtual CGameSaveRestoreInfo *GetGameSaveRestoreInfo() = 0;
 	virtual IEntityList* GetEntityList() = 0;
 	virtual bool IsValidEntityPointer(void* ptr) = 0;
+	virtual bool IsServer() = 0;
+	virtual bool IsClient() = 0;
 protected:
 	virtual ~IRestore() {};
 };

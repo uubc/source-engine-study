@@ -86,6 +86,21 @@ void PhysForceClearVelocity( IPhysicsObject *pPhys );
 bool PhysHasContactWithOtherInDirection( IPhysicsObject *pPhysics, const Vector &dir );
 
 void PrecachePhysicsSounds(IEntityList* pEntityList);
+
+
+//=============================================================================
+//
+// Physics Game Trace
+//
+class CPhysicsGameTrace : public IPhysicsGameTrace
+{
+public:
+
+	void VehicleTraceRay(const Ray_t& ray, void* pVehicle, trace_t* pTrace);
+	void VehicleTraceRayWithWater(const Ray_t& ray, void* pVehicle, trace_t* pTrace);
+	bool VehiclePointInWater(const Vector& vecPoint, void* pVehicle);
+};
+
 //-----------------------------------------------------------------------------
 // Singleton access
 //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "vphysics/player_controller.h"
 #include "vphysics/constraints.h"
 #include "predicted_viewmodel.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "gamestats.h"
 
 
@@ -1284,7 +1284,7 @@ static void TraceCollideAgainstBBox( const CPhysCollide *pCollide, const Vector 
 #include "player_pickup.h"
 #include "props.h"
 #include "vphysics/friction.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 ConVar hl2_normspeed( "hl2_normspeed", "190" );
 ConVar player_throwforce( "player_throwforce", "1000" );
 ConVar physcannon_maxmass( "physcannon_maxmass", "250" );

@@ -17,7 +17,7 @@
 #include "basetypes.h"
 #include "mathlib/vector.h"
 #include "interface.h"
-#include "ipredictionsystem.h"
+//#include "ipredictionsystem.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations

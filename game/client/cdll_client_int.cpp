@@ -53,7 +53,7 @@
 #include "c_user_message_register.h"
 #include "IGameUIFuncs.h"
 #include "saverestoretypes.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "igameevents.h"
 #include "datacache/idatacache.h"
 #include "datacache/imdlcache.h"

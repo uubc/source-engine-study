@@ -5,12 +5,6 @@
 //=============================================================================//
 //#include "cbase.h"
 #include "ragdoll_shared.h"
-#ifdef CLIENT_DLL
-//#include "cdll_client_int.h"
-#endif
-#ifdef GAME_DLL
-//#include "enginecallback.h"
-#endif // GAME_DLL
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -27,15 +21,6 @@
 // UNDONE: This hash holds both entity & IPhysicsObject pointer pairs
 // UNDONE: Split into separate hashes?
 //IPhysicsObjectPairHash *g_EntityCollisionHash = NULL;
-
-#ifdef CLIENT_DLL
-extern IVModelInfoClient* modelinfo;
-#endif // CLIENT_DLL
-#ifdef GAME_DLL
-extern IVModelInfo* modelinfo;
-#endif // GAME_DLL
-
-
 
 const char *SURFACEPROP_MANIFEST_FILE = "scripts/surfaceproperties_manifest.txt";
 
@@ -127,12 +112,12 @@ IPhysicsObject *PhysModelCreateBox( IHandleEntity *pEntity, const Vector &mins, 
 
 	if ( modelIndex )
 	{
-		const model_t *model = modelinfo->GetModel( modelIndex );
+		const model_t *model = pEntity->GetEntityList()->GetModelInfo()->GetModel(modelIndex);
 		if ( model )
 		{
-			IStudioHdr* studioHdr = modelinfo->GetStudiomodel( model );
+			IStudioHdr* studioHdr = pEntity->GetEntityList()->GetModelInfo()->GetStudiomodel( model );
 			if (!studioHdr) {
-				studioHdr = modelinfo->GetStudiomodel(model);
+				studioHdr = pEntity->GetEntityList()->GetModelInfo()->GetStudiomodel(model);
 			}
 			if (studioHdr && studioHdr->IsValid())
 			{
@@ -170,10 +155,10 @@ IPhysicsObject *PhysModelCreateOBB( IHandleEntity *pEntity, const Vector &mins, 
 
 	if ( modelIndex )
 	{
-		const model_t *model = modelinfo->GetModel( modelIndex );
+		const model_t *model = pEntity->GetEntityList()->GetModelInfo()->GetModel( modelIndex );
 		if ( model )
 		{
-			IStudioHdr* studioHdr = modelinfo->GetStudiomodel( model );
+			IStudioHdr* studioHdr = pEntity->GetEntityList()->GetModelInfo()->GetStudiomodel( model );
 			if (studioHdr->IsValid()) 
 			{
 				pSurfaceProps = studioHdr->Studio_GetDefaultSurfaceProps(  );
@@ -200,7 +185,7 @@ IPhysicsObject *PhysModelCreateOBB( IHandleEntity *pEntity, const Vector &mins, 
 //-----------------------------------------------------------------------------
 bool PhysModelParseSolidByIndex( solid_t &solid, IHandleEntity *pEntity, int modelIndex, int solidIndex )
 {
-	vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
+	vcollide_t *pCollide = pEntity->GetEntityList()->GetModelInfo()->GetVCollide( modelIndex );
 	if ( !pCollide )
 		return false;
 
@@ -322,7 +307,7 @@ IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const V
 	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
-	vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
+	vcollide_t *pCollide = pEntity->GetEntityList()->GetModelInfo()->GetVCollide( modelIndex );
 	if ( !pCollide || !pCollide->solidCount )
 		return NULL;
 	
@@ -344,9 +329,9 @@ IPhysicsObject *PhysModelCreate( IHandleEntity *pEntity, int modelIndex, const V
 
 	if ( pObject )
 	{
-		if ( modelinfo->GetModelType(modelinfo->GetModel(modelIndex)) == mod_brush )
+		if (pEntity->GetEntityList()->GetModelInfo()->GetModelType(pEntity->GetEntityList()->GetModelInfo()->GetModel(modelIndex)) == mod_brush )
 		{
-			unsigned int contents = modelinfo->GetModelContents( modelIndex );
+			unsigned int contents = pEntity->GetEntityList()->GetModelInfo()->GetModelContents( modelIndex );
 			Assert(contents!=0);
 			// HACKHACK: contents is used to filter collisions
 			// HACKHACK: So keep solid on for water brushes since they should pass collision rules (as triggers)
@@ -380,7 +365,7 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 	if ( !pEntity->GetEntityList()->PhysGetEnv())
 		return NULL;
 
-	vcollide_t *pCollide = modelinfo->GetVCollide( modelIndex );
+	vcollide_t *pCollide = pEntity->GetEntityList()->GetModelInfo()->GetVCollide( modelIndex );
 	if ( !pCollide || !pCollide->solidCount )
 		return NULL;
 
@@ -404,9 +389,9 @@ IPhysicsObject *PhysModelCreateUnmoveable( IHandleEntity *pEntity, int modelInde
 	//PhysCheckAdd( pObject, STRING(pEntity->m_iClassname) );
 	if ( pObject )
 	{
-		if ( modelinfo->GetModelType(modelinfo->GetModel(modelIndex)) == mod_brush )
+		if (pEntity->GetEntityList()->GetModelInfo()->GetModelType(pEntity->GetEntityList()->GetModelInfo()->GetModel(modelIndex)) == mod_brush )
 		{
-			unsigned int contents = modelinfo->GetModelContents( modelIndex );
+			unsigned int contents = pEntity->GetEntityList()->GetModelInfo()->GetModelContents( modelIndex );
 			Assert(contents!=0);
 			if ( contents != pObject->GetContents() && contents != 0 )
 			{
@@ -584,7 +569,7 @@ void PhysCreateVirtualTerrain( IHandleEntity *pWorld, const objectparams_t &defa
 	char nameBuf[1024];
 	for ( int i = 0; i < MAX_MAP_DISPINFO; i++ )
 	{
-		CPhysCollide *pCollide = modelinfo->GetCollideForVirtualTerrain( i );
+		CPhysCollide *pCollide = pWorld->GetEntityList()->GetModelInfo()->GetCollideForVirtualTerrain( i );
 		if ( pCollide )
 		{
 			solid_t solid;
@@ -714,23 +699,6 @@ IPhysicsObject *PhysCreateWorld_Shared( IHandleEntity *pWorld, vcollide_t *pWorl
 	}
 	return pWorldPhysics;
 }
-
-
-//=============================================================================
-//
-// Physics Game Trace
-//
-class CPhysicsGameTrace : public IPhysicsGameTrace
-{
-public:
-
-	void VehicleTraceRay( const Ray_t &ray, void *pVehicle, trace_t *pTrace );
-	void VehicleTraceRayWithWater( const Ray_t &ray, void *pVehicle, trace_t *pTrace );
-	bool VehiclePointInWater( const Vector &vecPoint, void* pVehicle);
-};
-
-CPhysicsGameTrace g_PhysGameTrace;
-IPhysicsGameTrace *physgametrace = &g_PhysGameTrace;
 
 //-----------------------------------------------------------------------------
 // Purpose: Game ray-traces in vphysics.

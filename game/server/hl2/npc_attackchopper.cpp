@@ -32,7 +32,7 @@
 #include "te_effect_dispatch.h"
 #include "ai_spotlight.h"
 #include "vphysics/constraints.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "ai_memory.h"
 #include "npc_attackchopper.h"
 

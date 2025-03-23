@@ -7,14 +7,6 @@
 //#include "cbase.h"
 #include "ragdoll_shared.h"
 
-#ifdef CLIENT_DLL
-extern IVModelInfoClient* modelinfo;
-#endif // CLIENT_DLL
-#ifdef GAME_DLL
-extern IVModelInfo* modelinfo;
-#endif // GAME_DLL
-
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -98,7 +90,7 @@ private:
 
 void RagdollSetupAnimatedFriction(IEntityList* pEntityList, IPhysicsEnvironment *pPhysEnv, ragdoll_t *ragdoll, int iModelIndex )
 {
-	vcollide_t* pCollide = modelinfo->GetVCollide( iModelIndex );
+	vcollide_t* pCollide = pEntityList->GetModelInfo()->GetVCollide(iModelIndex);
 
 	if ( pCollide )
 	{

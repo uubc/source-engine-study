@@ -37,7 +37,7 @@
 #include "game/server/iservervehicle.h"
 #include "soundent.h"
 #include "npc_citizen17.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "hl2_shareddefs.h"
 #include "props.h"
 #include "npc_attackchopper.h"

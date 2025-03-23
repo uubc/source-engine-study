@@ -10,7 +10,7 @@
 #include "items.h"
 #include "engine/IEngineSound.h"
 #include "game/server/iservervehicle.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "world.h"
 
 #ifdef HL2MP

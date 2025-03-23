@@ -19,7 +19,7 @@
 #include "physobj.h"
 #include "world.h"
 #include "hierarchy.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "PhysicsCloneArea.h"
 #include "portal_gamestats.h"
 #include "prop_portal_shared.h"

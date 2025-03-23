@@ -16,7 +16,7 @@
 #include "engine/IEngineSound.h"
 #include "model_types.h"
 #include "props.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "saverestore_utlvector.h"
 #include "vphysics/constraints.h"
 #include "collisionutils.h"

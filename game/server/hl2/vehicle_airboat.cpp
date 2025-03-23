@@ -16,7 +16,7 @@
 #include "decals.h"
 #include "soundent.h"
 #include "te_effect_dispatch.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "movevars_shared.h"
 #include "npc_attackchopper.h"
 #include "weapon_rpg.h"

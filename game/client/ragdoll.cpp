@@ -14,7 +14,7 @@
 #include "engine/ivmodelinfo.h"
 #include "iviewrender.h"
 #include "tier0/vprof.h"
-#include "physics_saverestore.h"
+//#include "physics_saverestore.h"
 #include "vphysics/constraints.h"
 #include "engine/ivdebugoverlay.h"
 #include "c_entitydissolve.h"

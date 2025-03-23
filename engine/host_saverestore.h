@@ -192,6 +192,8 @@ public:
 	virtual IEngineObject* GetEngineObject(int entnum);
 	virtual IEntityList* GetEntityList();
 	virtual bool IsValidEntityPointer(void* ptr);
+	virtual bool IsServer() { return true; }
+	virtual bool IsClient() { return false; }
 };
 
 class CSaveClient : public CSave {
@@ -206,6 +208,8 @@ public:
 	virtual IEngineObject* GetEngineObject(int entnum);
 	virtual IEntityList* GetEntityList();
 	virtual bool IsValidEntityPointer(void* ptr);
+	virtual bool IsServer() { return false; }
+	virtual bool IsClient() { return true; }
 };
 
 //-----------------------------------------------------------------------------
@@ -381,6 +385,8 @@ public:
 	virtual IEngineObject* GetEngineObject(int entnum);
 	virtual IEntityList* GetEntityList();
 	virtual bool IsValidEntityPointer(void* ptr);
+	virtual bool IsServer() { return true; }
+	virtual bool IsClient() { return false; }
 };
 
 class CRestoreClient : public CRestore {
@@ -397,6 +403,8 @@ public:
 	virtual IEngineObject* GetEngineObject(int entnum);
 	virtual IEntityList* GetEntityList();
 	virtual bool IsValidEntityPointer(void* ptr);
+	virtual bool IsServer() { return false; }
+	virtual bool IsClient() { return true; }
 };
 
 template <int FIELD_TYPE>

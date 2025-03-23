@@ -42,8 +42,10 @@ class IPhysicsSurfaceProps;
 class IPhysicsObject;
 class IPhysicsCollision;
 class IPhysSaveRestoreBlockHandler;
+class IPhysicsGameTrace;
 class IPhysicsObjectPairHash;
 struct EmitSound_t;
+class IVModelInfo;
 
 //-----------------------------------------------------------------------------
 // A ray...
@@ -561,7 +563,12 @@ public:
 	virtual void DumpEntityFactories() = 0;
 };
 
-abstract_class IEntityList
+abstract_class IPooledStringAllocer{
+public:
+	virtual string_t AllocPooledString(const char* pStr) = 0;
+};
+
+abstract_class IEntityList : public IPooledStringAllocer
 {
 public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
@@ -579,7 +586,10 @@ public:
 	virtual IPhysicsObject* PhysGetWorldObject() = 0;
 	virtual IPhysicsCollision* PhysGetCollision() = 0;
 	virtual IPhysSaveRestoreBlockHandler* PhysSaveRestoreBlockHandler() = 0;
+	virtual IPhysicsGameTrace* IPhysGameTrace() = 0;
 	virtual IPhysicsObjectPairHash* PhysGetEntityCollisionHash() = 0;
+	virtual IVModelInfo* GetModelInfo() = 0;
+	virtual string_t AllocPooledString(const char* pStr) = 0;
 	//-----------------------------------------------------------------------------
 // Shared random number generators for shared/predicted code:
 // whenever generating random numbers in shared/predicted code, these functions

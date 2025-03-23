@@ -481,7 +481,7 @@ class CBaseEntityList : public IPartitionQueryCallback
 {
 public:
 	CBaseEntityList();
-	~CBaseEntityList();
+	virtual ~CBaseEntityList();
 	
 	// Members of IGameSystem
 	virtual bool Init();
@@ -1924,5 +1924,18 @@ public:
 	virtual void QueueSave(IHandleEntity* pOwner, typedescription_t* pTypeDesc, void** ppPhysObj, PhysInterfaceId_t type) = 0;
 	virtual void QueueRestore(IHandleEntity* pOwner, typedescription_t* pTypeDesc, void** ppPhysObj, PhysInterfaceId_t type) = 0;
 };
+
+//-----------------------------------------------------------------------------
+
+ISaveRestoreOps* GetPhysObjSaveRestoreOps(PhysInterfaceId_t);
+
+//-------------------------------------
+
+#define DEFINE_PHYSPTR(name) \
+	{ FIELD_CUSTOM, #name, { offsetof(classNameTypedef,name), 0 }, 1, FTYPEDESC_SAVE, NULL, GetPhysObjSaveRestoreOps( GetPhysIID( &(((classNameTypedef *)0)->name) ) ), NULL }
+
+#define DEFINE_PHYSPTR_ARRAY(name) \
+	{ FIELD_CUSTOM, #name, { offsetof(classNameTypedef,name), 0 }, ARRAYSIZE(((classNameTypedef *)0)->name), FTYPEDESC_SAVE, NULL, GetPhysObjSaveRestoreOps( GetPhysIID( &(((classNameTypedef *)0)->name[0]) ) ), NULL }
+
 
 #endif // ENTITYLIST_BASE_H

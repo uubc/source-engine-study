@@ -4,9 +4,13 @@
 //
 //=============================================================================//
 
-#include "cbase.h"
+//#include "cbase.h"
 #include "entitylist_base.h"
 #include "ihandleentity.h"
+#include "isaverestore.h"
+#include "saverestoretypes.h"
+//#include "physics_shared.h"
+//#include "physics_saverestore.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -210,4 +214,112 @@ void CEntityFactoryDictionary::DumpEntityFactories()
 	{
 		Msg("%s\n", m_Factories.GetElementName(i));
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:	Classifies field and queues it up for physics save/restore.
+//
+
+class CPhysObjSaveRestoreOps : public CDefSaveRestoreOps
+{
+public:
+	virtual void Save(const SaveRestoreFieldInfo_t& fieldInfo, ISave* pSave)
+	{
+		IHandleEntity* pOwnerEntity = pSave->GetGameSaveRestoreInfo()->GetCurrentEntityContext();
+
+		bool bFoundEntity = true;
+
+		if (pSave->IsValidEntityPointer(pOwnerEntity) == false)
+		{
+			bFoundEntity = false;
+
+			if (pSave->IsClient()) {
+				pOwnerEntity = pSave->GetEntityList()->GetBaseEntityFromHandle(pOwnerEntity->GetRefEHandle());
+
+				if (pOwnerEntity)
+				{
+					bFoundEntity = true;
+				}
+			}
+		}
+
+		AssertMsg(pOwnerEntity && bFoundEntity == true, "Physics save/load is only suitable for entities");
+
+		if (m_type == PIID_UNKNOWN)
+		{
+			AssertMsg(0, "Unknown physics save/load type");
+			return;
+		}
+		pSave->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueSave(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
+	}
+
+	virtual void Restore(const SaveRestoreFieldInfo_t& fieldInfo, IRestore* pRestore)
+	{
+		IHandleEntity* pOwnerEntity = pRestore->GetGameSaveRestoreInfo()->GetCurrentEntityContext();
+
+		bool bFoundEntity = true;
+
+		if (pRestore->IsValidEntityPointer(pOwnerEntity) == false)
+		{
+			bFoundEntity = false;
+
+			if (pRestore->IsClient()) {
+				pOwnerEntity = pRestore->GetEntityList()->GetBaseEntityFromHandle(pOwnerEntity->GetRefEHandle());
+
+				if (pOwnerEntity)
+				{
+					bFoundEntity = true;
+				}
+			}
+		}
+
+		AssertMsg(pOwnerEntity && bFoundEntity == true, "Physics save/load is only suitable for entities");
+
+		if (m_type == PIID_UNKNOWN)
+		{
+			AssertMsg(0, "Unknown physics save/load type");
+			return;
+		}
+
+		pRestore->GetEntityList()->PhysSaveRestoreBlockHandler()->QueueRestore(pOwnerEntity, fieldInfo.pTypeDesc, (void**)fieldInfo.pField, m_type);
+	}
+
+	virtual void MakeEmpty(const SaveRestoreFieldInfo_t& fieldInfo)
+	{
+		memset(fieldInfo.pField, 0, fieldInfo.pTypeDesc->fieldSize * sizeof(void*));
+	}
+
+	virtual bool IsEmpty(const SaveRestoreFieldInfo_t& fieldInfo)
+	{
+		void** ppPhysObj = (void**)fieldInfo.pField;
+		int nObjects = fieldInfo.pTypeDesc->fieldSize;
+		for (int i = 0; i < nObjects; i++)
+		{
+			if (ppPhysObj[i] != NULL)
+				return false;
+		}
+		return true;
+	}
+
+	PhysInterfaceId_t m_type;
+};
+
+//-----------------------------------------------------------------------------
+
+CPhysObjSaveRestoreOps g_PhysObjSaveRestoreOps[PIID_NUM_TYPES];
+
+//-------------------------------------
+
+ISaveRestoreOps* GetPhysObjSaveRestoreOps(PhysInterfaceId_t type)
+{
+	static bool inited;
+	if (!inited)
+	{
+		inited = true;
+		for (int i = 0; i < PIID_NUM_TYPES; i++)
+		{
+			g_PhysObjSaveRestoreOps[i].m_type = (PhysInterfaceId_t)i;
+		}
+	}
+	return &g_PhysObjSaveRestoreOps[type];
 }

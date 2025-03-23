@@ -24,7 +24,7 @@
 //#include "te_effect_dispatch.h"
 #include "ServerNetworkProperty.h"
 #include "variant_t.h"
-#include "recipientfilter.h"
+//#include "recipientfilter.h"
 
 //class IServerEntity;
 // We can only ever move 512 entities across a transition
@@ -51,7 +51,6 @@ extern IStaticPropMgrServer* staticpropmgr;
 extern ISpatialPartition* partition;
 extern IDataCache* datacache;
 extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger, IEngineObjectServer* pEntity);
-extern ISaveRestoreBlockHandler* GetAISaveRestoreBlockHandler();
 extern IServerGameDLL* serverGameDLL;
 extern ISoundEnvelopeController* g_pSoundEnvelopeController;
 #ifdef POSIX
@@ -65,7 +64,6 @@ namespace _SUBSYSTEM
 #else
 extern IUniformRandomStream* random;
 #endif
-extern IPhysicsGameTrace* physgametrace;
 extern bool ShouldRemoveThisRagdoll(IServerEntity* pRagdoll);
 extern void PostSimulation_ImpulseEvent(IPhysicsObject* pObject, const Vector& centerForce, const AngularImpulse& centerTorque);
 extern void PostSimulation_SetVelocityEvent(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity);
@@ -76,9 +74,6 @@ class CSimThinkManager;
 extern CSimThinkManager g_SimThinkManager;
 class CEntityTouchManager;
 extern CEntityTouchManager g_TouchManager;
-inline string_t AllocPooledStringInEntityList(const char* pStr) {
-	return serverGameDLL->AllocPooledString(pStr);
-}
 
 class CAimTargetManager : public IEntityListener<IServerEntity>
 {
@@ -500,7 +495,7 @@ public:
 
 	void SetClassname(const char* className)
 	{
-		m_iClassname = AllocPooledStringInEntityList(className);
+		m_iClassname = m_pServerEntityList->AllocPooledString(className);
 	}
 	const char* GetClassName() const
 	{
@@ -512,7 +507,7 @@ public:
 	}
 	void SetGlobalname(const char* iGlobalname) 
 	{
-		m_iGlobalname = AllocPooledStringInEntityList(iGlobalname);
+		m_iGlobalname = m_pServerEntityList->AllocPooledString(iGlobalname);
 	}
 	const string_t& GetGlobalname() const
 	{
@@ -520,7 +515,7 @@ public:
 	}
 	void SetParentName(const char* parentName)
 	{
-		m_iParent = AllocPooledStringInEntityList(parentName);
+		m_iParent = m_pServerEntityList->AllocPooledString(parentName);
 	}
 	string_t& GetParentName() 
 	{
@@ -528,7 +523,7 @@ public:
 	}
 	void SetName(const char* newName)
 	{
-		m_iName = AllocPooledStringInEntityList(newName);
+		m_iName = m_pServerEntityList->AllocPooledString(newName);
 	}
 	const string_t& GetEntityName() const
 	{
@@ -3540,6 +3535,12 @@ public:
 	virtual void ReportEntitySizes();
 	virtual void DumpEntityFactories();
 
+	virtual IVModelInfo* GetModelInfo() {
+		return modelinfo;
+	}
+	string_t AllocPooledString(const char* pStr) {
+		return serverGameDLL->AllocPooledString(pStr);
+	}
 	virtual const char* GetBlockName();
 
 	virtual void PreSave(CSaveRestoreData* pSaveData);
@@ -3789,6 +3790,10 @@ public:
 		return &m_PhysSaveRestoreBlockHandler;
 	}
 
+	IPhysicsGameTrace* IPhysGameTrace() {
+		return &m_PhysGameTrace;
+	}
+
 	IPhysicsObjectPairHash* PhysGetEntityCollisionHash() {
 		return m_EntityCollisionHash;
 	}
@@ -3919,10 +3924,11 @@ public:
 					return;
 
 				pFriction->pObject = pEntity;
-				CPASAttenuationFilter filter((IServerEntity*)pEntity, params.soundlevel);
+				IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter((IServerEntity*)pEntity, params.soundlevel);
 				pFriction->patch = g_pSoundEnvelopeController->SoundCreate(
-					filter, ((IServerEntity*)pEntity)->entindex(), CHAN_BODY, pSoundName, params.soundlevel);
+					*pFilter, ((IServerEntity*)pEntity)->entindex(), CHAN_BODY, pSoundName, params.soundlevel);
 				g_pSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
+				delete pFilter;
 			}
 			else
 			{
@@ -4762,7 +4768,7 @@ protected:
 
 				if (sound.volume > 1)
 					sound.volume = 1;
-				CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+				IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
 				// JAY: If this entity gets deleted, the sound comes out at the world origin
 				// this sounds bad!  Play on ent 0 for now.
 				EmitSound_t ep;
@@ -4773,7 +4779,8 @@ protected:
 				ep.m_nPitch = params.pitch;
 				ep.m_pOrigin = &sound.origin;
 
-				g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+				g_pSoundEmitterSystem->EmitSound(*pFilter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+				delete pFilter;
 			}
 		}
 		list.RemoveAll();
@@ -4853,7 +4860,7 @@ protected:
 				return;
 
 			// Play from the world, because the entity is breaking, so it'll be destroyed soon
-			CPASAttenuationFilter filter(sound.origin, params.soundlevel);
+			IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
 			EmitSound_t ep;
 			ep.m_nChannel = CHAN_STATIC;
 			ep.m_pSoundName = params.soundname;
@@ -4861,7 +4868,8 @@ protected:
 			ep.m_SoundLevel = params.soundlevel;
 			ep.m_nPitch = params.pitch;
 			ep.m_pOrigin = &sound.origin;
-			g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+			g_pSoundEmitterSystem->EmitSound(*pFilter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+			delete pFilter;
 		}
 		list.RemoveAll();
 	}
@@ -4914,7 +4922,8 @@ private:
 	IPhysicsEnvironment* m_pPhysenv = NULL;
 	IPhysicsSurfaceProps* m_pPhysprops = NULL;
 	IPhysicsCollision* m_pPhyscollision = NULL;
-	CPhysSaveRestoreBlockHandler m_PhysSaveRestoreBlockHandler;
+	CServerPhysSaveRestoreBlockHandler m_PhysSaveRestoreBlockHandler;
+	CPhysicsGameTrace m_PhysGameTrace;
 	IPhysicsObjectPairHash* m_EntityCollisionHash = NULL;
 	IPhysicsObject* m_PhysWorldObject = NULL;
 	bool		m_isFinalTick;
@@ -6125,11 +6134,11 @@ int	CGlobalEntityList<T>::CreateEntityTransitionList(IRestore* pRestore, int a)
 	if (movedCount)
 	{
 		engine->CallBlockHandlerRestore(&m_PhysSaveRestoreBlockHandler, base, pRestore, false);
-		engine->CallBlockHandlerRestore(GetAISaveRestoreBlockHandler(), base, pRestore, false);
+		engine->CallBlockHandlerRestore(serverGameDLL->GetAISaveRestoreBlockHandler(), base, pRestore, false);
 	}
 
 	m_PhysSaveRestoreBlockHandler.PostRestore();
-	GetAISaveRestoreBlockHandler()->PostRestore();
+	serverGameDLL->GetAISaveRestoreBlockHandler()->PostRestore();
 	this->PostRestore();
 	return movedCount;
 }
@@ -8254,7 +8263,7 @@ bool CGlobalEntityList<T>::FindOrAddVehicleScript(const char* pScriptName, vehic
 		{
 			// new script, parse it and write to the table
 			index = m_vehicleScripts.AddToTail();
-			m_vehicleScripts[index].scriptName = AllocPooledStringInEntityList(pScriptName);
+			m_vehicleScripts[index].scriptName = AllocPooledString(pScriptName);
 			m_vehicleScripts[index].sounds.Init();
 
 			IVPhysicsKeyParser* pParse = m_pPhyscollision->VPhysicsKeyParserCreate((char*)pFile);
