@@ -52,7 +52,7 @@ extern ISpatialPartition* partition;
 extern IDataCache* datacache;
 extern bool TestEntityTriggerIntersection_Accurate(IEngineObjectServer* pTrigger, IEngineObjectServer* pEntity);
 extern IServerGameDLL* serverGameDLL;
-extern ISoundEnvelopeController* g_pSoundEnvelopeController;
+extern ISoundEnvelopeController* g_pServerSoundEnvelopeController;
 #ifdef POSIX
 #define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
 #endif
@@ -3925,16 +3925,16 @@ public:
 
 				pFriction->pObject = pEntity;
 				IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter((IServerEntity*)pEntity, params.soundlevel);
-				pFriction->patch = g_pSoundEnvelopeController->SoundCreate(
+				pFriction->patch = g_pServerSoundEnvelopeController->SoundCreate(
 					*pFilter, ((IServerEntity*)pEntity)->entindex(), CHAN_BODY, pSoundName, params.soundlevel);
-				g_pSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
+				g_pServerSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
 				delete pFilter;
 			}
 			else
 			{
 				float pitch = (flVolume * (params.pitchhigh - params.pitchlow)) + params.pitchlow;
-				g_pSoundEnvelopeController->SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
-				g_pSoundEnvelopeController->SoundChangePitch(pFriction->patch, pitch, 0.1f);
+				g_pServerSoundEnvelopeController->SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
+				g_pServerSoundEnvelopeController->SoundChangePitch(pFriction->patch, pitch, 0.1f);
 			}
 
 			pFriction->flLastUpdateTime = gpGlobals->curtime;

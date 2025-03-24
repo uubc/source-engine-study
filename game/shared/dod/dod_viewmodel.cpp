@@ -26,7 +26,7 @@ END_NETWORK_TABLE()
 // Purpose: 
 //-----------------------------------------------------------------------------
 #ifdef CLIENT_DLL
-CDODViewModel::CDODViewModel() : m_LagAnglesHistory("CDODViewModel::m_LagAnglesHistory", &m_vLagAngles, 0)
+CDODViewModel::CDODViewModel() : m_LagAnglesHistory(gpGlobals->curtime, "CDODViewModel::m_LagAnglesHistory", &m_vLagAngles, 0)
 {
 	m_vLagAngles.Init();
 	//m_LagAnglesHistory.Setup( &m_vLagAngles, 0 );
@@ -73,10 +73,10 @@ void CDODViewModel::CalcViewModelLag( Vector& origin, QAngle& angles, QAngle& or
 
 	// Add an entry to the history.
 	m_vLagAngles = angles;
-	m_LagAnglesHistory.NoteChanged( gpGlobals->curtime, cl_wpn_sway_interp.GetFloat(), false );
+	m_LagAnglesHistory.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, cl_wpn_sway_interp.GetFloat(), false );
 
 	// Interpolate back 100ms.
-	m_LagAnglesHistory.Interpolate( gpGlobals->curtime, cl_wpn_sway_interp.GetFloat() );
+	m_LagAnglesHistory.Interpolate( NULL, cl_wpn_sway_interp.GetFloat() );
 
 	// Now take the 100ms angle difference and figure out how far the forward vector moved in local space.
 	Vector vLaggedForward;

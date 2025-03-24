@@ -28,8 +28,8 @@ public:
 	DECLARE_EMBEDDED_NETWORKVAR();
 
 	CPlayerLocalData() :
-		m_iv_vecPunchAngle( "CPlayerLocalData::m_iv_vecPunchAngle", &m_vecPunchAngle.m_Value, LATCH_SIMULATION_VAR),
-		m_iv_vecPunchAngleVel( "CPlayerLocalData::m_iv_vecPunchAngleVel", &m_vecPunchAngleVel.m_Value, LATCH_SIMULATION_VAR)
+		m_iv_vecPunchAngle(gpGlobals->curtime, "CPlayerLocalData::m_iv_vecPunchAngle", &m_vecPunchAngle.m_Value, LATCH_SIMULATION_VAR),
+		m_iv_vecPunchAngleVel(gpGlobals->curtime, "CPlayerLocalData::m_iv_vecPunchAngleVel", &m_vecPunchAngleVel.m_Value, LATCH_SIMULATION_VAR)
 	{
 		//m_iv_vecPunchAngle.Setup( &m_vecPunchAngle.m_Value, LATCH_SIMULATION_VAR );
 		//m_iv_vecPunchAngleVel.Setup( &m_vecPunchAngleVel.m_Value, LATCH_SIMULATION_VAR );

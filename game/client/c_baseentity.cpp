@@ -251,7 +251,7 @@ void SpewInterpolatedVar( CInterpolatedVar< Vector > *pVar, float flNow, float f
 		if ( bSpew && target >= changetime )
 		{
 			Vector o;
-			pVar->DebugInterpolate( &o, flNow );
+			pVar->DebugInterpolate(NULL, &o, flNow );
 			bool bInterp = newtime != 999999.0f;
 			float frac = 0.0f;
 			char desc[ 32 ];
@@ -1611,7 +1611,7 @@ bool C_BaseEntity::SetModel( const char *pModelName )
 // Purpose: Default interpolation for entities
 // Output : true means entity should be drawn, false means probably not
 //-----------------------------------------------------------------------------
-bool C_BaseEntity::Interpolate( float currentTime )
+bool C_BaseEntity::Interpolate(IInterpolationContext* pContext, float currentTime )
 {
 	VPROF( "C_BaseEntity::Interpolate" );
 
@@ -1620,7 +1620,7 @@ bool C_BaseEntity::Interpolate( float currentTime )
 	Vector oldVel;
 
 	int bNoMoreChanges;
-	int retVal = GetEngineObject()->BaseInterpolatePart1( currentTime, oldOrigin, oldAngles, oldVel, bNoMoreChanges );
+	int retVal = GetEngineObject()->BaseInterpolatePart1(pContext, currentTime, oldOrigin, oldAngles, oldVel, bNoMoreChanges );
 
 	// If all the Interpolate() calls returned that their values aren't going to
 	// change anymore, then get us out of the interpolation list.

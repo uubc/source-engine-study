@@ -41,6 +41,7 @@ extern ConVar cl_extrapolate;
 extern ConVar g_ragdoll_important_maxcount;
 extern ConVar g_ragdoll_maxcount;
 extern ConVar g_debug_ragdoll_removal;
+extern CGlobalVarsBase* gpGlobals;
 extern IFileSystem* filesystem;
 extern IVEngineClient* engine;
 extern IBaseClientDLL* clientdll;
@@ -64,7 +65,7 @@ namespace _SUBSYSTEM
 #else
 extern IUniformRandomStream* random;
 #endif
-extern ISoundEnvelopeController* g_pSoundEnvelopeController;
+extern ISoundEnvelopeController* g_pClientSoundEnvelopeController;
 extern bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll);
 
 
@@ -218,14 +219,14 @@ public:
 
 	C_EngineObjectInternal(IClientEntityList* pClientEntityList, int iForceEdictIndex, int iSerialNum)
 		:m_pClientEntityList(pClientEntityList), m_RefEHandle(iForceEdictIndex, iSerialNum),
-		m_iv_vecOrigin("IClientEntity::m_iv_vecOrigin", &m_vecOrigin, LATCH_SIMULATION_VAR),
-		m_iv_angRotation("IClientEntity::m_iv_angRotation", &m_angRotation, LATCH_SIMULATION_VAR),
-		m_iv_vecVelocity("IClientEntity::m_iv_vecVelocity", &m_vecVelocity, LATCH_SIMULATION_VAR),
-		m_iv_flCycle("C_BaseAnimating::m_iv_flCycle", &m_flCycle, LATCH_ANIMATION_VAR),
-		m_iv_flPoseParameter("C_BaseAnimating::m_iv_flPoseParameter", m_flPoseParameter, LATCH_ANIMATION_VAR),
-		m_iv_flEncodedController("C_BaseAnimating::m_iv_flEncodedController", m_flEncodedController, LATCH_ANIMATION_VAR),
-		m_iv_ragPos("C_ServerRagdoll::m_iv_ragPos", m_ragPos, LATCH_SIMULATION_VAR),
-		m_iv_ragAngles("C_ServerRagdoll::m_iv_ragAngles", m_ragAngles, LATCH_SIMULATION_VAR)
+		m_iv_vecOrigin(gpGlobals->curtime, "IClientEntity::m_iv_vecOrigin", &m_vecOrigin, LATCH_SIMULATION_VAR),
+		m_iv_angRotation(gpGlobals->curtime, "IClientEntity::m_iv_angRotation", &m_angRotation, LATCH_SIMULATION_VAR),
+		m_iv_vecVelocity(gpGlobals->curtime, "IClientEntity::m_iv_vecVelocity", &m_vecVelocity, LATCH_SIMULATION_VAR),
+		m_iv_flCycle(gpGlobals->curtime, "C_BaseAnimating::m_iv_flCycle", &m_flCycle, LATCH_ANIMATION_VAR),
+		m_iv_flPoseParameter(gpGlobals->curtime, "C_BaseAnimating::m_iv_flPoseParameter", m_flPoseParameter, LATCH_ANIMATION_VAR),
+		m_iv_flEncodedController(gpGlobals->curtime, "C_BaseAnimating::m_iv_flEncodedController", m_flEncodedController, LATCH_ANIMATION_VAR),
+		m_iv_ragPos(gpGlobals->curtime, "C_ServerRagdoll::m_iv_ragPos", m_ragPos, LATCH_SIMULATION_VAR),
+		m_iv_ragAngles(gpGlobals->curtime, "C_ServerRagdoll::m_iv_ragAngles", m_ragAngles, LATCH_SIMULATION_VAR)
 	{
 		AddVar(&m_iv_vecOrigin);//&m_vecOrigin, , LATCH_SIMULATION_VAR
 		AddVar(&m_iv_angRotation);//&m_angRotation, , LATCH_SIMULATION_VAR
@@ -501,7 +502,7 @@ public:
 	void Interp_SetupMappings();
 
 	// Returns 1 if there are no more changes (ie: we could call RemoveFromInterpolationList).
-	int Interp_Interpolate(float currentTime);
+	int Interp_Interpolate(IInterpolationContext* pContext, float currentTime);
 
 	void Interp_RestoreToLastNetworked();
 	void Interp_UpdateInterpolationAmounts();
@@ -512,7 +513,7 @@ public:
 
 	// Returns INTERPOLATE_STOP or INTERPOLATE_CONTINUE.
 	// bNoMoreChanges is set to 1 if you can call RemoveFromInterpolationList on the entity.
-	int BaseInterpolatePart1(float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges);
+	int BaseInterpolatePart1(IInterpolationContext* pContext, float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges);
 	void BaseInterpolatePart2(Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int nChangeFlags);
 
 	void AllocateIntermediateData(void);
@@ -3008,6 +3009,75 @@ public:
 	int* m_pStoredEvent;
 };
 
+// this global keeps the last known server packet tick (to avoid calling engine->GetLastTimestamp() all the time)
+extern float g_flLastPacketTimestamp;
+
+// Before calling Interpolate(), you can use this use this to setup the context if 
+// you want to enable extrapolation.
+class CInterpolationContext : public IInterpolationContext
+{
+public:
+
+	CInterpolationContext()
+	{
+		m_bOldAllowExtrapolation = s_bAllowExtrapolation;
+		m_flOldLastTimeStamp = s_flLastTimeStamp;
+
+		// By default, disable extrapolation unless they call EnableExtrapolation.
+		s_bAllowExtrapolation = false;
+
+		// this is the context stack
+		m_pNext = s_pHead;
+		s_pHead = this;
+	}
+
+	~CInterpolationContext()
+	{
+		// restore values from prev stack element
+		s_bAllowExtrapolation = m_bOldAllowExtrapolation;
+		s_flLastTimeStamp = m_flOldLastTimeStamp;
+
+		Assert(s_pHead == this);
+		s_pHead = m_pNext;
+	}
+
+	void EnableExtrapolation(bool state)
+	{
+		s_bAllowExtrapolation = state;
+	}
+
+	bool IsThereAContext()
+	{
+		return s_pHead != NULL;
+	}
+
+	bool IsExtrapolationAllowed()
+	{
+		return s_bAllowExtrapolation;
+	}
+
+	void SetLastTimeStamp(float timestamp)
+	{
+		s_flLastTimeStamp = timestamp;
+	}
+
+	float GetLastTimeStamp()
+	{
+		return s_flLastTimeStamp;
+	}
+
+
+private:
+
+	CInterpolationContext* m_pNext;
+	bool m_bOldAllowExtrapolation;
+	float m_flOldLastTimeStamp;
+
+	static CInterpolationContext* s_pHead;
+	static bool s_bAllowExtrapolation;
+	static float s_flLastTimeStamp;
+};
+
 //
 // This is the IClientEntityList implemenation. It serves two functions:
 //
@@ -3196,7 +3266,11 @@ public:
 	void SetPredictionRandomSeed(const CUserCmd* cmd);
 	IEngineObject* GetPredictionPlayer(void);
 	void SetPredictionPlayer(IEngineObject* player);
-
+	void SetLastPacketTimeStamp(float timestamp)
+	{
+		Assert(timestamp > 0);
+		g_flLastPacketTimestamp = timestamp;
+	}
 	// Should we be interpolating?
 	bool IsInterpolationEnabled();
 	// Figure out the smoothly interpolated origin for all server entities. Happens right before
@@ -3206,8 +3280,8 @@ public:
 
 	// Interpolate entity
 	void ProcessTeleportList();
-	void ProcessInterpolatedList();
-	void CheckInterpolatedVarParanoidMeasurement();
+	void ProcessInterpolatedList(IInterpolationContext* pContext);
+	void CheckInterpolatedVarParanoidMeasurement(IInterpolationContext* pContext);
 
 	// Move it to the top of the LRU
 	void MoveToTopOfLRU(IClientEntity* pRagdoll, bool bImportant = false);
@@ -3330,16 +3404,16 @@ public:
 				if (entindex < 0)
 					entindex = 0;
 
-				pFriction->patch = g_pSoundEnvelopeController->SoundCreate(
+				pFriction->patch = g_pClientSoundEnvelopeController->SoundCreate(
 					*pFilter, entindex, CHAN_BODY, pSoundName, params.soundlevel);
-				g_pSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
+				g_pClientSoundEnvelopeController->Play(pFriction->patch, params.volume * flVolume, params.pitch);
 				delete pFilter;
 			}
 			else
 			{
 				float pitch = (flVolume * (params.pitchhigh - params.pitchlow)) + params.pitchlow;
-				g_pSoundEnvelopeController->SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
-				g_pSoundEnvelopeController->SoundChangePitch(pFriction->patch, pitch, 0.1f);
+				g_pClientSoundEnvelopeController->SoundChangeVolume(pFriction->patch, params.volume * flVolume, 0.1f);
+				g_pClientSoundEnvelopeController->SoundChangePitch(pFriction->patch, pitch, 0.1f);
 			}
 
 			pFriction->flLastUpdateTime = gpGlobals->curtime;
@@ -3657,7 +3731,7 @@ protected:
 				return;
 
 			// Play from the world, because the entity is breaking, so it'll be destroyed soon
-			IRecipientFilter* filter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
+			IRecipientFilter* pFilter = m_pWorld->CreatePASAttenuationFilter(sound.origin, params.soundlevel);
 			EmitSound_t ep;
 			ep.m_nChannel = CHAN_STATIC;
 			ep.m_pSoundName = params.soundname;
@@ -3665,8 +3739,8 @@ protected:
 			ep.m_SoundLevel = params.soundlevel;
 			ep.m_nPitch = params.pitch;
 			ep.m_pOrigin = &sound.origin;
-			g_pSoundEmitterSystem->EmitSound(filter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
-			delete filter;
+			g_pSoundEmitterSystem->EmitSound(*pFilter, 0 /*sound.entityIndex*/, ep);//CBaseEntity::
+			delete pFilter;
 		}
 		list.RemoveAll();
 	}
@@ -5299,8 +5373,6 @@ bool CClientEntityList<T>::IsSimulatingOnAlternateTicks()
 	return sv_alternateticks.GetBool();
 }
 
-
-
 template<class T>
 void CClientEntityList<T>::InterpolateServerEntities()
 {
@@ -5350,7 +5422,7 @@ void CClientEntityList<T>::InterpolateServerEntities()
 
 	// Smoothly interpolate position for server entities.
 	ProcessTeleportList();
-	ProcessInterpolatedList();
+	ProcessInterpolatedList(&context);
 }
 
 template<class T>
@@ -5383,7 +5455,7 @@ void CClientEntityList<T>::ProcessTeleportList()
 }
 
 template<class T>
-void CClientEntityList<T>::CheckInterpolatedVarParanoidMeasurement()
+void CClientEntityList<T>::CheckInterpolatedVarParanoidMeasurement(IInterpolationContext* pContext)
 {
 	// What we're doing here is to check all the entities that were not in the interpolation
 	// list and make sure that there's no entity that should be in the list that isn't.
@@ -5407,7 +5479,7 @@ void CClientEntityList<T>::CheckInterpolatedVarParanoidMeasurement()
 
 		g_bRestoreInterpolatedVarValues = true;
 		g_nInterpolatedVarsChanged = 0;
-		pEnt->Interpolate(gpGlobals->curtime);
+		pEnt->Interpolate(pContext, gpGlobals->curtime);
 		g_bRestoreInterpolatedVarValues = false;
 
 		if (g_nInterpolatedVarsChanged > 0)
@@ -5421,9 +5493,9 @@ void CClientEntityList<T>::CheckInterpolatedVarParanoidMeasurement()
 }
 
 template<class T>
-void CClientEntityList<T>::ProcessInterpolatedList()
+void CClientEntityList<T>::ProcessInterpolatedList(IInterpolationContext* pContext)
 {
-	CheckInterpolatedVarParanoidMeasurement();
+	CheckInterpolatedVarParanoidMeasurement(pContext);
 
 	// Interpolate the minimal set of entities that need it.
 	int iNext;
@@ -5432,7 +5504,7 @@ void CClientEntityList<T>::ProcessInterpolatedList()
 		iNext = m_InterpolationList.Next(iCur);
 		C_EngineObjectInternal* pCur = m_InterpolationList[iCur];
 
-		pCur->m_bReadyToDraw = pCur->GetOuter()->Interpolate(gpGlobals->curtime);
+		pCur->m_bReadyToDraw = pCur->GetOuter()->Interpolate(pContext, gpGlobals->curtime);
 	}
 }
 

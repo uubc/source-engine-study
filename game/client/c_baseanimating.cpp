@@ -2094,7 +2094,7 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 
-bool C_BaseAnimating::Interpolate( float flCurrentTime )
+bool C_BaseAnimating::Interpolate(IInterpolationContext* pContext, float flCurrentTime )
 {
 	// ragdolls don't need interpolation
 	if (GetEngineObject()->RagdollBoneCount())
@@ -2111,7 +2111,7 @@ bool C_BaseAnimating::Interpolate( float flCurrentTime )
 
 
 	int bNoMoreChanges;
-	int retVal = GetEngineObject()->BaseInterpolatePart1( flCurrentTime, oldOrigin, oldAngles, oldVel, bNoMoreChanges );
+	int retVal = GetEngineObject()->BaseInterpolatePart1(pContext, flCurrentTime, oldOrigin, oldAngles, oldVel, bNoMoreChanges );
 	if ( retVal == INTERPOLATE_STOP )
 	{
 		if ( bNoMoreChanges )
@@ -2301,7 +2301,7 @@ void C_BaseAnimating::ForceSetupBonesAtTime( matrix3x4_t *pBonesOut, float flTim
 	GetEngineObject()->InvalidateBoneCache();
 
 	// reset root position to flTime
-	Interpolate( flTime );
+	Interpolate(NULL, flTime );
 
 	// Setup bone state at the given time
 	GetEngineObject()->SetupBones( pBonesOut, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, flTime );

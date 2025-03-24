@@ -549,7 +549,7 @@ public:
 	float							GetInterpolationAmount(int flags);
 
 	// Interpolate the position for rendering
-	virtual bool					Interpolate(float currentTime);
+	virtual bool					Interpolate(IInterpolationContext* pContext, float currentTime);
 
 
 	// Is this a submodel of the world ( *1 etc. in name ) ( brush models only )

@@ -2294,7 +2294,7 @@ void CHLClient::FrameStageNotify( ClientFrameStage_t curStage )
 			// disabled all recomputations while we update entities
 			EntityList()->EnableAbsRecomputations( false );
 			EntityList()->SetAbsQueriesValid( false );
-			Interpolation_SetLastPacketTimeStamp( engine->GetLastTimeStamp() );
+			EntityList()->SetLastPacketTimeStamp( engine->GetLastTimeStamp() );
 			partition->SuppressLists( PARTITION_ALL_CLIENT_EDICTS, true );
 
 			PREDICTION_STARTTRACKVALUE( "netupdate" );

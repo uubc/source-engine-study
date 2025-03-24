@@ -39,7 +39,7 @@ ConVar mp_slammoveyaw( "mp_slammoveyaw", "0", FCVAR_REPLICATED | FCVAR_DEVELOPME
 
 CMultiPlayerAnimState::CMultiPlayerAnimState() 
 #ifdef CLIENT_DLL
-	: m_iv_flMaxGroundSpeed("CMultiPlayerAnimState::m_iv_flMaxGroundSpeed", &m_flMaxGroundSpeed, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY)
+	: m_iv_flMaxGroundSpeed(gpGlobals->curtime, "CMultiPlayerAnimState::m_iv_flMaxGroundSpeed", &m_flMaxGroundSpeed, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY)
 #endif
 {
 	
@@ -51,7 +51,7 @@ CMultiPlayerAnimState::CMultiPlayerAnimState()
 //-----------------------------------------------------------------------------
 CMultiPlayerAnimState::CMultiPlayerAnimState( CBasePlayer *pPlayer, MultiPlayerMovementData_t &movementData )
 #ifdef CLIENT_DLL
-	: m_iv_flMaxGroundSpeed( "CMultiPlayerAnimState::m_iv_flMaxGroundSpeed", &m_flMaxGroundSpeed, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY)
+	: m_iv_flMaxGroundSpeed(gpGlobals->curtime, "CMultiPlayerAnimState::m_iv_flMaxGroundSpeed", &m_flMaxGroundSpeed, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY)
 #endif
 {
 	// Pose parameters.
@@ -1155,8 +1155,8 @@ void CMultiPlayerAnimState::ResetGroundSpeed( void )
 {
 #ifdef CLIENT_DLL
 		m_flMaxGroundSpeed = GetCurrentMaxGroundSpeed();
-		m_iv_flMaxGroundSpeed.Reset();
-		m_iv_flMaxGroundSpeed.NoteChanged( gpGlobals->curtime, 0, false );
+		m_iv_flMaxGroundSpeed.Reset(gpGlobals->curtime);
+		m_iv_flMaxGroundSpeed.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, 0, false );
 #endif
 }
 
@@ -1180,10 +1180,10 @@ void CMultiPlayerAnimState::UpdateInterpolators()
 		m_flLastGroundSpeedUpdateTime = gpGlobals->curtime;
 
 		m_flMaxGroundSpeed = flCurMaxSpeed;
-		m_iv_flMaxGroundSpeed.NoteChanged( gpGlobals->curtime, flGroundSpeedInterval, false );
+		m_iv_flMaxGroundSpeed.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, flGroundSpeedInterval, false );
 	}
 
-	m_iv_flMaxGroundSpeed.Interpolate( gpGlobals->curtime, flGroundSpeedInterval );
+	m_iv_flMaxGroundSpeed.Interpolate(NULL, gpGlobals->curtime, flGroundSpeedInterval );
 #else
 	m_flMaxGroundSpeed = flCurMaxSpeed;
 #endif

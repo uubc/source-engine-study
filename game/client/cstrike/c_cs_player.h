@@ -92,7 +92,7 @@ public:
 
 	virtual void OnDataChanged( DataUpdateType_t type );
 	virtual void PostDataUpdate( DataUpdateType_t updateType );
-	virtual bool Interpolate( float currentTime );
+	virtual bool Interpolate(IInterpolationContext* pContext, float currentTime );
 	virtual void UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrigin, const Vector &vecVelocity  );
 	virtual surfacedata_t * GetFootstepSurface( const Vector &origin, const char *surfaceName );
 	virtual void ValidateModelIndex( void );

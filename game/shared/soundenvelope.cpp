@@ -1270,6 +1270,14 @@ void CSoundControllerImp::OnRestore()
 //-----------------------------------------------------------------------------
 static CSoundControllerImp s_Controller;
 ISoundEnvelopeController* g_pSoundEnvelopeController = &s_Controller;
+#ifdef GAME_DLL
+ISoundEnvelopeController* g_pServerSoundEnvelopeController = &s_Controller;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CSoundControllerImp, ISoundEnvelopeController, SERVER_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION, s_Controller);
+#endif // GAME_DLL
+#ifdef CLIENT_DLL
+ISoundEnvelopeController* g_pClientSoundEnvelopeController = &s_Controller;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CSoundControllerImp, ISoundEnvelopeController, CLIENT_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION, s_Controller);
+#endif // CLIENT_DLL
 
 
 //-----------------------------------------------------------------------------

@@ -108,7 +108,7 @@ void ResizeAnimationLayerCallback( void *pStruct, int offsetToUtlVector, int len
 	{
 		IInterpolatedVar *pWatcher = pVecIV->Element( i );
 		if (!pWatcher) {
-			pVecIV->Element(i) = new CInterpolatedVar< C_AnimationLayer >(s_m_iv_AnimOverlayNames[i], &pVec->Element(i), LATCH_ANIMATION_VAR);
+			pVecIV->Element(i) = new CInterpolatedVar< C_AnimationLayer >(gpGlobals->curtime, s_m_iv_AnimOverlayNames[i], &pVec->Element(i), LATCH_ANIMATION_VAR);
 			pWatcher = pVecIV->Element(i);
 		}
 		//pWatcher->SetDebugName( s_m_iv_AnimOverlayNames[i] );
@@ -286,7 +286,7 @@ void C_BaseAnimatingOverlay::CheckForLayerChanges( IStudioHdr *hdr, float curren
 			*/
 
 			m_iv_AnimOverlay[i]->SetLooping(GetEngineObject()->IsSequenceLooping( hdr, pHead->m_nSequence ) );
-			m_iv_AnimOverlay[i]->Interpolate( currentTime );
+			m_iv_AnimOverlay[i]->Interpolate(NULL, currentTime );
 
 			// reset event indexes
 			m_flOverlayPrevEventCycle[i] = pHead->m_flPrevCycle - 0.01;

@@ -616,6 +616,19 @@ public:
 	virtual const char* CurrentBufferPosition(void) = 0;
 };
 
+class IInterpolationContext {
+public:
+	virtual void EnableExtrapolation(bool state) = 0;
+
+	virtual bool IsThereAContext() = 0;
+
+	virtual bool IsExtrapolationAllowed() = 0;
+
+	virtual void SetLastTimeStamp(float timestamp) = 0;
+
+	virtual float GetLastTimeStamp() = 0;
+};
+
 abstract_class IInterpolatedVar
 {
 public:
@@ -625,12 +638,12 @@ public:
 	virtual void SetInterpolationAmount(float seconds) = 0;
 
 	// Returns true if the new value is different from the prior most recent value.
-	virtual void NoteLastNetworkedValue() = 0;
-	virtual bool NoteChanged(float changetime, bool bUpdateLastNetworkedValue) = 0;
-	virtual void Reset() = 0;
+	virtual void NoteLastNetworkedValue(float networkTime) = 0;
+	virtual bool NoteChanged(float currentTime, float changetime, bool bUpdateLastNetworkedValue) = 0;
+	virtual void Reset(float currentTime) = 0;
 
 	// Returns 1 if the value will always be the same if currentTime is always increasing.
-	virtual int Interpolate(float currentTime) = 0;
+	virtual int Interpolate(IInterpolationContext* pContext, float currentTime) = 0;
 
 	virtual int& GetType() = 0;
 	virtual void RestoreToLastNetworked() = 0;
@@ -729,6 +742,9 @@ struct envelopeDescription_t
 	envelopePoint_t* pPoints;
 	int				nNumPoints;
 };
+
+#define SERVER_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION	"ServerSoundEnvelopeController001"
+#define CLIENT_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION	"ClientSoundEnvelopeController001"
 
 abstract_class ISoundEnvelopeController
 {

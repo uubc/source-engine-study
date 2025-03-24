@@ -436,7 +436,7 @@ void C_CSRagdoll::CreateCSRagdoll()
 			Interp_Copy( pPlayer );
 
 			GetEngineObject()->SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetEngineObject()->GetRotationInterpolator().Reset();
+			GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);
 
 			GetEngineObject()->SetAnimTime(pPlayer->GetEngineObject()->GetAnimTime());
 			GetEngineObject()->SetSequence( pPlayer->GetEngineObject()->GetSequence() );
@@ -794,7 +794,7 @@ END_RECV_TABLE()
 
 
 C_CSPlayer::C_CSPlayer() :
-	m_iv_angEyeAngles( "C_CSPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
+	m_iv_angEyeAngles(gpGlobals->curtime, "C_CSPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this, this, LEGANIM_9WAY, true );
 
@@ -1409,9 +1409,9 @@ void C_CSPlayer::PostDataUpdate( DataUpdateType_t updateType )
 // Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool C_CSPlayer::Interpolate( float currentTime )
+bool C_CSPlayer::Interpolate(IInterpolationContext* pContext, float currentTime )
 {
-	if ( !BaseClass::Interpolate( currentTime ) )
+	if ( !BaseClass::Interpolate(pContext, currentTime ) )
 		return false;
 
 	if ( CSGameRules()->IsFreezePeriod() )

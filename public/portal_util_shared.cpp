@@ -907,7 +907,7 @@ void UTIL_TransformInterpolatedAngle(ITypedInterpolatedVar< QAngle > &qInterped,
 			break;
 	}
 
-	qInterped.Interpolate( gpGlobals->curtime );
+	qInterped.Interpolate(NULL, gpGlobals->curtime );
 }
 
 void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector > &vInterped, VMatrix matTransform, bool bSkipNewest )
@@ -942,7 +942,7 @@ void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector > &vInterp
 			break;
 	}
 
-	vInterped.Interpolate( gpGlobals->curtime );
+	vInterped.Interpolate(NULL, gpGlobals->curtime );
 }
 #endif
 

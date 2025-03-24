@@ -29,21 +29,21 @@ BEGIN_SIMPLE_DATADESC( PhysBlockHeader_t )
 	DEFINE_FIELD( pWorldObject, FIELD_POINTER ),	
 END_DATADESC()
 
-#if defined(_STATIC_LINKED) && defined(CLIENT_DLL)
-const char *g_ppszPhysTypeNames[PIID_NUM_TYPES] =
-{
-	"Unknown",
-	"IPhysicsObject",
-	"IPhysicsFluidController",
-	"IPhysicsSpring",
-	"IPhysicsConstraintGroup",
-	"IPhysicsConstraint",
-	"IPhysicsShadowController",
-	"IPhysicsPlayerController",
-	"IPhysicsMotionController",
-	"IPhysicsVehicleController",
-};
-#endif
+//#if defined(_STATIC_LINKED) && defined(CLIENT_DLL)
+//const char *g_ppszPhysTypeNames[PIID_NUM_TYPES] =
+//{
+//	"Unknown",
+//	"IPhysicsObject",
+//	"IPhysicsFluidController",
+//	"IPhysicsSpring",
+//	"IPhysicsConstraintGroup",
+//	"IPhysicsConstraint",
+//	"IPhysicsShadowController",
+//	"IPhysicsPlayerController",
+//	"IPhysicsMotionController",
+//	"IPhysicsVehicleController",
+//};
+//#endif
 
 //-----------------------------------------------------------------------------
 
@@ -80,14 +80,14 @@ const char * CPhysSaveRestoreBlockHandler::GetBlockName()
 	return "Physics";
 }
 
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::PreSave( CSaveRestoreData * )
 {
 	m_blockHeader.Clear();
 }
 	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::Save( ISave *pSave )
 {
@@ -123,7 +123,7 @@ void CPhysSaveRestoreBlockHandler::Save( ISave *pSave )
 	}
 }
 	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::WriteSaveHeaders( ISave *pSave )
 {
@@ -131,14 +131,14 @@ void CPhysSaveRestoreBlockHandler::WriteSaveHeaders( ISave *pSave )
 	pSave->WriteAll( &m_blockHeader );
 }
 	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::PostSave()
 {
 	m_QueuedSaves.Purge();
 }
 	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::PreRestore()
 {
@@ -151,7 +151,7 @@ void CPhysSaveRestoreBlockHandler::PreRestore()
 	}
 }
 	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::ReadRestoreHeaders( IRestore *pRestore )
 {
@@ -162,7 +162,7 @@ void CPhysSaveRestoreBlockHandler::ReadRestoreHeaders( IRestore *pRestore )
 	pRestore->ReadAll( &m_blockHeader );
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::Restore( IRestore *pRestore, bool )
 {
@@ -194,7 +194,7 @@ void CPhysSaveRestoreBlockHandler::Restore( IRestore *pRestore, bool )
 	}
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::RestoreBlock( IRestore *pRestore, const PhysObjectHeader_t &header )
 {
@@ -248,8 +248,7 @@ void CPhysSaveRestoreBlockHandler::RestoreBlock( IRestore *pRestore, const PhysO
 	}
 }
 	
-	
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRestore, const PhysObjectHeader_t &header, QueuedItem_t *pItem, int nObjects )
 {
@@ -321,7 +320,7 @@ void CPhysSaveRestoreBlockHandler::RestorePhysicsObjectAndModel( IRestore *pRest
 		DevMsg( "Don't know how to reconsitite models for physobj array \n" );
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::PostRestore()
 {
@@ -338,7 +337,7 @@ void CPhysSaveRestoreBlockHandler::PostRestore()
 	m_QueuedRestores.RemoveAll();
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::QueueSave( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
 {
@@ -398,7 +397,7 @@ void CPhysSaveRestoreBlockHandler::QueueSave( IHandleEntity *pOwner, typedescrip
 	m_QueuedSaves.Insert( item );
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::QueueRestore( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
 {
@@ -420,7 +419,7 @@ void CPhysSaveRestoreBlockHandler::QueueRestore( IHandleEntity *pOwner, typedesc
 	memset( ppPhysObj, 0, pTypeDesc->fieldSize * sizeof( void * ) );
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::SavePhysicsObject( ISave *pSave, IHandleEntity *pOwner, void *pObject, PhysInterfaceId_t type )
 {
@@ -433,7 +432,7 @@ void CPhysSaveRestoreBlockHandler::SavePhysicsObject( ISave *pSave, IHandleEntit
 	}
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::RestorePhysicsObject( IRestore *pRestore, const PhysObjectHeader_t &header, void **ppObject, const CPhysCollide *pCollide )
 {
@@ -463,8 +462,8 @@ void CPhysSaveRestoreBlockHandler::OnEntityDeleted( IHandleEntity *pEntity )
 	}
 }
 
-	//-----------------------------------------------------
-	// IPhysSaveRestoreManager methods
+//-----------------------------------------------------
+// IPhysSaveRestoreManager methods
 	
 void CPhysSaveRestoreBlockHandler::NoteBBox( const Vector &mins, const Vector &maxs, CPhysCollide *pCollide )
 {
@@ -477,7 +476,7 @@ void CPhysSaveRestoreBlockHandler::NoteBBox( const Vector &mins, const Vector &m
 	}
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, int modelIndex )
 {
@@ -485,7 +484,7 @@ void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, int 
 	m_PhysObjectModels.Insert( pObject, modelIndex );
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, const CPhysCollide *pModel )
 {
@@ -493,7 +492,7 @@ void CPhysSaveRestoreBlockHandler::AssociateModel( IPhysicsObject *pObject, cons
 	m_PhysObjectCustomModels.Insert( pObject, pModel );
 }
 
-	//---------------------------------
+//---------------------------------
 	
 void CPhysSaveRestoreBlockHandler::ForgetModel( IPhysicsObject *pObject )
 {
@@ -501,7 +500,7 @@ void CPhysSaveRestoreBlockHandler::ForgetModel( IPhysicsObject *pObject )
 		m_PhysObjectCustomModels.Remove( pObject );
 }
 
-	//---------------------------------
+//---------------------------------
 
 void CPhysSaveRestoreBlockHandler::ForgetAllModels()
 {
@@ -510,7 +509,7 @@ void CPhysSaveRestoreBlockHandler::ForgetAllModels()
 	m_PhysCollideBBoxModels.RemoveAll();
 }
 
-	//---------------------------------
+//---------------------------------
 	
 string_t CPhysSaveRestoreBlockHandler::GetModelName( IPhysicsObject *pObject )
 {
@@ -520,7 +519,7 @@ string_t CPhysSaveRestoreBlockHandler::GetModelName( IPhysicsObject *pObject )
 	return m_pEntityList->AllocPooledString(m_pEntityList->GetModelInfo()->GetModelName(m_pEntityList->GetModelInfo()->GetModel( m_PhysObjectModels[i] ) ) );
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 BBox_t * CPhysSaveRestoreBlockHandler::GetBBox( IPhysicsObject *pObject )
 {
@@ -533,9 +532,6 @@ BBox_t * CPhysSaveRestoreBlockHandler::GetBBox( IPhysicsObject *pObject )
 	return &(m_PhysCollideBBoxModels[i]);
 }
 
-	
-	
-	
 int CPhysSaveRestoreBlockHandler::CEntityRestoreSet::Add( IHandleEntity *pOwner, typedescription_t *pTypeDesc, void **ppPhysObj, PhysInterfaceId_t type )
 {
 	int i = AddToTail();
@@ -570,7 +566,7 @@ CPhysSaveRestoreBlockHandler::QueuedItem_t * CPhysSaveRestoreBlockHandler::CEnti
 	return NULL;
 }
 	
-	//---------------------------------
+//---------------------------------
 	
 bool CPhysSaveRestoreBlockHandler::SaveQueueFunc( const CPhysSaveRestoreBlockHandler::QueuedItem_t &left, const CPhysSaveRestoreBlockHandler::QueuedItem_t &right )
 {
@@ -586,7 +582,7 @@ bool CPhysSaveRestoreBlockHandler::SaveQueueFunc( const CPhysSaveRestoreBlockHan
 // This object is only a listener during restore	
 void CServerPhysSaveRestoreBlockHandler::OnEntityCreated(IServerEntity* pEntity)
 {
-
+	CPhysSaveRestoreBlockHandler::OnEntityCreated(pEntity);
 }
 
 //---------------------------------
@@ -594,7 +590,6 @@ void CServerPhysSaveRestoreBlockHandler::OnEntityCreated(IServerEntity* pEntity)
 void CServerPhysSaveRestoreBlockHandler::OnEntityDeleted(IServerEntity* pEntity)
 {
 	CPhysSaveRestoreBlockHandler::OnEntityDeleted(pEntity);
-	
 }
 
 int CServerPhysSaveRestoreBlockHandler::GetModelIndexFromHeader(const PhysObjectHeader_t& header)

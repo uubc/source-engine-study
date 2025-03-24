@@ -301,7 +301,7 @@ extern bool g_bUpsideDown;
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
 C_Portal_Player::C_Portal_Player()
-: m_iv_angEyeAngles( "C_Portal_Player::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
+: m_iv_angEyeAngles(gpGlobals->curtime, "C_Portal_Player::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
 {
 	m_PlayerAnimState = CreatePortalPlayerAnimState( this );
 
@@ -726,7 +726,7 @@ void C_Portal_Player::FixTeleportationRoll( void )
 				vAbsAngles[ROLL] = 0.0f;
 			engine->SetViewAngles( vAbsAngles );
 			m_angEyeAngles = vAbsAngles;
-			m_iv_angEyeAngles.Reset();
+			m_iv_angEyeAngles.Reset(gpGlobals->curtime);
 		}
 	}
 	else
@@ -751,7 +751,7 @@ void C_Portal_Player::FixTeleportationRoll( void )
 
 				engine->SetViewAngles( vAbsAngles );
 				m_angEyeAngles = vAbsAngles;
-				m_iv_angEyeAngles.Reset();
+				m_iv_angEyeAngles.Reset(gpGlobals->curtime);
 			}
 			else
 			{
@@ -762,7 +762,7 @@ void C_Portal_Player::FixTeleportationRoll( void )
 						vAbsAngles[ROLL] = 0.0f;
 					engine->SetViewAngles( vAbsAngles );
 					m_angEyeAngles = vAbsAngles;
-					m_iv_angEyeAngles.Reset();
+					m_iv_angEyeAngles.Reset(gpGlobals->curtime);
 				}
 				else if ( vAbsAngles[ROLL] > 0.0f )
 				{
@@ -771,7 +771,7 @@ void C_Portal_Player::FixTeleportationRoll( void )
 						vAbsAngles[ROLL] = 0.0f;
 					engine->SetViewAngles( vAbsAngles );
 					m_angEyeAngles = vAbsAngles;
-					m_iv_angEyeAngles.Reset();
+					m_iv_angEyeAngles.Reset(gpGlobals->curtime);
 				}
 			}
 		}
@@ -1102,7 +1102,7 @@ bool C_Portal_Player::DetectAndHandlePortalTeleportation( void )
 			m_angEyeAngles.x = AngleNormalize( m_angEyeAngles.x );
 			m_angEyeAngles.y = AngleNormalize( m_angEyeAngles.y );
 			m_angEyeAngles.z = AngleNormalize( m_angEyeAngles.z );
-			m_iv_angEyeAngles.Reset(); //copies from m_angEyeAngles
+			m_iv_angEyeAngles.Reset(gpGlobals->curtime); //copies from m_angEyeAngles
 
 			if( engine->IsPlayingDemo() )
 			{				

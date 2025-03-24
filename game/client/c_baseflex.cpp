@@ -118,11 +118,11 @@ bool GetHWMExpressionFileName( const char *pFilename, char *pHWMFilename )
 }
 
 C_BaseFlex::C_BaseFlex() : 
-	m_iv_viewtarget( "C_BaseFlex::m_iv_viewtarget", &m_viewtarget, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY),
-	m_iv_flexWeight("C_BaseFlex:m_iv_flexWeight", m_flexWeight, LATCH_ANIMATION_VAR),
+	m_iv_viewtarget(gpGlobals->curtime, "C_BaseFlex::m_iv_viewtarget", &m_viewtarget, LATCH_ANIMATION_VAR | INTERPOLATE_LINEAR_ONLY),
+	m_iv_flexWeight(gpGlobals->curtime, "C_BaseFlex:m_iv_flexWeight", m_flexWeight, LATCH_ANIMATION_VAR),
 #ifdef HL2_CLIENT_DLL
-	m_iv_vecLean("C_BaseFlex:m_iv_vecLean", &m_vecLean, LATCH_ANIMATION_VAR),
-	m_iv_vecShift("C_BaseFlex:m_iv_vecShift", &m_vecShift, LATCH_ANIMATION_VAR),
+	m_iv_vecLean(gpGlobals->curtime, "C_BaseFlex:m_iv_vecLean", &m_vecLean, LATCH_ANIMATION_VAR),
+	m_iv_vecShift(gpGlobals->curtime, "C_BaseFlex:m_iv_vecShift", &m_vecShift, LATCH_ANIMATION_VAR),
 #endif
 	m_LocalToGlobal( 0, 0, FlexSettingLessFunc )
 {
@@ -216,7 +216,7 @@ IStudioHdr *C_BaseFlex::OnNewModel()
 			memset( m_flFlexDelayedWeight, 0, sizeof( float ) * m_cFlexDelayedWeight );
 		}
 
-		m_iv_flexWeight.SetMaxCount( hdr->numflexcontrollers() );
+		m_iv_flexWeight.SetMaxCount(gpGlobals->curtime, hdr->numflexcontrollers() );
 
 		m_iMouthAttachment = GetEngineObject()->LookupAttachment( "mouth" );
 

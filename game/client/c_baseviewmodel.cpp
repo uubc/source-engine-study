@@ -142,13 +142,13 @@ void C_BaseViewModel::FireEvent( const Vector& origin, const QAngle& angles, int
 	}
 }
 
-bool C_BaseViewModel::Interpolate( float currentTime )
+bool C_BaseViewModel::Interpolate(IInterpolationContext* pContext, float currentTime )
 {
 	IStudioHdr *pStudioHdr = GetEngineObject()->GetModelPtr();
 	// Make sure we reset our animation information if we've switch sequences
 	UpdateAnimationParity();
 
-	bool bret = BaseClass::Interpolate( currentTime );
+	bool bret = BaseClass::Interpolate(pContext, currentTime );
 
 	// Hack to extrapolate cycle counter for view model
 	float elapsed_time = currentTime - GetEngineObject()->GetAnimTime();

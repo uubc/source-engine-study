@@ -45,7 +45,7 @@ static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_U
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
-C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles( "C_HL2MP_Player::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
+C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles(gpGlobals->curtime, "C_HL2MP_Player::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
 {
 	m_iIDEntIndex = 0;
 	m_iSpawnInterpCounterCache = 0;
@@ -859,7 +859,7 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 			Interp_Copy( pPlayer );
 
 			GetEngineObject()->SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetEngineObject()->GetRotationInterpolator().Reset();
+			GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);
 
 			GetEngineObject()->SetAnimTime(pPlayer->GetEngineObject()->GetAnimTime());
 			GetEngineObject()->SetSequence( pPlayer->GetEngineObject()->GetSequence() );

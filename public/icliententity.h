@@ -400,7 +400,7 @@ public:
 	virtual void Interp_SetupMappings() = 0;
 
 	// Returns 1 if there are no more changes (ie: we could call RemoveFromInterpolationList).
-	virtual int	Interp_Interpolate(float currentTime) = 0;
+	virtual int	Interp_Interpolate(IInterpolationContext* pContext, float currentTime) = 0;
 
 	virtual void Interp_RestoreToLastNetworked() = 0;
 	virtual void Interp_UpdateInterpolationAmounts() = 0;
@@ -411,7 +411,7 @@ public:
 
 	// Returns INTERPOLATE_STOP or INTERPOLATE_CONTINUE.
 	// bNoMoreChanges is set to 1 if you can call RemoveFromInterpolationList on the entity.
-	virtual int BaseInterpolatePart1(float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges) = 0;
+	virtual int BaseInterpolatePart1(IInterpolationContext* pContext, float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges) = 0;
 	virtual void BaseInterpolatePart2(Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int nChangeFlags) = 0;
 
 	virtual void AllocateIntermediateData(void) = 0;
@@ -1079,7 +1079,7 @@ public:
 	virtual bool GetPredictable(void) const = 0;
 	virtual bool ShouldInterpolate() = 0;
 	virtual float GetInterpolationAmount(int flags) = 0;
-	virtual bool Interpolate(float currentTime) = 0;
+	virtual bool Interpolate(IInterpolationContext* pContext, float currentTime) = 0;
 	virtual void OnPostRestoreData() = 0;
 	virtual float GetFinalPredictedTime() const = 0;
 	virtual unsigned int ComputeClientSideAnimationFlags() = 0;
@@ -1313,6 +1313,7 @@ public:
 	virtual void SetMaxEntities(int maxents) = 0;
 	virtual int GetMaxEntities() = 0;
 	virtual bool IsInterpolationEnabled() = 0;
+	virtual void SetLastPacketTimeStamp(float timestamp) = 0;
 	virtual void InterpolateServerEntities() = 0;
 	virtual void UpdateClientSideAnimations() = 0;
 	virtual void UpdateDirtySpatialPartitionEntities() = 0;

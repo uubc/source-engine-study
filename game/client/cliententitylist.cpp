@@ -44,6 +44,12 @@ void cc_cl_interp_all_changed(IConVar* pConVar, const char* pOldString, float fl
 static ConVar  cl_interp_all("cl_interp_all", "0", 0, "Disable interpolation list optimizations.", 0, 0, 0, 0, cc_cl_interp_all_changed);
 extern ConVar	cl_showerror;
 
+CInterpolationContext* CInterpolationContext::s_pHead = NULL;
+bool CInterpolationContext::s_bAllowExtrapolation = false;
+float CInterpolationContext::s_flLastTimeStamp = 0;
+
+float g_flLastPacketTimestamp = 0;
+
 // Create interface
 CClientEntityList<IClientEntity> g_EntityList;
 IClientEntityList* entitylist = &g_EntityList;
@@ -529,7 +535,7 @@ friction_t* CCollisionEvent::FindFriction(IClientEntity* pObject)
 void CCollisionEvent::ShutdownFriction(friction_t& friction)
 {
 	//	Msg( "Scrape Stop %s \n", STRING(friction.pObject->m_iClassname) );
-	g_pSoundEnvelopeController->SoundDestroy(friction.patch);
+	g_pClientSoundEnvelopeController->SoundDestroy(friction.patch);
 	friction.patch = NULL;
 	friction.pObject = NULL;
 }
@@ -2832,7 +2838,7 @@ void C_EngineObjectInternal::PostDataUpdate(DataUpdateType_t updateType)
 		IStudioHdr* hdr = GetModelPtr();
 		if (hdr && !(hdr->flags() & STUDIOHDR_FLAGS_STATIC_PROP))
 		{
-			m_iv_flCycle.Reset();
+			m_iv_flCycle.Reset(gpGlobals->curtime);
 		}
 	}
 
@@ -2848,11 +2854,11 @@ void C_EngineObjectInternal::PostDataUpdate(DataUpdateType_t updateType)
 		{
 			m_elementCount = RagdollExtractBoneIndices(m_pClientEntityList, m_boneIndex, GetModelPtr(), pCollide);
 		}
-		m_iv_ragPos.SetMaxCount(m_elementCount);
-		m_iv_ragAngles.SetMaxCount(m_elementCount);
+		m_iv_ragPos.SetMaxCount(gpGlobals->curtime, m_elementCount);
+		m_iv_ragAngles.SetMaxCount(gpGlobals->curtime, m_elementCount);
 	}
-	m_iv_ragPos.NoteChanged(gpGlobals->curtime, true);
-	m_iv_ragAngles.NoteChanged(gpGlobals->curtime, true);
+	m_iv_ragPos.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, true);
+	m_iv_ragAngles.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, true);
 	// this is the local client time at which this update becomes stale
 	m_flLastBoneChangeTime = gpGlobals->curtime + m_pOuter->GetInterpolationAmount(m_iv_ragPos.GetType());
 	// if we changed parents, recalculate visibility
@@ -3072,7 +3078,7 @@ void C_EngineObjectInternal::Interp_HierarchyUpdateInterpolationAmounts()
 	}
 }
 
-inline int C_EngineObjectInternal::Interp_Interpolate(float currentTime)
+inline int C_EngineObjectInternal::Interp_Interpolate(IInterpolationContext* pContext, float currentTime)
 {
 	int bNoMoreChanges = 1;
 	if (currentTime < m_VarMap.m_lastInterpolationTime)
@@ -3097,7 +3103,7 @@ inline int C_EngineObjectInternal::Interp_Interpolate(float currentTime)
 		Assert(!(watcher->GetType() & EXCLUDE_AUTO_INTERPOLATE));
 
 
-		if (watcher->Interpolate(currentTime))
+		if (watcher->Interpolate(pContext, currentTime))
 			e->m_bNeedsToInterpolate = false;
 		else
 			bNoMoreChanges = 0;
@@ -3402,7 +3408,7 @@ void C_EngineObjectInternal::OnStoreLastNetworkedValue()
 		if (type & EXCLUDE_AUTO_LATCH)
 			continue;
 
-		watcher->NoteLastNetworkedValue();
+		watcher->NoteLastNetworkedValue(g_flLastPacketTimestamp);
 	}
 
 	if (bRestore)
@@ -3440,7 +3446,7 @@ void C_EngineObjectInternal::OnLatchInterpolatedVariables(int flags)
 		if (type & EXCLUDE_AUTO_LATCH)
 			continue;
 
-		if (watcher->NoteChanged(changetime, bUpdateLastNetworkedValue))
+		if (watcher->NoteChanged(gpGlobals->curtime, changetime, bUpdateLastNetworkedValue))
 			e->m_bNeedsToInterpolate = true;
 	}
 
@@ -3450,7 +3456,7 @@ void C_EngineObjectInternal::OnLatchInterpolatedVariables(int flags)
 	}
 }
 
-int C_EngineObjectInternal::BaseInterpolatePart1(float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges)
+int C_EngineObjectInternal::BaseInterpolatePart1(IInterpolationContext* pContext, float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges)
 {
 	// Don't mess with the world!!!
 	bNoMoreChanges = 1;
@@ -3482,7 +3488,7 @@ int C_EngineObjectInternal::BaseInterpolatePart1(float& currentTime, Vector& old
 	oldAngles = m_angRotation;
 	oldVel = m_vecVelocity;
 
-	bNoMoreChanges = Interp_Interpolate(currentTime);
+	bNoMoreChanges = Interp_Interpolate(pContext, currentTime);
 	if (cl_interp_all.GetInt() || (m_EntClientFlags & ENTCLIENTFLAG_ALWAYS_INTERPOLATE))
 		bNoMoreChanges = 0;
 
@@ -4403,7 +4409,7 @@ void C_EngineObjectInternal::EstimateAbsVelocity(Vector& vel)
 
 	CInterpolationContext context;
 	context.EnableExtrapolation(true);
-	m_iv_vecOrigin.GetDerivative_SmoothVelocity(&vel, gpGlobals->curtime);
+	m_iv_vecOrigin.GetDerivative_SmoothVelocity(&context, &vel, gpGlobals->curtime);
 }
 
 void C_EngineObjectInternal::Interp_Reset()
@@ -4415,7 +4421,7 @@ void C_EngineObjectInternal::Interp_Reset()
 		VarMapEntry_t* e = &m_VarMap.m_Entries[i];
 		IInterpolatedVar* watcher = e->watcher;
 
-		watcher->Reset();
+		watcher->Reset(gpGlobals->curtime);
 	}
 }
 
@@ -6271,7 +6277,7 @@ void C_EngineObjectInternal::LockStudioHdr()
 	m_pStudioHdr = pStudioHdr;// pNewWrapper; // must be last to ensure virtual model correctly set up
 	Assert(pStudioHdr->GetNumPoseParameters() <= ARRAYSIZE(m_flPoseParameter));
 
-	m_iv_flPoseParameter.SetMaxCount(pStudioHdr->GetNumPoseParameters());
+	m_iv_flPoseParameter.SetMaxCount(gpGlobals->curtime, pStudioHdr->GetNumPoseParameters());
 
 	int i;
 	for (i = 0; i < pStudioHdr->GetNumPoseParameters(); i++)
@@ -6289,7 +6295,7 @@ void C_EngineObjectInternal::LockStudioHdr()
 
 	int boneControllerCount = MIN(pStudioHdr->numbonecontrollers(), ARRAYSIZE(m_flEncodedController));
 
-	m_iv_flEncodedController.SetMaxCount(boneControllerCount);
+	m_iv_flEncodedController.SetMaxCount(gpGlobals->curtime, boneControllerCount);
 
 	for (i = 0; i < boneControllerCount; i++)
 	{

@@ -80,7 +80,7 @@ public:
 
 	bool UsesPowerOfTwoFrameBufferTexture( void );
 
-	virtual bool	Interpolate( float currentTime );
+	virtual bool	Interpolate(IInterpolationContext* pContext, float currentTime );
 	virtual void	Simulate();	
 
 	float	GetAnimTimeInterval( void ) const;

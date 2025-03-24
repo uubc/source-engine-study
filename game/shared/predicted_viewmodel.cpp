@@ -20,7 +20,7 @@ END_NETWORK_TABLE()
 // Purpose: 
 //-----------------------------------------------------------------------------
 #ifdef CLIENT_DLL
-CPredictedViewModel::CPredictedViewModel() : m_LagAnglesHistory("CPredictedViewModel::m_LagAnglesHistory", &m_vLagAngles, 0)
+CPredictedViewModel::CPredictedViewModel() : m_LagAnglesHistory(gpGlobals->curtime, "CPredictedViewModel::m_LagAnglesHistory", &m_vLagAngles, 0)
 {
 	m_vLagAngles.Init();
 	//m_LagAnglesHistory.Setup( &m_vLagAngles, 0 );
@@ -53,10 +53,10 @@ void CPredictedViewModel::CalcViewModelLag( Vector& origin, QAngle& angles, QAng
 		
 		// Add an entry to the history.
 		m_vLagAngles = angles;
-		m_LagAnglesHistory.NoteChanged( gpGlobals->curtime, cl_wpn_sway_interp.GetFloat(), false );
+		m_LagAnglesHistory.NoteChanged(gpGlobals->curtime, gpGlobals->curtime, cl_wpn_sway_interp.GetFloat(), false );
 		
 		// Interpolate back 100ms.
-		m_LagAnglesHistory.Interpolate( gpGlobals->curtime, cl_wpn_sway_interp.GetFloat() );
+		m_LagAnglesHistory.Interpolate(NULL, gpGlobals->curtime, cl_wpn_sway_interp.GetFloat() );
 		
 		// Now take the 100ms angle difference and figure out how far the forward vector moved in local space.
 		Vector vLaggedForward;

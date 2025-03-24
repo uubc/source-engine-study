@@ -466,7 +466,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 			Interp_Copy( pPlayer );
 
 			GetEngineObject()->SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetEngineObject()->GetRotationInterpolator().Reset();
+			GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);
 
 			GetEngineObject()->SetAnimTime(pPlayer->GetEngineObject()->GetAnimTime());
 			GetEngineObject()->SetSequence( pPlayer->GetEngineObject()->GetSequence() );
@@ -673,7 +673,7 @@ void C_DODRagdoll::StartFadeOut( float fDelay )
 // C_DODPlayer implementation.
 // ------------------------------------------------------------------------------------------ //
 C_DODPlayer::C_DODPlayer() : 
-	m_iv_angEyeAngles( "C_DODPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
+	m_iv_angEyeAngles(gpGlobals->curtime, "C_DODPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this );
 	

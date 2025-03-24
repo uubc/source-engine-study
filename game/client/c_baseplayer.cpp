@@ -392,7 +392,7 @@ LINK_ENTITY_TO_CLASS( player, C_BasePlayer );
 // -------------------------------------------------------------------------------- //
 // Functions.
 // -------------------------------------------------------------------------------- //
-C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOffset", &m_vecViewOffset, LATCH_SIMULATION_VAR)
+C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePlayer::m_iv_vecViewOffset", &m_vecViewOffset, LATCH_SIMULATION_VAR)
 {
 #ifdef _DEBUG																
 	m_vecLadderNormal.Init();
@@ -2584,7 +2584,7 @@ void C_BasePlayer::ForceSetupBonesAtTimeFakeInterpolation( matrix3x4_t *pBonesOu
 	// blow the cached prev bones
 	GetEngineObject()->InvalidateBoneCache();
 	// reset root position to flTime
-	Interpolate( gpGlobals->curtime + curtimeOffset );
+	Interpolate(NULL, gpGlobals->curtime + curtimeOffset );
 
 	// force cycle back by boneDt
 	GetEngineObject()->SetCycle(fmod( 10 + cycle + GetEngineObject()->GetPlaybackRate() * curtimeOffset, 1.0f ));

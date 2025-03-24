@@ -427,7 +427,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 			Interp_Copy( pPlayer );
 
 			GetEngineObject()->SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetEngineObject()->GetRotationInterpolator().Reset();
+			GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);
 
 			GetEngineObject()->SetAnimTime(pPlayer->GetEngineObject()->GetAnimTime());
 			GetEngineObject()->SetSequence( pPlayer->GetEngineObject()->GetSequence() );

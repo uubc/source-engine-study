@@ -1857,7 +1857,7 @@ void CPrediction::SetViewOrigin( Vector& org )
 	player->GetEngineObject()->SetLocalOrigin( org );
 	player->GetEngineObject()->SetNetworkOrigin(org);
 
-	player->GetEngineObject()->GetOriginInterpolator().Reset();//m_iv_vecOrigin
+	player->GetEngineObject()->GetOriginInterpolator().Reset(gpGlobals->curtime);//m_iv_vecOrigin
 }
 
 //-----------------------------------------------------------------------------
@@ -1888,7 +1888,7 @@ void CPrediction::SetViewAngles( QAngle& ang )
 		return;
 
 	player->SetViewAngles( ang );
-	player->GetEngineObject()->GetRotationInterpolator().Reset();//m_iv_angRotation
+	player->GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);//m_iv_angRotation
 }
 
 //-----------------------------------------------------------------------------

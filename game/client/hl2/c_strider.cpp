@@ -625,8 +625,8 @@ int	C_StriderFX::DrawModel( int )
 // Purpose: Strider class implementation
 //-----------------------------------------------------------------------------
 C_Strider::C_Strider() :
-		m_iv_vecHitPos("C_Strider::m_iv_vecHitPos", &m_vecHitPos, LATCH_ANIMATION_VAR),
-		m_iv_vecIKTarget("C_Strider::m_iv_vecIKTarget", &m_vecIKTarget, LATCH_ANIMATION_VAR)
+		m_iv_vecHitPos(gpGlobals->curtime, "C_Strider::m_iv_vecHitPos", &m_vecHitPos, LATCH_ANIMATION_VAR),
+		m_iv_vecIKTarget(gpGlobals->curtime, "C_Strider::m_iv_vecIKTarget", &m_vecIKTarget, LATCH_ANIMATION_VAR)
 {
 	memset(m_vecIKTarget, 0, sizeof(m_vecIKTarget));
 	m_flNextRopeCutTime = 0;
