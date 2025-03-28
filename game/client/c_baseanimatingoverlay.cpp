@@ -33,7 +33,7 @@ C_BaseAnimatingOverlay::C_BaseAnimatingOverlay()
 
 #undef CBaseAnimatingOverlay
 
-
+template class CInterpolatedVar<C_AnimationLayer>;
 
 BEGIN_RECV_TABLE_NOBASE(CAnimationLayer, DT_Animationlayer)
 	RecvPropInt(	RECVINFO_NAME(m_nSequence, m_nSequence)),
