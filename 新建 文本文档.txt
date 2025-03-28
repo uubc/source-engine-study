@@ -1,1 +1,1 @@
-waf configure --build-games hl2 -T release
+waf configure --build-games hl2 -T release --32bits

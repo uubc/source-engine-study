@@ -46,4 +46,11 @@ public:
 static CEngineUniformRandomStream s_EngineRandomStream;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CEngineUniformRandomStream, IUniformRandomStream, 
 	VENGINE_CLIENT_RANDOM_INTERFACE_VERSION, s_EngineRandomStream );
+#ifdef POSIX
+#define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
+#endif
+#if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
+
+#else
 IUniformRandomStream* random = &s_EngineRandomStream;
+#endif
