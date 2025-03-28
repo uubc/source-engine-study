@@ -313,6 +313,10 @@ void CCvar::RegisterConCommand( ConCommandBase *variable )
 	const ConCommandBase *pOther = FindVar( variable->GetName() );
 	if ( pOther )
 	{
+		if (variable->GetDLLIdentifier() == pOther->GetDLLIdentifier()) 
+		{
+			Warning("WARNING: find convar: %s has same name.\n", variable->GetName());
+		}
 		if ( variable->IsCommand() || pOther->IsCommand() )
 		{
 			Warning( "WARNING: unable to link %s and %s because one or more is a ConCommand.\n", variable->GetName(), pOther->GetName() );

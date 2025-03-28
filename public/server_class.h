@@ -22,7 +22,7 @@ class ServerClass;
 class SendTable;
 
 extern ServerClass *g_pServerClassHead;
-
+extern ServerClass* GetAllServerClasses(void);
 
 class ServerClass
 {

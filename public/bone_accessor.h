@@ -26,12 +26,7 @@ public:
 	CBoneAccessor( matrix3x4_t *pBones ); // This can be used to allow access to all bones.
 	
 	// Initialize.
-#if defined( CLIENT_DLL )
-	void Init( const IEngineObjectClient *pAnimating, matrix3x4_t *pBones );
-#endif
-#ifdef GAME_DLL
-	void Init(const IEngineObjectServer* pAnimating, matrix3x4_t* pBones);
-#endif // GAME_DLL
+	void Init( const IEngineObject *pAnimating, matrix3x4_t *pBones );
 
 	
 	int GetReadableBones();
@@ -49,17 +44,12 @@ public:
 
 private:
 
-#if defined( CLIENT_DLL ) && defined( _DEBUG )
+#if defined( _DEBUG )
 	void SanityCheckBone( int iBone, bool bReadable ) const;
 #endif
 
-#if defined( CLIENT_DLL ) 
 	// Only used in the client DLL for debug verification.
-	const IEngineObjectClient *m_pAnimating;
-#endif
-#ifdef GAME_DLL
-	const IEngineObjectServer* m_pAnimating;
-#endif // GAME_DLL
+	const IEngineObject *m_pAnimating;
 
 	matrix3x4_t *m_pBones;
 
@@ -70,37 +60,23 @@ private:
 
 inline CBoneAccessor::CBoneAccessor()
 {
-#if defined( CLIENT_DLL ) || defined( GAME_DLL )
 	m_pAnimating = NULL;
-#endif
 	m_pBones = NULL;
 	m_ReadableBones = m_WritableBones = 0;
 }
 
 inline CBoneAccessor::CBoneAccessor( matrix3x4_t *pBones )
 {
-#if defined( CLIENT_DLL ) || defined( GAME_DLL )
 	m_pAnimating = NULL;
-#endif
 	m_pBones = pBones;
 }
 
-#if defined( CLIENT_DLL )
-	inline void CBoneAccessor::Init( const IEngineObjectClient *pAnimating, matrix3x4_t *pBones )
-	{
-		m_pAnimating = pAnimating;
-		m_pBones = pBones;
-	}
-#endif
 
-#ifdef GAME_DLL
-	inline void CBoneAccessor::Init(const IEngineObjectServer* pAnimating, matrix3x4_t* pBones)
-	{
-		m_pAnimating = pAnimating;
-		m_pBones = pBones;
-	}
-#endif // GAME_DLL
-
+inline void CBoneAccessor::Init( const IEngineObject *pAnimating, matrix3x4_t *pBones )
+{
+	m_pAnimating = pAnimating;
+	m_pBones = pBones;
+}
 
 inline int CBoneAccessor::GetReadableBones()
 {
@@ -124,7 +100,7 @@ inline void CBoneAccessor::SetWritableBones( int flags )
 
 inline const matrix3x4_t& CBoneAccessor::GetBone( int iBone ) const
 {
-#if defined( CLIENT_DLL ) && defined( _DEBUG )
+#if defined( _DEBUG )
 	SanityCheckBone( iBone, true );
 #endif
 	return m_pBones[iBone];
@@ -132,7 +108,7 @@ inline const matrix3x4_t& CBoneAccessor::GetBone( int iBone ) const
 
 inline const matrix3x4_t& CBoneAccessor::operator[]( int iBone ) const
 {
-#if defined( CLIENT_DLL ) && defined( _DEBUG )
+#if defined( _DEBUG )
 	SanityCheckBone( iBone, true );
 #endif
 	return m_pBones[iBone];
@@ -140,7 +116,7 @@ inline const matrix3x4_t& CBoneAccessor::operator[]( int iBone ) const
 
 inline matrix3x4_t& CBoneAccessor::GetBoneForWrite( int iBone )
 {
-#if defined( CLIENT_DLL ) && defined( _DEBUG )
+#if defined( _DEBUG )
 	SanityCheckBone( iBone, false );
 #endif
 	return m_pBones[iBone];

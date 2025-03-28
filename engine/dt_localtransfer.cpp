@@ -95,17 +95,21 @@ void AddPropOffsetToMap( CSendTablePrecalc *pPrecalc, int iInProp, int iInOffset
 class CPropMapStack : public CDatatableStack
 {
 public:
-						CPropMapStack( CSendTablePrecalc *pPrecalc, const CStandardSendProxies *pSendProxies ) :
+						CPropMapStack( CSendTablePrecalc *pPrecalc, const CStandardSendProxies *pSendProxies, const CStandardSendProxies* pGameSendProxies) :
 							CDatatableStack( pPrecalc, (unsigned char*)1, -1 )
 						{
 							m_pPropMapStackPrecalc = pPrecalc;
 							m_pSendProxies = pSendProxies;
+							m_pGameSendProxies = pGameSendProxies;
 						}
 
-	bool IsNonPointerModifyingProxy( SendTableProxyFn fn, const CStandardSendProxies *pSendProxies )
+	bool IsNonPointerModifyingProxy( SendTableProxyFn fn, const CStandardSendProxies *pSendProxies, const CStandardSendProxies* pGameSendProxies)
 	{
 		if ( fn == m_pSendProxies->m_DataTableToDataTable ||
-			 fn == m_pSendProxies->m_SendLocalDataTable )
+			 fn == m_pSendProxies->m_SendLocalDataTable	||
+			 fn == m_pGameSendProxies->m_DataTableToDataTable ||
+			 fn == m_pGameSendProxies->m_SendLocalDataTable 
+			)
 		{
 			return true;
 		}
@@ -121,6 +125,17 @@ public:
 			}
 		}
 
+		if (pGameSendProxies->m_ppNonModifiedPointerProxies)
+		{
+			CNonModifiedPointerProxy* pCur = *pGameSendProxies->m_ppNonModifiedPointerProxies;
+			while (pCur)
+			{
+				if (pCur->m_Fn == fn)
+					return true;
+				pCur = pCur->m_pNext;
+			}
+		}
+
 		return false;
 	}
 
@@ -130,7 +145,7 @@ public:
 			return 0;
 		
 		const SendProp *pProp = m_pPropMapStackPrecalc->GetDatatableProp( iProp );
-		if ( IsNonPointerModifyingProxy( pProp->GetDataTableProxyFn(), m_pSendProxies ) )
+		if ( IsNonPointerModifyingProxy( pProp->GetDataTableProxyFn(), m_pSendProxies, m_pGameSendProxies) )
 		{
 			// Note: these are offset by 1 (see the constructor), otherwise it won't recurse
 			// during the Init call because pCurStructBase is 0.
@@ -164,12 +179,13 @@ public:
 public:
 	CSendTablePrecalc *m_pPropMapStackPrecalc;
 	const CStandardSendProxies *m_pSendProxies;
+	const CStandardSendProxies* m_pGameSendProxies;
 };
 
 
-void BuildPropOffsetToIndexMap( CSendTablePrecalc *pPrecalc, const CStandardSendProxies *pSendProxies )
+void BuildPropOffsetToIndexMap( CSendTablePrecalc *pPrecalc, const CStandardSendProxies *pSendProxies, const CStandardSendProxies* pGameSendProxies)
 {
-	CPropMapStack pmStack( pPrecalc, pSendProxies );
+	CPropMapStack pmStack( pPrecalc, pSendProxies, pGameSendProxies);
 	pmStack.Init();
 	
 	for ( int i=0; i < pPrecalc->m_Props.Count(); i++ )
@@ -211,9 +227,11 @@ void BuildPropOffsetToIndexMap( CSendTablePrecalc *pPrecalc, const CStandardSend
 
 void LocalTransfer_InitFastCopy( 
 	const SendTable *pSendTable, 
-	const CStandardSendProxies *pSendProxies,
+	const CStandardSendProxies* pSendProxies,
+	const CStandardSendProxies *pGameSendProxies,
 	RecvTable *pRecvTable,
 	const CStandardRecvProxies *pRecvProxies,
+	const CStandardRecvProxies* pGameRecvProxies,
 	int &nSlowCopyProps,		// These are incremented to tell you how many fast copy props it found.
 	int &nFastCopyProps
 	)
@@ -222,7 +240,7 @@ void LocalTransfer_InitFastCopy(
 
 	// Setup the offset-to-index map.
 	pPrecalc->m_PropOffsetToIndexMap.RemoveAll();
-	BuildPropOffsetToIndexMap( pPrecalc, pSendProxies );
+	BuildPropOffsetToIndexMap( pPrecalc, pSendProxies, pGameSendProxies);
 
 	// Clear the old lists.
 	pPrecalc->m_FastLocalTransfer.m_FastInt32.Purge();
@@ -250,6 +268,13 @@ void LocalTransfer_InitFastCopy(
 			{
 				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt32;
 				++nFastCopyProps;
+			} 
+			else if (pSendProp->GetType() == DPT_Int &&
+				(pSendProp->GetProxyFn() == pGameSendProxies->m_Int32ToInt32 || pSendProp->GetProxyFn() == pGameSendProxies->m_UInt32ToInt32) &&
+				pRecvProp->GetProxyFn() == pGameRecvProxies->m_Int32ToInt32)
+			{
+				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt32;
+				++nFastCopyProps;
 			}
 			else if( pSendProp->GetType() == DPT_Int && 
 				(pSendProp->GetProxyFn() == pSendProxies->m_Int16ToInt32 || pSendProp->GetProxyFn() == pSendProxies->m_UInt16ToInt32) &&
@@ -258,9 +283,23 @@ void LocalTransfer_InitFastCopy(
 				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt16;
 				++nFastCopyProps;
 			}
+			else if (pSendProp->GetType() == DPT_Int &&
+				(pSendProp->GetProxyFn() == pGameSendProxies->m_Int16ToInt32 || pSendProp->GetProxyFn() == pGameSendProxies->m_UInt16ToInt32) &&
+				pRecvProp->GetProxyFn() == pGameRecvProxies->m_Int32ToInt16)
+			{
+				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt16;
+				++nFastCopyProps;
+			}
 			else if( pSendProp->GetType() == DPT_Int && 
 				(pSendProp->GetProxyFn() == pSendProxies->m_Int8ToInt32 || pSendProp->GetProxyFn() == pSendProxies->m_UInt8ToInt32) &&
 				pRecvProp->GetProxyFn() == pRecvProxies->m_Int32ToInt8 )
+			{
+				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt8;
+				++nFastCopyProps;
+			}
+			else if (pSendProp->GetType() == DPT_Int &&
+				(pSendProp->GetProxyFn() == pGameSendProxies->m_Int8ToInt32 || pSendProp->GetProxyFn() == pGameSendProxies->m_UInt8ToInt32) &&
+				pRecvProp->GetProxyFn() == pGameRecvProxies->m_Int32ToInt8)
 			{
 				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt8;
 				++nFastCopyProps;
@@ -273,9 +312,24 @@ void LocalTransfer_InitFastCopy(
 				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt32;
 				++nFastCopyProps;
 			}
+			else if (pSendProp->GetType() == DPT_Float &&
+				pSendProp->GetProxyFn() == pGameSendProxies->m_FloatToFloat &&
+				pRecvProp->GetProxyFn() == pGameRecvProxies->m_FloatToFloat)
+			{
+				Assert(sizeof(int) == sizeof(float));
+				pList = &pPrecalc->m_FastLocalTransfer.m_FastInt32;
+				++nFastCopyProps;
+			}
 			else if ( pSendProp->GetType() == DPT_Vector && 
 				pSendProp->GetProxyFn() == pSendProxies->m_VectorToVector &&
 				pRecvProp->GetProxyFn() == pRecvProxies->m_VectorToVector )
+			{
+				pList = &pPrecalc->m_FastLocalTransfer.m_FastVector;
+				++nFastCopyProps;
+			}
+			else if (pSendProp->GetType() == DPT_Vector &&
+				pSendProp->GetProxyFn() == pGameSendProxies->m_VectorToVector &&
+				pRecvProp->GetProxyFn() == pGameRecvProxies->m_VectorToVector)
 			{
 				pList = &pPrecalc->m_FastLocalTransfer.m_FastVector;
 				++nFastCopyProps;

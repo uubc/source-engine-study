@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "cbase.h"
+//#include "cbase.h"
 #include "rope_helpers.h"
 #include "basetypes.h"
 #include "mathlib/mathlib.h"

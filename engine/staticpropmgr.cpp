@@ -452,6 +452,7 @@ static CStaticPropMgr	s_StaticPropMgr;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CStaticPropMgr, IStaticPropMgrClient, INTERFACEVERSION_STATICPROPMGR_CLIENT, s_StaticPropMgr);
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CStaticPropMgr, IStaticPropMgrServer, INTERFACEVERSION_STATICPROPMGR_SERVER, s_StaticPropMgr);
 IStaticPropMgrClient* staticpropmgr = &s_StaticPropMgr;
+IStaticPropMgrServer* pServerStaticPropMgr = &s_StaticPropMgr;
 
 //-----------------------------------------------------------------------------
 //

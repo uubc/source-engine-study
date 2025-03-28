@@ -2687,6 +2687,7 @@ void CVoxelTree::RenderObjectsInPlayerLeafs( const Vector &vecPlayerMin, const V
 //-----------------------------------------------------------------------------
 static CSpatialPartition	g_SpatialPartition;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CSpatialPartition, ISpatialPartition, INTERFACEVERSION_SPATIALPARTITION, g_SpatialPartition );
+ISpatialPartition* partition = &g_SpatialPartition;
 
 //-----------------------------------------------------------------------------
 // Expose ISpatialPartitionInternal to the engine.

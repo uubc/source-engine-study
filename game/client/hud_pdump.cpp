@@ -227,7 +227,7 @@ void CPDumpPanel::DumpEntity( C_BaseEntity *ent, int commands_acknowledged )
 
 	Clear();
 
-	CPredictionCopy datacompare( PC_EVERYTHING, 
+	CPredictionCopy datacompare(modelinfo, gpGlobals, PC_EVERYTHING,
 		original_state_data, data_type_original, 
 		predicted_state_data, data_type_predicted, 
 		true,  // counterrors

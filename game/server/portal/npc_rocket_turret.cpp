@@ -635,7 +635,7 @@ void CNPC_RocketTurret::FollowThink( void )
 	CTraceFilterTranslateClones filter ( &subfilter );
 	float flRequiredParameter = 2.0f;
 	IEnginePortal* pFirstPortal = UTIL_Portal_FirstAlongRay(EntityList(), rayDmg, flRequiredParameter );
-	UTIL_Portal_TraceRay_Bullets(pFirstPortal, rayDmg, MASK_VISIBLE_AND_NPCS, &filter, &traceDmg, false);
+	UTIL_Portal_TraceRay_Bullets(EntityList(), pFirstPortal, rayDmg, MASK_VISIBLE_AND_NPCS, &filter, &traceDmg, false);
 
 	if ( traceDmg.m_pEnt )
 	{

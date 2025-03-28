@@ -88,6 +88,25 @@ inline bool CGameTrace::DidHit() const
 	return fraction < 1 || allsolid || startsolid; 
 }
 
+inline bool CGameTrace::DidHitWorld() const
+{
+	return m_pEnt ? m_pEnt == m_pEnt->GetEntityList()->GetBaseEntity(0) : false;
+}
+
+
+inline bool CGameTrace::DidHitNonWorldEntity() const
+{
+	return m_pEnt != NULL && !DidHitWorld();
+}
+
+
+inline int CGameTrace::GetEntityIndex() const
+{
+	if (m_pEnt)
+		return m_pEnt->entindex();
+	else
+		return -1;
+}
 
 typedef CGameTrace trace_t;
 

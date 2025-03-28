@@ -1,0 +1,1 @@
+waf configure --build-games hl2 -T release

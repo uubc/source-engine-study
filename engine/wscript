@@ -197,7 +197,28 @@ def build(bld):
 		'audio/voice_wavefile.cpp',
 		'audio/vox.cpp',
 		'masterserver.cpp',
-
+		"../public/interpolatedvar.cpp",
+		"physics_saverestore.cpp",
+		"physics_shared.cpp",
+		"ragdoll_shared.cpp",
+        "../public/client_class.cpp",
+		"collisionproperty.cpp",
+		"../public/jigglebones.cpp",				
+		"../public/predictioncopy.cpp",
+		"../public/rope_helpers.cpp",
+		"../public/entitylist_base.cpp",
+		"../public/bone_accessor.cpp",
+		"../public/rope_physics.cpp",
+		"../public/simple_physics.cpp",
+		"../public/sendproxy.cpp",
+		"../public/ServerNetworkProperty.cpp",
+		"../public/variant_t.cpp",
+		"../public/portal_util_shared.cpp",
+		"../public/sequence_Transitioner.cpp",
+        "../public/server_class.cpp",
+        "../public/bone_setup.cpp",
+        "../public/bone_accessor.cpp",
+		"entitylist.cpp",
 		#'audio/snd_dev_xaudio.cpp',[$X360]
 		#'audio/snd_wave_mixer_xma.cpp',	[$X360]
 
@@ -333,6 +354,10 @@ def build(bld):
             'clientleafsystem.cpp',
             'clientshadowmgr.cpp',
             'detailobjectsystem.cpp',
+            "bone_merge_cache.cpp",
+            "../public/recvproxy.cpp",
+            "cliententitylist.cpp",
+            "../public/posedebugger.cpp",
 		]
 		
 		if bld.env.DEST_OS != 'win32':

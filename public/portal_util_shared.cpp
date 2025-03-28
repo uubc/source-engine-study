@@ -15,7 +15,7 @@
 #include "ihandleentity.h"
 #include "collisionutils.h"
 #include "entitylist_base.h"
-#include "baseentity_shared.h"
+//#include "baseentity_shared.h"
 #include "gamerules.h"
 //#include "util_shared.h"
 #include "portal_util_shared.h"
@@ -78,18 +78,18 @@ IEnginePortal* UTIL_Portal_FirstAlongRay(IEntityList* pEntityList, const Ray_t &
 }
 
 
-bool UTIL_Portal_TraceRay_Bullets( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
+bool UTIL_Portal_TraceRay_Bullets(IEntityList* pEntityList, const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
 {
 	if( !pPortal || !pPortal->IsActivedAndLinked() )
 	{
 		//not in a portal environment, use regular traces
-		enginetrace->TraceRay( ray, fMask, pTraceFilter, pTrace );
+		pEntityList->GetEngineWorld()->TraceRay( ray, fMask, pTraceFilter, pTrace );
 		return false;
 	}
 
 	trace_t trReal;
 
-	enginetrace->TraceRay( ray, fMask, pTraceFilter, &trReal );
+	pEntityList->GetEngineWorld()->TraceRay( ray, fMask, pTraceFilter, &trReal );
 
 	Vector vRayNormal = ray.m_Delta;
 	VectorNormalize( vRayNormal );
@@ -134,7 +134,7 @@ bool UTIL_Portal_TraceRay_Bullets( const IEnginePortal *pPortal, const Ray_t &ra
 	}
 
 	trace_t trPostPortal;
-	enginetrace->TraceRay( rayTransformed, fMask, pTraceFilter, &trPostPortal );
+	pEntityList->GetEngineWorld()->TraceRay( rayTransformed, fMask, pTraceFilter, &trPostPortal );
 
 	if ( pSimpleFilter )
 	{
@@ -150,19 +150,19 @@ bool UTIL_Portal_TraceRay_Bullets( const IEnginePortal *pPortal, const Ray_t &ra
 	return true;
 }
 
-void UTIL_Portal_TraceRay_With( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
+void UTIL_Portal_TraceRay_With(IEntityList* pEntityList, const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
 {
 	//check to see if the player is theoretically in a portal environment
 	if( !pPortal || !pPortal->IsReadyToSimulate() )//m_hPortalSimulator->
 	{
 		//not in a portal environment, use regular traces
-		enginetrace->TraceRay( ray, fMask, pTraceFilter, pTrace );
+		pEntityList->GetEngineWorld()->TraceRay(ray, fMask, pTraceFilter, pTrace);
 	}
 	else
 	{		
 
 		trace_t RealTrace;
-		enginetrace->TraceRay( ray, fMask, pTraceFilter, &RealTrace );
+		pEntityList->GetEngineWorld()->TraceRay( ray, fMask, pTraceFilter, &RealTrace );
 
 		trace_t PortalTrace;
 		UTIL_Portal_TraceRay( pPortal, ray, fMask, pTraceFilter, &PortalTrace, bTraceHolyWall );
@@ -334,7 +334,7 @@ IEnginePortal* UTIL_Portal_TraceRay(IEntityList* pEntityList, const Ray_t &ray, 
 
 	if ( g_bBulletPortalTrace )
 	{
-		if (UTIL_Portal_TraceRay_Bullets(pIntersectedPortal, ray, fMask, pTraceFilter, pTrace, bTraceHolyWall))
+		if (UTIL_Portal_TraceRay_Bullets(pEntityList, pIntersectedPortal, ray, fMask, pTraceFilter, pTrace, bTraceHolyWall))
 			return pIntersectedPortal;
 
 		// Bullet didn't actually go through portal
@@ -343,7 +343,7 @@ IEnginePortal* UTIL_Portal_TraceRay(IEntityList* pEntityList, const Ray_t &ray, 
 	}
 	else
 	{
-		UTIL_Portal_TraceRay_With(pIntersectedPortal, ray, fMask, pTraceFilter, pTrace, bTraceHolyWall);
+		UTIL_Portal_TraceRay_With(pEntityList, pIntersectedPortal, ray, fMask, pTraceFilter, pTrace, bTraceHolyWall);
 		return pIntersectedPortal;
 	}
 }
@@ -386,7 +386,7 @@ void UTIL_Portal_TraceRay( const IEnginePortal *pPortal, const Ray_t &ray, unsig
 void UTIL_PortalLinked_TraceRay( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall )
 {
 #ifdef CLIENT_DLL
-	Assert( (EntityList()->GetWorld() == NULL) || EntityList()->GetWorld()->IsMultiplayer());
+	Assert( (pPortal->AsEngineObject()->GetEntityList()->GetWorld() == NULL) || pPortal->AsEngineObject()->GetEntityList()->GetWorld()->IsMultiplayer());
 #endif
 	// Transform the specified ray to the remote portal's space
 	Ray_t rayTransformed;
@@ -432,12 +432,12 @@ void UTIL_Portal_TraceEntity(IEnginePortal* pPortal, IHandleEntity *pEntity, con
 	pTrace->fraction = 1.0f;
 	pTrace->fractionleftsolid = 0;
 
-	ICollideable* pCollision = enginetrace->GetCollideable( pEntity );
+	ICollideable* pCollision = pEntity->GetEntityList()->GetEngineWorld()->GetCollideable(pEntity);
 
 	// If main is simulating this object, trace as UTIL_TraceEntity would
 	trace_t realTrace;
 	QAngle qCollisionAngles = pCollision->GetCollisionAngles();
-	enginetrace->SweepCollideable( pCollision, vecAbsStart, vecAbsEnd, qCollisionAngles, mask, pFilter, &realTrace );
+	pEntity->GetEntityList()->GetEngineWorld()->SweepCollideable( pCollision, vecAbsStart, vecAbsEnd, qCollisionAngles, mask, pFilter, &realTrace );
 
 	// For the below box test, we need to add the tolerance onto the extents, because the underlying
 	// box on plane side test doesn't use the parameter tolerance.
@@ -874,77 +874,7 @@ bool UTIL_Portal_EntityIsInPortalHole( const IEnginePortal *pPortal, IHandleEnti
 }
 
 
-#ifdef CLIENT_DLL
-void UTIL_TransformInterpolatedAngle(ITypedInterpolatedVar< QAngle > &qInterped, matrix3x4_t matTransform, bool bSkipNewest )
-{
-	int iHead = qInterped.GetHead();
-	if( !qInterped.IsValidIndex( iHead ) )
-		return;
 
-#ifdef DBGFLAG_ASSERT
-	float fHeadTime;
-	qInterped.GetHistoryValue( iHead, fHeadTime );
-#endif
-
-	float fTime;
-	QAngle *pCurrent;
-	int iCurrent;
-
-	if( bSkipNewest )
-		iCurrent = qInterped.GetNext( iHead );
-	else
-		iCurrent = iHead;
-
-	while( (pCurrent = qInterped.GetHistoryValue( iCurrent, fTime )) != NULL )
-	{
-		Assert( (fTime <= fHeadTime) || (iCurrent == iHead) ); //asserting that head is always newest
-
-		if( fTime < gpGlobals->curtime )
-			*pCurrent = TransformAnglesToWorldSpace( *pCurrent, matTransform );
-
-		iCurrent = qInterped.GetNext( iCurrent );
-		if( iCurrent == iHead )
-			break;
-	}
-
-	qInterped.Interpolate(NULL, gpGlobals->curtime );
-}
-
-void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector > &vInterped, VMatrix matTransform, bool bSkipNewest )
-{
-	int iHead = vInterped.GetHead();
-	if( !vInterped.IsValidIndex( iHead ) )
-		return;
-
-#ifdef DBGFLAG_ASSERT
-	float fHeadTime;
-	vInterped.GetHistoryValue( iHead, fHeadTime );
-#endif
-
-	float fTime;
-	Vector *pCurrent;
-	int iCurrent;
-
-	if( bSkipNewest )
-		iCurrent = vInterped.GetNext( iHead );
-	else
-		iCurrent = iHead;
-
-	while( (pCurrent = vInterped.GetHistoryValue( iCurrent, fTime )) != NULL )
-	{
-		Assert( (fTime <= fHeadTime) || (iCurrent == iHead) );
-
-		if( fTime < gpGlobals->curtime )
-			*pCurrent = matTransform * (*pCurrent);
-
-		iCurrent = vInterped.GetNext( iCurrent );
-		if( iCurrent == iHead )
-			break;
-	}
-
-	vInterped.Interpolate(NULL, gpGlobals->curtime );
-}
-#endif
 
 
 

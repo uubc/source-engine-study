@@ -64,14 +64,12 @@ static const char *g_FieldTypes[ FIELD_TYPECOUNT ] =
 	"FIELD_MODELINDEX"		// FIELD_MODELINDEX
 };
 
-
-extern IVModelInfoClient* modelinfo;
-extern CGlobalVarsBase* gpGlobals;
-
-CPredictionCopy::CPredictionCopy( int type, void *dest, bool dest_packed, void const *src, bool src_packed, 
+CPredictionCopy::CPredictionCopy(IVModelInfoClient* modelinfoclient, CGlobalVarsBase* pGlobalVariables, int type, void *dest, bool dest_packed, void const *src, bool src_packed,
 	bool counterrors /*= false*/, bool reporterrors /*= false*/, bool performcopy /*= true*/,
 	bool describefields /*= false*/, FN_FIELD_COMPARE func /*= NULL*/ )
 {
+	m_modelinfoclient = modelinfoclient;
+	m_pGlobalVariables = pGlobalVariables;
 	m_nType				= type;
 	m_pDest				= dest;
 	m_pSrc				= src;
@@ -304,13 +302,13 @@ void CPredictionCopy::DescribeInt( difftype_t dt, int *outvalue, const int *inva
 	if ( m_pCurrentField->flags & FTYPEDESC_MODELINDEX )
 	{
 		int modelindex = outvalue[0];
-		model_t const *m = modelinfo->GetModel( modelindex );
+		model_t const *m = m_modelinfoclient->GetModel( modelindex );
 		if ( m )
 		{
 			described = true;
 			char shortfile[ 512 ];
 			shortfile[ 0 ] = 0;
-			Q_FileBase( modelinfo->GetModelName( m ), shortfile, sizeof( shortfile ) );
+			Q_FileBase(m_modelinfoclient->GetModelName( m ), shortfile, sizeof( shortfile ) );
 
 			DescribeFields( dt, "integer (%i->%s)\n", outvalue[0], shortfile );
 		}
@@ -331,13 +329,13 @@ void CPredictionCopy::WatchInt( difftype_t dt, int *outvalue, const int *invalue
 	if ( m_pCurrentField->flags & FTYPEDESC_MODELINDEX )
 	{
 		int modelindex = outvalue[0];
-		model_t const *m = modelinfo->GetModel( modelindex );
+		model_t const *m = m_modelinfoclient->GetModel( modelindex );
 		if ( m )
 		{
 			described = true;
 			char shortfile[ 512 ];
 			shortfile[ 0 ] = 0;
-			Q_FileBase( modelinfo->GetModelName( m ), shortfile, sizeof( shortfile ) );
+			Q_FileBase(m_modelinfoclient->GetModelName( m ), shortfile, sizeof( shortfile ) );
 
 			WatchMsg( "integer (%i->%s)", outvalue[0], shortfile );
 		}
@@ -1329,7 +1327,7 @@ void CPredictionCopy::WatchMsg( const char *fmt, ... )
 	len = Q_vsnprintf(data, sizeof( data ), fmt, argptr);
 	va_end(argptr);
 
-	Msg( "%i %s %s : %s\n", gpGlobals->tickcount, m_pOperation, m_pCurrentField->fieldName, data );
+	Msg( "%i %s %s : %s\n", m_pGlobalVariables->tickcount, m_pOperation, m_pCurrentField->fieldName, data );
 }
 
 //-----------------------------------------------------------------------------

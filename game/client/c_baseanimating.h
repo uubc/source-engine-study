@@ -22,7 +22,7 @@
 #include "animationlayer.h"
 #include "sequence_Transitioner.h"
 #include "bone_accessor.h"
-#include "bone_merge_cache.h"
+//#include "bone_merge_cache.h"
 //#include "ragdoll_shared.h"
 #include "tier0/threadtools.h"
 #include "datacache/idatacache.h"

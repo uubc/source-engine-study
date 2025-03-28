@@ -72,6 +72,8 @@ public:
 	#define CAnimationLayer C_AnimationLayer
 #endif
 
+template class CInterpolatedVar<C_AnimationLayer>;
+
 inline C_AnimationLayer::C_AnimationLayer()
 {
 	Reset();

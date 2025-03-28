@@ -28,8 +28,8 @@
 #include "tier0/memdbgon.h"
 
 
-extern IVEngineClient *engine;
-extern CGlobalVarsBase *gpGlobals;
+extern IVEngineClient *engineClient;
+extern CGlobalVarsBase g_ClientGlobalVariables;
 
 static ConVar ui_posedebug_fade_in_time( "ui_posedebug_fade_in_time", "0.2",
 										 FCVAR_CHEAT | FCVAR_DONTRECORD,
@@ -189,7 +189,7 @@ void ModelPoseDebugInfo::AddInfoText( InfoText *x, ModelPoseDebugInfo *pOld )
 			if ( x )
 			{
 				x->m_uiFlags |= F_SEEN_LAST_FRAME;
-				x->m_flTimeAlive += gpGlobals->frametime;
+				x->m_flTimeAlive += g_ClientGlobalVariables.frametime;
 			}
 		}
 
@@ -203,8 +203,8 @@ void ModelPoseDebugInfo::AddInfoText( InfoText *x, ModelPoseDebugInfo *pOld )
 
 			txtFinished.m_uiFlags &= ~F_SEEN_THIS_FRAME;
 
-			txtFinished.m_flTimeToLive -= gpGlobals->frametime;
-			txtFinished.m_flTimeAlive += gpGlobals->frametime;
+			txtFinished.m_flTimeToLive -= g_ClientGlobalVariables.frametime;
+			txtFinished.m_flTimeAlive += g_ClientGlobalVariables.frametime;
 
 			if ( txtFinished.m_flTimeToLive >= 0.0f )
 				m_arrTxt.AddToTail( txtFinished );
@@ -290,7 +290,7 @@ void ModelPoseDebugInfo::PrintPendingInfoText( int &rnPosPrint )
 		}
 
 		nxPrn.index = ( rnPosPrint += 1 );
-		engine->Con_NXPrintf( &nxPrn, "%s", prntxt.m_chTextLines[0] );
+		engineClient->Con_NXPrintf( &nxPrn, "%s", prntxt.m_chTextLines[0] );
 
 		for ( int iLine = 1; iLine < ModelPoseDebugInfo::InfoText::MAX_TEXT_LINES; ++ iLine)
 		{
@@ -298,7 +298,7 @@ void ModelPoseDebugInfo::PrintPendingInfoText( int &rnPosPrint )
 				break;
 
 			nxPrn.index = ( rnPosPrint += 1 );
-			engine->Con_NXPrintf( &nxPrn, "%s", prntxt.m_chTextLines[iLine] );
+			engineClient->Con_NXPrintf( &nxPrn, "%s", prntxt.m_chTextLines[iLine] );
 		}
 	}
 
@@ -459,7 +459,7 @@ void CPoseDebuggerImpl::StartBlending( IClientEntity *pEntity, const IStudioHdr 
 	nxPrn.color[0] = 0.9f, nxPrn.color[1] = 1.0f, nxPrn.color[2] = 0.9f;
 	nxPrn.fixed_width_font = false;
 
-	engine->Con_NXPrintf( &nxPrn, "[ %2d  ]    Model: %s", iEntNum, pRMdl->pszName() );
+	engineClient->Con_NXPrintf( &nxPrn, "[ %2d  ]    Model: %s", iEntNum, pRMdl->pszName() );
 	m_nPosPrint += 3;
 }
 

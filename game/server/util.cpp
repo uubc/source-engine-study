@@ -1529,47 +1529,6 @@ extern "C" void Sys_Error( char *error, ... )
 	Assert(0);
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Initialize the matrix from an entity
-// Input  : *pEntity - 
-//-----------------------------------------------------------------------------
-void EntityMatrix::InitFromEntity( IServerEntity *pEntity, int iAttachment )
-{
-	if ( !pEntity )
-	{
-		Identity();
-		return;
-	}
-
-	// Get an attachment's matrix?
-	if ( iAttachment != 0 )
-	{
-		if (pEntity->GetEngineObject()->GetModelPtr() )
-		{
-			Vector vOrigin;
-			QAngle vAngles;
-			if ( pEntity->GetEngineObject()->GetAttachment( iAttachment, vOrigin, vAngles ) )
-			{
-				((VMatrix *)this)->SetupMatrixOrgAngles( vOrigin, vAngles );
-				return;
-			}
-		}
-	}
-
-	((VMatrix *)this)->SetupMatrixOrgAngles( pEntity->GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsAngles() );
-}
-
-
-void EntityMatrix::InitFromEntityLocal( IServerEntity *entity )
-{
-	if ( !entity || entity->entindex()==-1 )
-	{
-		Identity();
-		return;
-	}
-	((VMatrix *)this)->SetupMatrixOrgAngles( entity->GetEngineObject()->GetLocalOrigin(), entity->GetEngineObject()->GetLocalAngles() );
-}
-
 //==================================================
 // Purpose: 
 // Input: 

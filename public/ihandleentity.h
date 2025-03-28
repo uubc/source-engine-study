@@ -46,6 +46,7 @@ class IPhysicsGameTrace;
 class IPhysicsObjectPairHash;
 struct EmitSound_t;
 class IVModelInfo;
+class IEffects;
 
 //-----------------------------------------------------------------------------
 // A ray...
@@ -287,6 +288,8 @@ public:
 	virtual const QAngle& GetAbsAngles(void) const = 0;
 	virtual const Vector& GetAbsVelocity() const = 0;
 	virtual const Vector& GetLocalOrigin(void) const = 0;
+	virtual const QAngle& GetLocalAngles(void) const = 0;
+	virtual const Vector& GetLocalVelocity() const = 0;
 	virtual void GetVectors(Vector* forward, Vector* right, Vector* up) const = 0;
 	virtual IHandleEntity* GetHandleEntity() const = 0;
 	virtual const Vector& WorldAlignMins() const = 0;
@@ -307,6 +310,8 @@ public:
 	virtual IEngineObject* GetOwnerEntity(void) const = 0;
 	virtual IEngineObject* GetEffectEntity(void) const = 0;
 	virtual int	LookupAttachment(const char* pAttachmentName) = 0;
+	virtual bool GetAttachment(int number, Vector& origin, QAngle& angles) = 0;
+	virtual bool GetAttachment(int number, matrix3x4_t& matrix) = 0;
 
 	virtual bool IsEngineObjectServer() const = 0;
 	virtual IEngineObjectServer* AsEngineObjectServer() = 0;
@@ -574,6 +579,7 @@ public:
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
 	virtual IHandleEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
+	virtual IHandleEntity* GetBaseEntity(int entnum) const = 0;
 	virtual IHandleEntity* FindHandleEntityByName(IHandleEntity* pStartEntity, string_t iszName) = 0;
 	virtual IEngineWorld* GetEngineWorld() = 0;
 	virtual IHandleWorld* GetWorld() = 0;
@@ -589,6 +595,7 @@ public:
 	virtual IPhysicsGameTrace* IPhysGameTrace() = 0;
 	virtual IPhysicsObjectPairHash* PhysGetEntityCollisionHash() = 0;
 	virtual IVModelInfo* GetModelInfo() = 0;
+	virtual IEffects* GetEffects() = 0;
 	virtual string_t AllocPooledString(const char* pStr) = 0;
 	//-----------------------------------------------------------------------------
 // Shared random number generators for shared/predicted code:

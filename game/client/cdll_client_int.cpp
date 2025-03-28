@@ -181,7 +181,7 @@ extern vgui::IInputInternal *g_InputInternal;
 
 // IF YOU ADD AN INTERFACE, EXTERN IT IN THE HEADER FILE.
 IVEngineClient	*engine = NULL;
-//IClientEntityList* entitylist = NULL;
+IClientEntityList* entitylist = NULL;
 IVModelRender *modelrender = NULL;
 IVEfx *effects = NULL;
 IVRenderView *render = NULL;
@@ -906,8 +906,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	// please don't collapse this into one monolithic boolean expression (impossible to debug)
 	if ( (engine = (IVEngineClient *)appSystemFactory( VENGINE_CLIENT_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
-	//if ((entitylist = (IClientEntityList*)appSystemFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL)) == NULL)
-	//	return false;
+	if ((entitylist = (IClientEntityList*)appSystemFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL)) == NULL)
+		return false;
 	if ( (modelrender = (IVModelRender *)appSystemFactory( VENGINE_HUDMODEL_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
 	if ( (effects = (IVEfx *)appSystemFactory( VENGINE_EFFECTS_INTERFACE_VERSION, NULL )) == NULL )
@@ -2248,7 +2248,6 @@ void OnRenderStart()
 	//C_BaseEntity::AddVisibleEntities();
 }
 
-void DisplayBoneSetupEnts();
 void OnRenderEnd()
 {
 	// Disallow access to bones (access is enabled in CViewRender::SetUpView).
@@ -2256,7 +2255,7 @@ void OnRenderEnd()
 
 	UpdatePVSNotifiers();
 
-	DisplayBoneSetupEnts();
+	EntityList()->DisplayBoneSetupEnts();
 }
 
 

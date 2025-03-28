@@ -388,6 +388,10 @@ void CGameServer::Clear( void )
 	//edicts = NULL;
 	
 	// Clear the instance baseline indices in the ServerClasses.
+	for (ServerClass* pCur = GetAllServerClasses(); pCur; pCur = pCur->m_pNext)
+	{
+		pCur->m_InstanceBaselineIndex = INVALID_STRING_INDEX;
+	}
 	if ( serverGameDLL )
 	{
 		for( ServerClass *pCur = serverGameDLL->GetAllServerClasses(); pCur; pCur=pCur->m_pNext )
@@ -762,32 +766,31 @@ CON_COMMAND( maxplayers, "Change the maximum number of players allowed on this s
 	SetupMaxPlayers( Q_atoi( args[ 1 ] ) );
 }
 
-int SV_BuildSendTablesArray( ServerClass *pClasses, SendTable **pTables, int nMaxTables )
-{
-        int nTables = 0;
-
-        for( ServerClass *pCur=pClasses; pCur; pCur=pCur->m_pNext )
-        {
-                ErrorIfNot( nTables < nMaxTables, ("SV_BuildSendTablesArray: too many SendTables!") );
-                pTables[nTables] = pCur->m_pTable;
-                ++nTables;
-        }
-
-        return nTables;
-}
-
-
 // Builds an alternate copy of the datatable for any classes that have datatables with props excluded.
-void SV_InitSendTables( ServerClass *pClasses )
+void SV_InitSendTables(ServerClass* pClasses, ServerClass *pGameClasses )
 {
 	SendTable *pTables[MAX_DATATABLES];
-	int nTables = SV_BuildSendTablesArray( pClasses, pTables, ARRAYSIZE( pTables ) );
+
+	int nTables = 0;
+
+	for (ServerClass* pCur = pClasses; pCur; pCur = pCur->m_pNext)
+	{
+		ErrorIfNot(nTables < MAX_DATATABLES, ("SV_InitSendTables: too many SendTables!"));
+		pTables[nTables] = pCur->m_pTable;
+		++nTables;
+	}
+	for (ServerClass* pCur = pGameClasses; pCur; pCur = pCur->m_pNext)
+	{
+		ErrorIfNot(nTables < MAX_DATATABLES, ("SV_InitSendTables: too many SendTables!"));
+		pTables[nTables] = pCur->m_pTable;
+		++nTables;
+	}
 
 	SendTable_Init( pTables, nTables );
 }
 
 
-void SV_TermSendTables( ServerClass *pClasses )
+void SV_TermSendTables(ServerClass* pClasses, ServerClass *pGameClasses )
 {
 	SendTable_Term();
 }
@@ -948,7 +951,7 @@ void SV_InitGameDLL( void )
 	COM_TimestampedLog( "SV_InitSendTables" );
 
 	// Make extra copies of data tables if they have SendPropExcludes.
-	SV_InitSendTables( serverGameDLL->GetAllServerClasses() );
+	SV_InitSendTables(GetAllServerClasses(), serverGameDLL->GetAllServerClasses() );
 
 	host_state.interval_per_tick = serverGameDLL->GetTickInterval();
 	if ( host_state.interval_per_tick < MINIMUM_TICK_INTERVAL ||
@@ -1003,7 +1006,7 @@ void SV_ShutdownGameDLL( void )
 	}
 
 	// Delete any extra SendTable copies we've attached to the game DLL's classes, if any.
-	SV_TermSendTables( serverGameDLL->GetAllServerClasses() );
+	SV_TermSendTables(GetAllServerClasses(), serverGameDLL->GetAllServerClasses() );
 	g_pServerPluginHandler->UnloadPlugins();
 	serverGameDLL->DLLShutdown();
 #if !defined(SWDS)
@@ -1020,7 +1023,16 @@ void SV_ShutdownGameDLL( void )
 
 ServerClass* SV_FindServerClass( const char *pName )
 {
-	ServerClass *pCur = serverGameDLL->GetAllServerClasses();
+	ServerClass* pCur = GetAllServerClasses();
+	while (pCur)
+	{
+		if (Q_stricmp(pCur->GetName(), pName) == 0)
+			return pCur;
+
+		pCur = pCur->m_pNext;
+	}
+
+	pCur = serverGameDLL->GetAllServerClasses();
 	while ( pCur )
 	{
 		if ( Q_stricmp( pCur->GetName(), pName ) == 0 )
@@ -1028,13 +1040,12 @@ ServerClass* SV_FindServerClass( const char *pName )
 
 		pCur = pCur->m_pNext;
 	}
-	
 	return NULL;
 }
 
 ServerClass* SV_FindServerClass( int index )
 {
-	ServerClass *pCur = serverGameDLL->GetAllServerClasses();
+	ServerClass* pCur = GetAllServerClasses();
 	int count = 0;
 
 	while ( (count < index) && (pCur != NULL) )
@@ -1043,6 +1054,12 @@ ServerClass* SV_FindServerClass( int index )
 		pCur = pCur->m_pNext;
 	}
 
+	pCur = serverGameDLL->GetAllServerClasses();
+	while ((count < index) && (pCur != NULL))
+	{
+		count++;
+		pCur = pCur->m_pNext;
+	}
 	return pCur;
 }
 

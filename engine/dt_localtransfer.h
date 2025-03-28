@@ -26,8 +26,10 @@ class CBaseEdict;
 void LocalTransfer_InitFastCopy( 
 	const SendTable *pSendTable, 
 	const CStandardSendProxies *pSendProxies,
+	const CStandardSendProxies* pGameSendProxies,
 	RecvTable *pRecvTable,
 	const CStandardRecvProxies *pRecvProxies,
+	const CStandardRecvProxies* pGameRecvProxies,
 	int &nSlowCopyProps,		// These are incremented to tell you how many fast copy props it found.
 	int &nFastCopyProps
 	);

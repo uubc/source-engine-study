@@ -30,11 +30,11 @@ enum vehiclesound
 	VS_NUM_SOUNDS,
 };
 
-extern const char *vehiclesound_parsenames[VS_NUM_SOUNDS];
+//extern const char *vehiclesound_parsenames[VS_NUM_SOUNDS];
 
 // This is a list of vehiclesounds to automatically stop when the vehicle's driver exits the vehicle
 #define NUM_SOUNDS_TO_STOP_ON_EXIT	4
-extern vehiclesound g_iSoundsToStopOnExit[NUM_SOUNDS_TO_STOP_ON_EXIT];
+//extern vehiclesound g_iSoundsToStopOnExit[NUM_SOUNDS_TO_STOP_ON_EXIT];
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -114,24 +114,6 @@ struct vehiclesounds_t
 	string_t					iszSound[ VS_NUM_SOUNDS ];
 	string_t					iszStateSounds[SS_NUM_STATES];
 	float						minStateTime[SS_NUM_STATES];
-};
-
-//-----------------------------------------------------------------------------
-// Purpose: A KeyValues parse for vehicle sound blocks
-//-----------------------------------------------------------------------------
-class CVehicleSoundsParser : public IVPhysicsKeyHandler
-{
-public:
-	CVehicleSoundsParser( void );
-
-	virtual void ParseKeyValue( void *pData, const char *pKey, const char *pValue );
-	virtual void SetDefaults( void *pData );
-
-private:
-	// Index of the gear we're currently reading data into
-	int	m_iCurrentGear;
-	int	m_iCurrentState;
-	int m_iCurrentCrashSound;
 };
 
 #endif // VEHICLE_SOUNDS_H

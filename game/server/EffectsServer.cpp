@@ -89,7 +89,7 @@ private:
 // Client-server neutral effects interface accessor
 //-----------------------------------------------------------------------------
 static CEffectsServer s_EffectServer;
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CEffectsServer, IEffects, IEFFECTS_INTERFACE_VERSION, s_EffectServer);
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CEffectsServer, IEffects, ISERVEREFFECTS_INTERFACE_VERSION, s_EffectServer);
 IEffects *g_pEffects = &s_EffectServer;
 
 

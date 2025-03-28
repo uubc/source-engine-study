@@ -39,7 +39,7 @@ public:
 		WITHINTOLERANCE,
 	} difftype_t;
 
-	CPredictionCopy( int type, void *dest, bool dest_packed, void const *src, bool src_packed,
+	CPredictionCopy(IVModelInfoClient* modelinfoclient, CGlobalVarsBase* pGlobalVariables, int type, void *dest, bool dest_packed, void const *src, bool src_packed,
 		bool counterrors = false, bool reporterrors = false, bool performcopy = true, 
 		bool describefields = false, FN_FIELD_COMPARE func = NULL );
 
@@ -142,6 +142,8 @@ private:
 
 	typedescription_t	 *m_pWatchField;
 	char const			*m_pOperation;
+	IVModelInfoClient* m_modelinfoclient;
+	CGlobalVarsBase* m_pGlobalVariables;
 };
 
 typedef void (*FN_FIELD_DESCRIPTION)( const char *classname, const char *fieldname, const char *fieldtype,

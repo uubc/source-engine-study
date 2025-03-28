@@ -1324,3 +1324,75 @@ bool UTIL_HasLoadedAnyMap()
 
 	return g_pFullFileSystem->FileExists( szFilename, "MOD" );
 }
+
+#ifdef CLIENT_DLL
+void UTIL_TransformInterpolatedAngle(ITypedInterpolatedVar< QAngle >& qInterped, matrix3x4_t matTransform, bool bSkipNewest)
+{
+	int iHead = qInterped.GetHead();
+	if (!qInterped.IsValidIndex(iHead))
+		return;
+
+#ifdef DBGFLAG_ASSERT
+	float fHeadTime;
+	qInterped.GetHistoryValue(iHead, fHeadTime);
+#endif
+
+	float fTime;
+	QAngle* pCurrent;
+	int iCurrent;
+
+	if (bSkipNewest)
+		iCurrent = qInterped.GetNext(iHead);
+	else
+		iCurrent = iHead;
+
+	while ((pCurrent = qInterped.GetHistoryValue(iCurrent, fTime)) != NULL)
+	{
+		Assert((fTime <= fHeadTime) || (iCurrent == iHead)); //asserting that head is always newest
+
+		if (fTime < gpGlobals->curtime)
+			*pCurrent = TransformAnglesToWorldSpace(*pCurrent, matTransform);
+
+		iCurrent = qInterped.GetNext(iCurrent);
+		if (iCurrent == iHead)
+			break;
+	}
+
+	qInterped.Interpolate(NULL, gpGlobals->curtime);
+}
+
+void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector >& vInterped, VMatrix matTransform, bool bSkipNewest)
+{
+	int iHead = vInterped.GetHead();
+	if (!vInterped.IsValidIndex(iHead))
+		return;
+
+#ifdef DBGFLAG_ASSERT
+	float fHeadTime;
+	vInterped.GetHistoryValue(iHead, fHeadTime);
+#endif
+
+	float fTime;
+	Vector* pCurrent;
+	int iCurrent;
+
+	if (bSkipNewest)
+		iCurrent = vInterped.GetNext(iHead);
+	else
+		iCurrent = iHead;
+
+	while ((pCurrent = vInterped.GetHistoryValue(iCurrent, fTime)) != NULL)
+	{
+		Assert((fTime <= fHeadTime) || (iCurrent == iHead));
+
+		if (fTime < gpGlobals->curtime)
+			*pCurrent = matTransform * (*pCurrent);
+
+		iCurrent = vInterped.GetNext(iCurrent);
+		if (iCurrent == iHead)
+			break;
+	}
+
+	vInterped.Interpolate(NULL, gpGlobals->curtime);
+}
+#endif

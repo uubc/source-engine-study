@@ -20,9 +20,9 @@ Color UTIL_Portal_Color( int iPortal );
 
 IEnginePortal* UTIL_Portal_FirstAlongRay(IEntityList* pEntityList, const Ray_t &ray, float &fMustBeCloserThan );
 
-bool UTIL_Portal_TraceRay_Bullets( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall = true );
+bool UTIL_Portal_TraceRay_Bullets(IEntityList* pEntityList, const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall = true );
 
-void UTIL_Portal_TraceRay_With( const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall = true );
+void UTIL_Portal_TraceRay_With(IEntityList* pEntityList, const IEnginePortal *pPortal, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall = true );
 IEnginePortal* UTIL_Portal_TraceRay(IEntityList* pEntityList, const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace, bool bTraceHolyWall = true ); //traces a ray normally, then sees if portals have anything to say about it
 IEnginePortal* UTIL_Portal_TraceRay(IEntityList* pEntityList, const Ray_t &ray, unsigned int fMask, const IHandleEntity *ignore, int collisionGroup, trace_t *pTrace, bool bTraceHolyWall = true );
 
@@ -72,11 +72,6 @@ bool UTIL_IsBoxIntersectingPortal( const Vector &vecBoxCenter, const Vector &vec
 bool UTIL_IsBoxIntersectingPortal( const Vector &vecBoxCenter, const Vector &vecBoxExtents, const IEnginePortal *pPortal, float flTolerance = 0.0f );
 
 IEnginePortal *UTIL_IntersectEntityExtentsWithPortal( const IHandleEntity*pEntity );
-
-#ifdef CLIENT_DLL
-void UTIL_TransformInterpolatedAngle(ITypedInterpolatedVar< QAngle > &qInterped, matrix3x4_t matTransform, bool bSkipNewest );
-void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector > &vInterped, VMatrix matTransform, bool bSkipNewest );
-#endif
 
 bool UTIL_Portal_EntityIsInPortalHole( const IEnginePortal *pPortal, IHandleEntity *pEntity );
 

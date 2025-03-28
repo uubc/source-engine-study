@@ -273,7 +273,7 @@ void CReplayServer::InitClientRecvTables()
 {
 	ServerClass* pCur = NULL;
 	
-	if ( ClientDLL_GetAllClasses() != NULL )
+	if (g_ClientDLL->GetAllClasses() != NULL)
 		return; //already initialized
 
 	// first create all SendTables

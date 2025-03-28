@@ -1902,8 +1902,7 @@ void Physics_SimulateEntity( CBaseEntity *pEntity )
 	}
 }
 
-extern bool g_bTestMoveTypeStepSimulation;
-extern ConVar sv_teststepsimulation;
+
 //-----------------------------------------------------------------------------
 // Purpose: Runs the main physics simulation loop against all entities ( except players )
 //-----------------------------------------------------------------------------
@@ -1911,7 +1910,7 @@ void Physics_RunThinkFunctions( bool simulating )
 {
 	VPROF( "Physics_RunThinkFunctions");
 
-	g_bTestMoveTypeStepSimulation = sv_teststepsimulation.GetBool();
+	EntityList()->UpdateTestMoveTypeStepSimulation();
 
 	float starttime = gpGlobals->curtime;
 	// clear all entites freed outside of this loop

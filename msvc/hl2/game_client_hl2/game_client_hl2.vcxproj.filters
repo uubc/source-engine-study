@@ -222,9 +222,6 @@
     <ClCompile Include="..\..\..\public\bone_accessor.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\bone_merge_cache.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\c_ai_basehumanoid.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -468,9 +465,6 @@
     <ClCompile Include="..\..\..\game\client\clienteffectprecachesystem.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\cliententitylist.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\clientmode_shared.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -484,9 +478,6 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\client\commentary_modelviewer.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\collisionproperty.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\shared\death_pose.cpp">
@@ -663,9 +654,6 @@
     <ClCompile Include="..\..\..\game\client\initializer.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\interpolatedvar.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\IsNPCProxy.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -796,9 +784,6 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\client\ragdoll.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\client\recvproxy.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\client\basepresence.cpp">
@@ -1009,9 +994,6 @@
       <Filter>源文件\Sixense</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\bone_setup.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\public\posedebugger.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\client_class.cpp">
@@ -1563,19 +1545,10 @@
     <ClCompile Include="..\..\..\public\usercmd.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\public\ragdoll_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\public\ehandle.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\rope_helpers.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\public\physics_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\public\physics_saverestore.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\gamerules.cpp">
@@ -1606,6 +1579,12 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\predictioncopy.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\interpolatedvar.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\recvproxy.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

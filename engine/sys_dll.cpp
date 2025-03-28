@@ -60,7 +60,7 @@
 //#include "eifacev21.h"
 #include "cl_steamauth.h"
 #include "tier0/etwprof.h"
-
+#include "IEffects.h"
 #include "vgui_baseui_interface.h"
 #include "tier0/systeminformation.h"
 #ifdef _WIN32
@@ -127,7 +127,7 @@ CSysModule *g_GameDLL = NULL;
 
 IServerGameDLL	*serverGameDLL = NULL;
 int g_iServerGameDLLVersion = 0;
-IServerEntityList* serverEntitylist = NULL;
+//IServerEntityList* serverEntitylist = NULL;
 IServerGameEnts *serverGameEnts = NULL;
 
 IServerGameClients *serverGameClients = NULL;
@@ -137,6 +137,8 @@ IHLTVDirector	*serverGameDirector = NULL;
 
 IServerGameTags *serverGameTags = NULL;
 ISoundEmitterSystem* g_pSoundEmitterSystem = NULL;
+IEffects* g_pServerEffects = NULL;
+ISoundEnvelopeController* g_pServerSoundEnvelopeController = NULL;
 
 void Sys_InitArgv( char *lpCmdLine );
 void Sys_ShutdownArgv( void );
@@ -1166,12 +1168,12 @@ static bool LoadThisDll( char *szDllFilename, bool bIsServerOnly )
 			}
 		}
 
-		serverEntitylist = (IServerEntityList*)g_ServerFactory(VSERVERENTITYLIST_INTERFACE_VERSION, NULL);
-		if (!serverEntitylist)
-		{
-			ConMsg("Could not get IServerEntityList interface from library %s", szDllFilename);
-			goto IgnoreThisDLL;
-		}
+		//serverEntitylist = (IServerEntityList*)g_ServerFactory(VSERVERENTITYLIST_INTERFACE_VERSION, NULL);
+		//if (!serverEntitylist)
+		//{
+		//	ConMsg("Could not get IServerEntityList interface from library %s", szDllFilename);
+		//	goto IgnoreThisDLL;
+		//}
 
 		serverGameEnts = (IServerGameEnts*)g_ServerFactory(INTERFACEVERSION_SERVERGAMEENTS, NULL);
 		if ( !serverGameEnts )
@@ -1212,6 +1214,18 @@ static bool LoadThisDll( char *szDllFilename, bool bIsServerOnly )
 		{
 			ConMsg("Could not get ISoundEmitterSystem interface from library %s", szDllFilename);
 			// this is not a critical 
+		}
+
+		g_pServerEffects = (IEffects*)g_ServerFactory(ISERVEREFFECTS_INTERFACE_VERSION, NULL);
+		if (!g_pServerEffects)
+		{
+			ConMsg("Could not get g_pServerEffects interface from library %s", szDllFilename);
+		}
+
+		g_pServerSoundEnvelopeController = (ISoundEnvelopeController*)g_ServerFactory(SERVER_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION, NULL);
+		if (!g_pServerSoundEnvelopeController)
+		{
+			ConMsg("Could not get g_pServerSoundEnvelopeController interface from library %s", szDllFilename);
 		}
 
 		serverGameTags = (IServerGameTags*)g_ServerFactory(INTERFACEVERSION_SERVERGAMETAGS, NULL);

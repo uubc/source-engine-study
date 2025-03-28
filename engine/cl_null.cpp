@@ -25,7 +25,7 @@ Vector		listener_origin;
 
 CEngineStats g_EngineStats;
 
-ClientClass *g_pClientClassHead = NULL;
+//ClientClass *g_pClientClassHead = NULL;
 
 bool CL_IsHL2Demo()
 {
@@ -89,10 +89,10 @@ void ClientDLL_FrameStageNotify( ClientFrameStage_t frameStage )
 {
 }
 
-ClientClass *ClientDLL_GetAllClasses( void )
-{
-	return g_pClientClassHead;
-}
+//ClientClass *ClientDLL_GetAllClasses( void )
+//{
+//	return g_pClientClassHead;
+//}
 
 #define LIGHT_MIN_LIGHT_VALUE 0.03f
 

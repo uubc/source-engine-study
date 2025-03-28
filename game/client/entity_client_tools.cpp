@@ -171,7 +171,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CClientTools, IClientTools, VCLIENTTOOLS_INTE
 CClientTools::CClientTools() : m_Handles( 0, 0, HandleLessFunc )
 {
 	m_bInRecordingMode = false;
-	EntityList()->AddListenerEntity( this );
+	//EntityList()->AddListenerEntity( this );
 }
 
 
@@ -548,7 +548,7 @@ bool CClientTools::IsValidHandle( HTOOLHANDLE handle )
 	return m_Handles.Find( HToolEntry_t( handle ) ) != m_Handles.InvalidIndex();
 }
 
-void CClientTools::OnEntityDeleted( CBaseEntity *pEntity )
+void CClientTools::OnEntityDeleted( C_BaseEntity *pEntity )
 {
 	HTOOLHANDLE handle = pEntity ? pEntity->GetEngineObject()->GetToolHandle() : (HTOOLHANDLE)0;
 	if ( handle == (HTOOLHANDLE)0 )
@@ -565,7 +565,7 @@ void CClientTools::OnEntityDeleted( CBaseEntity *pEntity )
 	DetachFromEntity( pEntity );
 }
 
-void CClientTools::OnEntityCreated( CBaseEntity *pEntity )
+void CClientTools::OnEntityCreated( C_BaseEntity *pEntity )
 {
 	if ( !m_bInRecordingMode )
 		return;

@@ -1037,7 +1037,7 @@ void CAI_BlendedMotor::BuildVelocityScript( const AILocalMoveGoal_t &move )
 
 	//-------------------------
 
-	extern ConVar npc_height_adjust;
+	ConVarRef npc_height_adjust("npc_height_adjust");
 	if (npc_height_adjust.GetBool() && move.bHasTraced && move.directTrace.flTotalDist != move.thinkTrace.flTotalDist)
 	{
 		float flDist = (move.directTrace.vEndPosition - m_scriptMove[0].vecLocation).Length2D();

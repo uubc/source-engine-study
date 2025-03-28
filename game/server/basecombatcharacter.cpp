@@ -473,7 +473,7 @@ bool CBaseCombatCharacter::FVisibleThroughPortal( const IEnginePortalServer *pPo
 		traceMask = MASK_BLOCKLOS_AND_NPCS;
 	}
 
-	UTIL_Portal_TraceRay_Bullets(pPortal, ray, traceMask, &traceFilter, &tr);
+	UTIL_Portal_TraceRay_Bullets(EntityList(), pPortal, ray, traceMask, &traceFilter, &tr);
 
 	if (tr.fraction != 1.0 || tr.startsolid )
 	{

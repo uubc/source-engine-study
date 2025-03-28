@@ -144,7 +144,6 @@
     <ClCompile Include="..\..\..\game\server\entityblocker.cpp" />
     <ClCompile Include="..\..\..\game\server\EntityDissolve.cpp" />
     <ClCompile Include="..\..\..\game\server\EntityFlame.cpp" />
-    <ClCompile Include="..\..\..\game\server\entitylist.cpp" />
     <ClCompile Include="..\..\..\game\server\EntityParticleTrail.cpp" />
     <ClCompile Include="..\..\..\game\server\entity_tools_server.cpp" />
     <ClCompile Include="..\..\..\game\server\EnvBeam.cpp" />
@@ -271,9 +270,7 @@
     <ClCompile Include="..\..\..\game\server\scratchpad_gamedll_helpers.cpp" />
     <ClCompile Include="..\..\..\game\server\scripted.cpp" />
     <ClCompile Include="..\..\..\game\server\scriptedtarget.cpp" />
-    <ClCompile Include="..\..\..\game\server\sendproxy.cpp" />
     <ClCompile Include="..\..\..\game\server\serverbenchmark_base.cpp" />
-    <ClCompile Include="..\..\..\game\server\ServerNetworkProperty.cpp" />
     <ClCompile Include="..\..\..\game\server\shadowcontrol.cpp" />
     <ClCompile Include="..\..\..\game\server\SkyCamera.cpp" />
     <ClCompile Include="..\..\..\game\server\slideshow_display.cpp" />
@@ -346,7 +343,6 @@
     <ClCompile Include="..\..\..\game\server\trains.cpp" />
     <ClCompile Include="..\..\..\game\server\triggers.cpp" />
     <ClCompile Include="..\..\..\game\server\util.cpp" />
-    <ClCompile Include="..\..\..\game\server\variant_t.cpp" />
     <ClCompile Include="..\..\..\game\server\vehicle_base.cpp" />
     <ClCompile Include="..\..\..\game\server\vehicle_baseserver.cpp" />
     <ClCompile Include="..\..\..\game\server\vguiscreen.cpp" />
@@ -373,7 +369,6 @@
     <ClCompile Include="..\..\..\game\shared\baseviewmodel_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\base_playeranimstate.cpp" />
     <ClCompile Include="..\..\..\game\shared\beam_shared.cpp" />
-    <ClCompile Include="..\..\..\game\shared\collisionproperty.cpp" />
     <ClCompile Include="..\..\..\game\shared\death_pose.cpp" />
     <ClCompile Include="..\..\..\game\shared\debugoverlay_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\decals.cpp" />
@@ -502,16 +497,15 @@
     <ClCompile Include="..\..\..\public\keyframe\keyframe.cpp" />
     <ClCompile Include="..\..\..\public\map_utils.cpp" />
     <ClCompile Include="..\..\..\public\networkvar.cpp" />
-    <ClCompile Include="..\..\..\public\physics_saverestore.cpp" />
-    <ClCompile Include="..\..\..\public\physics_shared.cpp" />
     <ClCompile Include="..\..\..\public\portal_util_shared.cpp" />
-    <ClCompile Include="..\..\..\public\ragdoll_shared.cpp" />
     <ClCompile Include="..\..\..\public\registry.cpp" />
     <ClCompile Include="..\..\..\public\rope_helpers.cpp" />
     <ClCompile Include="..\..\..\public\rope_physics.cpp" />
     <ClCompile Include="..\..\..\public\scratchpad3d.cpp" />
     <ClCompile Include="..\..\..\public\ScratchPadUtils.cpp" />
+    <ClCompile Include="..\..\..\public\sendproxy.cpp" />
     <ClCompile Include="..\..\..\public\sequence_Transitioner.cpp" />
+    <ClCompile Include="..\..\..\public\ServerNetworkProperty.cpp" />
     <ClCompile Include="..\..\..\public\server_class.cpp" />
     <ClCompile Include="..\..\..\public\simple_physics.cpp" />
     <ClCompile Include="..\..\..\public\SoundParametersInternal.cpp" />
@@ -519,6 +513,7 @@
     <ClCompile Include="..\..\..\public\studio.cpp" />
     <ClCompile Include="..\..\..\public\tier0\memoverride.cpp" />
     <ClCompile Include="..\..\..\public\usercmd.cpp" />
+    <ClCompile Include="..\..\..\public\variant_t.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

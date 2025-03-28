@@ -46,3 +46,4 @@ public:
 static CEngineUniformRandomStream s_EngineRandomStream;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CEngineUniformRandomStream, IUniformRandomStream, 
 	VENGINE_CLIENT_RANDOM_INTERFACE_VERSION, s_EngineRandomStream );
+IUniformRandomStream* random = &s_EngineRandomStream;

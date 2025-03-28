@@ -38,6 +38,7 @@ class CMouthInfo;
 class ClientClass;
 // Linked list of all known client classes
 extern ClientClass *g_pClientClassHead;
+extern ClientClass* GetAllClientClasses(void);
 
 // The serial number that gets passed in is used for ehandles.
 //typedef IClientNetworkable*	(*CreateClientClassFn)( int entnum, int serialNum );

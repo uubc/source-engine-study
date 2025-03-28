@@ -316,8 +316,10 @@ void CHLTVServer::InitClientRecvTables()
 {
 	ServerClass* pCur = NULL;
 	
-	if ( ClientDLL_GetAllClasses() != NULL )
+#ifndef SWDS
+	if (g_ClientDLL->GetAllClasses() != NULL)
 		return; //already initialized
+#endif
 
 	// first create all SendTables
 	for ( pCur = serverGameDLL->GetAllServerClasses(); pCur; pCur=pCur->m_pNext )

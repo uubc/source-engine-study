@@ -312,9 +312,6 @@
     <ClCompile Include="..\..\..\game\server\client.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\collisionproperty.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\public\collisionutils.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
@@ -382,9 +379,6 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\EntityFlame.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\entitylist.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\EntityParticleTrail.cpp">
@@ -876,16 +870,10 @@
     <ClCompile Include="..\..\..\game\server\scriptedtarget.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\server\sendproxy.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\public\server_class.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\serverbenchmark_base.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\ServerNetworkProperty.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\shadowcontrol.cpp">
@@ -1009,9 +997,6 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\shared\util_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\variant_t.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\vehicle_base.cpp">
@@ -1707,19 +1692,10 @@
     <ClCompile Include="..\..\..\public\usercmd.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\public\ragdoll_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\public\ehandle.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\rope_helpers.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\public\physics_shared.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\public\physics_saverestore.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\gamerules.cpp">
@@ -1735,6 +1711,15 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\portal_util_shared.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\sendproxy.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\ServerNetworkProperty.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\public\variant_t.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

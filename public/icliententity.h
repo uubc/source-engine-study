@@ -1253,6 +1253,7 @@ public:
 	virtual void DumpEntityFactories() = 0;
 
 	virtual IVModelInfo* GetModelInfo() = 0;
+	virtual IEffects* GetEffects() = 0;
 	virtual string_t AllocPooledString(const char* pStr) = 0;
 	virtual const char* GetBlockName() = 0;
 	virtual void PreSave(CSaveRestoreData* pSaveData) = 0;
@@ -1292,7 +1293,7 @@ public:
 	virtual IClientEntity* GetClientEntity(int entnum) = 0;
 	virtual IClientEntity* GetClientEntityFromHandle(CBaseHandle hEnt) = 0;
 
-	virtual IClientEntity* GetBaseEntity(int entnum) = 0;
+	virtual IClientEntity* GetBaseEntity(int entnum) const = 0;
 	// For backwards compatibility...
 	virtual IClientEntity* GetEnt(int entnum) { return GetBaseEntity(entnum); }
 	virtual IClientEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
@@ -1333,6 +1334,7 @@ public:
 	virtual void PreThreadedBoneSetup() = 0;
 	virtual void PostThreadedBoneSetup() = 0;
 	virtual void ThreadedBoneSetup() = 0;
+	virtual void DisplayBoneSetupEnts() = 0;
 	virtual void InitBoneSetupThreadPool() = 0;
 	virtual void ShutdownBoneSetupThreadPool() = 0;
 	virtual void InvalidateBoneCaches() = 0;

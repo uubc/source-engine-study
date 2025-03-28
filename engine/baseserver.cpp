@@ -1712,8 +1712,6 @@ void CBaseServer::CreateBaseline(void)
 {
 	SV_WriteVoiceCodec(sv.m_Signon);
 
-	ServerClass* pClasses = serverGameDLL->GetAllServerClasses();
-
 	// Send SendTable info.
 	if (sv_sendtables.GetInt())
 	{
@@ -1723,7 +1721,8 @@ void CBaseServer::CreateBaseline(void)
 		sv.m_FullSendTablesBuffer.EnsureCapacity(NET_MAX_PAYLOAD);
 		sv.m_FullSendTables.StartWriting(sv.m_FullSendTablesBuffer.Base(), sv.m_FullSendTablesBuffer.Count());
 
-		WriteSendTables(pClasses, sv.m_FullSendTables);
+		WriteSendTables(GetAllServerClasses(), sv.m_FullSendTables);
+		WriteSendTables(serverGameDLL->GetAllServerClasses(), sv.m_FullSendTables);
 
 		if (sv.m_FullSendTables.IsOverflowed())
 		{
@@ -1732,7 +1731,8 @@ void CBaseServer::CreateBaseline(void)
 		}
 
 		// Send class descriptions.
-		WriteClassInfos(pClasses, sv.m_FullSendTables);
+		WriteClassInfos(GetAllServerClasses(), sv.m_FullSendTables);
+		WriteClassInfos(serverGameDLL->GetAllServerClasses(), sv.m_FullSendTables);
 
 		if (sv.m_FullSendTables.IsOverflowed())
 		{
@@ -1876,9 +1876,12 @@ void CBaseServer::WriteSendTables(ServerClass* pClasses, bf_write& pBuf)
 //-----------------------------------------------------------------------------
 void CBaseServer::ComputeClassInfosCRC(CRC32_t* crc)
 {
-	ServerClass* pClasses = serverGameDLL->GetAllServerClasses();
-
-	for (ServerClass* pClass = pClasses; pClass; pClass = pClass->m_pNext)
+	for (ServerClass* pClass = GetAllServerClasses(); pClass; pClass = pClass->m_pNext)
+	{
+		CRC32_ProcessBuffer(crc, (void*)pClass->m_pNetworkName, Q_strlen(pClass->m_pNetworkName));
+		CRC32_ProcessBuffer(crc, (void*)pClass->m_pTable->GetName(), Q_strlen(pClass->m_pTable->GetName()));
+	}
+	for (ServerClass* pClass = serverGameDLL->GetAllServerClasses(); pClass; pClass = pClass->m_pNext)
 	{
 		CRC32_ProcessBuffer(crc, (void*)pClass->m_pNetworkName, Q_strlen(pClass->m_pNetworkName));
 		CRC32_ProcessBuffer(crc, (void*)pClass->m_pTable->GetName(), Q_strlen(pClass->m_pTable->GetName()));
@@ -1887,11 +1890,14 @@ void CBaseServer::ComputeClassInfosCRC(CRC32_t* crc)
 
 void CBaseServer::AssignClassIds()
 {
-	ServerClass* pClasses = serverGameDLL->GetAllServerClasses();
 
 	// Count the number of classes.
 	int nClasses = 0;
-	for (ServerClass* pCount = pClasses; pCount; pCount = pCount->m_pNext)
+	for (ServerClass* pCount = GetAllServerClasses(); pCount; pCount = pCount->m_pNext)
+	{
+		++nClasses;
+	}
+	for (ServerClass* pCount = serverGameDLL->GetAllServerClasses(); pCount; pCount = pCount->m_pNext)
 	{
 		++nClasses;
 	}
@@ -1907,7 +1913,16 @@ void CBaseServer::AssignClassIds()
 	bool bSpew = CommandLine()->FindParm("-netspike") != 0;
 
 	int curID = 0;
-	for (ServerClass* pClass = pClasses; pClass; pClass = pClass->m_pNext)
+	for (ServerClass* pClass = GetAllServerClasses(); pClass; pClass = pClass->m_pNext)
+	{
+		pClass->m_ClassID = curID++;
+
+		if (bSpew)
+		{
+			Msg("%d == '%s'\n", pClass->m_ClassID, pClass->GetName());
+		}
+	}
+	for (ServerClass* pClass = serverGameDLL->GetAllServerClasses(); pClass; pClass = pClass->m_pNext)
 	{
 		pClass->m_ClassID = curID++;
 

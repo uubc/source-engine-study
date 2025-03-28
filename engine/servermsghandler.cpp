@@ -415,6 +415,7 @@ bool CClientState::ProcessClassInfo( SVC_ClassInfo *msg )
 			// store the current data tables in demo file to make sure
 			// they are the same during playback 
 #ifndef _XBOX
+			demorecorder->RecordServerClasses(GetAllServerClasses());
 			demorecorder->RecordServerClasses( serverGameDLL->GetAllServerClasses() );
 #endif
 		}

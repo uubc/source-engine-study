@@ -1255,14 +1255,14 @@ void CPortal_Player::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 
 			CTraceFilterSimple OriginalTraceFilter( this, COLLISION_GROUP_PLAYER_MOVEMENT );
 			CTraceFilterTranslateClones traceFilter( &OriginalTraceFilter );
-			UTIL_Portal_TraceRay_With(GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, & traceFilter, & trace);
+			UTIL_Portal_TraceRay_With(EntityList(), GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, & traceFilter, & trace);
 
 			// current position is not ok, fixup
 			if ( trace.allsolid || trace.startsolid )
 			{
 				//try again with new position
 				ray.Init( newPosition, newPosition, GetEngineObject()->WorldAlignMins(), GetEngineObject()->WorldAlignMaxs() );
-				UTIL_Portal_TraceRay_With(GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, &traceFilter, &trace);
+				UTIL_Portal_TraceRay_With(EntityList(), GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, &traceFilter, &trace);
 
 				if( trace.startsolid == false )
 				{

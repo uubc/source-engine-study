@@ -28,7 +28,7 @@ void ClientDLL_ProcessInput( void );
 void ClientDLL_Update( void );
 void ClientDLL_VoiceStatus( int entindex, bool bTalking );
 void ClientDLL_FrameStageNotify( ClientFrameStage_t frameStage );
-ClientClass *ClientDLL_GetAllClasses( void );
+//ClientClass *ClientDLL_GetAllClasses( void );
 CreateInterfaceFn ClientDLL_GetFactory( void );
 
 //-----------------------------------------------------------------------------

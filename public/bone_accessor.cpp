@@ -4,11 +4,11 @@
 //
 //=============================================================================//
 
-#include "cbase.h"
+//#include "cbase.h"
 #include "bone_accessor.h"
 
 
-#if defined( CLIENT_DLL ) && defined( _DEBUG )
+#if defined( _DEBUG )
 
 	void CBoneAccessor::SanityCheckBone( int iBone, bool bReadable ) const
 	{

@@ -91,8 +91,8 @@ class CClientFrame;
 
 
 // Builds an alternate copy of the datatable for any classes that have datatables with props excluded.
-void SV_InitSendTables( ServerClass *pClasses );
-void SV_TermSendTables( ServerClass *pClasses );
+void SV_InitSendTables(ServerClass* pClasses, ServerClass *pGameClasses );
+void SV_TermSendTables(ServerClass* pClasses, ServerClass *pGameClasses );
 
 // send voice data from cl to other clients
 void SV_BroadcastVoiceData(IClient * cl, int nBytes, char * data, int64 xuid);

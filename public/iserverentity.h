@@ -1427,6 +1427,7 @@ public:
 	virtual const char* GetBlockName() = 0;
 
 	virtual IVModelInfo* GetModelInfo() = 0;
+	virtual IEffects* GetEffects() = 0;
 	virtual string_t AllocPooledString(const char* pStr) = 0;
 
 	virtual void PreSave(CSaveRestoreData* pSaveData) = 0;
@@ -1542,6 +1543,7 @@ public:
 	virtual void SetPredictionRandomSeed(const CUserCmd* cmd) = 0;
 	virtual IEngineObject* GetPredictionPlayer(void) = 0;
 	virtual void SetPredictionPlayer(IEngineObject* player) = 0;
+	virtual void UpdateTestMoveTypeStepSimulation() = 0;
 	virtual bool IsSimulatingOnAlternateTicks() = 0;
 	virtual IServerEntity* GetPlayerHoldingEntity(IServerEntity* pEntity) = 0;
 	virtual int GetPortalCount() = 0;

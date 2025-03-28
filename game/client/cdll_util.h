@@ -184,4 +184,9 @@ int UTIL_GetMapKeyCount( const char *pszCustomKey );
 // Returns true if the user has loaded any maps, false otherwise.
 bool UTIL_HasLoadedAnyMap();
 
+#ifdef CLIENT_DLL
+void UTIL_TransformInterpolatedAngle(ITypedInterpolatedVar< QAngle >& qInterped, matrix3x4_t matTransform, bool bSkipNewest);
+void UTIL_TransformInterpolatedPosition(ITypedInterpolatedVar< Vector >& vInterped, VMatrix matTransform, bool bSkipNewest);
+#endif
+
 #endif // !UTIL_H

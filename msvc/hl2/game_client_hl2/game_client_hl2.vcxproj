@@ -169,13 +169,11 @@
     <ClCompile Include="..\..\..\game\client\baseclientrendertargets.cpp" />
     <ClCompile Include="..\..\..\game\client\basepresence.cpp" />
     <ClCompile Include="..\..\..\game\client\beamdraw.cpp" />
-    <ClCompile Include="..\..\..\game\client\bone_merge_cache.cpp" />
     <ClCompile Include="..\..\..\game\client\camomaterialproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\cdll_bounded_cvars.cpp" />
     <ClCompile Include="..\..\..\game\client\cdll_client_int.cpp" />
     <ClCompile Include="..\..\..\game\client\cdll_util.cpp" />
     <ClCompile Include="..\..\..\game\client\clienteffectprecachesystem.cpp" />
-    <ClCompile Include="..\..\..\game\client\cliententitylist.cpp" />
     <ClCompile Include="..\..\..\game\client\clientmode_shared.cpp" />
     <ClCompile Include="..\..\..\game\client\clientsideeffects.cpp" />
     <ClCompile Include="..\..\..\game\client\clientsideeffects_test.cpp" />
@@ -439,7 +437,6 @@
     <ClCompile Include="..\..\..\game\client\hud_vehicle.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_weapon.cpp" />
     <ClCompile Include="..\..\..\game\client\initializer.cpp" />
-    <ClCompile Include="..\..\..\game\client\interpolatedvar.cpp" />
     <ClCompile Include="..\..\..\game\client\in_camera.cpp" />
     <ClCompile Include="..\..\..\game\client\in_joystick.cpp" />
     <ClCompile Include="..\..\..\game\client\in_main.cpp" />
@@ -483,7 +480,6 @@
     <ClCompile Include="..\..\..\game\client\proxyplayer.cpp" />
     <ClCompile Include="..\..\..\game\client\proxypupil.cpp" />
     <ClCompile Include="..\..\..\game\client\ragdoll.cpp" />
-    <ClCompile Include="..\..\..\game\client\recvproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\rendertexture.cpp" />
     <ClCompile Include="..\..\..\game\client\replay\cdll_replay.cpp" />
     <ClCompile Include="..\..\..\game\client\replay\genericclassbased_replay.cpp" />
@@ -575,7 +571,6 @@
     <ClCompile Include="..\..\..\game\shared\base_playeranimstate.cpp" />
     <ClCompile Include="..\..\..\game\shared\beam_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\cam_thirdperson.cpp" />
-    <ClCompile Include="..\..\..\game\shared\collisionproperty.cpp" />
     <ClCompile Include="..\..\..\game\shared\death_pose.cpp" />
     <ClCompile Include="..\..\..\game\shared\debugoverlay_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\decals.cpp" />
@@ -652,15 +647,13 @@
     <ClCompile Include="..\..\..\public\gamerules.cpp" />
     <ClCompile Include="..\..\..\public\haptics\haptic_msgs.cpp" />
     <ClCompile Include="..\..\..\public\haptics\haptic_utils.cpp" />
+    <ClCompile Include="..\..\..\public\interpolatedvar.cpp" />
     <ClCompile Include="..\..\..\public\interpolatortypes.cpp" />
     <ClCompile Include="..\..\..\public\jigglebones.cpp" />
     <ClCompile Include="..\..\..\public\networkvar.cpp" />
-    <ClCompile Include="..\..\..\public\physics_saverestore.cpp" />
-    <ClCompile Include="..\..\..\public\physics_shared.cpp" />
     <ClCompile Include="..\..\..\public\portal_util_shared.cpp" />
-    <ClCompile Include="..\..\..\public\posedebugger.cpp" />
     <ClCompile Include="..\..\..\public\predictioncopy.cpp" />
-    <ClCompile Include="..\..\..\public\ragdoll_shared.cpp" />
+    <ClCompile Include="..\..\..\public\recvproxy.cpp" />
     <ClCompile Include="..\..\..\public\renamed_recvtable_compat.cpp" />
     <ClCompile Include="..\..\..\public\rope_helpers.cpp" />
     <ClCompile Include="..\..\..\public\rope_physics.cpp" />

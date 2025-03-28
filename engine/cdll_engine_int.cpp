@@ -94,6 +94,7 @@
 #include "iviewrender.h"
 #include "iclientshadowmgr.h"
 #include "entitylist_base.h"
+#include "IEffects.h"
 
 #if defined( REPLAY_ENABLED )
 #include "replay_internal.h"
@@ -1683,33 +1684,46 @@ IBaseClientDLL *g_ClientDLL = NULL;
 IClientVirtualReality *g_pClientVR = NULL;
 IPrediction	*g_pClientSidePrediction = NULL;
 IClientRenderTargets *g_pClientRenderTargets = NULL;
-IClientEntityList *entitylist = NULL;
+//IClientEntityList *entitylist = NULL;
 ICenterPrint *centerprint = NULL;
-ClientClass *g_pClientClassHead = NULL;
+//ClientClass *g_pClientClassHead = NULL;
 IClientReplay *g_pClientReplay = NULL;
 //IClientShadowMgr* g_pClientShadowMgr = NULL;
 IViewRender* g_pViewRender = NULL;
+IEffects* g_pClientEffects = NULL;
+IClientTools* clienttools = NULL;
+ISoundEnvelopeController* g_pClientSoundEnvelopeController = NULL;
 
-ClientClass *ClientDLL_GetAllClasses( void )
-{
-	if ( g_ClientDLL )
-		return g_ClientDLL->GetAllClasses();
-	else
-		return g_pClientClassHead;
-}
+//ClientClass *ClientDLL_GetAllClasses( void )
+//{
+//	if ( g_ClientDLL )
+//		return g_ClientDLL->GetAllClasses();
+//	else
+//		return g_pClientClassHead;
+//}
 
 static void ClientDLL_InitRecvTableMgr()
 {
 	// Register all the receive tables.
 	RecvTable *pRecvTables[MAX_DATATABLES];
 	int nRecvTables = 0;
-	for ( ClientClass *pCur = ClientDLL_GetAllClasses(); pCur; pCur=pCur->m_pNext )
+	for (ClientClass* pCur = g_ClientDLL->GetAllClasses(); pCur; pCur = pCur->m_pNext)
 	{
 		ErrorIfNot( 
 			nRecvTables < ARRAYSIZE( pRecvTables ), 
 			("ClientDLL_InitRecvTableMgr: overflowed MAX_DATATABLES")
 			);
 		
+		pRecvTables[nRecvTables] = pCur->m_pRecvTable;
+		++nRecvTables;
+	}
+	for (ClientClass* pCur = GetAllClientClasses(); pCur; pCur = pCur->m_pNext)
+	{
+		ErrorIfNot(
+			nRecvTables < ARRAYSIZE(pRecvTables),
+			("ClientDLL_InitRecvTableMgr: overflowed MAX_DATATABLES")
+		);
+
 		pRecvTables[nRecvTables] = pCur->m_pRecvTable;
 		++nRecvTables;
 	}
@@ -1767,11 +1781,11 @@ bool ClientDLL_Load()
 				Sys_Error("Could not get IPrediction interface from library client");
 			}
 
-			entitylist = (IClientEntityList*)g_ClientFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL);
-			if (!entitylist)
-			{
-				Sys_Error("Could not get client entity list interface from library client");
-			}
+			//entitylist = (IClientEntityList*)g_ClientFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL);
+			//if (!entitylist)
+			//{
+			//	Sys_Error("Could not get client entity list interface from library client");
+			//}
 			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist);
 			g_pClientGameSaveRestoreBlockSet->AddBlockHandler(entitylist->PhysSaveRestoreBlockHandler());
 
@@ -1792,6 +1806,20 @@ bool ClientDLL_Load()
 			{
 				Sys_Error("Could not get g_pViewRender interface from library client");
 			}
+
+			g_pClientEffects = (IEffects*)g_ClientFactory(ICLIENTEFFECTS_INTERFACE_VERSION, NULL);
+			if (!g_pClientEffects)
+			{
+				Sys_Error("Could not get g_pClientEffects interface from library client");
+			}
+
+			g_pClientSoundEnvelopeController = (ISoundEnvelopeController*)g_ClientFactory(CLIENT_SOUNDENVELOPECONTROLLER_INTERFACE_VERSION, NULL);
+			if (!g_pClientSoundEnvelopeController)
+			{
+				Sys_Error("Could not get g_pClientSoundEnvelopeController interface from library client");
+			}
+
+			clienttools = (IClientTools*)g_ClientFactory(VCLIENTTOOLS_INTERFACE_VERSION, NULL);
 
 			//g_pClientShadowMgr = (IClientShadowMgr*)g_ClientFactory(CLIENTSHADOW_INTERFACE_VERSION, NULL);
 			//if (!g_pClientShadowMgr) 
@@ -1987,7 +2015,7 @@ void ClientDLL_Shutdown( void )
 	}
 	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist->PhysSaveRestoreBlockHandler());
 	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist);
-	entitylist = NULL;
+	//entitylist = NULL;
 	g_pClientSidePrediction = NULL;
 	g_ClientFactory = NULL;
 	centerprint = NULL;

@@ -25,12 +25,12 @@ void CLocalNetworkBackdoor::InitFastCopy()
 		return;
 
 
-	const CStandardSendProxies *pSendProxies = NULL;
+	const CStandardSendProxies *pGameSendProxies = NULL;
 
 	// If the game server is greater than v4, then it is using the new proxy format.
 	if ( g_iServerGameDLLVersion >= 5 ) // check server version
 	{
-		pSendProxies = serverGameDLL->GetStandardSendProxies();
+		pGameSendProxies = serverGameDLL->GetStandardSendProxies();
 	}
 	else
 	{
@@ -42,10 +42,10 @@ void CLocalNetworkBackdoor::InitFastCopy()
 		compatSendProxy.m_SendLocalDataTable = g_StandardSendProxies.m_SendLocalDataTable;
 		compatSendProxy.m_ppNonModifiedPointerProxies = g_StandardSendProxies.m_ppNonModifiedPointerProxies;
 
-		pSendProxies = &compatSendProxy;
+		pGameSendProxies = &compatSendProxy;
 	} 
 
-	const CStandardRecvProxies *pRecvProxies = g_ClientDLL->GetStandardRecvProxies();
+	const CStandardRecvProxies *pGameRecvProxies = g_ClientDLL->GetStandardRecvProxies();
 
 	int nFastCopyProps = 0;
 	int nSlowCopyProps = 0;
@@ -62,9 +62,11 @@ void CLocalNetworkBackdoor::InitFastCopy()
 
 		LocalTransfer_InitFastCopy(
 			pServerClass->m_pTable,
-			pSendProxies,
+			&g_StandardSendProxies,
+			pGameSendProxies,
 			pClientClass->m_pRecvTable,
-			pRecvProxies,
+			&g_StandardRecvProxies,
+			pGameRecvProxies,
 			nSlowCopyProps,
 			nFastCopyProps
 			);
@@ -380,7 +382,7 @@ void CLocalNetworkBackdoor::EntState(
 			pClientEntity->GetClientNetworkable(),
 			bCreated, 
 			bExistedAndWasDormant,
-			iEnt );
+			iEnt);
 
 		if ( bExistedAndWasDormant )
 		{

@@ -37,6 +37,58 @@ bool ShouldVehicleIgnoreEntity( CBaseEntity *pVehicle, CBaseEntity *pCollide );
 
 #define HITBOX_SET	2
 
+//===========================================================================================================
+// Vehicle Sounds
+//===========================================================================================================
+
+// These are sounds that are to be automatically stopped whenever the vehicle's driver leaves it
+vehiclesound g_iSoundsToStopOnExit[] =
+{
+	VS_ENGINE2_START,
+	VS_ENGINE2_STOP,
+};
+
+const char* pSoundStateNames[] =
+{
+	"SS_NONE",
+	"SS_SHUTDOWN",
+	"SS_SHUTDOWN_WATER",
+	"SS_START_WATER",
+	"SS_START_IDLE",
+	"SS_IDLE",
+	"SS_GEAR_0",
+	"SS_GEAR_1",
+	"SS_GEAR_2",
+	"SS_GEAR_3",
+	"SS_GEAR_4",
+	"SS_SLOWDOWN",
+	"SS_SLOWDOWN_HIGHSPEED",
+	"SS_GEAR_0_RESUME",
+	"SS_GEAR_1_RESUME",
+	"SS_GEAR_2_RESUME",
+	"SS_GEAR_3_RESUME",
+	"SS_GEAR_4_RESUME",
+	"SS_TURBO",
+	"SS_REVERSE",
+};
+
+inline int SoundStateIndexFromName(const char* pName)
+{
+	for (int i = 0; i < SS_NUM_STATES; i++)
+	{
+		Assert(i < ARRAYSIZE(pSoundStateNames));
+		if (!strcmpi(pSoundStateNames[i], pName))
+			return i;
+	}
+	return -1;
+}
+
+inline const char* SoundStateNameFromIndex(int index)
+{
+	index = clamp(index, 0, SS_NUM_STATES - 1);
+	return pSoundStateNames[index];
+}
+
 //-----------------------------------------------------------------------------
 // Save/load
 //-----------------------------------------------------------------------------
@@ -1714,47 +1766,7 @@ float CBaseServerVehicle::Weapon_SecondaryCanFireAt( void )
 	return gpGlobals->curtime;
 }
 
-const char *pSoundStateNames[] =
-{
-	"SS_NONE",
-	"SS_SHUTDOWN",
-	"SS_SHUTDOWN_WATER",
-	"SS_START_WATER",
-	"SS_START_IDLE",
-	"SS_IDLE",
-	"SS_GEAR_0",
-	"SS_GEAR_1",
-	"SS_GEAR_2",
-	"SS_GEAR_3",
-	"SS_GEAR_4",
-	"SS_SLOWDOWN",
-	"SS_SLOWDOWN_HIGHSPEED",
-	"SS_GEAR_0_RESUME",
-	"SS_GEAR_1_RESUME",
-	"SS_GEAR_2_RESUME",
-	"SS_GEAR_3_RESUME",
-	"SS_GEAR_4_RESUME",
-	"SS_TURBO",
-	"SS_REVERSE",
-};
 
-
-static int SoundStateIndexFromName( const char *pName )
-{
-	for ( int i = 0; i < SS_NUM_STATES; i++ )
-	{
-		Assert( i < ARRAYSIZE(pSoundStateNames) );
-		if ( !strcmpi( pSoundStateNames[i], pName ) )
-			return i;
-	}
-	return -1;
-}
-
-static const char *SoundStateNameFromIndex( int index )
-{
-	index = clamp(index, 0, SS_NUM_STATES-1 );
-	return pSoundStateNames[index];
-}
 
 void CBaseServerVehicle::PlaySound( const char *pSound )
 {
@@ -2233,7 +2245,7 @@ void CBaseServerVehicle::SoundShutdown( float flFadeTime )
 
 	// Stop any looping sounds that may be running, as the following stop sound may not exist
 	// and thus leave a looping sound playing after the user gets out.
-	for ( int i = 0; i < NUM_SOUNDS_TO_STOP_ON_EXIT; i++ )
+	for ( int i = 0; i < ARRAYSIZE(g_iSoundsToStopOnExit); i++ )
 	{
 		StopSound( g_iSoundsToStopOnExit[i] );
 	}
@@ -2587,166 +2599,5 @@ bool CBaseServerVehicle::PassengerShouldReceiveDamage( ITakeDamageInfo &info )
 	return true;
 }
 
-//===========================================================================================================
-// Vehicle Sounds
-//===========================================================================================================
 
-// These are sounds that are to be automatically stopped whenever the vehicle's driver leaves it
-vehiclesound g_iSoundsToStopOnExit[] =
-{
-	VS_ENGINE2_START,
-	VS_ENGINE2_STOP,
-};
-
-const char *vehiclesound_parsenames[VS_NUM_SOUNDS] =
-{
-	"skid_lowfriction",
-	"skid_normalfriction",
-	"skid_highfriction",
-	"engine2_start",
-	"engine2_stop",
-	"misc1",
-	"misc2",
-	"misc3",
-	"misc4",
-};
-
-CVehicleSoundsParser::CVehicleSoundsParser( void )
-{
-	// UNDONE: Revisit this pattern - move sub-block processing ideas into the parser architecture
-	m_iCurrentGear = -1;
-	m_iCurrentState = -1;
-	m_iCurrentCrashSound = -1;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CVehicleSoundsParser::ParseKeyValue( void *pData, const char *pKey, const char *pValue )
-{
-	vehiclesounds_t *pSounds = (vehiclesounds_t *)pData;
-	// New gear?
-	if ( !strcmpi( pKey, "gear" ) )
-	{
-		// Create, initialize, and add a new gear to our list
-		int iNewGear = pSounds->pGears.AddToTail();
-		pSounds->pGears[iNewGear].flMaxSpeed = 0;
-		pSounds->pGears[iNewGear].flSpeedApproachFactor = 1.0;
-
-		// Set our min speed to the previous gear's max
-		if ( iNewGear == 0 )
-		{
-			// First gear, so our minspeed is 0
-			pSounds->pGears[iNewGear].flMinSpeed = 0;
-		}
-		else
-		{
-			pSounds->pGears[iNewGear].flMinSpeed = pSounds->pGears[iNewGear-1].flMaxSpeed;
-		}
-
-		// Remember which gear we're reading data from
-		m_iCurrentGear = iNewGear;
-	}
-	else if ( !strcmpi( pKey, "state" ) )
-	{
-		m_iCurrentState = 0;
-	}
-	else if ( !strcmpi( pKey, "crashsound" ) )
-	{
-		m_iCurrentCrashSound = pSounds->crashSounds.AddToTail();
-		pSounds->crashSounds[m_iCurrentCrashSound].flMinSpeed = 0;
-		pSounds->crashSounds[m_iCurrentCrashSound].flMinDeltaSpeed = 0;
-		pSounds->crashSounds[m_iCurrentCrashSound].iszCrashSound = NULL_STRING;
-	}
-	else
-	{
-		int i;
-
-		// Are we currently in a gear block?
-		if ( m_iCurrentGear >= 0 )
-		{
-			Assert( m_iCurrentGear < pSounds->pGears.Count() );
-
-			// Check gear keys
-			if ( !strcmpi( pKey, "max_speed" ) )
-			{
-				pSounds->pGears[m_iCurrentGear].flMaxSpeed = atof(pValue);
-				return;
-			}
-			if ( !strcmpi( pKey, "speed_approach_factor" ) )
-			{
-				pSounds->pGears[m_iCurrentGear].flSpeedApproachFactor = atof(pValue);
-				return;
-			}
-		}
-		// We're done reading a gear, so stop checking them.
-		m_iCurrentGear = -1;
-
-		if ( m_iCurrentState >= 0 )
-		{
-			if ( !strcmpi( pKey, "name" ) )
-			{
-				m_iCurrentState = SoundStateIndexFromName( pValue );
-				pSounds->iszStateSounds[m_iCurrentState] = NULL_STRING;
-				pSounds->minStateTime[m_iCurrentState] = 0.0f;
-				return;
-			}
-			else if ( !strcmpi( pKey, "sound" ) )
-			{
-				pSounds->iszStateSounds[m_iCurrentState] = AllocPooledString(pValue);
-				return;
-			}
-			else if ( !strcmpi( pKey, "min_time" ) )
-			{
-				pSounds->minStateTime[m_iCurrentState] = atof(pValue);
-				return;
-			}
-		}
-		// 
-		m_iCurrentState = -1;
-
-		if ( m_iCurrentCrashSound >= 0 )
-		{
-			if ( !strcmpi( pKey, "min_speed" ) )
-			{
-				pSounds->crashSounds[m_iCurrentCrashSound].flMinSpeed = atof(pValue);
-				return;
-			}
-			else if ( !strcmpi( pKey, "sound" ) )
-			{
-				pSounds->crashSounds[m_iCurrentCrashSound].iszCrashSound = AllocPooledString(pValue);
-				return;
-			}
-			else if ( !strcmpi( pKey, "min_speed_change" ) )
-			{
-				pSounds->crashSounds[m_iCurrentCrashSound].flMinDeltaSpeed = atof(pValue);
-				return;
-			}
-			else if ( !strcmpi( pKey, "gear_limit" ) )
-			{
-				pSounds->crashSounds[m_iCurrentCrashSound].gearLimit = atoi(pValue);
-				return;
-			}
-		}
-		m_iCurrentCrashSound = -1;
-
-		for ( i = 0; i < VS_NUM_SOUNDS; i++ )
-		{
-			if ( !strcmpi( pKey, vehiclesound_parsenames[i] ) )
-			{
-				pSounds->iszSound[i] = AllocPooledString(pValue);
-				return;
-			}
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CVehicleSoundsParser::SetDefaults( void *pData ) 
-{
-	vehiclesounds_t *pSounds = (vehiclesounds_t *)pData;
-	pSounds->Init();
-}
 

@@ -1395,10 +1395,10 @@ void CC_GroundList_f(const CCommand &args)
 			linkCount += DescribeGroundList((CBaseEntity*)ent );
 		}
 
-		extern int groundlinksallocated;
-		Assert( linkCount == groundlinksallocated );
+		//extern int groundlinksallocated;
+		//Assert( linkCount == groundlinksallocated );
 
-		Msg( "--- %i links\n", groundlinksallocated );
+		//Msg( "--- %i links\n", groundlinksallocated );
 	}
 }
 

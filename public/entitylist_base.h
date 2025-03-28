@@ -1362,7 +1362,7 @@ class CEntityFactory : public IEntityFactory
 
 		void UpdateOnRemove() {
 			if (bUpdateOnRemoved) {
-				Error("recursive UpdateOnRemove hit");
+				Error("recursive UpdateOnRemove hit\n");
 			}
 			T::UpdateOnRemove();
 			bUpdateOnRemoved = true;
@@ -1846,8 +1846,8 @@ inline Vector UTIL_YawToVector(float yaw)
 class EntityMatrix : public VMatrix
 {
 public:
-	void InitFromEntity(IServerEntity* pEntity, int iAttachment = 0);
-	void InitFromEntityLocal(IServerEntity* entity);
+	void InitFromEntity(IHandleEntity* pEntity, int iAttachment = 0);
+	void InitFromEntityLocal(IHandleEntity* entity);
 
 	inline Vector LocalToWorld(const Vector& vVec) const
 	{
@@ -1869,6 +1869,47 @@ public:
 		return VMul3x3Transpose(vVec);
 	}
 };
+
+//-----------------------------------------------------------------------------
+// Purpose: Initialize the matrix from an entity
+// Input  : *pEntity - 
+//-----------------------------------------------------------------------------
+inline void EntityMatrix::InitFromEntity(IHandleEntity* pEntity, int iAttachment)
+{
+	if (!pEntity)
+	{
+		Identity();
+		return;
+	}
+
+	// Get an attachment's matrix?
+	if (iAttachment != 0)
+	{
+		if (pEntity->GetEngineObject()->GetModelPtr())
+		{
+			Vector vOrigin;
+			QAngle vAngles;
+			if (pEntity->GetEngineObject()->GetAttachment(iAttachment, vOrigin, vAngles))
+			{
+				((VMatrix*)this)->SetupMatrixOrgAngles(vOrigin, vAngles);
+				return;
+			}
+		}
+	}
+
+	((VMatrix*)this)->SetupMatrixOrgAngles(pEntity->GetEngineObject()->GetAbsOrigin(), pEntity->GetEngineObject()->GetAbsAngles());
+}
+
+
+inline void EntityMatrix::InitFromEntityLocal(IHandleEntity* entity)
+{
+	if (!entity || entity->entindex() == -1)
+	{
+		Identity();
+		return;
+	}
+	((VMatrix*)this)->SetupMatrixOrgAngles(entity->GetEngineObject()->GetLocalOrigin(), entity->GetEngineObject()->GetLocalAngles());
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Convert angles to -180 t 180 range

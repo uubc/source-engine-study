@@ -190,21 +190,28 @@ void DataTable_CreateClientTablesFromServerTables()
 		Sys_Error( "DataTable_CreateClientTablesFromServerTables:  No serverGameDLL loaded!" );
 	}
 
-	ServerClass *pClasses = serverGameDLL->GetAllServerClasses();
 	ServerClass *pCur;
 
 	CUtlVector< SendTable * > visited;
 
 	// First, we send all the leaf classes. These are the ones that will need decoders
 	// on the client.
-	for ( pCur=pClasses; pCur; pCur=pCur->m_pNext )
+	for (pCur = GetAllServerClasses(); pCur; pCur = pCur->m_pNext)
+	{
+		DataTable_MaybeCreateReceiveTable(visited, pCur->m_pTable, true);
+	}
+	for ( pCur= serverGameDLL->GetAllServerClasses(); pCur; pCur=pCur->m_pNext )
 	{
 		DataTable_MaybeCreateReceiveTable( visited, pCur->m_pTable, true );
 	}
 
 	// Now, we send their base classes. These don't need decoders on the client
 	// because we will never send these SendTables by themselves.
-	for ( pCur=pClasses; pCur; pCur=pCur->m_pNext )
+	for (pCur = GetAllServerClasses(); pCur; pCur = pCur->m_pNext)
+	{
+		DataTable_MaybeCreateReceiveTable_R(visited, pCur->m_pTable);
+	}
+	for ( pCur= serverGameDLL->GetAllServerClasses(); pCur; pCur=pCur->m_pNext )
 	{
 		DataTable_MaybeCreateReceiveTable_R( visited, pCur->m_pTable );
 	}
@@ -217,11 +224,13 @@ void DataTable_CreateClientClassInfosFromServerClasses( CBaseClientState *pState
 		Sys_Error( "DataTable_CreateClientClassInfosFromServerClasses:  No serverGameDLL loaded!" );
 	}
 
-	ServerClass *pClasses = serverGameDLL->GetAllServerClasses();
-
 	// Count the number of classes.
 	int nClasses = 0;
-	for ( ServerClass *pCount=pClasses; pCount; pCount=pCount->m_pNext )
+	for (ServerClass* pCount = GetAllServerClasses(); pCount; pCount = pCount->m_pNext)
+	{
+		++nClasses;
+	}
+	for ( ServerClass *pCount= serverGameDLL->GetAllServerClasses(); pCount; pCount=pCount->m_pNext )
 	{
 		++nClasses;
 	}
@@ -244,7 +253,16 @@ void DataTable_CreateClientClassInfosFromServerClasses( CBaseClientState *pState
 
 	// Now fill in the entries
 	int curID = 0;
-	for ( ServerClass *pClass=pClasses; pClass; pClass=pClass->m_pNext )
+	for (ServerClass* pClass = GetAllServerClasses(); pClass; pClass = pClass->m_pNext)
+	{
+		Assert(pClass->m_ClassID >= 0 && pClass->m_ClassID < nClasses);
+
+		pClass->m_ClassID = curID++;
+
+		pState->m_pServerClasses[pClass->m_ClassID].m_ClassName = COM_StringCopy(pClass->m_pNetworkName);
+		pState->m_pServerClasses[pClass->m_ClassID].m_DatatableName = COM_StringCopy(pClass->m_pTable->GetName());
+	}
+	for ( ServerClass *pClass= serverGameDLL->GetAllServerClasses(); pClass; pClass=pClass->m_pNext )
 	{
 		Assert( pClass->m_ClassID >= 0 && pClass->m_ClassID < nClasses );
 

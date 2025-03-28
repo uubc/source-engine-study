@@ -160,6 +160,9 @@ T* CHandle<T>::operator -> () const
 template<class T>
 inline T* CHandle<T>::Get() const
 {
+	if (!IsValid()) {
+		return NULL;
+	}
 #ifdef CLIENT_DLL
 	return (T*)entitylist->GetBaseEntityFromHandle(*this);
 #endif // CLIENT_DLL
