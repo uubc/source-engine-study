@@ -217,7 +217,6 @@ def build(bld):
 		"../public/sequence_Transitioner.cpp",
         "../public/server_class.cpp",
         "../public/bone_setup.cpp",
-        "../public/bone_accessor.cpp",
 		"entitylist.cpp",
 		#'audio/snd_dev_xaudio.cpp',[$X360]
 		#'audio/snd_wave_mixer_xma.cpp',	[$X360]
