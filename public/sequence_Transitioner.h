@@ -13,7 +13,14 @@
 class CAnimationData {
 	friend class CSequenceTransitioner;
 public:
-
+	CAnimationData() {
+		m_nSequence = 0;
+		m_flWeight = 0;
+		m_flPlaybackRate = 0;
+		m_flCycle = 0;
+		m_flLayerAnimtime = 0;
+		m_flLayerFadeOuttime = 0;
+	}
 	float GetFadeout(float flCurTime) const
 	{
 		float s;
