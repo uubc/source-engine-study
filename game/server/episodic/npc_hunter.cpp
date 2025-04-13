@@ -539,7 +539,7 @@ void CHunterFlechette::Spawn()
 	GetEngineObject()->SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
 	
 	// Make sure we're updated if we're underwater
-	UpdateWaterState();
+	GetEngineObject()->UpdateWaterState();
 
 	SetTouch( &CHunterFlechette::FlechetteTouch );
 
@@ -872,7 +872,7 @@ void CHunterFlechette::BubbleThink()
 {
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f, s_szHunterFlechetteBubbles );
 
-	if ( GetWaterLevel()  == 0 )
+	if (GetEngineObject()->GetWaterLevel()  == 0 )
 		return;
 
 	UTIL_BubbleTrail(GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsVelocity() * 0.1f, GetEngineObject()->GetAbsOrigin(), 5 );

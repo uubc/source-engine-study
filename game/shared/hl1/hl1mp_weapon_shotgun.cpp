@@ -212,7 +212,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 		return;
 	}
 
-	if ( pPlayer->GetWaterLevel() == 3 )
+	if ( pPlayer->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		// This weapon doesn't fire underwater
 		WeaponSound(EMPTY);

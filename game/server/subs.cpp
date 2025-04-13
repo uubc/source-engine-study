@@ -184,7 +184,7 @@ void CBaseToggle::LinearMove( const Vector &vecDest, float flSpeed )
 	float flTravelTime = vecDestDelta.Length() / flSpeed;
 
 	// set m_flNextThink to trigger a call to LinearMoveDone when dest is reached
-	SetMoveDoneTime( flTravelTime );
+	GetEngineObject()->SetMoveDoneTime( flTravelTime );
 
 	// scale the destdelta vector by the time spent traveling to get velocity
 	GetEngineObject()->SetLocalVelocity( vecDestDelta / flTravelTime );
@@ -212,7 +212,7 @@ void CBaseToggle::LinearMoveDone( void )
 {
 	UTIL_SetOrigin( this, m_vecFinalDest);
 	GetEngineObject()->SetAbsVelocity( vec3_origin );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 }
 
 
@@ -261,10 +261,10 @@ void CBaseToggle::AngularMove( const QAngle &vecDestAngle, float flSpeed )
 	}
 
 	// set m_flNextThink to trigger a call to AngularMoveDone when dest is reached
-	SetMoveDoneTime( flTravelTime );
+	GetEngineObject()->SetMoveDoneTime( flTravelTime );
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	SetLocalAngularVelocity( vecDestDelta * (1.0 / flTravelTime) );
+	GetEngineObject()->SetLocalAngularVelocity( vecDestDelta * (1.0 / flTravelTime) );
 }
 
 
@@ -274,8 +274,8 @@ void CBaseToggle::AngularMove( const QAngle &vecDestAngle, float flSpeed )
 void CBaseToggle::AngularMoveDone( void )
 {
 	GetEngineObject()->SetLocalAngles( m_vecFinalAngle );
-	SetLocalAngularVelocity( vec3_angle );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 }
 
 

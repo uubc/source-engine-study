@@ -285,7 +285,7 @@ public:
 	virtual IPhysicsObject *GetRootPhysicsObjectForBreak();
 
 	// IPositionWatcher
-	virtual void NotifyPositionChanged( CBaseEntity *pEntity );
+	virtual void NotifyPositionChanged( IHandleEntity *pEntity );
 
 	// Input handlers
 	void InputSetAnimation( inputdata_t &inputdata );

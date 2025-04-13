@@ -111,7 +111,7 @@ void CGunTarget::Spawn( void )
 	if (GetEngineObject()->HasSpawnFlags(FGUNTARGET_START_ON) )
 	{
 		SetMoveDone( &CGunTarget::Start );
-		SetMoveDoneTime( 0.3 );
+		GetEngineObject()->SetMoveDoneTime( 0.3 );
 	}
 	CreateVPhysics();
 }
@@ -188,7 +188,7 @@ void CGunTarget::Wait( void )
 	SetMoveDone( &CGunTarget::Next );
 	if (m_flWait != 0)
 	{// -1 wait will wait forever!		
-		SetMoveDoneTime( m_flWait );
+		GetEngineObject()->SetMoveDoneTime( m_flWait );
 	}
 	else
 	{
@@ -200,7 +200,7 @@ void CGunTarget::Wait( void )
 void CGunTarget::Stop( void )
 {
 	GetEngineObject()->SetAbsVelocity( vec3_origin );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 	m_takedamage = DAMAGE_NO;
 }
 

@@ -111,7 +111,7 @@ void CHL1BaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 	SetThink( &CBaseGrenade::Smoke );
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.3);
 
-	if ( GetWaterLevel() == 0 )
+	if (GetEngineObject()->GetWaterLevel() == 0 )
 	{
 		int sparkCount = random->RandomInt( 0,3 );
 		QAngle angles;

@@ -482,7 +482,8 @@ extern CAI_Manager g_AI_Manager;
 //=============================================================================
 
 class CAI_BaseNPC : public CBaseCombatCharacter, 
-					public CAI_DefMovementSink
+					public CAI_DefMovementSink,
+					public IServerNPC
 {
 	DECLARE_CLASS( CAI_BaseNPC, CBaseCombatCharacter );
 
@@ -546,7 +547,8 @@ public:
 
 	//---------------------------------
 
-	virtual bool			IsNPC( void ) const { return true; }
+	virtual bool IsNPC( void ) const { return true; }
+	virtual IServerNPC* AsHandleNPC() { return this; }
 	bool NPC_CheckBrushExclude(IServerEntity* pBrush);
 	//---------------------------------
 
@@ -1291,7 +1293,7 @@ public:
 	// ------------
 	// Methods used by motor to query properties/preferences/move-related state
 	// ------------
-	virtual bool		CanStandOn( CBaseEntity *pSurface ) const;
+	virtual bool		CanStandOn( IServerEntity *pSurface ) const;
 
 	virtual bool		IsJumpLegal( const Vector &startPos, const Vector &apex, const Vector &endPos ) const; // Override for specific creature types
 	bool				IsJumpLegal( const Vector &startPos, const Vector &apex, const Vector &endPos, float maxUp, float maxDown, float maxDist ) const;

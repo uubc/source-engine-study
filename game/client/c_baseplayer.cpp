@@ -226,7 +226,6 @@ END_RECV_TABLE()
  		//RecvPropFloat		(RECVINFO_INVALID(m_vecVelocity[1]), 0, RecvProxy_LocalVelocityY ),
  		//RecvPropFloat		(RECVINFO_INVALID(m_vecVelocity[2]), 0, RecvProxy_LocalVelocityZ ),
 
-		RecvPropVector		( RECVINFO( m_vecBaseVelocity ) ),
 
 		RecvPropEHandle		( RECVINFO( m_hConstraintEntity)),
 		RecvPropVector		( RECVINFO( m_vecConstraintCenter) ),
@@ -236,7 +235,6 @@ END_RECV_TABLE()
 
 		RecvPropFloat		( RECVINFO( m_flDeathTime )),
 
-		RecvPropInt			( RECVINFO( m_nWaterLevel ) ),
 		RecvPropFloat		( RECVINFO( m_flLaggedMovementValue )),
 
 	END_RECV_TABLE()
@@ -354,9 +352,9 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 	DEFINE_PRED_FIELD( m_fOnTarget, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	//DEFINE_PRED_FIELD( m_nNextThinkTick, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_lifeState, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_nWaterLevel, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE ),
+	//DEFINE_PRED_FIELD( m_nWaterLevel, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE ),
 	
-	DEFINE_PRED_FIELD_TOL( m_vecBaseVelocity, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.05 ),
+	//DEFINE_PRED_FIELD_TOL( m_vecBaseVelocity, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.05 ),
 
 	DEFINE_FIELD( m_nButtons, FIELD_INTEGER ),
 	DEFINE_FIELD( m_flWaterJumpTime, FIELD_FLOAT ),
@@ -489,7 +487,7 @@ bool C_BasePlayer::AudioStateIsUnderwater( Vector vecMainViewOrigin )
 		return (cont & MASK_WATER);
 	}
 
-	return ( GetWaterLevel() >= WL_Eyes );
+	return ( GetEngineObject()->GetWaterLevel() >= WL_Eyes );
 }
 
 bool C_BasePlayer::IsHLTV() const
@@ -1284,7 +1282,7 @@ extern float UTIL_WaterLevel( const Vector &position, float minz, float maxz );
 void C_BasePlayer::CreateWaterEffects( void )
 {
 	// Must be completely submerged to bother
-	if ( GetWaterLevel() < 3 )
+	if (GetEngineObject()->GetWaterLevel() < 3 )
 	{
 		m_bResampleWaterSurface = true;
 		return;
@@ -2263,10 +2261,10 @@ void C_BasePlayer::PhysicsSimulate( void )
 	}
 
 	// Make sure not to simulate this guy twice per frame
-	if (m_nSimulationTick == gpGlobals->tickcount)
+	if (GetEngineObject()->GetSimulationTick() == gpGlobals->tickcount)
 		return;
 
-	m_nSimulationTick = gpGlobals->tickcount;
+	GetEngineObject()->SetSimulationTick(gpGlobals->tickcount);
 
 	if ( !IsLocalPlayer() )
 		return;

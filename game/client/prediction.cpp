@@ -1266,7 +1266,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		C_BaseEntity *entity = predictables->GetPredictable( i );
 		if ( entity )
 		{
-			entity->m_nSimulationTick = -1;
+			entity->GetEngineObject()->SetSimulationTick(-1);
 		}
 	}
 

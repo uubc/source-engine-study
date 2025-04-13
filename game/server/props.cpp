@@ -1674,7 +1674,7 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const ITakeDamageInfo&info )
 	else
 	{
 		velocity = GetEngineObject()->GetAbsVelocity();
-		QAngleToAngularImpulse( GetLocalAngularVelocity(), angVelocity );
+		QAngleToAngularImpulse(GetEngineObject()->GetLocalAngularVelocity(), angVelocity );
 		origin = GetEngineObject()->GetAbsOrigin();
 		angles = GetEngineObject()->GetAbsAngles();
 	}
@@ -2179,7 +2179,7 @@ void CDynamicProp::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CDynamicProp::NotifyPositionChanged( CBaseEntity *pEntity )
+void CDynamicProp::NotifyPositionChanged( IHandleEntity *pEntity )
 {
 	Assert(pEntity==this);
 	m_BoneFollowerManager.UpdateBoneFollowers(this);
@@ -4204,7 +4204,7 @@ void CBasePropDoor::DoorOpenMoveDone(void)
 	if (WillAutoReturn())
 	{
 		// In flWait seconds, DoorClose will fire, unless wait is -1, then door stays open
-		SetMoveDoneTime(m_flAutoReturnDelay + 0.1);
+		GetEngineObject()->SetMoveDoneTime(m_flAutoReturnDelay + 0.1);
 		SetMoveDone(&CBasePropDoor::DoorAutoCloseThink);
 
 		if (m_flAutoReturnDelay == -1)
@@ -4246,7 +4246,7 @@ void CBasePropDoor::DoorAutoCloseThink(void)
 		else
 		{
 			// In flWait seconds, DoorClose will fire, unless wait is -1, then door stays open
-			SetMoveDoneTime(m_flAutoReturnDelay + 0.1);
+			GetEngineObject()->SetMoveDoneTime(m_flAutoReturnDelay + 0.1);
 			SetMoveDone(&CBasePropDoor::DoorAutoCloseThink);
 		}
 
@@ -4352,7 +4352,7 @@ void CBasePropDoor::DoorCloseMoveDone(void)
 // Purpose: 
 // Input  : *pOther - 
 //-----------------------------------------------------------------------------
-void CBasePropDoor::MasterStartBlocked( CBaseEntity *pOther )
+void CBasePropDoor::MasterStartBlocked( IServerEntity *pOther )
 {
 	if ( HasSlaves() )
 	{
@@ -4368,20 +4368,20 @@ void CBasePropDoor::MasterStartBlocked( CBaseEntity *pOther )
 			if ( pLinkedDoor != NULL )
 			{
 				// If the door isn't already moving, get it moving
-				pLinkedDoor->OnStartBlocked( pOther );
+				pLinkedDoor->OnStartBlocked( (CBaseEntity*)pOther );
 			}
 		}
 	}
 
 	// Start ourselves blocked
-	OnStartBlocked( pOther );
+	OnStartBlocked( (CBaseEntity*)pOther );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Called the first frame that the door is blocked while opening or closing.
 // Input  : pOther - The blocking entity.
 //-----------------------------------------------------------------------------
-void CBasePropDoor::StartBlocked( CBaseEntity *pOther )
+void CBasePropDoor::StartBlocked( IServerEntity *pOther )
 {
 	m_bFirstBlocked = true;
 
@@ -4392,7 +4392,7 @@ void CBasePropDoor::StartBlocked( CBaseEntity *pOther )
 	}
 
 	// Start ourselves blocked
-	OnStartBlocked( pOther );
+	OnStartBlocked( (CBaseEntity*)pOther );
 }
 
 //-----------------------------------------------------------------------------
@@ -5209,8 +5209,8 @@ void CPropDoorRotating::DoorTeleportToSpawnPosition()
 void CPropDoorRotating::MoveDone()
 {
 	GetEngineObject()->SetLocalAngles(m_angGoal);
-	SetLocalAngularVelocity(vec3_angle);
-	SetMoveDoneTime(-1);
+	GetEngineObject()->SetLocalAngularVelocity(vec3_angle);
+	GetEngineObject()->SetMoveDoneTime(-1);
 	BaseClass::MoveDone();
 }
 
@@ -5241,10 +5241,10 @@ void CPropDoorRotating::AngularMove(const QAngle &vecDestAngle, float flSpeed)
 	float flTravelTime = vecDestDelta.Length() / flSpeed;
 
 	// Call MoveDone when destination angles are reached.
-	SetMoveDoneTime(flTravelTime);
+	GetEngineObject()->SetMoveDoneTime(flTravelTime);
 
 	// Scale the destdelta vector by the time spent traveling to get velocity.
-	SetLocalAngularVelocity(vecDestDelta * (1.0 / flTravelTime));
+	GetEngineObject()->SetLocalAngularVelocity(vecDestDelta * (1.0 / flTravelTime));
 }
 
 
@@ -5386,8 +5386,8 @@ void CPropDoorRotating::BeginClosing( void )
 //-----------------------------------------------------------------------------
 void CPropDoorRotating::DoorStop( void )
 {
-	SetLocalAngularVelocity( vec3_angle );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -5461,7 +5461,7 @@ int CPropDoorRotating::DrawDebugTextOverlays(void)
 	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
 	{
 		char tempstr[512];
-		Q_snprintf(tempstr, sizeof(tempstr),"Avelocity: %.2f %.2f %.2f", GetLocalAngularVelocity().x,  GetLocalAngularVelocity().y,  GetLocalAngularVelocity().z);
+		Q_snprintf(tempstr, sizeof(tempstr),"Avelocity: %.2f %.2f %.2f", GetEngineObject()->GetLocalAngularVelocity().x, GetEngineObject()->GetLocalAngularVelocity().y, GetEngineObject()->GetLocalAngularVelocity().z);
 		EntityText( text_offset, tempstr, 0);
 		text_offset++;
 

@@ -1164,7 +1164,7 @@ bool CHL2_Player::CanSprint()
 	return ( m_bSprintEnabled &&										// Only if sprint is enabled 
 			!IsWalking() &&												// Not if we're walking
 			!( m_Local.m_bDucked && !m_Local.m_bDucking ) &&			// Nor if we're ducking
-			(GetWaterLevel() != 3) &&									// Certainly not underwater
+			(GetEngineObject()->GetWaterLevel() != 3) &&									// Certainly not underwater
 			(engine->GlobalEntity_GetState("suit_no_sprint") != GLOBAL_ON) );	// Out of the question without the sprint module
 }
 
@@ -2333,10 +2333,10 @@ int	CHL2_Player::OnTakeDamage( const ITakeDamageInfo&info )
 
 	if( info.GetDamageType() & DMG_BLAST_SURFACE )
 	{
-		if( GetWaterLevel() > 2 )
+		if(GetEngineObject()->GetWaterLevel() > 2 )
 		{
 			// Don't take blast damage from anything above the surface.
-			if(info.GetInflictor()->GetWaterLevel() == 0 )
+			if(info.GetInflictor()->GetEngineObject()->GetWaterLevel() == 0 )
 			{
 				return 0;
 			}
@@ -3798,7 +3798,7 @@ void CHL2_Player::Splash( void )
 	data.m_vNormal = Vector(0,0,1);
 	data.m_vAngles = QAngle( 0, 0, 0 );
 	
-	if ( GetWaterType() & CONTENTS_SLIME )
+	if (GetEngineObject()->GetWaterType() & CONTENTS_SLIME )
 	{
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}

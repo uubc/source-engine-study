@@ -467,7 +467,7 @@ void C_PhysPropClientside::Break()
 	else
 	{
 		velocity = GetEngineObject()->GetAbsVelocity();
-		QAngleToAngularImpulse( GetLocalAngularVelocity(), angVelocity );
+		QAngleToAngularImpulse(GetEngineObject()->GetLocalAngularVelocity(), angVelocity );
 		origin = GetEngineObject()->GetAbsOrigin();
 		angles = GetEngineObject()->GetAbsAngles();
 	}

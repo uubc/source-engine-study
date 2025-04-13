@@ -673,7 +673,7 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 		return COND_NONE;
 	
 	Vector flEnemyLKP = GetEnemyLKP();
-	if ( !(pEnemy->GetEngineObject()->GetFlags() & FL_ONGROUND) && pEnemy->GetWaterLevel() == 0 && flEnemyLKP.z > (GetEngineObject()->GetAbsOrigin().z + GetEngineObject()->WorldAlignMaxs().z)  )
+	if ( !(pEnemy->GetEngineObject()->GetFlags() & FL_ONGROUND) && pEnemy->GetEngineObject()->GetWaterLevel() == 0 && flEnemyLKP.z > (GetEngineObject()->GetAbsOrigin().z + GetEngineObject()->WorldAlignMaxs().z)  )
 	{
 		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely to 
 		// be grenaded.
@@ -1107,7 +1107,7 @@ void CNPC_HGrunt::HandleAnimEvent( animevent_t *pEvent )
 		
 			CGrenadeMP5 * m_pMyGrenade = (CGrenadeMP5*)Create( "grenade_mp5", vecSrc, angAngles, this );
 			m_pMyGrenade->GetEngineObject()->SetAbsVelocity( m_vecTossVelocity );
-			m_pMyGrenade->SetLocalAngularVelocity( QAngle( random->RandomFloat( -100, -500 ), 0, 0 ) );
+			m_pMyGrenade->GetEngineObject()->SetLocalAngularVelocity( QAngle( random->RandomFloat( -100, -500 ), 0, 0 ) );
 			m_pMyGrenade->GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY );
 			m_pMyGrenade->SetThrower( this );
 			m_pMyGrenade->SetDamage( sk_plr_dmg_mp5_grenade.GetFloat() );

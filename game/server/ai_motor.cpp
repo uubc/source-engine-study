@@ -160,7 +160,7 @@ AIMotorMoveResult_t CAI_Motor::MoveGroundStep( const Vector &newPos, CBaseEntity
 		// stepped onto a new entity.
 		if ( GetOuter()->GetEngineObject()->GetFlags() & FL_ONGROUND )
 		{
-			GetOuter()->PhysicsStepRecheckGround();
+			GetOuter()->GetEngineObject()->PhysicsStepRecheckGround();
 		}
 
 		// skip tiny steps, but notify the shadow object of any large steps
@@ -969,7 +969,7 @@ float CAI_Motor::StepHeight() const
 	return GetOuter()->GetStepHeight();
 }
 
-bool CAI_Motor::CanStandOn( CBaseEntity *pSurface ) const
+bool CAI_Motor::CanStandOn( IServerEntity *pSurface ) const
 {
 	return GetOuter()->CanStandOn( pSurface );
 }

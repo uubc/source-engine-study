@@ -15,7 +15,7 @@
 #include "c_basecombatcharacter.h"
 
 // NOTE: MOved all controller code into c_basestudiomodel
-class C_AI_BaseNPC : public C_BaseCombatCharacter
+class C_AI_BaseNPC : public C_BaseCombatCharacter, public IClientNPC
 {
 	DECLARE_CLASS( C_AI_BaseNPC, C_BaseCombatCharacter );
 
@@ -25,6 +25,7 @@ public:
 	C_AI_BaseNPC();
 	virtual unsigned int	PhysicsSolidMaskForEntity( void ) const;
 	virtual bool			IsNPC( void ) const { return true; }
+	virtual IClientNPC*		AsHandleNPC() { return this; }
 	bool					IsMoving( void ){ return m_bIsMoving; }
 	bool					ShouldAvoidObstacle( void ){ return m_bPerformAvoidance; }
 	virtual bool			AddRagdollToFadeQueue( void ) { return m_bFadeCorpse; }

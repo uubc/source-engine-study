@@ -790,10 +790,10 @@ void CFuncTank::Think( void )
 	// refresh the matrix
 	UpdateMatrix();
 
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	TrackTarget();
 
-	if ( fabs(GetLocalAngularVelocity().x) > 1 || fabs(GetLocalAngularVelocity().y) > 1 )
+	if ( fabs(GetEngineObject()->GetLocalAngularVelocity().x) > 1 || fabs(GetEngineObject()->GetLocalAngularVelocity().y) > 1 )
 		StartRotSound();
 	else
 		StopRotSound();
@@ -999,7 +999,7 @@ void CFuncTank::TrackTarget( void )
 	// Move toward target at rate or less
 	float distY = UTIL_AngleDistance( angles.y, GetEngineObject()->GetLocalAngles().y );
 
-	QAngle vecAngVel = GetLocalAngularVelocity();
+	QAngle vecAngVel = GetEngineObject()->GetLocalAngularVelocity();
 	vecAngVel.y = distY * 10;
 	vecAngVel.y = clamp( vecAngVel.y, -m_yawRate, m_yawRate );
 
@@ -1010,9 +1010,9 @@ void CFuncTank::TrackTarget( void )
 	float distX = UTIL_AngleDistance( angles.x, GetEngineObject()->GetLocalAngles().x );
 	vecAngVel.x = distX  * 10;
 	vecAngVel.x = clamp( vecAngVel.x, -m_pitchRate, m_pitchRate );
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 
-	SetMoveDoneTime( 0.1 );
+	GetEngineObject()->SetMoveDoneTime( 0.1 );
 	if ( m_pController )
 		return;
 

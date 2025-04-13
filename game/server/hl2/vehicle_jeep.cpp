@@ -594,14 +594,14 @@ void CPropJeep::CheckWaterLevel( void )
 		bool bEyes = ( UTIL_PointContents(EntityList(), vecAttachPoint ) & MASK_WATER ) ? true : false;
 		if ( bEyes )
 		{
-			pPlayer->SetWaterLevel( WL_Eyes );
+			pPlayer->GetEngineObject()->SetWaterLevel( WL_Eyes );
 			return;
 		}
 
 		// Check waist.  (vehicle_engine point -- see parent function).
 		if ( m_WaterData.m_bBodyInWater )
 		{
-			pPlayer->SetWaterLevel( WL_Waist );
+			pPlayer->GetEngineObject()->SetWaterLevel( WL_Waist );
 			return;
 		}
 
@@ -611,12 +611,12 @@ void CPropJeep::CheckWaterLevel( void )
 		bool bFeet = ( UTIL_PointContents(EntityList(), vecAttachPoint ) & MASK_WATER ) ? true : false;
 		if ( bFeet )
 		{
-			pPlayer->SetWaterLevel( WL_Feet );
+			pPlayer->GetEngineObject()->SetWaterLevel( WL_Feet );
 			return;
 		}
 
 		// Not in water.
-		pPlayer->SetWaterLevel( WL_NotInWater );
+		pPlayer->GetEngineObject()->SetWaterLevel( WL_NotInWater );
 	}
 }
 
@@ -649,7 +649,7 @@ void CPropJeep::CreateRipple( const Vector &vecPosition )
 	data.m_vNormal.Init( 0.0f, 0.0f, 1.0f );
 	VectorAngles( data.m_vNormal, data.m_vAngles );
 	data.m_flScale = 10.0f + random->RandomFloat( 0, 2 );
-	if ( GetWaterType() & CONTENTS_SLIME )
+	if (GetEngineObject()->GetWaterType() & CONTENTS_SLIME )
 	{
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}

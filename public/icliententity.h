@@ -342,6 +342,11 @@ public:
 	virtual void CalcAbsolutePosition() = 0;
 	virtual void CalcAbsoluteVelocity() = 0;
 
+	virtual const Vector& GetBaseVelocity() const = 0;
+	virtual void SetBaseVelocity(const Vector& v) = 0;
+	virtual void SetLocalAngularVelocity(const QAngle& vecAngVelocity) = 0;
+	virtual const QAngle& GetLocalAngularVelocity() const = 0;
+
 	// Unlinks from hierarchy
 	// Set the movement parent. Your local origin and angles will become relative to this parent.
 	// If iAttachment is a valid attachment on the parent, then your local origin and angles 
@@ -596,6 +601,28 @@ public:
 	virtual bool IsAnimatedEveryTick() const = 0;
 	virtual void SetSimulatedEveryTick(bool sim) = 0;
 	virtual void SetAnimatedEveryTick(bool anim) = 0;
+	virtual int	GetSimulationTick() = 0;
+	virtual void SetSimulationTick(int nSimulationTick) = 0;
+
+	virtual int GetWaterLevel() const = 0;
+	virtual void SetWaterLevel(int nLevel) = 0;
+	virtual int GetWaterType() const = 0;
+	virtual void SetWaterType(int nType) = 0;
+	// Computes the water level + type
+	virtual void UpdateWaterState() = 0;
+
+	virtual float GetActualGravity() = 0;
+	virtual void UpdateBaseVelocity(void) = 0;
+	virtual void PhysicsRigidChild(void) = 0;
+	virtual int	PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce) = 0;
+	virtual void PhysicsPushEntity(const Vector& push, trace_t* pTrace) = 0;
+	virtual void PhysicsStep(void) = 0;
+	virtual void PhysicsPusher(void) = 0;
+	virtual void PhysicsNone(void) = 0;
+	virtual void PhysicsNoclip(void) = 0;
+	virtual void PhysicsToss(void) = 0;
+	virtual void PhysicsCustom(void) = 0;
+	virtual void PhysicsSimulate(void) = 0;
 
 	virtual void FollowEntity(IEngineObjectClient* pBaseEntity, bool bBoneMerge = true) = 0;
 	virtual void StopFollowingEntity() = 0;	// will also change to MOVETYPE_NONE
@@ -978,6 +1005,7 @@ public:
 	virtual void	InfoPanelDisplayed() = 0;
 	virtual bool	IsHTMLInfoPanelAllowed() = 0;
 	virtual IRecipientFilter* CreatePASAttenuationFilter(IClientEntity* entity, float attenuation) = 0;
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IClientEntity* entity, const char* lookupSound) = 0;
 	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation) = 0;
 };
 
@@ -1000,6 +1028,11 @@ public:
 	virtual bool LocalPlayerInFirstPersonView() = 0;
 	virtual bool ShouldDrawLocalPlayer() = 0;
 	virtual IClientEntity* GetActiveWeapon(void) const = 0;
+};
+
+class IClientNPC : public IHandleNPC {
+public:
+	
 };
 
 //-----------------------------------------------------------------------------
@@ -1057,6 +1090,7 @@ public:
 	virtual IClientWorld* AsHandleWorld() = 0;
 	virtual bool IsBSPModel() const = 0;
 	virtual bool IsNPC(void) const = 0;
+	virtual IClientNPC* AsHandleNPC() = 0;
 	virtual bool IsPlayer(void) const = 0;
 	virtual IClientPlayer* AsHandlePlayer() = 0;
 	virtual bool IsViewModel() const = 0;
@@ -1162,9 +1196,10 @@ public:
 	virtual char const* DamageDecal(int bitsDamageType, int gameMaterial) = 0;
 	virtual void AddDecal(const Vector& rayStart, const Vector& rayEnd,
 		const Vector& decalCenter, int hitbox, int decalIndex, bool doTrace, trace_t& tr, int maxLODToDecal = ADDDECAL_TO_ALL_LODS) = 0;
-	virtual int GetWaterLevel() const = 0;
 	virtual int GetTeamNumber(void) const = 0;
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
+	virtual void PerformCustomPhysics(Vector* pNewPosition, Vector* pNewVelocity, QAngle* pNewAngles, QAngle* pNewAngVelocity) = 0;
+	virtual void ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity) = 0;
 };
 
 #define INPVS_YES			0x0001		// The entity thinks it's in the PVS.
@@ -1211,6 +1246,10 @@ public:
 abstract_class IClientEntityList : public IEntityList, public ISaveRestoreBlockHandler
 {
 public:
+
+	virtual IServerEntityList* AsServerEntityList() { return NULL; }
+	virtual IClientEntityList* AsClientEntityList() { return this; }
+
 	virtual bool Init() = 0;
 	virtual void Shutdown() = 0;
 
@@ -1318,7 +1357,7 @@ public:
 	virtual void InterpolateServerEntities() = 0;
 	virtual void UpdateClientSideAnimations() = 0;
 	virtual void UpdateDirtySpatialPartitionEntities() = 0;
-	virtual void PhysicsSimulate() = 0;
+	virtual void PhysFrame() = 0;
 	virtual void ToolRecordEntities() = 0;
 	virtual void MarkAimEntsDirty() = 0;
 	virtual void CalcAimEntPositions() = 0;

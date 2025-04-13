@@ -2059,7 +2059,6 @@ bool CAI_Navigator::DelayNavigationFailure( const AIMoveTrace_t &trace )
 // @TODO (toml 11-12-02): right now, physics can pull the box back pretty far even though a hull
 // trace said we could make the move. Jay is looking into it. For now, if the NPC physics shadow
 // is active, allow for a bugger tolerance
-extern ConVar npc_vphysics;
 
 bool test_it = false;
 
@@ -2070,6 +2069,7 @@ bool CAI_Navigator::MoveUpdateWaypoint( AIMoveResult_t *pResult )
 	AI_Waypoint_t *pCurWaypoint = GetPath()->GetCurWaypoint();
 	float 		   waypointDist = ComputePathDistance( GetNavType(), GetLocalOrigin(), pCurWaypoint->GetPos() );
 	bool		   bIsGoal		= CurWaypointIsGoal();
+	ConVarRef npc_vphysics("npc_vphysics");
 	float		   tolerance	= ( npc_vphysics.GetBool() ) ? 0.25 : 0.0625;
 
 	bool fHit = false;

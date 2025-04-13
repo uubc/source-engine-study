@@ -840,14 +840,14 @@ void CFuncRotating::Precache( void )
 	}
 	g_pSoundEmitterSystem->PrecacheScriptSound( STRING( m_NoiseRunning ) );
 	
-	if (GetLocalAngularVelocity() != vec3_angle )
+	if (GetEngineObject()->GetLocalAngularVelocity() != vec3_angle )
 	{
 		//
 		// If fan was spinning, and we went through transition or save/restore,
 		// make sure we restart the sound.  1.5 sec delay is a magic number.
 		//
 		SetMoveDone( &CFuncRotating::SpinUpMove );
-		SetMoveDoneTime( 1.5 );
+		GetEngineObject()->SetMoveDoneTime( 1.5 );
 	}
 }
 
@@ -863,7 +863,7 @@ void CFuncRotating::HurtTouch ( IServerEntity *pOther )
 		return;
 
 	// calculate damage based on rotation speed
-	m_flBlockDamage = GetLocalAngularVelocity().Length() / 10;
+	m_flBlockDamage = GetEngineObject()->GetLocalAngularVelocity().Length() / 10;
 
 #ifdef HL1_DLL
 	if( m_flBlockDamage > 0 )
@@ -1016,7 +1016,7 @@ void CFuncRotating::UpdateSpeed( float flNewSpeed )
 		RampPitchVol();
 	}
 
-	SetLocalAngularVelocity( m_vecMoveAng * m_flSpeed );
+	GetEngineObject()->SetLocalAngularVelocity( m_vecMoveAng * m_flSpeed );
 }
 
 
@@ -1056,7 +1056,7 @@ void CFuncRotating::SpinUpMove( void )
 		RotateMove();
 	} 
 
-	SetMoveDoneTime( GetNextMoveInterval() );
+	GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 }
 
 
@@ -1116,7 +1116,7 @@ void CFuncRotating::SpinDownMove( void )
 	}
 	else
 	{
-		SetMoveDoneTime( GetNextMoveInterval() );
+		GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 	}
 }
 
@@ -1134,7 +1134,7 @@ void CFuncRotating::ReverseMove( void )
 	}
 	else
 	{
-		SetMoveDoneTime( GetNextMoveInterval() );
+		GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 	}
 }
 
@@ -1144,11 +1144,11 @@ void CFuncRotating::ReverseMove( void )
 //-----------------------------------------------------------------------------
 void CFuncRotating::RotateMove( void )
 {
-	SetMoveDoneTime( 10 );
+	GetEngineObject()->SetMoveDoneTime( 10 );
 
 	if ( m_bStopAtStartPos )
 	{
-		SetMoveDoneTime( GetNextMoveInterval() );
+		GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 		int checkAxis = 2;
 
 		// See if we got close to the starting orientation
@@ -1165,7 +1165,7 @@ void CFuncRotating::RotateMove( void )
 		if ( angDelta > 180.0f )
 			angDelta -= 360.0f;
 
-		QAngle avel = GetLocalAngularVelocity();
+		QAngle avel = GetEngineObject()->GetLocalAngularVelocity();
 		// Delta per tick
 		QAngle avelpertick = avel * TICK_INTERVAL;
 
@@ -1263,7 +1263,7 @@ void CFuncRotating::SetTargetSpeed( float flSpeed )
 		}
 	}
 
-	SetMoveDoneTime( GetNextMoveInterval() );
+	GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 }
 
 
@@ -1366,7 +1366,7 @@ void CFuncRotating::InputStopAtStartPos( inputdata_t &inputdata )
 {
 	m_bStopAtStartPos = true;
 	SetTargetSpeed( 0 );
-	SetMoveDoneTime( GetNextMoveInterval() );
+	GetEngineObject()->SetMoveDoneTime( GetNextMoveInterval() );
 }
 
 //-----------------------------------------------------------------------------

@@ -209,7 +209,7 @@ void CWeaponEgon::PrimaryAttack( void )
 	}
 
 	// don't fire underwater
-	if ( pPlayer->GetWaterLevel() == 3 )
+	if ( pPlayer->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		if ( m_fireState != FIRE_OFF || m_hBeam )
 		{

@@ -14,97 +14,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-
-//-----------------------------------------------------------------------------
-// helper method for trace hull as used by physics...
-//-----------------------------------------------------------------------------
-static void Physics_TraceHull( C_BaseEntity* pBaseEntity, const Vector &vecStart,
-	const Vector &vecEnd, const Vector &hullMin, const Vector &hullMax,	
-	unsigned int mask, trace_t *ptr )
-{
-	// FIXME: I really am not sure the best way of doing this
-	// The TraceHull code below for shots will make sure the object passes
-	// through shields which do not block that damage type. It will also 
-	// send messages to the shields that they've been hit.
-#if 0
-	if (pBaseEntity->GetDamageType() != DMG_GENERIC)
-	{
-		GameRules()->WeaponTraceHull( vecStart, vecEnd, hullMin, hullMax, 
-			mask, pBaseEntity, pBaseEntity->GetEngineObject()->GetCollisionGroup(),
-			pBaseEntity, ptr );
-	}
-	else
-#endif
-	{
-		UTIL_TraceHull(EntityList(), vecStart, vecEnd, hullMin, hullMax, mask,
-			pBaseEntity, pBaseEntity->GetEngineObject()->GetCollisionGroup(), ptr );
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Does not change the entities velocity at all
-// Input  : push - 
-// Output : trace_t
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsCheckSweep( const Vector& vecAbsStart, const Vector &vecAbsDelta, trace_t *pTrace )
-{
-	unsigned int mask = PhysicsSolidMaskForEntity();
-
-	Vector vecAbsEnd;
-	VectorAdd( vecAbsStart, vecAbsDelta, vecAbsEnd );
-
-	// Set collision type
-	if ( !GetEngineObject()->IsSolid() || GetEngineObject()->IsSolidFlagSet( FSOLID_VOLUME_CONTENTS ) )
-	{
-		// don't collide with monsters
-		mask &= ~CONTENTS_MONSTER;
-	}
-
-	Physics_TraceHull( this, vecAbsStart, vecAbsEnd, GetEngineObject()->WorldAlignMins(), GetEngineObject()->WorldAlignMaxs(), mask, pTrace );
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : push - 
-// Output : trace_t
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsPushEntity( const Vector& push, trace_t *pTrace )
-{
-/*
-	if ( m_pMoveParent )
-	{
-		Warning( "pushing entity (%s) that has m_pMoveParent!\n", STRING( pev->classname ) );
-		Assert(0);
-	}
-*/
-
-	// NOTE: absorigin and origin must be equal because there is no moveparent
-	Vector prevOrigin;
-	VectorCopy(GetEngineObject()->GetAbsOrigin(), prevOrigin );
-
-	trace_t		trace;
-	PhysicsCheckSweep( prevOrigin, push, pTrace );
-
-	if ( pTrace->fraction )
-	{
-		GetEngineObject()->SetAbsOrigin( pTrace->endpos );
-	}
-
-	// CLIENT DLL HACKS
-	GetEngineObject()->SetNetworkOrigin(GetEngineObject()->GetLocalOrigin());
-	GetEngineObject()->SetNetworkAngles(GetEngineObject()->GetLocalAngles());
-
-//	InvalidatePhysicsRecursive( POSITION_CHANGED | ANGLES_CHANGED );
-
-	if ( pTrace->m_pEnt )
-	{
-		GetEngineObject()->PhysicsImpact( ((C_BaseEntity*)pTrace->m_pEnt)->GetEngineObject(), *pTrace );
-	}
-}
-
-
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : *pNewPosition - 
@@ -116,111 +25,6 @@ void C_BaseEntity::PerformCustomPhysics( Vector *pNewPosition, Vector *pNewVeloc
 {
 	// If you're going to use custom physics, you need to implement this!
 	Assert(0);
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsCustom()
-{
-	PhysicsCheckWater();
-
-	// regular thinking
-	if ( !GetEngineObject()->PhysicsRunThink() )
-		return;
-
-	// Moving upward, off the ground, or  resting on something that isn't ground
-	if (GetEngineObject()->GetLocalVelocity()[2] > 0 || !GetEngineObject()->GetGroundEntity() || !GetEngineObject()->GetGroundEntity()->GetOuter()->IsStandable())
-	{
-		GetEngineObject()->SetGroundEntity( NULL );
-	}
-
-	// NOTE: The entity must set the position, angles, velocity in its custom movement
-	Vector vecNewPosition = GetEngineObject()->GetAbsOrigin();
-
-	if ( vecNewPosition == vec3_origin )
-	{
-		// Shouldn't be at world origin
-		Assert( 0 );
-	}
-
-	Vector vecNewVelocity = GetEngineObject()->GetLocalVelocity();
-	QAngle angNewAngles = GetEngineObject()->GetAbsAngles();
-	QAngle angNewAngVelocity = m_vecAngVelocity;
-
-	PerformCustomPhysics( &vecNewPosition, &vecNewVelocity, &angNewAngles, &angNewAngVelocity );
-
-	// Store off all of the new state information...
-	GetEngineObject()->SetLocalVelocity(vecNewVelocity);
-	GetEngineObject()->SetAbsAngles( angNewAngles );
-	m_vecAngVelocity = angNewAngVelocity;
-
-	Vector move;
-	VectorSubtract( vecNewPosition, GetEngineObject()->GetAbsOrigin(), move );
-
-	// move origin
-	trace_t trace;
-	PhysicsPushEntity( move, &trace );
-
-	PhysicsCheckVelocity();
-
-	if (trace.allsolid)
-	{	
-		// entity is trapped in another solid
-		// UNDONE: does this entity needs to be removed?
-		//VectorCopy (vec3_origin, m_vecVelocity);
-		GetEngineObject()->SetLocalVelocity(vec3_origin);
-		//VectorCopy (vec3_angle, m_vecAngVelocity);
-		SetLocalAngularVelocity(vec3_angle);
-		return;
-	}
-	
-#if !defined( CLIENT_DLL )
-	if (pev->free)
-		return;
-#endif
-
-	// check for in water
-	PhysicsCheckWaterTransition();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsStep()
-{
-	// Run all but the base think function
-	GetEngineObject()->PhysicsRunThink( THINK_FIRE_ALL_BUT_BASE );
-	GetEngineObject()->PhysicsRunThink( THINK_FIRE_BASE_ONLY );
-}
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsNoclip( void )
-{
-	GetEngineObject()->PhysicsRunThink();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsNone( void )
-{
-	GetEngineObject()->PhysicsRunThink();
-}
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsPusher( void )
-{
-	GetEngineObject()->PhysicsRunThink();
-}
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::PhysicsParent( void )
-{
-	GetEngineObject()->PhysicsRunThink();
 }
 
 //-----------------------------------------------------------------------------
@@ -261,13 +65,13 @@ void C_BaseEntity::EndTouch( IClientEntity *pOther )
 //	}
 }
 
-void CBaseEntity::StartGroundContact(IClientEntity* ground)
+void C_BaseEntity::StartGroundContact(IClientEntity* ground)
 {
 	GetEngineObject()->AddFlag(FL_ONGROUND);
 	//	Msg( "+++ %s starting contact with ground %s\n", GetClassname(), ground->GetClassname() );
 }
 
-void CBaseEntity::EndGroundContact(IClientEntity* ground)
+void C_BaseEntity::EndGroundContact(IClientEntity* ground)
 {
 	GetEngineObject()->RemoveFlag(FL_ONGROUND);
 	//	Msg( "--- %s ending contact with ground %s\n", GetClassname(), ground->GetClassname() );

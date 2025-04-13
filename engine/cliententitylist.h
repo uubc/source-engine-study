@@ -31,6 +31,8 @@
 //class IClientEntity;
 class C_EngineRopeInternal;
 
+// For now just using one big AI network
+extern ConVar think_limit;
 extern ConVar cl_phys_timescale;
 extern ConVar sv_alternateticks;
 extern ConVar cl_threaded_bone_setup;
@@ -39,6 +41,12 @@ extern ConVar cl_extrapolate;
 extern ConVar g_ragdoll_important_maxcount;
 extern ConVar g_ragdoll_maxcount;
 extern ConVar g_debug_ragdoll_removal;
+extern ConVar sv_gravity;
+extern ConVar sv_maxvelocity;
+extern ConVar sv_friction;
+extern ConVar sv_stopspeed;
+extern ConVar sv_bounce;
+
 extern CGlobalVarsBase g_ClientGlobalVariables;
 extern IFileSystem* g_pFileSystem;
 extern IVEngineClient* engineClient;
@@ -65,6 +73,8 @@ namespace _SUBSYSTEM
 extern IUniformRandomStream* random;
 #endif
 extern ISoundEnvelopeController* g_pClientSoundEnvelopeController;
+extern float GetCurrentGravity(void);
+extern float GetActualGravity(IEngineObject* pEnt);
 extern bool ShouldRemoveThisRagdoll(IClientEntity* pRagdoll);
 extern void DisplayBoneSetupEnts();
 
@@ -505,6 +515,9 @@ public:
 		SetRenderColor(255, 255, 255, 255);
 		// Assume drawing everything
 		m_bReadyToDraw = true;
+		m_vecBaseVelocity.Init();
+		m_nSimulationTick = -1;
+
 	}
 
 	virtual ~C_EngineObjectInternal()
@@ -596,6 +609,13 @@ public:
 	// Computes absolute position based on hierarchy
 	void CalcAbsolutePosition();
 	void CalcAbsoluteVelocity();
+
+	const Vector& GetBaseVelocity() const;
+	void SetBaseVelocity(const Vector& v);
+	// NOTE: Setting the abs velocity in either space will cause a recomputation
+// in the other space, so setting the abs velocity will also set the local vel
+	void SetLocalAngularVelocity(const QAngle& vecAngVelocity);
+	const QAngle& GetLocalAngularVelocity() const;
 
 	// Unlinks from hierarchy
 	// Set the movement parent. Your local origin and angles will become relative to this parent.
@@ -799,6 +819,8 @@ public:
 		SetRenderColor(255, 255, 255, 255);
 		// Assume drawing everything
 		m_bReadyToDraw = true;
+		m_vecBaseVelocity.Init();
+		m_nSimulationTick = -1;
 	}
 
 	virtual void OnPositionChanged();
@@ -951,9 +973,53 @@ public:
 	void SetSimulatedEveryTick(bool sim);
 	bool IsAnimatedEveryTick() const;
 	void SetAnimatedEveryTick(bool anim);
+	int	GetSimulationTick() {
+		return m_nSimulationTick;
+	}
+	void SetSimulationTick(int nSimulationTick) {
+		m_nSimulationTick = nSimulationTick;
+	}
 	// These set entity flags (EFL_*) to help optimize queries
 	void CheckHasGamePhysicsSimulation();
 	bool WillSimulateGamePhysics();
+
+	int GetWaterLevel() const;
+	void SetWaterLevel(int nLevel);
+	int GetWaterType() const;
+	void SetWaterType(int nType);
+	// Computes the water level + type
+	void UpdateWaterState();
+	float GetActualGravity() {
+		return ::GetActualGravity(this);
+	}
+	void PhysicsCheckVelocity(void);
+	bool PhysicsCheckWater(void);
+	// Computes new angles based on the angular velocity
+	void SimulateAngles(float flFrameTime);
+	// Computes the base velocity
+	void UpdateBaseVelocity(void);
+	// Simulation in local space of rigid children
+	void PhysicsRigidChild(void);
+	// For non-players
+	int	PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce);
+	void PhysicsAddGravityMove(Vector& move);
+	void PhysicsCheckWaterTransition(void);
+	// Checks a sweep without actually performing the move
+	void PhysicsCheckSweep(const Vector& vecAbsStart, const Vector& vecAbsDelta, trace_t* pTrace);
+	void PhysicsPushEntity(const Vector& push, trace_t* pTrace);
+	// Performs the collision resolution for fliers.
+	void PerformFlyCollisionResolution(trace_t& trace, Vector& move);
+	void ResolveFlyCollisionBounce(trace_t& trace, Vector& vecVelocity, float flMinTotalElasticity = 0.0f);
+	void ResolveFlyCollisionSlide(trace_t& trace, Vector& vecVelocity);
+	void PhysicsStep(void);
+	// Physics-related private methods
+	void PhysicsPusher(void);
+	void PhysicsNone(void);
+	void PhysicsNoclip(void);
+	void PhysicsParent(void);
+	void PhysicsToss(void);
+	void PhysicsCustom(void);
+	virtual void PhysicsSimulate(void);
 
 	// These methods encapsulate MOVETYPE_FOLLOW, which became obsolete
 	void FollowEntity(IEngineObjectClient* pBaseEntity, bool bBoneMerge = true);
@@ -1163,7 +1229,8 @@ public:
 	virtual void	VPhysicsDestroyObject(void);
 	virtual IPhysicsObject* VPhysicsGetObject(void) const { return m_pPhysicsObject; }
 	virtual int VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
-	void			VPhysicsSetObject(IPhysicsObject* pPhysics);
+	void VPhysicsSetObject(IPhysicsObject* pPhysics);
+	void NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake);
 
 	// Convenience routines to init the vphysics simulation for this object.
 // This creates a static object.  Something that behaves like world geometry - solid, but never moves
@@ -1492,6 +1559,13 @@ protected:
 	// Object orientation
 	QAngle							m_angAbsRotation = QAngle(0, 0, 0);
 	Vector							m_vecAbsVelocity = Vector(0, 0, 0);
+	// Base velocity
+	Vector							m_vecBaseVelocity;
+	// was pev->avelocity
+	QAngle							m_vecAngVelocity;
+	unsigned char					m_nWaterLevel;
+	unsigned char					m_nWaterType;
+
 	IClientEntity* m_pOuter = NULL;
 
 	// Hierarchy
@@ -1565,6 +1639,7 @@ protected:
 
 	bool							m_bSimulatedEveryTick;
 	bool							m_bAnimatedEveryTick;
+	int								m_nSimulationTick;
 
 	// Time animation sequence or frame was last changed
 	float							m_flAnimTime;
@@ -1743,6 +1818,31 @@ protected:
 	CBaseHandle					m_hEffectEntity;
 	C_GrabControllerInternal		m_grabController;
 };
+
+inline const Vector& C_EngineObjectInternal::GetBaseVelocity() const
+{
+	return m_vecBaseVelocity;
+}
+
+inline void	C_EngineObjectInternal::SetBaseVelocity(const Vector& v)
+{
+	m_vecBaseVelocity = v;
+}
+
+inline const QAngle& C_EngineObjectInternal::GetLocalAngularVelocity() const
+{
+	return m_vecAngVelocity;
+}
+
+inline int C_EngineObjectInternal::GetWaterLevel() const
+{
+	return m_nWaterLevel;
+}
+
+inline void C_EngineObjectInternal::SetWaterLevel(int nLevel)
+{
+	m_nWaterLevel = nLevel;
+}
 
 //-----------------------------------------------------------------------------
 // Methods relating to traversing hierarchy
@@ -3048,6 +3148,7 @@ public:
 		{
 			//ReportVPhysicsStateChanged( pObject, pEntity, true );
 			pEntity->NotifyVPhysicsStateChanged(pObject, true);
+			((C_EngineGhostInternal*)pEntity->GetEngineObject())->NotifyVPhysicsStateChanged(pObject, true);
 		}
 	}
 
@@ -3058,6 +3159,7 @@ public:
 		{
 			//ReportVPhysicsStateChanged( pObject, pEntity, false );
 			pEntity->NotifyVPhysicsStateChanged(pObject, false);
+			((C_EngineGhostInternal*)pEntity->GetEngineObject())->NotifyVPhysicsStateChanged(pObject, true);
 		}
 	}
 
@@ -3493,7 +3595,7 @@ public:
 	}
 
 	void AddImpactSound(void* pGameData, IPhysicsObject* pObject, int surfaceProps, int surfacePropsHit, float volume, float speed);
-	void PhysicsSimulate();
+	void PhysFrame();
 
 	void PhysFrictionSound(IHandleEntity* pEntity, IPhysicsObject* pObject, float energy, int surfaceProps, int surfacePropsHit)
 	{
@@ -4633,7 +4735,6 @@ void CClientEntityList<T>::LevelInitPostEntity()
 
 	// TODO: need to get the right factory function here
 	//physenv->SetDebugOverlay( appSystemFactory );
-	ConVarRef	sv_gravity("sv_gravity");
 	m_pPhysenv->SetGravity(Vector(0, 0, -sv_gravity.GetFloat()));
 	// 15 ms per tick
 	// NOTE: Always run client physics at this rate - helps keep ragdolls stable
@@ -5925,9 +6026,9 @@ void CClientEntityList<T>::AddImpactSound(void* pGameData, IPhysicsObject* pObje
 }
 
 template<class T>
-void CClientEntityList<T>::PhysicsSimulate()
+void CClientEntityList<T>::PhysFrame()
 {
-	VPROF_BUDGET("CPhysicsSystem::PhysicsSimulate", VPROF_BUDGETGROUP_PHYSICS);
+	VPROF_BUDGET("CPhysicsSystem::PhysFrame", VPROF_BUDGETGROUP_PHYSICS);
 	float frametime = g_ClientGlobalVariables.frametime;
 
 	if (m_pPhysenv)

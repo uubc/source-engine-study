@@ -563,9 +563,9 @@ void CHL2GameMovement::FullLadderMove()
 	CalcDistanceSqrToLine( mv->GetAbsOrigin(), topPosition, bottomPosition, &oldt );
 	
 	// Perform the move accounting for any base velocity.
-	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorAdd (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 	TryPlayerMove();
-	VectorSubtract (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorSubtract (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 
 	// Pressed buttons are "changed(xor)" and'ed with the mask of currently held buttons
 	int buttonsChanged	= ( mv->m_nOldButtons ^ mv->m_nButtons );	// These buttons have changed this frame
@@ -621,7 +621,7 @@ void CHL2GameMovement::FullLadderMove()
 								pressing_forward_or_side && 
 								!moving_along_ladder );
 
-	bool fully_underwater = ( player->GetWaterLevel() == WL_Eyes ) ? true : false;
+	bool fully_underwater = ( player->GetEngineObject()->GetWaterLevel() == WL_Eyes ) ? true : false;
 
 	// If the user manually pressed use or we're simulating it, then use_dismount will occur
 	bool use_dismount = pressed_use || auto_dismount_use;
@@ -908,7 +908,7 @@ bool CHL2GameMovement::LadderMove( void )
 	//  a force to us.  In either case  make the player fall, etc.
 	if ( ladder && 
 		 ( !ladder->IsEnabled() ||
-		 ( player->GetBaseVelocity().LengthSqr() > 1.0f ) ) )
+		 ( player->GetEngineObject()->GetBaseVelocity().LengthSqr() > 1.0f ) ) )
 	{
 		GetHL2Player()->ExitLadder();
 		ladder = NULL;

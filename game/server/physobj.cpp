@@ -1020,7 +1020,7 @@ void CPhysExplosion::Explode( IServerEntity *pActivator, IServerEntity *pCaller 
 						Vector vecPush = (vecPushDir*m_damage*flFalloff*2.0f);
 						if ( pEntity->GetEngineObject()->GetFlags() & FL_BASEVELOCITY )
 						{
-							vecPush = vecPush + pEntity->GetBaseVelocity();
+							vecPush = vecPush + pEntity->GetEngineObject()->GetBaseVelocity();
 						}
 						if ( vecPush.z > 0 && (pEntity->GetEngineObject()->GetFlags() & FL_ONGROUND) )
 						{
@@ -1030,7 +1030,7 @@ void CPhysExplosion::Explode( IServerEntity *pActivator, IServerEntity *pCaller 
 							pEntity->GetEngineObject()->SetAbsOrigin( origin );
 						}
 
-						pEntity->SetBaseVelocity( vecPush );
+						pEntity->GetEngineObject()->SetBaseVelocity( vecPush );
 						pEntity->GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 
 						// Fire an output that the player has been pushed
@@ -2037,7 +2037,7 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 			Vector vecPush = (m_flMagnitude * vecPushDir * flFalloff);
 			if ( pTarget->GetEngineObject()->GetFlags() & FL_BASEVELOCITY )
 			{
-				vecPush = vecPush + pTarget->GetBaseVelocity();
+				vecPush = vecPush + pTarget->GetEngineObject()->GetBaseVelocity();
 			}
 			if ( vecPush.z > 0 && (pTarget->GetEngineObject()->GetFlags() & FL_ONGROUND) )
 			{
@@ -2047,7 +2047,7 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 				pTarget->GetEngineObject()->SetAbsOrigin( origin );
 			}
 
-			pTarget->SetBaseVelocity( vecPush );
+			pTarget->GetEngineObject()->SetBaseVelocity( vecPush );
 			pTarget->GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 		}
 		break;

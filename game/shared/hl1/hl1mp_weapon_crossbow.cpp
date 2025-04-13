@@ -296,7 +296,7 @@ void CCrossbowBolt::BubbleThink( void )
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 
-	if ( GetWaterLevel()  == 0 )
+	if (GetEngineObject()->GetWaterLevel()  == 0 )
 		return;
 
 	UTIL_BubbleTrail(GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsVelocity() * 0.1, GetEngineObject()->GetAbsOrigin(), 1 );
@@ -517,7 +517,7 @@ void CWeaponCrossbow::FireBolt( void )
     }
     else
     {
-        if ( pOwner->GetWaterLevel() == 3 )
+        if ( pOwner->GetEngineObject()->GetWaterLevel() == 3 )
         {
             pBolt->GetEngineObject()->SetAbsVelocity( vecAiming * BOLT_WATER_VELOCITY );
         }
@@ -527,7 +527,7 @@ void CWeaponCrossbow::FireBolt( void )
         }
     }
 
-	pBolt->SetLocalAngularVelocity( QAngle( 0, 0, 10 ) );
+	pBolt->GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 0, 10 ) );
 
     if ( m_fInZoom || !g_pGameRules->IsMultiplayer() )
     {

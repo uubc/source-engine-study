@@ -170,7 +170,7 @@ void CCrossbowBolt::Spawn( void )
 	GetEngineObject()->SetGravity( 0.05f );
 	
 	// Make sure we're updated if we're underwater
-	UpdateWaterState();
+	GetEngineObject()->UpdateWaterState();
 
 	SetTouch( &CCrossbowBolt::BoltTouch );
 
@@ -389,7 +389,7 @@ void CCrossbowBolt::BubbleThink( void )
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 
-	if ( GetWaterLevel()  == 0 )
+	if (GetEngineObject()->GetWaterLevel()  == 0 )
 		return;
 
 	UTIL_BubbleTrail(GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsVelocity() * 0.1f, GetEngineObject()->GetAbsOrigin(), 5 );
@@ -660,7 +660,7 @@ void CWeaponCrossbow::FireBolt( void )
 
 	CCrossbowBolt *pBolt = CCrossbowBolt::BoltCreate( vecSrc, angAiming, GetHL2MPWpnData().m_iPlayerDamage, pOwner );
 
-	if ( pOwner->GetWaterLevel() == 3 )
+	if ( pOwner->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		pBolt->GetEngineObject()->SetAbsVelocity( vecAiming * BOLT_WATER_VELOCITY );
 	}

@@ -367,9 +367,6 @@ void			DrawMessageEntities();
 
 #include "ai_network.h"
 
-// For now just using one big AI network
-extern ConVar think_limit;
-
 
 #if 0
 //-----------------------------------------------------------------------------
@@ -1185,6 +1182,7 @@ void CServerGameDLL::ServerActivate( IServerEntity *pEdictList, int edictCount, 
 	ConVarRef developer("developer");
 	if ( !developer.GetInt() )
 	{
+		ConVarRef think_limit("think_limit");
 		think_limit.SetValue( 0 );
 	}
 
@@ -1280,7 +1278,6 @@ void CServerGameDLL::GameFrame( bool simulating )
 #endif
 
 	extern void ServiceEventQueue( void );
-	extern void Physics_RunThinkFunctions( bool simulating );
 
 	// Delete anything that was marked for deletion
 	//  outside of server frameloop (e.g., in response to concommand)
@@ -1308,7 +1305,7 @@ void CServerGameDLL::GameFrame( bool simulating )
 	UpdateQueryCache();
 	g_pServerBenchmark->UpdateBenchmark();
 
-	Physics_RunThinkFunctions( simulating );
+	EntityList()->Physics_RunThinkFunctions( simulating );
 	EntityList()->FrameUpdatePostEntityThink();
 	IGameSystem::FrameUpdatePostEntityThinkAllSystems();
 

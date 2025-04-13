@@ -57,7 +57,7 @@ void CThrownGrenade::Spawn( void )
 	VectorAngles(GetEngineObject()->GetAbsVelocity(), angles );
 	GetEngineObject()->SetLocalAngles( angles );
 	QAngle vecAngVel( random->RandomFloat ( -100, -500 ), 0, 0 );
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 	
 	SetTouch( &CThrownGrenade::BounceTouch );
 }

@@ -1256,11 +1256,11 @@ void CGameMovement::StartGravity( void )
 	// Add gravity so they'll be in the correct position during movement
 	// yes, this 0.5 looks wrong, but it's not.  
 	mv->m_vecVelocity[2] -= (ent_gravity * GetCurrentGravity() * 0.5 * gpGlobals->frametime );
-	mv->m_vecVelocity[2] += player->GetBaseVelocity()[2] * gpGlobals->frametime;
+	mv->m_vecVelocity[2] += player->GetEngineObject()->GetBaseVelocity()[2] * gpGlobals->frametime;
 
-	Vector temp = player->GetBaseVelocity();
+	Vector temp = player->GetEngineObject()->GetBaseVelocity();
 	temp[ 2 ] = 0;
-	player->SetBaseVelocity( temp );
+	player->GetEngineObject()->SetBaseVelocity( temp );
 
 	CheckVelocity();
 }
@@ -1356,7 +1356,7 @@ void CGameMovement::WaterJump( void )
 
 	player->m_flWaterJumpTime -= 1000.0f * gpGlobals->frametime;
 
-	if (player->m_flWaterJumpTime <= 0 || !player->GetWaterLevel())
+	if (player->m_flWaterJumpTime <= 0 || !player->GetEngineObject()->GetWaterLevel())
 	{
 		player->m_flWaterJumpTime = 0;
 		player->GetEngineObject()->RemoveFlag( FL_WATERJUMP );
@@ -1428,6 +1428,7 @@ void CGameMovement::WaterMove( void )
 	speed = VectorNormalize(temp);
 	if (speed)
 	{
+		ConVarRef sv_friction("sv_friction");
 		newspeed = speed - gpGlobals->frametime * speed * sv_friction.GetFloat() * player->m_surfaceFriction;
 		if (newspeed < 0.1f)
 		{
@@ -1463,7 +1464,7 @@ void CGameMovement::WaterMove( void )
 		}
 	}
 
-	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorAdd (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 
 	// Now move
 	// assume it is a stair or a slope, so press down from stepheight above
@@ -1486,7 +1487,7 @@ void CGameMovement::WaterMove( void )
 			mv->m_outStepHeight += stepDist;
 			// walked up the step, so just keep result and exit
 			mv->SetAbsOrigin( pm.endpos );
-			VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+			VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 			return;
 		}
 
@@ -1498,14 +1499,14 @@ void CGameMovement::WaterMove( void )
 		if ( !player->GetEngineObject()->GetGroundEntity() )
 		{
 			TryPlayerMove();
-			VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+			VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 			return;
 		}
 
 		StepMove( dest, pm );
 	}
 	
-	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 }
 
 //-----------------------------------------------------------------------------
@@ -1632,11 +1633,12 @@ void CGameMovement::Friction( void )
 	// apply ground friction
 	if (player->GetEngineObject()->GetGroundEntity() != NULL)  // On an entity that is the ground
 	{
+		ConVarRef sv_friction("sv_friction");
 		friction = sv_friction.GetFloat() * player->m_surfaceFriction;
 
 		// Bleed off some speed, but if we have less than the bleed
 		//  threshold, bleed the threshold amount.
-
+		ConVarRef sv_stopspeed("sv_stopspeed");
 		if ( IsX360() )
 		{
 			if( player->m_Local.m_bDucked )
@@ -1789,12 +1791,12 @@ void CGameMovement::AirMove( void )
 	AirAccelerate( wishdir, wishspeed, sv_airaccelerate.GetFloat() );
 
 	// Add in any base velocity to the current velocity.
-	VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorAdd(mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 
 	TryPlayerMove();
 
 	// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 }
 
 
@@ -1961,7 +1963,7 @@ void CGameMovement::WalkMove( void )
 	mv->m_vecVelocity[2] = 0;
 
 	// Add in any base velocity to the current velocity.
-	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorAdd (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 
 	spd = VectorLength( mv->m_vecVelocity );
 
@@ -1969,7 +1971,7 @@ void CGameMovement::WalkMove( void )
 	{
 		mv->m_vecVelocity.Init();
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-		VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 		return;
 	}
 
@@ -1988,17 +1990,17 @@ void CGameMovement::WalkMove( void )
 	{
 		mv->SetAbsOrigin( pm.endpos );
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-		VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 
 		StayOnGround();
 		return;
 	}
 
 	// Don't walk up stairs if not on ground.
-	if ( oldground == NULL && player->GetWaterLevel()  == 0 )
+	if ( oldground == NULL && player->GetEngineObject()->GetWaterLevel()  == 0 )
 	{
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-		VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 		return;
 	}
 
@@ -2006,14 +2008,14 @@ void CGameMovement::WalkMove( void )
 	if ( player->m_flWaterJumpTime )         
 	{
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-		VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 		return;
 	}
 
 	StepMove( dest, pm );
 
 	// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 
 	StayOnGround();
 }
@@ -2040,9 +2042,9 @@ void CGameMovement::FullWalkMove( )
 
 	// If we are swimming in the water, see if we are nudging against a place we can jump up out
 	//  of, and, if so, start out jump.  Otherwise, if we are not moving up, then reset jump timer to 0
-	if ( player->GetWaterLevel() >= WL_Waist ) 
+	if ( player->GetEngineObject()->GetWaterLevel() >= WL_Waist )
 	{
-		if ( player->GetWaterLevel() == WL_Waist )
+		if ( player->GetEngineObject()->GetWaterLevel() == WL_Waist )
 		{
 			CheckWaterJump();
 		}
@@ -2129,8 +2131,8 @@ void CGameMovement::FullWalkMove( )
 		CheckFalling();
 	}
 
-	if  ( ( m_nOldWaterLevel == WL_NotInWater && player->GetWaterLevel() != WL_NotInWater ) ||
-		  ( m_nOldWaterLevel != WL_NotInWater && player->GetWaterLevel() == WL_NotInWater ) )
+	if  ( ( m_nOldWaterLevel == WL_NotInWater && player->GetEngineObject()->GetWaterLevel() != WL_NotInWater ) ||
+		  ( m_nOldWaterLevel != WL_NotInWater && player->GetEngineObject()->GetWaterLevel() == WL_NotInWater ) )
 	{
 		PlaySwimSound();
 #if !defined( CLIENT_DLL )
@@ -2207,7 +2209,7 @@ void CGameMovement::FullObserverMove( void )
 	//
 	// Clamp to server defined max speed
 	//
-
+	ConVarRef sv_maxvelocity("sv_maxvelocity");
 	float maxspeed = sv_maxvelocity.GetFloat(); 
 
 
@@ -2227,6 +2229,7 @@ void CGameMovement::FullObserverMove( void )
 		return;
 	}
 		
+	ConVarRef sv_friction("sv_friction");
 	float friction = sv_friction.GetFloat();
 					
 	// Add the amount to the drop amount.
@@ -2306,6 +2309,7 @@ void CGameMovement::FullNoClipMove( float factor, float maxacceleration )
 		//  threshhold, bleed the theshold amount.
 		float control = (spd < maxspeed/4.0) ? maxspeed/4.0 : spd;
 		
+		ConVarRef sv_friction("sv_friction");
 		float friction = sv_friction.GetFloat() * player->m_surfaceFriction;
 				
 		// Add the amount to the drop amount.
@@ -2369,14 +2373,14 @@ bool CGameMovement::CheckJumpButton( void )
 	}
 
 	// If we are in the water most of the way...
-	if ( player->GetWaterLevel() >= 2 )
+	if ( player->GetEngineObject()->GetWaterLevel() >= 2 )
 	{	
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
-		if(player->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
+		if(player->GetEngineObject()->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
 			mv->m_vecVelocity[2] = 100;
-		else if (player->GetWaterType() == CONTENTS_SLIME)
+		else if (player->GetEngineObject()->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
 		
 		// play swiming sound
@@ -2547,9 +2551,9 @@ void CGameMovement::FullLadderMove()
 	}
 	
 	// Perform the move accounting for any base velocity.
-	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorAdd (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 	TryPlayerMove();
-	VectorSubtract (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorSubtract (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 }
 
 //-----------------------------------------------------------------------------
@@ -2728,6 +2732,7 @@ int CGameMovement::TryPlayerMove( Vector *pFirstDest, trace_t *pFirstTrace )
 				}
 				else
 				{
+					ConVarRef sv_bounce("sv_bounce");
 					ClipVelocity( original_velocity, planes[i], new_velocity, 1.0 + sv_bounce.GetFloat() * (1 - player->m_surfaceFriction) );
 				}
 			}
@@ -3070,6 +3075,7 @@ void CGameMovement::CheckVelocity( void )
 			mv->SetAbsOrigin( org );
 		}
 
+		ConVarRef sv_maxvelocity("sv_maxvelocity");
 		// Bound it.
 		if (mv->m_vecVelocity[i] > sv_maxvelocity.GetFloat()) 
 		{
@@ -3101,10 +3107,10 @@ void CGameMovement::AddGravity( void )
 
 	// Add gravity incorrectly
 	mv->m_vecVelocity[2] -= (ent_gravity * GetCurrentGravity() * gpGlobals->frametime);
-	mv->m_vecVelocity[2] += player->GetBaseVelocity()[2] * gpGlobals->frametime;
-	Vector temp = player->GetBaseVelocity();
+	mv->m_vecVelocity[2] += player->GetEngineObject()->GetBaseVelocity()[2] * gpGlobals->frametime;
+	Vector temp = player->GetEngineObject()->GetBaseVelocity();
 	temp[2] = 0;
-	player->SetBaseVelocity( temp );
+	player->GetEngineObject()->SetBaseVelocity( temp );
 	
 	CheckVelocity();
 }
@@ -3462,7 +3468,7 @@ int CGameMovement::CheckStuck( void )
 //-----------------------------------------------------------------------------
 bool CGameMovement::InWater( void )
 {
-	return ( player->GetWaterLevel() > WL_Feet );
+	return ( player->GetEngineObject()->GetWaterLevel() > WL_Feet );
 }
 
 
@@ -3521,8 +3527,8 @@ bool CGameMovement::CheckWater( void )
 	point[2] = mv->GetAbsOrigin()[2] + vPlayerMins[2] + 1;
 	
 	// Assume that we are not in water at all.
-	player->SetWaterLevel( WL_NotInWater );
-	player->SetWaterType( CONTENTS_EMPTY );
+	player->GetEngineObject()->SetWaterLevel( WL_NotInWater );
+	player->GetEngineObject()->SetWaterType( CONTENTS_EMPTY );
 
 	// Grab point contents.
 	cont = GetPointContentsCached( point, 0 );	
@@ -3531,10 +3537,10 @@ bool CGameMovement::CheckWater( void )
 	if ( cont & MASK_WATER )
 	{
 		// Set water type
-		player->SetWaterType( cont );
+		player->GetEngineObject()->SetWaterType( cont );
 
 		// We are at least at level one
-		player->SetWaterLevel( WL_Feet );
+		player->GetEngineObject()->SetWaterLevel( WL_Feet );
 
 		// Now check a point that is at the player hull midpoint.
 		point[2] = mv->GetAbsOrigin()[2] + (vPlayerMins[2] + vPlayerMaxs[2])*0.5;
@@ -3543,13 +3549,13 @@ bool CGameMovement::CheckWater( void )
 		if ( cont & MASK_WATER )
 		{
 			// Set a higher water level.
-			player->SetWaterLevel( WL_Waist );
+			player->GetEngineObject()->SetWaterLevel( WL_Waist );
 
 			// Now check the eye position.  (view_ofs is relative to the origin)
 			point[2] = mv->GetAbsOrigin()[2] + player->GetViewOffset()[2];
 			cont = GetPointContentsCached( point, 2 );
 			if ( cont & MASK_WATER )
-				player->SetWaterLevel( WL_Eyes );  // In over our eyes
+				player->GetEngineObject()->SetWaterLevel( WL_Eyes );  // In over our eyes
 		}
 
 		// Adjust velocity based on water current, if any.
@@ -3573,18 +3579,18 @@ bool CGameMovement::CheckWater( void )
 			// BUGBUG -- this depends on the value of an unspecified enumerated type
 			// The deeper we are, the stronger the current.
 			Vector temp;
-			VectorMA( player->GetBaseVelocity(), 50.0*player->GetWaterLevel(), v, temp );
-			player->SetBaseVelocity( temp );
+			VectorMA( player->GetEngineObject()->GetBaseVelocity(), 50.0*player->GetEngineObject()->GetWaterLevel(), v, temp );
+			player->GetEngineObject()->SetBaseVelocity( temp );
 		}
 	}
 
 	// if we just transitioned from not in water to in water, record the time it happened
-	if ( ( WL_NotInWater == m_nOldWaterLevel ) && ( player->GetWaterLevel() >  WL_NotInWater ) )
+	if ( ( WL_NotInWater == m_nOldWaterLevel ) && ( player->GetEngineObject()->GetWaterLevel() >  WL_NotInWater ) )
 	{
 		m_flWaterEntryTime = gpGlobals->curtime;
 	}
 
-	return ( player->GetWaterLevel() > WL_Feet );
+	return ( player->GetEngineObject()->GetWaterLevel() > WL_Feet );
 }
 
 void CGameMovement::SetGroundEntity( trace_t *pm )
@@ -3592,7 +3598,7 @@ void CGameMovement::SetGroundEntity( trace_t *pm )
 	CBaseEntity *newGround = pm ? (CBaseEntity*)pm->m_pEnt : NULL;
 
 	CBaseEntity* oldGround = player->GetEngineObject()->GetGroundEntity() ? (CBaseEntity*)player->GetEngineObject()->GetGroundEntity()->GetOuter() : NULL;
-	Vector vecBaseVelocity = player->GetBaseVelocity();
+	Vector vecBaseVelocity = player->GetEngineObject()->GetBaseVelocity();
 
 	if ( !oldGround && newGround )
 	{
@@ -3607,7 +3613,7 @@ void CGameMovement::SetGroundEntity( trace_t *pm )
 		vecBaseVelocity.z = oldGround->GetEngineObject()->GetAbsVelocity().z;
 	}
 
-	player->SetBaseVelocity( vecBaseVelocity );
+	player->GetEngineObject()->SetBaseVelocity( vecBaseVelocity );
 	player->GetEngineObject()->SetGroundEntity(newGround ? newGround->GetEngineObject() : NULL);
 
 	// If we are on something...
@@ -3905,7 +3911,7 @@ void CGameMovement::CheckFalling( void )
 		bool bAlive = true;
 		float fvol = 0.5;
 
-		if ( player->GetWaterLevel() > 0 )
+		if ( player->GetEngineObject()->GetWaterLevel() > 0 )
 		{
 			// They landed in water.
 		}
@@ -4592,7 +4598,7 @@ void CGameMovement::PlayerMove( void )
 	}
 
 	// Store off the starting water level
-	m_nOldWaterLevel = player->GetWaterLevel();
+	m_nOldWaterLevel = player->GetEngineObject()->GetWaterLevel();
 
 	// If we are not on ground, store off how fast we are moving down
 	if ( player->GetEngineObject()->GetGroundEntity() == NULL )
@@ -4806,7 +4812,7 @@ void CGameMovement::FullTossMove( void )
 	// If on ground and not moving, return.
 	if ( player->GetEngineObject()->GetGroundEntity() != NULL )
 	{
-		if (VectorCompare(player->GetBaseVelocity(), vec3_origin) &&
+		if (VectorCompare(player->GetEngineObject()->GetBaseVelocity(), vec3_origin) &&
 		    VectorCompare(mv->m_vecVelocity, vec3_origin))
 			return;
 	}
@@ -4822,12 +4828,12 @@ void CGameMovement::FullTossMove( void )
 	// move origin
 	// Base velocity is not properly accounted for since this entity will move again after the bounce without
 	// taking it into account
-	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorAdd (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 	
 	CheckVelocity();
 
 	VectorScale (mv->m_vecVelocity, gpGlobals->frametime, move);
-	VectorSubtract (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
+	VectorSubtract (mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity);
 
 	PushEntity( move, &pm );	// Should this clear basevelocity
 

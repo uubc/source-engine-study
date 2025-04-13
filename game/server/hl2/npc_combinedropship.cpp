@@ -503,7 +503,7 @@ void CCombineDropshipContainer::CreateCorpse()
 
 	// Break into chunks
 	Vector angVelocity;
-	QAngleToAngularImpulse( GetLocalAngularVelocity(), angVelocity );
+	QAngleToAngularImpulse(GetEngineObject()->GetLocalAngularVelocity(), angVelocity );
 	PropBreakableCreateAll(GetEngineObject()->GetModelIndex(), GetEngineObject()->VPhysicsGetObject(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetAbsVelocity(), angVelocity, 1.0, 250, COLLISION_GROUP_NPC, this );
 
 	// Create flaming gibs
@@ -948,7 +948,7 @@ void CNPC_CombineDropship::Spawn( void )
 			m_hContainer->GetEngineObject()->SetOwnerEntity(this->GetEngineObject());
 			m_hContainer->GetEngineObject()->SetMoveType( MOVETYPE_PUSH );
 			m_hContainer->GetEngineObject()->SetGroundEntity( NULL );
-			m_hContainer->UpdatePhysicsShadowToCurrentPosition(0);
+			m_hContainer->GetEngineObject()->UpdatePhysicsShadowToCurrentPosition(0);
 		}
 		break;
 
@@ -1258,9 +1258,9 @@ void CNPC_CombineDropship::Flight( void )
 		// calc angular accel needed to hit goal pitch in dt time.
 		dt = 0.6;
 		QAngle goalAngAccel;
-		goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetLocalAngles().x ) ) - GetLocalAngularVelocity().x * dt) / (dt * dt);
-		goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetLocalAngles().y ) ) - GetLocalAngularVelocity().y * dt) / (dt * dt);
-		goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetLocalAngles().z ) ) - GetLocalAngularVelocity().z * dt) / (dt * dt);
+		goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetLocalAngles().x ) ) - GetEngineObject()->GetLocalAngularVelocity().x * dt) / (dt * dt);
+		goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetLocalAngles().y ) ) - GetEngineObject()->GetLocalAngularVelocity().y * dt) / (dt * dt);
+		goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetLocalAngles().z ) ) - GetEngineObject()->GetLocalAngularVelocity().z * dt) / (dt * dt);
 
 		goalAngAccel.x = clamp( goalAngAccel.x, -300, 300 );
 		//goalAngAccel.y = clamp( goalAngAccel.y, -60, 60 );
@@ -1288,14 +1288,14 @@ void CNPC_CombineDropship::Flight( void )
 		ApplySidewaysDrag( right );
 		ApplyGeneralDrag();
 		
-		QAngle angVel = GetLocalAngularVelocity();
+		QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 		angVel += m_vecAngAcceleration * 0.1;
 
 		//angVel.y = clamp( angVel.y, -60, 60 );
 		//angVel.y = clamp( angVel.y, -120, 120 );
 		angVel.y = clamp( angVel.y, -120, 120 );
 
-		SetLocalAngularVelocity( angVel );
+		GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 		m_flForce = m_flForce * 0.8 + (accel.z + fabs( accel.x ) * 0.1 + fabs( accel.y ) * 0.1) * 0.1 * 0.2;
 
@@ -1660,7 +1660,7 @@ void CNPC_CombineDropship::LandCommon( bool bHover )
 		SetLandingState( LANDING_LEVEL_OUT );
 	}
 
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 	// Do we have a land target?
 	if ( m_iszLandTarget != NULL_STRING )

@@ -126,7 +126,7 @@ private:
 
 	// Common services provided by CAI_BaseNPC, Convenience methods to simplify code
 	float				StepHeight() const;
-	bool				CanStandOn( CBaseEntity *pSurface ) const;
+	bool				CanStandOn( IServerEntity *pSurface ) const;
 
 	bool				m_bIgnoreTransientEntities;
 

@@ -395,7 +395,7 @@ bool CPropCrane::CanExitVehicle( CBaseEntity *pEntity )
 {
 	// Prevent exiting if the vehicle's locked, or rotating
 	// Adrian: Check also if I'm currently jumping in or out.
-	return ( !m_bLocked && (GetLocalAngularVelocity() == vec3_angle) && m_bExitAnimOn == false && m_bEnterAnimOn == false );
+	return ( !m_bLocked && (GetEngineObject()->GetLocalAngularVelocity() == vec3_angle) && m_bExitAnimOn == false && m_bEnterAnimOn == false );
 }
 
 //-----------------------------------------------------------------------------
@@ -574,7 +574,7 @@ void CPropCrane::DriveCrane( int iDriverButtons, int iButtonsPressed, float flNP
 		m_hPlayer->RumbleEffect( RUMBLE_FLAT_BOTH, (int)(rumble * 100), RUMBLE_FLAG_UPDATE_SCALE );
 	}
 
-	SetLocalAngularVelocity( QAngle(0,m_flTurn * 10,0) );
+	GetEngineObject()->SetLocalAngularVelocity( QAngle(0,m_flTurn * 10,0) );
 
 	// Handle extension / retraction of the arm
 	if ( iDriverButtons & IN_FORWARD )
@@ -695,7 +695,7 @@ void CPropCrane::RunCraneMovement( float flTime )
 	}
 
 	// If we've moved in any way, update the tip
-	if ( m_bDropping || m_flExtensionRate || GetLocalAngularVelocity() != vec3_angle )
+	if ( m_bDropping || m_flExtensionRate || GetEngineObject()->GetLocalAngularVelocity() != vec3_angle )
 	{
 		RecalculateCraneTip();
 	}

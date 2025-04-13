@@ -203,7 +203,7 @@ void CWeaponSMG1::SecondaryAttack( void )
 		return;
 
 	//Must have ammo
-	if ( ( pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) <= 0 ) || ( pPlayer->GetWaterLevel() == 3 ) )
+	if ( ( pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) <= 0 ) || ( pPlayer->GetEngineObject()->GetWaterLevel() == 3 ) )
 	{
 		SendWeaponAnim( ACT_VM_DRYFIRE );
 		BaseClass::WeaponSound( EMPTY );
@@ -228,7 +228,7 @@ void CWeaponSMG1::SecondaryAttack( void )
 	CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create( "grenade_ar2", vecSrc, vec3_angle, pPlayer );
 	pGrenade->GetEngineObject()->SetAbsVelocity( vecThrow );
 
-	pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
+	pGrenade->GetEngineObject()->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
 	pGrenade->GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 	pGrenade->SetThrower( GetOwner() );
 	pGrenade->SetDamage( SMG1_GRENADE_DAMAGE );

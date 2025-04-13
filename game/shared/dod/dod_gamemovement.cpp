@@ -695,14 +695,14 @@ bool CDODGameMovement::CheckJumpButton( void )
 	}
 
 	// If we are in the water most of the way...
-	if ( m_pDODPlayer->GetWaterLevel() >= 2 )
+	if ( m_pDODPlayer->GetEngineObject()->GetWaterLevel() >= 2 )
 	{	
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
-		if(m_pDODPlayer->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
+		if(m_pDODPlayer->GetEngineObject()->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
 			mv->m_vecVelocity[2] = 100;
-		else if (m_pDODPlayer->GetWaterType() == CONTENTS_SLIME)
+		else if (m_pDODPlayer->GetEngineObject()->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
 		
 		// play swiming sound

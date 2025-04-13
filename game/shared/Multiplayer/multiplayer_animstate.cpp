@@ -781,7 +781,7 @@ bool CMultiPlayerAnimState::HandleJumping( Activity &idealActivity )
 		}
 
 		// Check to see if we hit water and stop jumping animation.
-		if ( GetBasePlayer()->GetWaterLevel() >= WL_Waist )
+		if ( GetBasePlayer()->GetEngineObject()->GetWaterLevel() >= WL_Waist )
 		{
 			m_bJumping = false;
 			RestartMainSequence();
@@ -839,7 +839,7 @@ bool CMultiPlayerAnimState::HandleDucking( Activity &idealActivity )
 //-----------------------------------------------------------------------------
 bool CMultiPlayerAnimState::HandleSwimming( Activity &idealActivity )
 {
-	if ( GetBasePlayer()->GetWaterLevel() >= WL_Waist )
+	if ( GetBasePlayer()->GetEngineObject()->GetWaterLevel() >= WL_Waist )
 	{
 		if ( m_bFirstSwimFrame )
 		{

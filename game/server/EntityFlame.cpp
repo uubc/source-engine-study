@@ -274,7 +274,7 @@ void CEntityFlame::FlameThink( void )
 			return;
 		}
 
-		if( m_hEntAttached->GetWaterLevel() > 0 )
+		if( m_hEntAttached->GetEngineObject()->GetWaterLevel() > 0 )
 		{
 			Vector mins, maxs;
 

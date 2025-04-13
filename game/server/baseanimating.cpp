@@ -1232,7 +1232,7 @@ void CBaseAnimating::GetVelocity(Vector *vVelocity, AngularImpulse *vAngVelocity
 		}
 		if (vAngVelocity != NULL)
 		{
-			QAngle tmp = GetLocalAngularVelocity();
+			QAngle tmp = GetEngineObject()->GetLocalAngularVelocity();
 			QAngleToAngularImpulse( tmp, *vAngVelocity );
 		}
 	}

@@ -197,7 +197,7 @@ enum
 
 	void CWeaponDODBaseGrenade::StartThrow( int throwType )
 	{
-		if( GetPlayerOwner()->GetWaterLevel() > 2 )
+		if( GetPlayerOwner()->GetEngineObject()->GetWaterLevel() > 2 )
 		{
 			PlayEmptySound();
 			m_flNextPrimaryAttack = gpGlobals->curtime + 1.0;

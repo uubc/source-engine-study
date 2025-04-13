@@ -3032,7 +3032,7 @@ void CNPC_Alyx::ModifyOrAppendCriteria( AI_CriteriaSet &set )
 	}
 	set.AppendCriteria( "num_enemies", UTIL_VarArgs( "%d", iNumEnemies ) );
 	set.AppendCriteria( "darkness_mode", UTIL_VarArgs( "%d", HasCondition( COND_ALYX_IN_DARK ) ) );
-	set.AppendCriteria( "water_level", UTIL_VarArgs( "%d", GetWaterLevel() ) );
+	set.AppendCriteria( "water_level", UTIL_VarArgs( "%d", GetEngineObject()->GetWaterLevel() ) );
 
 	CHL2_Player *pPlayer = ToHL2Player( EntityList()->GetPlayerByIndex( 1 ) );
 	set.AppendCriteria( "num_companions", UTIL_VarArgs( "%d", pPlayer ? pPlayer->GetNumSquadCommandables() : 0 ) );

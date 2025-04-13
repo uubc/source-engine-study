@@ -293,7 +293,7 @@ void CHL1MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		{
 			idealActivity = GetActivity();
 		}
-		else if ( GetWaterLevel() > 1 )
+		else if (GetEngineObject()->GetWaterLevel() > 1 )
 		{
 			if ( speed == 0 )
 				idealActivity = ACT_HOVER;

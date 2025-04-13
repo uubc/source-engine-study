@@ -762,9 +762,9 @@ called each time a player is spawned into the game
 				}
 
 				// blast's don't tavel into or out of water
-				if (bInWater && pEntity->GetWaterLevel() == 0)
+				if (bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 0)
 					continue;
-				if (!bInWater && pEntity->GetWaterLevel() == 3)
+				if (!bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 3)
 					continue;
 
 				// radius damage can only be blocked by the world

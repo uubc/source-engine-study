@@ -1687,7 +1687,7 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 				m_flNextSecondaryAttack = m_flNextEmptySoundTime = gpGlobals->curtime + 0.5;
 			}
 		}
-		else if (pOwner->GetWaterLevel() == 3 && m_bAltFiresUnderwater == false)
+		else if (pOwner->GetEngineObject()->GetWaterLevel() == 3 && m_bAltFiresUnderwater == false)
 		{
 			// This weapon doesn't fire underwater
 			WeaponSound(EMPTY);
@@ -1730,7 +1730,7 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 		{
 			HandleFireOnEmpty();
 		}
-		else if (pOwner->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
+		else if (pOwner->GetEngineObject()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
 		{
 			// This weapon doesn't fire underwater
 			WeaponSound(EMPTY);

@@ -1719,6 +1719,11 @@ IRecipientFilter* C_World::CreatePASAttenuationFilter(IClientEntity* entity, flo
 	return new CPASAttenuationFilter(entity, attenuation);
 }
 
+IRecipientFilter* C_World::CreatePASAttenuationFilter(IClientEntity* entity, const char* lookupSound)
+{
+	return new CPASAttenuationFilter(entity, lookupSound);
+}
+
 IRecipientFilter* C_World::CreatePASAttenuationFilter(const Vector& origin, float attenuation)
 {
 	return new CPASAttenuationFilter(origin, attenuation);

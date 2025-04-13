@@ -155,9 +155,9 @@ void CSatchelCharge::SatchelThink( void )
 	{
 		GetEngineObject()->SetAbsVelocity( vec3_origin );
 
-		QAngle angVel = GetLocalAngularVelocity();
+		QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 		angVel.y  = 0;
-		SetLocalAngularVelocity( angVel );
+		GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 		// Clear think function
 		SetThink(NULL);

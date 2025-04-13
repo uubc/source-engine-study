@@ -87,7 +87,7 @@ public:
 		if (GetEngineObject()->GetFlags() & FL_ONGROUND )
 		{
 			QAngle vAngles = GetEngineObject()->GetAbsAngles();
-			QAngle vAngularVelocity = GetLocalAngularVelocity();
+			QAngle vAngularVelocity = GetEngineObject()->GetLocalAngularVelocity();
 
 			GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.9 );
 
@@ -97,7 +97,7 @@ public:
 			vAngularVelocity.z = 0;
 
 			GetEngineObject()->SetAbsAngles( vAngles );
-			SetLocalAngularVelocity( vAngularVelocity );
+			GetEngineObject()->SetLocalAngularVelocity( vAngularVelocity );
 		}
 	}
 

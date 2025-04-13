@@ -56,7 +56,7 @@ inline bool StandardFilterRules(IHandleEntity* pHandleEntity, int fContentsMask)
 
 	SolidType_t solid = pHandleEntity->GetEngineObject()->GetSolid();
 
-	if ((pHandleEntity->GetModelType() != mod_brush) || (solid != SOLID_BSP && solid != SOLID_VPHYSICS))
+	if ((pHandleEntity->GetEngineObject()->GetModelType() != mod_brush) || (solid != SOLID_BSP && solid != SOLID_VPHYSICS))
 	{
 		if ((fContentsMask & CONTENTS_MONSTER) == 0)
 			return false;

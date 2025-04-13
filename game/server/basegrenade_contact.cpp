@@ -49,7 +49,7 @@ void CBaseGrenadeContact::Spawn( void )
 	
 	// Tumble in air
 	QAngle vecAngVelocity( random->RandomFloat ( -100, -500 ), 0, 0 );
-	SetLocalAngularVelocity( vecAngVelocity );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVelocity );
 
 	// Explode on contact
 	SetTouch( &CBaseGrenadeContact::ExplodeTouch );

@@ -177,7 +177,7 @@ ConVar ammo_smokegrenade_max( "ammo_smokegrenade_max", "1", FCVAR_REPLICATED );
 //ConVar mp_dynamicpricing( "mp_dynamicpricing", "0", FCVAR_REPLICATED, "Enables or Disables the dynamic weapon prices" );
 
 
-extern ConVar sv_stopspeed;
+//extern ConVar sv_stopspeed;
 
 ConVar mp_buytime( 
 	"mp_buytime", 
@@ -1357,9 +1357,9 @@ called each time a player is spawned into the game
 				// blasts don't travel into or out of water
 				if ( !bIgnoreWorld )
 				{
-					if (bInWater && pEntity->GetWaterLevel() == 0)
+					if (bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 0)
 						continue;
-					if (!bInWater && pEntity->GetWaterLevel() == 3)
+					if (!bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 3)
 						continue;
 				}
 
@@ -2545,6 +2545,7 @@ called each time a player is spawned into the game
 		//CVAR_SET_FLOAT( "sv_friction", 4.0 );
 		//CVAR_SET_FLOAT( "sv_stopspeed", 75 );
 
+		ConVarRef sv_stopspeed("sv_stopspeed");
 		sv_stopspeed.SetValue( 75.0f );
 
 		// Tabulate the number of players on each team.

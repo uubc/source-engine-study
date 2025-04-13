@@ -463,7 +463,7 @@ bool CPropVehiclePrisonerPod::CanEnterVehicle( CBaseEntity *pEntity )
 bool CPropVehiclePrisonerPod::CanExitVehicle( CBaseEntity *pEntity )
 {
 	// Prevent exiting if the vehicle's locked, rotating, or playing an entry/exit anim.
-	return ( !m_bLocked && (GetLocalAngularVelocity() == vec3_angle) && !m_bEnterAnimOn && !m_bExitAnimOn );
+	return ( !m_bLocked && (GetEngineObject()->GetLocalAngularVelocity() == vec3_angle) && !m_bEnterAnimOn && !m_bExitAnimOn );
 }
 
 

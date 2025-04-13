@@ -476,7 +476,7 @@ void CWeaponShotgun::ItemPostFrame( void )
 		}
 
 		// Fire underwater?
-		else if (GetOwner()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
+		else if (GetOwner()->GetEngineObject()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
 		{
 			WeaponSound(EMPTY);
 			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;
@@ -507,7 +507,7 @@ void CWeaponShotgun::ItemPostFrame( void )
 			}
 		}
 		// Fire underwater?
-		else if (pOwner->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
+		else if (pOwner->GetEngineObject()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
 		{
 			WeaponSound(EMPTY);
 			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;

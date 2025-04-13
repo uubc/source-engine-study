@@ -232,7 +232,7 @@ void CWeaponAR2::SecondaryAttack( void )
 		return;
 
 	// Cannot fire underwater
-	if ( GetOwner() && GetOwner()->GetWaterLevel() == 3 )
+	if ( GetOwner() && GetOwner()->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		SendWeaponAnim( ACT_VM_DRYFIRE );
 		BaseClass::WeaponSound( EMPTY );

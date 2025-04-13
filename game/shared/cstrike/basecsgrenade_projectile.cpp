@@ -140,7 +140,7 @@ END_NETWORK_TABLE()
 
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.2 );
 
-		if (GetWaterLevel() != 0)
+		if (GetEngineObject()->GetWaterLevel() != 0)
 		{
 			GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.5 );
 		}
@@ -202,11 +202,11 @@ END_NETWORK_TABLE()
 
 		// NOTE: A backoff of 2.0f is a reflection
 		Vector vecAbsVelocity;
-		PhysicsClipVelocity(GetEngineObject()->GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, 2.0f );
+		GetEngineObject()->PhysicsClipVelocity(GetEngineObject()->GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, 2.0f );
 		vecAbsVelocity *= flTotalElasticity;
 
 		// Get the total velocity (player + conveyors, etc.)
-		VectorAdd( vecAbsVelocity, GetBaseVelocity(), vecVelocity );
+		VectorAdd( vecAbsVelocity, GetEngineObject()->GetBaseVelocity(), vecVelocity );
 		float flSpeedSqr = DotProduct( vecVelocity, vecVelocity );
 
 		// Stop if on ground.
@@ -227,7 +227,7 @@ END_NETWORK_TABLE()
 
 				// Reset velocities.
 				GetEngineObject()->SetAbsVelocity( vec3_origin );
-				SetLocalAngularVelocity( vec3_angle );
+				GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 				//align to the ground so we're not standing on end
 				QAngle angle;
@@ -242,14 +242,14 @@ END_NETWORK_TABLE()
 			}
 			else
 			{
-				Vector vecDelta = GetBaseVelocity() - vecAbsVelocity;	
-				Vector vecBaseDir = GetBaseVelocity();
+				Vector vecDelta = GetEngineObject()->GetBaseVelocity() - vecAbsVelocity;
+				Vector vecBaseDir = GetEngineObject()->GetBaseVelocity();
 				VectorNormalize( vecBaseDir );
 				float flScale = vecDelta.Dot( vecBaseDir );
 
 				VectorScale( vecAbsVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, vecVelocity ); 
-				VectorMA( vecVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, GetBaseVelocity() * flScale, vecVelocity );
-				PhysicsPushEntity( vecVelocity, &trace );
+				VectorMA( vecVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, GetEngineObject()->GetBaseVelocity() * flScale, vecVelocity );
+				GetEngineObject()->PhysicsPushEntity( vecVelocity, &trace );
 			}
 		}
 		else
@@ -260,7 +260,7 @@ END_NETWORK_TABLE()
 			{
 				// Reset velocities.
 				GetEngineObject()->SetAbsVelocity( vec3_origin );
-				SetLocalAngularVelocity( vec3_angle );
+				GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 			}
 			else
 			{
@@ -336,7 +336,7 @@ END_NETWORK_TABLE()
 		data.m_vNormal = normal;
 		data.m_flScale = random->RandomFloat( 1.0f, 2.0f );
 
-		if ( GetWaterType() & CONTENTS_SLIME )
+		if (GetEngineObject()->GetWaterType() & CONTENTS_SLIME )
 		{
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}

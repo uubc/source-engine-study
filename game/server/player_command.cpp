@@ -103,9 +103,9 @@ void CPlayerMove::CheckMovingGround( CBasePlayer *player, double frametime )
 			groundentity->GetGroundVelocityToApply( vecNewVelocity );
 			if ( player->GetEngineObject()->GetFlags() & FL_BASEVELOCITY )
 			{
-				vecNewVelocity += player->GetBaseVelocity();
+				vecNewVelocity += player->GetEngineObject()->GetBaseVelocity();
 			}
-			player->SetBaseVelocity( vecNewVelocity );
+			player->GetEngineObject()->SetBaseVelocity( vecNewVelocity );
 			player->GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 		}
 	}
@@ -113,8 +113,8 @@ void CPlayerMove::CheckMovingGround( CBasePlayer *player, double frametime )
 	if ( !( player->GetEngineObject()->GetFlags() & FL_BASEVELOCITY ) )
 	{
 		// Apply momentum (add in half of the previous frame of velocity first)
-		player->ApplyAbsVelocityImpulse( (1.0 + ( frametime * 0.5 )) * player->GetBaseVelocity() );
-		player->SetBaseVelocity( vec3_origin );
+		player->ApplyAbsVelocityImpulse( (1.0 + ( frametime * 0.5 )) * player->GetEngineObject()->GetBaseVelocity() );
+		player->GetEngineObject()->SetBaseVelocity( vec3_origin );
 	}
 
 	player->GetEngineObject()->RemoveFlag( FL_BASEVELOCITY );

@@ -107,7 +107,7 @@ void CGrenadeMP5::Detonate(void)
 
 	te->Explosion( filter, 0.0,
 		&GetEngineObject()->GetAbsOrigin(),
-		GetWaterLevel() == 0 ? g_sModelIndexFireball : g_sModelIndexWExplosion,
+		GetEngineObject()->GetWaterLevel() == 0 ? g_sModelIndexFireball : g_sModelIndexWExplosion,
 		(m_flDamage - 50) * .60, 
 		15,
 		TE_EXPLFLAG_NONE,
@@ -134,7 +134,7 @@ void CGrenadeMP5::Detonate(void)
 	CPASAttenuationFilter filter2( this );
 	g_pSoundEmitterSystem->EmitSound( filter2, entindex(), "GrenadeMP5.Detonate" );
 
-	if ( GetWaterLevel() == 0 )
+	if (GetEngineObject()->GetWaterLevel() == 0 )
 	{
 		int sparkCount = random->RandomInt( 0,3 );
 		QAngle angles;

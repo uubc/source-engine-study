@@ -351,7 +351,7 @@ void CBaseGrenade::DangerSoundThink( void )
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.2 );
 
-	if (GetWaterLevel() != 0)
+	if (GetEngineObject()->GetWaterLevel() != 0)
 	{
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.5 );
 	}
@@ -486,7 +486,7 @@ void CBaseGrenade ::TumbleThink( void )
 		SetThink( &CBaseGrenade::Detonate );
 	}
 
-	if (GetWaterLevel() != 0)
+	if (GetEngineObject()->GetWaterLevel() != 0)
 	{
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.5 );
 		GetEngineObject()->SetPlaybackRate(0.2);

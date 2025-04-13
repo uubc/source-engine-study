@@ -1140,19 +1140,19 @@ void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 	if ( flCurPos < m_IdealYaw )
 	{
 		// Moving forward (from start to end).
-		SetLocalAngularVelocity( m_flSpeed * m_vecMoveAng );
+		GetEngineObject()->SetLocalAngularVelocity( m_flSpeed * m_vecMoveAng );
 		m_direction = 1;
 	}
 	else if ( flCurPos > m_IdealYaw )
 	{
 		// Moving backward (from end to start).
-		SetLocalAngularVelocity( -m_flSpeed * m_vecMoveAng );
+		GetEngineObject()->SetLocalAngularVelocity( -m_flSpeed * m_vecMoveAng );
 		m_direction = -1;
 	}
 	else
 	{
 		// We're there already; nothing to do.
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		return;
 	}
 
@@ -1173,11 +1173,11 @@ void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 	{
 		dt = TICK_INTERVAL;
 		float speed = flAngleDelta / TICK_INTERVAL;
-		SetLocalAngularVelocity( speed * m_vecMoveAng * m_direction );
+		GetEngineObject()->SetLocalAngularVelocity( speed * m_vecMoveAng * m_direction );
 	}
 	dt = clamp( dt, TICK_INTERVAL, TICK_INTERVAL * 6);
 
-	SetMoveDoneTime( dt );
+	GetEngineObject()->SetMoveDoneTime( dt );
 }
 
 
@@ -1219,8 +1219,8 @@ void CMomentaryRotButton::Lock()
 {
 	BaseClass::Lock();
 
-	SetLocalAngularVelocity( vec3_angle );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 	SetMoveDone( NULL );
 
 	GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
@@ -1238,7 +1238,7 @@ void CMomentaryRotButton::Unlock()
 	SetMoveDone( &CMomentaryRotButton::ReturnMoveDone );
 
 	// Delay before autoreturn.
-	SetMoveDoneTime( 0.1f );
+	GetEngineObject()->SetMoveDoneTime( 0.1f );
 }
 
 
@@ -1274,11 +1274,11 @@ void CMomentaryRotButton::SetPositionMoveDone(void)
 		//
 		// We reached or surpassed our movement goal.
 		//
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		// BUGBUG: Won't this get the player stuck?
 		GetEngineObject()->SetLocalAngles( m_start + m_vecMoveAng * ( m_IdealYaw * m_flMoveDistance ) );
 		GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
-		SetMoveDoneTime( -1 );
+		GetEngineObject()->SetMoveDoneTime( -1 );
 		UpdateTarget( m_IdealYaw, this );
 		OutputMovementComplete();
 		return;
@@ -1292,11 +1292,11 @@ void CMomentaryRotButton::SetPositionMoveDone(void)
 	{
 		dt = TICK_INTERVAL;
 		float speed = flAngleDelta / TICK_INTERVAL;
-		SetLocalAngularVelocity( speed * m_vecMoveAng * m_direction );
+		GetEngineObject()->SetLocalAngularVelocity( speed * m_vecMoveAng * m_direction );
 	}
 	dt = clamp( dt, TICK_INTERVAL, TICK_INTERVAL * 6);
 
-	SetMoveDoneTime( dt );
+	GetEngineObject()->SetMoveDoneTime( dt );
 }
 
 
@@ -1388,14 +1388,14 @@ void CMomentaryRotButton::UpdateSelf( float value, bool bPlaySound )
 	// Set our move clock to 0.1 seconds in the future so we stop spinning unless we are
 	// used again before then.
 	//
-	SetMoveDoneTime( 0.1 );
+	GetEngineObject()->SetMoveDoneTime( 0.1 );
 
 	//
 	// If we hit the end, zero our avelocity and snap to the end angles.
 	//
 	if ( m_direction > 0 && value >= 1.0 )
 	{
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		GetEngineObject()->SetLocalAngles( m_end );
 
 		m_OnFullyClosed.FireOutput(this, this);
@@ -1406,7 +1406,7 @@ void CMomentaryRotButton::UpdateSelf( float value, bool bPlaySound )
 	//
 	else if ( m_direction < 0 && value <= 0 )
 	{
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		GetEngineObject()->SetLocalAngles( m_start );
 
 		m_OnFullyOpen.FireOutput(this, this);
@@ -1418,7 +1418,7 @@ void CMomentaryRotButton::UpdateSelf( float value, bool bPlaySound )
 		PlaySound();
 	}
 
-	SetLocalAngularVelocity( ( m_direction * m_flSpeed ) * m_vecMoveAng );
+	GetEngineObject()->SetLocalAngularVelocity( ( m_direction * m_flSpeed ) * m_vecMoveAng );
 	SetMoveDone( &CMomentaryRotButton::UseMoveDone );
 }
 
@@ -1444,7 +1444,7 @@ void CMomentaryRotButton::UpdateTarget( float value, IServerEntity *pActivator )
 //-----------------------------------------------------------------------------
 void CMomentaryRotButton::UseMoveDone( void )
 {
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 	// Make sure our targets stop where we stopped.
 	float flPos = GetPos(GetEngineObject()->GetLocalAngles() );
@@ -1461,7 +1461,7 @@ void CMomentaryRotButton::UseMoveDone( void )
 		m_direction = -1;
 
 		// Delay before autoreturn.
-		SetMoveDoneTime( 0.1f );
+		GetEngineObject()->SetMoveDoneTime( 0.1f );
 	}
 	else
 	{
@@ -1482,12 +1482,12 @@ void CMomentaryRotButton::ReturnMoveDone( void )
 		//
 		// Got back to the start, stop spinning.
 		//
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		GetEngineObject()->SetLocalAngles( m_start );
 
 		UpdateTarget( 0, NULL );
 
-		SetMoveDoneTime( -1 );
+		GetEngineObject()->SetMoveDoneTime( -1 );
 		SetMoveDone( NULL );
 
 		GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
@@ -1495,8 +1495,8 @@ void CMomentaryRotButton::ReturnMoveDone( void )
 	}
 	else
 	{
-		SetLocalAngularVelocity( -m_returnSpeed * m_vecMoveAng );
-		SetMoveDoneTime( 0.1f );
+		GetEngineObject()->SetLocalAngularVelocity( -m_returnSpeed * m_vecMoveAng );
+		GetEngineObject()->SetMoveDoneTime( 0.1f );
 
 		SetThink( &CMomentaryRotButton::UpdateThink );
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.01f );
@@ -1531,7 +1531,7 @@ int CMomentaryRotButton::DrawDebugTextOverlays(void)
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		Q_snprintf(tempstr,sizeof(tempstr),"AVelocity: %.2f %.2f %.2f", GetLocalAngularVelocity()[0], GetLocalAngularVelocity()[1], GetLocalAngularVelocity()[2]);
+		Q_snprintf(tempstr,sizeof(tempstr),"AVelocity: %.2f %.2f %.2f", GetEngineObject()->GetLocalAngularVelocity()[0], GetEngineObject()->GetLocalAngularVelocity()[1], GetEngineObject()->GetLocalAngularVelocity()[2]);
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 

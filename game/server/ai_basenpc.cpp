@@ -9233,12 +9233,12 @@ int CAI_BaseNPC::DrawDebugTextOverlays(void)
 			EntityText(text_offset,"Enemy too far to attack",0);
 			text_offset++;
 		}
-		if (GetEngineObject()->GetAbsVelocity() != vec3_origin || GetLocalAngularVelocity() != vec3_angle )
+		if (GetEngineObject()->GetAbsVelocity() != vec3_origin || GetEngineObject()->GetLocalAngularVelocity() != vec3_angle )
 		{
 			char tmp[512];
 			Q_snprintf( tmp, sizeof(tmp), "Vel %.1f %.1f %.1f   Ang: %.1f %.1f %.1f\n", 
 				GetEngineObject()->GetAbsVelocity().x, GetEngineObject()->GetAbsVelocity().y, GetEngineObject()->GetAbsVelocity().z,
-				GetLocalAngularVelocity().x, GetLocalAngularVelocity().y, GetLocalAngularVelocity().z );
+				GetEngineObject()->GetLocalAngularVelocity().x, GetEngineObject()->GetLocalAngularVelocity().y, GetEngineObject()->GetLocalAngularVelocity().z );
 			EntityText(text_offset,tmp,0);
 			text_offset++;
 		}
@@ -9731,7 +9731,7 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 
 	// If we're above water shooting at a player underwater, bias some of the shots forward of
 	// the player so that they see the cool bubble trails in the water ahead of them.
-	if (GetEnemy()->IsPlayer() && (GetWaterLevel() != 3) && (GetEnemy()->GetWaterLevel() == 3))
+	if (GetEnemy()->IsPlayer() && (GetEngineObject()->GetWaterLevel() != 3) && (GetEnemy()->GetEngineObject()->GetWaterLevel() == 3))
 	{
 #if 1
 		if (random->RandomInt(0, 4) < 3)
@@ -11300,7 +11300,7 @@ void CAI_BaseNPC::ToggleFreeze(void)
 		SetCondition(COND_NPC_FREEZE);
 		GetEngineObject()->SetMoveType(MOVETYPE_NONE);
 		GetEngineObject()->SetGravity(0);
-		SetLocalAngularVelocity(vec3_angle);
+		GetEngineObject()->SetLocalAngularVelocity(vec3_angle);
 		GetEngineObject()->SetAbsVelocity( vec3_origin );
 	}
 	else
@@ -12801,7 +12801,7 @@ void CAI_BaseNPC::Break( CBaseEntity *pBreaker )
 	else
 	{
 		velocity = GetEngineObject()->GetAbsVelocity();
-		QAngleToAngularImpulse( GetLocalAngularVelocity(), angVelocity );
+		QAngleToAngularImpulse(GetEngineObject()->GetLocalAngularVelocity(), angVelocity );
 		origin = GetEngineObject()->GetAbsOrigin();
 		angles = GetEngineObject()->GetAbsAngles();
 	}

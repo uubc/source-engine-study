@@ -2199,7 +2199,7 @@ void OnRenderStart()
 
 	// Simulate all the entities.
 	SimulateEntities();
-	EntityList()->PhysicsSimulate();
+	EntityList()->PhysFrame();
 
 	EntityList()->ThreadedBoneSetup();
 

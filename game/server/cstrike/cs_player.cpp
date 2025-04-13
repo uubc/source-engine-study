@@ -1730,7 +1730,7 @@ void CCSPlayer::PostThink()
 		ApplyDeafnessEffect();
 	}
 
-	if ( IsPlayerUnderwater() && GetWaterLevel() < 3 )
+	if ( IsPlayerUnderwater() && GetEngineObject()->GetWaterLevel() < 3 )
 	{
 		g_pSoundEmitterSystem->StopSound(this, "Player.AmbientUnderWater" );
 		SetPlayerUnderwater( false );

@@ -223,7 +223,7 @@ void CItem_ItemCrate::OnBreak( const Vector &vecVelocity, const AngularImpulse &
 
 		QAngle angVel;
 		AngularImpulseToQAngle( angImpulse, angVel );
-		pSpawn->SetLocalAngularVelocity( angVel );
+		pSpawn->GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 		// If we're creating an item, it can't be picked up until it comes to rest
 		// But only if it wasn't broken by a vehicle

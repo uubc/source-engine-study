@@ -1036,7 +1036,7 @@ void CBaseDoor::DoorHitTop( void )
 	else
 	{
 		// In flWait seconds, DoorGoDown will fire, unless wait is -1, then door stays open
-		SetMoveDoneTime( m_flWait );
+		GetEngineObject()->SetMoveDoneTime( m_flWait );
 		SetMoveDone( &CBaseDoor::DoorGoDown );
 
 		if ( m_flWait == -1 )
@@ -1166,7 +1166,7 @@ int CBaseDoor::GetDoorMovementGroup( CBaseDoor *pDoorList[], int listMax )
 // Purpose: Called the first frame that the door is blocked while opening or closing.
 // Input  : pOther - The blocking entity.
 //-----------------------------------------------------------------------------
-void CBaseDoor::StartBlocked( CBaseEntity *pOther )
+void CBaseDoor::StartBlocked( IServerEntity *pOther )
 {
 	//
 	// Fire whatever events we need to due to our blocked state.
@@ -1241,9 +1241,9 @@ void CBaseDoor::Blocked( IServerEntity *pOther )
 
 			if ( pDoor->m_flWait >= 0)
 			{
-				if (m_bDoorGroup && pDoor->m_vecMoveDir == m_vecMoveDir && pDoor->GetEngineObject()->GetAbsVelocity() == GetEngineObject()->GetAbsVelocity() && pDoor->GetLocalAngularVelocity() == GetLocalAngularVelocity())
+				if (m_bDoorGroup && pDoor->m_vecMoveDir == m_vecMoveDir && pDoor->GetEngineObject()->GetAbsVelocity() == GetEngineObject()->GetAbsVelocity() && pDoor->GetEngineObject()->GetLocalAngularVelocity() == GetEngineObject()->GetLocalAngularVelocity())
 				{
-					pDoor->m_nSimulationTick = m_nSimulationTick;	// don't run simulation this frame if you haven't run yet
+					pDoor->GetEngineObject()->SetSimulationTick(GetEngineObject()->GetSimulationTick());	// don't run simulation this frame if you haven't run yet
 
 					// this is the most hacked, evil, bastardized thing I've ever seen. kjb
 					if ( !pDoor->IsRotatingDoor() )
@@ -1255,7 +1255,7 @@ void CBaseDoor::Blocked( IServerEntity *pOther )
 					else
 					{// set angles to realign rotating doors
 						pDoor->GetEngineObject()->SetLocalAngles(GetEngineObject()->GetLocalAngles() );
-						pDoor->SetLocalAngularVelocity( vec3_angle );
+						pDoor->GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 					}
 				}
 			

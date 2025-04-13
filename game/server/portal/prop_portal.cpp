@@ -1578,7 +1578,8 @@ void CProp_Portal::WakeNearbyEntities( void )
 					}
 				}
 
-				pEntity->WakeRestingObjects();
+				//pEntity->WakeRestingObjects();
+				pEntity->GetEngineObject()->PhysicsRemoveGroundList();
 				//pEntity->SetGroundEntity( NULL );
 
 				if ( pEntity->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS )

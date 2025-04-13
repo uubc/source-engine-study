@@ -2907,7 +2907,7 @@ bool CDODPlayer::CanSprint()
 	return ( 
 		//!IsWalking() &&									// Not if we're walking
 		!( m_Local.m_bDucked && !m_Local.m_bDucking ) &&	// Nor if we're ducking
-		(GetWaterLevel() != 3) );							// Certainly not underwater
+		(GetEngineObject()->GetWaterLevel() != 3) );							// Certainly not underwater
 }
 
 void CDODPlayer::MoveToNextIntroCamera()

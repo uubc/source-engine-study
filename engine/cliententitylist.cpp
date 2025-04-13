@@ -1669,6 +1669,9 @@ BEGIN_PREDICTION_DATA_NO_BASE(C_EngineObjectInternal)
 	DEFINE_FIELD(m_angRotation, FIELD_VECTOR),
 	DEFINE_PRED_FIELD_TOL(m_vecNetworkOrigin, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, coordTolerance),
 	DEFINE_PRED_FIELD(m_angNetworkAngles, FIELD_VECTOR, FTYPEDESC_INSENDTABLE | FTYPEDESC_NOERRORCHECK),
+	//DEFINE_FIELD(m_vecBaseVelocity, FIELD_VECTOR),
+	DEFINE_PRED_FIELD_TOL(m_vecBaseVelocity, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.05),
+	DEFINE_FIELD(m_vecAngVelocity, FIELD_VECTOR),
 	DEFINE_PRED_FIELD(m_hNetworkMoveParent, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_hGroundEntity, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_nModelIndex, FIELD_SHORT, FTYPEDESC_INSENDTABLE | FTYPEDESC_MODELINDEX),
@@ -1695,7 +1698,9 @@ BEGIN_PREDICTION_DATA_NO_BASE(C_EngineObjectInternal)
 	DEFINE_PRED_FIELD(m_nRenderFX, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_clrRender, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_hOwnerEntity, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE),
-
+	//DEFINE_FIELD(m_nWaterLevel, FIELD_CHARACTER),
+	DEFINE_PRED_FIELD(m_nWaterLevel, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE),
+	DEFINE_FIELD(m_nWaterType, FIELD_CHARACTER),
 END_PREDICTION_DATA()
 
 #define DEFINE_RAGDOLL_ELEMENT( i ) \
@@ -1935,6 +1940,7 @@ BEGIN_RECV_TABLE_NOBASE(C_EngineObjectInternal, DT_EngineObject)
 	RecvPropQAngles(RECVINFO_NAME(m_angNetworkAngles, m_angRotation)),
 #endif
 	RecvPropVector(RECVINFO(m_vecVelocity), 0, RecvProxy_LocalVelocity),
+	RecvPropVector(RECVINFO(m_vecBaseVelocity)),
 	RecvPropInt(RECVINFO_NAME(m_hNetworkMoveParent, moveparent), 0, RecvProxy_IntToMoveParent),
 	RecvPropInt(RECVINFO(m_iParentAttachment)),
 	RecvPropEHandle(RECVINFO(m_hGroundEntity)),
@@ -1978,6 +1984,8 @@ BEGIN_RECV_TABLE_NOBASE(C_EngineObjectInternal, DT_EngineObject)
 	RecvPropInt(RECVINFO(m_ubInterpolationFrame)),
 	RecvPropEHandle(RECVINFO(m_hOwnerEntity)),
 	RecvPropEHandle(RECVINFO(m_hEffectEntity)),
+	RecvPropInt(RECVINFO(m_nWaterLevel)),
+
 END_RECV_TABLE()
 
 IMPLEMENT_CLIENTCLASS_NO_FACTORY(C_EngineObjectInternal, DT_EngineObject, CEngineObjectInternal);
@@ -2883,6 +2891,82 @@ const QAngle& C_EngineObjectInternal::GetAbsAngles(void) const
 	return m_angAbsRotation;
 }
 
+void C_EngineObjectInternal::SetLocalAngularVelocity(const QAngle& vecAngVelocity)
+{
+	if (m_vecAngVelocity != vecAngVelocity)
+	{
+		//		InvalidatePhysicsRecursive( ANG_VELOCITY_CHANGED );
+		m_vecAngVelocity = vecAngVelocity;
+	}
+}
+
+int C_EngineObjectInternal::GetWaterType() const
+{
+	int out = 0;
+	if (m_nWaterType & 1)
+		out |= CONTENTS_WATER;
+	if (m_nWaterType & 2)
+		out |= CONTENTS_SLIME;
+	return out;
+}
+
+void C_EngineObjectInternal::SetWaterType(int nType)
+{
+	m_nWaterType = 0;
+	if (nType & CONTENTS_WATER)
+		m_nWaterType |= 1;
+	if (nType & CONTENTS_SLIME)
+		m_nWaterType |= 2;
+}
+
+//-----------------------------------------------------------------------------
+// Computes the water level + type
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::UpdateWaterState()
+{
+	// FIXME: This computation is nonsensical for rigid child attachments
+	// Should we just grab the type + level of the parent?
+	// Probably for rigid children anyways...
+
+	// Compute the point to check for water state
+	Vector	point;
+	NormalizedToWorldSpace(Vector(0.5f, 0.5f, 0.0f), &point);
+
+	SetWaterLevel(0);
+	SetWaterType(CONTENTS_EMPTY);
+	int cont = UTIL_PointContents(&g_EntityList, point);
+
+	if ((cont & MASK_WATER) == 0)
+		return;
+
+	SetWaterType(cont);
+	SetWaterLevel(1);
+
+	// point sized entities are always fully submerged
+	if (IsPointSized())
+	{
+		SetWaterLevel(3);
+	}
+	else
+	{
+		// Check the exact center of the box
+		point[2] = WorldSpaceCenter().z;
+
+		int midcont = UTIL_PointContents(&g_EntityList, point);
+		if (midcont & MASK_WATER)
+		{
+			// Now check where the eyes are...
+			SetWaterLevel(2);
+			point[2] = m_pOuter->EyePosition().z;
+
+			int eyecont = UTIL_PointContents(&g_EntityList, point);
+			if (eyecont & MASK_WATER)
+			{
+				SetWaterLevel(3);
+			}
+		}
+	}
+}
 
 void C_EngineObjectInternal::UnlinkChild(IEngineObjectClient* pChild)
 {
@@ -5477,7 +5561,6 @@ bool C_EngineObjectInternal::PhysicsRunSpecificThink(int nContextIndex, CTHINKPT
 //-----------------------------------------------------------------------------
 void C_EngineObjectInternal::PhysicsDispatchThink(CTHINKPTR thinkFunc)
 {
-	ConVarRef think_limit("think_limit");
 	float thinkLimit = think_limit.GetFloat();
 	float startTime = 0.0;
 
@@ -5651,6 +5734,839 @@ IEngineObjectClient* C_EngineObjectInternal::FindFollowedEntity()
 	}
 
 	return follow;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Bounds velocity
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsCheckVelocity(void)
+{
+	Vector origin = GetAbsOrigin();
+	Vector vecAbsVelocity = GetAbsVelocity();
+
+	bool bReset = false;
+	for (int i = 0; i < 3; i++)
+	{
+		if (IS_NAN(vecAbsVelocity[i]))
+		{
+			Msg("Got a NaN velocity on %s\n", GetClassname());
+			vecAbsVelocity[i] = 0;
+			bReset = true;
+		}
+		if (IS_NAN(origin[i]))
+		{
+			Msg("Got a NaN origin on %s\n", GetClassname());
+			origin[i] = 0;
+			bReset = true;
+		}
+
+		if (vecAbsVelocity[i] > sv_maxvelocity.GetFloat())
+		{
+#ifdef _DEBUG
+			DevWarning(2, "Got a velocity too high on %s\n", GetClassname());
+#endif
+			vecAbsVelocity[i] = sv_maxvelocity.GetFloat();
+			bReset = true;
+		}
+		else if (vecAbsVelocity[i] < -sv_maxvelocity.GetFloat())
+		{
+#ifdef _DEBUG
+			DevWarning(2, "Got a velocity too low on %s\n", GetClassname());
+#endif
+			vecAbsVelocity[i] = -sv_maxvelocity.GetFloat();
+			bReset = true;
+		}
+	}
+
+	if (bReset)
+	{
+		SetAbsOrigin(origin);
+		SetAbsVelocity(vecAbsVelocity);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Check if entity is in the water and applies any current to velocity
+// and sets appropriate water flags
+// Output : Returns true on success, false on failure.
+//-----------------------------------------------------------------------------
+bool C_EngineObjectInternal::PhysicsCheckWater(void)
+{
+	if (GetMoveParent())
+		return GetWaterLevel() > 1;
+
+	int cont = GetWaterType();
+
+	// If we're not in water + don't have a current, we're done
+	if ((cont & (MASK_WATER | MASK_CURRENT)) != (MASK_WATER | MASK_CURRENT))
+		return GetWaterLevel() > 1;
+
+	// Compute current direction
+	Vector v(0, 0, 0);
+	if (cont & CONTENTS_CURRENT_0)
+	{
+		v[0] += 1;
+	}
+	if (cont & CONTENTS_CURRENT_90)
+	{
+		v[1] += 1;
+	}
+	if (cont & CONTENTS_CURRENT_180)
+	{
+		v[0] -= 1;
+	}
+	if (cont & CONTENTS_CURRENT_270)
+	{
+		v[1] -= 1;
+	}
+	if (cont & CONTENTS_CURRENT_UP)
+	{
+		v[2] += 1;
+	}
+	if (cont & CONTENTS_CURRENT_DOWN)
+	{
+		v[2] -= 1;
+	}
+
+	// The deeper we are, the stronger the current.
+	Vector newBaseVelocity;
+	VectorMA(GetBaseVelocity(), 50.0 * GetWaterLevel(), v, newBaseVelocity);
+	SetBaseVelocity(newBaseVelocity);
+
+	return GetWaterLevel() > 1;
+}
+
+//-----------------------------------------------------------------------------
+// Computes new angles based on the angular velocity
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::SimulateAngles(float flFrameTime)
+{
+	// move angles
+	QAngle angles;
+	VectorMA(GetLocalAngles(), flFrameTime, GetLocalAngularVelocity(), angles);
+	SetLocalAngles(angles);
+}
+
+//-----------------------------------------------------------------------------
+// Computes the base velocity
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::UpdateBaseVelocity(void)
+{
+
+}
+
+//-----------------------------------------------------------------------------
+// Simulation in local space of rigid children
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsRigidChild(void)
+{
+	VPROF("CBaseEntity::PhysicsRigidChild");
+	// NOTE: rigidly attached children do simulation in local space
+	// Collision impulses will be handled either not at all, or by
+	// forwarding the information to the highest move parent
+
+	Vector vecPrevOrigin = GetAbsOrigin();
+
+	// regular thinking
+	if (!PhysicsRunThink())
+		return;
+
+	VPROF_SCOPE_BEGIN("CBaseEntity::PhysicsRigidChild-2");
+
+	VPROF_SCOPE_END();
+}
+
+#define	STOP_EPSILON	0.1
+//-----------------------------------------------------------------------------
+// Purpose: Slide off of the impacting object.  Returns the blocked flags (1 = floor, 2 = step / wall)
+// Input  : in - 
+//			normal - 
+//			out - 
+//			overbounce - 
+// Output : int
+//-----------------------------------------------------------------------------
+int C_EngineObjectInternal::PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce)
+{
+	float	backoff;
+	float	change;
+	float angle;
+	int		i, blocked;
+
+	blocked = 0;
+
+	angle = normal[2];
+
+	if (angle > 0)
+	{
+		blocked |= 1;		// floor
+	}
+	if (!angle)
+	{
+		blocked |= 2;		// step
+	}
+
+	backoff = DotProduct(in, normal) * overbounce;
+
+	for (i = 0; i < 3; i++)
+	{
+		change = normal[i] * backoff;
+		out[i] = in[i] - change;
+		if (out[i] > -STOP_EPSILON && out[i] < STOP_EPSILON)
+		{
+			out[i] = 0;
+		}
+	}
+
+	return blocked;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Applies gravity to falling objects
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsAddGravityMove(Vector& move)
+{
+	Vector vecAbsVelocity = GetAbsVelocity();
+
+	move.x = (vecAbsVelocity.x + GetBaseVelocity().x) * g_ClientGlobalVariables.frametime;
+	move.y = (vecAbsVelocity.y + GetBaseVelocity().y) * g_ClientGlobalVariables.frametime;
+
+	if (GetFlags() & FL_ONGROUND)
+	{
+		move.z = GetBaseVelocity().z * g_ClientGlobalVariables.frametime;
+		return;
+	}
+
+	// linear acceleration due to gravity
+	float newZVelocity = vecAbsVelocity.z - GetActualGravity() * g_ClientGlobalVariables.frametime;
+
+	move.z = ((vecAbsVelocity.z + newZVelocity) / 2.0 + GetBaseVelocity().z) * g_ClientGlobalVariables.frametime;
+
+	Vector vecBaseVelocity = GetBaseVelocity();
+	vecBaseVelocity.z = 0.0f;
+	SetBaseVelocity(vecBaseVelocity);
+
+	vecAbsVelocity.z = newZVelocity;
+	SetAbsVelocity(vecAbsVelocity);
+
+	// Bound velocity
+	PhysicsCheckVelocity();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Checks if an object has passed into or out of water and sets water info, alters velocity, plays splash sounds, etc.
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsCheckWaterTransition(void)
+{
+	int oldcont = GetWaterType();
+	UpdateWaterState();
+	int cont = GetWaterType();
+
+	// We can exit right out if we're a child... don't bother with this...
+	if (GetMoveParent())
+		return;
+
+	if (cont & MASK_WATER)
+	{
+		if (oldcont == CONTENTS_EMPTY)
+		{
+
+			// just crossed into water
+			const char* soundname = "BaseEntity.EnterWater";
+			IRecipientFilter* pFilter = g_EntityList.GetWorld()->CreatePASAttenuationFilter(this->m_pOuter, soundname);
+
+			EmitSound_t params;
+			params.m_pSoundName = soundname;
+			params.m_flSoundTime = 0.0f;
+			params.m_pflSoundDuration = NULL;
+			params.m_bWarnOnDirectWaveReference = true;
+			g_pSoundEmitterSystem->EmitSound(*pFilter, this->entindex(), params);
+			delete pFilter;
+
+			if (!IsEFlagSet(EFL_NO_WATER_VELOCITY_CHANGE))
+			{
+				Vector vecAbsVelocity = GetAbsVelocity();
+				vecAbsVelocity[2] *= 0.5;
+				SetAbsVelocity(vecAbsVelocity);
+			}
+		}
+	}
+	else
+	{
+		if (oldcont != CONTENTS_EMPTY)
+		{
+			// just crossed out of water
+			const char* soundname = "BaseEntity.ExitWater";
+			IRecipientFilter* pFilter = g_EntityList.GetWorld()->CreatePASAttenuationFilter(this->m_pOuter, soundname);
+
+			EmitSound_t params;
+			params.m_pSoundName = soundname;
+			params.m_flSoundTime = 0.0f;
+			params.m_pflSoundDuration = NULL;
+			params.m_bWarnOnDirectWaveReference = true;
+			g_pSoundEmitterSystem->EmitSound(*pFilter, this->entindex(), params);
+			delete pFilter;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// helper method for trace hull as used by physics...
+//-----------------------------------------------------------------------------
+static void Physics_TraceHull(IClientEntity* pBaseEntity, const Vector& vecStart,
+	const Vector& vecEnd, const Vector& hullMin, const Vector& hullMax,
+	unsigned int mask, trace_t* ptr)
+{
+	// FIXME: I really am not sure the best way of doing this
+	// The TraceHull code below for shots will make sure the object passes
+	// through shields which do not block that damage type. It will also 
+	// send messages to the shields that they've been hit.
+#if 0
+	if (pBaseEntity->GetDamageType() != DMG_GENERIC)
+	{
+		GameRules()->WeaponTraceHull(vecStart, vecEnd, hullMin, hullMax,
+			mask, pBaseEntity, pBaseEntity->GetEngineObject()->GetCollisionGroup(),
+			pBaseEntity, ptr);
+	}
+	else
+#endif
+	{
+		UTIL_TraceHull(&g_EntityList, vecStart, vecEnd, hullMin, hullMax, mask,
+			pBaseEntity, pBaseEntity->GetEngineObject()->GetCollisionGroup(), ptr);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Does not change the entities velocity at all
+// Input  : push - 
+// Output : trace_t
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsCheckSweep(const Vector& vecAbsStart, const Vector& vecAbsDelta, trace_t* pTrace)
+{
+	unsigned int mask = m_pOuter->PhysicsSolidMaskForEntity();
+
+	Vector vecAbsEnd;
+	VectorAdd(vecAbsStart, vecAbsDelta, vecAbsEnd);
+
+	// Set collision type
+	if (!IsSolid() || IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
+	{
+		// don't collide with monsters
+		mask &= ~CONTENTS_MONSTER;
+	}
+
+	Physics_TraceHull(this->m_pOuter, vecAbsStart, vecAbsEnd, WorldAlignMins(), WorldAlignMaxs(), mask, pTrace);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : push - 
+// Output : trace_t
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsPushEntity(const Vector& push, trace_t* pTrace)
+{
+	/*
+		if ( m_pMoveParent )
+		{
+			Warning( "pushing entity (%s) that has m_pMoveParent!\n", STRING( pev->classname ) );
+			Assert(0);
+		}
+	*/
+
+	// NOTE: absorigin and origin must be equal because there is no moveparent
+	Vector prevOrigin;
+	VectorCopy(GetAbsOrigin(), prevOrigin);
+
+	trace_t		trace;
+	PhysicsCheckSweep(prevOrigin, push, pTrace);
+
+	if (pTrace->fraction)
+	{
+		SetAbsOrigin(pTrace->endpos);
+	}
+
+	// CLIENT DLL HACKS
+	SetNetworkOrigin(GetLocalOrigin());
+	SetNetworkAngles(GetLocalAngles());
+
+	//	InvalidatePhysicsRecursive( POSITION_CHANGED | ANGLES_CHANGED );
+
+	if (pTrace->m_pEnt)
+	{
+		PhysicsImpact((IEngineObjectClient*)pTrace->m_pEnt->GetEngineObject(), *pTrace);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::ResolveFlyCollisionBounce(trace_t& trace, Vector& vecVelocity, float flMinTotalElasticity)
+{
+#ifdef HL1_DLL
+	flMinTotalElasticity = 0.3f;
+#endif//HL1_DLL
+
+	// Get the impact surface's elasticity.
+	float flSurfaceElasticity;
+	g_EntityList.PhysGetProps()->GetPhysicsProperties(trace.surface.surfaceProps, NULL, NULL, NULL, &flSurfaceElasticity);
+
+	float flTotalElasticity = GetElasticity() * flSurfaceElasticity;
+	if (flMinTotalElasticity > 0.9f)
+	{
+		flMinTotalElasticity = 0.9f;
+	}
+	flTotalElasticity = clamp(flTotalElasticity, flMinTotalElasticity, 0.9f);
+
+	// NOTE: A backoff of 2.0f is a reflection
+	Vector vecAbsVelocity;
+	PhysicsClipVelocity(GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, 2.0f);
+	vecAbsVelocity *= flTotalElasticity;
+
+	// Get the total velocity (player + conveyors, etc.)
+	VectorAdd(vecAbsVelocity, GetBaseVelocity(), vecVelocity);
+	float flSpeedSqr = DotProduct(vecVelocity, vecVelocity);
+
+	// Stop if on ground.
+	if (trace.plane.normal.z > 0.7f)			// Floor
+	{
+		// Verify that we have an entity.
+		IClientEntity* pEntity = (IClientEntity*)trace.m_pEnt;
+		Assert(pEntity);
+
+		// Are we on the ground?
+		if (vecVelocity.z < (GetActualGravity() * g_ClientGlobalVariables.frametime))
+		{
+			vecAbsVelocity.z = 0.0f;
+
+			// Recompute speedsqr based on the new absvel
+			VectorAdd(vecAbsVelocity, GetBaseVelocity(), vecVelocity);
+			flSpeedSqr = DotProduct(vecVelocity, vecVelocity);
+		}
+
+		SetAbsVelocity(vecAbsVelocity);
+
+		if (flSpeedSqr < (30 * 30))
+		{
+			if (pEntity->IsStandable())
+			{
+				SetGroundEntity(pEntity->GetEngineObject());
+			}
+
+			// Reset velocities.
+			SetAbsVelocity(vec3_origin);
+			SetLocalAngularVelocity(vec3_angle);
+		}
+		else
+		{
+			Vector vecDelta = GetBaseVelocity() - vecAbsVelocity;
+			Vector vecBaseDir = GetBaseVelocity();
+			VectorNormalize(vecBaseDir);
+			float flScale = vecDelta.Dot(vecBaseDir);
+
+			VectorScale(vecAbsVelocity, (1.0f - trace.fraction) * g_ClientGlobalVariables.frametime, vecVelocity);
+			VectorMA(vecVelocity, (1.0f - trace.fraction) * g_ClientGlobalVariables.frametime, GetBaseVelocity() * flScale, vecVelocity);
+			PhysicsPushEntity(vecVelocity, &trace);
+		}
+	}
+	else
+	{
+		// If we get *too* slow, we'll stick without ever coming to rest because
+		// we'll get pushed down by gravity faster than we can escape from the wall.
+		if (flSpeedSqr < (30 * 30))
+		{
+			// Reset velocities.
+			SetAbsVelocity(vec3_origin);
+			SetLocalAngularVelocity(vec3_angle);
+		}
+		else
+		{
+			SetAbsVelocity(vecAbsVelocity);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::ResolveFlyCollisionSlide(trace_t& trace, Vector& vecVelocity)
+{
+	// Get the impact surface's friction.
+	float flSurfaceFriction;
+	g_EntityList.PhysGetProps()->GetPhysicsProperties(trace.surface.surfaceProps, NULL, NULL, &flSurfaceFriction, NULL);
+
+	// A backoff of 1.0 is a slide.
+	float flBackOff = 1.0f;
+	Vector vecAbsVelocity;
+	PhysicsClipVelocity(GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, flBackOff);
+
+	if (trace.plane.normal.z <= 0.7)			// Floor
+	{
+		SetAbsVelocity(vecAbsVelocity);
+		return;
+	}
+
+	// Stop if on ground.
+	// Get the total velocity (player + conveyors, etc.)
+	VectorAdd(vecAbsVelocity, GetBaseVelocity(), vecVelocity);
+	float flSpeedSqr = DotProduct(vecVelocity, vecVelocity);
+
+	// Verify that we have an entity.
+	IClientEntity* pEntity = (IClientEntity*)trace.m_pEnt;
+	Assert(pEntity);
+
+	// Are we on the ground?
+	if (vecVelocity.z < (GetActualGravity() * g_ClientGlobalVariables.frametime))
+	{
+		vecAbsVelocity.z = 0.0f;
+
+		// Recompute speedsqr based on the new absvel
+		VectorAdd(vecAbsVelocity, GetBaseVelocity(), vecVelocity);
+		flSpeedSqr = DotProduct(vecVelocity, vecVelocity);
+	}
+	SetAbsVelocity(vecAbsVelocity);
+
+	if (flSpeedSqr < (30 * 30))
+	{
+		if (pEntity->IsStandable())
+		{
+			SetGroundEntity(pEntity->GetEngineObject());
+		}
+
+		// Reset velocities.
+		SetAbsVelocity(vec3_origin);
+		SetLocalAngularVelocity(vec3_angle);
+	}
+	else
+	{
+		vecAbsVelocity += GetBaseVelocity();
+		vecAbsVelocity *= (1.0f - trace.fraction) * g_ClientGlobalVariables.frametime * flSurfaceFriction;
+		PhysicsPushEntity(vecAbsVelocity, &trace);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Performs the collision resolution for fliers.
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PerformFlyCollisionResolution(trace_t& trace, Vector& move)
+{
+	switch (GetMoveCollide())
+	{
+	case MOVECOLLIDE_FLY_CUSTOM:
+	{
+		m_pOuter->ResolveFlyCollisionCustom(trace, move);
+		break;
+	}
+
+	case MOVECOLLIDE_FLY_BOUNCE:
+	{
+		ResolveFlyCollisionBounce(trace, move);
+		break;
+	}
+
+	case MOVECOLLIDE_FLY_SLIDE:
+	case MOVECOLLIDE_DEFAULT:
+		// NOTE: The default fly collision state is the same as a slide (for backward capatability).
+	{
+		ResolveFlyCollisionSlide(trace, move);
+		break;
+	}
+
+	default:
+	{
+		// Invalid MOVECOLLIDE_<type>
+		Assert(0);
+		break;
+	}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsStep()
+{
+	// Run all but the base think function
+	PhysicsRunThink(THINK_FIRE_ALL_BUT_BASE);
+	PhysicsRunThink(THINK_FIRE_BASE_ONLY);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Toss, bounce, and fly movement.  When onground, do nothing.
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsToss(void)
+{
+	trace_t	trace;
+	Vector	move;
+
+	PhysicsCheckWater();
+
+	// regular thinking
+	if (!PhysicsRunThink())
+		return;
+
+	// Moving upward, off the ground, or  resting on a client/monster, remove FL_ONGROUND
+	if (GetAbsVelocity()[2] > 0 || !GetGroundEntity() || !GetGroundEntity()->GetOuter()->IsStandable())
+	{
+		SetGroundEntity(NULL);
+	}
+
+	// Check to see if entity is on the ground at rest
+	if (GetFlags() & FL_ONGROUND)
+	{
+		if (VectorCompare(GetAbsVelocity(), vec3_origin))
+		{
+			// Clear rotation if not moving (even if on a conveyor)
+			SetLocalAngularVelocity(vec3_angle);
+			if (VectorCompare(GetBaseVelocity(), vec3_origin))
+				return;
+		}
+	}
+
+	PhysicsCheckVelocity();
+
+	// add gravity
+	if (GetMoveType() == MOVETYPE_FLYGRAVITY && !(GetFlags() & FL_FLY))
+	{
+		PhysicsAddGravityMove(move);
+	}
+	else
+	{
+		// Base velocity is not properly accounted for since this entity will move again after the bounce without
+		// taking it into account
+		Vector vecAbsVelocity = GetAbsVelocity();
+		vecAbsVelocity += GetBaseVelocity();
+		VectorScale(vecAbsVelocity, g_ClientGlobalVariables.frametime, move);
+		PhysicsCheckVelocity();
+	}
+
+	// move angles
+	SimulateAngles(g_ClientGlobalVariables.frametime);
+
+	// move origin
+	PhysicsPushEntity(move, &trace);
+
+	PhysicsCheckVelocity();
+
+	if (trace.allsolid)
+	{
+		// entity is trapped in another solid
+		// UNDONE: does this entity needs to be removed?
+		SetAbsVelocity(vec3_origin);
+		SetLocalAngularVelocity(vec3_angle);
+		return;
+	}
+
+	if (trace.fraction != 1.0f)
+	{
+		PerformFlyCollisionResolution(trace, move);
+	}
+
+	// check for in water
+	PhysicsCheckWaterTransition();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsCustom()
+{
+	PhysicsCheckWater();
+
+	// regular thinking
+	if (!PhysicsRunThink())
+		return;
+
+	// Moving upward, off the ground, or  resting on something that isn't ground
+	if (GetLocalVelocity()[2] > 0 || !GetGroundEntity() || !GetGroundEntity()->GetOuter()->IsStandable())
+	{
+		SetGroundEntity(NULL);
+	}
+
+	// NOTE: The entity must set the position, angles, velocity in its custom movement
+	Vector vecNewPosition = GetAbsOrigin();
+
+	if (vecNewPosition == vec3_origin)
+	{
+		// Shouldn't be at world origin
+		Assert(0);
+	}
+
+	Vector vecNewVelocity = GetLocalVelocity();
+	QAngle angNewAngles = GetAbsAngles();
+	QAngle angNewAngVelocity = m_vecAngVelocity;
+
+	m_pOuter->PerformCustomPhysics(&vecNewPosition, &vecNewVelocity, &angNewAngles, &angNewAngVelocity);
+
+	// Store off all of the new state information...
+	SetLocalVelocity(vecNewVelocity);
+	SetAbsAngles(angNewAngles);
+	m_vecAngVelocity = angNewAngVelocity;
+
+	Vector move;
+	VectorSubtract(vecNewPosition, GetAbsOrigin(), move);
+
+	// move origin
+	trace_t trace;
+	PhysicsPushEntity(move, &trace);
+
+	PhysicsCheckVelocity();
+
+	if (trace.allsolid)
+	{
+		// entity is trapped in another solid
+		// UNDONE: does this entity needs to be removed?
+		//VectorCopy (vec3_origin, m_vecVelocity);
+		SetLocalVelocity(vec3_origin);
+		//VectorCopy (vec3_angle, m_vecAngVelocity);
+		SetLocalAngularVelocity(vec3_angle);
+		return;
+	}
+
+	// check for in water
+	PhysicsCheckWaterTransition();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsNoclip(void)
+{
+	PhysicsRunThink();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsNone(void)
+{
+	PhysicsRunThink();
+}
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsPusher(void)
+{
+	PhysicsRunThink();
+}
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsParent(void)
+{
+	PhysicsRunThink();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs a frame of physics for a specific edict (and all it's children)
+// Input  : *ent - the thinking edict
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::PhysicsSimulate(void)
+{
+	VPROF("CBaseEntity::PhysicsSimulate");
+	// NOTE:  Players override PhysicsSimulate and drive through their CUserCmds at that point instead of
+	//  processng through this function call!!!  They shouldn't chain to here ever.
+	// Make sure not to simulate this guy twice per frame
+	if (m_nSimulationTick == g_ClientGlobalVariables.tickcount)
+		return;
+
+	m_nSimulationTick = g_ClientGlobalVariables.tickcount;
+
+	Assert(!IsPlayer());
+
+	// If we've got a moveparent, we must simulate that first.
+	IClientEntity* pMoveParent = GetMoveParent() ? GetMoveParent()->GetOuter() : NULL;
+
+	if ((GetMoveType() == MOVETYPE_NONE && !pMoveParent) || (GetMoveType() == MOVETYPE_VPHYSICS))
+	{
+		PhysicsNone();
+		return;
+	}
+
+	// If ground entity goes away, make sure FL_ONGROUND is valid
+	if (!GetGroundEntity())
+	{
+		RemoveFlag(FL_ONGROUND);
+	}
+
+	if (pMoveParent)
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MoveParent");
+		pMoveParent->PhysicsSimulate();
+	}
+	else
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-BaseVelocity");
+
+		UpdateBaseVelocity();
+
+		if (((GetFlags() & FL_BASEVELOCITY) == 0) && (GetBaseVelocity() != vec3_origin))
+		{
+			// Apply momentum (add in half of the previous frame of velocity first)
+			// BUGBUG: This will break with PhysicsStep() because of the timestep difference
+			Vector vecAbsVelocity;
+			VectorMA(GetAbsVelocity(), 1.0 + (g_ClientGlobalVariables.frametime * 0.5), GetBaseVelocity(), vecAbsVelocity);
+			SetAbsVelocity(vecAbsVelocity);
+			SetBaseVelocity(vec3_origin);
+		}
+		RemoveFlag(FL_BASEVELOCITY);
+	}
+
+	switch (GetMoveType())
+	{
+	case MOVETYPE_PUSH:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_PUSH");
+		PhysicsPusher();
+	}
+	break;
+
+
+	case MOVETYPE_VPHYSICS:
+	{
+	}
+	break;
+
+	case MOVETYPE_NONE:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_NONE");
+		Assert(pMoveParent);
+		PhysicsRigidChild();
+	}
+	break;
+
+	case MOVETYPE_NOCLIP:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_NOCLIP");
+		PhysicsNoclip();
+	}
+	break;
+
+	case MOVETYPE_STEP:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_STEP");
+		PhysicsStep();
+	}
+	break;
+
+	case MOVETYPE_FLY:
+	case MOVETYPE_FLYGRAVITY:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_FLY");
+		PhysicsToss();
+	}
+	break;
+
+	case MOVETYPE_CUSTOM:
+	{
+		VPROF("CBaseEntity::PhysicsSimulate-MOVETYPE_CUSTOM");
+		PhysicsCustom();
+	}
+	break;
+
+	default:
+		Warning("PhysicsSimulate: %s bad movetype %d", GetClassname(), GetMoveType());
+		Assert(0);
+		break;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -6713,6 +7629,21 @@ void C_EngineObjectInternal::VPhysicsSetObject(IPhysicsObject* pPhysics)
 	if (pPhysics && !m_pPhysicsObject)
 	{
 		CollisionRulesChanged();
+	}
+}
+
+void C_EngineObjectInternal::NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake)
+{
+	IWatcherList* pList = (IWatcherList*)GetDataObject(VPHYSICSWATCHER);
+	IWatcherCallback* pCallbacks[1024];	// HACKHACK: Assumes this list is big enough!
+	int count = pList->GetCallbackObjects(pCallbacks, ARRAYSIZE(pCallbacks));
+	for (int i = 0; i < count; i++)
+	{
+		IVPhysicsWatcher* pWatcher = assert_cast<IVPhysicsWatcher*>(pCallbacks[i]);
+		if (pWatcher)
+		{
+			pWatcher->NotifyVPhysicsStateChanged(pPhysics, this->m_pOuter, bAwake);
+		}
 	}
 }
 

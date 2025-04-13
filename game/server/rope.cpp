@@ -344,7 +344,7 @@ bool CRopeKeyframe::Break( void )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CRopeKeyframe::NotifyPositionChanged( CBaseEntity *pEntity )
+void CRopeKeyframe::NotifyPositionChanged( IHandleEntity *pEntity )
 {
 	GetEngineRope()->NotifyPositionChanged();
 }

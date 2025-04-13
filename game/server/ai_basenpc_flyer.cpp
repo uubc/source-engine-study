@@ -39,7 +39,7 @@ void CAI_BaseFlyingBot::GetVelocity(Vector *vVelocity, AngularImpulse *vAngVeloc
 	}
 	if (vAngVelocity != NULL)
 	{
-		QAngle tmp = GetLocalAngularVelocity();
+		QAngle tmp = GetEngineObject()->GetLocalAngularVelocity();
 		QAngleToAngularImpulse( tmp, *vAngVelocity );
 	}
 }

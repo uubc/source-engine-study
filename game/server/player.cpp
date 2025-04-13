@@ -1844,7 +1844,7 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 		{
 			idealActivity = m_Activity;
 		}
-		else if ( GetWaterLevel() > 1 )
+		else if (GetEngineObject()->GetWaterLevel() > 1 )
 		{
 			if ( speed == 0 )
 				idealActivity = ACT_HOVER;
@@ -1977,7 +1977,7 @@ void CBasePlayer::WaterMove()
 	// waterlevel 2 - waist in water (WL_Waist)
 	// waterlevel 3 - head in water (WL_Eyes)
 
-	if (GetWaterLevel() != WL_Eyes || CanBreatheUnderwater()) 
+	if (GetEngineObject()->GetWaterLevel() != WL_Eyes || CanBreatheUnderwater())
 	{
 		// not underwater
 		
@@ -3242,12 +3242,12 @@ void CBasePlayer::PhysicsSimulate( void )
 	}
 
 	// Make sure not to simulate this guy twice per frame
-	if ( m_nSimulationTick == gpGlobals->tickcount )
+	if (GetEngineObject()->GetSimulationTick() == gpGlobals->tickcount)
 	{
 		return;
 	}
 	
-	m_nSimulationTick = gpGlobals->tickcount;
+	GetEngineObject()->SetSimulationTick(gpGlobals->tickcount);
 
 	// See how many CUserCmds are queued up for running
 	int simulation_ticks = DetermineSimulationTicks();
@@ -3454,7 +3454,7 @@ unsigned int CBasePlayer::PhysicsSolidMaskForEntity() const
 //-----------------------------------------------------------------------------
 void CBasePlayer::ForceSimulation()
 {
-	m_nSimulationTick = -1;
+	GetEngineObject()->SetSimulationTick(-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -4592,7 +4592,7 @@ void CBasePlayer::PostThink()
 				SetAnimation( PLAYER_IDLE );
 			else if ((GetEngineObject()->GetAbsVelocity().x || GetEngineObject()->GetAbsVelocity().y) && (GetEngineObject()->GetFlags() & FL_ONGROUND ))
 				SetAnimation( PLAYER_WALK );
-			else if (GetWaterLevel() > 1)
+			else if (GetEngineObject()->GetWaterLevel() > 1)
 				SetAnimation( PLAYER_WALK );
 		}
 
@@ -4733,15 +4733,6 @@ void CBasePlayer::PostThinkVPhysics( void )
 
 	m_oldOrigin = GetEngineObject()->GetAbsOrigin();
 }
-
-
-
-void CBasePlayer::UpdatePhysicsShadowToCurrentPosition()
-{
-	GetEnginePlayer()->UpdateVPhysicsPosition(GetEngineObject()->GetAbsOrigin(), vec3_origin, gpGlobals->frametime );
-}
-
-
 
 Vector CBasePlayer::GetSmoothedVelocity( void )
 { 
@@ -7026,7 +7017,7 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, autoaim_params_t &params 
 	if ( pEntHit && pEntHit->GetTakeDamage() != DAMAGE_NO && pEntHit->GetHealth() > 0 )
 	{
 		// don't look through water
-		if (!((GetWaterLevel() != 3 && pEntHit->GetWaterLevel() == 3) || (GetWaterLevel() == 3 && pEntHit->GetWaterLevel() == 0)))
+		if (!((GetEngineObject()->GetWaterLevel() != 3 && pEntHit->GetEngineObject()->GetWaterLevel() == 3) || (GetEngineObject()->GetWaterLevel() == 3 && pEntHit->GetEngineObject()->GetWaterLevel() == 0)))
 		{
 			if( pEntHit->ShouldAttractAutoAim(this) )
 			{
@@ -7091,7 +7082,7 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, autoaim_params_t &params 
 				continue;
 
 			// don't look through water
-			if ((GetWaterLevel() != 3 && pEntity->GetWaterLevel() == 3) || (GetWaterLevel() == 3 && pEntity->GetWaterLevel() == 0))
+			if ((GetEngineObject()->GetWaterLevel() != 3 && pEntity->GetEngineObject()->GetWaterLevel() == 3) || (GetEngineObject()->GetWaterLevel() == 3 && pEntity->GetEngineObject()->GetWaterLevel() == 0))
 				continue;
 
 			if( pEntity->MyNPCPointer() )
@@ -7914,11 +7905,7 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 		//SendPropFloat		( SENDINFO_VELOCITY(m_vecVelocity[1]), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_LocalVelocityY),
 		//SendPropFloat		( SENDINFO_VELOCITY(m_vecVelocity[2]), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_LocalVelocityZ),
 
-#if PREDICTION_ERROR_CHECK_LEVEL > 1 
-		SendPropVector		( SENDINFO( m_vecBaseVelocity ), -1, SPROP_COORD ),
-#else
-		SendPropVector		( SENDINFO( m_vecBaseVelocity ), 20, 0, -1000, 1000 ),
-#endif
+
 
 		SendPropEHandle		( SENDINFO( m_hConstraintEntity)),
 		SendPropVector		( SENDINFO( m_vecConstraintCenter), 0, SPROP_NOSCALE ),
@@ -7928,7 +7915,7 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 
 		SendPropFloat		( SENDINFO( m_flDeathTime ), 0, SPROP_NOSCALE ),
 
-		SendPropInt			( SENDINFO( m_nWaterLevel ), 2, SPROP_UNSIGNED ),
+		//SendPropInt			( SENDINFO( m_nWaterLevel ), 2, SPROP_UNSIGNED ),
 		SendPropFloat		( SENDINFO( m_flLaggedMovementValue ), 0, SPROP_NOSCALE ),
 
 	END_SEND_TABLE()

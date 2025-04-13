@@ -1785,7 +1785,7 @@ bool CWeaponCSBase::PhysicsSplash( const Vector &centerPoint, const Vector &norm
 		data.m_vNormal = normal;
 		data.m_flScale = random->RandomFloat( size, size + 1.0f );
 
-		if ( GetWaterType() & CONTENTS_SLIME )
+		if (GetEngineObject()->GetWaterType() & CONTENTS_SLIME )
 		{
 			data.m_fFlags |= FX_WATER_IN_SLIME;
 		}

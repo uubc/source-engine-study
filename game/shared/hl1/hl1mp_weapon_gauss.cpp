@@ -206,7 +206,7 @@ void CWeaponGauss::SecondaryAttack( void )
 	}
 
 	// don't fire underwater
-	if ( pPlayer->GetWaterLevel() == 3 )
+	if ( pPlayer->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		if ( m_nAttackState != 0 )
 		{

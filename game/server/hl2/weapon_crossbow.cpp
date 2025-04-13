@@ -169,7 +169,7 @@ void CCrossbowBolt::Spawn( void )
 	GetEngineObject()->SetGravity( 0.05f );
 	
 	// Make sure we're updated if we're underwater
-	UpdateWaterState();
+	GetEngineObject()->UpdateWaterState();
 
 	SetTouch( &CCrossbowBolt::BoltTouch );
 
@@ -425,7 +425,7 @@ void CCrossbowBolt::BubbleThink( void )
 	// Make danger sounds out in front of me, to scare snipers back into their hole
 	CSoundEnt::InsertSound( SOUND_DANGER_SNIPERONLY, GetEngineObject()->GetAbsOrigin() + GetEngineObject()->GetAbsVelocity() * 0.2, 120.0f, 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 
-	if ( GetWaterLevel()  == 0 )
+	if (GetEngineObject()->GetWaterLevel()  == 0 )
 		return;
 
 	UTIL_BubbleTrail(GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsVelocity() * 0.1f, GetEngineObject()->GetAbsOrigin(), 5 );
@@ -683,7 +683,7 @@ void CWeaponCrossbow::FireBolt( void )
 
 	CCrossbowBolt *pBolt = CCrossbowBolt::BoltCreate( vecSrc, angAiming, pOwner );
 
-	if ( pOwner->GetWaterLevel() == 3 )
+	if ( pOwner->GetEngineObject()->GetWaterLevel() == 3 )
 	{
 		pBolt->GetEngineObject()->SetAbsVelocity( vecAiming * BOLT_WATER_VELOCITY );
 	}

@@ -373,7 +373,7 @@ void CNPC_Osprey::DeployThink( void )
 	Vector vecUp;
 	Vector vecSrc;
 
-	SetLocalAngularVelocity( QAngle ( 0, 0, 0 ) );
+	GetEngineObject()->SetLocalAngularVelocity( QAngle ( 0, 0, 0 ) );
 	GetEngineObject()->SetAbsVelocity( Vector ( 0, 0, 0 ) );
 
 	AngleVectors(GetEngineObject()->GetAbsAngles(), &vecForward, &vecRight, &vecUp );
@@ -605,11 +605,11 @@ void CNPC_Osprey::DyingThink( void )
 		if( m_iNextCrashModel > 3 ) m_iNextCrashModel = 0;
 	}
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	if( angVel.y < 400 )
 	{
 		angVel.y *= 1.1;
-		SetLocalAngularVelocity( angVel );
+		GetEngineObject()->SetLocalAngularVelocity( angVel );
 	}
 	Vector vecImpulse( 0, 0, 0 );
 	// add gravity
@@ -778,7 +778,7 @@ void CBaseHelicopter::HelicopterThink( void )
 	if (CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI)
 	{
 		GetEngineObject()->SetAbsVelocity( vec3_origin );
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + HELICOPTER_THINK_INTERVAL );
 		return;
 	}
@@ -1028,9 +1028,9 @@ void CBaseHelicopter::Flight( void )
 
 	// estimate where I'll be facing in one seconds
 	Vector forward, right, up;
-	AngleVectors(GetEngineObject()->GetLocalAngles() + GetLocalAngularVelocity() * 2, &forward, &right, &up );
+	AngleVectors(GetEngineObject()->GetLocalAngles() + GetEngineObject()->GetLocalAngularVelocity() * 2, &forward, &right, &up );
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	float flSide = DotProduct( m_vecDesiredFaceDir, right );
 	if (flSide < 0)
 	{
@@ -1201,7 +1201,7 @@ void CBaseHelicopter::Flight( void )
 
 #endif
 
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 	// ALERT( at_console, "%.0f %.0f : %.0f %.0f : %.0f %.0f : %.0f\n", GetAbsOrigin().x, GetAbsVelocity().x, flDist, flSpeed, GetLocalAngles().x, m_vecAngVelocity.x, m_flForce ); 
 	// ALERT( at_console, "%.0f %.0f : %.0f %0.f : %.0f\n", GetAbsOrigin().z, GetAbsVelocity().z, vecEst.z, m_vecDesiredPosition.z, m_flForce ); 
 }
@@ -1298,7 +1298,7 @@ void CBaseHelicopter::DyingThink( void )
 	StudioFrameAdvance( );
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 
-	SetLocalAngularVelocity( GetLocalAngularVelocity() * 1.02 );
+	GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() * 1.02 );
 }
 
 

@@ -154,7 +154,7 @@ void CDODBaseGrenade::DetonateThink( void )
 		return;
 	}
 
-	if (GetWaterLevel() != 0)
+	if (GetEngineObject()->GetWaterLevel() != 0)
 	{
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.5 );
 	}
@@ -184,11 +184,11 @@ void CDODBaseGrenade::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelo
 
 	// NOTE: A backoff of 2.0f is a reflection
 	Vector vecAbsVelocity;
-	PhysicsClipVelocity(GetEngineObject()->GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, 2.0f );
+	GetEngineObject()->PhysicsClipVelocity(GetEngineObject()->GetAbsVelocity(), trace.plane.normal, vecAbsVelocity, 2.0f );
 	vecAbsVelocity *= flTotalElasticity;
 
 	// Get the total velocity (player + conveyors, etc.)
-	VectorAdd( vecAbsVelocity, GetBaseVelocity(), vecVelocity );
+	VectorAdd( vecAbsVelocity, GetEngineObject()->GetBaseVelocity(), vecVelocity );
 	float flSpeedSqr = DotProduct( vecVelocity, vecVelocity );
 
 	// Stop if on ground.
@@ -219,18 +219,18 @@ void CDODBaseGrenade::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelo
 
 			// Reset velocities.
 			GetEngineObject()->SetAbsVelocity( vec3_origin );
-			SetLocalAngularVelocity( vec3_angle );
+			GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		}
 		else
 		{
-			Vector vecDelta = GetBaseVelocity() - vecAbsVelocity;	
-			Vector vecBaseDir = GetBaseVelocity();
+			Vector vecDelta = GetEngineObject()->GetBaseVelocity() - vecAbsVelocity;
+			Vector vecBaseDir = GetEngineObject()->GetBaseVelocity();
 			VectorNormalize( vecBaseDir );
 			float flScale = vecDelta.Dot( vecBaseDir );
 
 			VectorScale( vecAbsVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, vecVelocity ); 
-			VectorMA( vecVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, GetBaseVelocity() * flScale, vecVelocity );
-			PhysicsPushEntity( vecVelocity, &trace );
+			VectorMA( vecVelocity, ( 1.0f - trace.fraction ) * gpGlobals->frametime, GetEngineObject()->GetBaseVelocity() * flScale, vecVelocity );
+			GetEngineObject()->PhysicsPushEntity( vecVelocity, &trace );
 		}
 	}
 	else
@@ -241,7 +241,7 @@ void CDODBaseGrenade::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelo
 		{
 			// Reset velocities.
 			GetEngineObject()->SetAbsVelocity( vec3_origin );
-			SetLocalAngularVelocity( vec3_angle );
+			GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		}
 		else
 		{

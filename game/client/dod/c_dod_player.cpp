@@ -1575,7 +1575,7 @@ bool C_DODPlayer::IsWeaponLowered( void )
 		return false;
 
 	// Lower when underwater ( except if its melee )
-	if ( GetWaterLevel() > 2 && pWeapon->GetDODWpnData().m_WeaponType != WPN_TYPE_MELEE )
+	if (GetEngineObject()->GetWaterLevel() > 2 && pWeapon->GetDODWpnData().m_WeaponType != WPN_TYPE_MELEE )
 		return true;
 
 	if ( m_Shared.IsProne() && GetEngineObject()->GetAbsVelocity().LengthSqr() > 1 )

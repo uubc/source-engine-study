@@ -277,7 +277,7 @@ void CNPC_Scientist::SUB_StartLVFadeOut( float delay, bool notSolid )
 	if ( notSolid )
 	{
 		GetEngineObject()->AddSolidFlags( FSOLID_NOT_SOLID );
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	}
 }
 

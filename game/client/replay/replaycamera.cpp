@@ -503,6 +503,7 @@ void C_ReplayCamera::CalcRoamingView(Vector& eyeOrigin, QAngle& eyeAngles, float
 				//  threshold, bleed the threshold amount.
 				float control = spd;
 
+				ConVarRef sv_friction("sv_friction");
 				float friction = sv_friction.GetFloat();
 
 				// Add the amount to the drop amount.

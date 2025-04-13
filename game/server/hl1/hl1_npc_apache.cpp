@@ -311,12 +311,12 @@ void CNPC_Apache::Flight( void )
 
 	// estimate where I'll be facing in one seconds
 	Vector forward, right, up;
-	AngleVectors(GetEngineObject()->GetAbsAngles() + GetLocalAngularVelocity() * 2 + angAdj, &forward, &right, &up );
+	AngleVectors(GetEngineObject()->GetAbsAngles() + GetEngineObject()->GetLocalAngularVelocity() * 2 + angAdj, &forward, &right, &up );
 	// Vector vecEst1 = GetAbsOrigin() + pev->velocity + gpGlobals->v_up * m_flForce - Vector( 0, 0, 384 );
 	// float flSide = DotProduct( m_posDesired - vecEst1, gpGlobals->v_right );
 	
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	float flSide = DotProduct( m_vecGoalOrientation, right );
 
 	if (flSide < 0)
@@ -334,12 +334,12 @@ void CNPC_Apache::Flight( void )
 		}
 	}
 	angVel.y *= 0.98;
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	Vector vecVel = GetEngineObject()->GetAbsVelocity();
 
 	// estimate where I'll be in two seconds
-	AngleVectors(GetEngineObject()->GetAbsAngles() + GetLocalAngularVelocity() * 1 + angAdj, &forward, &right, &up );
+	AngleVectors(GetEngineObject()->GetAbsAngles() + GetEngineObject()->GetLocalAngularVelocity() * 1 + angAdj, &forward, &right, &up );
 	Vector vecEst = GetEngineObject()->GetAbsOrigin() + vecVel * 2.0 + up * m_flForce * 20 - Vector( 0, 0, 384 * 2 );
 
 	// add immediate force
@@ -361,7 +361,7 @@ void CNPC_Apache::Flight( void )
 	// float flSlip = DotProduct( pev->velocity, gpGlobals->v_right );
 	float flSlip = -DotProduct( m_vecDesiredPosition - vecEst, right );
 
-	angVel = GetLocalAngularVelocity();
+	angVel = GetEngineObject()->GetLocalAngularVelocity();
 	// fly sideways
 	if (flSlip > 0)
 	{
@@ -378,7 +378,7 @@ void CNPC_Apache::Flight( void )
 		else
 			angVel.z -= 2;
 	}
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	// sideways drag
 	vecVel.x = vecVel.x * (1.0 - fabs( right.x ) * 0.05);
@@ -403,7 +403,7 @@ void CNPC_Apache::Flight( void )
 	}
 
 
-	angVel = GetLocalAngularVelocity();
+	angVel = GetEngineObject()->GetLocalAngularVelocity();
 	// pitch forward or back to get to target
 	if (flDist > 0 && flSpeed < m_flGoalSpeed && GetEngineObject()->GetAbsAngles().x + angVel.x < 40)
 	{
@@ -429,7 +429,7 @@ void CNPC_Apache::Flight( void )
 	}
 
 	// Set final computed angular velocity
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	// ALERT( at_console, "%.0f %.0f : %.0f %.0f : %.0f %.0f : %.0f\n", GetAbsOrigin().x, pev->velocity.x, flDist, flSpeed, GetAbsAngles().x, pev->avelocity.x, m_flForce ); 
 	// ALERT( at_console, "%.0f %.0f : %.0f %0.f : %.0f\n", GetAbsOrigin().z, pev->velocity.z, vecEst.z, m_posDesired.z, m_flForce ); 
@@ -678,11 +678,11 @@ void CNPC_Apache::DyingThink( void )
 		m_flNextCrashExplosion = gpGlobals->curtime + random->RandomFloat( 0.3, 0.5 );
 	}
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	if( angVel.y < 400 )
 	{
 		angVel.y *= 1.1;
-		SetLocalAngularVelocity( angVel );
+		GetEngineObject()->SetLocalAngularVelocity( angVel );
 	}
 
 	Vector vecImpulse( 0, 0, -38.4 );	// gravity - 32ft/sec

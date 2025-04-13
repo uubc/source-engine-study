@@ -137,9 +137,9 @@ void RadiusFlash(
 		vecEyePos = pEntity->EyePosition();
 
 		// blasts don't travel into or out of water
-		if ( bInWater && pEntity->GetWaterLevel() == 0)
+		if ( bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 0)
 			continue;
-		if (!bInWater && pEntity->GetWaterLevel() == 3)
+		if (!bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 3)
 			continue;
 
 		float percentageOfFlash = PercentageOfFlashForPlayer((CBaseEntity*)pEntity, vecSrc, pevInflictor);

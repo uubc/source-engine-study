@@ -213,7 +213,7 @@ void CSnark::HuntThink( void )
 	//		 For now, we stomp it clear and force it to revalidate -- jdw
 
 	GetEngineObject()->SetGroundEntity( NULL );
-	PhysicsStepRecheckGround();
+	GetEngineObject()->PhysicsStepRecheckGround();
 
 	// explode when ready
 	if ( gpGlobals->curtime >= m_flDie )
@@ -227,7 +227,7 @@ void CSnark::HuntThink( void )
 	}
 
 	// float
-	if ( GetWaterLevel() != 0)
+	if (GetEngineObject()->GetWaterLevel() != 0)
 	{
 		if (GetEngineObject()->GetMoveType() == MOVETYPE_FLYGRAVITY )
 		{
@@ -297,16 +297,16 @@ void CSnark::HuntThink( void )
 
 	if (GetEngineObject()->GetFlags() & FL_ONGROUND )
 	{
-		SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
+		GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
 	}
 	else
 	{
-		QAngle angVel = GetLocalAngularVelocity();
+		QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 		if ( angVel == QAngle( 0, 0, 0 ) )
 		{
 			angVel.x = random->RandomFloat( -100, 100 );
 			angVel.z = random->RandomFloat( -100, 100 );
-			SetLocalAngularVelocity( angVel );
+			GetEngineObject()->SetLocalAngularVelocity( angVel );
 		}
 	}
 
@@ -367,7 +367,7 @@ void CSnark::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelocity )
 
 	// Stop if on ground.
 	// Get the total velocity (player + conveyors, etc.)
-	VectorAdd( vecAbsVelocity, GetBaseVelocity(), vecVelocity );
+	VectorAdd( vecAbsVelocity, GetEngineObject()->GetBaseVelocity(), vecVelocity );
 	float flSpeedSqr = DotProduct( vecVelocity, vecVelocity );
 
 	// Verify that we have an entity.
@@ -379,7 +379,7 @@ void CSnark::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelocity )
 		vecAbsVelocity.z = 0.0f;
 
 		// Recompute speedsqr based on the new absvel
-		VectorAdd( vecAbsVelocity, GetBaseVelocity(), vecVelocity );
+		VectorAdd( vecAbsVelocity, GetEngineObject()->GetBaseVelocity(), vecVelocity );
 		flSpeedSqr = DotProduct( vecVelocity, vecVelocity );
 	}
 	GetEngineObject()->SetAbsVelocity( vecAbsVelocity );
@@ -393,13 +393,13 @@ void CSnark::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelocity )
 
 		// Reset velocities.
 		GetEngineObject()->SetAbsVelocity( vec3_origin );
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	}
 	else
 	{
-		vecAbsVelocity += GetBaseVelocity();
+		vecAbsVelocity += GetEngineObject()->GetBaseVelocity();
 		vecAbsVelocity *= ( 1.0f - trace.fraction ) * gpGlobals->frametime * flSurfaceFriction;
-		PhysicsPushEntity( vecAbsVelocity, &trace );
+		GetEngineObject()->PhysicsPushEntity( vecAbsVelocity, &trace );
 	}
 }
 

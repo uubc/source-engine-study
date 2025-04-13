@@ -1283,7 +1283,7 @@ void CRocket_Turret_Projectile::MissileTouch( IServerEntity *pOther )
 		QAngle vBounceAngles;
 		VectorAngles( vBounceVel, vBounceAngles );
 		GetEngineObject()->SetAbsAngles ( vBounceAngles );
-		SetLocalAngularVelocity ( QAngle ( 180, 90, 45 ) );
+		GetEngineObject()->SetLocalAngularVelocity ( QAngle ( 180, 90, 45 ) );
 		EntityList()->DestroyEntity ( m_hRocketTrail );
 
 		GetEngineObject()->SetSolid ( SOLID_NONE );

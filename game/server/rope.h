@@ -107,7 +107,7 @@ public:
 
 
 	// IPositionWatcher
-	virtual void NotifyPositionChanged( CBaseEntity *pEntity );
+	virtual void NotifyPositionChanged( IHandleEntity *pEntity );
 
 private:
 

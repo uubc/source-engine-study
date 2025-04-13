@@ -704,7 +704,7 @@ void CNPC_Ichthyosaur::RunTask(const Task_t *pTask )
 int CNPC_Ichthyosaur::MeleeAttack1Conditions( float flDot, float flDist )
 {
 	// Enemy must be submerged with us
-	if ( GetEnemy() && GetEnemy()->GetWaterLevel() != GetWaterLevel() )
+	if ( GetEnemy() && GetEnemy()->GetEngineObject()->GetWaterLevel() != GetEngineObject()->GetWaterLevel() )
 		return COND_NONE;
 
 	Vector	predictedDir	= ( (GetEnemy()->GetEngineObject()->GetAbsOrigin()+(GetEnemy()->GetSmoothedVelocity())) - GetEngineObject()->GetAbsOrigin() );
@@ -731,7 +731,7 @@ int CNPC_Ichthyosaur::RangeAttack1Conditions( float flDot, float flDist )
 {
 	CBaseEntity *pEnemy = GetEnemy();
 	
-	if( pEnemy && pEnemy->GetWaterLevel() != GetWaterLevel() )
+	if( pEnemy && pEnemy->GetEngineObject()->GetWaterLevel() != GetEngineObject()->GetWaterLevel() )
 	{
 		return COND_NONE;
 	}
@@ -965,7 +965,7 @@ bool CNPC_Ichthyosaur::ProbeZ( const Vector &position, const Vector &probe, floa
 bool CNPC_Ichthyosaur::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker )
 {
 	// Can't see entities that aren't in water
-	if ( pEntity->GetWaterLevel() < 1 )
+	if ( pEntity->GetEngineObject()->GetWaterLevel() < 1 )
 		return false;
 
 	return BaseClass::FVisible( pEntity, traceMask, ppBlocker );
@@ -1015,7 +1015,7 @@ void CNPC_Ichthyosaur::GatherEnemyConditions( CBaseEntity *pEnemy )
 
 	if ( HasCondition( COND_ENEMY_UNREACHABLE ) == false )
 	{
-		if( pEnemy == NULL || pEnemy->GetWaterLevel() != GetWaterLevel() )
+		if( pEnemy == NULL || pEnemy->GetEngineObject()->GetWaterLevel() != GetEngineObject()->GetWaterLevel() )
 		{
 			SetCondition( COND_ENEMY_UNREACHABLE );
 		}

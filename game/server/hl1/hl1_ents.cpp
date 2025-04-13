@@ -486,7 +486,7 @@ void CPendulum::PendulumUse( IServerEntity *pActivator, IServerEntity *pCaller, 
 
 			delta = CBaseToggle::AxisDelta(GetEngineObject()->GetSpawnFlags(), GetEngineObject()->GetAbsAngles(), m_vStart);
 
-			SetLocalAngularVelocity( m_flMaxSpeed * m_vecMoveAng );
+			GetEngineObject()->SetLocalAngularVelocity( m_flMaxSpeed * m_vecMoveAng );
 			GetEngineObject()->SetNextThink( gpGlobals->curtime + delta / m_flMaxSpeed);
 			SetThink( &CPendulum::Stop );
 		}
@@ -494,7 +494,7 @@ void CPendulum::PendulumUse( IServerEntity *pActivator, IServerEntity *pCaller, 
 		{
 			m_flSpeed = 0;		// Dead stop
 			SetThink( NULL );
-			SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
+			GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
 		}
 	}
 	else
@@ -519,7 +519,7 @@ void CPendulum::Stop( void )
 	GetEngineObject()->SetAbsAngles( m_vStart );
 	m_flSpeed = 0;
 	SetThink( NULL );
-	SetLocalAngularVelocity( QAngle ( 0, 0, 0 ) );
+	GetEngineObject()->SetLocalAngularVelocity( QAngle ( 0, 0, 0 ) );
 }
 
 
@@ -547,11 +547,11 @@ void CPendulum::Swing( void )
 		m_flSpeed = -m_flMaxSpeed;
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	SetLocalAngularVelocity( m_flSpeed * m_vecMoveAng );
+	GetEngineObject()->SetLocalAngularVelocity( m_flSpeed * m_vecMoveAng );
 
 	// Call this again
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
-	SetMoveDoneTime( 0.1 );
+	GetEngineObject()->SetMoveDoneTime( 0.1 );
 	
 	if ( m_flDamp )
 	{
@@ -561,7 +561,7 @@ void CPendulum::Swing( void )
 			GetEngineObject()->SetAbsAngles( m_vCenter );
 			m_flSpeed = 0;
 			SetThink( NULL );
-			SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
+			GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
 		}
 		else if ( m_flSpeed > m_flDampSpeed )
 			m_flSpeed = m_flDampSpeed;
@@ -1503,7 +1503,7 @@ void CHL1Gib::BounceGibTouch ( IServerEntity *pOther )
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.9 );
 
 		GetEngineObject()->SetAbsAngles( QAngle( 0, GetEngineObject()->GetAbsAngles().y, 0 ) );
-		SetLocalAngularVelocity( QAngle( 0, GetLocalAngularVelocity().y, 0 ) );
+		GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, GetEngineObject()->GetLocalAngularVelocity().y, 0 ) );
 	}
 	else
 	{
@@ -1558,7 +1558,7 @@ void CHL1Gib::StickyGibTouch ( IServerEntity *pOther )
 	GetEngineObject()->SetAbsAngles( qAngle );
 
 	GetEngineObject()->SetAbsVelocity( vec3_origin );
-	SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
+	GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 0, 0 ) );
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 }
 

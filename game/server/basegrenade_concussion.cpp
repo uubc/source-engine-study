@@ -51,7 +51,7 @@ void CBaseGrenadeConcussion::FallThink(void)
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + random->RandomFloat(0.05, 0.1) );
 
-	if (GetWaterLevel() != 0)
+	if (GetEngineObject()->GetWaterLevel() != 0)
 	{
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.5 );
 	}
@@ -110,7 +110,7 @@ void CBaseGrenadeConcussion::Spawn( void )
 	
 	// Tumble in air
 	QAngle vecAngVel( random->RandomFloat ( -100, -500 ), 0, 0 );
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 	
 	// Explode on contact
 	SetTouch( &CBaseGrenadeConcussion::ExplodeConcussion );

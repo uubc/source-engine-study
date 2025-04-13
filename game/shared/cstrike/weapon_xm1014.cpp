@@ -110,7 +110,7 @@ void CWeaponXM1014::PrimaryAttack()
 	float flCycleTime = GetCSWpnData().m_flCycleTime;
 
 	// don't fire underwater
-	if (pPlayer->GetWaterLevel() == 3)
+	if (pPlayer->GetEngineObject()->GetWaterLevel() == 3)
 	{
 		PlayEmptySound( );
 		m_flNextPrimaryAttack = gpGlobals->curtime + 0.15;

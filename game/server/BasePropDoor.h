@@ -146,9 +146,9 @@ private:
 
 	inline bool WillAutoReturn() { return m_flAutoReturnDelay != -1; }
 
-	void StartBlocked(CBaseEntity *pOther);
+	void StartBlocked(IServerEntity *pOther);
 	void OnStartBlocked( CBaseEntity *pOther );
-	void MasterStartBlocked( CBaseEntity *pOther );
+	void MasterStartBlocked( IServerEntity *pOther );
 
 	void Blocked(IServerEntity *pOther);
 	void EndBlocked(void);

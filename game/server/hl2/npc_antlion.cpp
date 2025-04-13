@@ -1136,7 +1136,7 @@ void CNPC_Antlion::HandleAnimEvent( animevent_t *pEvent )
 					}
 
 					// Tumble through the air
-					pGrenade->SetLocalAngularVelocity(
+					pGrenade->GetEngineObject()->SetLocalAngularVelocity(
 						QAngle( random->RandomFloat( -250, -500 ),
 								random->RandomFloat( -250, -500 ),
 								random->RandomFloat( -250, -500 ) ) );
@@ -1350,7 +1350,7 @@ void CNPC_Antlion::HandleAnimEvent( animevent_t *pEvent )
 #if HL2_EPISODIC
 	if ( pEvent->event == AE_ANTLION_WORKER_EXPLODE_SCREAM )
 	{
-		if ( GetWaterLevel() < 2 )
+		if (GetEngineObject()->GetWaterLevel() < 2 )
 		{
 			const char* soundname = "NPC_Antlion.PoisonBurstScream";
 			CPASAttenuationFilter filter(this, soundname);
@@ -3849,7 +3849,7 @@ void CNPC_Antlion::GatherConditions( void )
 		 IsCurSchedule(SCHED_FALL_TO_GROUND ) == false &&
 		 GetEngineObject()->IsEffectActive( EF_NODRAW ) == false )
 	{
-		if( m_lifeState == LIFE_ALIVE && GetWaterLevel() > 1 )
+		if( m_lifeState == LIFE_ALIVE && GetEngineObject()->GetWaterLevel() > 1 )
 		{
 			// Start Drowning!
 			SetCondition( COND_ANTLION_IN_WATER );
@@ -4547,7 +4547,7 @@ void CNPC_Antlion::InputJumpAtTarget( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CNPC_Antlion::DoPoisonBurst()
 {
-	if ( GetWaterLevel() < 2 )
+	if (GetEngineObject()->GetWaterLevel() < 2 )
 	{
 		CTakeDamageInfo info( this, this, sk_antlion_worker_burst_damage.GetFloat(), DMG_BLAST_SURFACE | ( ANTLION_WORKER_BURST_IS_POISONOUS() ? DMG_POISON : DMG_ACID ) );
 

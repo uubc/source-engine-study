@@ -953,10 +953,10 @@ void CWorld::RadiusDamage(const ITakeDamageInfo& info, const Vector& vecSrcIn, f
 		}
 
 		// blast's don't tavel into or out of water
-		if (bInWater && pEntity->GetWaterLevel() == 0)
+		if (bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 0)
 			continue;
 
-		if (!bInWater && pEntity->GetWaterLevel() == 3)
+		if (!bInWater && pEntity->GetEngineObject()->GetWaterLevel() == 3)
 			continue;
 
 		// Check that the explosion can 'see' this entity.
@@ -1311,7 +1311,7 @@ void CWorld::EndGameFrame(void)
 //-----------------------------------------------------------------------------
 // trace line rules
 //-----------------------------------------------------------------------------
-float CWorld::WeaponTraceEntity(CBaseEntity* pEntity, const Vector& vecStart, const Vector& vecEnd,
+float CWorld::WeaponTraceEntity(IServerEntity* pEntity, const Vector& vecStart, const Vector& vecEnd,
 	unsigned int mask, trace_t* ptr)
 {
 	EntityList()->GetEngineWorld()->TraceEntity(pEntity->GetEngineObject(), vecStart, vecEnd, mask, ptr);
@@ -1705,6 +1705,11 @@ void CWorld::DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, i
 IRecipientFilter* CWorld::CreatePASAttenuationFilter(IServerEntity* entity, float attenuation)
 {
 	return new CPASAttenuationFilter(entity, attenuation);
+}
+
+IRecipientFilter* CWorld::CreatePASAttenuationFilter(IServerEntity* entity, const char* lookupSound)
+{
+	return new CPASAttenuationFilter(entity, lookupSound);
 }
 
 IRecipientFilter* CWorld::CreatePASAttenuationFilter(const Vector& origin, float attenuation)

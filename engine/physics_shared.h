@@ -10,7 +10,11 @@
 #pragma once
 #endif
 
+#include "networkvar.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
+#include "engine/IEngineTrace.h"
+#include "iserverentity.h"
+#include "icliententity.h"
 
 class IPhysics;
 class IPhysicsEnvironment;
@@ -114,5 +118,154 @@ public:
 //-----------------------------------------------------------------------------
 extern IVPhysicsKeyHandler* g_pSolidSetup;
 extern const objectparams_t g_PhysDefaultObjectParams;
+
+//-----------------------------------------------------------------------------
+// Purpose: Keeps track of original positions of any entities that are being possibly pushed
+//  and handles restoring positions for those objects if the push is aborted
+//-----------------------------------------------------------------------------
+class CPhysicsPushedEntities
+{
+public:
+
+	DECLARE_CLASS_NOBASE(CPhysicsPushedEntities);
+
+	CPhysicsPushedEntities(void);
+
+	// Purpose: Tries to rotate an entity hierarchy, returns the blocker if any
+	IServerEntity* PerformRotatePush(IServerEntity* pRoot, float movetime);
+
+	// Purpose: Tries to linearly push an entity hierarchy, returns the blocker if any
+	IServerEntity* PerformLinearPush(IServerEntity* pRoot, float movetime);
+
+	int			CountMovedEntities() { return m_rgMoved.Count(); }
+	void		StoreMovedEntities(physicspushlist_t& list);
+	void		BeginPush(IServerEntity* pRootEntity);
+
+protected:
+
+	// describes the per-frame incremental motion of a rotating MOVETYPE_PUSH
+	struct RotatingPushMove_t
+	{
+		Vector		origin;
+		matrix3x4_t	startLocalToWorld;
+		matrix3x4_t	endLocalToWorld;
+		QAngle		amove;		// delta orientation
+	};
+
+	// Pushers + their original positions also (for touching triggers)
+	struct PhysicsPusherInfo_t
+	{
+		IServerEntity* m_pEntity;
+		Vector				m_vecStartAbsOrigin;
+	};
+
+	// Pushed entities + various state related to them being pushed
+	struct PhysicsPushedInfo_t
+	{
+		IServerEntity* m_pEntity;
+		Vector				m_vecStartAbsOrigin;
+		trace_t				m_Trace;
+		bool				m_bBlocked;
+		bool				m_bPusherIsGround;
+	};
+
+	// Adds the specified entity to the list
+	void	AddEntity(IServerEntity* ent);
+
+	// If a move fails, restores all entities to their original positions
+	void	RestoreEntities();
+
+	// Compute the direction to move the rotation blocker
+	void	ComputeRotationalPushDirection(IServerEntity* pBlocker, const RotatingPushMove_t& rotPushMove, Vector* pMove, IServerEntity* pRoot);
+
+	// Speculatively checks to see if all entities in this list can be pushed
+	bool SpeculativelyCheckPush(PhysicsPushedInfo_t& info, const Vector& vecAbsPush, bool bRotationalPush);
+
+	// Speculatively checks to see if all entities in this list can be pushed
+	virtual bool SpeculativelyCheckRotPush(const RotatingPushMove_t& rotPushMove, IServerEntity* pRoot);
+
+	// Speculatively checks to see if all entities in this list can be pushed
+	virtual bool	SpeculativelyCheckLinearPush(const Vector& vecAbsPush);
+
+	// Registers a blockage
+	IServerEntity* RegisterBlockage();
+
+	// Some fixup for objects pushed by rotating objects
+	virtual void	FinishRotPushedEntity(IServerEntity* pPushedEntity, const RotatingPushMove_t& rotPushMove);
+
+	// Commits the speculative movement
+	void	FinishPush(bool bIsRotPush = false, const RotatingPushMove_t* pRotPushMove = NULL);
+
+	// Generates a list of all entities potentially blocking all pushers
+	void	GenerateBlockingEntityList();
+	void	GenerateBlockingEntityListAddBox(const Vector& vecMoved);
+
+	// Purpose: Gets a list of all entities hierarchically attached to the root 
+	void	SetupAllInHierarchy(IServerEntity* pParent);
+
+	// Unlink + relink the pusher list so we can actually do the push
+	void	UnlinkPusherList(int* pPusherHandles);
+	void	RelinkPusherList(int* pPusherHandles);
+
+	// Causes all entities in the list to touch triggers from their prev position
+	void	FinishPushers();
+
+	// Purpose: Rotates the root entity, fills in the pushmove structure
+	void	RotateRootEntity(IServerEntity* pRoot, float movetime, RotatingPushMove_t& rotation);
+
+	// Purpose: Linearly moves the root entity
+	void	LinearlyMoveRootEntity(IServerEntity* pRoot, float movetime, Vector* pAbsPushVector);
+
+	bool	IsPushedPositionValid(IServerEntity* pBlocker);
+
+protected:
+
+	CUtlVector<PhysicsPusherInfo_t>	m_rgPusher;
+	CUtlVector<PhysicsPushedInfo_t>	m_rgMoved;
+	int								m_nBlocker;
+	bool							m_bIsUnblockableByPlayer;
+	Vector							m_rootPusherStartLocalOrigin;
+	QAngle							m_rootPusherStartLocalAngles;
+	float							m_rootPusherStartLocaltime;
+	float							m_flMoveTime;
+
+	friend class CPushBlockerEnum;
+};
+
+class CTraceFilterPushMove : public CTraceFilterSimple
+{
+	typedef CTraceFilterSimple BaseClass;
+	typedef CTraceFilterPushMove ThisClass;;
+
+public:
+	CTraceFilterPushMove(IServerEntity* pEntity, int nCollisionGroup)
+		: CTraceFilterSimple(pEntity, nCollisionGroup)
+	{
+		m_pRootParent = (IServerEntity*)pEntity->GetEngineObject()->GetRootMoveParent()->GetOuter();
+	}
+
+	bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
+	{
+		Assert(dynamic_cast<IServerEntity*>(pHandleEntity));
+		IServerEntity* pTestEntity = static_cast<IServerEntity*>(pHandleEntity);
+		if (!pTestEntity)
+			return false;
+
+		if (pTestEntity->GetEngineObject()->EntityHasMatchingRootParent(m_pRootParent ? m_pRootParent->GetEngineObject() : NULL))
+			return false;
+
+		if (pTestEntity->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS &&
+			pTestEntity->GetEngineObject()->VPhysicsGetObject() && pTestEntity->GetEngineObject()->VPhysicsGetObject()->IsMoveable())
+			return false;
+
+		return BaseClass::ShouldHitEntity(pHandleEntity, contentsMask);
+	}
+
+private:
+
+	IServerEntity* m_pRootParent;
+};
+
+extern CPhysicsPushedEntities *g_pPushedEntities;
 
 #endif // PHYSICS_SHARED_H

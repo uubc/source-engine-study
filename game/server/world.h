@@ -293,7 +293,7 @@ public:
 	virtual void EndMultiplayerGame(void) {}
 
 	// trace line rules
-	virtual float WeaponTraceEntity(CBaseEntity* pEntity, const Vector& vecStart, const Vector& vecEnd, unsigned int mask, trace_t* ptr);
+	virtual float WeaponTraceEntity(IServerEntity* pEntity, const Vector& vecStart, const Vector& vecEnd, unsigned int mask, trace_t* ptr);
 
 	// Setup g_pPlayerResource (some mods use a different entity type here).
 	virtual void CreateStandardEntities();
@@ -339,6 +339,7 @@ public:
 	virtual bool	MegaPhyscannonActive(void) { return false; }
 	virtual void DebugDrawLine(const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration);
 	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, float attenuation);
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, const char* lookupSound);
 	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation);
 private:
 	DECLARE_DATADESC();

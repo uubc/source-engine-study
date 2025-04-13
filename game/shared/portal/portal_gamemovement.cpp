@@ -361,12 +361,12 @@ void CPortalGameMovement::AirMove( void )
 	AirAccelerate( wishdir, wishspeed, 15.0f );
 
 	// Add in any base velocity to the current velocity.
-	VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorAdd(mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 
 	TryPlayerMove();
 
 	// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+	VectorSubtract( mv->m_vecVelocity, player->GetEngineObject()->GetBaseVelocity(), mv->m_vecVelocity );
 }
 
 void CPortalGameMovement::PlayerRoughLandingEffects( float fvol )
@@ -565,7 +565,7 @@ void CPortalGameMovement::CategorizePosition( void )
 			player->m_flWaterJumpTime = 0;
 
 			// If we could make the move, drop us down that 1 pixel
-			if ( player->GetWaterLevel() < WL_Waist && !pm.startsolid && !pm.allsolid )
+			if ( player->GetEngineObject()->GetWaterLevel() < WL_Waist && !pm.startsolid && !pm.allsolid )
 			{
 				// check distance we would like to move -- this is supposed to just keep up
 				// "on the ground" surface not stap us back to earth (i.e. on move origin to

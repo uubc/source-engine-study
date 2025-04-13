@@ -1055,7 +1055,7 @@ void CAPCMissile::SetGuidanceHint( const char *pHintName )
 //-----------------------------------------------------------------------------
 void CAPCMissile::DoExplosion( void )
 {
-	if ( GetWaterLevel() != 0 )
+	if (GetEngineObject()->GetWaterLevel() != 0 )
 	{
 		CEffectData data;
 		data.m_vOrigin = WorldSpaceCenter();

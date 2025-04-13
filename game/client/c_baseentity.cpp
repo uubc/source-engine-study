@@ -162,9 +162,9 @@ BEGIN_PREDICTION_DATA_NO_BASE( C_BaseEntity )
 	//DEFINE_FIELD( m_angRotation, FIELD_VECTOR ),
 
 //	DEFINE_FIELD( m_hGroundEntity, FIELD_EHANDLE ),
-	DEFINE_FIELD( m_nWaterLevel, FIELD_CHARACTER ),
-	DEFINE_FIELD( m_nWaterType, FIELD_CHARACTER ),
-	DEFINE_FIELD( m_vecAngVelocity, FIELD_VECTOR ),
+//	DEFINE_FIELD( m_nWaterLevel, FIELD_CHARACTER ),
+//	DEFINE_FIELD( m_nWaterType, FIELD_CHARACTER ),
+//	DEFINE_FIELD( m_vecAngVelocity, FIELD_VECTOR ),
 //	DEFINE_FIELD( m_vecAbsAngVelocity, FIELD_VECTOR ),
 
 
@@ -176,7 +176,7 @@ BEGIN_PREDICTION_DATA_NO_BASE( C_BaseEntity )
 	DEFINE_FIELD( m_bDormant, FIELD_BOOLEAN ),
 //	DEFINE_FIELD( current_position, FIELD_INTEGER ),
 //	DEFINE_FIELD( m_flLastMessageTime, FIELD_FLOAT ),
-	DEFINE_FIELD( m_vecBaseVelocity, FIELD_VECTOR ),
+//	DEFINE_FIELD( m_vecBaseVelocity, FIELD_VECTOR ),
 	//DEFINE_FIELD( m_flGravity, FIELD_FLOAT ),
 //	DEFINE_FIELD( m_ModelInstance, FIELD_SHORT ),
 	//DEFINE_FIELD( m_flProxyRandomValue, FIELD_FLOAT ),
@@ -367,10 +367,8 @@ C_BaseEntity::C_BaseEntity()
 	//GetEngineObject()->Init(this);
 #ifdef _DEBUG
 	m_vecViewOffset.Init();
-	m_vecBaseVelocity.Init();
 #endif
 
-	m_nSimulationTick = -1;
 	m_fBBoxVisFlags = 0;
 //#if !defined( NO_ENTITY_PREDICTION )
 //	m_pPredictionContext = NULL;
@@ -476,7 +474,6 @@ void C_BaseEntity::Clear( void )
 		GetEngineObject()->Clear();
 	}
 	m_vecViewOffset.Init();
-	m_vecBaseVelocity.Init();
 
 	m_ShadowDirUseOtherEntity = NULL;
 
@@ -2506,16 +2503,6 @@ void C_BaseEntity::SetAbsAngularVelocity( const QAngle &vecAbsAngVelocity )
 	MatrixAngles( localMatrix, m_vecAngVelocity );
 }
 */
-
-
-void C_BaseEntity::SetLocalAngularVelocity( const QAngle &vecAngVelocity )
-{
-	if (m_vecAngVelocity != vecAngVelocity)
-	{
-//		InvalidatePhysicsRecursive( ANG_VELOCITY_CHANGED );
-		m_vecAngVelocity = vecAngVelocity;
-	}
-}
 
 //-----------------------------------------------------------------------------
 // Sets the local position from a transform

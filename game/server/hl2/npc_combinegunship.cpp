@@ -1471,8 +1471,8 @@ void CNPC_CombineGunship::MoveHead( void )
  
 		// Look where going!
 #if 1 // old way- look according to rotational velocity
-		flYaw = UTIL_Approach( GetLocalAngularVelocity().y, flYaw, 2.0 * 10 * m_flDeltaT );	
-		flPitch = UTIL_Approach( GetLocalAngularVelocity().x, flPitch, 2.0 * 10 * m_flDeltaT );	
+		flYaw = UTIL_Approach(GetEngineObject()->GetLocalAngularVelocity().y, flYaw, 2.0 * 10 * m_flDeltaT );
+		flPitch = UTIL_Approach(GetEngineObject()->GetLocalAngularVelocity().x, flPitch, 2.0 * 10 * m_flDeltaT );
 #else // new way- look towards the next waypoint?
 		// !!!UNDONE
 #endif
@@ -2226,9 +2226,9 @@ void CNPC_CombineGunship::Flight( void )
 	// calc angular accel needed to hit goal pitch in dt time.
 	dt = 0.6;
 	QAngle goalAngAccel;
-	goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetLocalAngles().x ) ) - GetLocalAngularVelocity().x * dt) / (dt * dt);
-	goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetLocalAngles().y ) ) - GetLocalAngularVelocity().y * dt) / (dt * dt);
-	goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetLocalAngles().z ) ) - GetLocalAngularVelocity().z * dt) / (dt * dt);
+	goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetLocalAngles().x ) ) - GetEngineObject()->GetLocalAngularVelocity().x * dt) / (dt * dt);
+	goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetLocalAngles().y ) ) - GetEngineObject()->GetLocalAngularVelocity().y * dt) / (dt * dt);
+	goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetLocalAngles().z ) ) - GetEngineObject()->GetLocalAngularVelocity().z * dt) / (dt * dt);
 
 	goalAngAccel.x = clamp( goalAngAccel.x, -300, 300 );
 	//goalAngAccel.y = clamp( goalAngAccel.y, -60, 60 );
@@ -2256,14 +2256,14 @@ void CNPC_CombineGunship::Flight( void )
 	ApplySidewaysDrag( right );
 	ApplyGeneralDrag();
 	
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	angVel += m_vecAngAcceleration * 0.1;
 
 	//angVel.y = clamp( angVel.y, -60, 60 );
 	//angVel.y = clamp( angVel.y, -120, 120 );
 	angVel.y = clamp( angVel.y, -120, 120 );
 
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	m_flForce = m_flForce * 0.8 + (accel.z + fabs( accel.x ) * 0.1 + fabs( accel.y ) * 0.1) * 0.1 * 0.2;
 
@@ -2518,7 +2518,7 @@ void CNPC_CombineGunship::SelfDestruct( void )
 	if ( !m_hCrashTarget )
 	{
 		Vector angVelocity;
-		QAngleToAngularImpulse( pBreakEnt->GetLocalAngularVelocity(), angVelocity );
+		QAngleToAngularImpulse( pBreakEnt->GetEngineObject()->GetLocalAngularVelocity(), angVelocity );
 		PropBreakableCreateAll( pBreakEnt->GetEngineObject()->GetModelIndex(), pBreakEnt->GetEngineObject()->VPhysicsGetObject(), pBreakEnt->GetEngineObject()->GetAbsOrigin(), pBreakEnt->GetEngineObject()->GetAbsAngles(), pBreakEnt->GetEngineObject()->GetAbsVelocity(), angVelocity, 1.0, 800, COLLISION_GROUP_NPC, pBreakEnt );
 
 		// Throw out some small chunks too

@@ -1027,7 +1027,7 @@ void CNPC_Nihilanth::DyingThink( void )
 
 	if (GetEngineObject()->IsSequenceFinished() )
 	{
-		QAngle qAngularVel = GetLocalAngularVelocity();
+		QAngle qAngularVel = GetEngineObject()->GetLocalAngularVelocity();
 
 		qAngularVel.y += random->RandomFloat( -100, 100 );
 	
@@ -1036,7 +1036,7 @@ void CNPC_Nihilanth::DyingThink( void )
 		if ( qAngularVel.y > 100)
 			 qAngularVel.y = 100;
 
-		SetLocalAngularVelocity( qAngularVel );
+		GetEngineObject()->SetLocalAngularVelocity( qAngularVel );
 		GetEngineObject()->SetSequence(GetEngineObject()->LookupSequence( "die1" ) );
 	}
 
@@ -1400,7 +1400,7 @@ bool CNihilanthHVR::CircleTarget( Vector vecTarget )
 		m_vecIdeal = m_vecIdeal + vTemp * 50;
 	}
 
-	SetLocalAngularVelocity( QAngle( GetLocalAngularVelocity().x, GetLocalAngularVelocity().y, d1 * 20 ) );
+	GetEngineObject()->SetLocalAngularVelocity( QAngle(GetEngineObject()->GetLocalAngularVelocity().x, GetEngineObject()->GetLocalAngularVelocity().y, d1 * 20 ) );
 	
 	if (d1 < 32)
 	{

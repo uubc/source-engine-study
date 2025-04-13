@@ -253,9 +253,9 @@ void CWeaponSatchel::Throw( void )
 		if ( pSatchel )
 		{
 			pSatchel->GetEngineObject()->SetAbsVelocity( vecThrow );
-			QAngle angVel = pSatchel->GetLocalAngularVelocity();
+			QAngle angVel = pSatchel->GetEngineObject()->GetLocalAngularVelocity();
 			angVel.y = 400;
-			pSatchel->SetLocalAngularVelocity( angVel );
+			pSatchel->GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 			ActivateRadioModel();
 
@@ -507,7 +507,7 @@ void CSatchelCharge::SatchelUse( IServerEntity *pActivator, IServerEntity *pCall
 void CSatchelCharge::SatchelTouch( IServerEntity *pOther )
 {
 	Assert( pOther );
-	if ( pOther->GetEngineObject()->IsSolidFlagSet(FSOLID_TRIGGER | FSOLID_VOLUME_CONTENTS) || GetWaterLevel() > 0 )
+	if ( pOther->GetEngineObject()->IsSolidFlagSet(FSOLID_TRIGGER | FSOLID_VOLUME_CONTENTS) || GetEngineObject()->GetWaterLevel() > 0 )
 		return;
 
 	StudioFrameAdvance( );
@@ -522,7 +522,7 @@ void CSatchelCharge::SatchelTouch( IServerEntity *pOther )
 
 	// add a bit of static friction
 	GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * GetEngineObject()->GetFriction() );
-	SetLocalAngularVelocity( GetLocalAngularVelocity() * GetEngineObject()->GetFriction() );
+	GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() * GetEngineObject()->GetFriction() );
 }
 
 void CSatchelCharge::UpdateSlideSound( void )
@@ -552,16 +552,16 @@ void CSatchelCharge::SatchelThink( void )
 
 	Vector vecNewVel = GetEngineObject()->GetAbsVelocity();
 	
-	if ( GetWaterLevel() > 0 )
+	if (GetEngineObject()->GetWaterLevel() > 0 )
 	{
 		GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 		vecNewVel *= 0.8;
-		SetLocalAngularVelocity( GetLocalAngularVelocity() * 0.9 );
+		GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() * 0.9 );
 
 		vecNewVel.z = 0;
 		GetEngineObject()->SetGravity( -0.2 );
 	}
-	else if ( GetWaterLevel() == 0 )
+	else if (GetEngineObject()->GetWaterLevel() == 0 )
 	{
 		GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_SLIDE );
 

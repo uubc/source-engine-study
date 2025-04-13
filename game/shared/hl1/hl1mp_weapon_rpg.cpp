@@ -283,7 +283,7 @@ void CRpgRocket::SeekThink( void )
 	if ( gpGlobals->curtime - m_flIgniteTime < 1.0 )
 	{
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.2 + vecTarget * (flSpeed * 0.8 + 400) );
-		if ( GetWaterLevel() == 3 )
+		if (GetEngineObject()->GetWaterLevel() == 3 )
 		{
 			// go slow underwater
 			if (GetEngineObject()->GetAbsVelocity().Length() > 300 )
@@ -314,7 +314,7 @@ void CRpgRocket::SeekThink( void )
 
 		GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() * 0.2 + vecTarget * flSpeed * 0.798 );
 
-		if ( GetWaterLevel() == 0 && GetEngineObject()->GetAbsVelocity().Length() < 1500 )
+		if (GetEngineObject()->GetWaterLevel() == 0 && GetEngineObject()->GetAbsVelocity().Length() < 1500 )
 		{
 			Detonate();
 		}

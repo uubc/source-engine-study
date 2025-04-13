@@ -588,7 +588,7 @@ void CWateryDeathLeech::LeechThink( void )
 
 	if (GetEngineObject()->GetOwnerEntity() )
 	{
-		if (GetEngineObject()->GetOwnerEntity()->GetServerEntity()->GetWaterLevel() < 3)
+		if (GetEngineObject()->GetOwnerEntity()->GetWaterLevel() < 3)
 		{
 			GetEngineObject()->AddEffects( EF_NODRAW );
 		}

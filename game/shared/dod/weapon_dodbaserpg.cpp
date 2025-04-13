@@ -175,7 +175,7 @@ void CDODBaseRocketWeapon::PrimaryAttack()
 		return;
 	}
 
-	if( pPlayer->GetWaterLevel() > 2 )
+	if( pPlayer->GetEngineObject()->GetWaterLevel() > 2 )
 	{
 		PlayEmptySound();
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.0;
@@ -249,7 +249,7 @@ void CDODBaseRocketWeapon::SecondaryAttack()
 	CBasePlayer *pPlayer = GetPlayerOwner();
 
 	//if we're underwater, lower it
-	if( pPlayer->GetWaterLevel() > 2 )
+	if( pPlayer->GetEngineObject()->GetWaterLevel() > 2 )
 	{
 		if( IsDeployed() )
 			Lower();

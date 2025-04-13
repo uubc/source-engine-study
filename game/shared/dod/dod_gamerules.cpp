@@ -2639,14 +2639,16 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 		return NULL;
 	}
 
-	extern ConVar sv_stopspeed;
-	extern ConVar sv_friction;
+	//extern ConVar sv_stopspeed;
+	//extern ConVar sv_friction;
 
 	void CDODGameWorld::State_Enter_INIT( void )
 	{
 		InitTeams();
 
+		ConVarRef sv_stopspeed("sv_stopspeed");
 		sv_stopspeed.SetValue( 50.0f );
+		ConVarRef sv_friction("sv_friction");
 		sv_friction.SetValue( 8.0f );
 
 		ResetMapTime();

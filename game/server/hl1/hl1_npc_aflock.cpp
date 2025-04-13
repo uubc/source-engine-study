@@ -453,7 +453,7 @@ void CNPC_FlockingFlyer::BoidAdvanceFrame ( void )
 
 	GetEngineObject()->SetPlaybackRate(flapspeed);
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 
 	// lean
 	angVel.x = -GetEngineObject()->GetAbsAngles().x + flapspeed * 5;
@@ -461,7 +461,7 @@ void CNPC_FlockingFlyer::BoidAdvanceFrame ( void )
 	// bank
 	angVel.z = -GetEngineObject()->GetAbsAngles().z + angVel.y;
 
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	// pev->framerate		= flapspeed;
 	StudioFrameAdvance();
@@ -492,9 +492,9 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 		{
 			m_fTurning = FALSE;
 
-			QAngle angVel = GetLocalAngularVelocity();
+			QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 			angVel.y = 0;
-			SetLocalAngularVelocity( angVel );
+			GetEngineObject()->SetLocalAngularVelocity( angVel );
 		}
 
 		m_fPathBlocked = FALSE;
@@ -526,18 +526,18 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 		// turn right if more clearance on right side
 		if ( flRightSide > flLeftSide )
 		{
-			QAngle angVel = GetLocalAngularVelocity();
+			QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 			angVel.y = -AFLOCK_TURN_RATE;
-			SetLocalAngularVelocity( angVel );
+			GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 			m_fTurning = TRUE;
 		}
 		// default to left turn :)
 		else if ( flLeftSide > flRightSide )
 		{
-			QAngle angVel = GetLocalAngularVelocity();
+			QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 			angVel.y = AFLOCK_TURN_RATE;
-			SetLocalAngularVelocity( angVel );
+			GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 			m_fTurning = TRUE;
 		}
@@ -546,7 +546,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 			// equidistant. Pick randomly between left and right.
 			m_fTurning = TRUE;
 
-			QAngle angVel = GetLocalAngularVelocity();
+			QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 
 			if ( random->RandomInt( 0, 1 ) == 0 )
 			{
@@ -557,7 +557,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 				angVel.y = -AFLOCK_TURN_RATE;
 			}
 
-			SetLocalAngularVelocity( angVel );
+			GetEngineObject()->SetLocalAngularVelocity( angVel );
 		}
 	}
 

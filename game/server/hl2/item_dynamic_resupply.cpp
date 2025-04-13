@@ -548,7 +548,7 @@ bool CItem_DynamicResupply::SpawnItemFromRatio( int nCount, DynamicResupplyItems
 
 	CBaseEntity *pEnt = CBaseEntity::Create( pItems[iSelectedIndex].sEntityName, *pVecSpawnOrigin, GetEngineObject()->GetAbsAngles(), this );
 	pEnt->GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() );
-	pEnt->SetLocalAngularVelocity( GetLocalAngularVelocity() );
+	pEnt->GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() );
 
 	// Move the entity up so that it doesn't go below the spawn origin
 	Vector vecWorldMins, vecWorldMaxs;

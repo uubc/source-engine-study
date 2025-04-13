@@ -515,7 +515,7 @@ void CHL2MP_Player::ResetAnimation( void )
 			SetAnimation( PLAYER_IDLE );
 		else if ((GetEngineObject()->GetAbsVelocity().x || GetEngineObject()->GetAbsVelocity().y) && (GetEngineObject()->GetFlags() & FL_ONGROUND ))
 			SetAnimation( PLAYER_WALK );
-		else if (GetWaterLevel() > 1)
+		else if (GetEngineObject()->GetWaterLevel() > 1)
 			SetAnimation( PLAYER_WALK );
 	}
 }

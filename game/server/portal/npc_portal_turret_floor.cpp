@@ -685,7 +685,7 @@ void CNPC_Portal_FloorTurret::SetEyeState( eyeState_t state )
 
 inline bool CNPC_Portal_FloorTurret::OnSide( void )
 {
-	if ( GetWaterLevel() > 0 )
+	if (GetEngineObject()->GetWaterLevel() > 0 )
 		return true;
 
 	Vector	up;

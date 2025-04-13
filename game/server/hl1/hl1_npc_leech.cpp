@@ -241,7 +241,7 @@ void CNPC_Leech::Touch( IServerEntity *pOther )
 		if ( pOther->GetEngineObject()->GetAbsVelocity() == vec3_origin )
 			 return;
 
-		SetBaseVelocity( pOther->GetEngineObject()->GetAbsVelocity() );
+		GetEngineObject()->SetBaseVelocity( pOther->GetEngineObject()->GetAbsVelocity() );
 		GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 	}
 }
@@ -332,7 +332,7 @@ void CNPC_Leech::SwitchLeechState( void )
 	{
 		GetSenses()->Look( GetSenses()->GetDistLook() );
 		CBaseEntity *pEnemy = BestEnemy();
-		if ( pEnemy && pEnemy->GetWaterLevel() != 0 )
+		if ( pEnemy && pEnemy->GetEngineObject()->GetWaterLevel() != 0 )
 		{
 			SetEnemy ( pEnemy );
 			SetState( NPC_STATE_COMBAT );
@@ -586,7 +586,7 @@ void CNPC_Leech::UpdateMotion( void )
 
 	GetEngineObject()->SetPlaybackRate(flapspeed);
 
-	QAngle vAngularVelocity = GetLocalAngularVelocity();
+	QAngle vAngularVelocity = GetEngineObject()->GetLocalAngularVelocity();
 	QAngle vAngles = GetEngineObject()->GetLocalAngles();
 
 	if ( !m_fPathBlocked )
@@ -621,7 +621,7 @@ void CNPC_Leech::UpdateMotion( void )
 		SetIdealActivity( ACT_MELEE_ATTACK1 );
 
 	// Out of water check
-	if ( !GetWaterLevel() )
+	if ( !GetEngineObject()->GetWaterLevel() )
 	{
 		GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY );
 		SetIdealActivity( ACT_HOP );
@@ -652,7 +652,7 @@ void CNPC_Leech::UpdateMotion( void )
 	DispatchAnimEvents ( this );
 
 	GetEngineObject()->SetLocalAngles( vAngles );
-	SetLocalAngularVelocity( vAngularVelocity );
+	GetEngineObject()->SetLocalAngularVelocity( vAngularVelocity );
 
 	Vector vForward, vRight;
 
@@ -688,10 +688,10 @@ void CNPC_Leech::Event_Killed( const ITakeDamageInfo&info )
 		pOwner->GetServerEntity()->DeathNotice(this);
 
 	// When we hit the ground, play the "death_end" activity
-	if ( GetWaterLevel() )
+	if (GetEngineObject()->GetWaterLevel() )
 	{
 		QAngle qAngles = GetEngineObject()->GetAbsAngles();
-		QAngle qAngularVel = GetLocalAngularVelocity();
+		QAngle qAngularVel = GetEngineObject()->GetLocalAngularVelocity();
 		Vector  vOrigin = GetEngineObject()->GetLocalOrigin();
 
 		qAngles.z = 0;
@@ -705,7 +705,7 @@ void CNPC_Leech::Event_Killed( const ITakeDamageInfo&info )
 			 qAngularVel.y = random->RandomInt( -720, 720 );
 
 		GetEngineObject()->SetAbsAngles( qAngles );
-		SetLocalAngularVelocity( qAngularVel );
+		GetEngineObject()->SetLocalAngularVelocity( qAngularVel );
 		GetEngineObject()->SetAbsOrigin( vOrigin );
 
 		

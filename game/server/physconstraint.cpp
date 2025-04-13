@@ -752,7 +752,7 @@ public:
 		BaseClass::Deactivate();
 	}
 	
-	void NotifyVPhysicsStateChanged( IPhysicsObject *pPhysics, CBaseEntity *pEntity, bool bAwake )
+	void NotifyVPhysicsStateChanged( IPhysicsObject *pPhysics, IHandleEntity *pEntity, bool bAwake )
 	{
 #if HINGE_NOTIFY
 		Assert(m_pConstraint);
@@ -1056,7 +1056,7 @@ public:
 		BaseClass::DrawDebugGeometryOverlays();
 	}
 
-	void NotifyVPhysicsStateChanged( IPhysicsObject *pPhysics, CBaseEntity *pEntity, bool bAwake )
+	void NotifyVPhysicsStateChanged( IPhysicsObject *pPhysics, IHandleEntity *pEntity, bool bAwake )
 	{
 #if HINGE_NOTIFY
 		Assert(m_pConstraint);

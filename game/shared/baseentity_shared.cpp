@@ -817,7 +817,7 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 
 #ifndef CLIENT_DLL 
 			GetEngineObject()->PhysicsTouchTriggers( &prevOrigin );
-			PhysicsRelinkChildren(gpGlobals->frametime);
+			GetEngineObject()->PhysicsRelinkChildren(gpGlobals->frametime);
 #endif
 		}
 	break;
@@ -827,7 +827,7 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 
 	case MOVETYPE_PUSH:
 #ifndef CLIENT_DLL
-		VPhysicsUpdatePusher( pPhysics );
+		GetEngineObject()->VPhysicsUpdatePusher( pPhysics );
 #endif
 	break;
 	}
@@ -1380,7 +1380,7 @@ bool CBaseEntity::ShouldDrawUnderwaterBulletBubbles()
 {
 #if defined( HL2_DLL ) && defined( GAME_DLL )
 	IServerEntity *pPlayer = ( gpGlobals->maxClients == 1 ) ? EntityList()->GetLocalPlayer() : NULL;
-	return pPlayer && (pPlayer->GetWaterLevel() == 3);
+	return pPlayer && (pPlayer->GetEngineObject()->GetWaterLevel() == 3);
 #else
 	return false;
 #endif
@@ -1772,29 +1772,10 @@ void CBaseEntity::ApplyLocalAngularVelocityImpulse( const AngularImpulse &angImp
 		{
 			QAngle vecResult;
 			AngularImpulseToQAngle( angImpulse, vecResult );
-			VectorAdd( GetLocalAngularVelocity(), vecResult, vecResult );
-			SetLocalAngularVelocity( vecResult );
+			VectorAdd(GetEngineObject()->GetLocalAngularVelocity(), vecResult, vecResult );
+			GetEngineObject()->SetLocalAngularVelocity( vecResult );
 		}
 	}
-}
-
-int CBaseEntity::GetWaterType() const
-{
-	int out = 0;
-	if ( m_nWaterType & 1 )
-		out |= CONTENTS_WATER;
-	if ( m_nWaterType & 2 )
-		out |= CONTENTS_SLIME;
-	return out;
-}
-
-void CBaseEntity::SetWaterType( int nType )
-{
-	m_nWaterType = 0;
-	if ( nType & CONTENTS_WATER )
-		m_nWaterType |= 1;
-	if ( nType & CONTENTS_SLIME )
-		m_nWaterType |= 2;
 }
 
 

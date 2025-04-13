@@ -61,14 +61,14 @@ bool CHL1GameMovement::CheckJumpButton( void )
 	}
 
 	// If we are in the water most of the way...
-	if ( m_pHL1Player->GetWaterLevel() >= 2 )
+	if ( m_pHL1Player->GetEngineObject()->GetWaterLevel() >= 2 )
 	{	
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
-		if(m_pHL1Player->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
+		if(m_pHL1Player->GetEngineObject()->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
 			mv->m_vecVelocity[2] = 100;
-		else if (m_pHL1Player->GetWaterType() == CONTENTS_SLIME)
+		else if (m_pHL1Player->GetEngineObject()->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
 		
 		// play swiming sound

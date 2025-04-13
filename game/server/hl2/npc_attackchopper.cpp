@@ -4092,9 +4092,9 @@ void CNPC_AttackHelicopter::ComputeAngularVelocity( const Vector &vecGoalUp, con
 
 		// calc angular accel needed to hit goal pitch in dt time.
 		float dt = 0.6;
-		goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetAbsAngles().x ) ) - GetLocalAngularVelocity().x * dt) / (dt * dt);
-		goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetAbsAngles().y ) ) - GetLocalAngularVelocity().y * dt) / (dt * dt);
-		goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetAbsAngles().z ) ) - GetLocalAngularVelocity().z * dt) / (dt * dt);
+		goalAngAccel.x = 2.0 * (AngleDiff( goalPitch, AngleNormalize(GetEngineObject()->GetAbsAngles().x ) ) - GetEngineObject()->GetLocalAngularVelocity().x * dt) / (dt * dt);
+		goalAngAccel.y = 2.0 * (AngleDiff( goalYaw, AngleNormalize(GetEngineObject()->GetAbsAngles().y ) ) - GetEngineObject()->GetLocalAngularVelocity().y * dt) / (dt * dt);
+		goalAngAccel.z = 2.0 * (AngleDiff( goalRoll, AngleNormalize(GetEngineObject()->GetAbsAngles().z ) ) - GetEngineObject()->GetLocalAngularVelocity().z * dt) / (dt * dt);
 
 		goalAngAccel.x = clamp( goalAngAccel.x, -300, 300 );
 		//goalAngAccel.y = clamp( goalAngAccel.y, -60, 60 );
@@ -4126,7 +4126,7 @@ void CNPC_AttackHelicopter::ComputeAngularVelocity( const Vector &vecGoalUp, con
 
 	m_vecAngAcceleration += angAccelAccel * 0.1;
 
-	QAngle angVel = GetLocalAngularVelocity();
+	QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 	angVel += m_vecAngAcceleration * 0.1;
 	angVel.y = clamp( angVel.y, -120, 120 );
 
@@ -4139,7 +4139,7 @@ void CNPC_AttackHelicopter::ComputeAngularVelocity( const Vector &vecGoalUp, con
 		angVel.z = flRollDiff * 0.1f;
 	}
 
-	SetLocalAngularVelocity( angVel );
+	GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 	float flAmt = clamp( angVel.y, -30, 30 ); 
 	float flRudderPose = RemapVal( flAmt, -30, 30, 45, -45 );
@@ -5081,7 +5081,7 @@ void CGrenadeHelicopter::Spawn( void )
 	
 	// Tumble in air
 	QAngle vecAngVel( random->RandomFloat ( -100, -500 ), 0, 0 );
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 	
 	// Explode on contact
 	SetTouch( &CGrenadeHelicopter::ExplodeConcussion );
@@ -5326,7 +5326,7 @@ void CGrenadeHelicopter::PhysicsSimulate( void )
 
 	if (!m_bActivated && (GetEngineObject()->GetMoveType() != MOVETYPE_VPHYSICS))
 	{
-		if ( GetWaterLevel() > 1 )
+		if (GetEngineObject()->GetWaterLevel() > 1 )
 		{
 			GetEngineObject()->SetAbsVelocity( vec3_origin );
 			GetEngineObject()->SetMoveType( MOVETYPE_NONE );
@@ -5436,7 +5436,7 @@ void CGrenadeHelicopter::DoExplosion( const Vector &vecOrigin, const Vector &vec
 	CEffectData data;
 
 	// If we're under water do a water explosion
-	if ( GetWaterLevel() != 0 && (GetWaterType() & CONTENTS_WATER) )
+	if (GetEngineObject()->GetWaterLevel() != 0 && (GetEngineObject()->GetWaterType() & CONTENTS_WATER) )
 	{
 		data.m_vOrigin = WorldSpaceCenter();
 		data.m_flMagnitude = 128;
@@ -5497,7 +5497,7 @@ void CGrenadeHelicopter::ExplodeThink(void)
 //------------------------------------------------------------------------------
 void CGrenadeHelicopter::ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelocity )
 {
-	ResolveFlyCollisionBounce( trace, vecVelocity, 0.1f );
+	GetEngineObject()->ResolveFlyCollisionBounce( trace, vecVelocity, 0.1f );
 }
 
 

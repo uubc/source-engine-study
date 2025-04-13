@@ -173,7 +173,7 @@ protected:
 	bool				HasPoseParameter( int iSequence, int iParameter );
 	void				SetMoveType( MoveType_t val, MoveCollide_t moveCollide = MOVECOLLIDE_DEFAULT );
 	float				StepHeight() const;
-	bool				CanStandOn( CBaseEntity *pSurface ) const;
+	bool				CanStandOn( IServerEntity *pSurface ) const;
 	
 	// ----------------------------------------------------
 	// Primitives

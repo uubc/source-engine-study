@@ -24,6 +24,7 @@
 //#include "te_effect_dispatch.h"
 #include "ServerNetworkProperty.h"
 #include "variant_t.h"
+#include "PlayerState.h"
 //#include "recipientfilter.h"
 
 //class IServerEntity;
@@ -32,6 +33,9 @@
 #define MAX_ENTITY_BYTE_COUNT	(NUM_ENT_ENTRIES >> 3)
 #define DEBUG_TRANSITIONS_VERBOSE	2
 
+// For now just using one big AI network
+extern ConVar think_limit;
+extern ConVar vprof_scope_entity_gamephys;
 extern ConVar phys_timescale;
 extern ConVar sv_strict_notarget;
 extern ConVar sv_fullsyncclones;
@@ -41,6 +45,13 @@ extern ConVar g_ragdoll_important_maxcount;
 extern ConVar g_ragdoll_maxcount;
 extern ConVar g_debug_ragdoll_removal;
 extern ConVar sv_teststepsimulation;
+extern ConVar sv_gravity;
+extern ConVar sv_maxvelocity;
+extern ConVar sv_friction;
+extern ConVar sv_stopspeed;
+extern ConVar sv_bounce;
+extern ConVar npc_vphysics;
+
 extern IFileSystem* g_pFileSystem;
 extern CGlobalVars g_ServerGlobalVariables;
 extern IVEngineServer* g_pVEngineServer;
@@ -68,6 +79,8 @@ namespace _SUBSYSTEM
 #else
 extern IUniformRandomStream* random;
 #endif
+extern float GetCurrentGravity(void);
+extern float GetActualGravity(IEngineObject* pEnt);
 extern bool ShouldRemoveThisRagdoll(IServerEntity* pRagdoll);
 extern void PostSimulation_ImpulseEvent(IPhysicsObject* pObject, const Vector& centerForce, const AngularImpulse& centerTorque);
 extern void PostSimulation_SetVelocityEvent(IPhysicsObject* pPhysicsObject, const Vector& vecVelocity);
@@ -359,6 +372,12 @@ public:
 		m_fBoneCacheFlags = 0;
 		m_bAlternateSorting = false;
 		SetRenderColor(255, 255, 255, 255);
+		m_vecBaseVelocity.GetForModify().Init();
+		// necessary since in debug, we initialize vectors to NAN for debugging
+		m_vecAngVelocity.Init();
+		m_pBlocker = NULL;
+		m_nSimulationTick = -1;
+
 	}
 
 	virtual ~CEngineObjectInternal()
@@ -431,8 +450,16 @@ public:
 	void SetLocalVelocity(const Vector& vecVelocity);
 	const Vector& GetLocalVelocity() const;
 
+	virtual void NotifyPositionChanged();
 	void CalcAbsolutePosition();
 	void CalcAbsoluteVelocity();
+
+	const Vector& GetBaseVelocity() const;
+	void SetBaseVelocity(const Vector& v);
+	// NOTE: Setting the abs velocity in either space will cause a recomputation
+// in the other space, so setting the abs velocity will also set the local vel
+	void SetLocalAngularVelocity(const QAngle& vecAngVelocity);
+	const QAngle& GetLocalAngularVelocity() const;
 
 	CEngineObjectInternal* GetMoveParent(void) const;
 	void SetMoveParent(IEngineObjectServer* hMoveParent);
@@ -736,6 +763,12 @@ public:
 	void SetSimulatedEveryTick(bool sim);
 	bool IsAnimatedEveryTick() const;
 	void SetAnimatedEveryTick(bool anim);
+	int	GetSimulationTick() {
+		return m_nSimulationTick;
+	}
+	void SetSimulationTick(int nSimulationTick) {
+		m_nSimulationTick= nSimulationTick;
+	}
 	// These set entity flags (EFL_*) to help optimize queries
 	void CheckHasGamePhysicsSimulation();
 	bool WillSimulateGamePhysics();
@@ -746,6 +779,67 @@ public:
 	// Quick way to ask if we have a player entity as a child anywhere in our hierarchy.
 	void RecalcHasPlayerChildBit();
 	bool DoesHavePlayerChild();
+
+	int GetWaterLevel() const;
+	void SetWaterLevel(int nLevel);
+	int GetWaterType() const;
+	void SetWaterType(int nType);
+	// Computes the water level + type
+	void UpdateWaterState();
+	bool PhysicsCheckWater(void);
+	void PhysicsCheckWaterTransition(void);
+	float GetActualGravity() {
+		return ::GetActualGravity(this);
+	}
+	void PhysicsCheckVelocity(void);
+	bool PhysicsTestEntityPosition(IServerEntity** ppEntity = NULL);
+	void PhysicsAddHalfGravity(float timestep);
+	// Computes new angles based on the angular velocity
+	void SimulateAngles(float flFrameTime);
+	int PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce);
+	int PhysicsTryMove(float flTime, trace_t* steptrace);
+	void PhysicsAddGravityMove(Vector& move);
+	// Checks a sweep without actually performing the move
+	void PhysicsCheckSweep(const Vector& vecAbsStart, const Vector& vecAbsDelta, trace_t* pTrace);
+	void PhysicsPushEntity(const Vector& push, trace_t* pTrace);
+	void PhysicsStepRecheckGround();
+	void PhysicsStepRunTimestep(float timestep);
+	// update the shadow so it will coincide with the current AI position at some time
+	// in the future (or 0 for now)
+	virtual void UpdatePhysicsShadowToCurrentPosition(float deltaTime);
+	// Computes the base velocity
+	void UpdateBaseVelocity(void);
+	void PhysicsRelinkChildren(float dt);
+	// Simulation in local space of rigid children
+	void PhysicsRigidChild(void);
+	// Performs the collision resolution for fliers.
+	void PerformFlyCollisionResolution(trace_t& trace, Vector& move);
+	void ResolveFlyCollisionBounce(trace_t& trace, Vector& vecVelocity, float flMinTotalElasticity = 0.0f);
+	void ResolveFlyCollisionSlide(trace_t& trace, Vector& vecVelocity);
+	IServerEntity* PhysicsPushMove(float movetime);
+	IServerEntity* PhysicsPushRotate(float movetime);
+	void PerformPush(float movetime);
+	float GetLocalTime(void) const;
+	void IncrementLocalTime(float flTimeDelta);
+	float GetMoveDoneTime() const;
+	void SetMoveDoneTime(float flTime);
+	int GetPushEnumCount() {
+		return m_nPushEnumCount;
+	}
+	void SetPushEnumCount(int nPushEnumCount) {
+		m_nPushEnumCount = nPushEnumCount;
+	}
+	// Run regular think and latch off angle/origin changes so we can interpolate them on the server to fake simulation
+	void StepSimulationThink(float dt);
+	// Physics-related private methods
+	void PhysicsStep(void);
+	void PhysicsPusher(void);
+	void PhysicsNone(void);
+	void PhysicsNoclip(void);
+	void PhysicsToss(void);
+	void PhysicsCustom(void);
+	void VPhysicsUpdatePusher(IPhysicsObject* pPhysics);
+	virtual void PhysicsSimulate(void);
 
 	// These methods encapsulate MOVETYPE_FOLLOW, which became obsolete
 	void FollowEntity(IEngineObjectServer* pBaseEntity, bool bBoneMerge = true);
@@ -916,11 +1010,12 @@ public:
 	const char* GetFlexControllerName(LocalFlexController_t iFlexController);
 	const char* GetFlexControllerType(LocalFlexController_t iFlexController);
 	virtual IPhysicsObject* VPhysicsGetObject(void) const { return m_pPhysicsObject; }
-	virtual int		VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
+	virtual int VPhysicsGetObjectList(IPhysicsObject** pList, int listMax);
 	// destroy and remove the physics object for this entity
-	virtual void	VPhysicsDestroyObject(void);
-	void			VPhysicsSetObject(IPhysicsObject* pPhysics);
-	void			VPhysicsSwapObject(IPhysicsObject* pSwap);
+	virtual void VPhysicsDestroyObject(void);
+	void VPhysicsSetObject(IPhysicsObject* pPhysics);
+	void VPhysicsSwapObject(IPhysicsObject* pSwap);
+	void NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake);
 	// Convenience routines to init the vphysics simulation for this object.
 // This creates a static object.  Something that behaves like world geometry - solid, but never moves
 	IPhysicsObject* VPhysicsInitStatic(void);
@@ -1088,6 +1183,12 @@ protected:
 	QAngle			m_angAbsRotation = QAngle(0, 0, 0);
 	// Global velocity
 	Vector			m_vecAbsVelocity = Vector(0, 0, 0);
+	// Velocity of the thing we're standing on (world space)
+	CNetworkVar(Vector, m_vecBaseVelocity);
+	// Local angular velocity
+	QAngle			m_vecAngVelocity;
+	unsigned char	m_nWaterType;
+	CNetworkVar(unsigned char, m_nWaterLevel);
 	IServerEntity*	m_pOuter = NULL;
 
 	// Our immediate parent in the movement hierarchy.
@@ -1099,6 +1200,16 @@ protected:
 	CBaseHandle m_hMovePeer = NULL;
 	// local coordinate frame of entity
 	matrix3x4_t m_rgflCoordinateFrame;
+	// Physics state
+	CBaseHandle			m_pBlocker;
+	// was pev->ltime
+	float			m_flLocalTime;
+	// local time at the beginning of this frame
+	float			m_flVPhysicsUpdateLocalTime;
+	// local time the movement has ended
+	float			m_flMoveDoneTime;
+	// A counter to help quickly build a list of potentially pushed objects for physics
+	int				m_nPushEnumCount;
 
 	PVSInfo_t m_PVSInfo;
 	bool m_bPVSInfoDirty = false;
@@ -1153,6 +1264,8 @@ protected:
 
 	CNetworkVar(bool, m_bSimulatedEveryTick);
 	CNetworkVar(bool, m_bAnimatedEveryTick);
+	// Which frame did I simulate?
+	int						m_nSimulationTick;
 
 	CNetworkVar(float, m_flAnimTime);  // this is the point in time that the client will interpolate to position,angle,frame,etc.
 	CNetworkVar(float, m_flSimulationTime);
@@ -1318,6 +1431,31 @@ inline void	CEngineObjectInternal::NetworkStateChanged(unsigned short varOffset)
 	// Good, they passed an offset so we can track this variable's change
 	// and avoid sending the whole entity.
 	NetworkProp()->NetworkStateChanged(varOffset);
+}
+
+inline const Vector& CEngineObjectInternal::GetBaseVelocity() const
+{
+	return m_vecBaseVelocity.Get();
+}
+
+inline void CEngineObjectInternal::SetBaseVelocity(const Vector& v)
+{
+	m_vecBaseVelocity = v;
+}
+
+inline const QAngle& CEngineObjectInternal::GetLocalAngularVelocity() const
+{
+	return m_vecAngVelocity;
+}
+
+inline int CEngineObjectInternal::GetWaterLevel() const
+{
+	return m_nWaterLevel;
+}
+
+inline void CEngineObjectInternal::SetWaterLevel(int nLevel)
+{
+	m_nWaterLevel = nLevel;
 }
 
 inline int CEngineObjectInternal::GetParentAttachment()
@@ -1863,6 +2001,21 @@ inline void CEngineObjectInternal::SetAnimatedEveryTick(bool anim)
 	}
 }
 
+inline float CEngineObjectInternal::GetLocalTime(void) const
+{
+	return m_flLocalTime;
+}
+
+inline void CEngineObjectInternal::IncrementLocalTime(float flTimeDelta)
+{
+	m_flLocalTime += flTimeDelta;
+}
+
+inline float CEngineObjectInternal::GetMoveDoneTime() const
+{
+	return (m_flMoveDoneTime >= 0) ? m_flMoveDoneTime - GetLocalTime() : -1;
+}
+
 inline float CEngineObjectInternal::GetAnimTime() const
 {
 	return m_flAnimTime;
@@ -2117,6 +2270,8 @@ public:
 	bool IsHeldObjectOnOppositeSideOfPortal(void) { return m_bHeldObjectOnOppositeSideOfPortal; }
 	bool IsSilentDropAndPickup() { return m_bSilentDropAndPickup; }
 	void SetSilentDropAndPickup(bool bSilentDropAndPickup) { m_bSilentDropAndPickup = bSilentDropAndPickup; }
+	virtual void UpdatePhysicsShadowToCurrentPosition();
+
 private:
 	void UpdatePhysicsShadowToPosition(const Vector& vecAbsOrigin);
 private:
@@ -3757,6 +3912,9 @@ public:
 	void SimThink_EntityChanged(IServerEntity* pEntity);
 	int SimThink_ListCount();
 	int SimThink_ListCopy(IServerEntity* pList[], int listMax);
+	void Physics_SimulateEntity(IServerEntity* pEntity);
+	void Physics_RunThinkFunctions(bool simulating);
+
 
 	// Call this when hierarchy is not completely set up (such as during Restore) to throw asserts
 // when people call GetAbsAnything. 
@@ -5093,7 +5251,6 @@ void CGlobalEntityList<T>::LevelInitPreEntity()
 	m_pPhysenv->SetObjectEventHandler(&m_Collisions);
 
 	m_pPhysenv->SetSimulationTimestep(g_ServerGlobalVariables.interval_per_tick); // 15 ms per tick
-	ConVarRef	sv_gravity("sv_gravity");
 	// HL Game gravity, not real-world gravity
 	m_pPhysenv->SetGravity(Vector(0, 0, -sv_gravity.GetFloat()));
 	m_PhysAverageSimTime = 0;
@@ -7182,6 +7339,144 @@ template<class T>
 int CGlobalEntityList<T>::SimThink_ListCopy(IServerEntity* pList[], int listMax)
 {
 	return g_SimThinkManager.ListCopy(pList, listMax);
+}
+
+// After this long, if a player isn't updating, then return it's projectiles to server control
+#define PLAYER_PACKETS_STOPPED_SO_RETURN_TO_PHYSICS_TIME 1.0f
+
+template<class T>
+void CGlobalEntityList<T>::Physics_SimulateEntity(IServerEntity* pEntity)
+{
+	VPROF((!vprof_scope_entity_gamephys.GetBool()) ?
+		"Physics_SimulateEntity" :
+		GetCannonicalName(pEntity->GetClassname()));
+
+	if (pEntity->IsNetworkable() && pEntity->entindex() != -1)
+	{
+		//#if !defined( NO_ENTITY_PREDICTION )
+		//		// Player drives simulation of this entity
+		//		if ( pEntity->IsPlayerSimulated() )
+		//		{
+		//			// If the player is gone, dropped, crashed, then return
+		//			//  control to the game code.
+		//			CBasePlayer *simulatingPlayer = pEntity->GetSimulatingPlayer();
+		//			if ( simulatingPlayer &&
+		//				( simulatingPlayer->GetTimeBase() > gpGlobals->curtime - PLAYER_PACKETS_STOPPED_SO_RETURN_TO_PHYSICS_TIME ) )
+		//			{
+		//				// Okay, the guy is still around
+		//				return;
+		//			}
+		//
+		//			pEntity->UnsetPlayerSimulated();
+		//		}
+		//#endif
+
+		MDLCACHE_CRITICAL_SECTION();
+
+		//#if !defined( NO_ENTITY_PREDICTION )
+		//		// If an object was at one point player simulated, but had that status revoked (as just
+		//		//  above when no packets have arrived in a while ), then we still will assume that the
+		//		//  owner/player will be predicting the entity locally (even if the game is playing like butt)
+		//		//  and so we won't spam that player with additional network data such as effects/sounds 
+		//		//  that are theoretically being predicted by the player anyway.
+		//		if ( pEntity->m_PredictableID->IsActive() )
+		//		{
+		//			CBasePlayer *playerowner = ToBasePlayer( pEntity->GetOwnerEntity() );
+		//			if ( playerowner )
+		//			{
+		//				CBasePlayer *pl = ToBasePlayer( EntityList()->GetPlayerByIndex( pEntity->m_PredictableID->GetPlayer() + 1 ) );
+		//				// Is the player who created it still the owner?
+		//				if ( pl == playerowner )
+		//				{
+		//					// Set up to suppress sending events to owner player
+		//					if ( pl->IsPredictingWeapons() )
+		//					{
+		//						IPredictionSystem::SuppressHostEvents( playerowner );
+		//					}
+		//				}
+		//			}	
+		//			{
+		//				VPROF( ( !vprof_scope_entity_gamephys.GetBool() ) ? 
+		//						"pEntity->PhysicsSimulate" : 
+		//						EntityFactoryDictionary()->GetCannonicalName( pEntity->GetClassname() ) );
+		//
+		//				// Run entity physics
+		//				pEntity->PhysicsSimulate();
+		//			}
+		//
+		//			// Restore suppression filter
+		//			IPredictionSystem::SuppressHostEvents( NULL );
+		//		}
+		//		else
+		//#endif
+				//{
+					// Run entity physics
+		pEntity->PhysicsSimulate();
+		//}
+	}
+	else
+	{
+		pEntity->GetEngineObject()->PhysicsRunThink();
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs the main physics simulation loop against all entities ( except players )
+//-----------------------------------------------------------------------------
+template<class T>
+void CGlobalEntityList<T>::Physics_RunThinkFunctions(bool simulating)
+{
+	VPROF("Physics_RunThinkFunctions");
+
+	UpdateTestMoveTypeStepSimulation();
+
+	float starttime = g_ServerGlobalVariables.curtime;
+	// clear all entites freed outside of this loop
+	CleanupDeleteList();
+
+	if (!simulating)
+	{
+		// only simulate players
+		for (int i = 1; i <= g_ServerGlobalVariables.maxClients; i++)
+		{
+			IServerEntity* pPlayer = GetPlayerByIndex(i);
+			if (pPlayer)
+			{
+				// Always reset clock to real sv.time
+				g_ServerGlobalVariables.curtime = starttime;
+				// Force usercmd processing even though gpGlobals->tickcount isn't incrementing
+				pPlayer->AsHandlePlayer()->ForceSimulation();
+				Physics_SimulateEntity(pPlayer);
+			}
+		}
+	}
+	else
+	{
+		DisableDestroyImmediate();
+		int listMax = SimThink_ListCount();
+		listMax = MAX(listMax, 1);
+		IServerEntity** list = (IServerEntity**)stackalloc(sizeof(IServerEntity*) * listMax);
+		// iterate through all entities and have them think or simulate
+
+		// UNDONE: This has problems with UTIL_RemoveImmediate() (now disabled during this loop).  
+		// Do we really need UTIL_RemoveImmediate()?
+		int count = SimThink_ListCopy(list, listMax);
+
+		//DevMsg(1, "Count: %d\n", count );
+		for (int i = 0; i < count; i++)
+		{
+			if (!list[i])
+				continue;
+			// Always reset clock to real sv.time
+			g_ServerGlobalVariables.curtime = starttime;
+			Physics_SimulateEntity(list[i]);
+		}
+
+		stackfree(list);
+		EnableDestroyImmediate();
+	}
+
+	g_ServerGlobalVariables.curtime = starttime;
 }
 
 template<class T>

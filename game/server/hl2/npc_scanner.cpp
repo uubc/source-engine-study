@@ -364,7 +364,7 @@ void CNPC_CScanner::Gib( void )
 		{
 			pBattery->GetEngineObject()->SetAbsOrigin(GetEngineObject()->GetAbsOrigin() );
 			pBattery->GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() );
-			pBattery->SetLocalAngularVelocity( GetLocalAngularVelocity() );
+			pBattery->GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() );
 			pBattery->ActivateWhenAtRest();
 			pBattery->Spawn();
 		}

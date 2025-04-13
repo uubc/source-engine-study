@@ -48,7 +48,7 @@ void CWeaponBaseRifleGrenade::PrimaryAttack( void )
 		return;
 	}
 
-	if( pPlayer->GetWaterLevel() > 2 )
+	if( pPlayer->GetEngineObject()->GetWaterLevel() > 2 )
 	{
 		PlayEmptySound();
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.0;

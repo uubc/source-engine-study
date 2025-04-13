@@ -189,7 +189,7 @@ void CNPC_Bullseye::Spawn( void )
 	GetEngineObject()->AddEffects( EF_NODRAW );
 
 	//Check our water level
-	PhysicsCheckWater();
+	GetEngineObject()->PhysicsCheckWater();
 
 	CapabilitiesAdd( bits_CAP_SIMPLE_RADIUS_DAMAGE );
 

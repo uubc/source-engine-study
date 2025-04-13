@@ -484,7 +484,7 @@ void CGibShooter::InitPointGib( CGib *pGib, const Vector &vecShootDir, float flS
 		pGib->GetEngineObject()->SetAbsVelocity( vecShootDir * flSpeed );
 
 		QAngle angVel( random->RandomFloat ( 100, 200 ), random->RandomFloat ( 100, 300 ), 0 );
-		pGib->SetLocalAngularVelocity( angVel );
+		pGib->GetEngineObject()->SetLocalAngularVelocity( angVel );
 
 		float thinkTime = ( pGib->GetEngineObject()->GetNextThink() - gpGlobals->curtime );
 

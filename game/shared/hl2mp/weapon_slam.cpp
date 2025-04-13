@@ -496,7 +496,7 @@ void CWeapon_SLAM::SatchelThrow( void )
 	{
 		pSatchel->SetThrower( GetOwner() );
 		pSatchel->ApplyAbsVelocityImpulse( vecThrow );
-		pSatchel->SetLocalAngularVelocity( QAngle( 0, 400, 0 ) );
+		pSatchel->GetEngineObject()->SetLocalAngularVelocity( QAngle( 0, 400, 0 ) );
 		pSatchel->m_bIsLive = true;
 		pSatchel->m_pMyWeaponSLAM = this;
 	}

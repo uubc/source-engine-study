@@ -421,7 +421,7 @@ void CPlatTrigger::Touch( IServerEntity *pOther )
 	if (m_pPlatform->m_toggle_state == TS_AT_BOTTOM)
 		m_pPlatform->GoUp();
 	else if (m_pPlatform->m_toggle_state == TS_AT_TOP)
-		m_pPlatform->SetMoveDoneTime( 1 );// delay going down
+		m_pPlatform->GetEngineObject()->SetMoveDoneTime( 1 );// delay going down
 }
 
 
@@ -577,7 +577,7 @@ void CFuncPlat::HitTop( void )
 	{
 		// After a delay, the platform will automatically start going down again.
 		SetMoveDone( &CFuncPlat::CallGoDown );
-		SetMoveDoneTime( 3 );
+		GetEngineObject()->SetMoveDoneTime( 3 );
 	}
 }
 
@@ -667,7 +667,7 @@ void CFuncPlatRot::Spawn( void )
 void CFuncPlatRot::GoDown( void )
 {
 	BaseClass::GoDown();
-	RotMove( m_start, GetMoveDoneTime() );
+	RotMove( m_start, GetEngineObject()->GetMoveDoneTime() );
 }
 
 
@@ -677,7 +677,7 @@ void CFuncPlatRot::GoDown( void )
 void CFuncPlatRot::HitBottom( void )
 {
 	BaseClass::HitBottom();
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	GetEngineObject()->SetLocalAngles( m_start );
 }
 
@@ -688,7 +688,7 @@ void CFuncPlatRot::HitBottom( void )
 void CFuncPlatRot::GoUp( void )
 {
 	BaseClass::GoUp();
-	RotMove( m_end, GetMoveDoneTime() );
+	RotMove( m_end, GetEngineObject()->GetMoveDoneTime() );
 }
 
 
@@ -698,7 +698,7 @@ void CFuncPlatRot::GoUp( void )
 void CFuncPlatRot::HitTop( void )
 {
 	BaseClass::HitTop();
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	GetEngineObject()->SetLocalAngles( m_end );
 }
 
@@ -710,11 +710,11 @@ void CFuncPlatRot::RotMove( QAngle &destAngle, float time )
 
 	// Travel time is so short, we're practically there already;  so make it so.
 	if ( time >= 0.1)
-		SetLocalAngularVelocity( vecDestDelta * (1.0 / time) );
+		GetEngineObject()->SetLocalAngularVelocity( vecDestDelta * (1.0 / time) );
 	else
 	{
-		SetLocalAngularVelocity( vecDestDelta );
-		SetMoveDoneTime( 1 );
+		GetEngineObject()->SetLocalAngularVelocity( vecDestDelta );
+		GetEngineObject()->SetMoveDoneTime( 1 );
 	}
 }
 
@@ -861,7 +861,7 @@ void CFuncTrain::Wait( void )
 			g_pSoundEmitterSystem->EmitSound( filter, entindex(), ep );
 		}
 
-		SetMoveDoneTime( -1 );
+		GetEngineObject()->SetMoveDoneTime( -1 );
         
 		return;
     }
@@ -869,7 +869,7 @@ void CFuncTrain::Wait( void )
 	//NOTENOTE: -1 wait will wait forever
 	if ( m_flWait != 0 )
 	{
-		SetMoveDoneTime( m_flWait );
+		GetEngineObject()->SetMoveDoneTime( m_flWait );
 
 		StopMovingSound();
 		
@@ -998,7 +998,7 @@ void CFuncTrain::Activate( void )
 		// Start immediately if not triggered
 		if ( !GetEntityName() )
 		{	
-			SetMoveDoneTime( 0.1 );
+			GetEngineObject()->SetMoveDoneTime( 0.1 );
 			SetMoveDone( &CFuncTrain::Next );
 		}
 		else
@@ -1159,7 +1159,7 @@ void CFuncTrain::Stop( void )
 
 		//Do not teleport to our final move destination
 		SetMoveDone( NULL );
-		SetMoveDoneTime( -1 );
+		GetEngineObject()->SetMoveDoneTime( -1 );
 	}
 }
 
@@ -1620,7 +1620,7 @@ void CFuncTrackTrain::SetSpeed( float flSpeed, bool bAccel /*= false */  )
 void CFuncTrackTrain::Stop( void )
 {
 	GetEngineObject()->SetLocalVelocity( vec3_origin );
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	m_oldSpeed = m_flSpeed;
 	m_flSpeed = 0;
 	SoundStop();
@@ -2223,7 +2223,7 @@ void CFuncTrackTrain::DoUpdateOrientation( const QAngle &curAngles, const QAngle
 		flInterval = 0.1;
 	}
 
-	QAngle vecAngVel( vx / flInterval, vy / flInterval, GetLocalAngularVelocity().z );
+	QAngle vecAngVel( vx / flInterval, vy / flInterval, GetEngineObject()->GetLocalAngularVelocity().z );
 
 	if ( m_flBank != 0 )
 	{
@@ -2241,7 +2241,7 @@ void CFuncTrackTrain::DoUpdateOrientation( const QAngle &curAngles, const QAngle
 		}
 	}
 	
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 }
 
 
@@ -2272,7 +2272,7 @@ void CFuncTrackTrain::TeleportToPathTrack( CPathTrack *pTeleport )
 	}
 
 	Teleport( &pTeleport->GetEngineObject()->GetLocalOrigin(), &nextAngles, NULL );
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 	variant_t emptyVariant;
 	pTeleport->AcceptInput( "InTeleport", this, this, emptyVariant, 0 );
@@ -2373,7 +2373,7 @@ void CFuncTrackTrain::Next( void )
 		m_OnNext.FireOutput( pNext, this );
 
 		SetThink( &CFuncTrackTrain::Next );
-		SetMoveDoneTime( 0.5 );
+		GetEngineObject()->SetMoveDoneTime( 0.5 );
 		GetEngineObject()->SetNextThink( gpGlobals->curtime );
 		SetMoveDone( NULL );
 	}
@@ -2384,7 +2384,7 @@ void CFuncTrackTrain::Next( void )
 		//
 		SoundStop();
 		GetEngineObject()->SetLocalVelocity(nextPos - GetEngineObject()->GetLocalOrigin());
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 		float distance = GetEngineObject()->GetLocalVelocity().Length();
 		m_oldSpeed = m_flSpeed;
 
@@ -2400,7 +2400,7 @@ void CFuncTrackTrain::Next( void )
 			GetEngineObject()->SetLocalVelocity(GetEngineObject()->GetLocalVelocity() * (m_oldSpeed / distance) );
 			SetMoveDone( &CFuncTrackTrain::DeadEnd );
 			GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
-			SetMoveDoneTime( flTime );
+			GetEngineObject()->SetMoveDoneTime( flTime );
 		}
 		else
 		{
@@ -2465,7 +2465,7 @@ void CFuncTrackTrain::DeadEnd( void )
 	}
 
 	GetEngineObject()->SetLocalVelocity( vec3_origin );
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	if ( pTrack )
 	{
 		DevMsg( 2, "at %s\n", pTrack->GetDebugName() );
@@ -2614,7 +2614,7 @@ void CFuncTrackTrain::NearestPath( void )
 
 	if ( m_flSpeed != 0 )
 	{
-		SetMoveDoneTime( 0.1 );
+		GetEngineObject()->SetMoveDoneTime( 0.1 );
 		SetMoveDone( &CFuncTrackTrain::Next );
 	}
 }
@@ -2671,7 +2671,7 @@ void CFuncTrackTrain::Spawn( void )
 	}
 
 	GetEngineObject()->SetLocalVelocity(vec3_origin);
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 	m_dir = 1;
 
@@ -3044,11 +3044,11 @@ TRAIN_CODE CFuncTrackChange::EvaluateTrain( CPathTrack *pcurrent )
 
 void CFuncTrackChange::UpdateTrain( QAngle &dest )
 {
-	float time = GetMoveDoneTime();
+	float time = GetEngineObject()->GetMoveDoneTime();
 
 	m_train->GetEngineObject()->SetAbsVelocity(GetEngineObject()->GetAbsVelocity() );
-	m_train->SetLocalAngularVelocity( GetLocalAngularVelocity() );
-	m_train->SetMoveDoneTime( time );
+	m_train->GetEngineObject()->SetLocalAngularVelocity(GetEngineObject()->GetLocalAngularVelocity() );
+	m_train->GetEngineObject()->SetMoveDoneTime( time );
 
 	// Attempt at getting the train to rotate properly around the origin of the trackchange
 	if ( time <= 0 )
@@ -3089,7 +3089,7 @@ void CFuncTrackChange::GoDown( void )
 	{
 		BaseClass::GoDown();
 		SetMoveDone( &CFuncTrackChange::CallHitBottom );
-		RotMove( m_start, GetMoveDoneTime() );
+		RotMove( m_start, GetEngineObject()->GetMoveDoneTime() );
 	}
 	// Otherwise, rotate first, move second
 
@@ -3128,7 +3128,7 @@ void CFuncTrackChange::GoUp( void )
 		// If ROTMOVE, move & rotate
 		BaseClass::GoUp();
 		SetMoveDone( &CFuncTrackChange::CallHitTop );
-		RotMove( m_end, GetMoveDoneTime() );
+		RotMove( m_end, GetEngineObject()->GetMoveDoneTime() );
 	}
 	
 	// Otherwise, move first, rotate second
@@ -3222,7 +3222,7 @@ void CFuncTrackChange::HitBottom( void )
 		m_train->SetTrack( m_trackBottom );
 	}
 	SetMoveDone( NULL );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 
 	UpdateAutoTargets( m_toggle_state );
 
@@ -3244,7 +3244,7 @@ void CFuncTrackChange::HitTop( void )
 	
 	// Don't let the plat go back down
 	SetMoveDone( NULL );
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 	UpdateAutoTargets( m_toggle_state );
 	EnableUse();
 }

@@ -663,14 +663,14 @@ bool CCSGameMovement::CheckJumpButton( void )
 	}
 
 	// If we are in the water most of the way...
-	if ( m_pCSPlayer->GetWaterLevel() >= 2 )
+	if ( m_pCSPlayer->GetEngineObject()->GetWaterLevel() >= 2 )
 	{	
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
-		if(m_pCSPlayer->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
+		if(m_pCSPlayer->GetEngineObject()->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
 			mv->m_vecVelocity[2] = 100;
-		else if (m_pCSPlayer->GetWaterType() == CONTENTS_SLIME)
+		else if (m_pCSPlayer->GetEngineObject()->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
 		
 		// play swiming sound

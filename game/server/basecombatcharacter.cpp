@@ -292,7 +292,7 @@ void CBaseCombatCharacter::CorpseFade( void )
 	StopAnimation();
 	GetEngineObject()->SetAbsVelocity( vec3_origin );
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	GetEngineObject()->SetAnimTime(gpGlobals->curtime);
 	GetEngineObject()->IncrementInterpolationFrame();
 	SUB_StartFadeOut();
@@ -1599,7 +1599,6 @@ Killed
 */
 void CBaseCombatCharacter::Event_Killed( const ITakeDamageInfo&info )
 {
-	extern ConVar npc_vphysics;
 
 	// Advance life state to dying
 	m_lifeState = LIFE_DYING;

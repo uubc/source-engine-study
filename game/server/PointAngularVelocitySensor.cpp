@@ -226,7 +226,7 @@ float CPointAngularVelocitySensor::SampleAngularVelocity(CBaseEntity *pEntity)
 	}
 	else
 	{
-		QAngle vecAngVel = pEntity->GetLocalAngularVelocity();
+		QAngle vecAngVel = pEntity->GetEngineObject()->GetLocalAngularVelocity();
 		float flMax = MAX(fabs(vecAngVel[PITCH]), fabs(vecAngVel[YAW]));
 
 		return MAX(flMax, fabs(vecAngVel[ROLL]));

@@ -583,7 +583,7 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 #ifdef CSTRIKE_DLL
 	else if ( enginetrace->GetPointContents( knee ) & MASK_WATER )  // we want to use the knee for Cstrike, not the waist
 #else
-	else if ( GetWaterLevel() == WL_Waist )
+	else if (GetEngineObject()->GetWaterLevel() == WL_Waist )
 #endif // CSTRIKE_DLL
 	{
 		static int iSkipStep = 0;
@@ -602,7 +602,7 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 		fvol = 0.65;
 		SetStepSoundTime( STEPSOUNDTIME_WATER_KNEE, bWalking );
 	}
-	else if ( GetWaterLevel() == WL_Feet )
+	else if (GetEngineObject()->GetWaterLevel() == WL_Feet )
 	{
 		psurface = EntityList()->PhysGetProps()->GetSurfaceData(EntityList()->PhysGetProps()->GetSurfaceIndex( "water" ) );
 		fvol = bWalking ? 0.2 : 0.5;
@@ -1989,7 +1989,7 @@ bool CBasePlayer::SetFOV( CBaseEntity *pRequester, int FOV, float zoomRate, int 
 //-----------------------------------------------------------------------------
 void CBasePlayer::UpdateUnderwaterState( void )
 {
-	if ( GetWaterLevel() == WL_Eyes )
+	if (GetEngineObject()->GetWaterLevel() == WL_Eyes )
 	{
 		if ( IsPlayerUnderwater() == false )
 		{
@@ -2003,7 +2003,7 @@ void CBasePlayer::UpdateUnderwaterState( void )
 		SetPlayerUnderwater( false );
 	}
 
-	if ( GetWaterLevel() == 0 )
+	if (GetEngineObject()->GetWaterLevel() == 0 )
 	{
 		if (GetEngineObject()->GetFlags() & FL_INWATER )
 		{
@@ -2028,7 +2028,7 @@ void CBasePlayer::UpdateUnderwaterState( void )
 	{
 #ifndef CLIENT_DLL
 		// player enter water sound
-		if (GetWaterType() == CONTENTS_WATER)
+		if (GetEngineObject()->GetWaterType() == CONTENTS_WATER)
 		{
 			const char* soundname = "Player.Wade";
 			CPASAttenuationFilter filter(this, soundname);

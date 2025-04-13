@@ -1377,7 +1377,7 @@ float CAI_MoveProbe::StepHeight() const
 
 //-----------------------------------------------------------------------------
 
-bool CAI_MoveProbe::CanStandOn( CBaseEntity *pSurface ) const
+bool CAI_MoveProbe::CanStandOn( IServerEntity *pSurface ) const
 {
 	return GetOuter()->CanStandOn( pSurface );
 }

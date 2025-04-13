@@ -134,7 +134,7 @@ void CGravityVortexController::PullPlayersInRange( void )
 	vecForce *= ( 1.0f - ( dist / m_flRadius ) ) * playerForce * mass;
 	vecForce[2] *= 0.025f;
 	
-	pPlayer->SetBaseVelocity( vecForce );
+	pPlayer->GetEngineObject()->SetBaseVelocity( vecForce );
 	pPlayer->GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 	
 	// Make sure the player moves

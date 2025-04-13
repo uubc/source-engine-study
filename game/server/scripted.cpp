@@ -726,7 +726,7 @@ void CAI_ScriptedSequence::StartScript( void )
 			pTarget->Teleport( &GetEngineObject()->GetAbsOrigin(), NULL, &vec3_origin );
 			m_bIsTeleportingDueToMoveTo = false;
 			pTarget->GetMotor()->SetIdealYaw(GetEngineObject()->GetLocalAngles().y );
-			pTarget->SetLocalAngularVelocity( vec3_angle );
+			pTarget->GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 			pTarget->GetEngineObject()->IncrementInterpolationFrame();
 			QAngle angles = pTarget->GetEngineObject()->GetLocalAngles();
 			angles.y = GetEngineObject()->GetLocalAngles().y;

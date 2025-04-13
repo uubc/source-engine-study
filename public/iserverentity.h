@@ -47,12 +47,14 @@ class CDmgAccumulator;
 struct vehiclesounds_t;
 class IEngineObjectServer;
 class IServerEntity;
+class IServerEntityList;
 class IServerVehicle;
 class variant_t;
 class IEntitySaveUtils;
 class CEventAction;
 struct TimedOverlay_t;
 class KeyValues;
+class CPlayerState;
 
 struct servertouchlink_t
 {
@@ -418,11 +420,16 @@ public:
 	virtual void CalcAbsolutePosition() = 0;
 	virtual void CalcAbsoluteVelocity() = 0;
 
+	virtual const Vector& GetBaseVelocity() const = 0;
+	virtual void SetBaseVelocity(const Vector& v) = 0;
+	virtual void SetLocalAngularVelocity(const QAngle& vecAngVelocity) = 0;
+	virtual const QAngle& GetLocalAngularVelocity() const = 0;
+
 	// Set the movement parent. Your local origin and angles will become relative to this parent.
 // If iAttachment is a valid attachment on the parent, then your local origin and angles 
 // are relative to the attachment on this entity. If iAttachment == -1, it'll preserve the
 // current m_iParentAttachment.
-	virtual void	SetParent(IEngineObjectServer* pNewParent, int iAttachment = -1) = 0;
+	virtual void SetParent(IEngineObjectServer* pNewParent, int iAttachment = -1) = 0;
 	// FIXME: Make hierarchy a member of IServerEntity
 	// or a contained private class...
 	virtual void UnlinkChild(IEngineObjectServer* pChild) = 0;
@@ -442,6 +449,7 @@ public:
 	//virtual void SetNextMovePeer(IEngineObjectServer* hMovePeer) = 0;
 	virtual int GetAllChildren(CUtlVector<IEngineObjectServer*>& list) = 0;
 	virtual bool EntityIsParentOf(IEngineObjectServer* pEntity) = 0;
+	virtual bool DoesHavePlayerChild() = 0;
 	virtual int GetAllInHierarchy(CUtlVector<IEngineObjectServer*>& list) = 0;
 	virtual void ResetRgflCoordinateFrame() = 0;
 	// Returns the entity-to-world transform
@@ -658,8 +666,38 @@ public:
 	virtual void SetSimulatedEveryTick(bool sim) = 0;
 	virtual bool IsAnimatedEveryTick() const = 0;
 	virtual void SetAnimatedEveryTick(bool anim) = 0;
+	virtual int	GetSimulationTick() = 0;
+	virtual void SetSimulationTick(int nSimulationTick) = 0;
 
-	virtual bool DoesHavePlayerChild() = 0;
+	virtual int GetWaterLevel() const = 0;
+	virtual void SetWaterLevel(int nLevel) = 0;
+	virtual int GetWaterType() const = 0;
+	virtual void SetWaterType(int nType) = 0;
+	virtual void UpdateWaterState() = 0;
+	virtual bool PhysicsCheckWater(void) = 0;
+	virtual void PhysicsCheckWaterTransition(void) = 0;
+
+	virtual float GetActualGravity() = 0;
+	virtual float GetLocalTime(void) const = 0;
+	virtual void PhysicsRelinkChildren(float dt) = 0;
+	virtual void UpdateBaseVelocity(void) = 0;
+	virtual void PhysicsRigidChild(void) = 0;
+	virtual int PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce) = 0;
+	virtual float GetMoveDoneTime() const = 0;
+	virtual void SetMoveDoneTime(float flTime) = 0;
+	virtual int GetPushEnumCount() = 0;
+	virtual void SetPushEnumCount(int nPushEnumCount) = 0;
+	virtual void PhysicsPushEntity(const Vector& push, trace_t* pTrace) = 0;
+	virtual void ResolveFlyCollisionBounce(trace_t& trace, Vector& vecVelocity, float flMinTotalElasticity = 0.0f) = 0;
+	virtual void PhysicsStepRecheckGround() = 0;
+	virtual void PhysicsStep(void) = 0;
+	virtual void PhysicsPusher(void) = 0;
+	virtual void PhysicsNone(void) = 0;
+	virtual void PhysicsNoclip(void) = 0;
+	virtual void PhysicsToss(void) = 0;
+	virtual void PhysicsCustom(void) = 0;
+	virtual void VPhysicsUpdatePusher(IPhysicsObject* pPhysics) = 0;
+	virtual void PhysicsSimulate(void) = 0;
 
 	virtual void FollowEntity(IEngineObjectServer* pBaseEntity, bool bBoneMerge = true) = 0;
 	virtual void StopFollowingEntity() = 0;	// will also change to MOVETYPE_NONE
@@ -773,6 +811,7 @@ public:
 	virtual int VPhysicsGetObjectList(IPhysicsObject** pList, int listMax) = 0;
 	virtual void VPhysicsSetObject(IPhysicsObject* pPhysics) = 0;
 	virtual void VPhysicsSwapObject(IPhysicsObject* pSwap) = 0;
+	virtual void UpdatePhysicsShadowToCurrentPosition(float deltaTime) = 0;
 	virtual const Vector& WorldAlignMins() const = 0;
 	virtual const Vector& WorldAlignMaxs() const = 0;
 	virtual const Vector& WorldAlignSize() const = 0;
@@ -1012,7 +1051,7 @@ public:
 	// Immediately end a multiplayer game
 	virtual void EndMultiplayerGame(void) = 0;
 	// trace line rules
-	virtual float WeaponTraceEntity(CBaseEntity* pEntity, const Vector& vecStart, const Vector& vecEnd, unsigned int mask, trace_t* ptr) = 0;
+	virtual float WeaponTraceEntity(IServerEntity* pEntity, const Vector& vecStart, const Vector& vecEnd, unsigned int mask, trace_t* ptr) = 0;
 	// Setup g_pPlayerResource (some mods use a different entity type here).
 	virtual void CreateStandardEntities() = 0;
 	// Team name, etc shown in chat and dedicated server console
@@ -1032,10 +1071,27 @@ public:
 	// game-specific factories
 	virtual CTacticalMissionManager* TacticalMissionManagerFactory(void) = 0;
 	virtual void ProcessVerboseLogOutput(void) = 0;
-	virtual bool	MegaPhyscannonActive(void) = 0;
+	virtual bool MegaPhyscannonActive(void) = 0;
 	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, float attenuation) = 0;
+	virtual IRecipientFilter* CreatePASAttenuationFilter(IServerEntity* entity, const char* lookupSound) = 0;
 	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation) = 0;
+};
+
+//
+// Player PHYSICS FLAGS bits
+//
+enum PlayerPhysFlag_e
+{
+	PFLAG_DIROVERRIDE = (1 << 0),		// override the player's directional control (trains, physics gun, etc.)
+	PFLAG_DUCKING = (1 << 1),		// In the process of ducking, but totally squatted yet
+	PFLAG_USING = (1 << 2),		// Using a continuous entity
+	PFLAG_OBSERVER = (1 << 3),		// player is locked in stationary cam mode. Spectators can move, observers can't.
+	PFLAG_VPHYSICS_MOTIONCONTROLLER = (1 << 4),	// player is physically attached to a motion controller
+	PFLAG_GAMEPHYSICS_ROTPUSH = (1 << 5), // game physics did a rotating push that we may want to override with vphysics
+
+	// If you add another flag here check that you aren't 
+	// overwriting phys flags in the HL2 of TF2 player classes
 };
 
 class IServerPlayer : public IHandlePlayer {
@@ -1044,6 +1100,14 @@ public:
 	virtual int GetObserverMode(void) const = 0; // returns observer mode or OBS_NONE
 	virtual IServerEntity* GetObserverTarget(void) const = 0; // returns players targer or NULL
 	virtual bool SetObserverTarget(IServerEntity* target) = 0;
+	virtual void SetPhysicsFlag(int nFlag, bool bSet) = 0;
+	virtual CPlayerState* PlayerData(void) = 0;
+	virtual void ForceSimulation() = 0;
+};
+
+class IServerNPC : public IHandleNPC {
+public:
+	virtual void NotifyPushMove() = 0;
 };
 
 // This class is how the engine talks to entities in the game DLL.
@@ -1123,6 +1187,7 @@ public:
 	virtual IServerPlayer* AsHandlePlayer() = 0;
 	virtual bool IsCombatCharacter() const = 0;
 	virtual bool IsNPC(void) const = 0;
+	virtual IServerNPC* AsHandleNPC() = 0;
 	virtual bool IsNetClient(void) const = 0;
 	virtual bool IsCombineBall() const = 0;
 	virtual bool IsViewModel() const = 0;
@@ -1133,7 +1198,9 @@ public:
 	virtual const char* GetNewLandmarkName() = 0;
 	virtual bool IsNodeEnt() = 0;
 	virtual bool IsAlive(void) = 0;
+	virtual bool IsAIWalkable(void) = 0;
 	virtual bool IsStandable() const = 0;
+	virtual bool CanStandOn(IServerEntity* pSurface) const = 0;
 	virtual bool IsMoving(void) = 0;
 	virtual bool IsTransparent() const = 0;
 	virtual bool IsVisible(void) = 0;
@@ -1165,13 +1232,13 @@ public:
 	virtual void OnAddEffects(int nEffects) = 0;
 	virtual void OnRemoveEffects(int nEffects) = 0;
 	virtual void OnSetEffects(int nEffects) = 0;
+	virtual bool OnSetLocalAngularVelocity(const QAngle& vecAngVelocity) = 0;
 	virtual	bool ShouldCollide(int collisionGroup, int contentsMask) const = 0;
 	virtual bool TestCollision(const Ray_t& ray, unsigned int mask, trace_t& trace) = 0;
 	virtual	bool TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr) = 0;
 	virtual void AddWatcherToEntity(IServerEntity* pWatcher, int watcherType) = 0;
 	virtual void RemoveWatcherFromEntity(IServerEntity* pWatcher, int watcherType) = 0;
 	virtual void Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) = 0;
-	virtual int GetPushEnumCount() = 0;
 	virtual void PhysicsSimulate(void) = 0;
 	virtual void Think(void) = 0;
 #ifdef _DEBUG
@@ -1192,7 +1259,6 @@ public:
 	virtual unsigned int PhysicsSolidMaskForEntity(void) const = 0;
 	virtual void VPhysicsUpdate(IPhysicsObject* pPhysics) = 0;
 	virtual void VPhysicsShadowUpdate(IPhysicsObject* pPhysics) = 0;
-	virtual void UpdatePhysicsShadowToCurrentPosition(float deltaTime) = 0;
 	virtual int VPhysicsTakeDamage(const ITakeDamageInfo& info) = 0;
 	virtual void VPhysicsCollision(int index, gamevcollisionevent_t* pEvent) = 0;
 	virtual void VPhysicsShadowCollision(int index, gamevcollisionevent_t* pEvent) = 0;
@@ -1200,7 +1266,13 @@ public:
 	virtual void StartTouch(IServerEntity* pOther) = 0;
 	virtual void Touch(IServerEntity* pOther) = 0;
 	virtual void EndTouch(IServerEntity* pOther) = 0;
+	virtual void StartBlocked(IServerEntity* pOther) = 0;
 	virtual void Blocked(IServerEntity* pOther) = 0;
+	virtual void EndBlocked(void) = 0;
+	virtual void MoveDone(void) = 0;
+	virtual void GetGroundVelocityToApply(Vector& vecGroundVel) = 0;
+	virtual void PerformCustomPhysics(Vector* pNewPosition, Vector* pNewVelocity, QAngle* pNewAngles, QAngle* pNewAngVelocity) = 0;
+	virtual void ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity) = 0;
 	virtual bool IsTriggered(IServerEntity* pActivator) = 0;
 	virtual void StartGroundContact(IServerEntity* ground) = 0;
 	virtual void EndGroundContact(IServerEntity* ground) = 0;
@@ -1219,17 +1291,12 @@ public:
 	virtual const Vector& WorldSpaceCenter() const = 0;
 	virtual	Vector GetStepOrigin(void) const = 0;
 	virtual	QAngle GetStepAngles(void) const = 0;
-	virtual const Vector& GetBaseVelocity() const = 0;
-	virtual void SetBaseVelocity(const Vector& v) = 0;
-	virtual void SetLocalAngularVelocity(const QAngle& vecAngVelocity) = 0;
-	virtual const QAngle& GetLocalAngularVelocity() const = 0;
 	virtual Vector GetSmoothedVelocity(void) = 0;
 	virtual void VelocityPunch(const Vector& vecForce) = 0;
 	virtual void ApplyAbsVelocityImpulse(const Vector& vecImpulse) = 0;
 	virtual float GetStepHeight() const = 0;
 	virtual int IsDormant(void) = 0;
 	virtual void MakeDormant(void) = 0;
-	virtual float GetMoveDoneTime() const = 0;
 	virtual IServerEntity* GetActiveWeapon() const = 0;
 	virtual IServerEntity* PhysCannonGetHeldEntity() = 0;
 	virtual int GetMaxHealth() const = 0;
@@ -1239,6 +1306,7 @@ public:
 	virtual const char& GetTakeDamage() const = 0;
 	virtual void SetTakeDamage(int takedamage) = 0;
 	virtual float GetAttackDamageScale(IHandleEntity* pVictim) = 0;
+	virtual int GetDamageType() const = 0;
 	virtual bool PassesDamageFilter(const ITakeDamageInfo& info) = 0;
 	virtual void TakeDamage(const ITakeDamageInfo& info) = 0;
 	virtual int OnTakeDamage(const ITakeDamageInfo& info) = 0;
@@ -1263,7 +1331,6 @@ public:
 	virtual IServerVehicle* GetServerVehicle() = 0;
 	virtual int GetVehicleAnalogControlBias() = 0;
 	virtual void SetVehicleAnalogControlBias(int bias) = 0;
-	virtual void PhysicsRelinkChildren(float dt) = 0;
 	virtual bool PhysicsSplash(const Vector& centerPoint, const Vector& normal, float rawSpeed, float scaledSpeed) = 0;
 	virtual void PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
 	virtual void PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
@@ -1272,9 +1339,7 @@ public:
 	virtual IServerEntity* EntityPhysics_CreateSolver(IServerEntity* pPhysicsBlocker, bool disableCollisions, float separationDuration) = 0;
 	virtual IServerEntity* NPCPhysics_CreateSolver(IServerEntity* pPhysicsObject, bool disableCollisions, float separationDuration) = 0;
 	virtual bool NPC_CheckBrushExclude(IServerEntity* pBrush) = 0;
-	virtual int GetWaterLevel() const = 0;
-	virtual int GetWaterType() const = 0;
-	virtual void UpdateWaterState() = 0;
+	virtual void Splash() = 0;
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
 	static bool IsServer(void) { return true; }
 };
@@ -1363,6 +1428,9 @@ const float DEFAULT_SKID_THRESHOLD = 10.0f;
 abstract_class IServerEntityList : public IEntityList, public ISaveRestoreBlockHandler
 {
 public:
+
+	virtual IServerEntityList* AsServerEntityList() { return this; }
+	virtual IClientEntityList* AsClientEntityList() { return NULL; }
 
 	virtual bool Init() = 0;
 	virtual void Shutdown() = 0;
@@ -1530,6 +1598,7 @@ public:
 	virtual void SimThink_EntityChanged(IServerEntity* pEntity) = 0;
 	virtual int SimThink_ListCount() = 0;
 	virtual int SimThink_ListCopy(IServerEntity* pList[], int listMax) = 0;
+	virtual void Physics_RunThinkFunctions(bool simulating) = 0;
 
 	virtual bool IsAccurateTriggerBboxChecks() = 0;
 	virtual void SetAccurateTriggerBboxChecks(bool bAccurateTriggerBboxChecks) = 0;

@@ -265,7 +265,7 @@ private:
 
 	CNetworkVar( int, m_nExactWaterLevel );
 
-	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_nWaterLevel );
+	//IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_nWaterLevel );
 
 };
 
@@ -273,7 +273,7 @@ IMPLEMENT_SERVERCLASS_ST( CPropAirboat, DT_PropAirboat )
 	SendPropBool( SENDINFO( m_bHeadlightIsOn ) ),
 	SendPropInt( SENDINFO( m_nAmmoCount ), 9 ),
 	SendPropInt( SENDINFO( m_nExactWaterLevel ) ),
-	SendPropInt( SENDINFO( m_nWaterLevel ) ),
+	//SendPropInt( SENDINFO( m_nWaterLevel ) ),
 	SendPropVector( SENDINFO( m_vecPhysVelocity ) ),
 END_SEND_TABLE();
 
@@ -1144,18 +1144,18 @@ void CPropAirboat::Think(void)
 		if ( tr.contents & CONTENTS_SLIME )
 		{
 			// We fake this value to mean type, instead of level
-			SetWaterLevel( 2 );
+			GetEngineObject()->SetWaterLevel( 2 );
 		}
 		else
 		{
 			// This simply signifies water
-			SetWaterLevel( 1 );
+			GetEngineObject()->SetWaterLevel( 1 );
 		}
 	}
 	else
 	{
 		// Not in water
-		SetWaterLevel( 0 );
+		GetEngineObject()->SetWaterLevel( 0 );
 	}
 
 	StudioFrameAdvance();
@@ -1453,7 +1453,7 @@ void CPropAirboat::UpdateFanSound( float speedRatio )
 //-----------------------------------------------------------------------------
 void CPropAirboat::UpdateWaterSound( float speedRatio )
 {
-	int nWaterLevel = GetWaterLevel();
+	int nWaterLevel = GetEngineObject()->GetWaterLevel();
 
 	// Manage the state of the water stopped sound (gentle lapping at the pontoons).
 	if ( nWaterLevel == 0 )
@@ -2051,7 +2051,7 @@ void CPropAirboat::DampenUpMotion( Vector &vecVehicleEyePos, QAngle &vecVehicleE
 //-----------------------------------------------------------------------------
 void CPropAirboat::CreateSplash( int nSplashType )
 {
-	if ( GetWaterLevel( ) == 0 )
+	if (GetEngineObject()->GetWaterLevel( ) == 0 )
 		return;
 
 	Vector vecSplashPoint;
@@ -2061,7 +2061,7 @@ void CPropAirboat::CreateSplash( int nSplashType )
 	CEffectData	data;
 	data.m_fFlags = 0;
 	data.m_vOrigin = vecSplashPoint;
-	if ( GetWaterType() & CONTENTS_SLIME )
+	if (GetEngineObject()->GetWaterType() & CONTENTS_SLIME )
 	{
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}

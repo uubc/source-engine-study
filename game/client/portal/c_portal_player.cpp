@@ -1191,7 +1191,7 @@ Vector C_Portal_Player::GetAutoaimVector( float flDelta )
 //-----------------------------------------------------------------------------
 bool C_Portal_Player::CanSprint( void )
 {
-	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && (GetWaterLevel() != 3) );
+	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && (GetEngineObject()->GetWaterLevel() != 3) );
 }
 
 

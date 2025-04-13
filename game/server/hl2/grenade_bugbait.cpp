@@ -315,7 +315,7 @@ CGrenadeBugBait *BugBaitGrenade_Create( const Vector &position, const QAngle &an
 	
 	if ( pGrenade != NULL )
 	{
-		pGrenade->SetLocalAngularVelocity( angVelocity );
+		pGrenade->GetEngineObject()->SetLocalAngularVelocity( angVelocity );
 		pGrenade->GetEngineObject()->SetAbsVelocity( velocity );
 		pGrenade->SetThrower( ToBaseCombatCharacter( owner ) );
 	}

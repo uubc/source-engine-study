@@ -5,6 +5,8 @@
 //=============================================================================//
 //#include "cbase.h"
 #include "ragdoll_shared.h"
+#include "edict.h"
+#include "PlayerState.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -39,6 +41,14 @@ const objectparams_t g_PhysDefaultObjectParams =
 	true,// enable collisions?
 };
 
+// Prints warnings if any entity think functions take longer than this many milliseconds
+#ifdef _DEBUG
+#define DEF_THINK_LIMIT "20"
+#else
+#define DEF_THINK_LIMIT "10"
+#endif
+
+ConVar think_limit("think_limit", DEF_THINK_LIMIT, FCVAR_REPLICATED, "Maximum think time in milliseconds, warning is printed if this is exceeded.");
 ConVar sv_portal_collision_sim_bounds_x("sv_portal_collision_sim_bounds_x", "200", FCVAR_REPLICATED, "Size of box used to grab collision geometry around placed portals. These should be at the default size or larger only!");
 ConVar sv_portal_collision_sim_bounds_y("sv_portal_collision_sim_bounds_y", "200", FCVAR_REPLICATED, "Size of box used to grab collision geometry around placed portals. These should be at the default size or larger only!");
 ConVar sv_portal_collision_sim_bounds_z("sv_portal_collision_sim_bounds_z", "252", FCVAR_REPLICATED, "Size of box used to grab collision geometry around placed portals. These should be at the default size or larger only!");
@@ -48,6 +58,38 @@ ConVar sv_portal_trace_vs_holywall("sv_portal_trace_vs_holywall", "1", FCVAR_REP
 ConVar sv_portal_trace_vs_staticprops("sv_portal_trace_vs_staticprops", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Use traces against portal environment static prop geometry");
 ConVar sv_use_transformed_collideables("sv_use_transformed_collideables", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Disables traces against remote portal moving entities using transforms to bring them into local space.");
 
+ConVar	sv_gravity("sv_gravity", "600", FCVAR_NOTIFY | FCVAR_REPLICATED, "World gravity.");
+ConVar	sv_maxvelocity("sv_maxvelocity", "3500", FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Maximum speed any ballistically moving object is allowed to attain per axis.");
+ConVar	sv_friction("sv_friction", "4", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "World friction.");
+ConVar	sv_stopspeed("sv_stopspeed", "100", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Minimum stopping speed when on ground.");
+ConVar	sv_bounce("sv_bounce", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Bounce multiplier for when physically simulated objects collide with other objects.");
+ConVar	npc_vphysics("npc_vphysics", "0");
+
+float GetCurrentGravity(void)
+{
+#if defined( TF_CLIENT_DLL ) || defined( TF_DLL )
+	if (TFGameRules())
+	{
+		return (sv_gravity.GetFloat() * TFGameRules()->GetGravityMultiplier());
+	}
+#endif 
+
+	return sv_gravity.GetFloat();
+}
+
+//-----------------------------------------------------------------------------
+// Returns the actual gravity
+//-----------------------------------------------------------------------------
+float GetActualGravity(IEngineObject* pEnt)
+{
+	float ent_gravity = pEnt->GetGravity();
+	if (ent_gravity == 0.0f)
+	{
+		ent_gravity = 1.0f;
+	}
+
+	return ent_gravity * GetCurrentGravity();
+}
 
 // solid_t parsing
 class CSolidSetDefaults : public IVPhysicsKeyHandler
@@ -872,4 +914,803 @@ void PrecachePhysicsSounds(IEntityList* pEntityList)
 	}
 }
 
+extern CGlobalVars g_ServerGlobalVariables;
+extern IEngineTrace* g_pEngineTraceServer;
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+CPhysicsPushedEntities::CPhysicsPushedEntities(void) : m_rgPusher(8, 8), m_rgMoved(32, 32)
+{
+	m_flMoveTime = -1.0f;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Store off entity and copy original origin to temporary array
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::AddEntity(IServerEntity* ent)
+{
+	int i = m_rgMoved.AddToTail();
+	m_rgMoved[i].m_pEntity = ent;
+	m_rgMoved[i].m_vecStartAbsOrigin = ent->GetEngineObject()->GetAbsOrigin();
+}
+
+
+//-----------------------------------------------------------------------------
+// Unlink + relink the pusher list so we can actually do the push
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::UnlinkPusherList(int* pPusherHandles)
+{
+	for (int i = m_rgPusher.Count(); --i >= 0; )
+	{
+		pPusherHandles[i] = partition->HideElement(m_rgPusher[i].m_pEntity->GetEngineObject()->GetPartitionHandle());
+	}
+}
+
+void CPhysicsPushedEntities::RelinkPusherList(int* pPusherHandles)
+{
+	for (int i = m_rgPusher.Count(); --i >= 0; )
+	{
+		partition->UnhideElement(m_rgPusher[i].m_pEntity->GetEngineObject()->GetPartitionHandle(), pPusherHandles[i]);
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Compute the direction to move the rotation blocker
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::ComputeRotationalPushDirection(IServerEntity* pBlocker, const RotatingPushMove_t& rotPushMove, Vector* pMove, IServerEntity* pRoot)
+{
+	// calculate destination position
+	// "start" is relative to the *root* pusher, world orientation
+	Vector start = pBlocker->GetEngineObject()->GetCollisionOrigin();
+	if (pRoot->GetEngineObject()->GetSolid() == SOLID_VPHYSICS)
+	{
+		// HACKHACK: Use move dir to guess which corner of the box determines contact and rotate the box so
+		// that corner remains in the same local position.
+		// BUGBUG: This will break, but not as badly as the previous solution!!!
+		Vector vecAbsMins, vecAbsMaxs;
+		pBlocker->GetEngineObject()->WorldSpaceAABB(&vecAbsMins, &vecAbsMaxs);
+		start.x = (pMove->x < 0) ? vecAbsMaxs.x : vecAbsMins.x;
+		start.y = (pMove->y < 0) ? vecAbsMaxs.y : vecAbsMins.y;
+		start.z = (pMove->z < 0) ? vecAbsMaxs.z : vecAbsMins.z;
+
+		if (pBlocker->IsPlayer())
+		{
+			// notify the player physics code so it can use vphysics to keep players from getting stuck
+			pBlocker->AsHandlePlayer()->SetPhysicsFlag(PFLAG_GAMEPHYSICS_ROTPUSH, true);
+		}
+	}
+
+	// org is pusher local coordinate of start
+	Vector local;
+	// transform starting point into local space
+	VectorITransform(start, rotPushMove.startLocalToWorld, local);
+	// rotate local org into world space at end of rotation
+	Vector end;
+	VectorTransform(local, rotPushMove.endLocalToWorld, end);
+
+	// move is the difference (in world space) that the move will push this object
+	VectorSubtract(end, start, *pMove);
+}
+
+class CTraceFilterPushFinal : public CTraceFilterSimple
+{
+	typedef CTraceFilterSimple BaseClass;
+	typedef CTraceFilterPushFinal ThisClass;;
+
+public:
+	CTraceFilterPushFinal(IServerEntity* pEntity, int nCollisionGroup)
+		: CTraceFilterSimple(pEntity, nCollisionGroup)
+	{
+
+	}
+
+	bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
+	{
+		Assert(dynamic_cast<IServerEntity*>(pHandleEntity));
+		IServerEntity* pTestEntity = static_cast<IServerEntity*>(pHandleEntity);
+
+		// UNDONE: This should really filter to just the pushing entities
+		if (pTestEntity->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS &&
+			pTestEntity->GetEngineObject()->VPhysicsGetObject() && pTestEntity->GetEngineObject()->VPhysicsGetObject()->IsMoveable())
+			return false;
+
+		return BaseClass::ShouldHitEntity(pHandleEntity, contentsMask);
+	}
+
+};
+
+bool CPhysicsPushedEntities::IsPushedPositionValid(IServerEntity* pBlocker)
+{
+	CTraceFilterPushFinal pushFilter(pBlocker, pBlocker->GetEngineObject()->GetCollisionGroup());
+
+	trace_t trace;
+	pBlocker->GetEntityList()->AsServerEntityList()->GetEngineWorld()->TraceEntity(pBlocker->GetEngineObject(), pBlocker->GetEngineObject()->GetAbsOrigin(), pBlocker->GetEngineObject()->GetAbsOrigin(), pBlocker->PhysicsSolidMaskForEntity(), &pushFilter, &trace);
+
+	return !trace.startsolid;
+}
+
+//-----------------------------------------------------------------------------
+// Speculatively checks to see if all entities in this list can be pushed
+//-----------------------------------------------------------------------------
+bool CPhysicsPushedEntities::SpeculativelyCheckPush(PhysicsPushedInfo_t& info, const Vector& vecAbsPush, bool bRotationalPush)
+{
+	IServerEntity* pBlocker = info.m_pEntity;
+
+	// See if it's possible to move the entity, but disable all pushers in the hierarchy first
+	int* pPusherHandles = (int*)stackalloc(m_rgPusher.Count() * sizeof(int));
+	UnlinkPusherList(pPusherHandles);
+	CTraceFilterPushMove pushFilter(pBlocker, pBlocker->GetEngineObject()->GetCollisionGroup());
+
+	Vector pushDestPosition = pBlocker->GetEngineObject()->GetAbsOrigin() + vecAbsPush;
+	pBlocker->GetEntityList()->AsServerEntityList()->GetEngineWorld()->TraceEntity(pBlocker->GetEngineObject(), pBlocker->GetEngineObject()->GetAbsOrigin(), pushDestPosition,
+		pBlocker->PhysicsSolidMaskForEntity(), &pushFilter, &info.m_Trace);
+
+	RelinkPusherList(pPusherHandles);
+	info.m_bPusherIsGround = false;
+	if (pBlocker->GetEngineObject()->GetGroundEntity() && pBlocker->GetEngineObject()->GetGroundEntity()->GetRootMoveParent()->GetOuter() == m_rgPusher[0].m_pEntity)
+	{
+		info.m_bPusherIsGround = true;
+	}
+
+	bool bIsUnblockable = (m_bIsUnblockableByPlayer && (pBlocker->IsPlayer() || pBlocker->IsNPC())) ? true : false;
+	if (bIsUnblockable)
+	{
+		pBlocker->GetEngineObject()->SetAbsOrigin(pushDestPosition);
+	}
+	else
+	{
+		// Move the blocker into its new position
+		if (info.m_Trace.fraction)
+		{
+			pBlocker->GetEngineObject()->SetAbsOrigin(info.m_Trace.endpos);
+		}
+
+		// We're not blocked if the blocker is point-sized or non-solid
+		if (pBlocker->GetEngineObject()->IsPointSized() || !pBlocker->GetEngineObject()->IsSolid() ||
+			pBlocker->GetEngineObject()->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
+		{
+			return true;
+		}
+
+		if ((!bRotationalPush) && (info.m_Trace.fraction == 1.0))
+		{
+			//Assert( pBlocker->PhysicsTestEntityPosition() == false );
+			if (!IsPushedPositionValid(pBlocker))
+			{
+				Warning("Interpenetrating entities! (%s and %s)\n",
+					pBlocker->GetClassname(), m_rgPusher[0].m_pEntity->GetClassname());
+			}
+
+			return true;
+		}
+	}
+
+	// Check to see if we're still blocked by the pushers
+	// FIXME: If the trace fraction == 0 can we early out also?
+	info.m_bBlocked = !IsPushedPositionValid(pBlocker);
+
+	if (!info.m_bBlocked)
+		return true;
+
+	// if the player is blocking the train try nudging him around to fix accumulated error
+	if (bIsUnblockable)
+	{
+		Vector org = pBlocker->GetEngineObject()->GetAbsOrigin();
+		for (int checkCount = 0; checkCount < 4; checkCount++)
+		{
+			Vector move;
+			MatrixGetColumn(m_rgPusher[0].m_pEntity->GetEngineObject()->EntityToWorldTransform(), checkCount >> 1, move);
+
+			// alternate movements 1/2" in each direction
+			float factor = (checkCount & 1) ? -0.5f : 0.5f;
+			pBlocker->GetEngineObject()->SetAbsOrigin(org + move * factor);
+			info.m_bBlocked = !IsPushedPositionValid(pBlocker);
+			if (!info.m_bBlocked)
+				return true;
+		}
+		pBlocker->GetEngineObject()->SetAbsOrigin(pushDestPosition);
+
+#ifndef TF_DLL
+		DevMsg(1, "Ignoring player blocking train!\n");
+#endif
+		return true;
+	}
+	return false;
+}
+
+
+//-----------------------------------------------------------------------------
+// Speculatively checks to see if all entities in this list can be pushed
+//-----------------------------------------------------------------------------
+bool CPhysicsPushedEntities::SpeculativelyCheckRotPush(const RotatingPushMove_t& rotPushMove, IServerEntity* pRoot)
+{
+	Vector vecAbsPush;
+	m_nBlocker = -1;
+	for (int i = m_rgMoved.Count(); --i >= 0; )
+	{
+		ComputeRotationalPushDirection(m_rgMoved[i].m_pEntity, rotPushMove, &vecAbsPush, pRoot);
+		if (!SpeculativelyCheckPush(m_rgMoved[i], vecAbsPush, true))
+		{
+			m_nBlocker = i;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+//-----------------------------------------------------------------------------
+// Speculatively checks to see if all entities in this list can be pushed
+//-----------------------------------------------------------------------------
+bool CPhysicsPushedEntities::SpeculativelyCheckLinearPush(const Vector& vecAbsPush)
+{
+	m_nBlocker = -1;
+	for (int i = m_rgMoved.Count(); --i >= 0; )
+	{
+		if (!SpeculativelyCheckPush(m_rgMoved[i], vecAbsPush, false))
+		{
+			m_nBlocker = i;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+//-----------------------------------------------------------------------------
+// Causes all entities in the list to touch triggers from their prev position
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::FinishPushers()
+{
+	// We succeeded! Now that we know the final location of all entities,
+	// touch triggers + update physics objects + do other fixup
+	for (int i = m_rgPusher.Count(); --i >= 0; )
+	{
+		PhysicsPusherInfo_t& info = m_rgPusher[i];
+
+		// Cause touch functions to be called
+		// FIXME: Need to make moved entities not touch triggers until we know we're ok
+		// FIXME: it'd be better for the engine to just have a touch method
+		info.m_pEntity->GetEngineObject()->PhysicsTouchTriggers(&info.m_vecStartAbsOrigin);
+
+		info.m_pEntity->GetEngineObject()->UpdatePhysicsShadowToCurrentPosition(g_ServerGlobalVariables.frametime);
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Causes all entities in the list to touch triggers from their prev position
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::FinishRotPushedEntity(IServerEntity* pPushedEntity, const RotatingPushMove_t& rotPushMove)
+{
+	// Impart angular velocity of push onto pushed objects
+	if (pPushedEntity->IsPlayer())
+	{
+		QAngle angVel = pPushedEntity->GetEngineObject()->GetLocalAngularVelocity();
+		angVel[1] = rotPushMove.amove[1];
+		pPushedEntity->GetEngineObject()->SetLocalAngularVelocity(angVel);
+
+		// Look up associated client
+		pPushedEntity->AsHandlePlayer()->PlayerData()->fixangle = FIXANGLE_RELATIVE;
+		// Because we can run multiple ticks per server frame, accumulate a total offset here instead of straight
+		//  setting it.  The engine will reset anglechange to 0 when the message is actually sent to the client
+		pPushedEntity->AsHandlePlayer()->PlayerData()->anglechange += rotPushMove.amove;
+	}
+	else
+	{
+		QAngle angles = pPushedEntity->GetEngineObject()->GetAbsAngles();
+
+		// only rotate YAW with pushing.  Freely rotateable entities should either use VPHYSICS
+		// or be set up as children
+		angles.y += rotPushMove.amove.y;
+		pPushedEntity->GetEngineObject()->SetAbsAngles(angles);
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Causes all entities in the list to touch triggers from their prev position
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::FinishPush(bool bIsRotPush, const RotatingPushMove_t* pRotPushMove)
+{
+	FinishPushers();
+
+	for (int i = m_rgMoved.Count(); --i >= 0; )
+	{
+		PhysicsPushedInfo_t& info = m_rgMoved[i];
+		IServerEntity* pPushedEntity = info.m_pEntity;
+
+		// Cause touch functions to be called
+		// FIXME: it'd be better for the engine to just have a touch method
+		info.m_pEntity->GetEngineObject()->PhysicsTouchTriggers(&info.m_vecStartAbsOrigin);
+		info.m_pEntity->GetEngineObject()->UpdatePhysicsShadowToCurrentPosition(g_ServerGlobalVariables.frametime);
+		IServerNPC* pNPC = info.m_pEntity->AsHandleNPC();
+		if (info.m_bPusherIsGround && pNPC)
+		{
+			pNPC->NotifyPushMove();
+		}
+
+
+		// Register physics impacts...
+		if (info.m_Trace.m_pEnt)
+		{
+			pPushedEntity->GetEngineObject()->PhysicsImpact((IEngineObjectServer*)info.m_Trace.m_pEnt->GetEngineObject(), info.m_Trace);
+		}
+
+		if (bIsRotPush)
+		{
+			FinishRotPushedEntity(pPushedEntity, *pRotPushMove);
+		}
+	}
+}
+
+// save initial state when beginning a push sequence
+void CPhysicsPushedEntities::BeginPush(IServerEntity* pRoot)
+{
+	m_rgMoved.RemoveAll();
+	m_rgPusher.RemoveAll();
+
+	m_rootPusherStartLocalOrigin = pRoot->GetEngineObject()->GetLocalOrigin();
+	m_rootPusherStartLocalAngles = pRoot->GetEngineObject()->GetLocalAngles();
+	m_rootPusherStartLocaltime = pRoot->GetEngineObject()->GetLocalTime();
+}
+
+// store off a list of what has changed - so vphysicsUpdate can undo this if the object gets blocked
+void CPhysicsPushedEntities::StoreMovedEntities(physicspushlist_t& list)
+{
+	list.localMoveTime = m_rootPusherStartLocaltime;
+	list.localOrigin = m_rootPusherStartLocalOrigin;
+	list.localAngles = m_rootPusherStartLocalAngles;
+	list.pushedCount = CountMovedEntities();
+	Assert(list.pushedCount < ARRAYSIZE(list.pushedEnts));
+	if (list.pushedCount > ARRAYSIZE(list.pushedEnts))
+	{
+		list.pushedCount = ARRAYSIZE(list.pushedEnts);
+	}
+	for (int i = 0; i < list.pushedCount; i++)
+	{
+		list.pushedEnts[i] = m_rgMoved[i].m_pEntity;
+		list.pushVec[i] = m_rgMoved[i].m_pEntity->GetEngineObject()->GetAbsOrigin() - m_rgMoved[i].m_vecStartAbsOrigin;
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Registers a blockage
+//-----------------------------------------------------------------------------
+IServerEntity* CPhysicsPushedEntities::RegisterBlockage()
+{
+	Assert(m_nBlocker >= 0);
+
+	// Generate a PhysicsImpact against the blocker...
+	PhysicsPushedInfo_t& info = m_rgMoved[m_nBlocker];
+	if (info.m_Trace.m_pEnt)
+	{
+		info.m_pEntity->GetEngineObject()->PhysicsImpact((IEngineObjectServer*)info.m_Trace.m_pEnt->GetEngineObject(), info.m_Trace);
+	}
+
+	// This is the dude 
+	return info.m_pEntity;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Restore entities that might have been moved
+// Input  : fromrotation - if the move is from a rotation, then angular move must also be reverted
+//			*amove - 
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::RestoreEntities()
+{
+	// Reset all of the pushed entities to get them back into place also
+	for (int i = m_rgMoved.Count(); --i >= 0; )
+	{
+		m_rgMoved[i].m_pEntity->GetEngineObject()->SetAbsOrigin(m_rgMoved[i].m_vecStartAbsOrigin);
+	}
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// Purpose: This is a trace filter that only hits an exclusive list of entities
+//-----------------------------------------------------------------------------
+class CTraceFilterAgainstEntityList : public ITraceFilter
+{
+public:
+	virtual bool ShouldHitEntity(IHandleEntity* pEntity, int contentsMask)
+	{
+		for (int i = m_entityList.Count() - 1; i >= 0; --i)
+		{
+			if (m_entityList[i] == pEntity)
+				return true;
+		}
+
+		return false;
+	}
+
+	virtual TraceType_t	GetTraceType() const
+	{
+		return TRACE_ENTITIES_ONLY;
+	}
+
+	void AddEntityToHit(IHandleEntity* pEntity)
+	{
+		m_entityList.AddToTail(pEntity);
+	}
+
+	CUtlVector<IHandleEntity*>	m_entityList;
+};
+
+//-----------------------------------------------------------------------------
+// Generates a list of potential blocking entities
+//-----------------------------------------------------------------------------
+class CPushBlockerEnum : public IPartitionEnumerator
+{
+public:
+	CPushBlockerEnum(CPhysicsPushedEntities* pPushedEntities) : m_pPushedEntities(pPushedEntities)
+	{
+		// All elements are part of the same hierarchy, so they all have
+		// the same root, so it doesn't matter which one we grab
+		m_pRootHighestParent = m_pPushedEntities->m_rgPusher[0].m_pEntity->GetEngineObject()->GetRootMoveParent()->GetOuter();
+		++s_nEnumCount;
+
+		m_collisionGroupCount = 0;
+		for (int i = m_pPushedEntities->m_rgPusher.Count(); --i >= 0; )
+		{
+			if (!m_pPushedEntities->m_rgPusher[i].m_pEntity->GetEngineObject()->IsSolid())
+				continue;
+
+			m_pushersOnly.AddEntityToHit(m_pPushedEntities->m_rgPusher[i].m_pEntity);
+			int collisionGroup = m_pPushedEntities->m_rgPusher[i].m_pEntity->GetEngineObject()->GetCollisionGroup();
+			AddCollisionGroup(collisionGroup);
+		}
+
+	}
+
+	virtual IterationRetval_t EnumElement(IHandleEntity* pHandleEntity)
+	{
+		IServerEntity* pCheck = GetPushableEntity(pHandleEntity);
+		if (!pCheck)
+			return ITERATION_CONTINUE;
+
+		// Mark it as seen
+		pCheck->GetEngineObject()->SetPushEnumCount(s_nEnumCount);
+		m_pPushedEntities->AddEntity(pCheck);
+
+		return ITERATION_CONTINUE;
+	}
+
+private:
+
+	inline void AddCollisionGroup(int collisionGroup)
+	{
+		for (int i = 0; i < m_collisionGroupCount; i++)
+		{
+			if (m_collisionGroups[i] == collisionGroup)
+				return;
+		}
+		if (m_collisionGroupCount < ARRAYSIZE(m_collisionGroups))
+		{
+			m_collisionGroups[m_collisionGroupCount] = collisionGroup;
+			m_collisionGroupCount++;
+		}
+	}
+
+	bool IsStandingOnPusher(IServerEntity* pCheck)
+	{
+		IServerEntity* pGroundEnt = pCheck->GetEngineObject()->GetGroundEntity() ? pCheck->GetEngineObject()->GetGroundEntity()->GetOuter() : NULL;
+		if (pCheck->GetEngineObject()->GetFlags() & FL_ONGROUND || pGroundEnt)
+		{
+			for (int i = m_pPushedEntities->m_rgPusher.Count(); --i >= 0; )
+			{
+				if (m_pPushedEntities->m_rgPusher[i].m_pEntity == pGroundEnt)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool IntersectsPushers(IServerEntity* pTest)
+	{
+		trace_t tr;
+
+		ICollideable* pCollision = pTest->GetCollideable();
+		g_pEngineTraceServer->SweepCollideable(pCollision, pTest->GetEngineObject()->GetAbsOrigin(), pTest->GetEngineObject()->GetAbsOrigin(), pCollision->GetCollisionAngles(),
+			pTest->PhysicsSolidMaskForEntity(), &m_pushersOnly, &tr);
+
+		return tr.startsolid;
+	}
+
+	IServerEntity* GetPushableEntity(IHandleEntity* pHandleEntity)
+	{
+		IServerEntity* pCheck = (IServerEntity*)pHandleEntity->GetEntityList()->GetBaseEntityFromHandle(pHandleEntity->GetRefEHandle());
+		if (!pCheck)
+			return NULL;
+
+		// Don't bother if we've already seen this one...
+		if (pCheck->GetEngineObject()->GetPushEnumCount() == s_nEnumCount)
+			return NULL;
+
+		if (!pCheck->GetEngineObject()->IsSolid())
+			return NULL;
+
+		if (pCheck->GetEngineObject()->GetMoveType() == MOVETYPE_PUSH ||
+			pCheck->GetEngineObject()->GetMoveType() == MOVETYPE_NONE ||
+			pCheck->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS ||
+			pCheck->GetEngineObject()->GetMoveType() == MOVETYPE_NOCLIP)
+		{
+			return NULL;
+		}
+
+		bool bCollide = false;
+		for (int i = 0; i < m_collisionGroupCount; i++)
+		{
+			if (pCheck->GetEntityList()->GetWorld()->ShouldCollide(pCheck->GetEngineObject()->GetCollisionGroup(), m_collisionGroups[i]))
+			{
+				bCollide = true;
+				break;
+			}
+		}
+		if (!bCollide)
+			return NULL;
+		// We're not pushing stuff we're hierarchically attached to
+		IEngineObjectServer* pCheckHighestParent = pCheck->GetEngineObject()->GetRootMoveParent();
+		if (pCheckHighestParent->GetOuter() == m_pRootHighestParent)
+			return NULL;
+
+		// If we're standing on the pusher or any rigidly attached child
+		// of the pusher, we don't need to bother checking for interpenetration
+		if (!IsStandingOnPusher(pCheck))
+		{
+			// Our surrounding boxes are touching. But we may well not be colliding....
+			// see if the ent's bbox is inside the pusher's final position
+			if (!IntersectsPushers(pCheck))
+				return NULL;
+		}
+
+		// NOTE: This is pretty tricky here. If a rigidly attached child comes into
+		// contact with a pusher, we *cannot* push the child. Instead, we must push
+		// the highest parent of that child.
+		return pCheckHighestParent->GetOuter();
+	}
+
+private:
+	static int s_nEnumCount;
+	CPhysicsPushedEntities* m_pPushedEntities;
+	IServerEntity* m_pRootHighestParent;
+	CTraceFilterAgainstEntityList	m_pushersOnly;
+	int m_collisionGroups[8];
+	int m_collisionGroupCount;
+};
+
+int CPushBlockerEnum::s_nEnumCount = 0;
+
+//-----------------------------------------------------------------------------
+// Generates a list of potential blocking entities
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::GenerateBlockingEntityList()
+{
+	VPROF("CPhysicsPushedEntities::GenerateBlockingEntityList");
+
+	m_rgMoved.RemoveAll();
+	CPushBlockerEnum blockerEnum(this);
+
+	for (int i = m_rgPusher.Count(); --i >= 0; )
+	{
+		IServerEntity* pPusher = m_rgPusher[i].m_pEntity;
+
+		// Don't bother if the pusher isn't solid
+		if (!pPusher->GetEngineObject()->IsSolid() || pPusher->GetEngineObject()->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
+		{
+			continue;
+		}
+
+		Vector vecAbsMins, vecAbsMaxs;
+		pPusher->GetEngineObject()->WorldSpaceAABB(&vecAbsMins, &vecAbsMaxs);
+		partition->EnumerateElementsInBox(PARTITION_ENGINE_NON_STATIC_EDICTS, vecAbsMins, vecAbsMaxs, false, &blockerEnum);
+
+		//Go back throught the generated list.
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Generates a list of potential blocking entities
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::GenerateBlockingEntityListAddBox(const Vector& vecMoved)
+{
+	VPROF("CPhysicsPushedEntities::GenerateBlockingEntityListAddBox");
+
+	m_rgMoved.RemoveAll();
+	CPushBlockerEnum blockerEnum(this);
+
+	for (int i = m_rgPusher.Count(); --i >= 0; )
+	{
+		IServerEntity* pPusher = m_rgPusher[i].m_pEntity;
+
+		// Don't bother if the pusher isn't solid
+		if (!pPusher->GetEngineObject()->IsSolid() || pPusher->GetEngineObject()->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
+		{
+			continue;
+		}
+
+		Vector vecAbsMins, vecAbsMaxs;
+		pPusher->GetEngineObject()->WorldSpaceAABB(&vecAbsMins, &vecAbsMaxs);
+		for (int iAxis = 0; iAxis < 3; ++iAxis)
+		{
+			if (vecMoved[iAxis] >= 0.0f)
+			{
+				vecAbsMins[iAxis] -= vecMoved[iAxis];
+			}
+			else
+			{
+				vecAbsMaxs[iAxis] -= vecMoved[iAxis];
+			}
+		}
+
+		partition->EnumerateElementsInBox(PARTITION_ENGINE_NON_STATIC_EDICTS, vecAbsMins, vecAbsMaxs, false, &blockerEnum);
+
+		//Go back throught the generated list.
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Gets a list of all entities hierarchically attached to the root 
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::SetupAllInHierarchy(IServerEntity* pParent)
+{
+	if (!pParent)
+		return;
+
+	VPROF("CPhysicsPushedEntities::SetupAllInHierarchy");
+
+	// Make sure to snack the position +before+ relink because applying the
+	// rotation (which occurs in relink) will put it at the final location
+	// NOTE: The root object at this point is actually at its final position.
+	// We'll fix that up later
+	int i = m_rgPusher.AddToTail();
+	m_rgPusher[i].m_pEntity = pParent;
+	m_rgPusher[i].m_vecStartAbsOrigin = pParent->GetEngineObject()->GetAbsOrigin();
+
+	IEngineObjectServer* pChild;
+	for (pChild = pParent->GetEngineObject()->FirstMoveChild(); pChild != NULL; pChild = pChild->NextMovePeer())
+	{
+		SetupAllInHierarchy(pChild->GetOuter());
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Rotates the root entity, fills in the pushmove structure
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::RotateRootEntity(IServerEntity* pRoot, float movetime, RotatingPushMove_t& rotation)
+{
+	VPROF("CPhysicsPushedEntities::RotateRootEntity");
+
+	rotation.amove = pRoot->GetEngineObject()->GetLocalAngularVelocity() * movetime;
+	rotation.origin = pRoot->GetEngineObject()->GetAbsOrigin();
+
+	// Knowing the initial + ending basis is needed for determining
+	// which corner we're pushing 
+	MatrixCopy(pRoot->GetEngineObject()->EntityToWorldTransform(), rotation.startLocalToWorld);
+
+	// rotate the pusher to it's final position
+	QAngle angles = pRoot->GetEngineObject()->GetLocalAngles();
+	angles += pRoot->GetEngineObject()->GetLocalAngularVelocity() * movetime;
+
+	pRoot->GetEngineObject()->SetLocalAngles(angles);
+
+	// Compute the change in absangles
+	MatrixCopy(pRoot->GetEngineObject()->EntityToWorldTransform(), rotation.endLocalToWorld);
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Tries to rotate an entity hierarchy, returns the blocker if any
+//-----------------------------------------------------------------------------
+IServerEntity* CPhysicsPushedEntities::PerformRotatePush(IServerEntity* pRoot, float movetime)
+{
+	VPROF("CPhysicsPushedEntities::PerformRotatePush");
+
+	m_bIsUnblockableByPlayer = (pRoot->GetEngineObject()->GetFlags() & FL_UNBLOCKABLE_BY_PLAYER) ? true : false;
+	// Build a list of this entity + all its children because we're going to try to move them all
+	// This will also make sure each entity is linked in the appropriate place
+	// with correct absboxes
+	m_rgPusher.RemoveAll();
+	SetupAllInHierarchy(pRoot);
+
+	// save where we rotated from, in case we're blocked
+	QAngle angPrevAngles = pRoot->GetEngineObject()->GetLocalAngles();
+
+	// Apply the rotation
+	RotatingPushMove_t	rotPushMove;
+	RotateRootEntity(pRoot, movetime, rotPushMove);
+
+	// Next generate a list of all entities that could potentially be intersecting with
+	// any of the children in their new locations...
+	GenerateBlockingEntityList();
+
+	// Now we have a unique list of things that could potentially block our push
+	// and need to be pushed out of the way. Lets try to push them all out of the way.
+	// If we fail, undo it all
+	if (!SpeculativelyCheckRotPush(rotPushMove, pRoot))
+	{
+		IServerEntity* pBlocker = RegisterBlockage();
+		pRoot->GetEngineObject()->SetLocalAngles(angPrevAngles);
+		RestoreEntities();
+		return pBlocker;
+	}
+
+	FinishPush(true, &rotPushMove);
+	return NULL;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Linearly moves the root entity
+//-----------------------------------------------------------------------------
+void CPhysicsPushedEntities::LinearlyMoveRootEntity(IServerEntity* pRoot, float movetime, Vector* pAbsPushVector)
+{
+	VPROF("CPhysicsPushedEntities::LinearlyMoveRootEntity");
+
+	// move the pusher to it's final position
+	Vector move = pRoot->GetEngineObject()->GetLocalVelocity() * movetime;
+	Vector origin = pRoot->GetEngineObject()->GetLocalOrigin();
+	origin += move;
+	pRoot->GetEngineObject()->SetLocalOrigin(origin);
+
+	// Store off the abs push vector
+	*pAbsPushVector = pRoot->GetEngineObject()->GetAbsVelocity() * movetime;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Tries to linearly push an entity hierarchy, returns the blocker if any
+//-----------------------------------------------------------------------------
+IServerEntity* CPhysicsPushedEntities::PerformLinearPush(IServerEntity* pRoot, float movetime)
+{
+	VPROF("CPhysicsPushedEntities::PerformLinearPush");
+
+	m_flMoveTime = movetime;
+
+	m_bIsUnblockableByPlayer = (pRoot->GetEngineObject()->GetFlags() & FL_UNBLOCKABLE_BY_PLAYER) ? true : false;
+	// Build a list of this entity + all its children because we're going to try to move them all
+	// This will also make sure each entity is linked in the appropriate place
+	// with correct absboxes
+	m_rgPusher.RemoveAll();
+	SetupAllInHierarchy(pRoot);
+
+	// save where we started from, in case we're blocked
+	Vector vecPrevOrigin = pRoot->GetEngineObject()->GetLocalOrigin();
+
+	// Move the root (and all children) into its new position
+	Vector vecAbsPush;
+	LinearlyMoveRootEntity(pRoot, movetime, &vecAbsPush);
+
+	// Next generate a list of all entities that could potentially be intersecting with
+	// any of the children in their new locations...
+	GenerateBlockingEntityListAddBox(vecAbsPush);
+
+	// Now we have a unique list of things that could potentially block our push
+	// and need to be pushed out of the way. Lets try to push them all out of the way.
+	// If we fail, undo it all
+	if (!SpeculativelyCheckLinearPush(vecAbsPush))
+	{
+		IServerEntity* pBlocker = RegisterBlockage();
+		pRoot->GetEngineObject()->SetLocalOrigin(vecPrevOrigin);
+		RestoreEntities();
+		return pBlocker;
+	}
+
+	FinishPush();
+	return NULL;
+}
+
+CPhysicsPushedEntities s_PushedEntities;
+#ifndef TF_DLL
+CPhysicsPushedEntities* g_pPushedEntities = &s_PushedEntities;
+#endif

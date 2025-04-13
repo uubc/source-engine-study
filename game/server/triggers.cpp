@@ -1744,7 +1744,7 @@ void CTriggerPush::Touch( IServerEntity *pOther )
 			Vector vecPush = (m_flPushSpeed * vecAbsDir);
 			if ( pOther->GetEngineObject()->GetFlags() & FL_BASEVELOCITY )
 			{
-				vecPush = vecPush + pOther->GetBaseVelocity();
+				vecPush = vecPush + pOther->GetEngineObject()->GetBaseVelocity();
 			}
 			if ( vecPush.z > 0 && (pOther->GetEngineObject()->GetFlags() & FL_ONGROUND) )
 			{
@@ -1764,7 +1764,7 @@ void CTriggerPush::Touch( IServerEntity *pOther )
 			vecPush.z = 0;
 #endif			
 
-			pOther->SetBaseVelocity( vecPush );
+			pOther->GetEngineObject()->SetBaseVelocity( vecPush );
 			pOther->GetEngineObject()->AddFlag( FL_BASEVELOCITY );
 		}
 		break;
@@ -2642,7 +2642,7 @@ void CTriggerCamera::Disable( void )
 	SetThink( NULL );
 
 	m_OnEndFollow.FireOutput(this, this); // dvsents2: what is the best name for this output?
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 	DispatchUpdateTransmitState();
 }
@@ -2740,8 +2740,8 @@ void CTriggerCamera::FollowTarget( )
 			dy = dy - 360;
 
 		QAngle vecAngVel;
-		vecAngVel.Init( dx * 40 * gpGlobals->frametime, dy * 40 * gpGlobals->frametime, GetLocalAngularVelocity().z );
-		SetLocalAngularVelocity(vecAngVel);
+		vecAngVel.Init( dx * 40 * gpGlobals->frametime, dy * 40 * gpGlobals->frametime, GetEngineObject()->GetLocalAngularVelocity().z );
+		GetEngineObject()->SetLocalAngularVelocity(vecAngVel);
 	}
 
 	if (!GetEngineObject()->HasSpawnFlags(SF_CAMERA_PLAYER_TAKECONTROL))

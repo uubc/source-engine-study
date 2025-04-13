@@ -523,6 +523,8 @@ public:
 	virtual void OnAddEffects(int nEffects);
 	virtual void OnRemoveEffects(int nEffects);
 	virtual void OnSetEffects(int nEffects);
+	virtual bool OnSetLocalAngularVelocity(const QAngle& vecAngVelocity);
+
 	// makes the entity inactive
 	void		MakeDormant( void );
 	int			IsDormant( void );
@@ -826,6 +828,7 @@ public:
 	void					TraceBleed( float flDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType );
 	virtual bool			IsTriggered( IServerEntity *pActivator ) {return true;}
 	virtual bool			IsNPC( void ) const { return false; }
+	virtual IServerNPC*		AsHandleNPC() { return NULL; }
 	CAI_BaseNPC				*MyNPCPointer( void ); 
 	virtual bool			NPC_CheckBrushExclude(IServerEntity* pBrush) { return false; }
 	virtual float			GetStepHeight() const { return 0.0f; }
@@ -895,7 +898,7 @@ public:
 	bool IsStandable() const;
 
 	// UNDONE: Do these three functions actually need to be virtual???
-	virtual bool	CanStandOn( CBaseEntity *pSurface ) const { return (pSurface && !pSurface->IsStandable()) ? false : true; }
+	virtual bool	CanStandOn( IServerEntity *pSurface ) const { return (pSurface && !pSurface->IsStandable()) ? false : true; }
 	//virtual bool	CanStandOn( edict_t	*ent ) const { return CanStandOn( GetContainingEntity( ent ) ); }
 	virtual CBaseEntity		*GetEnemy( void ) { return NULL; }
 	virtual CBaseEntity		*GetEnemy( void ) const { return NULL; }
@@ -916,12 +919,15 @@ public:
 	virtual void			StartTouch( IServerEntity *pOther );
 	virtual void			Touch( IServerEntity *pOther ); 
 	virtual void			EndTouch( IServerEntity *pOther );
-	virtual void			StartBlocked( CBaseEntity *pOther ) {}
+	virtual void			StartBlocked( IServerEntity *pOther ) {}
 	virtual void			Blocked( IServerEntity *pOther );
 	virtual void			EndBlocked( void ) {}
 
 	// Physics simulation
-	virtual void			PhysicsSimulate( void );
+	virtual void			PhysicsSimulate(void) 
+	{
+		GetEngineObject()->PhysicsSimulate();
+	}
 
 public:
 
@@ -931,7 +937,7 @@ public:
 
 
 	// Remove this as ground entity for all object resting on this object
-	void					WakeRestingObjects();
+	//void					WakeRestingObjects();
 	bool					HasNPCsOnIt();
 
 	virtual void			UpdateOnRemove( void );
@@ -1162,18 +1168,14 @@ public:
 
 	
 
-	// NOTE: Setting the abs velocity in either space will cause a recomputation
-	// in the other space, so setting the abs velocity will also set the local vel
-	void			SetLocalAngularVelocity( const QAngle &vecAngVelocity );
-	const QAngle&	GetLocalAngularVelocity( ) const;
+
 
 	// FIXME: While we're using (dPitch, dYaw, dRoll) as our local angular velocity
 	// representation, we can't actually solve this problem
 //	void			SetAbsAngularVelocity( const QAngle &vecAngVelocity );
 //	const QAngle&	GetAbsAngularVelocity( ) const;
 
-	const Vector&	GetBaseVelocity() const;
-	void			SetBaseVelocity( const Vector& v );
+
 
 	virtual Vector	GetSmoothedVelocity( void );
 
@@ -1198,10 +1200,7 @@ public:
 	// Gets the velocity we impart to a player standing on us
 	virtual void			GetGroundVelocityToApply( Vector &vecGroundVel ) { vecGroundVel = vec3_origin; }
 
-	int						GetWaterLevel() const;
-	void					SetWaterLevel( int nLevel );
-	int						GetWaterType() const;
-	void					SetWaterType( int nType );
+
 
 	virtual bool			PhysicsSplash( const Vector &centerPoint, const Vector &normal, float rawSpeed, float scaledSpeed ) { return false; }
 	virtual void			Splash() {}
@@ -1228,10 +1227,7 @@ public:
 	float					GetShadowCastDistance( void ) const;
 	void					SetShadowCastDistance( float flDesiredDistance, float flDelay );
 
-	float					GetLocalTime( void ) const;
-	void					IncrementLocalTime( float flTimeDelta );
-	float					GetMoveDoneTime( ) const;
-	void					SetMoveDoneTime( float flTime );
+
 	
 	// Used by the PAS filters to ask the entity where in world space the sounds it emits come from.
 	// This is used right now because if you have something sitting on an incline, using our axis-aligned 
@@ -1318,7 +1314,6 @@ public:
 
 
 	virtual void	VPhysicsUpdate( IPhysicsObject *pPhysics );
-	void			VPhysicsUpdatePusher( IPhysicsObject *pPhysics );
 	
 	// react physically to damage (called from CBaseEntity::OnTakeDamage() by default)
 	virtual int		VPhysicsTakeDamage( const ITakeDamageInfo&info );
@@ -1327,9 +1322,7 @@ public:
 	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 	virtual void	VPhysicsFriction( IPhysicsObject *pObject, float energy, int surfaceProps, int surfacePropsHit );
 	
-	// update the shadow so it will coincide with the current AI position at some time
-	// in the future (or 0 for now)
-	virtual void	UpdatePhysicsShadowToCurrentPosition( float deltaTime );
+	
 	virtual bool	VPhysicsIsFlesh( void );
 	// --------------------------------------------------------------------
 		// Is the entity floating?
@@ -1376,13 +1369,7 @@ public:
 //#endif
 	// FIXME: Make these private!
 
-	bool					PhysicsTestEntityPosition( CBaseEntity **ppEntity = NULL );
-	void					PhysicsPushEntity( const Vector& push, trace_t *pTrace );
-	bool					PhysicsCheckWater( void );
-	void					PhysicsCheckWaterTransition( void );
-	void					PhysicsStepRecheckGround();
-	// Computes the water level + type
-	void					UpdateWaterState();
+	
 	//bool					IsEdictFree() const { return edict()->IsFree(); }
 
 	// Callbacks for the physgun/cannon picking up an entity
@@ -1405,61 +1392,35 @@ public:
 	void					OnAnimationChanged();
 	void					AddWatcherToEntity(IServerEntity* pWatcher, int watcherType);
 	void					RemoveWatcherFromEntity(IServerEntity* pWatcher, int watcherType);
-	void					NotifyPositionChanged();
-	void					NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake);
+	void					NotifyPositionChanged() {}
+	void					NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake) {}
 protected:
 
-	int						PhysicsClipVelocity (const Vector& in, const Vector& normal, Vector& out, float overbounce );
-	void					PhysicsRelinkChildren( float dt );
 
 	// Performs the collision resolution for fliers.
-	void					PerformFlyCollisionResolution( trace_t &trace, Vector &move );
-	void					ResolveFlyCollisionBounce( trace_t &trace, Vector &vecVelocity, float flMinTotalElasticity = 0.0f );
-	void					ResolveFlyCollisionSlide( trace_t &trace, Vector &vecVelocity );
 	virtual void			ResolveFlyCollisionCustom( trace_t &trace, Vector &vecVelocity );
 
 private:
-	// Physics-related private methods
-	void					PhysicsStep( void );
-	void					PhysicsPusher( void );
-	void					PhysicsNone( void );
-	void					PhysicsNoclip( void );
-	void					PhysicsStepRunTimestep( float timestep );
-	void					PhysicsToss( void );
-	void					PhysicsCustom( void );
-	void					PerformPush( float movetime );
+	
 
-	// Simulation in local space of rigid children
-	void					PhysicsRigidChild( void );
 
-	// Computes the base velocity
-	void					UpdateBaseVelocity( void );
+
+
+	
 
 	// Implement this if you use MOVETYPE_CUSTOM
 	virtual void			PerformCustomPhysics( Vector *pNewPosition, Vector *pNewVelocity, QAngle *pNewAngles, QAngle *pNewAngVelocity );
 
 
-	CBaseEntity				*PhysicsPushMove( float movetime );
-	CBaseEntity				*PhysicsPushRotate( float movetime );
 
-	CBaseEntity				*PhysicsCheckRotateMove( rotatingpushmove_t &rotPushmove, CBaseEntity **pPusherList, int pusherListCount );
-	CBaseEntity				*PhysicsCheckPushMove( const Vector& move, CBaseEntity **pPusherList, int pusherListCount );
-	int						PhysicsTryMove( float flTime, trace_t *steptrace );
 
-	void					PhysicsCheckVelocity( void );
-	void					PhysicsAddHalfGravity( float timestep );
-	void					PhysicsAddGravityMove( Vector &move );
+	//CBaseEntity				*PhysicsCheckRotateMove( rotatingpushmove_t &rotPushmove, CBaseEntity **pPusherList, int pusherListCount );
+	//CBaseEntity				*PhysicsCheckPushMove( const Vector& move, CBaseEntity **pPusherList, int pusherListCount );
 
-	void					CalcAbsoluteAngularVelocity();
 
-	// Checks a sweep without actually performing the move
-	void					PhysicsCheckSweep( const Vector& vecAbsStart, const Vector &vecAbsDelta, trace_t *pTrace );
+	//void					CalcAbsoluteAngularVelocity();
 
-	// Computes new angles based on the angular velocity
-	void					SimulateAngles( float flFrameTime );
 
-	// Run regular think and latch off angle/origin changes so we can interpolate them on the server to fake simulation
-	void					StepSimulationThink( float dt );
 
 public:
 	// Add a discontinuity to a step
@@ -1514,8 +1475,7 @@ public:
 	CBaseEntity* GetLightingOrigin();
 
 protected:
-	// Which frame did I simulate?
-	int						m_nSimulationTick;
+	
 
 private:
 
@@ -1542,42 +1502,19 @@ private:
 	// Sets water type + level for physics objects
 	unsigned char	m_nWaterTouch;
 	unsigned char	m_nSlimeTouch;
-	unsigned char	m_nWaterType;
-	CNetworkVarForDerived( unsigned char, m_nWaterLevel );
+
 	float			m_flNavIgnoreUntilTime;
 
-	// Velocity of the thing we're standing on (world space)
-	CNetworkVarForDerived( Vector, m_vecBaseVelocity );
+
 
 	
 
-	// Local angular velocity
-	QAngle			m_vecAngVelocity;
+
 
 	// Global angular velocity
 //	QAngle			m_vecAbsAngVelocity;
 
 	
-
-	// Physics state
-	EHANDLE			m_pBlocker;
-
-	// was pev->ltime
-	float			m_flLocalTime;
-	// local time at the beginning of this frame
-	float			m_flVPhysicsUpdateLocalTime;
-	// local time the movement has ended
-	float			m_flMoveDoneTime;
-
-	int				GetPushEnumCount() {
-		return m_nPushEnumCount;
-	}
-	// A counter to help quickly build a list of potentially pushed objects for physics
-	int				m_nPushEnumCount;
-
-
-
-
 	//Adrian
 	CNetworkVar( unsigned char, m_iTextureFrameIndex );
 	
@@ -1856,10 +1793,7 @@ inline Vector CBaseEntity::GetSmoothedVelocity( void )
 	return vel;
 }
 
-inline const QAngle &CBaseEntity::GetLocalAngularVelocity( ) const
-{
-	return m_vecAngVelocity;
-}
+
 
 /*
 // FIXME: While we're using (dPitch, dYaw, dRoll) as our local angular velocity
@@ -1875,15 +1809,7 @@ inline const QAngle &CBaseEntity::GetAbsAngularVelocity( ) const
 }
 */
 
-inline const Vector& CBaseEntity::GetBaseVelocity() const 
-{ 
-	return m_vecBaseVelocity.Get(); 
-}
 
-inline void CBaseEntity::SetBaseVelocity( const Vector& v ) 
-{ 
-	m_vecBaseVelocity = v; 
-}
 
 
 inline void	CBaseEntity::SetShadowCastDistance( float flDistance )
@@ -1894,31 +1820,6 @@ inline void	CBaseEntity::SetShadowCastDistance( float flDistance )
 inline float CBaseEntity::GetShadowCastDistance( void )	const			
 { 
 	return m_flShadowCastDistance; 
-}
-
-inline float CBaseEntity::GetLocalTime( void ) const
-{ 
-	return m_flLocalTime; 
-}
-
-inline void CBaseEntity::IncrementLocalTime( float flTimeDelta )
-{ 
-	m_flLocalTime += flTimeDelta; 
-}
-
-inline float CBaseEntity::GetMoveDoneTime( ) const
-{
-	return (m_flMoveDoneTime >= 0) ? m_flMoveDoneTime - GetLocalTime() : -1;
-}
-
-inline int CBaseEntity::GetWaterLevel() const
-{
-	return m_nWaterLevel;
-}
-
-inline void CBaseEntity::SetWaterLevel( int nLevel )
-{
-	m_nWaterLevel = nLevel;
 }
 
 inline int	CBaseEntity::GetTextureFrameIndex( void )

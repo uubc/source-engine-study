@@ -59,7 +59,7 @@ public:
 	bool KeyValue( const char *szKeyName, const char *szValue );
 	virtual void Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_TYPE useType, float value );
 
-	virtual void StartBlocked( CBaseEntity *pOther );
+	virtual void StartBlocked( IServerEntity *pOther );
 	virtual void Blocked( IServerEntity *pOther );
 	virtual void EndBlocked( void );
 

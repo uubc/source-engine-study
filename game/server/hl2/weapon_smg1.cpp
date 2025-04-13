@@ -251,7 +251,7 @@ void CWeaponSMG1::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChar
 
 			CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create("grenade_ar2", vecShootOrigin, vec3_angle, npc);
 			pGrenade->GetEngineObject()->SetAbsVelocity( vecThrow );
-			pGrenade->SetLocalAngularVelocity(RandomAngle(-400, 400)); //tumble in air
+			pGrenade->GetEngineObject()->SetLocalAngularVelocity(RandomAngle(-400, 400)); //tumble in air
 			pGrenade->GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 
 			pGrenade->SetThrower(GetOwner());
@@ -348,7 +348,7 @@ void CWeaponSMG1::SecondaryAttack( void )
 		return;
 
 	//Must have ammo
-	if ( ( pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) <= 0 ) || ( pPlayer->GetWaterLevel() == 3 ) )
+	if ( ( pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) <= 0 ) || ( pPlayer->GetEngineObject()->GetWaterLevel() == 3 ) )
 	{
 		SendWeaponAnim( ACT_VM_DRYFIRE );
 		BaseClass::WeaponSound( EMPTY );
@@ -376,7 +376,7 @@ void CWeaponSMG1::SecondaryAttack( void )
 	CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create( "grenade_ar2", vecSrc, angles, pPlayer );
 	pGrenade->GetEngineObject()->SetAbsVelocity( vecThrow );
 
-	pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
+	pGrenade->GetEngineObject()->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
 	pGrenade->GetEngineObject()->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 	pGrenade->SetThrower( GetOwner() );
 	pGrenade->SetDamage( sk_plr_dmg_smg1_grenade.GetFloat() );
@@ -438,7 +438,7 @@ int CWeaponSMG1::WeaponRangeAttack2Condition(/* float flDot, float flDist */)
 		return COND_NONE;
 
 	Vector vecEnemyLKP = npcOwner->GetEnemyLKP();
-	if ( !( pEnemy->GetEngineObject()->GetFlags() & FL_ONGROUND ) && pEnemy->GetWaterLevel() == 0 && vecEnemyLKP.z > (GetEngineObject()->GetAbsOrigin().z + GetEngineObject()->WorldAlignMaxs().z) )
+	if ( !( pEnemy->GetEngineObject()->GetFlags() & FL_ONGROUND ) && pEnemy->GetEngineObject()->GetWaterLevel() == 0 && vecEnemyLKP.z > (GetEngineObject()->GetAbsOrigin().z + GetEngineObject()->WorldAlignMaxs().z) )
 	{
 		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely to 
 		// be grenaded.

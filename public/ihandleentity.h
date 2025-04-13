@@ -31,6 +31,8 @@ class IHandleEntity;
 class CBaseHandle;
 class IEntityFactory;
 class IEntityList;
+class IServerEntityList;
+class IClientEntityList;
 class datamap_t;
 struct PS_SD_Static_SurfaceProperties_t;
 class CTraceListData;
@@ -274,10 +276,12 @@ public:
 	virtual IEngineObject* NextMovePeer(void) const = 0;
 	virtual int GetModelIndex(void) const = 0;
 	virtual string_t GetModelName(void) const = 0;
+	virtual int GetModelType() const = 0;
 	virtual const model_t* GetModel(void) const = 0;
 	virtual IStudioHdr* GetModelPtr(void) const = 0;
 	virtual float GetModelScale() const = 0;
 	virtual void AddSolidFlags(int flags) = 0;
+	virtual ICollideable* GetCollideable() = 0;
 	virtual SolidType_t GetSolid() const = 0;
 	virtual bool IsSolidFlagSet(int flagMask) const = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
@@ -305,10 +309,13 @@ public:
 	virtual const matrix3x4_t& CollisionToWorldTransform() const = 0;
 	virtual const matrix3x4_t& EntityToWorldTransform() const = 0;
 	virtual MoveType_t GetMoveType() const = 0;
+	virtual int GetWaterLevel() const = 0;
 	virtual IPhysicsObject* VPhysicsGetObject(void) const = 0;
 	virtual bool IsRagdoll() const = 0;
 	virtual IEngineObject* GetOwnerEntity(void) const = 0;
 	virtual IEngineObject* GetEffectEntity(void) const = 0;
+	virtual void SetGravity(float flGravity) = 0;
+	virtual float GetGravity(void) const = 0;
 	virtual int	LookupAttachment(const char* pAttachmentName) = 0;
 	virtual bool GetAttachment(int number, Vector& origin, QAngle& angles) = 0;
 	virtual bool GetAttachment(int number, matrix3x4_t& matrix) = 0;
@@ -469,6 +476,11 @@ public:
 
 };
 
+abstract_class IHandleNPC{
+public:
+
+};
+
 // An IHandleEntity-derived class can go into an entity list and use ehandles.
 class SINGLE_INHERITANCE IHandleEntity
 {
@@ -493,7 +505,6 @@ public:
 	virtual char const* GetClassname(void) const { return NULL; }
 	virtual bool ClassMatches(const char* pszClassOrWildcard) { return false; }
 	virtual char const* GetDebugName(void) const { return NULL; }
-	virtual int GetModelType() const { return mod_bad; }
 	virtual	bool ShouldCollide(int collisionGroup, int contentsMask) const { return false; }
 	virtual bool TestCollision(const Ray_t& ray, unsigned int mask, trace_t& trace) { return false; }
 	virtual	bool TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr) { return false; }
@@ -525,7 +536,6 @@ public:
 	virtual const QAngle& LocalEyeAngles(void) { return *(QAngle*)0; }	// Direction of eyes in local space (pl.v_angle)
 	virtual Vector EarPosition(void) { return EyePosition(); }// position of ears
 	virtual Vector Weapon_ShootPosition() { return EyePosition(); }
-	virtual int GetWaterLevel() const { return 0; }
 	virtual ITraceFilter* GetBeamTraceFilter(void) { return NULL; }
 };
 
@@ -576,6 +586,8 @@ public:
 abstract_class IEntityList : public IPooledStringAllocer
 {
 public:
+	virtual IServerEntityList* AsServerEntityList() = 0;
+	virtual IClientEntityList* AsClientEntityList() = 0;
 	virtual IHandleEntity * CreateEntityByName(const char* className, int iForceEdictIndex = -1, int iSerialNum = -1) = 0;
 	virtual void DestroyEntity(IHandleEntity* pEntity) = 0;
 	virtual IHandleEntity* GetBaseEntityFromHandle(CBaseHandle hEnt) const = 0;
@@ -681,6 +693,18 @@ abstract_class IWatcherCallback
 {
 public:
 	virtual ~IWatcherCallback() {}
+};
+
+abstract_class IPositionWatcher : public IWatcherCallback
+{
+public:
+	virtual void NotifyPositionChanged(IHandleEntity * pEntity) = 0;
+};
+
+abstract_class IVPhysicsWatcher : public IWatcherCallback
+{
+public:
+	virtual void NotifyVPhysicsStateChanged(IPhysicsObject * pPhysics, IHandleEntity* pEntity, bool bAwake) = 0;
 };
 
 class IWatcherList {

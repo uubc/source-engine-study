@@ -971,7 +971,7 @@ void CNPC_Ichthyosaur::MoveFlyExecute( CBaseEntity *pTargetEnt, const Vector &ve
 bool CNPC_Ichthyosaur::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker )
 {
 	// don't look through water
-	if ( GetWaterLevel() != pEntity->GetWaterLevel() )
+	if (GetEngineObject()->GetWaterLevel() != pEntity->GetEngineObject()->GetWaterLevel() )
 		return false;
 
 	return BaseClass::FVisible( pEntity, traceMask, ppBlocker );
@@ -1062,7 +1062,7 @@ void CNPC_Ichthyosaur::Bite( void )
 
 			if ( pPlayer )
 			{
-				if ( ( ( m_flHoldTime < gpGlobals->curtime ) && ( pPlayer->m_iHealth < (pPlayer->m_iMaxHealth*0.5f)) ) || ( pPlayer->GetWaterLevel() < 1 ) )
+				if ( ( ( m_flHoldTime < gpGlobals->curtime ) && ( pPlayer->m_iHealth < (pPlayer->m_iMaxHealth*0.5f)) ) || ( pPlayer->GetEngineObject()->GetWaterLevel() < 1 ) )
 				{
 					//EnsnareVictim( pHurt );
 				}
@@ -1193,9 +1193,9 @@ void CNPC_Ichthyosaur::PrescheduleThink( void )
 	}
 
 	//Check our water level
-	if ( GetWaterLevel() != 3 )
+	if (GetEngineObject()->GetWaterLevel() != 3 )
 	{
-		if ( GetWaterLevel() < 2 )
+		if (GetEngineObject()->GetWaterLevel() < 2 )
 		{
 			DevMsg( 2, "Came out of water\n" );
 			

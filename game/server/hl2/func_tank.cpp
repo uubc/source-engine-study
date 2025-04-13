@@ -1187,7 +1187,7 @@ void CFuncTank::StopControl()
 		GetEngineObject()->SetNextThink( m_flNextControllerSearch );
 	}
 
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 }
 
 //-----------------------------------------------------------------------------
@@ -1694,10 +1694,10 @@ void CFuncTank::Think( void )
 	// refresh the matrix
 	UpdateMatrix();
 
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	TrackTarget();
 
-	if ( fabs(GetLocalAngularVelocity().x) > 1 || fabs(GetLocalAngularVelocity().y) > 1 )
+	if ( fabs(GetEngineObject()->GetLocalAngularVelocity().x) > 1 || fabs(GetEngineObject()->GetLocalAngularVelocity().y) > 1 )
 	{
 		StartRotSound();
 	}
@@ -1860,7 +1860,7 @@ bool CFuncTank::RotateTankToAngles( const QAngle &angles, float *pDistX, float *
 	}
 
 	// Get at the angular vel
-	QAngle vecAngVel = GetLocalAngularVelocity();
+	QAngle vecAngVel = GetEngineObject()->GetLocalAngularVelocity();
 
 	// Move toward target at rate or less
 	float distY = UTIL_AngleDistance( flActualYaw, GetEngineObject()->GetLocalAngles().y );
@@ -1873,7 +1873,7 @@ bool CFuncTank::RotateTankToAngles( const QAngle &angles, float *pDistX, float *
 	vecAngVel.x = clamp( vecAngVel.x, -m_pitchRate, m_pitchRate );
 
 	// How exciting! We're done
-	SetLocalAngularVelocity( vecAngVel );
+	GetEngineObject()->SetLocalAngularVelocity( vecAngVel );
 
 	if ( pDistX && pDistY )
 	{
@@ -2092,7 +2092,7 @@ void CFuncTank::AimFuncTankAtTarget( void )
 		m_persist2burst = 0;
 	}
 
-	SetMoveDoneTime( 0.1 );
+	GetEngineObject()->SetMoveDoneTime( 0.1 );
 
 	if ( CanFire() && ( ( (fabs(distX) <= m_pitchTolerance) && (fabs(distY) <= m_yawTolerance) ) || (GetEngineObject()->GetSpawnFlags() & SF_TANK_LINEOFSIGHT)))
 	{
@@ -2153,7 +2153,7 @@ void CFuncTank::TrackTarget( void )
 		AimBarrelAtPlayerCrosshair( &angles );
 		RotateTankToAngles( angles );
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.05f );
-		SetMoveDoneTime( 0.1 );
+		GetEngineObject()->SetMoveDoneTime( 0.1 );
 		return;
 	}
 
@@ -2162,7 +2162,7 @@ void CFuncTank::TrackTarget( void )
 		AimBarrelAtNPCEnemy( &angles );
 		RotateTankToAngles( angles );
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.05f );
-		SetMoveDoneTime( 0.1 );
+		GetEngineObject()->SetMoveDoneTime( 0.1 );
 		return;
 	}
 

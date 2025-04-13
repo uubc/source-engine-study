@@ -693,7 +693,6 @@ public:
 
 	void (C_BaseEntity ::* m_pfnTouch)(IClientEntity* pOther);
 
-	void					PhysicsStep(void);
 
 public:
 
@@ -703,32 +702,20 @@ public:
 
 
 	// Remove this as ground entity for all object resting on this object
-	void					WakeRestingObjects();
+	//void					WakeRestingObjects();
 	bool					HasNPCsOnIt();
 
-	bool					PhysicsCheckWater(void);
-	void					PhysicsCheckVelocity(void);
-	void					PhysicsAddHalfGravity(float timestep);
-	void					PhysicsAddGravityMove(Vector& move);
 
 	virtual unsigned int	PhysicsSolidMaskForEntity(void) const;
-
-	void					PhysicsPushEntity(const Vector& push, trace_t* pTrace);
-	void					PhysicsCheckWaterTransition(void);
-
-
-
 	// Performs the collision resolution for fliers.
-	void					PerformFlyCollisionResolution(trace_t& trace, Vector& move);
-	void					ResolveFlyCollisionBounce(trace_t& trace, Vector& vecVelocity, float flMinTotalElasticity = 0.0f);
-	void					ResolveFlyCollisionSlide(trace_t& trace, Vector& vecVelocity);
-	void					ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity);
-
-
+	virtual  void					ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity);
 
 public:
 
-	virtual void					PhysicsSimulate(void);
+	virtual void					PhysicsSimulate(void) 
+	{
+		GetEngineObject()->PhysicsSimulate();
+	}
 	virtual bool					IsAlive(void);
 
 	bool							IsInWorld(void) { return true; }
@@ -742,6 +729,7 @@ public:
 	virtual bool					IsCombatCharacter(void) const { return false; };
 	virtual C_BaseCombatCharacter  *MyCombatCharacterPointer(void) { return NULL; }
 	virtual bool					IsNPC(void) const { return false; }
+	virtual IClientNPC*				AsHandleNPC() { return NULL; }
 	C_AI_BaseNPC* MyNPCPointer(void);
 	virtual bool					IsNextBot() { return false; }
 	// TF2 specific
@@ -795,16 +783,12 @@ public:
 	void				ApplyAbsVelocityImpulse(const Vector& vecImpulse);
 	void				ApplyLocalAngularVelocityImpulse(const AngularImpulse& angImpulse);
 
-	// NOTE: Setting the abs velocity in either space will cause a recomputation
-	// in the other space, so setting the abs velocity will also set the local vel
-	void				SetLocalAngularVelocity(const QAngle& vecAngVelocity);
-	const QAngle& GetLocalAngularVelocity() const;
+
 
 	//	void				SetAbsAngularVelocity( const QAngle &vecAngAbsVelocity );
 	//	const QAngle&		GetAbsAngularVelocity( ) const;
 
-	const Vector& GetBaseVelocity() const;
-	void				SetBaseVelocity(const Vector& v);
+
 
 	virtual const Vector& GetViewOffset() const;
 	virtual void		  SetViewOffset(const Vector& v);
@@ -822,8 +806,8 @@ public:
 	void					OnAnimationChanged();
 	//void					AddWatcherToEntity(CBaseEntity* pWatcher, int watcherType);
 	//void					RemoveWatcherFromEntity(CBaseEntity* pWatcher, int watcherType);
-	void					NotifyPositionChanged();
-	void					NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake);
+	//void					NotifyPositionChanged();
+	void					NotifyVPhysicsStateChanged(IPhysicsObject* pPhysics, bool bAwake) {}
 
 
 	void				SetRemovalFlag(bool bRemove);
@@ -870,8 +854,7 @@ protected:
 
 
 
-	// For non-players
-	int	PhysicsClipVelocity(const Vector& in, const Vector& normal, Vector& out, float overbounce);
+	
 
 	// Allow entities to perform client-side fades
 	//virtual unsigned char GetClientSideFade() { return 255; }
@@ -974,10 +957,7 @@ public:
 	//bool							BecameDormantThisPacket( void ) const;
 	//void							SetDormantPredictable( bool dormant );
 
-	int								GetWaterLevel() const;
-	void							SetWaterLevel( int nLevel );
-	int								GetWaterType() const;
-	void							SetWaterType( int nType );
+
 
 
 	int								GetTextureFrameIndex( void );
@@ -1014,10 +994,6 @@ protected:
 //	bool							m_bPredictionEligible;
 //#endif
 
-	int								m_nSimulationTick;
-
-
-
 	// Object eye position
 	Vector							m_vecViewOffset;
 
@@ -1044,25 +1020,15 @@ private:
 
 	
 
-	// Computes the base velocity
-	void UpdateBaseVelocity( void );
 
-	// Physics-related private methods
-	void PhysicsPusher( void );
-	void PhysicsNone( void );
-	void PhysicsNoclip( void );
-	void PhysicsParent( void );
-	void PhysicsStepRunTimestep( float timestep );
-	void PhysicsToss( void );
-	void PhysicsCustom( void );
-
-	// Simulation in local space of rigid children
-	void PhysicsRigidChild( void );
 
 	
 
-	// Computes new angles based on the angular velocity
-	void SimulateAngles( float flFrameTime );
+
+
+	
+
+
 
 	// Implement this if you use MOVETYPE_CUSTOM
 	virtual void PerformCustomPhysics( Vector *pNewPosition, Vector *pNewVelocity, QAngle *pNewAngles, QAngle *pNewAngVelocity );
@@ -1074,19 +1040,16 @@ private:
 
 	
 
-	// Computes the water level + type
-	void UpdateWaterState();
 
-	// Checks a sweep without actually performing the move
-	void PhysicsCheckSweep( const Vector& vecAbsStart, const Vector &vecAbsDelta, trace_t *pTrace );
+
+
 
 public:
 	// FIXME: REMOVE!!!
 	void MoveToAimEnt( );
 private:
 
-	// was pev->avelocity
-	QAngle							m_vecAngVelocity;
+
 
 //	QAngle							m_vecAbsAngVelocity;
 
@@ -1099,8 +1062,7 @@ private:
 //#endif
 
 
-	// Base velocity
-	Vector							m_vecBaseVelocity;
+	
 
 	
 
@@ -1115,8 +1077,7 @@ private:
 
 
 
-	unsigned char					m_nWaterLevel;
-	unsigned char					m_nWaterType;
+
 	// For client/server entities, true if the entity goes outside the PVS.
 	// Unused for client only entities.
 	bool							m_bDormant;
@@ -1249,31 +1210,12 @@ inline const char *C_BaseEntity::GetDLLType( void )
 //	return GetEngineObject()->BoundingRadius();
 //}
 
-inline const QAngle& C_BaseEntity::GetLocalAngularVelocity( ) const
-{
-	return m_vecAngVelocity;
-}
-
-inline const Vector& C_BaseEntity::GetBaseVelocity() const 
-{ 
-	return m_vecBaseVelocity; 
-}
-
-inline void	C_BaseEntity::SetBaseVelocity( const Vector& v ) 
-{ 
-	m_vecBaseVelocity = v; 
-}
 
 
-inline int C_BaseEntity::GetWaterLevel() const
-{
-	return m_nWaterLevel;
-}
 
-inline void C_BaseEntity::SetWaterLevel( int nLevel )
-{
-	m_nWaterLevel = nLevel;
-}
+
+
+
 
 #ifdef SIXENSE
 

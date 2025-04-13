@@ -341,7 +341,7 @@ void CBaseMoveBehavior::Activate( void )
 {
 	BaseClass::Activate();
 
-	SetMoveDoneTime( 0.5 );	// start moving in 0.2 seconds time
+	GetEngineObject()->SetMoveDoneTime( 0.5 );	// start moving in 0.2 seconds time
 
 	// if we are just the basic keyframed entity, cycle our animation
 	if ( !stricmp(GetClassname(), "move_keyframed") )
@@ -359,7 +359,7 @@ bool CBaseMoveBehavior::IsAtSequenceStart( void )
 	if ( !m_pCurrentKeyFrame )
 		return true;
 
-	if ( m_flAnimStartTime && m_flAnimStartTime >= GetLocalTime() )
+	if ( m_flAnimStartTime && m_flAnimStartTime >= GetEngineObject()->GetLocalTime() )
 	{
 		if ( !m_pCurrentKeyFrame->PrevKey(1) && !m_pTargetKeyFrame )
 			return true;
@@ -414,7 +414,7 @@ bool CBaseMoveBehavior::StartMoving( int direction )
 	if ( m_iDirection == direction )
 	{
 		// if we're at the end of the current anim key, move to the next one
-		if ( GetLocalTime() >= m_flAnimEndTime )
+		if (GetEngineObject()->GetLocalTime() >= m_flAnimEndTime )
 		{
 			m_pCurrentKeyFrame = m_pTargetKeyFrame;
 			m_flTimeIntoFrame = 0;
@@ -491,8 +491,8 @@ bool CBaseMoveBehavior::StartMoving( int direction )
 	// ->m_flNextTime is the time to traverse to the NEXT key, so we need the opposite if travelling backwards
 	if ( m_iDirection == 1 )
 	{
-		m_flAnimStartTime = GetLocalTime() - m_flTimeIntoFrame;
-		m_flAnimEndTime = GetLocalTime() + m_pCurrentKeyFrame->m_flNextTime - m_flTimeIntoFrame;
+		m_flAnimStartTime = GetEngineObject()->GetLocalTime() - m_flTimeIntoFrame;
+		m_flAnimEndTime = GetEngineObject()->GetLocalTime() + m_pCurrentKeyFrame->m_flNextTime - m_flTimeIntoFrame;
 	}
 	else
 	{
@@ -500,8 +500,8 @@ bool CBaseMoveBehavior::StartMoving( int direction )
 		if ( m_flTimeIntoFrame )
 			m_flTimeIntoFrame = m_pTargetKeyFrame->m_flNextTime - m_flTimeIntoFrame;
 
-		m_flAnimStartTime = GetLocalTime() - m_flTimeIntoFrame;
-		m_flAnimEndTime = GetLocalTime() + m_pTargetKeyFrame->m_flNextTime - m_flTimeIntoFrame;
+		m_flAnimStartTime = GetEngineObject()->GetLocalTime() - m_flTimeIntoFrame;
+		m_flAnimEndTime = GetEngineObject()->GetLocalTime() + m_pTargetKeyFrame->m_flNextTime - m_flTimeIntoFrame;
 	}
 
 	// calculate the average speed at which we cross 
@@ -509,7 +509,7 @@ bool CBaseMoveBehavior::StartMoving( int direction )
 	float dist = (m_pCurrentKeyFrame->m_Origin - m_pTargetKeyFrame->m_Origin).Length();
 	m_flAverageSpeedAcrossFrame = animDuration / dist;
 
-	SetMoveDoneTime( m_flAnimEndTime - GetLocalTime() );
+	GetEngineObject()->SetMoveDoneTime( m_flAnimEndTime - GetEngineObject()->GetLocalTime() );
 	return true;
 }
 
@@ -526,9 +526,9 @@ void CBaseMoveBehavior::StopMoving( void )
 	if ( m_iDirection == 1 )
 	{
 		// record the time if we're not at the end of the frame
-		if ( GetLocalTime() < m_flAnimEndTime )
+		if (GetEngineObject()->GetLocalTime() < m_flAnimEndTime )
 		{
-			m_flTimeIntoFrame = GetLocalTime() - m_flAnimStartTime;
+			m_flTimeIntoFrame = GetEngineObject()->GetLocalTime() - m_flAnimStartTime;
 		}
 		else
 		{
@@ -544,20 +544,20 @@ void CBaseMoveBehavior::StopMoving( void )
 		// store it only as a forward movement
 		m_pCurrentKeyFrame = m_pTargetKeyFrame;
 
-		if ( GetLocalTime() < m_flAnimEndTime )
+		if (GetEngineObject()->GetLocalTime() < m_flAnimEndTime )
 		{
-			m_flTimeIntoFrame = m_flAnimEndTime - GetLocalTime();
+			m_flTimeIntoFrame = m_flAnimEndTime - GetEngineObject()->GetLocalTime();
 		}
 	}
 
 	// stop moving totally
-	SetMoveDoneTime( -1 );
+	GetEngineObject()->SetMoveDoneTime( -1 );
 	m_iDirection = 0;
 	m_flAnimStartTime = 0;
 	m_flAnimEndTime = 0;
 	m_pTargetKeyFrame = NULL;
 	GetEngineObject()->SetAbsVelocity(vec3_origin);
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 }
 
 
@@ -611,7 +611,7 @@ float CBaseMoveBehavior::SetObjectPhysicsVelocity( float moveTime )
 	if ( !IsMoving() )
 		return moveTime;
 	
-	float destTime = moveTime + GetLocalTime();
+	float destTime = moveTime + GetEngineObject()->GetLocalTime();
 
 	// work out where we want to be, using destTime
 	m_flTimeIntoFrame = destTime - m_flAnimStartTime;
@@ -650,7 +650,7 @@ float CBaseMoveBehavior::SetObjectPhysicsVelocity( float moveTime )
 	// find our velocity vector (newPos - currentPos) and scale velocity vector according to the movetime
 	float oneOnMoveTime = 1 / moveTime;
 	GetEngineObject()->SetAbsVelocity( (newPos - GetEngineObject()->GetLocalOrigin()) * oneOnMoveTime );
-	SetLocalAngularVelocity( (newAngles - GetEngineObject()->GetLocalAngles()) * oneOnMoveTime );
+	GetEngineObject()->SetLocalAngularVelocity( (newAngles - GetEngineObject()->GetLocalAngles()) * oneOnMoveTime );
 
 	return moveTime;
 }

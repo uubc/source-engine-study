@@ -356,7 +356,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 
 				pTouchEnt->GetEngineObject()->SetMoveType( MOVETYPE_FLY );
 				pTouchEnt->GetEngineObject()->SetAbsVelocity( vec3_origin );
-				pTouchEnt->SetBaseVelocity( vec3_origin );
+				pTouchEnt->GetEngineObject()->SetBaseVelocity( vec3_origin );
 				Vector origin = GetEngineObject()->GetAbsOrigin();
 				origin.z = pTouchEnt->GetEngineObject()->GetAbsOrigin().z;
 				pTouchEnt->GetEngineObject()->SetLocalOrigin( origin );

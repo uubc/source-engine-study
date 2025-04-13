@@ -249,7 +249,7 @@ float CAI_BaseNPC::OpenDoorAndWait( CBaseEntity *pDoor )
 	if (pDoor && !pDoor->IsLockedByMaster())
 	{
 		pDoor->Use(this, this, USE_ON, 0.0);
-		flTravelTime = pDoor->GetMoveDoneTime();
+		flTravelTime = pDoor->GetEngineObject()->GetMoveDoneTime();
 		if ( pDoor->GetEntityName() != NULL_STRING )
 		{
 			IServerEntity *pTarget = NULL;
@@ -276,7 +276,7 @@ float CAI_BaseNPC::OpenDoorAndWait( CBaseEntity *pDoor )
 
 //-----------------------------------------------------------------------------
 
-bool CAI_BaseNPC::CanStandOn( CBaseEntity *pSurface ) const
+bool CAI_BaseNPC::CanStandOn( IServerEntity *pSurface ) const
 {
 	if ( !pSurface->IsAIWalkable() )
 	{

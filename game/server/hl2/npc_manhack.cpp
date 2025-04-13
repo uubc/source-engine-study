@@ -290,7 +290,7 @@ void CNPC_Manhack::PrescheduleThink( void )
 	// ----------------------------------------
 	//	Am I in water?
 	// ----------------------------------------
-	if ( GetWaterLevel() > 0 )
+	if (GetEngineObject()->GetWaterLevel() > 0 )
 	{
 		if( m_nLastWaterLevel == 0 )
 		{
@@ -314,7 +314,7 @@ void CNPC_Manhack::PrescheduleThink( void )
 		}
 	}
 
-	m_nLastWaterLevel = GetWaterLevel();
+	m_nLastWaterLevel = GetEngineObject()->GetWaterLevel();
 }
 
 
@@ -1381,7 +1381,7 @@ void CNPC_Manhack::Splash( const Vector &vecSplashPos )
 
 	data.m_flScale = 8.0f;
 
-	int contents = GetWaterType();
+	int contents = GetEngineObject()->GetWaterType();
 
 	// Verify we have valid contents
 	if ( !( contents & (CONTENTS_SLIME|CONTENTS_WATER)))
@@ -1460,7 +1460,7 @@ bool CNPC_Manhack::IsHeldByPhyscannon( )
 void CNPC_Manhack::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 {
 	// Don't hurt the player if I'm in water
-	if( GetWaterLevel() > 0 && pHitEntity->IsPlayer() )
+	if(GetEngineObject()->GetWaterLevel() > 0 && pHitEntity->IsPlayer() )
 		return;
 
 	// Can't slice players holding it with the phys cannon
@@ -1901,7 +1901,7 @@ void CNPC_Manhack::PlayFlySound(void)
 //-----------------------------------------------------------------------------
 void CNPC_Manhack::MoveExecute_Alive(float flInterval)
 {
-	PhysicsCheckWaterTransition();
+	GetEngineObject()->PhysicsCheckWaterTransition();
 
 	Vector	vCurrentVelocity = GetCurrentVelocity();
 
@@ -1990,7 +1990,7 @@ void CNPC_Manhack::MoveExecute_Alive(float flInterval)
 			m_vCurrentVelocity.z = 0.0;
 		}
 	}
-	else if( GetWaterLevel() > 0 )
+	else if(GetEngineObject()->GetWaterLevel() > 0 )
 	{
 		// Allow the manhack to lift off, but not to go deeper.
 		m_vCurrentVelocity.z = MAX( m_vCurrentVelocity.z, 0 );
@@ -2143,14 +2143,14 @@ void CNPC_Manhack::SpinBlades(float flInterval)
 //-----------------------------------------------------------------------------
 void CNPC_Manhack::MoveExecute_Dead(float flInterval)
 {
-	if( GetWaterLevel() > 0 )
+	if(GetEngineObject()->GetWaterLevel() > 0 )
 	{
 		// No movement if sinking in water.
 		return;
 	}
 
 	// Periodically emit smoke.
-	if (gpGlobals->curtime > m_fSmokeTime && GetWaterLevel() == 0)
+	if (gpGlobals->curtime > m_fSmokeTime && GetEngineObject()->GetWaterLevel() == 0)
 	{
 //		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(10, 15), 10);
 		m_fSmokeTime = gpGlobals->curtime + random->RandomFloat( 0.1, 0.3);

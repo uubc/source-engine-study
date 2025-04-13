@@ -97,7 +97,7 @@ void CGib::SpawnStickyGibs( CBaseEntity *pVictim, Vector vecOrigin, int cGibs )
 			vecNewVelocity *= 900;
 
 			QAngle vecAngVelocity( random->RandomFloat ( 250, 400 ), random->RandomFloat ( 250, 400 ), 0 );
-			pGib->SetLocalAngularVelocity( vecAngVelocity );
+			pGib->GetEngineObject()->SetLocalAngularVelocity( vecAngVelocity );
 
 			// copy owner's blood color
 			pGib->SetBloodColor( pVictim->BloodColor() );
@@ -155,10 +155,10 @@ void CGib::SpawnHeadGib( CBaseEntity *pVictim )
 			vecNewVelocity = Vector (random->RandomFloat(-100,100), random->RandomFloat(-100,100), random->RandomFloat(200,300));
 		}
 
-		QAngle vecNewAngularVelocity = pGib->GetLocalAngularVelocity();
+		QAngle vecNewAngularVelocity = pGib->GetEngineObject()->GetLocalAngularVelocity();
 		vecNewAngularVelocity.x = random->RandomFloat ( 100, 200 );
 		vecNewAngularVelocity.y = random->RandomFloat ( 100, 300 );
-		pGib->SetLocalAngularVelocity( vecNewAngularVelocity );
+		pGib->GetEngineObject()->SetLocalAngularVelocity( vecNewAngularVelocity );
 
 		// copy owner's blood color
 		pGib->SetBloodColor( pVictim->BloodColor() );
@@ -226,10 +226,10 @@ void CGib::InitGib( CBaseEntity *pVictim, float fMinVelocity, float fMaxVelocity
 
 		vecNewVelocity *= random->RandomFloat ( fMaxVelocity, fMinVelocity );
 
-		QAngle vecNewAngularVelocity = GetLocalAngularVelocity();
+		QAngle vecNewAngularVelocity = GetEngineObject()->GetLocalAngularVelocity();
 		vecNewAngularVelocity.x = random->RandomFloat ( 100, 200 );
 		vecNewAngularVelocity.y = random->RandomFloat ( 100, 300 );
-		SetLocalAngularVelocity( vecNewAngularVelocity );
+		GetEngineObject()->SetLocalAngularVelocity( vecNewAngularVelocity );
 		
 		// copy owner's blood color
 		SetBloodColor( pVictim->BloodColor() );
@@ -348,7 +348,7 @@ void CGib::WaitTillLand ( void )
 		{
 			GetEngineObject()->AddSolidFlags( FSOLID_NOT_SOLID );
 		}
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 
 		GetEngineObject()->SetNextThink( gpGlobals->curtime + m_lifeTime );
 		SetThink ( &CGib::SUB_FadeOut );
@@ -518,10 +518,10 @@ void CGib::BounceGibTouch ( IServerEntity *pOther )
 		angles.z = 0;
 		GetEngineObject()->SetLocalAngles( angles );
 
-		QAngle angVel = GetLocalAngularVelocity();
+		QAngle angVel = GetEngineObject()->GetLocalAngularVelocity();
 		angVel.x = 0;
 		angVel.z = 0;
-		SetLocalAngularVelocity( vec3_angle );
+		GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	}
 	else
 	{
@@ -573,7 +573,7 @@ void CGib::StickyGibTouch ( IServerEntity *pOther )
 	VectorAngles( vecForward, angles );
 	GetEngineObject()->SetLocalAngles( angles );
 	GetEngineObject()->SetAbsVelocity( vec3_origin );
-	SetLocalAngularVelocity( vec3_angle );
+	GetEngineObject()->SetLocalAngularVelocity( vec3_angle );
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 }
 

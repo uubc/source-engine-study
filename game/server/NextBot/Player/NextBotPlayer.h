@@ -579,7 +579,7 @@ inline void NextBotPlayer< PlayerType >::PhysicsSimulate( void )
 	VPROF( "NextBotPlayer::PhysicsSimulate" );
 
 	// Make sure not to simulate this guy twice per frame
-	if ( PlayerType::m_nSimulationTick == gpGlobals->tickcount )
+	if ( PlayerType::GetEngineObject()->GetSimulationTick() == gpGlobals->tickcount)
 	{
 		return;
 	}

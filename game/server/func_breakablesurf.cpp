@@ -143,7 +143,7 @@ CWindowPane* CWindowPane::CreateWindowPane( const Vector &vecOrigin, const QAngl
 		pGlass->GetEngineObject()->SetLocalAngles( vecAngles );
 		pGlass->Spawn();
 		pGlass->SetTouch(&CWindowPane::PaneTouch);
-		pGlass->SetLocalAngularVelocity( RandomAngle(-50,50) );
+		pGlass->GetEngineObject()->SetLocalAngularVelocity( RandomAngle(-50,50) );
 		pGlass->GetEngineObject()->SetBody( random->RandomInt(0,2));
 	}
 	return pGlass;
@@ -1105,7 +1105,7 @@ void CBreakableSurface::DropPane(int nWidth, int nHeight)
 		CWindowPane *pPane = CWindowPane::CreateWindowPane(vBreakPos, vAngles);
 		if (pPane)
 		{
-			pPane->SetLocalAngularVelocity( RandomAngle(-120,120) );
+			pPane->GetEngineObject()->SetLocalAngularVelocity( RandomAngle(-120,120) );
 		}
 	}
 }

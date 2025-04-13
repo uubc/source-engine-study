@@ -115,22 +115,6 @@ enum
 };
 
 //
-// Player PHYSICS FLAGS bits
-//
-enum PlayerPhysFlag_e
-{
-	PFLAG_DIROVERRIDE	= ( 1<<0 ),		// override the player's directional control (trains, physics gun, etc.)
-	PFLAG_DUCKING		= ( 1<<1 ),		// In the process of ducking, but totally squatted yet
-	PFLAG_USING			= ( 1<<2 ),		// Using a continuous entity
-	PFLAG_OBSERVER		= ( 1<<3 ),		// player is locked in stationary cam mode. Spectators can move, observers can't.
-	PFLAG_VPHYSICS_MOTIONCONTROLLER = ( 1<<4 ),	// player is physically attached to a motion controller
-	PFLAG_GAMEPHYSICS_ROTPUSH = (1<<5), // game physics did a rotating push that we may want to override with vphysics
-
-	// If you add another flag here check that you aren't 
-	// overwriting phys flags in the HL2 of TF2 player classes
-};
-
-//
 // generic player
 //
 //-----------------------------------------------------
@@ -646,7 +630,6 @@ public:
 	virtual	void			RefreshCollisionBounds( void );
 	virtual void			InitVCollision();
 	void					PostThinkVPhysics( void );
-	virtual void			UpdatePhysicsShadowToCurrentPosition();
 
 	// Hint system
 	virtual CHintSystem		*Hints( void ) { return NULL; }
@@ -855,10 +838,10 @@ public:
 
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_lifeState );
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_iHealth );
-	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_vecBaseVelocity );
+	//IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_vecBaseVelocity );
 	//IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_nNextThinkTick );
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_vecVelocity );
-	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_nWaterLevel );
+	//IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_nWaterLevel );
 	
 	int						m_nButtons;
 	int						m_afButtonPressed;
