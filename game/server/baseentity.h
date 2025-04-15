@@ -830,8 +830,8 @@ public:
 	virtual bool			IsNPC( void ) const { return false; }
 	virtual IServerNPC*		AsHandleNPC() { return NULL; }
 	CAI_BaseNPC				*MyNPCPointer( void ); 
-	virtual bool			NPC_CheckBrushExclude(IServerEntity* pBrush) { return false; }
-	virtual float			GetStepHeight() const { return 0.0f; }
+	//virtual bool			NPC_CheckBrushExclude(IServerEntity* pBrush) { return false; }
+	//virtual float			GetStepHeight() const { return 0.0f; }
 	virtual CBaseCombatCharacter *MyCombatCharacterPointer( void ) { return NULL; }
 	virtual INextBot		*MyNextBotPointer( void ) { return NULL; }
 	virtual float			GetDelay( void ) { return 0; }

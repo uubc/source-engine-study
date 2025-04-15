@@ -3289,7 +3289,7 @@ public:
 
 			if ( pEnt->IsNPC() )
 			{
-				if (pEnt->NPC_CheckBrushExclude( pTestEntity ) == true )
+				if (pEnt->AsHandleNPC()->NPC_CheckBrushExclude(pTestEntity) == true)
 					return false;
 			}
 		}

@@ -1108,6 +1108,8 @@ public:
 class IServerNPC : public IHandleNPC {
 public:
 	virtual void NotifyPushMove() = 0;
+	virtual float GetStepHeight() const = 0;
+	virtual bool NPC_CheckBrushExclude(IServerEntity* pBrush) = 0;
 };
 
 // This class is how the engine talks to entities in the game DLL.
@@ -1294,7 +1296,6 @@ public:
 	virtual Vector GetSmoothedVelocity(void) = 0;
 	virtual void VelocityPunch(const Vector& vecForce) = 0;
 	virtual void ApplyAbsVelocityImpulse(const Vector& vecImpulse) = 0;
-	virtual float GetStepHeight() const = 0;
 	virtual int IsDormant(void) = 0;
 	virtual void MakeDormant(void) = 0;
 	virtual IServerEntity* GetActiveWeapon() const = 0;
@@ -1338,7 +1339,7 @@ public:
 	virtual void DispatchTraceAttack(const ITakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator = NULL) = 0;
 	virtual IServerEntity* EntityPhysics_CreateSolver(IServerEntity* pPhysicsBlocker, bool disableCollisions, float separationDuration) = 0;
 	virtual IServerEntity* NPCPhysics_CreateSolver(IServerEntity* pPhysicsObject, bool disableCollisions, float separationDuration) = 0;
-	virtual bool NPC_CheckBrushExclude(IServerEntity* pBrush) = 0;
+	//virtual bool NPC_CheckBrushExclude(IServerEntity* pBrush) = 0;
 	virtual void Splash() = 0;
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
 	static bool IsServer(void) { return true; }

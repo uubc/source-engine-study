@@ -11969,7 +11969,7 @@ void CEngineObjectInternal::UpdateStepOrigin()
 				float height = 18.0f;
 				if (m_pOuter->IsNPC())
 				{
-					height = m_pOuter->GetStepHeight();
+					height = m_pOuter->AsHandleNPC()->GetStepHeight();
 				}
 
 				// debounce floor location
@@ -12406,7 +12406,7 @@ public:
 
 		if (m_pEntity->IsNPC())
 		{
-			if (m_pEntity->NPC_CheckBrushExclude(pEntity))
+			if (m_pEntity->AsHandleNPC()->NPC_CheckBrushExclude(pEntity))
 				return false;
 
 		}

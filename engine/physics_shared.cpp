@@ -61,7 +61,7 @@ ConVar sv_use_transformed_collideables("sv_use_transformed_collideables", "1", F
 ConVar	sv_gravity("sv_gravity", "600", FCVAR_NOTIFY | FCVAR_REPLICATED, "World gravity.");
 ConVar	sv_maxvelocity("sv_maxvelocity", "3500", FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Maximum speed any ballistically moving object is allowed to attain per axis.");
 ConVar	sv_friction("sv_friction", "4", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "World friction.");
-ConVar	sv_stopspeed("sv_stopspeed", "100", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Minimum stopping speed when on ground.");
+ConVar	sv_stopspeed("sv_stopspeed", "100", FCVAR_NOTIFY | FCVAR_REPLICATED , "Minimum stopping speed when on ground.");//FCVAR_DEVELOPMENTONLY
 ConVar	sv_bounce("sv_bounce", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Bounce multiplier for when physically simulated objects collide with other objects.");
 ConVar	npc_vphysics("npc_vphysics", "0");
 
