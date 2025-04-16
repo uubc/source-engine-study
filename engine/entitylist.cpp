@@ -18469,7 +18469,7 @@ void CEngineRopeInternal::Init()
 
 void CEngineRopeInternal::NotifyPositionChanged()
 {
-	BaseClass::NotifyPositionChanged();
+	//BaseClass::NotifyPositionChanged();
 	// Update our bbox?
 	UpdateBBox(false);
 

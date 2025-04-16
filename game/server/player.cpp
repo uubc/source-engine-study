@@ -3388,7 +3388,7 @@ void CBasePlayer::PhysicsSimulate( void )
 		// Suppress predicted events, etc.
 		if ( IsPredictingWeapons() )
 		{
-			IPredictionSystem::SuppressHostEvents( this );
+			EntityList()->SetSuppressHost(this);
 		}
 
 		for ( int i = 0; i < commandsToRun; ++i )
@@ -3406,7 +3406,7 @@ void CBasePlayer::PhysicsSimulate( void )
 		}
 
 		// Always reset after running commands
-		IPredictionSystem::SuppressHostEvents( NULL );
+		EntityList()->SetSuppressHost(NULL);
 
 		MoveHelperServer()->SetHost( NULL );
 

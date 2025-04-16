@@ -23,7 +23,7 @@ extern short		g_sModelIndexBloodSpray;	// (in combatweapon.cpp) holds the sprite
 //-----------------------------------------------------------------------------
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
-class CEffectsServer : public IEffects, public IPredictionSystem
+class CEffectsServer : public IEffects
 {
 public:
 	CEffectsServer();
@@ -65,11 +65,11 @@ private:
 	//-----------------------------------------------------------------------------
 	bool SuppressTE( CRecipientFilter& filter )
 	{
-		if ( GetSuppressHost() )
+		if ( EntityList()->GetSuppressHost() )
 		{
 			if ( !filter.IgnorePredictionCull() )
 			{
-				filter.RemoveRecipient( GetSuppressHost()  );
+				filter.RemoveRecipient(EntityList()->GetSuppressHost()  );
 			}
 
 			if ( !filter.GetRecipientCount() )

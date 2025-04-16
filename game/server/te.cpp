@@ -121,13 +121,13 @@ private:
 	//-----------------------------------------------------------------------------
 	bool SuppressTE( IRecipientFilter& filter )
 	{
-		if ( GetSuppressHost() )
+		if (EntityList()->GetSuppressHost() )
 		{
 			CRecipientFilter& _filter = (( CRecipientFilter & )filter);
 
 			if ( !_filter.IgnorePredictionCull() )
 			{
-				_filter.RemoveRecipient( GetSuppressHost()  );
+				_filter.RemoveRecipient(EntityList()->GetSuppressHost()  );
 			}
 
 			if ( !_filter.GetRecipientCount() )

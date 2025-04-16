@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
-class CEffectsClient : public IEffects, public IPredictionSystem
+class CEffectsClient : public IEffects
 {
 public:
 	CEffectsClient();
@@ -62,7 +62,7 @@ private:
 	//-----------------------------------------------------------------------------
 	bool SuppressTE( C_RecipientFilter& filter )
 	{
-		if ( !CanPredict() )
+		if ( !EntityList()->CanPredict() )
 			return true;
 
 		if ( !filter.GetRecipientCount() )

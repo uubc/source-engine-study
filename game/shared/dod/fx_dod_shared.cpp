@@ -86,7 +86,7 @@ void TE_DODExplosion( IRecipientFilter &filter, float flDelay, const Vector &vec
 
 		CBroadcastRecipientFilter filter; // this is client side only
 
-		if ( !te->CanPredict() )
+		if ( !EntityList()->CanPredict())
 			return;
 				
 		g_pSoundEmitterSystem->EmitSound( filter, iPlayerIndex, shootsound, &vOrigin ); //CBaseEntity::

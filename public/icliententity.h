@@ -1402,6 +1402,12 @@ public:
 	virtual void Rope_ResetCounters() = 0;
 
 	virtual IClientWorld* GetWorld() = 0;
+
+	virtual void SetSuppressEvent(bool state) = 0;
+	virtual bool CanPredict(void) const = 0;
+	virtual void PushDisableSuppress(void) = 0;
+	virtual void PopDisableSuppress(void) = 0;
+
 };
 
 extern IClientEntityList* entitylist;

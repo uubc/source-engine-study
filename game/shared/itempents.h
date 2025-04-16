@@ -23,7 +23,7 @@ class KeyValues;
 //-----------------------------------------------------------------------------
 // Purpose:  Shared interface to temp entities
 //-----------------------------------------------------------------------------
-abstract_class ITempEntsSystem : public IPredictionSystem
+abstract_class ITempEntsSystem
 {
 public:
 	virtual void ArmorRicochet( IRecipientFilter& filer, float delay,

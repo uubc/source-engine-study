@@ -4741,6 +4741,50 @@ public:
 		BaseClass::AddDirtyEntity(pEntity);
 	}
 
+	void SetSuppressEvent(bool state)
+	{
+		m_bSuppressEvent = state;
+	}
+
+	void SetSuppressHost(IHandleEntity* host)
+	{
+		m_pSuppressHost = host;
+	}
+
+	IHandleEntity const* GetSuppressHost(void)
+	{
+		if (DisableFiltering())
+		{
+			return NULL;
+		}
+
+		return m_pSuppressHost;
+	}
+
+	bool CanPredict(void) const
+	{
+		if (DisableFiltering())
+		{
+			return false;
+		}
+
+		return !m_bSuppressEvent;
+	}
+
+	void PushDisableSuppress(void)
+	{
+		++m_nStatusPushed;
+	}
+	void PopDisableSuppress(void)
+	{
+		--m_nStatusPushed;
+	}
+
+	bool DisableFiltering(void) const
+	{
+		return (m_nStatusPushed > 0) ? true : false;
+	}
+
 protected:
 	virtual void AfterCreated(IHandleEntity* pEntity);
 	virtual void BeforeDestroy(IHandleEntity* pEntity);
@@ -5145,7 +5189,11 @@ private:
 	bool	m_bClientPVSIsExpanded;
 	CStaticCollisionPolyhedronCache m_StaticCollisionPolyhedronCache;
 	IServerWorld* m_pWorld = NULL;
-	bool    m_bLockWorld = false;
+	bool m_bLockWorld = false;
+	bool m_bSuppressEvent;
+	IHandleEntity* m_pSuppressHost;
+	int m_nStatusPushed;
+
 };
 
 template<class T>
@@ -7181,6 +7229,10 @@ CGlobalEntityList<T>::CGlobalEntityList()
 	m_LRUImportantRagdolls.RemoveAll();
 	m_LRU.RemoveAll();
 	AddListenerEntity(&m_PhysSaveRestoreBlockHandler);
+	m_bSuppressEvent = false;
+	m_pSuppressHost = NULL;
+
+	m_nStatusPushed = 0;
 }
 
 template<class T>
@@ -7353,66 +7405,8 @@ void CGlobalEntityList<T>::Physics_SimulateEntity(IServerEntity* pEntity)
 
 	if (pEntity->IsNetworkable() && pEntity->entindex() != -1)
 	{
-		//#if !defined( NO_ENTITY_PREDICTION )
-		//		// Player drives simulation of this entity
-		//		if ( pEntity->IsPlayerSimulated() )
-		//		{
-		//			// If the player is gone, dropped, crashed, then return
-		//			//  control to the game code.
-		//			CBasePlayer *simulatingPlayer = pEntity->GetSimulatingPlayer();
-		//			if ( simulatingPlayer &&
-		//				( simulatingPlayer->GetTimeBase() > gpGlobals->curtime - PLAYER_PACKETS_STOPPED_SO_RETURN_TO_PHYSICS_TIME ) )
-		//			{
-		//				// Okay, the guy is still around
-		//				return;
-		//			}
-		//
-		//			pEntity->UnsetPlayerSimulated();
-		//		}
-		//#endif
-
 		MDLCACHE_CRITICAL_SECTION();
-
-		//#if !defined( NO_ENTITY_PREDICTION )
-		//		// If an object was at one point player simulated, but had that status revoked (as just
-		//		//  above when no packets have arrived in a while ), then we still will assume that the
-		//		//  owner/player will be predicting the entity locally (even if the game is playing like butt)
-		//		//  and so we won't spam that player with additional network data such as effects/sounds 
-		//		//  that are theoretically being predicted by the player anyway.
-		//		if ( pEntity->m_PredictableID->IsActive() )
-		//		{
-		//			CBasePlayer *playerowner = ToBasePlayer( pEntity->GetOwnerEntity() );
-		//			if ( playerowner )
-		//			{
-		//				CBasePlayer *pl = ToBasePlayer( EntityList()->GetPlayerByIndex( pEntity->m_PredictableID->GetPlayer() + 1 ) );
-		//				// Is the player who created it still the owner?
-		//				if ( pl == playerowner )
-		//				{
-		//					// Set up to suppress sending events to owner player
-		//					if ( pl->IsPredictingWeapons() )
-		//					{
-		//						IPredictionSystem::SuppressHostEvents( playerowner );
-		//					}
-		//				}
-		//			}	
-		//			{
-		//				VPROF( ( !vprof_scope_entity_gamephys.GetBool() ) ? 
-		//						"pEntity->PhysicsSimulate" : 
-		//						EntityFactoryDictionary()->GetCannonicalName( pEntity->GetClassname() ) );
-		//
-		//				// Run entity physics
-		//				pEntity->PhysicsSimulate();
-		//			}
-		//
-		//			// Restore suppression filter
-		//			IPredictionSystem::SuppressHostEvents( NULL );
-		//		}
-		//		else
-		//#endif
-				//{
-					// Run entity physics
 		pEntity->PhysicsSimulate();
-		//}
 	}
 	else
 	{

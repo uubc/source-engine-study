@@ -16,8 +16,6 @@
 static CMoveData g_MoveData;
 CMoveData *g_pMoveData = &g_MoveData;
 
-IPredictionSystem *IPredictionSystem::g_pPredictionSystems = NULL;
-
 
 //-----------------------------------------------------------------------------
 // Sets up the move data for Halflife 1

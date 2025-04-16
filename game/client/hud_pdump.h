@@ -12,6 +12,9 @@
 
 #include <vgui_controls/Panel.h>
 #include "hudelement.h"
+#include "ehandle.h"
+
+typedef CHandle<C_BaseEntity> EHANDLE;
 
 namespace vgui
 {

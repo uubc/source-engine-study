@@ -11,8 +11,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-static IPredictionSystem g_RecipientFilterPredictionSystem;
-
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -106,7 +104,7 @@ void C_RecipientFilter::AddRecipient( const IHandleEntity *player )
 		Assert( prediction->InPrediction() );
 
 		// Only add local player if this is the first time doing prediction
-		if ( !g_RecipientFilterPredictionSystem.CanPredict() )
+		if ( !EntityList()->CanPredict())
 		{
 			return;
 		}
@@ -193,7 +191,7 @@ void C_RecipientFilter::UsePredictionRules( void )
 	if ( c == 0 )
 		return;
 
-	if ( !g_RecipientFilterPredictionSystem.CanPredict() )
+	if ( !EntityList()->CanPredict())
 	{
 		RemoveRecipient( local );
 	}

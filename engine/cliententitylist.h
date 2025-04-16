@@ -3847,6 +3847,50 @@ public:
 		g_DataChangedEvents.Purge();
 	}
 
+	void SetSuppressEvent(bool state)
+	{
+		m_bSuppressEvent = state;
+	}
+
+	void SetSuppressHost(IHandleEntity* host)
+	{
+		m_pSuppressHost = host;
+	}
+
+	IHandleEntity const* GetSuppressHost(void)
+	{
+		if (DisableFiltering())
+		{
+			return NULL;
+		}
+
+		return m_pSuppressHost;
+	}
+
+	bool CanPredict(void) const
+	{
+		if (DisableFiltering())
+		{
+			return false;
+		}
+
+		return !m_bSuppressEvent;
+	}
+
+	void PushDisableSuppress(void)
+	{
+		++m_nStatusPushed;
+	}
+	void PopDisableSuppress(void)
+	{
+		--m_nStatusPushed;
+	}
+
+	bool DisableFiltering(void) const
+	{
+		return (m_nStatusPushed > 0) ? true : false;
+	}
+
 	// CBaseEntityList overrides.
 protected:
 
@@ -4123,8 +4167,12 @@ private:
 	int m_nTouchDepth = 0;
 	CCallQueue m_PostTouchQueue;
 	IClientWorld* m_pWorld = NULL;
-	bool    m_bLockWorld = false;
+	bool m_bLockWorld = false;
 	CUtlLinkedList<CDataChangedEvent, unsigned short> g_DataChangedEvents;
+	bool m_bSuppressEvent;
+	IHandleEntity* m_pSuppressHost;
+	int m_nStatusPushed;
+
 };
 
 template<class T>
@@ -4621,6 +4669,10 @@ CClientEntityList<T>::CClientEntityList(void) :
 	m_LRUImportantRagdolls.RemoveAll();
 	m_LRU.RemoveAll();
 	//LevelShutdown();
+	m_bSuppressEvent = false;
+	m_pSuppressHost = NULL;
+
+	m_nStatusPushed = 0;
 }
 
 //-----------------------------------------------------------------------------

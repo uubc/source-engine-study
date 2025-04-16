@@ -1639,6 +1639,11 @@ public:
 
 	virtual IServerWorld* GetWorld() = 0;
 
+	virtual void SetSuppressHost(IHandleEntity* host) = 0;
+	virtual IHandleEntity const* GetSuppressHost(void) = 0;
+	virtual void PushDisableSuppress(void) = 0;
+	virtual void PopDisableSuppress(void) = 0;
+
 };
 
 extern IServerEntityList* serverEntitylist;

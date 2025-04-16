@@ -31,8 +31,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-IPredictionSystem *IPredictionSystem::g_pPredictionSystems = NULL;
-
 #if !defined( NO_ENTITY_PREDICTION )
 
 ConVar	cl_predictweapons	( "cl_predictweapons","1", FCVAR_USERINFO | FCVAR_NOT_CONNECTED, "Perform client side prediction of weapon effects." );
@@ -1256,7 +1254,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 	ctx->cmd = *cmd;
 	ctx->command_number = current_command;
 
-	IPredictionSystem::SuppressEvents( !IsFirstTimePredicted() );
+	EntityList()->SetSuppressEvent(!IsFirstTimePredicted());
 
 	int i;
 
@@ -1328,7 +1326,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 	}
 
 	// Always reset after running command
-	IPredictionSystem::SuppressEvents( false );
+	EntityList()->SetSuppressEvent(false);
 #endif
 }
 

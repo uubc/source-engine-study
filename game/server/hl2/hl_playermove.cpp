@@ -60,8 +60,6 @@ CPlayerMove *PlayerMove()
 static CHLMoveData g_HLMoveData;
 CMoveData *g_pMoveData = &g_HLMoveData;
 
-IPredictionSystem *IPredictionSystem::g_pPredictionSystems = NULL;
-
 void CHLPlayerMove::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move )
 {
 	// Call the default SetupMove code.

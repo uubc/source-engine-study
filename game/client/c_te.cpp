@@ -139,7 +139,7 @@ private:
 	//-----------------------------------------------------------------------------
 	bool SuppressTE( IRecipientFilter& filter )
 	{
-		if ( !CanPredict() )
+		if ( !EntityList()->CanPredict() )
 			return true;
 
 		C_RecipientFilter& _filter = (( C_RecipientFilter & )filter);

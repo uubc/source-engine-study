@@ -1615,15 +1615,15 @@ void CFuncTankMortar::Fire( int bulletCount, const Vector &barrelEnd, const Vect
 	if ( g_pGameRules->IsMultiplayer() )
 	{
 		// temp remove suppress host
-		ent = (CBaseEntity*)te->GetSuppressHost();
-		te->SetSuppressHost( NULL );
+		ent = (CBaseEntity*)EntityList()->GetSuppressHost();
+		EntityList()->SetSuppressHost( NULL );
 	}
 
 	ExplosionCreate( tr.endpos, GetEngineObject()->GetAbsAngles(), this, m_Magnitude, 0, true );
 
 	if ( g_pGameRules->IsMultiplayer() )
 	{
-		te->SetSuppressHost( (CBaseEntity *) ent );
+		EntityList()->SetSuppressHost( (CBaseEntity *) ent );
 	}
 
 	BaseClass::Fire( bulletCount, barrelEnd, vecForward, this );

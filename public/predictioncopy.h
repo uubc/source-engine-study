@@ -15,6 +15,8 @@
 #include "datamap.h"
 #include "tier1/utlstring.h"
 #include "basehandle.h"
+#include "engine/ivmodelinfo.h"
+#include "globalvars_base.h"
 
 enum
 {

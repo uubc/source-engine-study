@@ -132,7 +132,7 @@ void CWeaponHL2MPBase::WeaponSound( WeaponSound_t sound_type, float soundtime /*
 			return;
 
 		CBroadcastRecipientFilter filter; // this is client side only
-		if ( !te->CanPredict() )
+		if ( !EntityList()->CanPredict())
 			return;
 				
 		g_pSoundEmitterSystem->EmitSound( filter, GetPlayerOwner()->entindex(), shootsound, &GetPlayerOwner()->GetEngineObject()->GetAbsOrigin() ); //CBaseEntity::
