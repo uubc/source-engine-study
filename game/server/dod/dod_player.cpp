@@ -627,6 +627,42 @@ void CDODPlayer::Spawn()
 	m_StatProperty.SetClassAndTeamForThisLife( m_Shared.PlayerClass(), GetTeamNumber() );
 }
 
+//-----------------------------------------------------------------------------
+// Main setup, finish
+//-----------------------------------------------------------------------------
+
+/*
+void CDODPlayer::StartCommand( CUserCmd *cmd )
+{
+	BaseClass::StartCommand( cmd );
+}
+*/
+
+//-----------------------------------------------------------------------------
+// Purpose: This is called pre player movement and copies all the data necessary
+//          from the player for movement. (Server-side, the client-side version
+//          of this code can be found in prediction.cpp.)
+//-----------------------------------------------------------------------------
+void CDODPlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
+{
+	this->AvoidPhysicsProps(ucmd);
+
+	BaseClass::SetupMove(ucmd, pHelper, move);
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: This is called post player movement to copy back all data that
+//          movement could have modified and that is necessary for future
+//          movement. (Server-side, the client-side version of this code can 
+//          be found in prediction.cpp.)
+//-----------------------------------------------------------------------------
+void CDODPlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	// Call the default FinishMove code.
+	BaseClass::FinishMove(ucmd, move);
+}
+
 void CDODPlayer::PlayerDeathThink()
 {
 	//overridden, do nothing

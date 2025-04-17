@@ -60,6 +60,12 @@ public:
 	float				m_flSpeedModTime;
 	bool				m_fIsSprinting;
 
+protected:
+	virtual CMoveData* GetMoveData()
+	{
+		return &m_HLMoveData;
+	}
+	CHLMoveData			m_HLMoveData;
 private:
 	C_BaseHLPlayer( const C_BaseHLPlayer & ); // not defined, not accessible
 	

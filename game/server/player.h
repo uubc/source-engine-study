@@ -17,6 +17,7 @@
 #include "game/server/iplayerinfo.h"
 #include "hintsystem.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
+#include "igamemovement.h"
 
 #if defined USES_ECON_ITEMS
 #include "game_item_schema.h"
@@ -574,6 +575,30 @@ public:
 
 	void					AvoidPhysicsProps( CUserCmd *pCmd );
 
+	// Public interfaces:
+// Run a movement command from the player
+	void			RunCommand(CUserCmd* ucmd, IMoveHelper* moveHelper);
+
+protected:
+	// Prepare for running movement
+	virtual void	SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+
+	// Finish movement
+	virtual void	FinishMove(CUserCmd* ucmd, CMoveData* move);
+
+	// Called before and after any movement processing
+	virtual void	StartCommand(CUserCmd* cmd);
+	void			FinishCommand();
+
+	// Helper to determine if the user is standing on ground
+	void			CheckMovingGround(double frametime);
+
+	// Helpers to call pre and post think for player, and to call think if a think function is set
+	void			RunPreThink();
+	void			RunThink(double frametime);
+	void			RunPostThink();
+
+public:
 	// Run a user command. The default implementation calls ::PlayerRunCommand. In TF, this controls a vehicle if
 	// the player is in one.
 	virtual void			PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper);
@@ -1110,6 +1135,12 @@ private:
 	char					m_szNetname[MAX_PLAYER_NAME_LENGTH];
 
 protected:
+
+	virtual CMoveData* GetMoveData() 
+	{
+		return &m_MoveData;
+	}
+
 	// HACK FOR TF2 Prediction
 	friend class CTFGameMovementRecon;
 	friend class CGameMovement;
@@ -1152,6 +1183,7 @@ protected:
 	char			m_chPreviousTextureType;	// Separate from m_chTextureType. This is cleared if the player's not on the ground.
 
 	bool			m_bSinglePlayerGameEnding;
+	CMoveData		m_MoveData;
 
 public:
 

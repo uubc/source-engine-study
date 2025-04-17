@@ -48,6 +48,7 @@
 #include "steam/steam_api.h"
 #include "sourcevr/isourcevirtualreality.h"
 #include "client_virtualreality.h"
+#include "predictioncopy.h"
 
 #if defined USES_ECON_ITEMS
 #include "econ_wearable.h"
@@ -56,6 +57,10 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 #include "ivmodemanager.h"
+
+#ifdef HL2_CLIENT_DLL
+#include "c_basehlplayer.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -2245,6 +2250,335 @@ bool C_BasePlayer::ShouldPredict( void )
 	return false;
 }
 
+
+extern IGameMovement* g_pGameMovement;
+//-----------------------------------------------------------------------------
+// Purpose: Predicts a single movement command for player
+// Input  : *moveHelper - 
+//			*player - 
+//			*u - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::RunCommand(CUserCmd* ucmd, IMoveHelper* moveHelper)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::RunCommand");
+#if defined( _DEBUG )
+	char sz[32];
+	Q_snprintf(sz, sizeof(sz), "runcommand%04d", ucmd->command_number);
+	PREDICTION_TRACKVALUECHANGESCOPE(sz);
+#endif
+	StartCommand(ucmd);
+
+	// Set globals appropriately
+	gpGlobals->curtime = this->m_nTickBase * TICK_INTERVAL;
+	gpGlobals->frametime = engine->IsPaused() ? 0 : TICK_INTERVAL;
+
+	g_pGameMovement->StartTrackPredictionErrors(this);
+
+	// TODO
+	// TODO:  Check for impulse predicted?
+
+		// Do weapon selection
+	if (ucmd->weaponselect != 0)
+	{
+		C_BaseCombatWeapon* weapon = dynamic_cast<C_BaseCombatWeapon*>(C_BaseEntity::Instance(ucmd->weaponselect));
+		if (weapon)
+		{
+			this->SelectItem(weapon->GetName(), ucmd->weaponsubtype);
+		}
+	}
+
+	// Latch in impulse.
+	IClientVehicle* pVehicle = this->GetVehicle();
+	if (ucmd->impulse)
+	{
+		// Discard impulse commands unless the vehicle allows them.
+		// FIXME: UsingStandardWeapons seems like a bad filter for this. 
+		// The flashlight is an impulse command, for example.
+		if (!pVehicle || this->UsingStandardWeaponsInVehicle())
+		{
+			this->m_nImpulse = ucmd->impulse;
+		}
+	}
+
+	// Get button states
+	this->UpdateButtonState(ucmd->buttons);
+
+	// TODO
+	//	CheckMovingGround( player, ucmd->frametime );
+
+	// TODO
+	//	GetMoveData()->m_vecOldAngles = player->pl.v_angle;
+
+		// Copy from command to player unless game .dll has set angle using fixangle
+		// if ( !player->pl.fixangle )
+	{
+		this->SetLocalViewAngles(ucmd->viewangles);
+	}
+
+	// Call standard client pre-think
+	RunPreThink();
+
+	// Call Think if one is set
+	RunThink(TICK_INTERVAL);
+
+	// Setup input.
+	{
+
+		SetupMove(ucmd, moveHelper, GetMoveData());
+	}
+
+	// RUN MOVEMENT
+	if (!pVehicle)
+	{
+		Assert(g_pGameMovement);
+		g_pGameMovement->ProcessMovement(this, GetMoveData());
+	}
+	else
+	{
+		pVehicle->ProcessMovement(this, GetMoveData());
+	}
+
+	FinishMove(ucmd, GetMoveData());
+
+	RunPostThink();
+
+	g_pGameMovement->FinishTrackPredictionErrors(this);
+
+	FinishCommand();
+
+	if (gpGlobals->frametime > 0)
+	{
+		this->m_nTickBase++;
+	}
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called before any movement processing
+// Input  : *player - 
+//			*cmd - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::StartCommand(CUserCmd* cmd)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::StartCommand");
+
+	//CPredictableId::ResetInstanceCounters();
+
+	this->m_pCurrentCommand = cmd;
+	EntityList()->SetPredictionRandomSeed(cmd);
+	EntityList()->SetPredictionPlayer(this->GetEngineObject());
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called after any movement processing
+// Input  : *player - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::FinishCommand()
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::FinishCommand");
+
+	this->m_pCurrentCommand = NULL;
+	EntityList()->SetPredictionRandomSeed(NULL);
+	EntityList()->SetPredictionPlayer(NULL);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called before player thinks
+// Input  : *player - 
+//			thinktime - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::RunPreThink()
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::RunPreThink");
+
+	// Run think functions on the player
+	if (!this->GetEngineObject()->PhysicsRunThink())
+		return;
+
+	// Called every frame to let game rules do any specific think logic for the player
+	// FIXME:  Do we need to set up a client side version of the gamerules???
+	// g_pGameRules->PlayerThink( player );
+
+	this->PreThink();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs the PLAYER's thinking code if time.  There is some play in the exact time the think
+//  function will be called, because it is called before any movement is done
+//  in a frame.  Not used for pushmove objects, because they must be exact.
+//  Returns false if the entity removed itself.
+// Input  : *ent - 
+//			frametime - 
+//			clienttimebase - 
+// Output : void CPlayerMove::RunThink
+//-----------------------------------------------------------------------------
+void C_BasePlayer::RunThink(double frametime)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::RunThink");
+
+	int thinktick = this->GetEngineObject()->GetNextThinkTick();
+
+	if (thinktick <= 0 || thinktick > this->m_nTickBase)
+		return;
+
+	this->GetEngineObject()->SetNextThink(TICK_NEVER_THINK);
+
+	// Think
+	this->Think();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called after player movement
+// Input  : *player - 
+//			thinktime - 
+//			frametime - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::RunPostThink()
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::RunPostThink");
+
+	// Run post-think
+	this->PostThink();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Prepare for running prediction code
+// Input  : *ucmd - 
+//			*from - 
+//			*pHelper - 
+//			&moveInput - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::SetupMove");
+
+	move->m_bFirstRunOfFunctions = prediction->IsFirstTimePredicted();
+
+	move->m_nPlayerHandle = this;// ->GetClientHandle();
+	move->m_vecVelocity = this->GetEngineObject()->GetAbsVelocity();
+	move->SetAbsOrigin(this->GetEngineObject()->GetNetworkOrigin());
+	move->m_vecOldAngles = move->m_vecAngles;
+	move->m_nOldButtons = this->m_Local.m_nOldButtons;
+	move->m_flClientMaxSpeed = this->m_flMaxspeed;
+
+	move->m_vecAngles = ucmd->viewangles;
+	move->m_vecViewAngles = ucmd->viewangles;
+	move->m_nImpulseCommand = ucmd->impulse;
+	move->m_nButtons = ucmd->buttons;
+
+	IEngineObjectClient* pMoveParent = this->GetEngineObject()->GetMoveParent();
+	if (!pMoveParent)
+	{
+		move->m_vecAbsViewAngles = move->m_vecViewAngles;
+	}
+	else
+	{
+		matrix3x4_t viewToParent, viewToWorld;
+		AngleMatrix(move->m_vecViewAngles, viewToParent);
+		ConcatTransforms(pMoveParent->EntityToWorldTransform(), viewToParent, viewToWorld);
+		MatrixAngles(viewToWorld, move->m_vecAbsViewAngles);
+	}
+
+
+	// Ingore buttons for movement if at controls
+	if (this->GetEngineObject()->GetFlags() & FL_ATCONTROLS)
+	{
+		move->m_flForwardMove = 0;
+		move->m_flSideMove = 0;
+		move->m_flUpMove = 0;
+	}
+	else
+	{
+		move->m_flForwardMove = ucmd->forwardmove;
+		move->m_flSideMove = ucmd->sidemove;
+		move->m_flUpMove = ucmd->upmove;
+	}
+
+	IClientVehicle* pVehicle = this->GetVehicle();
+	if (pVehicle)
+	{
+		pVehicle->SetupMove(this, ucmd, pHelper, move);
+	}
+
+	// Copy constraint information
+	if (this->m_hConstraintEntity)
+		move->m_vecConstraintCenter = this->m_hConstraintEntity->GetEngineObject()->GetAbsOrigin();
+	else
+		move->m_vecConstraintCenter = this->m_vecConstraintCenter;
+
+	move->m_flConstraintRadius = this->m_flConstraintRadius;
+	move->m_flConstraintWidth = this->m_flConstraintWidth;
+	move->m_flConstraintSpeedFactor = this->m_flConstraintSpeedFactor;
+
+#ifdef HL2_CLIENT_DLL
+	// Convert to HL2 data.
+	C_BaseHLPlayer* pHLPlayer = ToHL2Player(this);
+	Assert(pHLPlayer);
+
+	CHLMoveData* pHLMove = static_cast<CHLMoveData*>(move);
+	Assert(pHLMove);
+
+	pHLMove->m_bIsSprinting = pHLPlayer->IsSprinting();
+#endif
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Finish running prediction code
+// Input  : &move - 
+//			*to - 
+//-----------------------------------------------------------------------------
+void C_BasePlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	VPROF("CPrediction::FinishMove");
+
+	//player->m_RefEHandle = move->m_nPlayerHandle;
+
+	this->GetEngineObject()->SetLocalVelocity(move->m_vecVelocity);
+
+	this->GetEngineObject()->SetNetworkOrigin(move->GetAbsOrigin());
+
+	this->m_Local.m_nOldButtons = move->m_nButtons;
+
+
+	// NOTE: Don't copy this.  the movement code modifies its local copy but is not expecting to be authoritative
+	//player->m_flMaxspeed = move->m_flClientMaxSpeed;
+
+	m_hLastGround = this->GetEngineObject()->GetGroundEntity() ? (C_BaseEntity*)this->GetEngineObject()->GetGroundEntity()->GetOuter() : NULL;
+
+	this->GetEngineObject()->SetLocalOrigin(move->GetAbsOrigin());
+
+	IClientVehicle* pVehicle = this->GetVehicle();
+	if (pVehicle)
+	{
+		pVehicle->FinishMove(this, ucmd, move);
+	}
+
+	// Sanity checks
+	if (this->m_hConstraintEntity)
+		Assert(move->m_vecConstraintCenter == this->m_hConstraintEntity->GetEngineObject()->GetAbsOrigin());
+	else
+		Assert(move->m_vecConstraintCenter == this->m_vecConstraintCenter);
+	Assert(move->m_flConstraintRadius == this->m_flConstraintRadius);
+	Assert(move->m_flConstraintWidth == this->m_flConstraintWidth);
+	Assert(move->m_flConstraintSpeedFactor == this->m_flConstraintSpeedFactor);
+#endif
+}
+
+
 //-----------------------------------------------------------------------------
 // Purpose: Special processing for player simulation
 // NOTE: Don't chain to BaseClass!!!!
@@ -2289,8 +2623,7 @@ void C_BasePlayer::PhysicsSimulate( void )
 	}
 
 	// Run the next command
-	prediction->RunCommand( 
-		this, 
+	RunCommand( 
 		&ctx->cmd, 
 		MoveHelper() );
 #endif

@@ -43,6 +43,7 @@
 #include "filters.h"
 #include "tier0/icommandline.h"
 #include "IEffects.h"
+#include "vehicle_base.h"
 
 #ifdef HL2_EPISODIC
 #include "npc_alyx_episodic.h"
@@ -383,6 +384,10 @@ BEGIN_DATADESC( CHL2_Player )
 END_DATADESC()
 
 CHL2_Player::CHL2_Player()
+	:m_bWasInVehicle(false),
+	m_bVehicleFlipped(false),
+	m_bInGodMode(false),
+	m_bInNoClip(false)
 {
 	m_nNumMissPositions	= 0;
 	m_pPlayerAISquad = 0;
@@ -390,6 +395,7 @@ CHL2_Player::CHL2_Player()
 
 	m_flArmorReductionTime = 0.0f;
 	m_iArmorReductionFrom = 0;
+	m_vecSaveOrigin.Init();
 }
 
 //
@@ -1704,6 +1710,117 @@ void CHL2_Player::CommanderMode()
 	else
 	{
 		m_QueuedCommand = (player_squad_transient_commands.GetBool()) ? CC_SEND : CC_TOGGLE;
+	}
+}
+
+void CHL2_Player::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
+{
+	// Call the default SetupMove code.
+	BaseClass::SetupMove(ucmd, pHelper, move);
+
+	CHLMoveData* pHLMove = static_cast<CHLMoveData*>(move);
+	Assert(pHLMove);
+
+	this->m_flForwardMove = ucmd->forwardmove;
+	this->m_flSideMove = ucmd->sidemove;
+
+	pHLMove->m_bIsSprinting = this->IsSprinting();
+
+	if (gpGlobals->frametime != 0)
+	{
+		IServerVehicle* pVehicle = this->GetVehicle();
+
+		if (pVehicle)
+		{
+			pVehicle->SetupMove(this, ucmd, pHelper, move);
+
+			if (!m_bWasInVehicle)
+			{
+				m_bWasInVehicle = true;
+				m_vecSaveOrigin.Init();
+			}
+		}
+		else
+		{
+			m_vecSaveOrigin = this->GetEngineObject()->GetAbsOrigin();
+			if (m_bWasInVehicle)
+			{
+				m_bWasInVehicle = false;
+			}
+		}
+	}
+}
+
+
+void CHL2_Player::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	// Call the default FinishMove code.
+	BaseClass::FinishMove(ucmd, move);
+	if (gpGlobals->frametime != 0)
+	{
+		float distance = 0.0f;
+		IServerVehicle* pVehicle = this->GetVehicle();
+		if (pVehicle)
+		{
+			pVehicle->FinishMove(this, ucmd, move);
+			IPhysicsObject* obj = this->GetVehicleEntity()->GetEngineObject()->VPhysicsGetObject();
+			if (obj)
+			{
+				Vector newPos;
+				obj->GetPosition(&newPos, NULL);
+				distance = VectorLength(newPos - m_vecSaveOrigin);
+				if (m_vecSaveOrigin == vec3_origin || distance > 100.0f)
+					distance = 0.0f;
+				m_vecSaveOrigin = newPos;
+			}
+
+			CPropVehicleDriveable* driveable = dynamic_cast<CPropVehicleDriveable*>(this->GetVehicleEntity());
+			if (driveable)
+			{
+				// Overturned and at rest (if still moving it can fix itself)
+				bool bFlipped = driveable->IsOverturned() && (distance < 0.5f);
+				if (m_bVehicleFlipped != bFlipped)
+				{
+					if (bFlipped)
+					{
+						gamestats->Event_FlippedVehicle(this, driveable);
+					}
+					m_bVehicleFlipped = bFlipped;
+				}
+			}
+			else
+			{
+				m_bVehicleFlipped = false;
+			}
+		}
+		else
+		{
+			m_bVehicleFlipped = false;
+			distance = VectorLength(this->GetEngineObject()->GetAbsOrigin() - m_vecSaveOrigin);
+		}
+		if (distance > 0)
+		{
+			gamestats->Event_PlayerTraveled(this, distance, pVehicle ? true : false, !pVehicle && ToHL2Player(this)->IsSprinting());
+		}
+	}
+
+	bool bGodMode = (this->GetEngineObject()->GetFlags() & FL_GODMODE) ? true : false;
+	if (m_bInGodMode != bGodMode)
+	{
+		m_bInGodMode = bGodMode;
+		if (bGodMode)
+		{
+			gamestats->Event_PlayerEnteredGodMode(this);
+		}
+	}
+	bool bNoClip = (this->GetEngineObject()->GetMoveType() == MOVETYPE_NOCLIP);
+	if (m_bInNoClip != bNoClip)
+	{
+		m_bInNoClip = bNoClip;
+		if (bNoClip)
+		{
+			gamestats->Event_PlayerEnteredNoClip(this);
+		}
 	}
 }
 

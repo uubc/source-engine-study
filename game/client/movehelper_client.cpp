@@ -15,8 +15,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern CMoveData *g_pMoveData;
-
 class CMoveHelperClient : public IMoveHelper
 {
 public:
@@ -216,9 +214,9 @@ void CMoveHelperClient::StartSound( const Vector& origin, int channel,
 void CMoveHelperClient::PlaybackEventFull( int flags, int clientindex, unsigned short eventindex, float delay, Vector& origin, Vector& angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 )
 {
 	// TODO
-	if (g_pMoveData->m_bFirstRunOfFunctions )
-	{
-	}
+	//if (g_pMoveData->m_bFirstRunOfFunctions )
+	//{
+	//}
 }
 
 //-----------------------------------------------------------------------------

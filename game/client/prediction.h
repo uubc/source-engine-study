@@ -98,24 +98,14 @@ public:
 	virtual void	GetLocalViewAngles( QAngle& ang );
 	virtual void	SetLocalViewAngles( QAngle& ang );
 
-	virtual void	RunCommand( C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper *moveHelper );
-
 // Internal
 protected:
-	virtual void	SetupMove( C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move );
-	virtual void	FinishMove( C_BasePlayer *player, CUserCmd *ucmd, CMoveData *move );
+
 	virtual void	SetIdealPitch ( C_BasePlayer *player, const Vector& origin, const QAngle& angles, const Vector& viewheight );
 
 	void			CheckError( int commands_acknowledged );
 
-	// Called before and after any movement processing
-	void			StartCommand( C_BasePlayer *player, CUserCmd *cmd );
-	void			FinishCommand( C_BasePlayer *player );
 
-	// Helpers to call pre and post think for player, and to call think if a think function is set
-	void			RunPreThink( C_BasePlayer *player );
-	void			RunThink (C_BasePlayer *ent, double frametime );
-	void			RunPostThink( C_BasePlayer *player );
 
 private:
 	virtual void	_Update
@@ -148,10 +138,6 @@ private:
 	void			SmoothViewOnMovingPlatform( C_BasePlayer *pPlayer, Vector& offset );
 
 #if !defined( NO_ENTITY_PREDICTION )
-// Data
-protected:
-	// Last object the player was standing on
-	CBaseHandle		m_hLastGround;
 private:
 	bool			m_bInPrediction;
 	bool			m_bFirstTimePredicted;

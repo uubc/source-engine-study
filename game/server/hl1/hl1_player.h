@@ -65,6 +65,11 @@ public:
 	void		Precache( void );
 	void		Spawn(void);
 	void		Event_Killed( const ITakeDamageInfo&info );
+
+	virtual void	StartCommand(CUserCmd* cmd);
+	virtual void	SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void	FinishMove(CUserCmd* ucmd, CMoveData* move);
+
 	void		CheatImpulseCommands( int iImpulse );
 	void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper );
 	void		UpdateClientData( void );

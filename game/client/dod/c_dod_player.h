@@ -41,6 +41,9 @@ public:
 	bool Init(int entnum, int iSerialNum);
 	static C_DODPlayer* GetLocalDODPlayer();
 
+	virtual void	SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void	FinishMove(CUserCmd* ucmd, CMoveData* move);
+
 	virtual const QAngle& GetRenderAngles();
 	virtual void UpdateClientSideAnimation();
 	virtual void ProcessMuzzleFlashEvent();

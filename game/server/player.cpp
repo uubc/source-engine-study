@@ -118,6 +118,7 @@ extern ConVar sv_turbophysics;
 extern ConVar *sv_maxreplay;
 
 extern CServerGameDLL g_ServerGameDLL;
+extern IGameMovement* g_pGameMovement;
 
 // TIME BASED DAMAGE AMOUNT
 // tweak these values based on gameplay feedback:
@@ -3680,6 +3681,436 @@ void CBasePlayer::DumpPerfToRecipient( CBasePlayer *pRecipient, int nMaxRecords 
 
 // Duck debouncing code to stop menu changes from disallowing crouch/uncrouch
 ConVar xc_crouch_debounce( "xc_crouch_debounce", "0", FCVAR_NONE );
+ConVar sv_maxusrcmdprocessticks_warning("sv_maxusrcmdprocessticks_warning", "-1", FCVAR_NONE, "Print a warning when user commands get dropped due to insufficient usrcmd ticks allocated, number of seconds to throttle, negative disabled");
+
+//-----------------------------------------------------------------------------
+// Purpose: We're about to run this usercmd for the specified player.  We can set up groupinfo and masking here, etc.
+//  This is the time to examine the usercmd for anything extra.  This call happens even if think does not.
+// Input  : *player - 
+//			*cmd - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::StartCommand(CUserCmd* cmd)
+{
+	VPROF("CPlayerMove::StartCommand");
+
+	//#if !defined( NO_ENTITY_PREDICTION )
+	//	CPredictableId::ResetInstanceCounters();
+	//#endif
+
+	this->m_pCurrentCommand = cmd;
+	EntityList()->SetPredictionRandomSeed(cmd);
+	EntityList()->SetPredictionPlayer(this->GetEngineObject());
+
+#if defined (HL2_DLL)
+	// pull out backchannel data and move this out
+
+	int i;
+	for (i = 0; i < cmd->entitygroundcontact.Count(); i++)
+	{
+		int entindex = cmd->entitygroundcontact[i].entindex;
+		IServerEntity* pEntity = EntityList()->GetBaseEntity(entindex);
+		if (pEntity)
+		{
+			if (pEntity->GetEngineObject()->GetModelPtr())
+			{
+				pEntity->GetEngineObject()->SetIKGroundContactInfo(cmd->entitygroundcontact[i].minheight, cmd->entitygroundcontact[i].maxheight);
+			}
+		}
+	}
+
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: We've finished running a user's command
+// Input  : *player - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::FinishCommand()
+{
+	VPROF("CPlayerMove::FinishCommand");
+
+	this->m_pCurrentCommand = NULL;
+	EntityList()->SetPredictionRandomSeed(NULL);
+	EntityList()->SetPredictionPlayer(NULL);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Checks if the player is standing on a moving entity and adjusts velocity and 
+//  basevelocity appropriately
+// Input  : *player - 
+//			frametime - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::CheckMovingGround(double frametime)
+{
+	VPROF("CPlayerMove::CheckMovingGround()");
+
+	CBaseEntity* groundentity;
+
+	if (this->GetEngineObject()->GetFlags() & FL_ONGROUND)
+	{
+		groundentity = this->GetEngineObject()->GetGroundEntity() ? (CBaseEntity*)this->GetEngineObject()->GetGroundEntity()->GetOuter() : NULL;
+		if (groundentity && (groundentity->GetEngineObject()->GetFlags() & FL_CONVEYOR))
+		{
+			Vector vecNewVelocity;
+			groundentity->GetGroundVelocityToApply(vecNewVelocity);
+			if (this->GetEngineObject()->GetFlags() & FL_BASEVELOCITY)
+			{
+				vecNewVelocity += this->GetEngineObject()->GetBaseVelocity();
+			}
+			this->GetEngineObject()->SetBaseVelocity(vecNewVelocity);
+			this->GetEngineObject()->AddFlag(FL_BASEVELOCITY);
+		}
+	}
+
+	if (!(this->GetEngineObject()->GetFlags() & FL_BASEVELOCITY))
+	{
+		// Apply momentum (add in half of the previous frame of velocity first)
+		this->ApplyAbsVelocityImpulse((1.0 + (frametime * 0.5)) * this->GetEngineObject()->GetBaseVelocity());
+		this->GetEngineObject()->SetBaseVelocity(vec3_origin);
+	}
+
+	this->GetEngineObject()->RemoveFlag(FL_BASEVELOCITY);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Prepares for running movement
+// Input  : *player - 
+//			*ucmd - 
+//			*pHelper - 
+//			*move - 
+//			time - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
+{
+	VPROF("CPlayerMove::SetupMove");
+
+	// Allow sound, etc. to be created by movement code
+	move->m_bFirstRunOfFunctions = true;
+	move->m_bGameCodeMovedPlayer = false;
+	if (this->GetPreviouslyPredictedOrigin() != this->GetEngineObject()->GetAbsOrigin())
+	{
+		move->m_bGameCodeMovedPlayer = true;
+	}
+
+	// Prepare the usercmd fields
+	move->m_nImpulseCommand = ucmd->impulse;
+	move->m_vecViewAngles = ucmd->viewangles;
+
+	IEngineObjectServer* pMoveParent = this->GetEngineObject()->GetMoveParent();
+	if (!pMoveParent)
+	{
+		move->m_vecAbsViewAngles = move->m_vecViewAngles;
+	}
+	else
+	{
+		matrix3x4_t viewToParent, viewToWorld;
+		AngleMatrix(move->m_vecViewAngles, viewToParent);
+		ConcatTransforms(pMoveParent->EntityToWorldTransform(), viewToParent, viewToWorld);
+		MatrixAngles(viewToWorld, move->m_vecAbsViewAngles);
+	}
+
+	move->m_nButtons = ucmd->buttons;
+
+	// Ingore buttons for movement if at controls
+	if (this->GetEngineObject()->GetFlags() & FL_ATCONTROLS)
+	{
+		move->m_flForwardMove = 0;
+		move->m_flSideMove = 0;
+		move->m_flUpMove = 0;
+	}
+	else
+	{
+		move->m_flForwardMove = ucmd->forwardmove;
+		move->m_flSideMove = ucmd->sidemove;
+		move->m_flUpMove = ucmd->upmove;
+	}
+
+	// Prepare remaining fields
+	move->m_flClientMaxSpeed = this->m_flMaxspeed;
+	move->m_nOldButtons = this->m_Local.m_nOldButtons;
+	move->m_vecAngles = this->pl.v_angle;
+
+	move->m_vecVelocity = this->GetEngineObject()->GetAbsVelocity();
+
+	move->m_nPlayerHandle = this;
+
+	move->SetAbsOrigin(this->GetEngineObject()->GetAbsOrigin());
+
+	// Copy constraint information
+	if (this->m_hConstraintEntity.Get())
+		move->m_vecConstraintCenter = this->m_hConstraintEntity.Get()->GetEngineObject()->GetAbsOrigin();
+	else
+		move->m_vecConstraintCenter = this->m_vecConstraintCenter;
+	move->m_flConstraintRadius = this->m_flConstraintRadius;
+	move->m_flConstraintWidth = this->m_flConstraintWidth;
+	move->m_flConstraintSpeedFactor = this->m_flConstraintSpeedFactor;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Finishes running movement
+// Input  : *player - 
+//			*move - 
+//			*ucmd - 
+//			time - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	VPROF("CPlayerMove::FinishMove");
+
+	// NOTE: Don't copy this.  the movement code modifies its local copy but is not expecting to be authoritative
+	//player->m_flMaxspeed			= move->m_flClientMaxSpeed;
+	this->GetEngineObject()->SetAbsOrigin(move->GetAbsOrigin());
+	this->GetEngineObject()->SetAbsVelocity(move->m_vecVelocity);
+	this->SetPreviouslyPredictedOrigin(move->GetAbsOrigin());
+
+	this->m_Local.m_nOldButtons = move->m_nButtons;
+
+	// Convert final pitch to body pitch
+	float pitch = move->m_vecAngles[PITCH];
+	if (pitch > 180.0f)
+	{
+		pitch -= 360.0f;
+	}
+	pitch = clamp(pitch, -90.f, 90.f);
+
+	move->m_vecAngles[PITCH] = pitch;
+
+	this->SetBodyPitch(pitch);
+
+	this->GetEngineObject()->SetLocalAngles(move->m_vecAngles);
+
+	// The class had better not have changed during the move!!
+	if (this->m_hConstraintEntity)
+		Assert(move->m_vecConstraintCenter == this->m_hConstraintEntity.Get()->GetEngineObject()->GetAbsOrigin());
+	else
+		Assert(move->m_vecConstraintCenter == this->m_vecConstraintCenter);
+	Assert(move->m_flConstraintRadius == this->m_flConstraintRadius);
+	Assert(move->m_flConstraintWidth == this->m_flConstraintWidth);
+	Assert(move->m_flConstraintSpeedFactor == this->m_flConstraintSpeedFactor);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called before player thinks
+// Input  : *player - 
+//			thinktime - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::RunPreThink()
+{
+	VPROF("CPlayerMove::RunPreThink");
+
+	// Run think functions on the player
+	VPROF_SCOPE_BEGIN("player->GetEngineObject()->PhysicsRunThink()");
+	if (!this->GetEngineObject()->PhysicsRunThink())
+		return;
+	VPROF_SCOPE_END();
+
+	VPROF_SCOPE_BEGIN("g_pGameRules->PlayerThink( player )");
+	// Called every frame to let game rules do any specific think logic for the player
+	g_pGameRules->PlayerThink(this);
+	VPROF_SCOPE_END();
+
+	VPROF_SCOPE_BEGIN("player->PreThink()");
+	this->PreThink();
+	VPROF_SCOPE_END();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs the PLAYER's thinking code if time.  There is some play in the exact time the think
+//  function will be called, because it is called before any movement is done
+//  in a frame.  Not used for pushmove objects, because they must be exact.
+//  Returns false if the entity removed itself.
+// Input  : *ent - 
+//			frametime - 
+//			clienttimebase - 
+// Output : void CPlayerMove::RunThink
+//-----------------------------------------------------------------------------
+void CBasePlayer::RunThink(double frametime)
+{
+	VPROF("CPlayerMove::RunThink");
+	int thinktick = this->GetEngineObject()->GetNextThinkTick();
+
+	if (thinktick <= 0 || thinktick > this->m_nTickBase)
+		return;
+
+	//gpGlobals->curtime = thinktime;
+	this->GetEngineObject()->SetNextThink(TICK_NEVER_THINK);
+
+	// Think
+	this->Think();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called after player movement
+// Input  : *player - 
+//			thinktime - 
+//			frametime - 
+//-----------------------------------------------------------------------------
+void CBasePlayer::RunPostThink()
+{
+	VPROF("CPlayerMove::RunPostThink");
+
+	// Run post-think
+	this->PostThink();
+}
+
+void CommentarySystem_PePlayerRunCommand(CBasePlayer* player, CUserCmd* ucmd);
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs movement commands for the player
+// Input  : *player - 
+//			*ucmd - 
+//			*moveHelper - 
+// Output : void CPlayerMove::RunCommand
+//-----------------------------------------------------------------------------
+void CBasePlayer::RunCommand(CUserCmd* ucmd, IMoveHelper* moveHelper)
+{
+	const float playerCurTime = this->m_nTickBase * TICK_INTERVAL;
+	const float playerFrameTime = this->m_bGamePaused ? 0 : TICK_INTERVAL;
+	const float flTimeAllowedForProcessing = this->ConsumeMovementTimeForUserCmdProcessing(playerFrameTime);
+	if (!this->IsBot() && (flTimeAllowedForProcessing < playerFrameTime))
+	{
+		// Make sure that the activity in command is erased because player cheated or dropped too many packets
+		double dblWarningFrequencyThrottle = sv_maxusrcmdprocessticks_warning.GetFloat();
+		if (dblWarningFrequencyThrottle >= 0)
+		{
+			static double s_dblLastWarningTime = 0;
+			double dblTimeNow = Plat_FloatTime();
+			if (!s_dblLastWarningTime || (dblTimeNow - s_dblLastWarningTime >= dblWarningFrequencyThrottle))
+			{
+				s_dblLastWarningTime = dblTimeNow;
+				Warning("sv_maxusrcmdprocessticks_warning at server tick %u: Ignored client %s usrcmd (%.6f < %.6f)!\n", gpGlobals->tickcount, this->GetPlayerName(), flTimeAllowedForProcessing, playerFrameTime);
+			}
+		}
+		return; // Don't process this command
+	}
+
+	StartCommand(ucmd);
+
+	// Set globals appropriately
+	gpGlobals->curtime = playerCurTime;
+	gpGlobals->frametime = playerFrameTime;
+
+	// Prevent hacked clients from sending us invalid view angles to try to get leaf server code to crash
+	if (!ucmd->viewangles.IsValid() || !IsEntityQAngleReasonable(ucmd->viewangles))
+	{
+		ucmd->viewangles = vec3_angle;
+	}
+
+	// Add and subtract buttons we're forcing on the player
+	ucmd->buttons |= this->m_afButtonForced;
+	ucmd->buttons &= ~this->m_afButtonDisabled;
+
+	if (this->m_bGamePaused)
+	{
+		// If no clipping and cheats enabled and noclipduring game enabled, then leave
+		//  forwardmove and angles stuff in usercmd
+		if (this->GetEngineObject()->GetMoveType() == MOVETYPE_NOCLIP &&
+			sv_cheats->GetBool() &&
+			sv_noclipduringpause.GetBool())
+		{
+			gpGlobals->frametime = TICK_INTERVAL;
+		}
+	}
+
+	/*
+	// TODO:  We can check whether the player is sending more commands than elapsed real time
+	cmdtimeremaining -= ucmd->msec;
+	if ( cmdtimeremaining < 0 )
+	{
+	//	return;
+	}
+	*/
+
+	g_pGameMovement->StartTrackPredictionErrors(this);
+
+	CommentarySystem_PePlayerRunCommand(this, ucmd);
+
+	// Do weapon selection
+	if (ucmd->weaponselect != 0)
+	{
+		CBaseCombatWeapon* weapon = dynamic_cast<CBaseCombatWeapon*>(EntityList()->GetBaseEntity(ucmd->weaponselect));
+		if (weapon)
+		{
+			VPROF("player->SelectItem()");
+			this->SelectItem(weapon->GetName(), ucmd->weaponsubtype);
+		}
+	}
+
+	IServerVehicle* pVehicle = this->GetVehicle();
+
+	// Latch in impulse.
+	if (ucmd->impulse)
+	{
+		// Discard impulse commands unless the vehicle allows them.
+		// FIXME: UsingStandardWeapons seems like a bad filter for this. The flashlight is an impulse command, for example.
+		if (!pVehicle || this->UsingStandardWeaponsInVehicle())
+		{
+			this->m_nImpulse = ucmd->impulse;
+		}
+	}
+
+	// Update player input button states
+	VPROF_SCOPE_BEGIN("player->UpdateButtonState");
+	this->UpdateButtonState(ucmd->buttons);
+	VPROF_SCOPE_END();
+
+	CheckMovingGround(TICK_INTERVAL);
+
+	GetMoveData()->m_vecOldAngles = this->pl.v_angle;
+
+	// Copy from command to player unless game .dll has set angle using fixangle
+	if (this->pl.fixangle == FIXANGLE_NONE)
+	{
+		this->pl.v_angle = ucmd->viewangles;
+	}
+	else if (this->pl.fixangle == FIXANGLE_RELATIVE)
+	{
+		this->pl.v_angle = ucmd->viewangles + this->pl.anglechange;
+	}
+
+	// Call standard client pre-think
+	RunPreThink();
+
+	// Call Think if one is set
+	RunThink(TICK_INTERVAL);
+
+	// Setup input.
+	SetupMove(ucmd, moveHelper, GetMoveData());
+
+	// Let the game do the movement.
+	if (!pVehicle)
+	{
+		VPROF("g_pGameMovement->ProcessMovement()");
+		Assert(g_pGameMovement);
+		g_pGameMovement->ProcessMovement(this, GetMoveData());
+	}
+	else
+	{
+		VPROF("pVehicle->ProcessMovement()");
+		pVehicle->ProcessMovement(this, GetMoveData());
+	}
+
+	// Copy output
+	FinishMove(ucmd, GetMoveData());
+
+	// Let server invoke any needed impact functions
+	VPROF_SCOPE_BEGIN("moveHelper->ProcessImpacts");
+	moveHelper->ProcessImpacts();
+	VPROF_SCOPE_END();
+
+	RunPostThink();
+
+	g_pGameMovement->FinishTrackPredictionErrors(this);
+
+	FinishCommand();
+
+	// Let time pass
+	if (gpGlobals->frametime > 0)
+	{
+		this->m_nTickBase++;
+	}
+}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -3728,7 +4159,7 @@ void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 		}
 	}
 	
-	PlayerMove()->RunCommand(this, ucmd, moveHelper);
+	this->RunCommand(ucmd, moveHelper);
 }
 
 //-----------------------------------------------------------------------------
@@ -4506,12 +4937,6 @@ void FixPlayerCrouchStuck( CBasePlayer *pPlayer )
 	}
 }
 #define SMOOTHING_FACTOR 0.9
-extern CMoveData *g_pMoveData;
-
-
-
-
-
 
 //-----------------------------------------------------------------------------
 // For debugging...
@@ -4673,9 +5098,9 @@ void CBasePlayer::PostThinkVPhysics( void )
 
 	IPhysicsObject *pPhysGround = GetEngineObject()->GetGroundVPhysics();
 
-	if ( !pPhysGround && m_touchedPhysObject && g_pMoveData->m_outStepHeight <= 0.f && (GetEngineObject()->GetFlags() & FL_ONGROUND) )
+	if ( !pPhysGround && m_touchedPhysObject && GetMoveData()->m_outStepHeight <= 0.f && (GetEngineObject()->GetFlags() & FL_ONGROUND) )
 	{
-		newPosition = m_oldOrigin + frametime * g_pMoveData->m_outWishVel;
+		newPosition = m_oldOrigin + frametime * GetMoveData()->m_outWishVel;
 		newPosition = (GetEngineObject()->GetAbsOrigin() * 0.5f) + (newPosition * 0.5f);
 	}
 
@@ -4697,13 +5122,13 @@ void CBasePlayer::PostThinkVPhysics( void )
 	if ( !(TouchedPhysics() || pPhysGround) )
 	{
 		float maxSpeed = m_flMaxspeed > 0.0f ? m_flMaxspeed : sv_maxspeed.GetFloat();
-		g_pMoveData->m_outWishVel.Init( maxSpeed, maxSpeed, maxSpeed );
+		GetMoveData()->m_outWishVel.Init( maxSpeed, maxSpeed, maxSpeed );
 	}
 
 	// teleport the physics object up by stepheight (game code does this - reflect in the physics)
-	if ( g_pMoveData->m_outStepHeight > 0.1f )
+	if (GetMoveData()->m_outStepHeight > 0.1f )
 	{
-		if ( g_pMoveData->m_outStepHeight > 4.0f )
+		if (GetMoveData()->m_outStepHeight > 4.0f )
 		{
 			GetEngineObject()->VPhysicsGetObject()->SetPosition(GetEngineObject()->GetAbsOrigin(), vec3_angle, true );
 		}
@@ -4713,23 +5138,23 @@ void CBasePlayer::PostThinkVPhysics( void )
 			Vector position, end;
 			GetEngineObject()->VPhysicsGetObject()->GetPosition( &position, NULL );
 			end = position;
-			end.z += g_pMoveData->m_outStepHeight;
+			end.z += GetMoveData()->m_outStepHeight;
 			trace_t trace;
 			EntityList()->GetEngineWorld()->TraceEntity( this->GetEngineObject(), position, end, MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace);
 			if ( trace.DidHit() )
 			{
-				g_pMoveData->m_outStepHeight = trace.endpos.z - position.z;
+				GetMoveData()->m_outStepHeight = trace.endpos.z - position.z;
 			}
-			GetEnginePlayer()->GetPhysicsController()->StepUp( g_pMoveData->m_outStepHeight );
+			GetEnginePlayer()->GetPhysicsController()->StepUp(GetMoveData()->m_outStepHeight );
 		}
 		GetEnginePlayer()->GetPhysicsController()->Jump();
 	}
-	g_pMoveData->m_outStepHeight = 0.0f;
+	GetMoveData()->m_outStepHeight = 0.0f;
 	
 	// Store these off because after running the usercmds, it'll pass them
 	// to UpdateVPhysicsPosition.	
 	m_vNewVPhysicsPosition = newPosition;
-	m_vNewVPhysicsVelocity = g_pMoveData->m_outWishVel;
+	m_vNewVPhysicsVelocity = GetMoveData()->m_outWishVel;
 
 	m_oldOrigin = GetEngineObject()->GetAbsOrigin();
 }

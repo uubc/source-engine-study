@@ -738,6 +738,27 @@ C_DODPlayer* C_DODPlayer::GetLocalDODPlayer()
 	return ToDODPlayer(EntityList()->GetLocalPlayer() );
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_DODPlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper,
+	CMoveData* move)
+{
+	this->AvoidPhysicsProps(ucmd);
+
+	// Call the default SetupMove code.
+	BaseClass::SetupMove(ucmd, pHelper, move);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_DODPlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	// Call the default FinishMove code.
+	BaseClass::FinishMove(ucmd, move);
+}
+
 const IEngineObjectClient* C_DODPlayer::GetRepresentativeRagdoll() const
 {
 	if ( m_hRagdoll.Get() )

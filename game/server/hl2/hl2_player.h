@@ -98,6 +98,10 @@ public:
 	virtual void		Precache( void );
 	virtual void		Spawn(void);
 	virtual void		Activate( void );
+
+	virtual void		SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void		FinishMove(CUserCmd* ucmd, CMoveData* move);
+
 	virtual void		CheatImpulseCommands( int iImpulse );
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper);
 	virtual void		PlayerUse ( void );
@@ -316,8 +320,13 @@ private:
 	CNetworkVarForDerived( bool, m_fIsWalking );
 
 protected:	// Jeep: Portal_Player needs access to this variable to overload PlayerUse for picking up objects through portals
-	bool				m_bPlayUseDenySound;		// Signaled by PlayerUse, but can be unset by HL2 ladder code...
+	virtual CMoveData* GetMoveData()
+	{
+		return &m_HLMoveData;
+	}
 
+	bool				m_bPlayUseDenySound;		// Signaled by PlayerUse, but can be unset by HL2 ladder code...
+	CHLMoveData			m_HLMoveData;
 private:
 
 	CAI_Squad *			m_pPlayerAISquad;
@@ -363,6 +372,12 @@ private:
 
 	float				m_flTimeNextLadderHint;	// Next time we're eligible to display a HUD hint about a ladder.
 	
+	Vector m_vecSaveOrigin;
+	bool m_bWasInVehicle;
+	bool m_bVehicleFlipped;
+	bool m_bInGodMode;
+	bool m_bInNoClip;
+
 	friend class CHL2GameMovement;
 };
 

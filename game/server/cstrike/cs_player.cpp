@@ -57,6 +57,7 @@
 #include "holiday_gift.h"
 #include "../../shared/cstrike/cs_achievement_constants.h"
 #include "physics_prop_ragdoll.h"
+#include "game/server/iservervehicle.h"
 
 //=============================================================================
 // HPE_BEGIN
@@ -1446,6 +1447,56 @@ bool CCSPlayer::IsShieldDrawn() const
 #endif
 }
 
+//-----------------------------------------------------------------------------
+// Main setup, finish
+//-----------------------------------------------------------------------------
+
+void CCSPlayer::StartCommand(CUserCmd* cmd)
+{
+	// Reset this.. it gets reset each frame that we're in a bomb zone.
+	this->m_bInBombZone = false;
+	this->m_bInBuyZone = false;
+	this->m_bInHostageRescueZone = false;
+
+	BaseClass::StartCommand(cmd);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: This is called pre player movement and copies all the data necessary
+//          from the player for movement. (Server-side, the client-side version
+//          of this code can be found in prediction.cpp.)
+//-----------------------------------------------------------------------------
+void CCSPlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
+{
+	this->AvoidPhysicsProps(ucmd);
+
+	BaseClass::SetupMove(ucmd, pHelper, move);
+
+	IServerVehicle* pVehicle = this->GetVehicle();
+	if (pVehicle && gpGlobals->frametime != 0)
+	{
+		pVehicle->SetupMove(this, ucmd, pHelper, move);
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: This is called post player movement to copy back all data that
+//          movement could have modified and that is necessary for future
+//          movement. (Server-side, the client-side version of this code can 
+//          be found in prediction.cpp.)
+//-----------------------------------------------------------------------------
+void CCSPlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	// Call the default FinishMove code.
+	BaseClass::FinishMove(ucmd, move);
+
+	IServerVehicle* pVehicle = this->GetVehicle();
+	if (pVehicle && gpGlobals->frametime != 0)
+	{
+		pVehicle->FinishMove(this, ucmd, move);
+	}
+}
 
 void CCSPlayer::CheatImpulseCommands( int iImpulse )
 {

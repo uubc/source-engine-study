@@ -2305,6 +2305,27 @@ void C_CSPlayer::Simulate( void )
 	BaseClass::Simulate();
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_CSPlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper,
+	CMoveData* move)
+{
+	this->AvoidPhysicsProps(ucmd);
+
+	// Call the default SetupMove code.
+	BaseClass::SetupMove(ucmd, pHelper, move);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_CSPlayer::FinishMove(CUserCmd* ucmd, CMoveData* move)
+{
+	// Call the default FinishMove code.
+	BaseClass::FinishMove(ucmd, move);
+}
+
 void C_CSPlayer::ReleaseFlashlight( void )
 {
 	if( m_pFlashlightBeam )

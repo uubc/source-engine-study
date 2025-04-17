@@ -28,6 +28,7 @@
 #include "igameevents.h"
 #include "GameEventListener.h"
 #include "portalrenderable_flatbasic.h"
+#include "igamemovement.h"
 
 #if defined USES_ECON_ITEMS
 #include "econ_item.h"
@@ -243,6 +244,20 @@ public:
 //	void						RemoveFromPlayerSimulationList( C_BaseEntity *ent );
 //	void						ClearPlayerSimulationList( void );
 //#endif
+
+	virtual void				RunCommand(CUserCmd* ucmd, IMoveHelper* moveHelper);
+
+	// Called before and after any movement processing
+	void						StartCommand(CUserCmd* cmd);
+	void						FinishCommand();
+
+	// Helpers to call pre and post think for player, and to call think if a think function is set
+	void						RunPreThink();
+	void						RunThink(double frametime);
+	void						RunPostThink();
+
+	virtual void				SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void				FinishMove(CUserCmd* ucmd, CMoveData* move);
 
 	virtual void				PhysicsSimulate( void );
 	virtual unsigned int	PhysicsSolidMaskForEntity( void ) const { return MASK_PLAYERSOLID; }
@@ -479,6 +494,11 @@ protected:
 	virtual void	FireGameEvent( IGameEvent *event );
 
 protected:
+	virtual CMoveData* GetMoveData()
+	{
+		return &m_MoveData;
+	}
+
 	// Did we just enter a vehicle this frame?
 	bool			JustEnteredVehicle();
 
@@ -495,6 +515,7 @@ protected:
 	float			m_flStepSoundTime;
 	bool			m_IsFootprintOnLeft;
 
+	CMoveData		m_MoveData;
 private:
 	// Make sure no one calls this...
 	C_BasePlayer& operator=( const C_BasePlayer& src );
@@ -623,7 +644,12 @@ protected:
 	// Wearables
 	CUtlVector<CHandle<C_EconWearable > >	m_hMyWearables;
 #endif
-
+#if !defined( NO_ENTITY_PREDICTION )
+	// Data
+protected:
+	// Last object the player was standing on
+	CBaseHandle		m_hLastGround;
+#endif
 private:
 
 	struct StepSoundCache_t

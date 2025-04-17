@@ -249,6 +249,10 @@ public:
 	virtual void		Spawn();
 	virtual void		InitialSpawn( void );
 	
+	virtual void		StartCommand(CUserCmd* cmd);
+	virtual void		SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void		FinishMove(CUserCmd* ucmd, CMoveData* move);
+
 	virtual void		CheatImpulseCommands( int iImpulse );
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper );
 	virtual void		PostThink();

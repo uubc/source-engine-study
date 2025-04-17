@@ -47,6 +47,9 @@ public:
 	bool Init(int entnum, int iSerialNum);
 	virtual void Simulate();
 
+	virtual void	SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
+	virtual void	FinishMove(CUserCmd* ucmd, CMoveData* move);
+
 	bool HasDefuser() const;
 
 	void GiveDefuser();

@@ -12,9 +12,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-static CHLMoveData g_HLMoveData;
-CMoveData *g_pMoveData = &g_HLMoveData;
-
 // Expose interface to engine
 static CPrediction g_Prediction;
 
