@@ -22,6 +22,8 @@ class CBaseCombatCharacter;
 class CNPC_VehicleDriver;
 enum VehicleSeatQuery_e;
 class ITakeDamageInfo;
+class IMoveHelper;
+class CMoveData;
 
 struct vbs_sound_update_t
 {
@@ -49,9 +51,26 @@ struct vbs_sound_update_t
 
 // This is used by the player to access vehicles. It's an interface so the
 // vehicles are not restricted in what they can derive from.
-abstract_class IServerVehicle : public IVehicle
+abstract_class IServerVehicle
 {
 public:
+	// Get and set the current driver. Use PassengerRole_t enum in shareddefs.h for adding passengers
+	virtual CBaseCombatCharacter* GetPassenger(int nRole = VEHICLE_ROLE_DRIVER) = 0;
+	virtual int						GetPassengerRole(CBaseCombatCharacter* pPassenger) = 0;
+
+	// Where is the passenger seeing from?
+	virtual void			GetVehicleViewPosition(int nRole, Vector* pOrigin, QAngle* pAngles, float* pFOV = NULL) = 0;
+
+	// Does the player use his normal weapons while in this mode?
+	virtual bool			IsPassengerUsingStandardWeapons(int nRole = VEHICLE_ROLE_DRIVER) = 0;
+
+	// Process movement
+	virtual void			SetupMove(CBasePlayer* player, CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move) = 0;
+	virtual void			ProcessMovement(CBasePlayer* pPlayer, CMoveData* pMoveData) = 0;
+	virtual void			FinishMove(CBasePlayer* player, CUserCmd* ucmd, CMoveData* move) = 0;
+
+	// Process input
+	virtual void			ItemPostFrame(CBasePlayer* pPlayer) = 0;
 	// Get the entity associated with the vehicle.
 	virtual CBaseEntity*	GetVehicleEnt() = 0;
 
