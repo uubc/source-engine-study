@@ -170,9 +170,9 @@ public:
 
 	// Process movement
 	//virtual void			ItemPostFrame( CBasePlayer *pPlayer ) = 0;
-	virtual void			SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move ) = 0;
-	virtual void			ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData ) = 0;
-	virtual void			FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *move ) = 0;
+	//virtual void			SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move ) = 0;
+	//virtual void			ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData ) = 0;
+	//virtual void			FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *move ) = 0;
 
 	// Entering / Exiting
 	virtual bool			CanEnterVehicle( CBaseEntity *pEntity ) = 0;

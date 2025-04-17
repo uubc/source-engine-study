@@ -1592,7 +1592,7 @@ void CBaseServerVehicle::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, 
 //-----------------------------------------------------------------------------
 void CBaseServerVehicle::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move )
 {
-	GetDrivableVehicle()->SetupMove( player, ucmd, pHelper, move );
+	//GetDrivableVehicle()->SetupMove( player, ucmd, pHelper, move );
 }
 
 //-----------------------------------------------------------------------------
@@ -1600,7 +1600,7 @@ void CBaseServerVehicle::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHe
 //-----------------------------------------------------------------------------
 void CBaseServerVehicle::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData )
 {
-	GetDrivableVehicle()->ProcessMovement( pPlayer, pMoveData );
+	//GetDrivableVehicle()->ProcessMovement( pPlayer, pMoveData );
 
 	trace_t	tr;
 	UTIL_TraceLine(EntityList(), pPlayer->GetEngineObject()->GetAbsOrigin(), pPlayer->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_PLAYERSOLID, GetVehicleEnt(), COLLISION_GROUP_NONE, &tr );
@@ -1623,7 +1623,7 @@ void CBaseServerVehicle::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove
 //-----------------------------------------------------------------------------
 void CBaseServerVehicle::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *move )
 {
-	GetDrivableVehicle()->FinishMove( player, ucmd, move );
+	//GetDrivableVehicle()->FinishMove( player, ucmd, move );
 }
 
 //-----------------------------------------------------------------------------

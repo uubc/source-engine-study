@@ -171,8 +171,8 @@ public:
 	virtual CBaseEntity *GetDriver( void );
 	//virtual void		ItemPostFrame( CBasePlayer *pPlayer );
 	virtual void		SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move );
-	virtual void		ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData ) { return; }
-	virtual void		FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *move ) { return; }
+	//virtual void		ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData ) { return; }
+	//virtual void		FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *move ) { return; }
 	virtual bool		CanEnterVehicle( CBaseEntity *pEntity );
 	virtual bool		CanExitVehicle( CBaseEntity *pEntity );
 	virtual void		SetVehicleEntryAnim( bool bOn ) { m_bEnterAnimOn = bOn; }
