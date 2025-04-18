@@ -1308,7 +1308,7 @@ bool CPrediction::PerformPrediction( bool received_new_world_update, IClientEnti
 		if ( i >= MULTIPLAYER_BACKUP )
 			break;
 
-		CUserCmd *cmd = input->GetUserCmd( current_command );
+		CUserCmd *cmd = g_pUserInput->GetUserCmd( current_command );
 		
 		if ( !cmd )
 		{

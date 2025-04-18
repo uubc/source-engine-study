@@ -10,24 +10,19 @@
 #define _WIN32_WINNT 0x0502
 #include <windows.h>
 #endif
-#include "cbase.h"
-#include "hud.h"
+//#include "cbase.h"
 #include "cdll_int.h"
-#include "kbutton.h"
-#include "basehandle.h"
-#include "usercmd.h"
+#include "icliententity.h"
+//#include "hud.h"
 #include "input.h"
 #include "iviewrender.h"
-#include "iclientmode.h"
+//#include "iclientmode.h"
 #include "tier0/icommandline.h"
-#include "vgui/ISurface.h"
-#include "vgui_controls/Controls.h"
-#include "vgui/Cursor.h"
-#include "cdll_client_int.h"
-#include "cdll_util.h"
+
+//#include "cdll_client_int.h"
+//#include "cdll_util.h"
 #include "tier1/convar_serverbounded.h"
 #include "cam_thirdperson.h"
-#include "inputsystem/iinputsystem.h"
 #include "touch.h"
 
 // up / down
@@ -53,12 +48,14 @@ ConVar touch_accel( "touch_accel", "1.f", FCVAR_ARCHIVE );
 ConVar touch_reverse( "touch_reverse", "0", FCVAR_ARCHIVE );
 ConVar touch_sensitivity( "touch_sensitivity", "3.0", FCVAR_ARCHIVE, "touch look sensitivity" );
 
+extern IVEngineClient* engine;
+
 void CUserInput::TouchScale( float &dx, float &dy )
 {
 	dx *= touch_yaw.GetFloat();
 	dy *= touch_pitch.GetFloat();
 
-	float sensitivity = touch_sensitivity.GetFloat() * gHUD.GetFOVSensitivityAdjust() * ( touch_reverse.GetBool() ? -1.f : 1.f );
+	float sensitivity = touch_sensitivity.GetFloat() * GetFOVSensitivityAdjust() * ( touch_reverse.GetBool() ? -1.f : 1.f );
 
 	if( touch_enable_accel.GetBool() )
 	{
@@ -103,7 +100,7 @@ void CUserInput::TouchMove( CUserCmd *cmd )
 	TouchScale( dx, dy );
 
 	// Let the client mode at the mouse input before it's used
-	g_pGameRules->OverrideMouseInput( &dx, &dy );
+	entitylist->GetWorld()->OverrideMouseInput(&dx, &dy);
 
 	// Add mouse X/Y movement to cmd
 	ApplyTouch( viewangles, cmd, dx, dy );

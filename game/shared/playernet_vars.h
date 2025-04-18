@@ -12,6 +12,7 @@
 #endif
 
 #include "networkvar.h"
+#include "ehandle.h"
 #include "shared_classnames.h"
 
 #define NUM_AUDIO_LOCAL_SOUNDS	8

@@ -6,13 +6,13 @@
 //=============================================================================//
 
 
-#include "cbase.h"
-#include "hud.h"
-#include "kbutton.h"
+//#include "cbase.h"
+#include "cdll_int.h"
+#include "icliententity.h"
+//#include "hud.h"
 #include "input.h"
 
-#include <vgui/IInput.h>
-#include "vgui_controls/Controls.h"
+
 #include "tier0/vprof.h"
 #include "debugoverlay_shared.h"
 #include "cam_thirdperson.h"
@@ -47,6 +47,7 @@ static kbutton_t cam_in, cam_out; // -- "cam_move" is unused
 
 extern ConVar cl_thirdperson;
 
+extern IVEngineClient* engine;
 
 // API Wrappers
 
@@ -63,13 +64,13 @@ void CAM_ToThirdPerson(void)
 		g_ThirdPersonManager.SetOverridingThirdPerson( true );
 	}
 
-	input->CAM_ToThirdPerson();
+	g_pUserInput->CAM_ToThirdPerson();
 
 	// Let the local player know
-	C_BasePlayer *localPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *localPlayer = entitylist->GetLocalPlayer();
 	if ( localPlayer )
 	{
-		localPlayer->ThirdPersonSwitch( true );
+		localPlayer->AsHandlePlayer()->ThirdPersonSwitch(true);
 	}
 }
 
@@ -98,8 +99,8 @@ CAM_ToFirstPerson
 */
 void CAM_ToFirstPerson(void) 
 { 
-	C_BasePlayer *localPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-	if ( localPlayer && !localPlayer->CanUseFirstPersonCommand() )
+	IClientEntity *localPlayer = entitylist->GetLocalPlayer();
+	if ( localPlayer && !localPlayer->AsHandlePlayer()->CanUseFirstPersonCommand() )
 		return;
 
 	if ( cl_thirdperson.GetBool() == false )
@@ -107,12 +108,12 @@ void CAM_ToFirstPerson(void)
 		g_ThirdPersonManager.SetOverridingThirdPerson( false );
 	}
 
-	input->CAM_ToFirstPerson();
+	g_pUserInput->CAM_ToFirstPerson();
 
 	// Let the local player know
 	if ( localPlayer )
 	{
-		localPlayer->ThirdPersonSwitch( false );
+		localPlayer->AsHandlePlayer()->ThirdPersonSwitch( false );
 	}
 }
 
@@ -124,7 +125,7 @@ CAM_ToOrthographic
 */
 void CAM_ToOrthographic(void) 
 { 
-	input->CAM_ToOrthographic();
+	g_pUserInput->CAM_ToOrthographic();
 }
 
 /*
@@ -135,7 +136,7 @@ CAM_StartMouseMove
 */
 void CAM_StartMouseMove( void )
 {
-	input->CAM_StartMouseMove();
+	g_pUserInput->CAM_StartMouseMove();
 }
 
 /*
@@ -146,7 +147,7 @@ CAM_EndMouseMove
 */
 void CAM_EndMouseMove( void )
 {
-	input->CAM_EndMouseMove();
+	g_pUserInput->CAM_EndMouseMove();
 }
 
 /*
@@ -157,7 +158,7 @@ CAM_StartDistance
 */
 void CAM_StartDistance( void )
 {
-	input->CAM_StartDistance();
+	g_pUserInput->CAM_StartDistance();
 }
 
 /*
@@ -168,7 +169,7 @@ CAM_EndDistance
 */
 void CAM_EndDistance( void )
 {
-	input->CAM_EndDistance();
+	g_pUserInput->CAM_EndDistance();
 }
 
 /*
@@ -397,7 +398,7 @@ void CUserInput::CAM_Think( void )
 			//set old mouse coordinates to current mouse coordinates
 			//since we are done with the mouse
 			
-			if ( ( flSensitivity = gHUD.GetSensitivity() ) != 0 )
+			if ( ( flSensitivity = GetMouseSensitivity() ) != 0 )
 			{
 				m_nCameraOldX=m_nCameraX*flSensitivity;
 				m_nCameraOldY=m_nCameraY*flSensitivity;
@@ -414,17 +415,17 @@ void CUserInput::CAM_Think( void )
 	}
 	
 	//Nathan code here
-	if( input->KeyState( &cam_pitchup ) )
+	if( g_pUserInput->KeyState( &cam_pitchup ) )
 		idealAngles[ PITCH ] += cam_idealdelta.GetFloat();
-	else if( input->KeyState( &cam_pitchdown ) )
+	else if( g_pUserInput->KeyState( &cam_pitchdown ) )
 		idealAngles[ PITCH ] -= cam_idealdelta.GetFloat();
 	
-	if( input->KeyState( &cam_yawleft ) )
+	if( g_pUserInput->KeyState( &cam_yawleft ) )
 		idealAngles[ YAW ] -= cam_idealdelta.GetFloat();
-	else if( input->KeyState( &cam_yawright ) )
+	else if( g_pUserInput->KeyState( &cam_yawright ) )
 		idealAngles[ YAW ] += cam_idealdelta.GetFloat();
 	
-	if( input->KeyState( &cam_in ) )
+	if( g_pUserInput->KeyState( &cam_in ) )
 	{
 		idealAngles[ DIST ] -= 2*cam_idealdelta.GetFloat();
 		if( idealAngles[ DIST ] < CAM_MIN_DIST )
@@ -436,7 +437,7 @@ void CUserInput::CAM_Think( void )
 		}
 		
 	}
-	else if( input->KeyState( &cam_out ) )
+	else if( g_pUserInput->KeyState( &cam_out ) )
 		idealAngles[ DIST ] += 2*cam_idealdelta.GetFloat();
 	
 	if (m_fCameraDistanceMove)
@@ -468,8 +469,8 @@ void CUserInput::CAM_Think( void )
 		}
 		//set old mouse coordinates to current mouse coordinates
 		//since we are done with the mouse
-		m_nCameraOldX=m_nCameraX*gHUD.GetSensitivity();
-		m_nCameraOldY=m_nCameraY*gHUD.GetSensitivity();
+		m_nCameraOldX=m_nCameraX* GetMouseSensitivity();
+		m_nCameraOldY=m_nCameraY* GetMouseSensitivity();
 #ifndef _XBOX
 		ResetMouse();
 #endif
@@ -551,7 +552,7 @@ void CUserInput::CAM_Think( void )
 			desiredCamAngles = viewangles;
 		}
 
-		g_ThirdPersonManager.PositionCamera( (C_BasePlayer*)EntityList()->GetLocalPlayer(), desiredCamAngles );
+		g_ThirdPersonManager.PositionCamera( entitylist->GetLocalPlayer(), desiredCamAngles );
     }
 
 	if ( cam_showangles.GetInt() )
@@ -636,13 +637,13 @@ void CUserInput::CAM_CameraThirdThink( void )
 		vecCamOffset[DIST] += ( m_pCameraThirdData->m_flDist - vecCamOffset[DIST] ) / flLag;
 	}
 
-	C_BasePlayer* pLocalPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity* pLocalPlayer = entitylist->GetLocalPlayer();
 
 	if ( pLocalPlayer )
 	{
 		QAngle desiredCamAngles = QAngle( vecCamOffset[ PITCH ], vecCamOffset[ YAW ], vecCamOffset[DIST] );
 	
-		g_ThirdPersonManager.PositionCamera( (C_BasePlayer*)EntityList()->GetLocalPlayer(), desiredCamAngles );
+		g_ThirdPersonManager.PositionCamera( entitylist->GetLocalPlayer(), desiredCamAngles );
 		
 	//	vecCamOffset = g_ThirdPersonManager.GetCameraOffsetAngles();
 	}
@@ -702,10 +703,10 @@ void CUserInput::CAM_ToFirstPerson(void)
 	cam_command.SetValue( 0 );
 
 	// Let the local player know
-	C_BasePlayer *localPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *localPlayer = entitylist->GetLocalPlayer();
 	if ( localPlayer )
 	{
-		localPlayer->ThirdPersonSwitch( false );
+		localPlayer->AsHandlePlayer()->ThirdPersonSwitch( false );
 	}
 }
 
@@ -776,7 +777,7 @@ void CUserInput::CAM_StartMouseMove(void)
 			m_nCameraX = cpx;
 			m_nCameraY = cpy;
 
-			if ( ( flSensitivity = gHUD.GetSensitivity() ) != 0 )
+			if ( ( flSensitivity = GetMouseSensitivity() ) != 0 )
 			{
 				m_nCameraOldX=m_nCameraX*flSensitivity;
 				m_nCameraOldY=m_nCameraY*flSensitivity;
@@ -842,8 +843,8 @@ void CUserInput::CAM_StartDistance(void)
 		  m_nCameraX = cpx;
 		  m_nCameraY = cpy;
 
-		  m_nCameraOldX=m_nCameraX*gHUD.GetSensitivity();
-		  m_nCameraOldY=m_nCameraY*gHUD.GetSensitivity();
+		  m_nCameraOldX=m_nCameraX* GetMouseSensitivity();
+		  m_nCameraOldY=m_nCameraY* GetMouseSensitivity();
 	  }
 	}
 	//we are not in 3rd person view..therefore do not allow camera movement

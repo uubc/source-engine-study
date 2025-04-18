@@ -735,6 +735,7 @@ public:
 	// TF2 specific
 	virtual bool					IsBaseObject(void) const { return false; }
 	virtual bool					IsBaseCombatWeapon(void) const { return false; }
+	virtual int						GetSubType(void) { return 0; }
 	virtual int						GetWorldModelIndex(void) { return GetEngineObject()->GetModelIndex(); }
 	virtual C_BaseEntity*			GetRenderedWeaponModel() { return NULL; }
 	virtual class C_BaseCombatWeapon* MyCombatWeaponPointer() { return NULL; }

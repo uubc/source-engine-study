@@ -164,7 +164,7 @@ void CBaseHudWeaponSelection::ProcessInput()
 			{
 				// Swallow the button
 				gHUD.m_iKeyBits &= ~IN_ATTACK;
-				input->ClearInputButton( IN_ATTACK );
+				g_pUserInput->ClearInputButton( IN_ATTACK );
 			}
 
 			engine->ClientCmd( "cancelselect\n" );
@@ -183,8 +183,8 @@ void CBaseHudWeaponSelection::ProcessInput()
 			{
 				// Swallow the button
 				gHUD.m_iKeyBits &= ~(IN_ATTACK | IN_ATTACK2);
-				input->ClearInputButton( IN_ATTACK );
-				input->ClearInputButton( IN_ATTACK2 );
+				g_pUserInput->ClearInputButton( IN_ATTACK );
+				g_pUserInput->ClearInputButton( IN_ATTACK2 );
 			}
 
 			// select weapon
@@ -491,7 +491,7 @@ void CBaseHudWeaponSelection::SwitchToLastWeapon( void )
 	if ( !player )
 		return;
 
-	input->MakeWeaponSelection( player->GetLastWeapon() );
+	g_pUserInput->MakeWeaponSelection( player->GetLastWeapon() );
 }
 
 //-----------------------------------------------------------------------------
@@ -501,7 +501,7 @@ void CBaseHudWeaponSelection::SetWeaponSelected( void )
 {
 	Assert( GetSelectedWeapon() );
 	// Mark selection so that it's placed into next CUserCmd created
-	input->MakeWeaponSelection( GetSelectedWeapon() );
+	g_pUserInput->MakeWeaponSelection( GetSelectedWeapon() );
 }
 
 

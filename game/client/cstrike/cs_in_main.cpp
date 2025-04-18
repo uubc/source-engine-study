@@ -16,8 +16,8 @@ class CCSInput : public CUserInput
 public:
 };
 
-static CCSInput g_Input;
+static CCSInput g_UserInput;
 
 // Expose this interface
-IUserInput *input = ( IUserInput * )&g_Input;
+IUserInput * g_pUserInput = ( IUserInput * )&g_UserInput;
 

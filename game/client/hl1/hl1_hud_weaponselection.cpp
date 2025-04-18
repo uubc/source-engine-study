@@ -679,7 +679,7 @@ void CHudWeaponSelection::FastWeaponSwitch( int iWeaponSlot )
 	if ( pNextWeapon && pNextWeapon != pActiveWeapon && pNextWeapon->GetSlot() == iWeaponSlot )
 	{
 		// select the new weapon
-		::input->MakeWeaponSelection( pNextWeapon );
+		g_pUserInput->MakeWeaponSelection( pNextWeapon );
 	}
 	else if ( pNextWeapon != pActiveWeapon )
 	{

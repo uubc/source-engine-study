@@ -1080,7 +1080,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	C_BaseTempEntity::PrecacheTempEnts();
 
-	::input->Init_All();
+	g_pUserInput->Init_All();
 
 	VGui_CreateGlobalPanels();
 
@@ -1214,7 +1214,7 @@ void CHLClient::Shutdown( void )
 	g_pGameRules->Disable();
 	//g_pClientMode->Shutdown();
 
-	::input->Shutdown_All();
+	g_pUserInput->Shutdown_All();
 	C_BaseTempEntity::ClearDynamicTempEnts();
 	TermSmokeFogOverlay();
 	g_pViewRender->Shutdown();
@@ -1382,7 +1382,7 @@ IEntityFactory* CHLClient::GetAllEntityFactories(void)
 //-----------------------------------------------------------------------------
 void CHLClient::IN_ActivateMouse( void )
 {
-	::input->ActivateMouse();
+	g_pUserInput->ActivateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1390,7 +1390,7 @@ void CHLClient::IN_ActivateMouse( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_DeactivateMouse( void )
 {
-	::input->DeactivateMouse();
+	g_pUserInput->DeactivateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1398,7 +1398,7 @@ void CHLClient::IN_DeactivateMouse( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_Accumulate ( void )
 {
-	::input->AccumulateMouse();
+	g_pUserInput->AccumulateMouse();
 }
 
 //-----------------------------------------------------------------------------
@@ -1406,7 +1406,7 @@ void CHLClient::IN_Accumulate ( void )
 //-----------------------------------------------------------------------------
 void CHLClient::IN_ClearStates ( void )
 {
-	::input->ClearStates();
+	g_pUserInput->ClearStates();
 }
 
 //-----------------------------------------------------------------------------
@@ -1415,7 +1415,7 @@ void CHLClient::IN_ClearStates ( void )
 //-----------------------------------------------------------------------------
 bool CHLClient::IN_IsKeyDown( const char *name, bool& isdown )
 {
-	kbutton_t *key = ::input->FindKey( name );
+	kbutton_t *key = g_pUserInput->FindKey( name );
 	if ( !key )
 	{
 		return false;
@@ -1452,7 +1452,7 @@ void CHLClient::IN_OnMouseWheeled( int nDelta )
 //-----------------------------------------------------------------------------
 int CHLClient::IN_KeyEvent( int eventcode, ButtonCode_t keynum, const char *pszCurrentBinding )
 {
-	return ::input->KeyEvent( eventcode, keynum, pszCurrentBinding );
+	return g_pUserInput->KeyEvent( eventcode, keynum, pszCurrentBinding );
 }
 
 void CHLClient::ExtraMouseSample( float frametime, bool active )
@@ -1463,14 +1463,14 @@ void CHLClient::ExtraMouseSample( float frametime, bool active )
 	EntityList()->PushAllowBoneAccess(true, false, (char const*)1);
 
 	MDLCACHE_CRITICAL_SECTION();
-	::input->ExtraMouseSample( frametime, active );
+	g_pUserInput->ExtraMouseSample( frametime, active );
 	EntityList()->PopBoneAccess((char const*)1);
 }
 
 void CHLClient::IN_SetSampleTime( float frametime )
 {
-	::input->Joystick_SetSampleTime( frametime );
-	::input->IN_SetSampleTime( frametime );
+	g_pUserInput->Joystick_SetSampleTime( frametime );
+	g_pUserInput->IN_SetSampleTime( frametime );
 
 #ifdef SIXENSE
 	g_pSixenseInput->ResetFrameTime( frametime );
@@ -1491,7 +1491,7 @@ void CHLClient::CreateMove ( int sequence_number, float input_sample_frametime, 
 	EntityList()->PushAllowBoneAccess(true, false, (char const*)1);
 
 	MDLCACHE_CRITICAL_SECTION();
-	::input->CreateMove( sequence_number, input_sample_frametime, active );
+	g_pUserInput->CreateMove( sequence_number, input_sample_frametime, active );
 	EntityList()->PopBoneAccess((char const*)1);
 }
 
@@ -1503,7 +1503,7 @@ void CHLClient::CreateMove ( int sequence_number, float input_sample_frametime, 
 //-----------------------------------------------------------------------------
 bool CHLClient::WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool isnewcommand )
 {
-	return ::input->WriteUsercmdDeltaToBuffer( buf, from, to, isnewcommand );
+	return g_pUserInput->WriteUsercmdDeltaToBuffer( buf, from, to, isnewcommand );
 }
 
 //-----------------------------------------------------------------------------
@@ -1514,7 +1514,7 @@ bool CHLClient::WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool
 //-----------------------------------------------------------------------------
 void CHLClient::EncodeUserCmdToBuffer( bf_write& buf, int slot )
 {
-	::input->EncodeUserCmdToBuffer( buf, slot );
+	g_pUserInput->EncodeUserCmdToBuffer( buf, slot );
 }
 
 //-----------------------------------------------------------------------------
@@ -1525,7 +1525,7 @@ void CHLClient::EncodeUserCmdToBuffer( bf_write& buf, int slot )
 //-----------------------------------------------------------------------------
 void CHLClient::DecodeUserCmdFromBuffer( bf_read& buf, int slot )
 {
-	::input->DecodeUserCmdFromBuffer( buf, slot );
+	g_pUserInput->DecodeUserCmdFromBuffer( buf, slot );
 }
 
 //-----------------------------------------------------------------------------
@@ -1632,7 +1632,7 @@ void CHLClient::LevelInitPreEntity()
 		return;
 	g_bLevelInitialized = true;
 
-	::input->LevelInit();
+	g_pUserInput->LevelInit();
 
 	vieweffects->LevelInit();
 	
@@ -2170,7 +2170,7 @@ void OnRenderStart()
 
 	// Make sure the camera simulation happens before OnRenderStart, where it's used.
 	// NOTE: the only thing that happens in CAM_Think is thirdperson related code.
-	::input->CAM_Think();
+	g_pUserInput->CAM_Think();
 
 	// This will place the player + the view models + all parent
 	// entities	at the correct abs position so that their attachment points

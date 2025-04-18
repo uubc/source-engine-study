@@ -695,7 +695,7 @@ void CHudWeaponSelection::SwitchToLastWeapon( void )
 		lastWeapon = GameRules()->GetNextBestWeapon( player, activeWeapon );
 	}
 
-	::input->MakeWeaponSelection( lastWeapon );
+	g_pUserInput->MakeWeaponSelection( lastWeapon );
 }
 
 //-----------------------------------------------------------------------------

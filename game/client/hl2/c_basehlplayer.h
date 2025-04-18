@@ -52,7 +52,7 @@ public:
 	void			PerformClientSideNPCSpeedModifiers( float flFrameTime, CUserCmd *pCmd );
 
 	bool				IsWeaponLowered( void ) { return m_HL2Local.m_bWeaponLowered; }
-
+	bool				IsAutoAimTarget() { return m_HL2Local.m_bAutoAimTarget; }
 public:
 
 	C_HL2PlayerLocalData		m_HL2Local;

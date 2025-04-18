@@ -19,7 +19,7 @@ class CHLInput : public CUserInput
 public:
 };
 
-static CHLInput g_Input;
+static CHLInput g_UserInput;
 
 // Expose this interface
-IUserInput *input = ( IUserInput * )&g_Input;
+IUserInput * g_pUserInput = &g_UserInput;

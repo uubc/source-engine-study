@@ -11,12 +11,6 @@
 #pragma once
 #endif
 
-#ifdef CLIENT_DLL
-	#include "c_baseplayer.h"
-#else
-	#include "baseplayer.h"
-#endif
-
 #define DIST_FORWARD 0
 #define DIST_RIGHT 1
 #define DIST_UP 2
@@ -55,7 +49,7 @@ public:
 
 	void	Update( void );
 
-	void	PositionCamera( CBasePlayer *pPlayer, QAngle angles );
+	void	PositionCamera( IClientEntity *pPlayer, QAngle angles );
 
 	void	UseCameraOffsets( bool bUse ) { m_bUseCameraOffsets = bUse; }
 	bool	UsingCameraOffsets( void ) { return m_bUseCameraOffsets; }

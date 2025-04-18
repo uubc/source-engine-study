@@ -7,25 +7,19 @@
 // $NoKeywords: $
 //===========================================================================//
 
-#include "cbase.h"
-#include "basehandle.h"
+#include "cdll_int.h"
+#include "icliententity.h"
 #include "utlvector.h"
-#include "cdll_client_int.h"
-#include "cdll_util.h"
-#include "kbutton.h"
-#include "usercmd.h"
+//#include "cdll_client_int.h"
+//#include "cdll_util.h"
 #include "game/client/iclientvehicle.h"
 #include "input.h"
 #include "iviewrender.h"
 #include "convar.h"
-#include "hud.h"
-#include "vgui/ISurface.h"
-#include "vgui_controls/Controls.h"
-#include "vgui/Cursor.h"
+//#include "hud.h"
+
 #include "tier0/icommandline.h"
-#include "inputsystem/iinputsystem.h"
-#include "inputsystem/ButtonCode.h"
-#include "math.h"
+//#include "math.h"
 #include "tier1/convar_serverbounded.h"
 #include "cam_thirdperson.h"
 
@@ -33,11 +27,6 @@
 #include "xbox/xbox_win32stubs.h"
 #else
 #include "../common/xbox/xboxstubs.h"
-#endif
-
-#ifdef HL2_CLIENT_DLL
-// FIXME: Autoaim support needs to be moved from HL2_DLL to the client dll, so this include should be c_baseplayer.h
-#include "c_basehlplayer.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -98,6 +87,9 @@ static ConVar option_duck_method_default( "option_duck_method_default", "1.0", F
 static ConVar joy_inverty_default( "joy_inverty_default", "0", FCVAR_ARCHIVE_XBOX );				// Extracted & saved from profile
 static ConVar joy_movement_stick_default( "joy_movement_stick_default", "0", FCVAR_ARCHIVE_XBOX );	// Extracted & saved from profile
 static ConVar sv_stickysprint_default( "sv_stickysprint_default", "0", FCVAR_NONE );
+
+extern IInputSystem* inputsystem;
+extern IVEngineClient* engine;
 
 void joy_movement_stick_Callback( IConVar *var, const char *pOldString, float flOldValue )
 {
@@ -235,24 +227,21 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 float AutoAimDampening( float x, int axis, float dist )
 {
 	// FIXME: Autoaim support needs to be moved from HL2_DLL to the client dll, so all games can use it.
-#ifdef HL2_CLIENT_DLL
-	// Help the user stay on target if the feature is enabled and the user
-	// is not making a gross stick movement.
-	if( joy_autoaimdampen.GetFloat() > 0.0f && fabs(x) < joy_autoaimdampenrange.GetFloat() )
-	{
-		// Get the HL2 player
-		C_BaseHLPlayer *pLocalPlayer = ToHL2Player(EntityList()->GetLocalPlayer());
-
-		if( pLocalPlayer )
+	if (entitylist->GetWorld()->ShouldAutoaim()) {
+		// Help the user stay on target if the feature is enabled and the user
+		// is not making a gross stick movement.
+		if (joy_autoaimdampen.GetFloat() > 0.0f && fabs(x) < joy_autoaimdampenrange.GetFloat())
 		{
-			// Get the autoaim target
-			if( pLocalPlayer->m_HL2Local.m_bAutoAimTarget )
+			if (entitylist->GetLocalPlayer())
 			{
-				return joy_autoaimdampen.GetFloat();
+				// Get the autoaim target
+				if (entitylist->GetLocalPlayer()->AsHandlePlayer()->IsAutoAimTarget())
+				{
+					return joy_autoaimdampen.GetFloat();
+				}
 			}
 		}
 	}
-#endif
 	return 1.0f;// No dampening.
 }
 
@@ -811,15 +800,15 @@ void CUserInput::JoyStickMove( float frametime, CUserCmd *cmd )
 
 	float	joySideMove = 0.f;
 	float	joyForwardMove = 0.f;
-	float   aspeed = frametime * gHUD.GetFOVSensitivityAdjust();
+	float   aspeed = frametime * GetFOVSensitivityAdjust();
 
 	// apply forward and side control
-	C_BasePlayer *pLocalPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+	IClientEntity *pLocalPlayer = entitylist->GetLocalPlayer();
 	
 	int iResponseCurve = 0;
-	if ( pLocalPlayer && pLocalPlayer->IsInAVehicle() )
+	if ( pLocalPlayer && pLocalPlayer->AsHandlePlayer()->IsInAVehicle())
 	{
-		iResponseCurve = pLocalPlayer->GetVehicle() ? pLocalPlayer->GetVehicle()->GetJoystickResponseCurve() : joy_response_move_vehicle.GetInt();
+		iResponseCurve = pLocalPlayer->AsHandlePlayer()->GetVehicle() ? pLocalPlayer->AsHandlePlayer()->GetVehicle()->GetJoystickResponseCurve() : joy_response_move_vehicle.GetInt();
 	}
 	else
 	{

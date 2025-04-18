@@ -48,6 +48,7 @@ namespace vgui
 	class AnimationController;
 }
 class CViewSetup;
+class IClientVehicle;
 
 class VarMapEntry_t
 {
@@ -905,6 +906,7 @@ public:
 	// Damage rules for ammo types
 	virtual float GetAmmoDamage(IHandleEntity* pAttacker, IHandleEntity* pVictim, int nAmmoType) = 0;
 	virtual bool IsConnectedUserInfoChangeAllowed(C_BasePlayer* pPlayer) = 0;
+	virtual bool ShouldAutoaim() { return false; }
 	virtual bool ShouldHitAsNPC(IHandleEntity* pHandleEntity) { return false; }
 
 	virtual int		GetKillCamMode() const = 0;
@@ -1045,6 +1047,11 @@ public:
 	virtual void NotePredictionError(const Vector& vDelta) = 0;
 	virtual const QAngle& GetLocalViewAngles() = 0;
 	virtual void SetLocalViewAngles(const QAngle& viewAngles) = 0;
+	virtual bool IsInAVehicle() const = 0;
+	virtual IClientVehicle* GetVehicle() = 0;
+	virtual bool CanUseFirstPersonCommand(void) = 0;
+	virtual void ThirdPersonSwitch(bool bThirdperson) = 0;
+	virtual bool IsAutoAimTarget() = 0;
 };
 
 class IClientNPC : public IHandleNPC {
@@ -1113,6 +1120,7 @@ public:
 	virtual bool IsViewModel() const = 0;
 	virtual bool IsCombatCharacter(void) const = 0;
 	virtual bool IsBaseCombatWeapon(void) const = 0;
+	virtual int GetSubType(void) = 0;
 	virtual bool IsAlive(void) = 0;
 	virtual bool IsFloating() = 0;
 	virtual bool IsStandable() const = 0;

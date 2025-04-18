@@ -546,7 +546,7 @@ int CNewParticleEffect::DrawModel( int flags )
 			if ( pEntity )
 			{
 				// If we're in thirdperson, we still see it
-				if ( !input->CAM_IsThirdPerson() )
+				if ( !g_pUserInput->CAM_IsThirdPerson() )
 				{
 					if ( pEntity == pCameraObject )
 						return 0;

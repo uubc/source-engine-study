@@ -925,23 +925,6 @@ void CHud::RemoveHudElement( CHudElement *pHudElement )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Returns current mouse sensitivity setting
-// Output : float - the return value
-//-----------------------------------------------------------------------------
-float CHud::GetSensitivity( void )
-{
-#ifndef _X360
-	return m_flMouseSensitivity;
-#else
-	return 1.0f;
-#endif
-}
-
-float CHud::GetFOVSensitivityAdjust()
-{
-	return m_flFOVSensitivityAdjust;
-}
-//-----------------------------------------------------------------------------
 // Purpose: Return true if the passed in sections of the HUD shouldn't be drawn
 //-----------------------------------------------------------------------------
 bool CHud::IsHidden( int iHudFlags )
@@ -993,7 +976,7 @@ void CHud::ProcessInput( bool bActive )
 {
 	if ( bActive )
 	{
-		m_iKeyBits = input->GetButtonBits( 0 );
+		m_iKeyBits = g_pUserInput->GetButtonBits( 0 );
 
 		// Weaponbits need to be sent down as a UserMsg now.
 		gHUD.Think();

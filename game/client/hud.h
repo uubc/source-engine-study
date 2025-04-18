@@ -132,9 +132,6 @@ public:
 	
 	bool						IsHidden( int iHudFlags );
 
-	float						GetSensitivity();
-	float						GetFOVSensitivityAdjust();
-
 	void						DrawProgressBar( int x, int y, int width, int height, float percentage, Color& clr, unsigned char type );
 	void						DrawIconProgressBar( int x, int y, CHudTexture *icon, CHudTexture *icon2, float percentage, Color& clr, int type );
 
@@ -164,11 +161,7 @@ public:
 public:
 
 	int							m_iKeyBits;
-#ifndef _XBOX
-	float						m_flMouseSensitivity;
-	float						m_flMouseSensitivityFactor;
-#endif
-	float						m_flFOVSensitivityAdjust;
+
 
 	Color						m_clrNormal;
 	Color						m_clrCaution;

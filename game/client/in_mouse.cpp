@@ -10,8 +10,8 @@
 #define _WIN32_WINNT 0x0502
 #include <windows.h>
 #endif
-#include "cbase.h"
-#include "hud.h"
+//#include "cbase.h"
+//#include "hud.h"
 #include "cdll_int.h"
 #include "kbutton.h"
 #include "basehandle.h"
@@ -22,9 +22,9 @@
 #include "tier0/icommandline.h"
 #include "vgui/ISurface.h"
 #include "vgui_controls/Controls.h"
-#include "vgui/Cursor.h"
-#include "cdll_client_int.h"
-#include "cdll_util.h"
+//#include "vgui/Cursor.h"
+//#include "cdll_client_int.h"
+//#include "cdll_util.h"
 #include "tier1/convar_serverbounded.h"
 #include "cam_thirdperson.h"
 #include "inputsystem/iinputsystem.h"
@@ -112,6 +112,12 @@ ConVar cl_mouseenable( "cl_mouseenable", "1" );
 // From other modules...
 void GetVGUICursorPos( int& x, int& y );
 void SetVGUICursorPos( int x, int y );
+// ScreenHeight returns the height of the screen, in pixels
+int ScreenHeight(void);
+// ScreenWidth returns the width of the screen, in pixels
+int ScreenWidth(void);
+extern IInputSystem* inputsystem;
+extern IVEngineClient* engine;
 
 //-----------------------------------------------------------------------------
 // Purpose: Hides cursor and starts accumulation/re-centering
@@ -395,8 +401,8 @@ void CUserInput::ScaleMouse( float *x, float *y )
 	float mx = *x;
 	float my = *y;
 
-	float mouse_sensitivity = ( gHUD.GetSensitivity() != 0 ) 
-		?  gHUD.GetSensitivity() : sensitivity.GetFloat();
+	float mouse_sensitivity = (GetMouseSensitivity() != 0 )
+		? GetMouseSensitivity() : sensitivity.GetFloat();
 
 	if ( m_customaccel.GetInt() == 1 ||  m_customaccel.GetInt() == 2 ) 
 	{ 
@@ -638,6 +644,39 @@ void CUserInput::SetMousePos(int x, int y)
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Returns current mouse sensitivity setting
+// Output : float - the return value
+//-----------------------------------------------------------------------------
+float CUserInput::GetMouseSensitivity(void)
+{
+#ifndef _X360
+	return m_flMouseSensitivity;
+#else
+	return 1.0f;
+#endif
+}
+
+void CUserInput::SetMouseSensitivity(float flMouseSensitivity)
+{
+	m_flMouseSensitivity = flMouseSensitivity;
+}
+
+float CUserInput::GetMouseSensitivityFactor()
+{
+	return m_flMouseSensitivityFactor;
+}
+
+float CUserInput::GetFOVSensitivityAdjust()
+{
+	return m_flFOVSensitivityAdjust;
+}
+
+void CUserInput::SetFOVSensitivityAdjust(float flFOVSensitivityAdjust)
+{
+	m_flFOVSensitivityAdjust = flFOVSensitivityAdjust;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: MouseMove -- main entry point for applying mouse
 // Input  : *cmd - 
 //-----------------------------------------------------------------------------
@@ -674,7 +713,7 @@ void CUserInput::MouseMove( CUserCmd *cmd )
 		ScaleMouse( &mouse_x, &mouse_y );
 
 		// Let the client mode at the mouse input before it's used
-		g_pGameRules->OverrideMouseInput( &mouse_x, &mouse_y );
+		entitylist->GetWorld()->OverrideMouseInput(&mouse_x, &mouse_y);
 
 		// Add mouse X/Y movement to cmd
 		ApplyMouse( viewangles, cmd, mouse_x, mouse_y );

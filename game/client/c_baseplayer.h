@@ -212,6 +212,7 @@ public:
 
 	// Global/static methods
 	virtual void				ThirdPersonSwitch( bool bThirdperson );
+	virtual bool				IsAutoAimTarget() { return false; }
 	bool					LocalPlayerInFirstPersonView();
 	bool					ShouldDrawLocalPlayer();
 	int							GetUserID( void );

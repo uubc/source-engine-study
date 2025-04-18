@@ -945,9 +945,9 @@ void C_BasePlayer::OnRestore()
 	if ( IsLocalPlayer() )
 	{
 		// debounce the attack key, for if it was used for restore
-		input->ClearInputButton( IN_ATTACK | IN_ATTACK2 );
+		g_pUserInput->ClearInputButton( IN_ATTACK | IN_ATTACK2 );
 		// GetButtonBits() has to be called for the above to take effect
-		input->GetButtonBits( 0 );
+		g_pUserInput->GetButtonBits( 0 );
 	}
 
 	// For ammo history icons to current value so they don't flash on level transtions
@@ -1150,7 +1150,7 @@ bool C_BasePlayer::CreateMove( float flInputSampleTime, CUserCmd *pCmd )
 		if ( joy_autosprint.GetBool() )
 #endif
 		{
-			if ( input->KeyState( &in_joyspeed ) != 0.0f )
+			if (g_pUserInput->KeyState( &in_joyspeed ) != 0.0f )
 			{
 				pCmd->buttons |= IN_SPEED;
 			}
@@ -1862,7 +1862,7 @@ void C_BasePlayer::ThirdPersonSwitch( bool bThirdperson )
 	int ObserverMode = pLocalPlayer->GetObserverMode();
 	if ( ( ObserverMode == OBS_MODE_NONE ) || ( ObserverMode == OBS_MODE_IN_EYE ) )
 	{
-		return !input->CAM_IsThirdPerson() && ( !ToolsEnabled() || !ToolFramework_IsThirdPersonCamera() );
+		return !g_pUserInput->CAM_IsThirdPerson() && ( !ToolsEnabled() || !ToolFramework_IsThirdPersonCamera() );
 	}
 
 	// Not looking at the local player, e.g. in a replay in third person mode or freelook.
@@ -2060,7 +2060,7 @@ void C_BasePlayer::GetToolRecordingState( KeyValues *msg )
 	float flZNear = g_pViewRender->GetZNear();
 	float flZFar = g_pViewRender->GetZFar();
 	CalcView( state.m_vecEyePosition, state.m_vecEyeAngles, flZNear, flZFar, state.m_flFOV );
-	state.m_bThirdPerson = !engine->IsPaused() && ::input->CAM_IsThirdPerson();
+	state.m_bThirdPerson = !engine->IsPaused() && g_pUserInput->CAM_IsThirdPerson();
 
 	// this is a straight copy from ClientModeShared::OverrideView,
 	// When that method is removed in favor of rolling it into CalcView,

@@ -59,9 +59,9 @@ void CThirdPersonManager::Init( void )
 
 	m_flUpOffset = CAMERA_UP_OFFSET;
 
-	if ( input )
+	if (g_pUserInput)
 	{
-		input->CAM_SetCameraThirdData( NULL, vec3_angle );
+		g_pUserInput->CAM_SetCameraThirdData( NULL, vec3_angle );
 	}
 }
 
@@ -73,16 +73,16 @@ void CThirdPersonManager::Update( void )
 	ConVarRef sv_cheats("sv_cheats");
 	if ( sv_cheats.IsValid() && !sv_cheats.GetBool() && GameRules() && GameRules()->AllowThirdPersonCamera() == false)
 	{
-		if ( (bool)input->CAM_IsThirdPerson() == true )
+		if ( (bool)g_pUserInput->CAM_IsThirdPerson() == true )
 		{
-			input->CAM_ToFirstPerson();
+			g_pUserInput->CAM_ToFirstPerson();
 		}
 		return;
 	}
 
 	if ( IsOverridingThirdPerson() == false )
 	{
-		if ( (bool)input->CAM_IsThirdPerson() != ( cl_thirdperson.GetBool() || m_bForced ) && GameRules() && GameRules()->AllowThirdPersonCamera() == true )
+		if ( (bool)g_pUserInput->CAM_IsThirdPerson() != ( cl_thirdperson.GetBool() || m_bForced ) && GameRules() && GameRules()->AllowThirdPersonCamera() == true )
 		{
 			ToggleThirdPerson( m_bForced || cl_thirdperson.GetBool() );
 		}
@@ -145,7 +145,7 @@ Vector CThirdPersonManager::GetDistanceFraction( void )
 	return Vector( flFraction, flFraction, flUpFraction );
 }
 
-void CThirdPersonManager::PositionCamera( CBasePlayer *pPlayer, QAngle angles )
+void CThirdPersonManager::PositionCamera( IClientEntity *pPlayer, QAngle angles )
 {
 	if ( pPlayer )
 	{

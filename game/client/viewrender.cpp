@@ -1189,7 +1189,7 @@ void CViewRender::DriftPitch(void)
 	// Don't count small mouse motion
 	if (m_PitchDrift.nodrift)
 	{	
-		if (fabs(::input->GetLastForwardMove()) < cl_forwardspeed.GetFloat())
+		if (fabs(g_pUserInput->GetLastForwardMove()) < cl_forwardspeed.GetFloat())
 		{
 			m_PitchDrift.driftmove = 0;
 		}
@@ -1282,11 +1282,11 @@ void CViewRender::OnRenderStart()
 		// Don't let it go too low
 		localFOV = MAX(min_fov, localFOV);
 
-		gHUD.m_flFOVSensitivityAdjust = 1.0f;
+		g_pUserInput->SetFOVSensitivityAdjust(1.0f);
 #ifndef _XBOX
-		if (gHUD.m_flMouseSensitivityFactor)
+		if (g_pUserInput->GetMouseSensitivityFactor())
 		{
-			gHUD.m_flMouseSensitivity = sensitivity.GetFloat() * gHUD.m_flMouseSensitivityFactor;
+			g_pUserInput->SetMouseSensitivity(sensitivity.GetFloat() * g_pUserInput->GetMouseSensitivityFactor());
 		}
 		else
 #endif
@@ -1296,7 +1296,7 @@ void CViewRender::OnRenderStart()
 			{
 #ifndef _XBOX
 				// reset to saved sensitivity
-				gHUD.m_flMouseSensitivity = 0;
+				g_pUserInput->SetMouseSensitivity(0);
 #endif
 			}
 			else
@@ -1308,11 +1308,11 @@ void CViewRender::OnRenderStart()
 					Assert(0); // would divide by zero, something is broken with iDefatulFOV
 					iDefaultFOV = 1;
 				}
-				gHUD.m_flFOVSensitivityAdjust =
+				g_pUserInput->SetFOVSensitivityAdjust(
 					((float)localFOV / (float)iDefaultFOV) * // linear fov downscale
-					zoom_sensitivity_ratio.GetFloat(); // sensitivity scale factor
+					zoom_sensitivity_ratio.GetFloat()); // sensitivity scale factor
 #ifndef _XBOX
-				gHUD.m_flMouseSensitivity = gHUD.m_flFOVSensitivityAdjust * sensitivity.GetFloat(); // regular sensitivity
+				g_pUserInput->SetMouseSensitivity(g_pUserInput->GetFOVSensitivityAdjust() * sensitivity.GetFloat()); // regular sensitivity
 #endif
 			}
 		}
@@ -1394,7 +1394,7 @@ static void CalcDemoViewOverride(Vector& origin, QAngle& angles)
 {
 	engine->SetViewAngles(s_DemoAngle);
 
-	::input->ExtraMouseSample(gpGlobals->absoluteframetime, true);
+	g_pUserInput->ExtraMouseSample(gpGlobals->absoluteframetime, true);
 
 	engine->GetViewAngles(s_DemoAngle);
 
@@ -1404,11 +1404,11 @@ static void CalcDemoViewOverride(Vector& origin, QAngle& angles)
 
 	float speed = gpGlobals->absoluteframetime * cl_demoviewoverride.GetFloat() * 320;
 
-	s_DemoView += speed * ::input->KeyState(&in_forward) * forward;
-	s_DemoView -= speed * ::input->KeyState(&in_back) * forward;
+	s_DemoView += speed * g_pUserInput->KeyState(&in_forward) * forward;
+	s_DemoView -= speed * g_pUserInput->KeyState(&in_back) * forward;
 
-	s_DemoView += speed * ::input->KeyState(&in_moveright) * right;
-	s_DemoView -= speed * ::input->KeyState(&in_moveleft) * right;
+	s_DemoView += speed * g_pUserInput->KeyState(&in_moveright) * right;
+	s_DemoView -= speed * g_pUserInput->KeyState(&in_moveleft) * right;
 
 	origin = s_DemoView;
 	angles = s_DemoAngle;

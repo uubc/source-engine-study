@@ -16,8 +16,8 @@ class CDODInput : public CUserInput
 public:
 };
 
-static CDODInput g_Input;
+static CDODInput g_UserInput;
 
 // Expose this interface
-IUserInput *input = ( IUserInput * )&g_Input;
+IUserInput * g_pUserInput = &g_UserInput;
 

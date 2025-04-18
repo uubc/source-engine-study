@@ -55,7 +55,7 @@ private:
 	virtual bool	ShouldDrawCrosshair(void);
 	int GetKillCamMode() const { return OBS_MODE_NONE; }
 	int GetKillCamTarget1() const { return 0; }
-
+	bool ShouldAutoaim() { return true; }
 #else
 
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.

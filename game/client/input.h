@@ -14,9 +14,17 @@
 
 #include "iinput.h"
 #include "mathlib/vector.h"
-#include "kbutton.h"
-#include "ehandle.h"
 #include "inputsystem/AnalogCode.h"
+#include "inputsystem/ButtonCode.h"
+#include "inputsystem/iinputsystem.h"
+#include "kbutton.h"
+#include "in_buttons.h"
+#include "basehandle.h"
+#include "usercmd.h"
+#include "vgui/ISurface.h"
+#include <vgui/IInput.h>
+#include "vgui_controls/Controls.h"
+#include "vgui/Cursor.h"
 
 typedef unsigned int CRC32_t;
 
@@ -54,7 +62,7 @@ public:
 
 	virtual		CUserCmd	*GetUserCmd( int sequence_number );
 
-	virtual		void		MakeWeaponSelection( C_BaseCombatWeapon *weapon );
+	virtual		void		MakeWeaponSelection( IClientEntity *weapon );
 
 	virtual		float		KeyState( kbutton_t *key );
 	virtual		int			KeyEvent( int down, ButtonCode_t keynum, const char *pszCurrentBinding );
@@ -149,6 +157,11 @@ private:
 	// Call this to get the cursor position. The call will be logged in the VCR file if there is one.
 	void		GetMousePos(int &x, int &y);
 	void		SetMousePos(int x, int y);
+	float		GetMouseSensitivity();
+	void		SetMouseSensitivity(float flMouseSensitivity);
+	float		GetMouseSensitivityFactor();
+	float		GetFOVSensitivityAdjust();
+	void		SetFOVSensitivityAdjust(float flFOVSensitivityAdjust);
 	void		GetWindowCenter( int&x, int& y );
 	// Called once per frame to allow convar overrides to acceleration settings when mouse is active
 	void		CheckMouseAcclerationVars();
@@ -197,6 +210,11 @@ private:
 	bool		m_fMouseInitialized;
 	// Is the mosue active?
 	bool		m_fMouseActive;
+#ifndef _XBOX
+	float		m_flMouseSensitivity;
+	float		m_flMouseSensitivityFactor;
+#endif
+	float		m_flFOVSensitivityAdjust;
 	// Has the joystick advanced initialization been run?
 	bool		m_fJoystickAdvancedInit;
 	// Used to support hotplugging by reinitializing the advanced joystick system when we toggle between some/none joysticks.
@@ -265,7 +283,7 @@ private:
 	CameraThirdData_t	*m_pCameraThirdData;
 
 	// Set until polled by CreateMove and cleared
-	CHandle< C_BaseCombatWeapon > m_hSelectedWeapon;
+	CBaseHandle m_hSelectedWeapon;
 
 #if defined( HL2_CLIENT_DLL )
 	CUtlVector< CEntityGroundContact > m_EntityGroundContact;

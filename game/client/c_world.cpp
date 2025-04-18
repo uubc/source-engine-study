@@ -863,7 +863,7 @@ void C_World::OverrideView(CViewSetup* pSetup)
 
 	pPlayer->OverrideView(pSetup);
 
-	if (::input->CAM_IsThirdPerson())
+	if (g_pUserInput->CAM_IsThirdPerson())
 	{
 		Vector cam_ofs = g_ThirdPersonManager.GetCameraOffsetAngles();
 		Vector cam_ofs_distance = g_ThirdPersonManager.GetFinalCameraOffset();
@@ -892,11 +892,11 @@ void C_World::OverrideView(CViewSetup* pSetup)
 		// Override angles from third person camera
 		VectorCopy(camAngles, pSetup->angles);
 	}
-	else if (::input->CAM_IsOrthographic())
+	else if (g_pUserInput->CAM_IsOrthographic())
 	{
 		pSetup->m_bOrtho = true;
 		float w, h;
-		::input->CAM_OrthographicSize(w, h);
+		g_pUserInput->CAM_OrthographicSize(w, h);
 		w *= 0.5f;
 		h *= 0.5f;
 		pSetup->m_OrthoLeft = -w;

@@ -14,6 +14,7 @@
 
 #include "bitvec.h"
 #include "const.h"
+#include "shareddefs.h"
 
 
 #define VOICE_MAX_PLAYERS		MAX_PLAYERS

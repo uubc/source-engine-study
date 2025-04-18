@@ -8,17 +8,15 @@
 //=============================================================================//
 
 
-#include "cbase.h"
-#include "kbutton.h"
-#include "usercmd.h"
-#include "in_buttons.h"
+//#include "cbase.h"
+#include "cdll_int.h"
 #include "input.h"
 #include "iviewrender.h"
-#include "iclientmode.h"
+//#include "iclientmode.h"
 #include "prediction.h"
 #include "bitbuf.h"
 #include "checksum_md5.h"
-#include "touch.h"
+//#include "touch.h"
 #include "hltvcamera.h"
 #if defined( REPLAY_ENABLED )
 #include "replay/replaycamera.h"
@@ -35,12 +33,13 @@
 #include "sourcevr/isourcevirtualreality.h"
 
 // NVNT Include
-#include "haptics/haptic_utils.h"
-#include <vgui/ISurface.h>
+//#include "haptics/haptic_utils.h"
 
 extern ConVar in_joystick;
 extern ConVar cam_idealpitch;
 extern ConVar cam_idealyaw;
+extern IVEngineClient* engine;
+extern CGlobalVarsBase* gpGlobals;
 
 // For showing/hiding the scoreboard
 #include <game/client/iviewport.h>
@@ -157,7 +156,7 @@ void IN_CenterView_f (void)
 
 	if ( UsingMouselook() == false )
 	{
-		if ( !::input->CAM_InterceptingMouse() )
+		if ( !g_pUserInput->CAM_InterceptingMouse() )
 		{
 			engine->GetViewAngles( viewangles );
 			viewangles[PITCH] = 0;
@@ -173,7 +172,7 @@ IN_Joystick_Advanced_f
 */
 void IN_Joystick_Advanced_f (void)
 {
-	::input->Joystick_Advanced();
+	g_pUserInput->Joystick_Advanced();
 }
 
 /*
@@ -312,6 +311,11 @@ CUserInput::CUserInput( void )
 	m_pCommands = NULL;
 	m_pCameraThirdData = NULL;
 	m_pVerifiedCommands = NULL;
+#ifndef _XBOX
+	// reset sensitivity
+	m_flMouseSensitivity = 0;
+	m_flMouseSensitivityFactor = 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -494,7 +498,7 @@ void IN_Attack3Up( const CCommand &args ) { KeyUp(&in_attack3, args[1] );}
 
 void IN_DuckToggle( const CCommand &args ) 
 { 
-	if ( ::input->KeyState(&in_ducktoggle) )
+	if (g_pUserInput->KeyState(&in_ducktoggle) )
 	{
 		KeyUp( &in_ducktoggle, args[1] ); 
 	}
@@ -562,8 +566,8 @@ int CUserInput::KeyEvent( int down, ButtonCode_t code, const char *pszCurrentBin
 			return 0;
 	}
 
-	if ( g_pGameRules )
-		return g_pGameRules->KeyInput(down, code, pszCurrentBinding);
+	if ( entitylist->GetWorld() )
+		return entitylist->GetWorld()->KeyInput(down, code, pszCurrentBinding);
 
 	return 1;
 }
@@ -950,6 +954,7 @@ void CUserInput::ControllerMove( float frametime, CUserCmd *cmd )
 
 	TouchMove( cmd );
 
+#if 0
 	// NVNT if we have a haptic device..
 	if(haptics && haptics->HasDevice())
 	{
@@ -975,7 +980,7 @@ void CUserInput::ControllerMove( float frametime, CUserCmd *cmd )
 		UpdateAvatarEffect();
 #endif
 	}
-
+#endif
 
 }
 
@@ -983,7 +988,7 @@ void CUserInput::ControllerMove( float frametime, CUserCmd *cmd )
 // Purpose: 
 // Input  : *weapon - 
 //-----------------------------------------------------------------------------
-void CUserInput::MakeWeaponSelection( C_BaseCombatWeapon *weapon )
+void CUserInput::MakeWeaponSelection( IClientEntity *weapon )
 {
 	m_hSelectedWeapon = weapon;
 }
@@ -1070,7 +1075,7 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 	}
 
 	// Let the move manager override anything it wants to.
-	if ( g_pGameRules->CreateMove( frametime, cmd ) )
+	if (entitylist->GetWorld()->CreateMove( frametime, cmd ) )
 	{
 		// Get current view angles after the client mode tweaks with it
 		engine->SetViewAngles( cmd->viewangles );
@@ -1082,8 +1087,8 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 	// first
 	if ( active && UseVR() )
 	{
-		C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-		if( pPlayer && !pPlayer->GetVehicle() )
+		IClientEntity *pPlayer = entitylist->GetLocalPlayer();
+		if( pPlayer && !pPlayer->AsHandlePlayer()->GetVehicle())
 		{
 			QAngle curViewangles, newViewangles;
 			Vector curMotion, newMotion;
@@ -1168,7 +1173,7 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 	// Latch and clear weapon selection
 	if ( m_hSelectedWeapon != NULL )
 	{
-		C_BaseCombatWeapon *weapon = m_hSelectedWeapon;
+		IClientEntity *weapon = entitylist->GetBaseEntityFromHandle(m_hSelectedWeapon);
 
 		cmd->weaponselect = weapon->entindex();
 		cmd->weaponsubtype = weapon->GetSubType();
@@ -1195,8 +1200,10 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 
 	// Using joystick?
 #ifdef SIXENSE
+	ConVarRef touch_enable("touch_enable");
 	if ( in_joystick.GetInt() || g_pSixenseInput->IsEnabled() || touch_enable.GetInt() )
 #else
+	ConVarRef touch_enable("touch_enable");
 	if ( in_joystick.GetInt() || touch_enable.GetInt() )
 #endif
 	{
@@ -1222,7 +1229,7 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 	}
 
 	// Let the move manager override anything it wants to.
-	if ( g_pGameRules->CreateMove( input_sample_frametime, cmd ) )
+	if (entitylist->GetWorld()->CreateMove( input_sample_frametime, cmd ) )
 	{
 		// Get current view angles after the client mode tweaks with it
 #ifdef SIXENSE
@@ -1238,8 +1245,8 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 
 		if ( UseVR() )
 		{
-			C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-			if( pPlayer && !pPlayer->GetVehicle() )
+			IClientEntity *pPlayer = entitylist->GetLocalPlayer();
+			if( pPlayer && !pPlayer->AsHandlePlayer()->GetVehicle())
 			{
 				QAngle curViewangles, newViewangles;
 				Vector curMotion, newMotion;

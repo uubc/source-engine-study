@@ -13,11 +13,12 @@
 
 #include "inputsystem/ButtonCode.h"
 #include "usercmd.h"
+#include "icliententity.h"
 
 class bf_write;
 class bf_read;
 //class CUserCmd;
-class C_BaseCombatWeapon;
+//class C_BaseCombatWeapon;
 struct kbutton_t;
 
 struct CameraThirdData_t
@@ -47,7 +48,7 @@ public:
 
 	virtual CUserCmd	*GetUserCmd( int sequence_number ) = 0;
 
-	virtual void		MakeWeaponSelection( C_BaseCombatWeapon *weapon ) = 0;
+	virtual void		MakeWeaponSelection( IClientEntity *weapon ) = 0;
 
 	// Retrieve key state
 	virtual float		KeyState ( kbutton_t *key ) = 0;
@@ -78,6 +79,11 @@ public:
 	virtual void		GetFullscreenMousePos( int *mx, int *my, int *unclampedx = 0, int *unclampedy = 0 ) = 0;
 	virtual void		SetFullscreenMousePos( int mx, int my ) = 0;
 	virtual void		ResetMouse( void ) = 0;
+	virtual float		GetMouseSensitivity() = 0;
+	virtual void		SetMouseSensitivity(float flMouseSensitivity) = 0;
+	virtual float		GetMouseSensitivityFactor() = 0;
+	virtual float		GetFOVSensitivityAdjust() = 0;
+	virtual void		SetFOVSensitivityAdjust(float flFOVSensitivityAdjust) = 0;
 	virtual	float		GetLastForwardMove( void ) = 0;
 	virtual	float		Joystick_GetForward( void ) = 0;
 	virtual	float		Joystick_GetSide( void ) = 0;
@@ -116,6 +122,6 @@ public:
 	virtual	bool		EnableJoystickMode() = 0;
 };
 
-extern IUserInput *input;
+extern IUserInput *g_pUserInput;
 
 #endif // IINPUT_H

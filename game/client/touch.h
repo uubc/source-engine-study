@@ -2,9 +2,10 @@
 #include "vgui/ISurface.h"
 #include "vgui/VGUI.h"
 #include <vgui_controls/Panel.h>
-#include "cbase.h"
+//#include "cbase.h"
 #include "kbutton.h"
 #include "usercmd.h"
+#include "materialsystem/imesh.h"
 
 extern ConVar touch_enable;
 
