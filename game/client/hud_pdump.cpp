@@ -190,7 +190,7 @@ void CPDumpPanel::PredictionDumpColor( bool networked, bool errorchecked, bool d
 // Input  : *ent - 
 //			last_predicted - 
 //-----------------------------------------------------------------------------
-void CPDumpPanel::DumpEntity( C_BaseEntity *ent, int commands_acknowledged )
+void CPDumpPanel::DumpEntity( IClientEntity *ent, int commands_acknowledged )
 {
 	if ( IsXbox() )
 	{
@@ -249,7 +249,7 @@ void CPDumpPanel::Clear()
 
 void CPDumpPanel::Paint()
 {
-	C_BaseEntity *ent = m_hDumpEntity;
+	IClientEntity *ent = EntityList()->GetBaseEntityFromHandle(m_hDumpEntity);
 	if ( !ent )
 	{
 		Clear();

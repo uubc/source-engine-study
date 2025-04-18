@@ -1972,12 +1972,6 @@ inline void CBaseEntity::FireBullets( int cShots, const Vector &vecSrc,
 	FireBullets( info );
 }
 
-
-inline bool FClassnameIs(IServerEntity *pEntity, const char *szClassname)
-{ 
-	return pEntity->ClassMatches(szClassname); 
-}
-
 // maximum number of targets a single multi_manager entity may be assigned.
 #define MAX_MULTI_TARGETS	16 
 

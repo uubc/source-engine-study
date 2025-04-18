@@ -20,10 +20,10 @@
 #include "interface.h"
 #include "mathlib/vector.h" // Solely to get at define for QAngle
 #include "basehandle.h"
+#include "icliententity.h"
 
 
 class IMoveHelper;
-class C_BaseEntity;
 
 //-----------------------------------------------------------------------------
 // Purpose: Engine interface into client side prediction system
@@ -72,7 +72,7 @@ abstract_class IPredictableList
 {
 public:
 	// Get predictables by index
-	virtual C_BaseEntity * GetPredictable(int slot) = 0;
+	virtual IClientEntity * GetPredictable(int slot) = 0;
 	// Get count of predictables
 	virtual int		GetPredictableCount(void) = 0;
 	virtual void	AddToPredictableList(CBaseHandle add) = 0;

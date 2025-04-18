@@ -20,6 +20,7 @@
 #include "vcollide_parse.h"
 #include "engine/IClientLeafSystem.h"
 #include "inputsystem/ButtonCode.h"
+#include "usercmd.h"
 
 struct Ray_t;
 class CGameTrace;
@@ -1009,6 +1010,15 @@ public:
 	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation) = 0;
 };
 
+class C_CommandContext
+{
+public:
+	bool			needsprocessing;
+
+	CUserCmd		cmd;
+	int				command_number;
+};
+
 class IClientPlayer : public IHandlePlayer {
 public:
 	virtual int GetDefaultFOV() const = 0;
@@ -1028,6 +1038,13 @@ public:
 	virtual bool LocalPlayerInFirstPersonView() = 0;
 	virtual bool ShouldDrawLocalPlayer() = 0;
 	virtual IClientEntity* GetActiveWeapon(void) const = 0;
+	virtual C_CommandContext* GetCommandContext() = 0;
+	virtual int GetTickBase() = 0;
+	virtual float GetTimeBase() const = 0;
+	virtual void SetFinalPredictedTick(int nFinalPredictedTick) = 0;
+	virtual void NotePredictionError(const Vector& vDelta) = 0;
+	virtual const QAngle& GetLocalViewAngles() = 0;
+	virtual void SetLocalViewAngles(const QAngle& viewAngles) = 0;
 };
 
 class IClientNPC : public IHandleNPC {
@@ -1110,6 +1127,8 @@ public:
 	virtual void OnRemoveEffects(int nEffects) = 0;
 	virtual void MoveToAimEnt() = 0;
 	virtual void CheckInitPredictable(const char* context) = 0;
+	virtual void InitPredictable(void) = 0;
+	virtual void ShutdownPredictable(void) = 0;
 	virtual bool GetPredictable(void) const = 0;
 	virtual bool ShouldInterpolate() = 0;
 	virtual float GetInterpolationAmount(int flags) = 0;
@@ -1201,6 +1220,15 @@ public:
 	virtual void PerformCustomPhysics(Vector* pNewPosition, Vector* pNewVelocity, QAngle* pNewAngles, QAngle* pNewAngVelocity) = 0;
 	virtual void ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity) = 0;
 };
+
+inline bool FClassnameIs(IClientEntity* pEntity, const char* szClassname)
+{
+	Assert(pEntity);
+	if (pEntity == NULL)
+		return false;
+
+	return !strcmp(pEntity->GetClassname(), szClassname) ? true : false;
+}
 
 #define INPVS_YES			0x0001		// The entity thinks it's in the PVS.
 #define INPVS_THISFRAME		0x0002		// Accumulated as different views are rendered during the frame and used to notify the entity if								// it is not in the PVS anymore (at the end of the frame).
@@ -1413,5 +1441,25 @@ public:
 extern IClientEntityList* entitylist;
 
 #define VCLIENTENTITYLIST_INTERFACE_VERSION	"VClientEntityList003"
+
+// Used for debugging. Will produce asserts if someone tries to setup bones or
+	// attachments before it's allowed.
+	// Use the "AutoAllowBoneAccess" class to auto push/pop bone access.
+	// Use a distinct "tag" when pushing/popping - asserts when push/pop tags do not match.
+struct AutoAllowBoneAccess
+{
+	AutoAllowBoneAccess(bool bAllowForNormalModels, bool bAllowForViewModels);
+	~AutoAllowBoneAccess(void);
+};
+
+inline AutoAllowBoneAccess::AutoAllowBoneAccess(bool bAllowForNormalModels, bool bAllowForViewModels)
+{
+	entitylist->PushAllowBoneAccess(bAllowForNormalModels, bAllowForViewModels, (char const*)1);
+}
+
+inline AutoAllowBoneAccess::~AutoAllowBoneAccess()
+{
+	entitylist->PopBoneAccess((char const*)1);
+}
 
 #endif // ICLIENTENTITY_H

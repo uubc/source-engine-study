@@ -660,6 +660,11 @@ int C_BasePlayer::GetObserverMode() const
 //	return UsesPowerOfTwoFrameBufferTexture();
 //}
 
+const QAngle& C_BasePlayer::GetLocalViewAngles()
+{
+	return pl.v_angle;
+}
+
 //-----------------------------------------------------------------------------
 // Used by prediction, sets the view angles for the player
 //-----------------------------------------------------------------------------

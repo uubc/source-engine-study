@@ -112,28 +112,6 @@ extern IEngineReplay *g_pEngineReplay;
 extern IEngineClientReplay *g_pEngineClientReplay;
 inline IClientEntityList* EntityList() { return entitylist; }
 
-
-
-// Used for debugging. Will produce asserts if someone tries to setup bones or
-	// attachments before it's allowed.
-	// Use the "AutoAllowBoneAccess" class to auto push/pop bone access.
-	// Use a distinct "tag" when pushing/popping - asserts when push/pop tags do not match.
-struct AutoAllowBoneAccess
-{
-	AutoAllowBoneAccess(bool bAllowForNormalModels, bool bAllowForViewModels);
-	~AutoAllowBoneAccess(void);
-};
-
-inline AutoAllowBoneAccess::AutoAllowBoneAccess(bool bAllowForNormalModels, bool bAllowForViewModels)
-{
-	EntityList()->PushAllowBoneAccess(bAllowForNormalModels, bAllowForViewModels, (char const*)1);
-}
-
-inline AutoAllowBoneAccess::~AutoAllowBoneAccess()
-{
-	EntityList()->PopBoneAccess((char const*)1);
-}
-
 //=============================================================================
 // HPE_BEGIN
 // [dwenger] Necessary for stats display

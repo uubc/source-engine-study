@@ -46,7 +46,7 @@ public:
 
 	// Remove dump info
 	void		Clear();
-	void		DumpEntity( C_BaseEntity *ent, int commands_acknowledged );
+	void		DumpEntity( IClientEntity *ent, int commands_acknowledged );
 
 	void DumpComparision( const char *classname, const char *fieldname, const char *fieldtype,
 		bool networked, bool noterrorchecked, bool differs, bool withintolerance, const char *value );
@@ -69,7 +69,7 @@ private:
 
 	CUtlVector< DumpInfo > m_DumpEntityInfo;
 
-	EHANDLE			m_hDumpEntity;
+	CBaseHandle			m_hDumpEntity;
 
 	CPanelAnimationVar( vgui::HFont, m_FontSmall, "ItemFont", "DefaultVerySmall" );
 	CPanelAnimationVar( vgui::HFont, m_FontMedium, "LabelFont", "DefaultSmall" );

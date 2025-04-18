@@ -46,15 +46,6 @@ class C_EconWearable;
 //extern int m_nKillCamTarget1;
 //extern int m_nKillCamTarget2;
 
-class C_CommandContext
-{
-public:
-	bool			needsprocessing;
-
-	CUserCmd		cmd;
-	int				command_number;
-};
-
 class C_PredictionError
 {
 public:
@@ -419,6 +410,13 @@ public:
 	
 	void					PlayerPortalled(CPortalRenderable_FlatBasic* pEnteredPortal);
 
+	int						GetTickBase() {
+		return m_nTickBase;
+	}
+
+	void					SetFinalPredictedTick(int nFinalPredictedTick) {
+		m_nFinalPredictedTick = nFinalPredictedTick;
+	}
 protected:
 	fogparams_t				m_CurrentFog;
 	EHANDLE					m_hOldFogController;
@@ -485,6 +483,7 @@ protected:
 	void DetermineVguiInputMode( CUserCmd *pCmd );
 
 	// Used by prediction, sets the view angles for the player
+	virtual const QAngle& GetLocalViewAngles();
 	virtual void SetLocalViewAngles( const QAngle &viewAngles );
 	virtual void SetViewAngles( const QAngle& ang );
 

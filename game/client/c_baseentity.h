@@ -1147,15 +1147,6 @@ protected:
 
 EXTERN_RECV_TABLE(DT_BaseEntity);
 
-inline bool FClassnameIs( C_BaseEntity *pEntity, const char *szClassname )
-{ 
-	Assert( pEntity );
-	if ( pEntity == NULL )
-		return false;
-
-	return !strcmp( pEntity->GetClassname(), szClassname ) ? true : false; 
-}
-
 #define SetThink( a ) GetEngineObject()->ThinkSet( (CTHINKPTR)a, 0, NULL )
 #define SetContextThink( a, b, context ) GetEngineObject()->ThinkSet( (CTHINKPTR)a, (b), context )
 

@@ -16,10 +16,9 @@
 #include "iprediction.h"
 //#include "c_baseplayer.h"
 #include "cdll_bounded_cvars.h"
+#include "networkvar.h"
 
 class CMoveData;
-class CUserCmd;
-class C_BasePlayer;
 
 #if !defined( NO_ENTITY_PREDICTION )
 //-----------------------------------------------------------------------------
@@ -28,7 +27,7 @@ class C_BasePlayer;
 class CPredictableList : public IPredictableList
 {
 public:
-	virtual C_BaseEntity* GetPredictable(int slot);
+	virtual IClientEntity* GetPredictable(int slot);
 	virtual int GetPredictableCount(void);
 
 protected:
@@ -37,8 +36,6 @@ protected:
 
 private:
 	CUtlVector<CBaseHandle>	m_Predictables;
-
-	friend class C_BaseEntity;
 };
 
 // Expose interface to rest of .dll
@@ -101,7 +98,7 @@ public:
 // Internal
 protected:
 
-	virtual void	SetIdealPitch ( C_BasePlayer *player, const Vector& origin, const QAngle& angles, const Vector& viewheight );
+	virtual void	SetIdealPitch ( IClientEntity *player, const Vector& origin, const QAngle& angles, const Vector& viewheight );
 
 	void			CheckError( int commands_acknowledged );
 
@@ -117,25 +114,25 @@ private:
 					);
 
 	// Actually does the prediction work, returns false if an error occurred
-	bool			PerformPrediction( bool received_new_world_update, C_BasePlayer *localPlayer, int incoming_acknowledged, int outgoing_command );
+	bool			PerformPrediction( bool received_new_world_update, IClientEntity *localPlayer, int incoming_acknowledged, int outgoing_command );
 
 	void			ShiftIntermediateDataForward( int slots_to_remove, int previous_last_slot );
 	void			RestoreEntityToPredictedFrame( int predicted_frame );
 	int				ComputeFirstCommandToExecute( bool received_new_world_update, int incoming_acknowledged, int outgoing_command );
 
-	void			DumpEntity( C_BaseEntity *ent, int commands_acknowledged );
+	//void			DumpEntity( IClientEntity *ent, int commands_acknowledged );
 
 	void			ShutdownPredictables( void );
 	void			ReinitPredictables( void );
 
 	//void			RemoveStalePredictedEntities( int last_command_packet );
 	void			RestoreOriginalEntityState( void );
-	void			RunSimulation( int current_command, float curtime, CUserCmd *cmd, C_BasePlayer *localPlayer );
+	void			RunSimulation( int current_command, float curtime, CUserCmd *cmd, IClientEntity *localPlayer );
 	void			Untouch( void );
 	void			StorePredictionResults( int predicted_frame );
-	bool			ShouldDumpEntity( C_BaseEntity *ent );
+	bool			ShouldDumpEntity( IClientEntity *ent );
 
-	void			SmoothViewOnMovingPlatform( C_BasePlayer *pPlayer, Vector& offset );
+	void			SmoothViewOnMovingPlatform( IClientEntity *pPlayer, Vector& offset );
 
 #if !defined( NO_ENTITY_PREDICTION )
 private:

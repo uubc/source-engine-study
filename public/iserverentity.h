@@ -1345,6 +1345,11 @@ public:
 	static bool IsServer(void) { return true; }
 };
 
+inline bool FClassnameIs(IServerEntity* pEntity, const char* szClassname)
+{
+	return pEntity->ClassMatches(szClassname);
+}
+
 // Derive a class from this if you want to filter entity list searches
 abstract_class IEntityFindFilter
 {
