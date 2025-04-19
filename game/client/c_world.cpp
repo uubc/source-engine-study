@@ -830,7 +830,10 @@ void	C_World::ComputeVguiResConditions(KeyValues* pkvConditions)
 	}
 }
 
+void C_World::AddIKGroundContactInfo(int entindex, float minheight, float maxheight)
+{
 
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: 

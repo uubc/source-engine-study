@@ -1713,6 +1713,29 @@ void CHL2_Player::CommanderMode()
 	}
 }
 
+void CHL2_Player::StartCommand(CUserCmd* cmd)
+{
+	BaseClass::StartCommand(cmd);
+#if defined (HL2_DLL)
+	// pull out backchannel data and move this out
+
+	int i;
+	for (i = 0; i < cmd->entitygroundcontact.Count(); i++)
+	{
+		int entindex = cmd->entitygroundcontact[i].entindex;
+		IServerEntity* pEntity = EntityList()->GetBaseEntity(entindex);
+		if (pEntity)
+		{
+			if (pEntity->GetEngineObject()->GetModelPtr())
+			{
+				pEntity->GetEngineObject()->SetIKGroundContactInfo(cmd->entitygroundcontact[i].minheight, cmd->entitygroundcontact[i].maxheight);
+			}
+		}
+	}
+
+#endif
+}
+
 void CHL2_Player::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move)
 {
 	// Call the default SetupMove code.

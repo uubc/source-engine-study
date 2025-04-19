@@ -1280,16 +1280,6 @@ void CUserInput::CreateMove ( int sequence_number, float input_sample_frametime,
 	ReplayCamera()->CreateMove( cmd );
 #endif
 
-#if defined( HL2_CLIENT_DLL )
-	// copy backchannel data
-	int i;
-	for (i = 0; i < m_EntityGroundContact.Count(); i++)
-	{
-		cmd->entitygroundcontact.AddToTail( m_EntityGroundContact[i] );
-	}
-	m_EntityGroundContact.RemoveAll();
-#endif
-
 	pVerified->m_cmd = *cmd;
 	pVerified->m_crc = cmd->GetChecksum();
 }
@@ -1542,33 +1532,6 @@ float CUserInput::GetLastForwardMove( void )
 	return m_flLastForwardMove;
 }
 
-
-#if defined( HL2_CLIENT_DLL )
-//-----------------------------------------------------------------------------
-// Purpose: back channel contact info for ground contact
-// Output :
-//-----------------------------------------------------------------------------
-
-void CUserInput::AddIKGroundContactInfo( int entindex, float minheight, float maxheight )
-{
-	CEntityGroundContact data;
-	data.entindex = entindex;
-	data.minheight = minheight;
-	data.maxheight = maxheight;
-
-	if (m_EntityGroundContact.Count() >= MAX_EDICTS)
-	{
-		// some overflow here, probably bogus anyway
-		Assert(0);
-		m_EntityGroundContact.RemoveAll();
-		return;
-	}
-
-	m_EntityGroundContact.AddToTail( data );
-}
-#endif
-
-
 static ConCommand startcommandermousemove("+commandermousemove", IN_CommanderMouseMoveDown);
 static ConCommand endcommandermousemove("-commandermousemove", IN_CommanderMouseMoveUp);
 static ConCommand startmoveup("+moveup",IN_UpDown);
@@ -1702,9 +1665,6 @@ void CUserInput::Shutdown_All(void)
 
 void CUserInput::LevelInit( void )
 {
-#if defined( HL2_CLIENT_DLL )
-	// Remove any IK information
-	m_EntityGroundContact.RemoveAll();
-#endif
+
 }
 

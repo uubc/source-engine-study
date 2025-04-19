@@ -164,6 +164,7 @@ public:
 	virtual void	PostRender();
 	virtual void	PostRenderVGui();
 	virtual void	ProcessInput(bool bActive);
+	virtual void	AddIKGroundContactInfo(int entindex, float minheight, float maxheight);
 	virtual bool	CreateMove(float flInputSampleTime, CUserCmd* cmd);
 	virtual void	Update();
 

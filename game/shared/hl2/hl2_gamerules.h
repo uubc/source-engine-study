@@ -52,10 +52,16 @@ private:
 	CHalfLife2World();
 
 	virtual void	Init();
+	virtual void	LevelInit(void);
 	virtual bool	ShouldDrawCrosshair(void);
 	int GetKillCamMode() const { return OBS_MODE_NONE; }
 	int GetKillCamTarget1() const { return 0; }
 	bool ShouldAutoaim() { return true; }
+	// IK back channel info
+	virtual void AddIKGroundContactInfo(int entindex, float minheight, float maxheight);
+	virtual bool CreateMove(float flInputSampleTime, CUserCmd* cmd);
+
+	CUtlVector< CEntityGroundContact > m_EntityGroundContact;
 #else
 
 	DECLARE_SERVERCLASS(); // This makes datatables able to access our private vars.

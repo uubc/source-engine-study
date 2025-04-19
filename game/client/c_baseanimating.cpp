@@ -970,7 +970,7 @@ void C_BaseAnimating::CalculateIKLocks( float currentTime )
 #if defined( HL2_CLIENT_DLL )
 	if (minHeight < FLT_MAX)
 	{
-		g_pUserInput->AddIKGroundContactInfo( entindex(), minHeight, maxHeight );
+		EntityList()->GetWorld()->AddIKGroundContactInfo(entindex(), minHeight, maxHeight);
 	}
 #endif
 

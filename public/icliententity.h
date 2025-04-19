@@ -951,6 +951,8 @@ public:
 	virtual void	StartMessageMode(int iMessageModeType) = 0;
 	virtual vgui::Panel* GetMessagePanel() = 0;
 	virtual void	OverrideMouseInput(float* x, float* y) = 0;
+	// IK back channel info
+	virtual void	AddIKGroundContactInfo(int entindex, float minheight, float maxheight) = 0;
 	virtual bool	CreateMove(float flInputSampleTime, CUserCmd* cmd) = 0;
 
 	// Certain modes hide the view model
@@ -1010,6 +1012,8 @@ public:
 	virtual IRecipientFilter* CreatePASAttenuationFilter(IClientEntity* entity, float attenuation) = 0;
 	virtual IRecipientFilter* CreatePASAttenuationFilter(IClientEntity* entity, const char* lookupSound) = 0;
 	virtual IRecipientFilter* CreatePASAttenuationFilter(const Vector& origin, float attenuation) = 0;
+
+
 };
 
 class C_CommandContext

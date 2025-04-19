@@ -252,11 +252,57 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		PanelMetaClassMgr()->LoadMetaClassDefinitionFile(SCREEN_FILE);
 	}
 
+	void CHalfLife2World::LevelInit(void)
+	{
+		BaseClass::LevelInit();
+#if defined( HL2_CLIENT_DLL )
+		// Remove any IK information
+		m_EntityGroundContact.RemoveAll();
+#endif
+	}
+
 	bool CHalfLife2World::ShouldDrawCrosshair(void)
 	{
 		return (g_bRollingCredits == false);
 	}
 
+	//-----------------------------------------------------------------------------
+// Purpose: back channel contact info for ground contact
+// Output :
+//-----------------------------------------------------------------------------
+
+	void CHalfLife2World::AddIKGroundContactInfo(int entindex, float minheight, float maxheight)
+	{
+		CEntityGroundContact data;
+		data.entindex = entindex;
+		data.minheight = minheight;
+		data.maxheight = maxheight;
+
+		if (m_EntityGroundContact.Count() >= MAX_EDICTS)
+		{
+			// some overflow here, probably bogus anyway
+			Assert(0);
+			m_EntityGroundContact.RemoveAll();
+			return;
+		}
+
+		m_EntityGroundContact.AddToTail(data);
+	}
+
+	bool CHalfLife2World::CreateMove(float flInputSampleTime, CUserCmd* cmd)
+	{
+		bool bRet = BaseClass::CreateMove(flInputSampleTime, cmd);
+#if defined( HL2_CLIENT_DLL )
+		// copy backchannel data
+		int i;
+		for (i = 0; i < m_EntityGroundContact.Count(); i++)
+		{
+			cmd->entitygroundcontact.AddToTail(m_EntityGroundContact[i]);
+		}
+		m_EntityGroundContact.RemoveAll();
+#endif
+		return bRet;
+	}
 #else //}{
 
 	extern bool		g_fGameOver;

@@ -3700,25 +3700,6 @@ void CBasePlayer::StartCommand(CUserCmd* cmd)
 	this->m_pCurrentCommand = cmd;
 	EntityList()->SetPredictionRandomSeed(cmd);
 	EntityList()->SetPredictionPlayer(this->GetEngineObject());
-
-#if defined (HL2_DLL)
-	// pull out backchannel data and move this out
-
-	int i;
-	for (i = 0; i < cmd->entitygroundcontact.Count(); i++)
-	{
-		int entindex = cmd->entitygroundcontact[i].entindex;
-		IServerEntity* pEntity = EntityList()->GetBaseEntity(entindex);
-		if (pEntity)
-		{
-			if (pEntity->GetEngineObject()->GetModelPtr())
-			{
-				pEntity->GetEngineObject()->SetIKGroundContactInfo(cmd->entitygroundcontact[i].minheight, cmd->entitygroundcontact[i].maxheight);
-			}
-		}
-	}
-
-#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -99,6 +99,7 @@ public:
 	virtual void		Spawn(void);
 	virtual void		Activate( void );
 
+	virtual void		StartCommand(CUserCmd* cmd);
 	virtual void		SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* move);
 	virtual void		FinishMove(CUserCmd* ucmd, CMoveData* move);
 
