@@ -11,7 +11,7 @@
 
 #ifdef CLIENT_DLL
 	#include "c_dod_player.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 #else
 	#include "dod_player.h"
 	#include "te_effect_dispatch.h"
@@ -192,7 +192,7 @@ bool CWeaponDODBaseGun::DODBaseGunFire()
 #ifdef CLIENT_DLL
 	CDODPlayer *p = ToDODPlayer( GetPlayerOwner() );
 
-	if ( prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->IsFirstTimePredicted() )
 		p->DoRecoil( GetWeaponID(), GetRecoil() );
 #endif
 

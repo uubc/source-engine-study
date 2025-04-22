@@ -15,32 +15,8 @@
 #include "mathlib/vector.h"
 #include "iprediction.h"
 //#include "c_baseplayer.h"
-#include "cdll_bounded_cvars.h"
+//#include "cdll_bounded_cvars.h"
 #include "networkvar.h"
-
-class CMoveData;
-
-#if !defined( NO_ENTITY_PREDICTION )
-//-----------------------------------------------------------------------------
-// Purpose: Maintains a list of predicted or client created entities
-//-----------------------------------------------------------------------------
-class CPredictableList : public IPredictableList
-{
-public:
-	virtual IClientEntity* GetPredictable(int slot);
-	virtual int GetPredictableCount(void);
-
-protected:
-	void	AddToPredictableList(CBaseHandle add);
-	void	RemoveFromPredictablesList(CBaseHandle remove);
-
-private:
-	CUtlVector<CBaseHandle>	m_Predictables;
-};
-
-// Expose interface to rest of .dll
-extern IPredictableList* predictables;
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Implements prediction in the client .dll
@@ -95,6 +71,8 @@ public:
 	virtual void	GetLocalViewAngles( QAngle& ang );
 	virtual void	SetLocalViewAngles( QAngle& ang );
 
+	virtual IClientEntity* GetPredictable(int slot);
+	virtual int GetPredictableCount(void);
 // Internal
 protected:
 
@@ -103,7 +81,8 @@ protected:
 	void			CheckError( int commands_acknowledged );
 
 
-
+	void	AddToPredictableList(CBaseHandle add);
+	void	RemoveFromPredictablesList(CBaseHandle remove);
 private:
 	virtual void	_Update
 					( 
@@ -152,6 +131,7 @@ private:
 #endif
 	float			m_flIdealPitch;
 
+	CUtlVector<CBaseHandle>	m_Predictables;
 };
  
 extern CPrediction *prediction;

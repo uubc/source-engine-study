@@ -15,7 +15,8 @@
 #ifdef CLIENT_DLL
 
 	#include "panelmetaclassmgr.h"
-	#include "prediction.h"
+	#include "iprediction.h"
+	#include "cdll_bounded_cvars.h"
 
 #else
 	#include "player.h"

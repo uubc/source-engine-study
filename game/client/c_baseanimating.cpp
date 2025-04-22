@@ -47,7 +47,7 @@
 #include "bonetoworldarray.h"
 #include "posedebugger.h"
 #include "tier0/icommandline.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "replay/replay_ragdoll.h"
 #include "studio_stats.h"
 #include "tier1/callqueue.h"

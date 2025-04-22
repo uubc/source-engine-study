@@ -9,7 +9,7 @@
 #include "weapon_riflegrenade.h"
 
 #ifdef CLIENT_DLL
-	#include "prediction.h"
+	#include "iprediction.h"
 #endif
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponBaseRifleGrenade, DT_WeaponBaseRifleGrenade )
@@ -82,7 +82,7 @@ void CWeaponBaseRifleGrenade::PrimaryAttack( void )
 #ifdef CLIENT_DLL
 	CDODPlayer *p = ToDODPlayer( GetPlayerOwner() );
 
-	if ( prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->IsFirstTimePredicted() )
 		p->DoRecoil( GetWeaponID(), GetRecoil() );
 #endif
 

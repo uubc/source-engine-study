@@ -13,7 +13,7 @@
 #include "input.h"
 #include "iviewrender.h"
 //#include "iclientmode.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "bitbuf.h"
 #include "checksum_md5.h"
 //#include "touch.h"
@@ -1079,7 +1079,7 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 	{
 		// Get current view angles after the client mode tweaks with it
 		engine->SetViewAngles( cmd->viewangles );
-		prediction->SetLocalViewAngles( cmd->viewangles );
+		g_pClientSidePrediction->SetLocalViewAngles( cmd->viewangles );
 	}
 
 	// Let the headtracker override the view at the very end of the process so
@@ -1104,7 +1104,7 @@ void CUserInput::ExtraMouseSample( float frametime, bool active )
 			cmd->upmove = newMotion[2];
 
 			cmd->viewangles = newViewangles;
-			prediction->SetLocalViewAngles( cmd->viewangles );
+			g_pClientSidePrediction->SetLocalViewAngles( cmd->viewangles );
 		}
 	}
 

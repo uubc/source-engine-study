@@ -22,7 +22,8 @@
 #include "game/client/iclientvehicle.h"
 #include "view_shared.h"
 #include "movevars_shared.h"
-#include "prediction.h"
+#include "iprediction.h"
+#include "cdll_bounded_cvars.h"
 #include "tier0/vprof.h"
 #include "filesystem.h"
 #include "bitbuf.h"
@@ -2469,7 +2470,7 @@ void C_BasePlayer::SetupMove(CUserCmd* ucmd, IMoveHelper* pHelper, CMoveData* mo
 #if !defined( NO_ENTITY_PREDICTION )
 	VPROF("CPrediction::SetupMove");
 
-	move->m_bFirstRunOfFunctions = prediction->IsFirstTimePredicted();
+	move->m_bFirstRunOfFunctions = g_pClientSidePrediction->IsFirstTimePredicted();
 
 	move->m_nPlayerHandle = this;// ->GetClientHandle();
 	move->m_vecVelocity = this->GetEngineObject()->GetAbsVelocity();
@@ -2720,7 +2721,7 @@ float C_BasePlayer::GetFOV( void )
 
 	// Don't do lerping during prediction. It's only necessary when actually rendering,
 	// and it'll cause problems due to prediction timing messiness.
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		// See if we need to lerp the values for local player
 		if ( IsLocalPlayer() && ( fFOV != m_iFOVStart ) && (m_Local.m_flFOVRate > 0.0f ) )

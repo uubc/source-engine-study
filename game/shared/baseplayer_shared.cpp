@@ -16,7 +16,7 @@
 #if defined( CLIENT_DLL )
 
 	#include "game/client/iclientvehicle.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "c_basedoor.h"
 	#include "c_world.h"
 	#include "iviewrender.h"
@@ -672,7 +672,7 @@ void CBasePlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, flo
 
 #if defined( CLIENT_DLL )
 	// during prediction play footstep sounds only once
-	if ( prediction->InPrediction() && !prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->InPrediction() && !g_pClientSidePrediction->IsFirstTimePredicted() )
 		return;
 #endif
 
@@ -935,7 +935,7 @@ void CBasePlayer::AbortReload( void )
 //		}
 //
 //#if defined( CLIENT_DLL )
-//		if ( e->IsClientCreated() && prediction->InPrediction() && !prediction->IsFirstTimePredicted() )
+//		if ( e->IsClientCreated() && g_pClientSidePrediction->InPrediction() && !g_pClientSidePrediction->IsFirstTimePredicted() )
 //		{
 //			continue;
 //		}
@@ -963,7 +963,7 @@ void CBasePlayer::AbortReload( void )
 //		}
 //
 //#if defined( CLIENT_DLL )
-//		if ( e->IsClientCreated() && prediction->InPrediction() && !prediction->IsFirstTimePredicted() )
+//		if ( e->IsClientCreated() && g_pClientSidePrediction->InPrediction() && !g_pClientSidePrediction->IsFirstTimePredicted() )
 //		{
 //			continue;
 //		}
@@ -1590,7 +1590,7 @@ void CBasePlayer::CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeA
 void CBasePlayer::CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov )
 {
 #if defined( CLIENT_DLL )
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		// FIXME: Move into prediction
 		g_pViewRender->DriftPitch();
@@ -1612,7 +1612,7 @@ void CBasePlayer::CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& f
 #endif
 
 #if defined( CLIENT_DLL )
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 #endif
 	{
 		SmoothViewOnStairs( eyeOrigin );
@@ -1627,7 +1627,7 @@ void CBasePlayer::CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& f
 	VectorAdd( eyeAngles, m_Local.m_vecPunchAngle, eyeAngles );
 
 #if defined( CLIENT_DLL )
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		// Shake it up baby!
 		vieweffects->CalcShake();
@@ -1683,7 +1683,7 @@ void CBasePlayer::CalcVehicleView(
 	VectorAdd( eyeAngles, m_Local.m_vecPunchAngle, eyeAngles );
 
 #if defined( CLIENT_DLL )
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		// Shake it up baby!
 		vieweffects->CalcShake();

@@ -11,7 +11,7 @@
 	#include "hud_macros.h"
 	#include "game/client/iclientvehicle.h"
 	#include "c_prop_vehicle.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "activitylist.h"
 #ifdef TERROR
 	#include "ClientTerrorPlayer.h"
@@ -358,7 +358,7 @@ void HapticMeleeContact(CBasePlayer* pPlayer)
 void HapticProcessSound(const char* soundname, int entIndex)
 {
 #ifdef CLIENT_DLL
-	if (prediction->InPrediction() && prediction->IsFirstTimePredicted())
+	if (g_pClientSidePrediction->InPrediction() && g_pClientSidePrediction->IsFirstTimePredicted())
 	{
 		bool local = false;
 		C_BaseEntity *ent = C_BaseEntity::Instance( entIndex );

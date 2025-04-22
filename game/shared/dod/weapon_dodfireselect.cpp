@@ -9,7 +9,7 @@
 #include "weapon_dodfireselect.h"
 
 #ifdef CLIENT_DLL
-	#include "prediction.h"
+	#include "iprediction.h"
 #endif
 
 IMPLEMENT_NETWORKCLASS_ALIASED( DODFireSelectWeapon, DT_FireSelectWeapon )
@@ -86,7 +86,7 @@ void CDODFireSelectWeapon::SecondaryAttack( void )
 	if ( m_bSemiAuto )
 	{
 #ifdef CLIENT_DLL
-		if ( prediction->IsFirstTimePredicted() )
+		if (g_pClientSidePrediction->IsFirstTimePredicted() )
 		{
 			m_flPosChangeTimer = gpGlobals->curtime;
 			m_bAnimToSemiAuto = false;
@@ -98,7 +98,7 @@ void CDODFireSelectWeapon::SecondaryAttack( void )
 	else
 	{
 #ifdef CLIENT_DLL
-		if ( prediction->IsFirstTimePredicted() )
+		if (g_pClientSidePrediction->IsFirstTimePredicted() )
 		{
 			m_flPosChangeTimer = gpGlobals->curtime;
 			m_bAnimToSemiAuto = true;
@@ -109,7 +109,7 @@ void CDODFireSelectWeapon::SecondaryAttack( void )
 	}
 
 #ifdef CLIENT_DLL
-	if ( prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->IsFirstTimePredicted() )
 	{
 		m_flPosChangeTimer = gpGlobals->curtime;
 	}
@@ -191,7 +191,7 @@ void CDODFireSelectWeapon::Drop( const Vector &vecVelocity )
 
 		static float flLastPercent = 0;
 
-		if ( prediction->InPrediction() )
+		if (g_pClientSidePrediction->InPrediction() )
 		{
 			return ( flLastPercent * offset +
 				( 1.0 - flLastPercent ) * GetDODWpnData().m_vecViewProneOffset );

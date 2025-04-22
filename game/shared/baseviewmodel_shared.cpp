@@ -10,7 +10,7 @@
 
 #if defined( CLIENT_DLL )
 #include "iprediction.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "client_virtualreality.h"
 #include "sourcevr/isourcevirtualreality.h"
 #else
@@ -412,7 +412,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	if ( pWeapon != NULL )
 	{
 #if defined( CLIENT_DLL )
-		if ( !prediction->InPrediction() )
+		if ( !g_pClientSidePrediction->InPrediction() )
 #endif
 		{
 			// add weapon-specific bob 
@@ -431,7 +431,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 #endif
 
 #if defined( CLIENT_DLL )
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		// Let the viewmodel shake at about 10% of the amplitude of the player's view
 		vieweffects->ApplyShake( vmorigin, vmangles, 0.1 );	

@@ -12,7 +12,7 @@
 #include "iviewrender.h"
 #include "ivieweffects.h"
 #include "ivmodemanager.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "clientsideeffects.h"
 #include "particlemgr.h"
 #include "steam/steam_api.h"
@@ -2322,7 +2322,7 @@ void CHLClient::FrameStageNotify( ClientFrameStage_t curStage )
 			VPROF( "CHLClient::FrameStageNotify FRAME_NET_UPDATE_POSTDATAUPDATE_END" );
 			PREDICTION_ENDTRACKVALUE();
 			// Let prediction copy off pristine data
-			prediction->PostEntityPacketReceived();
+			g_pClientSidePrediction->PostEntityPacketReceived();
 			HLTVCamera()->PostEntityPacketReceived();
 #if defined( REPLAY_ENABLED )
 			ReplayCamera()->PostEntityPacketReceived();

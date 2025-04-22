@@ -37,10 +37,10 @@
 	#include "c_soundscape.h"
 	#include "cstrikeclassmenu.h"
 	#include "cs_client_gamestats.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "panelmetaclassmgr.h"
 	#include "c_weapon__stubs.h"
-
+	#include "cdll_bounded_cvars.h"
 
 #else
 	

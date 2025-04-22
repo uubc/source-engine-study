@@ -16,7 +16,7 @@
 // NVNT start extra includes
 #include "haptics/haptic_utils.h"
 #ifdef CLIENT_DLL
-	#include "prediction.h"
+	#include "iprediction.h"
 #endif
 // NVNT end extra includes
 
@@ -1195,7 +1195,7 @@ bool CBaseCombatWeapon::SendWeaponAnim( int iActivity )
 	// NVNT notify the haptics system of this weapons new activity
 #ifdef WIN32
 #ifdef CLIENT_DLL
-	if ( prediction->InPrediction() && prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->InPrediction() && g_pClientSidePrediction->IsFirstTimePredicted() )
 #endif
 #ifndef _X360
 		HapticSendWeaponAnim(this,iActivity);

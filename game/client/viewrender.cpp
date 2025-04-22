@@ -55,7 +55,7 @@
 #include "c_te_legacytempents.h"
 #include "iviewrender_beams.h"
 #include "input.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "hltvcamera.h"
 #include "bitmap/tgawriter.h"
 #include "cl_mat_stub.h"
@@ -1206,7 +1206,7 @@ void CViewRender::DriftPitch(void)
 	}
 
 	// How far off are we
-	delta = prediction->GetIdealPitch() - player->GetEngineObject()->GetAbsAngles()[PITCH];
+	delta = g_pClientSidePrediction->GetIdealPitch() - player->GetEngineObject()->GetAbsAngles()[PITCH];
 	if (!delta)
 	{
 		m_PitchDrift.pitchvel = 0;

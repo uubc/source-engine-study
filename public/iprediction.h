@@ -22,13 +22,22 @@
 #include "basehandle.h"
 #include "icliententity.h"
 
-
-class IMoveHelper;
+// Interface used by client and server to track predictable entities
+abstract_class IPredictableList
+{
+public:
+	// Get predictables by index
+	virtual IClientEntity * GetPredictable(int slot) = 0;
+	// Get count of predictables
+	virtual int		GetPredictableCount(void) = 0;
+	virtual void	AddToPredictableList(CBaseHandle add) = 0;
+	virtual void	RemoveFromPredictablesList(CBaseHandle remove) = 0;
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Engine interface into client side prediction system
 //-----------------------------------------------------------------------------
-abstract_class IPrediction
+abstract_class IPrediction : public IPredictableList
 {
 public:
 	virtual			~IPrediction( void ) {};
@@ -37,6 +46,8 @@ public:
 	virtual void	Shutdown( void ) = 0;
 
 	virtual bool	InPrediction(void) const = 0;
+	virtual bool	IsFirstTimePredicted(void) const = 0;
+
 	// Run prediction
 	virtual void	Update
 					( 
@@ -61,22 +72,11 @@ public:
 	virtual void	SetViewAngles( QAngle& ang ) = 0;
 	virtual void	GetLocalViewAngles( QAngle& ang ) = 0;
 	virtual void	SetLocalViewAngles( QAngle& ang ) = 0;
+	virtual float	GetIdealPitch(void) const = 0;
 };
 
 extern IPrediction *g_pClientSidePrediction;
 
 #define VCLIENT_PREDICTION_INTERFACE_VERSION	"VClientPrediction001"
-
-// Interface used by client and server to track predictable entities
-abstract_class IPredictableList
-{
-public:
-	// Get predictables by index
-	virtual IClientEntity * GetPredictable(int slot) = 0;
-	// Get count of predictables
-	virtual int		GetPredictableCount(void) = 0;
-	virtual void	AddToPredictableList(CBaseHandle add) = 0;
-	virtual void	RemoveFromPredictablesList(CBaseHandle remove) = 0;
-};
 
 #endif // IPREDICTION_H

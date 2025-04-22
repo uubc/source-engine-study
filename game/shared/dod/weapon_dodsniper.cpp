@@ -9,7 +9,7 @@
 #include "weapon_dodsniper.h"
 
 #ifdef CLIENT_DLL
-	#include "prediction.h"
+	#include "iprediction.h"
 #endif
 
 IMPLEMENT_NETWORKCLASS_ALIASED( DODSniperWeapon, DT_SniperWeapon )
@@ -366,7 +366,7 @@ bool CDODSniperWeapon::IsZoomingIn( void )
 	{
 		static Vector vecLastResult = vec3_origin;
 
-		if ( prediction->InPrediction() && !prediction->IsFirstTimePredicted() )
+		if (g_pClientSidePrediction->InPrediction() && !g_pClientSidePrediction->IsFirstTimePredicted() )
 		{
 			return vecLastResult;
 		}

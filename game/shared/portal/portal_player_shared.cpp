@@ -9,7 +9,7 @@
 
 #ifdef CLIENT_DLL
 #include "c_portal_player.h"
-#include "prediction.h"
+#include "iprediction.h"
 #define CRecipientFilter C_RecipientFilter
 #else
 #include "portal_player.h"

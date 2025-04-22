@@ -29,7 +29,7 @@
 #ifdef CLIENT_DLL
 	
 	#include "c_dod_player.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "clientmode_dod.h"
 	#include "vgui_controls/AnimationController.h"
 
@@ -1182,7 +1182,7 @@ void CDODPlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, floa
 
 #if defined( CLIENT_DLL )
 	// during prediction play footstep sounds only once
-	if ( prediction->InPrediction() && !prediction->IsFirstTimePredicted() )
+	if (g_pClientSidePrediction->InPrediction() && !g_pClientSidePrediction->IsFirstTimePredicted() )
 		return;
 #endif
 

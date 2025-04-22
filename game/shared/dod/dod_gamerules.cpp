@@ -19,7 +19,7 @@
 	#include "dodviewport.h"
 	#include "precache_register.h"
 	#include "c_dod_player.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "usermessages.h"
 	#include "physpropclientside.h"
 	#include "hud.h"
@@ -28,7 +28,7 @@
 	#include "dod_hud_chat.h"
 	#include "c_playerresource.h"
 	#include "panelmetaclassmgr.h"
-
+	#include "cdll_bounded_cvars.h"
 
 
 #else

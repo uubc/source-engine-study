@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "prediction.h"
+#include "iprediction.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -101,7 +101,7 @@ void C_RecipientFilter::AddRecipient( const IHandleEntity *player )
 	if ( m_bUsingPredictionRules )
 	{
 		Assert( player == EntityList()->GetLocalPlayer() );
-		Assert( prediction->InPrediction() );
+		Assert(g_pClientSidePrediction->InPrediction() );
 
 		// Only add local player if this is the first time doing prediction
 		if ( !EntityList()->CanPredict())
@@ -171,7 +171,7 @@ void C_RecipientFilter::UsePredictionRules( void )
 	if ( m_bUsingPredictionRules )
 		return;
 
-	if ( !prediction->InPrediction() )
+	if ( !g_pClientSidePrediction->InPrediction() )
 	{
 		Assert( 0 );
 		return;

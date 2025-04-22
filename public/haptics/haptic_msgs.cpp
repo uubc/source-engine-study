@@ -10,7 +10,7 @@
 	#include "hud_macros.h"
 	#include "game/client/iclientvehicle.h"
 	#include "c_prop_vehicle.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 	#include "activitylist.h"
 #ifdef TERROR
 	#include "ClientTerrorPlayer.h"

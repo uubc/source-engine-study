@@ -10,7 +10,6 @@
 #include "interpolatedvar.h"
 #include "cdll_int.h"
 #include "engine/IEngineTrace.h"
-#include "igamemovement.h"
 #include "prediction_private.h"
 #include "ivrenderview.h"
 #include "iinput.h"
@@ -46,7 +45,6 @@ static ConVar	cl_pred_optimize( "cl_pred_optimize", "2", 0, "Optimize for not co
 
 #endif
 
-extern IGameMovement *g_pGameMovement;
 extern IVEngineClient* engine;
 extern CGlobalVarsBase* gpGlobals;
 extern IMDLCache* mdlcache;
@@ -63,11 +61,11 @@ typedescription_t *FindFieldByName( const char *fieldname, datamap_t *dmap );
 static IClientEntity *FindPredictableByGameClass( const char *classname )
 {
 	// Walk backward due to deletion from UtlVector
-	int c = predictables->GetPredictableCount();
+	int c = prediction->GetPredictableCount();
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = prediction->GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -81,16 +79,13 @@ static IClientEntity *FindPredictableByGameClass( const char *classname )
 	return NULL;
 }
 
-// Create singleton
-static CPredictableList g_Predictables;
-IPredictableList* predictables = &g_Predictables;
 
 //-----------------------------------------------------------------------------
 // Purpose: Add entity to list
 // Input  : add - 
 // Output : int
 //-----------------------------------------------------------------------------
-void CPredictableList::AddToPredictableList(CBaseHandle add)
+void CPrediction::AddToPredictableList(CBaseHandle add)
 {
 	// This is a hack to remap slot to index
 	if (m_Predictables.Find(add) != m_Predictables.InvalidIndex())
@@ -143,7 +138,7 @@ void CPredictableList::AddToPredictableList(CBaseHandle add)
 // Purpose: 
 // Input  : remove - 
 //-----------------------------------------------------------------------------
-void CPredictableList::RemoveFromPredictablesList(CBaseHandle remove)
+void CPrediction::RemoveFromPredictablesList(CBaseHandle remove)
 {
 	m_Predictables.FindAndRemove(remove);
 }
@@ -153,7 +148,7 @@ void CPredictableList::RemoveFromPredictablesList(CBaseHandle remove)
 // Input  : slot - 
 // Output : C_BaseEntity
 //-----------------------------------------------------------------------------
-IClientEntity* CPredictableList::GetPredictable(int slot)
+IClientEntity* CPrediction::GetPredictable(int slot)
 {
 	return entitylist->GetBaseEntityFromHandle(m_Predictables[slot]);
 }
@@ -162,24 +157,24 @@ IClientEntity* CPredictableList::GetPredictable(int slot)
 // Purpose: 
 // Output : int
 //-----------------------------------------------------------------------------
-int CPredictableList::GetPredictableCount(void)
+int CPrediction::GetPredictableCount(void)
 {
 	return m_Predictables.Count();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Searc predictables for previously created entity (by testId)
+// Purpose: Searc prediction for previously created entity (by testId)
 // Input  : testId - 
 // Output : static C_BaseEntity
 //-----------------------------------------------------------------------------
 //static C_BaseEntity *FindPreviouslyCreatedEntity( CPredictableId& testId )
 //{
-//	int c = predictables->GetPredictableCount();
+//	int c = GetPredictableCount();
 //
 //	int i;
 //	for ( i = 0; i < c; i++ )
 //	{
-//		C_BaseEntity *e = predictables->GetPredictable( i );
+//		C_BaseEntity *e = GetPredictable( i );
 //		if ( !e || !e->IsClientCreated() )
 //			continue;
 //
@@ -221,7 +216,8 @@ CPrediction::~CPrediction( void )
 void CPrediction::Init( void )
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	m_bOldCLPredictValue = cl_predict->GetInt();
+	ConVarRef cl_predict("cl_predict");
+	m_bOldCLPredictValue = cl_predict.GetInt();
 #endif
 }
 
@@ -247,7 +243,8 @@ void CPrediction::CheckError( int commands_acknowledged )
 		return;
 
 	// Not running prediction
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 		return;
 
 	player = entitylist->GetLocalPlayer();
@@ -312,8 +309,8 @@ void CPrediction::CheckError( int commands_acknowledged )
 void CPrediction::ShutdownPredictables( void )
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	// Transfer intermediate data from other predictables
-	int c = predictables->GetPredictableCount();
+	// Transfer intermediate data from other prediction
+	int c = GetPredictableCount();
 	int i;
 
 	int shutdown_count = 0;
@@ -321,11 +318,11 @@ void CPrediction::ShutdownPredictables( void )
 
 	for ( i = c - 1; i >= 0 ; i-- )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
-		// Shutdown predictables
+		// Shutdown prediction
 		if ( ent->GetPredictable() )
 		{
 			ent->ShutdownPredictable();
@@ -348,7 +345,7 @@ void CPrediction::ShutdownPredictables( void )
 	}
 
 	// All gone now...
-	Assert( predictables->GetPredictableCount() == 0 );
+	Assert( GetPredictableCount() == 0 );
 #endif
 }
 
@@ -374,7 +371,7 @@ void CPrediction::ReinitPredictables( void )
 	}
 
 	Msg( "Reinitialized %i predictable entities\n",
-		predictables->GetPredictableCount() );
+		GetPredictableCount() );
 #endif
 }
 
@@ -411,7 +408,8 @@ void CPrediction::PreEntityPacketReceived ( int commands_acknowledged, int curre
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 	{
 		ShutdownPredictables();
 		return;
@@ -422,12 +420,12 @@ void CPrediction::PreEntityPacketReceived ( int commands_acknowledged, int curre
 	if ( !current )
 		return;
 
-	// Transfer intermediate data from other predictables
-	int c = predictables->GetPredictableCount();
+	// Transfer intermediate data from other prediction
+	int c = GetPredictableCount();
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -450,7 +448,8 @@ void CPrediction::PostEntityPacketReceived( void )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 		return;
 
 	IClientEntity *current = entitylist->GetLocalPlayer();
@@ -458,12 +457,12 @@ void CPrediction::PostEntityPacketReceived( void )
 	if ( !current )
 		return;
 
-	// Transfer intermediate data from other predictables
-	int c = predictables->GetPredictableCount();
+	// Transfer intermediate data from other prediction
+	int c = GetPredictableCount();
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -551,7 +550,8 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	if ( cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( cl_predict.GetInt() )
 	{
 		int showlist = cl_predictionlist.GetInt();
 		int totalsize = 0;
@@ -564,12 +564,12 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		np.color[2] = 1.0f;
 		np.time_to_live = 2.0f;
 
-		// Transfer intermediate data from other predictables
-		int c = predictables->GetPredictableCount();
+		// Transfer intermediate data from other prediction
+		int c = GetPredictableCount();
 		int i;
 		for ( i = 0; i < c; i++ )
 		{
-			IClientEntity *ent = predictables->GetPredictable( i );
+			IClientEntity *ent = GetPredictable( i );
 			if ( !ent )
 				continue;
 
@@ -680,7 +680,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		}
 	}
 #endif
-	if ( cl_predict->GetBool() != m_bOldCLPredictValue )
+	if ( cl_predict.GetBool() != m_bOldCLPredictValue )
 	{
 		if ( !m_bOldCLPredictValue )
 		{
@@ -692,7 +692,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		m_nPreviousStartFrame = -1;
 	}
 
-	m_bOldCLPredictValue = cl_predict->GetInt();
+	m_bOldCLPredictValue = cl_predict.GetInt();
 
 #ifndef _XBOX
 	if ( /*dump &&*/ error_check && !entityDumped)
@@ -784,7 +784,7 @@ void CPrediction::SetIdealPitch ( IClientEntity *player, const Vector& origin, c
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Walk backward through predictables looking for ClientCreated entities
+// Purpose: Walk backward through prediction looking for ClientCreated entities
 //  such as projectiles which were
 // 1) not actually ack'd by the server or
 // 2) were ack'd and made dormant and can now safely be removed
@@ -798,11 +798,11 @@ void CPrediction::SetIdealPitch ( IClientEntity *player, const Vector& origin, c
 //	int oldest_allowable_command = sequence_number;
 //
 //	// Walk backward due to deletion from UtlVector
-//	int c = predictables->GetPredictableCount();
+//	int c = GetPredictableCount();
 //	int i;
 //	for ( i = c - 1; i >= 0; i-- )
 //	{
-//		C_BaseEntity *ent = predictables->GetPredictable( i );
+//		C_BaseEntity *ent = GetPredictable( i );
 //		if ( !ent )
 //			continue;
 //
@@ -875,7 +875,7 @@ void CPrediction::SetIdealPitch ( IClientEntity *player, const Vector& origin, c
 //			// flag of some kind
 //		}
 //
-//		// This will remove it from predictables list and will also free the entity, etc.
+//		// This will remove it from prediction list and will also free the entity, etc.
 //		DestroyEntity(ent);// ->Release();
 //	}
 //#endif
@@ -892,12 +892,12 @@ void CPrediction::RestoreOriginalEntityState( void )
 
 	Assert(entitylist->IsAbsRecomputationsEnabled() );
 
-	// Transfer intermediate data from other predictables
-	int pc = predictables->GetPredictableCount();
+	// Transfer intermediate data from other prediction
+	int pc = GetPredictableCount();
 	int p;
 	for ( p = 0; p < pc; p++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( p );
+		IClientEntity *ent = GetPredictable( p );
 		if ( !ent )
 			continue;
 
@@ -935,30 +935,30 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 	int i;
 
 	// Make sure simulation occurs at most once per entity per usercmd
-	for ( i = 0; i < predictables->GetPredictableCount(); i++ )
+	for ( i = 0; i < GetPredictableCount(); i++ )
 	{
-		IClientEntity *entity = predictables->GetPredictable( i );
+		IClientEntity *entity = GetPredictable( i );
 		if ( entity )
 		{
 			entity->GetEngineObject()->SetSimulationTick(-1);
 		}
 	}
 
-	// Don't used cached numpredictables since entities can be created mid-prediction by the player
-	for ( i = 0; i < predictables->GetPredictableCount(); i++ )
+	// Don't used cached numprediction since entities can be created mid-prediction by the player
+	for ( i = 0; i < GetPredictableCount(); i++ )
 	{
 		// Always reset
 		gpGlobals->curtime		= curtime;
 		gpGlobals->frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
 
-		IClientEntity *entity = predictables->GetPredictable( i );
+		IClientEntity *entity = GetPredictable( i );
 
 		if ( !entity )
 			continue;
 
 		bool islocal = ( localPlayer == entity ) ? true : false;
 
-		// Local player simulates first, if this assert fires then the predictables list isn't sorted 
+		// Local player simulates first, if this assert fires then the prediction list isn't sorted 
 		//  correctly (or we started predicting C_World???)
 		if ( islocal )
 		{
@@ -1012,13 +1012,13 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 void CPrediction::Untouch( void )
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	int numpredictables = predictables->GetPredictableCount();
+	int numpredictables = GetPredictableCount();
 
 	// Loop through all entities again, checking their untouch if flagged to do so
 	int i;
 	for ( i = 0; i < numpredictables; i++ )
 	{
-		IClientEntity *entity = predictables->GetPredictable( i );
+		IClientEntity *entity = GetPredictable( i );
 		if ( !entity )
 			continue;
 
@@ -1052,12 +1052,12 @@ void CPrediction::StorePredictionResults( int predicted_frame )
 	PREDICTION_TRACKVALUECHANGESCOPE( "save" );
 
 	int i;
-	int numpredictables = predictables->GetPredictableCount();
+	int numpredictables = GetPredictableCount();
 
 	// Now save off all of the results
 	for ( i = 0; i < numpredictables; i++ )
 	{
-		IClientEntity *entity = predictables->GetPredictable( i );
+		IClientEntity *entity = GetPredictable( i );
 		if ( !entity )
 			continue;
 
@@ -1094,14 +1094,15 @@ void CPrediction::ShiftIntermediateDataForward( int slots_to_remove, int number_
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 		return;
 
-	int c = predictables->GetPredictableCount();
+	int c = GetPredictableCount();
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -1130,14 +1131,15 @@ void CPrediction::RestoreEntityToPredictedFrame( int predicted_frame )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 		return;
 
-	int c = predictables->GetPredictableCount();
+	int c = GetPredictableCount();
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = predictables->GetPredictable( i );
+		IClientEntity *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -1228,9 +1230,9 @@ int CPrediction::ComputeFirstCommandToExecute( bool received_new_world_update, i
 				float flPrev = gpGlobals->curtime;
 				gpGlobals->curtime = pLocalPlayer->AsHandlePlayer()->GetTimeBase() - TICK_INTERVAL;
 				
-				for ( int i = 0; i < predictables->GetPredictableCount(); i++ )
+				for ( int i = 0; i < GetPredictableCount(); i++ )
 				{
-					IClientEntity *entity = predictables->GetPredictable( i );
+					IClientEntity *entity = GetPredictable( i );
 					if ( entity )
 					{
 						entity->GetEngineObject()->ResetLatched();
@@ -1404,9 +1406,10 @@ void CPrediction::Update( int startframe, bool validframe,
 	bool received_new_world_update = true;
 
 	// Still starting at same frame, so make sure we don't do extra prediction ,etc.
+	ConVarRef cl_predict("cl_predict");
 	if ( ( m_nPreviousStartFrame == startframe ) && 
 		cl_pred_optimize.GetBool() &&
-		cl_predict->GetInt() )
+		cl_predict.GetInt() )
 	{
 		received_new_world_update = false;
 	}
@@ -1447,7 +1450,8 @@ void CPrediction::_Update( bool received_new_world_update, bool validframe,
 	}
 
 	// If we are not doing prediction, copy authoritative value into velocity and angle.
-	if ( !cl_predict->GetInt() )
+	ConVarRef cl_predict("cl_predict");
+	if ( !cl_predict.GetInt() )
 	{
 		// When not predicting, we at least must make sure the player
 		// view angles match the view angles...

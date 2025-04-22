@@ -6,7 +6,7 @@
 //===========================================================================//
 #include "cbase.h"
 #include "c_baseentity.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "model_types.h"
 #include "iviewrender_beams.h"
 #include "dlight.h"
@@ -2582,7 +2582,7 @@ void C_BaseEntity::ShutdownPredictable( void )
 #if !defined( NO_ENTITY_PREDICTION )
 	Assert( GetPredictable() );
 
-	predictables->RemoveFromPredictablesList( GetClientHandle() );
+	g_pClientSidePrediction->RemoveFromPredictablesList( GetClientHandle() );
 	GetEngineObject()->DestroyIntermediateData();
 	SetPredictable( false );
 #endif
@@ -2601,7 +2601,7 @@ void C_BaseEntity::InitPredictable( void )
 	// Allocate buffers into which we copy data
 	GetEngineObject()->AllocateIntermediateData();
 	// Add to list of predictables
-	predictables->AddToPredictableList( GetClientHandle() );
+	g_pClientSidePrediction->AddToPredictableList( GetClientHandle() );
 	// Copy everything from "this" into the original_state_data
 	//  object.  Don't care about client local stuff, so pull from slot 0 which
 
@@ -2958,7 +2958,7 @@ void C_BaseEntity::UpdateOnRemove( void )
 	// Remove from the predictables list
 	if (GetPredictable() /*|| IsClientCreated()*/)
 	{
-		predictables->RemoveFromPredictablesList(GetClientHandle());
+		g_pClientSidePrediction->RemoveFromPredictablesList(GetClientHandle());
 	}
 	// Note that this must be called from here, not the destructor, because otherwise the
 //  vtable is hosed and the derived classes function is not going to get called!!!

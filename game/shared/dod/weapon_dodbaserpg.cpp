@@ -14,7 +14,7 @@
 #ifdef CLIENT_DLL
 
 	#include "c_dod_player.h"
-	#include "prediction.h"
+	#include "iprediction.h"
 
 #else
 
@@ -196,7 +196,7 @@ void CDODBaseRocketWeapon::PrimaryAttack()
 		m_iClip1--; 
 
 #ifdef CLIENT_DLL
-		if ( prediction->IsFirstTimePredicted() )
+		if (g_pClientSidePrediction->IsFirstTimePredicted() )
 			pPlayer->DoRecoil( GetWeaponID(), GetRecoil() );
 #endif
 

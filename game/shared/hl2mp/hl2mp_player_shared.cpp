@@ -9,7 +9,7 @@
 
 #ifdef CLIENT_DLL
 #include "c_hl2mp_player.h"
-#include "prediction.h"
+#include "iprediction.h"
 #define CRecipientFilter C_RecipientFilter
 #else
 #include "hl2mp_player.h"
@@ -75,7 +75,7 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 
 #if defined( CLIENT_DLL )
 	// during prediction play footstep sounds only once
-	if ( !prediction->IsFirstTimePredicted() )
+	if ( !g_pClientSidePrediction->IsFirstTimePredicted() )
 		return;
 #endif
 

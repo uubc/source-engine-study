@@ -30,7 +30,7 @@
 #include <igameevents.h>
 #include "physpropclientside.h"
 #include "obstacle_pushaway.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "viewangleanim.h"
 #include "soundenvelope.h"
 #include "weapon_dodbipodgun.h"

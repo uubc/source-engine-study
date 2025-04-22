@@ -8,7 +8,7 @@
 #include "hltvcamera.h"
 #include "cdll_client_int.h"
 #include "util_shared.h"
-#include "prediction.h"
+#include "iprediction.h"
 #include "movevars_shared.h"
 #include "in_buttons.h"
 #include "text_message.h"
@@ -587,7 +587,7 @@ void C_HLTVCamera::SetPrimaryTarget( int nEntity )
 		if ( target )
 		{
 			QAngle eyeAngle = target->EyeAngles();
-			prediction->SetViewAngles( eyeAngle );
+			g_pClientSidePrediction->SetViewAngles( eyeAngle );
 		}
 	}
 

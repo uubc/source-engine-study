@@ -9,7 +9,7 @@
 
 #ifdef CLIENT_DLL
 #include "c_dod_player.h"
-#include "prediction.h"
+#include "iprediction.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -53,7 +53,7 @@ ConVar cl_wpn_sway_scale( "cl_wpn_sway_scale", "2.6", FCVAR_CLIENTDLL );
 void CDODViewModel::CalcViewModelLag( Vector& origin, QAngle& angles, QAngle& original_angles )
 {
 #ifdef CLIENT_DLL
-	if ( prediction->InPrediction() )
+	if (g_pClientSidePrediction->InPrediction() )
 	{
 		return;
 	}

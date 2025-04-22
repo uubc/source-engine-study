@@ -785,7 +785,7 @@ $Project
 		$File	"$SRCDIR\game\shared\econ\ihasowner.h"
 		$File	"ihudlcd.h"
 		$File	"ipresence.h"
-		$File	"iinput.h"
+		$File	"$SRCDIR\public\iinput.h"
 		$File	"iloadingdisc.h"
 		$File	"imessagechars.h"
 		$File	"in_main.h"
