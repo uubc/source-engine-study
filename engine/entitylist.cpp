@@ -3714,10 +3714,10 @@ void SendProxy_MoveParentToInt(const SendProp* pProp, const void* pStruct, const
 
 void SendProxy_CropFlagsToPlayerFlagBitsLength(const SendProp* pProp, const void* pStruct, const void* pVarData, DVariant* pOut, int iElement, int objectID)
 {
-	int mask = (1 << PLAYER_FLAG_BITS) - 1;
+	//int mask = (1 << PLAYER_FLAG_BITS) - 1;
 	int data = *(int*)pVarData;
 
-	pOut->m_Int = (data & mask);
+	pOut->m_Int = (data);// & mask
 }
 
 // This table encodes edict data.
@@ -3843,7 +3843,7 @@ BEGIN_SEND_TABLE_NOBASE(CEngineObjectInternal, DT_EngineObject)
 	SendPropModelIndex(SENDINFO(m_nModelIndex)),
 	SendPropDataTable(SENDINFO_DT(m_Collision), &REFERENCE_SEND_TABLE(DT_CollisionProperty)),
 	SendPropInt(SENDINFO(m_CollisionGroup), 5, SPROP_UNSIGNED),
-	SendPropInt(SENDINFO(m_fFlags), PLAYER_FLAG_BITS, SPROP_UNSIGNED | SPROP_CHANGES_OFTEN, SendProxy_CropFlagsToPlayerFlagBitsLength),
+	SendPropInt(SENDINFO(m_fFlags), 32, SPROP_UNSIGNED | SPROP_CHANGES_OFTEN, SendProxy_CropFlagsToPlayerFlagBitsLength),
 	SendPropInt(SENDINFO(m_fEffects), EF_MAX_BITS, SPROP_UNSIGNED),
 	SendPropFloat(SENDINFO(m_flFriction), 8, SPROP_ROUNDDOWN, 0.0f, 4.0f),
 	SendPropFloat(SENDINFO(m_flElasticity), 0, SPROP_COORD),
