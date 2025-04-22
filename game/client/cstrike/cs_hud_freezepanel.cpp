@@ -162,13 +162,14 @@ void CCSFreezePanel::InitLayout()
 	LoadControlSettings( "resource/UI/FreezePanel_Basic.res" );
 
 	m_pBackgroundPanel = dynamic_cast<BorderedPanel*>( FindChildByName("FreezePanelBG"));
-	m_pAvatar = dynamic_cast<CAvatarImagePanel*>( m_pBackgroundPanel->FindChildByName("AvatarImage"));
-	m_pKillerHealth	= dynamic_cast<HorizontalGauge*>( m_pBackgroundPanel->FindChildByName("KillerHealth"));
-	m_pDominationIcon = dynamic_cast<ImagePanel*>( m_pBackgroundPanel->FindChildByName("DominationIcon"));
-
-	m_pAvatar->SetDefaultAvatar(scheme()->GetImage( CSTRIKE_DEFAULT_AVATAR, true ));
-	m_pAvatar->SetShouldScaleImage(true);
-	m_pAvatar->SetShouldDrawFriendIcon(false);
+	if (m_pBackgroundPanel) {
+		m_pAvatar = dynamic_cast<CAvatarImagePanel*>(m_pBackgroundPanel->FindChildByName("AvatarImage"));
+		m_pKillerHealth = dynamic_cast<HorizontalGauge*>(m_pBackgroundPanel->FindChildByName("KillerHealth"));
+		m_pDominationIcon = dynamic_cast<ImagePanel*>(m_pBackgroundPanel->FindChildByName("DominationIcon"));
+		m_pAvatar->SetDefaultAvatar(scheme()->GetImage(CSTRIKE_DEFAULT_AVATAR, true));
+		m_pAvatar->SetShouldScaleImage(true);
+		m_pAvatar->SetShouldDrawFriendIcon(false);
+	}
 }
 
 //-----------------------------------------------------------------------------
