@@ -119,4 +119,6 @@ public:
 
 extern IUserInput *g_pUserInput;
 
+#define USERINPUT_INTERFACE_VERSION	"UserInput001"
+
 #endif // IINPUT_H

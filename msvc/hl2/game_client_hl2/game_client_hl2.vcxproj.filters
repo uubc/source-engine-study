@@ -765,9 +765,6 @@
     <ClCompile Include="..\..\..\game\shared\predictableid.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\prediction.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\shared\props_shared.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>

@@ -356,6 +356,7 @@ def build(bld):
             "bone_merge_cache.cpp",
             "../public/recvproxy.cpp",
             "cliententitylist.cpp",
+            "prediction.cpp",
             "../public/posedebugger.cpp",
 		]
 		

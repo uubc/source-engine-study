@@ -17,6 +17,7 @@ public:
 };
 
 static CDODInput g_UserInput;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CCSInput, IUserInput, USERINPUT_INTERFACE_VERSION, g_UserInput);
 
 // Expose this interface
 IUserInput * g_pUserInput = &g_UserInput;

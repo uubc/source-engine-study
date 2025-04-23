@@ -49,6 +49,7 @@
 #include "host_cmd.h"
 #include "vox.h"
 #include "iprediction.h"
+#include "iinput.h"
 #include "icliententitylist.h"
 #include "eiface.h"
 #include "ivguicenterprint.h"
@@ -1682,7 +1683,8 @@ void CEngineClient::DisconnectInternal( void )
 //-----------------------------------------------------------------------------
 IBaseClientDLL *g_ClientDLL = NULL;
 IClientVirtualReality *g_pClientVR = NULL;
-IPrediction	*g_pClientSidePrediction = NULL;
+//IPrediction	*g_pClientSidePrediction = NULL;
+IUserInput* g_pUserInput = NULL;
 IClientRenderTargets *g_pClientRenderTargets = NULL;
 //IClientEntityList *entitylist = NULL;
 ICenterPrint *centerprint = NULL;
@@ -1775,10 +1777,16 @@ bool ClientDLL_Load()
 			}
 
 			// Load the prediction interface from the client .dll
-			g_pClientSidePrediction = (IPrediction*)g_ClientFactory(VCLIENT_PREDICTION_INTERFACE_VERSION, NULL);
-			if (!g_pClientSidePrediction)
+			//g_pClientSidePrediction = (IPrediction*)g_ClientFactory(VCLIENT_PREDICTION_INTERFACE_VERSION, NULL);
+			//if (!g_pClientSidePrediction)
+			//{
+			//	Sys_Error("Could not get IPrediction interface from library client");
+			//}
+
+			g_pUserInput = (IUserInput*)g_ClientFactory(USERINPUT_INTERFACE_VERSION, NULL);
+			if (!g_pUserInput)
 			{
-				Sys_Error("Could not get IPrediction interface from library client");
+				Sys_Error("Could not get g_pUserInput interface from library client");
 			}
 
 			//entitylist = (IClientEntityList*)g_ClientFactory(VCLIENTENTITYLIST_INTERFACE_VERSION, NULL);
@@ -2016,7 +2024,7 @@ void ClientDLL_Shutdown( void )
 	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist->PhysSaveRestoreBlockHandler());
 	g_pClientGameSaveRestoreBlockSet->RemoveBlockHandler(entitylist);
 	//entitylist = NULL;
-	g_pClientSidePrediction = NULL;
+	//g_pClientSidePrediction = NULL;
 	g_ClientFactory = NULL;
 	centerprint = NULL;
 

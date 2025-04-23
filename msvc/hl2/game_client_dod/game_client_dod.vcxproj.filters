@@ -636,9 +636,6 @@
     <ClCompile Include="..\..\..\game\client\playerspawncache.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\prediction.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\proxyentity.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>

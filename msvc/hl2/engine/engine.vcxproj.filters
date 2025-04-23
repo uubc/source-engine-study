@@ -917,5 +917,8 @@
     <ClCompile Include="..\..\..\public\bone_accessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\engine\prediction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -358,7 +358,6 @@
     <ClCompile Include="..\..\..\game\client\portalrenderable_flatbasic.cpp" />
     <ClCompile Include="..\..\..\game\client\Portal_DynamicMeshRenderingUtils.cpp" />
     <ClCompile Include="..\..\..\game\client\portal_render_targets.cpp" />
-    <ClCompile Include="..\..\..\game\client\prediction.cpp" />
     <ClCompile Include="..\..\..\game\client\proxyentity.cpp" />
     <ClCompile Include="..\..\..\game\client\ProxyHealth.cpp" />
     <ClCompile Include="..\..\..\game\client\proxyplayer.cpp" />

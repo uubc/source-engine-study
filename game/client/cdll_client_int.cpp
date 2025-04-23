@@ -198,6 +198,7 @@ IStaticPropMgrClient *staticpropmgr = NULL;
 IClientLeafSystem* g_pClientLeafSystem = NULL;
 IClientShadowMgr* g_pClientShadowMgr = NULL;
 IDetailObjectSystem* g_pDetailObjectSystem = NULL;
+IPrediction* g_pClientSidePrediction = NULL;
 IEngineSound *enginesound = NULL;
 IUniformRandomStream *random = NULL;
 static CGaussianRandomStream s_GaussianRandomStream;
@@ -939,6 +940,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if ((g_pClientShadowMgr = (IClientShadowMgr*)appSystemFactory(CLIENTSHADOW_INTERFACE_VERSION, NULL)) == NULL)
 		return false;
 	if ((g_pDetailObjectSystem = (IDetailObjectSystem*)appSystemFactory(DETAILOBJECTSYSTEM_INTERFACE_VERSION, NULL)) == NULL)
+		return false;
+	if ((g_pClientSidePrediction = (IPrediction*)appSystemFactory(VCLIENT_PREDICTION_INTERFACE_VERSION, NULL)) == NULL)
 		return false;
 	if ( (enginesound = (IEngineSound *)appSystemFactory(IENGINESOUND_CLIENT_INTERFACE_VERSION, NULL)) == NULL )
 		return false;

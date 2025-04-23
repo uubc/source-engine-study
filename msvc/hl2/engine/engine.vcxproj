@@ -340,6 +340,7 @@
     <ClCompile Include="..\..\..\engine\physics_saverestore.cpp" />
     <ClCompile Include="..\..\..\engine\physics_shared.cpp" />
     <ClCompile Include="..\..\..\engine\precache.cpp" />
+    <ClCompile Include="..\..\..\engine\prediction.cpp" />
     <ClCompile Include="..\..\..\engine\pr_edict.cpp" />
     <ClCompile Include="..\..\..\engine\pure_server.cpp" />
     <ClCompile Include="..\..\..\engine\quakedef.cpp" />

@@ -152,7 +152,7 @@ ConVar mp_autoteambalance( "mp_autoteambalance", "1", FCVAR_NOTIFY );
 ConVar mp_stalemate_enable( "mp_stalemate_enable", "0", FCVAR_NOTIFY, "Enable/Disable stalemate mode." );
 ConVar mp_match_end_at_timelimit( "mp_match_end_at_timelimit", "0", FCVAR_NOTIFY, "Allow the match to end when mp_timelimit hits instead of waiting for the end of the current round." );
 
-ConVar mp_holiday_nogifts( "mp_holiday_nogifts", "0", FCVAR_NOTIFY, "Set to 1 to prevent holiday gifts from spawning when players are killed." );
+ConVar mp_holiday_nogifts( "mp_holiday_nogifts", "1", FCVAR_NOTIFY, "Set to 1 to prevent holiday gifts from spawning when players are killed." );
 
 //-----------------------------------------------------------------------------
 // Purpose: 

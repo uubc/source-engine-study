@@ -8,6 +8,7 @@
 #include "prediction.h"
 #include "shareddefs.h"
 #include "interpolatedvar.h"
+#include "host.h"
 #include "cdll_int.h"
 #include "engine/IEngineTrace.h"
 #include "prediction_private.h"
@@ -45,8 +46,8 @@ static ConVar	cl_pred_optimize( "cl_pred_optimize", "2", 0, "Optimize for not co
 
 #endif
 
-extern IVEngineClient* engine;
-extern CGlobalVarsBase* gpGlobals;
+extern IVEngineClient* engineClient;
+extern CGlobalVarsBase g_ClientGlobalVariables;
 extern IMDLCache* mdlcache;
 
 void COM_Log( char *pszFile, const char *fmt, ...);
@@ -189,6 +190,15 @@ int CPrediction::GetPredictableCount(void)
 //}
 #endif
 
+// Expose interface to engine
+// Expose interface to engine
+static CPrediction g_Prediction;
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CPrediction, IPrediction, VCLIENT_PREDICTION_INTERFACE_VERSION, g_Prediction);
+
+CPrediction* prediction = &g_Prediction;
+IPrediction* g_pClientSidePrediction = &g_Prediction;
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -239,7 +249,7 @@ void CPrediction::CheckError( int commands_acknowledged )
 	static int	pos = 0;
 
 	// Not in the game yet
-	if ( !engine->IsInGame() )
+	if ( !engineClient->IsInGame() )
 		return;
 
 	// Not running prediction
@@ -296,7 +306,7 @@ void CPrediction::CheckError( int commands_acknowledged )
 				np.index = 20 + ( ++pos % 20 );
 				np.time_to_live = 2.0f;
 
-				engine->Con_NXPrintf( &np, "pred error %6.3f units (%6.3f %6.3f %6.3f)", len, delta.x, delta.y, delta.z );
+				engineClient->Con_NXPrintf( &np, "pred error %6.3f units (%6.3f %6.3f %6.3f)", len, delta.x, delta.y, delta.z );
 			}
 		}
 	}
@@ -600,7 +610,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 					int size = ent->GetEntityFactory()->GetEntitySize();// GetEntitySize();
 					int intermediate_size = ent->GetPredDescMap()->GetIntermediateDataSize() * ( MULTIPLAYER_BACKUP + 1 );
 
-					engine->Con_NXPrintf( &np, "%15s %30s (%5i / %5i bytes): %15s", 
+					engineClient->Con_NXPrintf( &np, "%15s %30s (%5i / %5i bytes): %15s", 
 						sz, 
 						ent->GetClassname(),
 						size,
@@ -612,7 +622,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 				}
 				else
 				{
-					engine->Con_NXPrintf( &np, "%15s %30s: %15s", 
+					engineClient->Con_NXPrintf( &np, "%15s %30s: %15s", 
 						sz, 
 						ent->GetClassname(),
 						ent->GetPredictable() ? "predicted" : "client created" );
@@ -639,7 +649,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 			Q_strncpy( sz1, Q_pretifymem( (float)totalsize ), sizeof( sz1 ) );
 			Q_strncpy( sz2, Q_pretifymem( (float)totalsize_intermediate ), sizeof( sz2 ) );
 
-			engine->Con_NXPrintf( &np, "%15s %27s (%s / %s)  %14s", 
+			engineClient->Con_NXPrintf( &np, "%15s %27s (%s / %s)  %14s", 
 				"totals:", 
 				"",
 				sz1,
@@ -652,7 +662,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		{
 			while ( i < 20 )
 			{
-				engine->Con_NPrintf( i, "" );
+				engineClient->Con_NPrintf( i, "" );
 				i++;
 			}
 		}
@@ -948,8 +958,8 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 	for ( i = 0; i < GetPredictableCount(); i++ )
 	{
 		// Always reset
-		gpGlobals->curtime		= curtime;
-		gpGlobals->frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
+		g_ClientGlobalVariables.curtime		= curtime;
+		g_ClientGlobalVariables.frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
 
 		IClientEntity *entity = GetPredictable( i );
 
@@ -1227,8 +1237,8 @@ int CPrediction::ComputeFirstCommandToExecute( bool received_new_world_update, i
 				// if we don't, we'll have 3 interpolation entries with the same timestamp as this predicted
 				// frame, so we won't be able to interpolate (which leads to jerky movement in the player when
 				// ANY entity like your gun gets a prediction error).
-				float flPrev = gpGlobals->curtime;
-				gpGlobals->curtime = pLocalPlayer->AsHandlePlayer()->GetTimeBase() - TICK_INTERVAL;
+				float flPrev = g_ClientGlobalVariables.curtime;
+				g_ClientGlobalVariables.curtime = pLocalPlayer->AsHandlePlayer()->GetTimeBase() - TICK_INTERVAL;
 				
 				for ( int i = 0; i < GetPredictableCount(); i++ )
 				{
@@ -1239,7 +1249,7 @@ int CPrediction::ComputeFirstCommandToExecute( bool received_new_world_update, i
 					}
 				}
 
-				gpGlobals->curtime = flPrev;
+				g_ClientGlobalVariables.curtime = flPrev;
 			}
 		}
 	}
@@ -1326,8 +1336,8 @@ bool CPrediction::PerformPrediction( bool received_new_world_update, IClientEnti
 
 		RunSimulation( current_command, curtime, cmd, localPlayer );
 
-		gpGlobals->curtime		= curtime;
-		gpGlobals->frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
+		g_ClientGlobalVariables.curtime		= curtime;
+		g_ClientGlobalVariables.frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
 
 		// Call untouch on any entities no longer predicted to be touching
 		Untouch();
@@ -1401,7 +1411,7 @@ void CPrediction::Update( int startframe, bool validframe,
 #if !defined( NO_ENTITY_PREDICTION )
 	VPROF_BUDGET( "CPrediction::Update", VPROF_BUDGETGROUP_PREDICTION );
 
-	m_bEnginePaused = engine->IsPaused();
+	m_bEnginePaused = engineClient->IsPaused();
 
 	bool received_new_world_update = true;
 
@@ -1418,12 +1428,12 @@ void CPrediction::Update( int startframe, bool validframe,
 
 	// Save off current timer values, etc.
 	CGlobalVarsBase saveVars(true);
-	saveVars = *gpGlobals;
+	saveVars = g_ClientGlobalVariables;
 
 	_Update( received_new_world_update, validframe, incoming_acknowledged, outgoing_command );
 
 	// Restore current timer values, etc.
-	*gpGlobals = saveVars;
+	g_ClientGlobalVariables = saveVars;
 #endif
 }
 
@@ -1441,7 +1451,7 @@ void CPrediction::_Update( bool received_new_world_update, bool validframe,
 	// Always using current view angles no matter what
 	// NOTE: ViewAngles are always interpreted as being *relative* to the player
 	QAngle viewangles;
-	engine->GetViewAngles( viewangles );
+	engineClient->GetViewAngles( viewangles );
 	localPlayer->GetEngineObject()->SetLocalAngles( viewangles );
 
 	if ( !validframe )
@@ -1535,7 +1545,7 @@ void CPrediction::SetViewOrigin( Vector& org )
 	player->GetEngineObject()->SetLocalOrigin( org );
 	player->GetEngineObject()->SetNetworkOrigin(org);
 
-	player->GetEngineObject()->GetOriginInterpolator().Reset(gpGlobals->curtime);//m_iv_vecOrigin
+	player->GetEngineObject()->GetOriginInterpolator().Reset(g_ClientGlobalVariables.curtime);//m_iv_vecOrigin
 }
 
 //-----------------------------------------------------------------------------
@@ -1568,7 +1578,7 @@ void CPrediction::SetViewAngles( QAngle& ang )
 	//player->SetViewAngles( ang );
 	player->GetEngineObject()->SetLocalAngles(ang);
 	player->GetEngineObject()->SetNetworkAngles(ang);
-	player->GetEngineObject()->GetRotationInterpolator().Reset(gpGlobals->curtime);//m_iv_angRotation
+	player->GetEngineObject()->GetRotationInterpolator().Reset(g_ClientGlobalVariables.curtime);//m_iv_angRotation
 }
 
 //-----------------------------------------------------------------------------
