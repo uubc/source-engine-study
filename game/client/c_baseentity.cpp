@@ -361,7 +361,6 @@ C_BaseEntity::C_BaseEntity()
 	m_nRenderFXBlend = 255;
 
 	//SetPredictionEligible( false );
-	m_bPredictable = false;
 
 
 	//GetEngineObject()->Init(this);
@@ -1526,51 +1525,6 @@ void C_BaseEntity::PostDataUpdate( DataUpdateType_t updateType )
 	
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *context - 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::CheckInitPredictable( const char *context )
-{
-#if !defined( NO_ENTITY_PREDICTION )
-	// Prediction is disabled
-	if ( !cl_predict->GetInt() )
-		return;
-
-	C_BasePlayer *player = (C_BasePlayer*)EntityList()->GetLocalPlayer();
-
-	if ( !player )
-		return;
-
-	//if ( !GetPredictionEligible() )
-	//{
-	//	if ( m_PredictableID.IsActive() &&
-	//		( player->index - 1 ) == m_PredictableID.GetPlayer() )
-	//	{
-	//		// If it comes through with an ID, it should be eligible
-	//		SetPredictionEligible( true );
-	//	}
-	//	else
-	//	{
-	//		return;
-	//	}
-	//}
-
-	//if ( IsClientCreated() )
-	//	return;
-
-	if ( !ShouldPredict() )
-		return;
-
-	if (GetEngineObject()->IsIntermediateDataAllocated() )
-		return;
-
-	// Msg( "Predicting init %s at %s\n", GetClassname(), context );
-
-	InitPredictable();
-#endif
-}
-
 //bool C_BaseEntity::IsSelfAnimating()
 //{
 //	return true;
@@ -1818,9 +1772,6 @@ void C_BaseEntity::OnPreDataChanged( DataUpdateType_t type )
 
 void C_BaseEntity::OnDataChanged( DataUpdateType_t type )
 {
-	// See if it needs to allocate prediction stuff
-	CheckInitPredictable( "OnDataChanged" );
-
 	// Set up shadows; do it here so that objects can change shadowcasting state
 	GetEngineObject()->CreateShadow();
 
@@ -2575,70 +2526,6 @@ void C_BaseEntity::CalcAbsoluteAngularVelocity()
 */
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::ShutdownPredictable( void )
-{
-#if !defined( NO_ENTITY_PREDICTION )
-	Assert( GetPredictable() );
-
-	g_pClientSidePrediction->RemoveFromPredictablesList( GetClientHandle() );
-	GetEngineObject()->DestroyIntermediateData();
-	SetPredictable( false );
-#endif
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Turn entity into something the predicts locally
-//-----------------------------------------------------------------------------
-void C_BaseEntity::InitPredictable( void )
-{
-#if !defined( NO_ENTITY_PREDICTION )
-	Assert( !GetPredictable() );
-
-	// Mark as predictable
-	SetPredictable( true );
-	// Allocate buffers into which we copy data
-	GetEngineObject()->AllocateIntermediateData();
-	// Add to list of predictables
-	g_pClientSidePrediction->AddToPredictableList( GetClientHandle() );
-	// Copy everything from "this" into the original_state_data
-	//  object.  Don't care about client local stuff, so pull from slot 0 which
-
-	//  should be empty anyway...
-	GetEngineObject()->PostNetworkDataReceived( 0 );
-
-	// Copy original data into all prediction slots, so we don't get an error saying we "mispredicted" any
-	//  values which are still at their initial values
-	for ( int i = 0; i < MULTIPLAYER_BACKUP; i++ )
-	{
-		GetEngineObject()->SaveData( "InitPredictable", i, PC_EVERYTHING );
-	}
-#endif
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : state - 
-//-----------------------------------------------------------------------------
-void C_BaseEntity::SetPredictable( bool state )
-{
-	m_bPredictable = state;
-
-	// update interpolation times
-	GetEngineObject()->Interp_UpdateInterpolationAmounts();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-bool C_BaseEntity::GetPredictable( void ) const
-{
-	return m_bPredictable;
-}
-
-//-----------------------------------------------------------------------------
 // Purpose: Just look up index
 // Input  : *name - 
 // Output : int
@@ -2945,47 +2832,6 @@ void C_BaseEntity::ChangeTeam( int iTeamNum )
 //-----------------------------------------------------------------------------
 void C_BaseEntity::UpdateOnRemove( void )
 {
-	// Nothing for now, if it's a predicted entity, could flag as "delete" or dormant
-	if (GetPredictable() /*|| IsClientCreated()*/)
-	{
-		// Make it solid
-		GetEngineObject()->AddSolidFlags(FSOLID_NOT_SOLID);
-		GetEngineObject()->SetMoveType(MOVETYPE_NONE);
-
-		GetEngineObject()->AddEFlags(EFL_KILLME);	// Make sure to ignore further calls into here or EntityList()->DestroyEntity.
-	}
-#if !defined( NO_ENTITY_PREDICTION )
-	// Remove from the predictables list
-	if (GetPredictable() /*|| IsClientCreated()*/)
-	{
-		g_pClientSidePrediction->RemoveFromPredictablesList(GetClientHandle());
-	}
-	// Note that this must be called from here, not the destructor, because otherwise the
-//  vtable is hosed and the derived classes function is not going to get called!!!
-	if (GetEngineObject()->IsIntermediateDataAllocated())
-	{
-		GetEngineObject()->DestroyIntermediateData();
-	}
-	// If it's play simulated, remove from simulation list if the player still exists...
-	//if ( IsPlayerSimulated() && (C_BasePlayer*)EntityList()->GetLocalPlayer() )
-	//{
-	//	(C_BasePlayer*)EntityList()->GetLocalPlayer()->RemoveFromPlayerSimulationList( this );
-	//}
-#endif
-	{
-		Assert(!GetEngineObject()->GetMoveParent());
-		AutoAllowBoneAccess boneaccess(true, true);
-		GetEngineObject()->UnlinkFromHierarchy();
-		//GetEngineObject()->UnlinkFromHierarchy();
-		GetEngineObject()->SetGroundEntity(NULL);
-	}
-	GetEngineObject()->VPhysicsDestroyObject();
-
-//#if !defined( NO_ENTITY_PREDICTION )
-//	delete m_pPredictionContext;
-//#endif
-	GetEngineObject()->RemoveFromInterpolationList();
-	GetEngineObject()->RemoveFromTeleportList();
 
 	if (GetClientHandle() != INVALID_CLIENTENTITY_HANDLE)
 	{
@@ -3009,13 +2855,6 @@ void C_BaseEntity::UpdateOnRemove( void )
 		beams->KillDeadBeams(this);
 	}
 
-	// Clean up the model instance
-	GetEngineObject()->DestroyModelInstance();
-
-	// Clean up drawing
-	GetEngineObject()->RemoveFromLeafSystem();
-
-	GetEngineObject()->RemoveFromAimEntsList();
 }
 
 //-----------------------------------------------------------------------------
@@ -3391,7 +3230,7 @@ float C_BaseEntity::GetInterpolationAmount( int flags )
 		serverTickMultiple = 2;
 	}
 
-	if ( GetPredictable() /*|| IsClientCreated()*/)
+	if (GetEngineObject()->GetPredictable() /*|| IsClientCreated()*/)
 	{
 		return TICK_INTERVAL * serverTickMultiple;
 	}

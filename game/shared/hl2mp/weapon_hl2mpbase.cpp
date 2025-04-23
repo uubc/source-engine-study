@@ -157,9 +157,6 @@ CHL2MP_Player* CWeaponHL2MPBase::GetHL2MPPlayerOwner() const
 void CWeaponHL2MPBase::OnDataChanged( DataUpdateType_t type )
 {
 	BaseClass::OnDataChanged( type );
-
-	if ( GetPredictable() && !ShouldPredict() )
-		ShutdownPredictable();
 }
 
 

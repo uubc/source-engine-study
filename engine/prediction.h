@@ -71,7 +71,7 @@ public:
 	virtual void	GetLocalViewAngles( QAngle& ang );
 	virtual void	SetLocalViewAngles( QAngle& ang );
 
-	virtual IClientEntity* GetPredictable(int slot);
+	virtual IEngineObjectClient* GetPredictable(int slot);
 	virtual int GetPredictableCount(void);
 // Internal
 protected:

@@ -517,7 +517,61 @@ public:
 		m_bReadyToDraw = true;
 		m_vecBaseVelocity.Init();
 		m_nSimulationTick = -1;
+		m_bPredictable = false;
 
+	}
+
+	virtual void UpdateOnRemove(void) 
+	{
+		// Nothing for now, if it's a predicted entity, could flag as "delete" or dormant
+		if (GetPredictable() /*|| IsClientCreated()*/)
+		{
+			// Make it solid
+			AddSolidFlags(FSOLID_NOT_SOLID);
+			SetMoveType(MOVETYPE_NONE);
+
+			AddEFlags(EFL_KILLME);	// Make sure to ignore further calls into here or EntityList()->DestroyEntity.
+		}
+#if !defined( NO_ENTITY_PREDICTION )
+		// Remove from the predictables list
+		if (GetPredictable() /*|| IsClientCreated()*/)
+		{
+			g_pClientSidePrediction->RemoveFromPredictablesList(GetRefEHandle());
+		}
+		// Note that this must be called from here, not the destructor, because otherwise the
+	//  vtable is hosed and the derived classes function is not going to get called!!!
+		if (IsIntermediateDataAllocated())
+		{
+			DestroyIntermediateData();
+		}
+		// If it's play simulated, remove from simulation list if the player still exists...
+		//if ( IsPlayerSimulated() && (C_BasePlayer*)EntityList()->GetLocalPlayer() )
+		//{
+		//	(C_BasePlayer*)EntityList()->GetLocalPlayer()->RemoveFromPlayerSimulationList( this );
+		//}
+#endif	
+		{
+			Assert(!GetMoveParent());
+			AutoAllowBoneAccess boneaccess(true, true);
+			UnlinkFromHierarchy();
+			//GetEngineObject()->UnlinkFromHierarchy();
+			SetGroundEntity(NULL);
+		}
+		VPhysicsDestroyObject();
+
+		//#if !defined( NO_ENTITY_PREDICTION )
+		//	delete m_pPredictionContext;
+		//#endif
+		RemoveFromInterpolationList();
+		RemoveFromTeleportList();
+
+		// Clean up the model instance
+		DestroyModelInstance();
+
+		// Clean up drawing
+		RemoveFromLeafSystem();
+
+		RemoveFromAimEntsList();
 	}
 
 	virtual ~C_EngineObjectInternal()
@@ -695,6 +749,15 @@ public:
 	void DestroyIntermediateData(void);
 	void ShiftIntermediateDataForward(int slots_to_remove, int previous_last_slot);
 
+	// Prediction stuff
+/////////////////
+	void CheckInitPredictable(const char* context);
+
+	void InitPredictable(void);
+	void ShutdownPredictable(void);
+
+	void SetPredictable(bool state);
+	bool GetPredictable(void) const;
 	void* GetPredictedFrame(int framenumber);
 	void* GetOuterPredictedFrame(int framenumber);
 	void* GetOriginalNetworkDataObject(void);
@@ -821,6 +884,8 @@ public:
 		m_bReadyToDraw = true;
 		m_vecBaseVelocity.Init();
 		m_nSimulationTick = -1;
+		m_bPredictable = false;
+
 	}
 
 	virtual void OnPositionChanged();
@@ -1817,6 +1882,8 @@ protected:
 	CBaseHandle					m_hOwnerEntity;
 	CBaseHandle					m_hEffectEntity;
 	C_GrabControllerInternal		m_grabController;
+	// Prediction system
+	bool							m_bPredictable;
 };
 
 inline const Vector& C_EngineObjectInternal::GetBaseVelocity() const
@@ -5218,6 +5285,7 @@ void CClientEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 		m_iNumClientNonNetworkable--;
 	}
 
+	m_EngineObjectArray[entnum]->UpdateOnRemove();
 	m_EngineObjectArray[entnum]->PhysicsRemoveTouchedList();
 	m_EngineObjectArray[entnum]->PhysicsRemoveGroundList();
 	m_EngineObjectArray[entnum]->DestroyAllDataObjects();

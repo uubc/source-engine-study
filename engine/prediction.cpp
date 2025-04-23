@@ -55,33 +55,6 @@ typedescription_t *FindFieldByName( const char *fieldname, datamap_t *dmap );
 
 #if !defined( NO_ENTITY_PREDICTION )
 //-----------------------------------------------------------------------------
-// Purpose: For debugging, find predictable by classname
-// Input  : *classname - 
-// Output : static C_BaseEntity
-//-----------------------------------------------------------------------------
-static IClientEntity *FindPredictableByGameClass( const char *classname )
-{
-	// Walk backward due to deletion from UtlVector
-	int c = prediction->GetPredictableCount();
-	int i;
-	for ( i = 0; i < c; i++ )
-	{
-		IClientEntity *ent = prediction->GetPredictable( i );
-		if ( !ent )
-			continue;
-
-		// Don't do anything to truly predicted things (like player and weapons )
-		if ( !FClassnameIs( ent, classname ) )
-			continue;
-
-		return ent;
-	}
-
-	return NULL;
-}
-
-
-//-----------------------------------------------------------------------------
 // Purpose: Add entity to list
 // Input  : add - 
 // Output : int
@@ -149,9 +122,9 @@ void CPrediction::RemoveFromPredictablesList(CBaseHandle remove)
 // Input  : slot - 
 // Output : C_BaseEntity
 //-----------------------------------------------------------------------------
-IClientEntity* CPrediction::GetPredictable(int slot)
+IEngineObjectClient* CPrediction::GetPredictable(int slot)
 {
-	return entitylist->GetBaseEntityFromHandle(m_Predictables[slot]);
+	return entitylist->GetEngineObjectFromHandle(m_Predictables[slot]);
 }
 
 //-----------------------------------------------------------------------------
@@ -328,7 +301,7 @@ void CPrediction::ShutdownPredictables( void )
 
 	for ( i = c - 1; i >= 0 ; i-- )
 	{
-		IClientEntity *ent = GetPredictable( i );
+		IEngineObjectClient *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
@@ -341,7 +314,7 @@ void CPrediction::ShutdownPredictables( void )
 		// Otherwise, release client created entities
 		else
 		{
-			entitylist->DestroyEntity(ent);// ->Release();
+			entitylist->DestroyEntity(ent->GetHandleEntity());// ->Release();
 			release_count++;
 		}
 	}
@@ -370,7 +343,7 @@ void CPrediction::ReinitPredictables( void )
 	int c = entitylist->GetHighestEntityIndex();
 	for ( i = 0; i <= c; i++ )
 	{
-		IClientEntity *e = entitylist->GetBaseEntity( i );
+		IEngineObjectClient *e = entitylist->GetEngineObject( i );
 		if ( !e )
 			continue;
 		
@@ -435,14 +408,14 @@ void CPrediction::PreEntityPacketReceived ( int commands_acknowledged, int curre
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = GetPredictable( i );
+		IEngineObjectClient *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
 		if ( !ent->GetPredictable() )
 			continue;
 
-		ent->GetEngineObject()->PreEntityPacketReceived( commands_acknowledged );
+		ent->PreEntityPacketReceived( commands_acknowledged );
 	}
 #endif
 }
@@ -472,14 +445,14 @@ void CPrediction::PostEntityPacketReceived( void )
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = GetPredictable( i );
+		IEngineObjectClient *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
 		if ( !ent->GetPredictable() )
 			continue;
 
-		ent->GetEngineObject()->PostEntityPacketReceived();
+		ent->PostEntityPacketReceived();
 	}
 #endif
 }
@@ -579,13 +552,13 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		int i;
 		for ( i = 0; i < c; i++ )
 		{
-			IClientEntity *ent = GetPredictable( i );
+			IEngineObjectClient *ent = GetPredictable( i );
 			if ( !ent )
 				continue;
 
 			if ( ent->GetPredictable() )
 			{
-				if ( ent->GetEngineObject()->PostNetworkDataReceived( m_nServerCommandsAcknowledged ) )
+				if ( ent->PostNetworkDataReceived( m_nServerCommandsAcknowledged ) )
 				{
 					m_bPreviousAckHadErrors = true;
 				}
@@ -607,7 +580,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 
 				if ( showlist >= 2 )
 				{
-					int size = ent->GetEntityFactory()->GetEntitySize();// GetEntitySize();
+					int size = ent->GetHandleEntity()->GetEntityFactory()->GetEntitySize();// GetEntitySize();
 					int intermediate_size = ent->GetPredDescMap()->GetIntermediateDataSize() * ( MULTIPLAYER_BACKUP + 1 );
 
 					engineClient->Con_NXPrintf( &np, "%15s %30s (%5i / %5i bytes): %15s", 
@@ -632,7 +605,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 			if ( error_check && 
 				!entityDumped &&
 				//dump &&
-				ShouldDumpEntity( ent ) )
+				ShouldDumpEntity( ent->GetClientEntity() ) )
 			{
 				entityDumped = true;
 				//dump->DumpEntity( ent, m_nServerCommandsAcknowledged );
@@ -907,13 +880,13 @@ void CPrediction::RestoreOriginalEntityState( void )
 	int p;
 	for ( p = 0; p < pc; p++ )
 	{
-		IClientEntity *ent = GetPredictable( p );
+		IEngineObjectClient *ent = GetPredictable( p );
 		if ( !ent )
 			continue;
 
 		if ( ent->GetPredictable() )
 		{
-			ent->GetEngineObject()->RestoreData( "RestoreOriginalEntityState", IEngineObjectClient::SLOT_ORIGINALDATA, PC_EVERYTHING );
+			ent->RestoreData( "RestoreOriginalEntityState", IEngineObjectClient::SLOT_ORIGINALDATA, PC_EVERYTHING );
 		}
 	}
 #endif
@@ -947,10 +920,10 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 	// Make sure simulation occurs at most once per entity per usercmd
 	for ( i = 0; i < GetPredictableCount(); i++ )
 	{
-		IClientEntity *entity = GetPredictable( i );
+		IEngineObjectClient *entity = GetPredictable( i );
 		if ( entity )
 		{
-			entity->GetEngineObject()->SetSimulationTick(-1);
+			entity->SetSimulationTick(-1);
 		}
 	}
 
@@ -961,12 +934,12 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		g_ClientGlobalVariables.curtime		= curtime;
 		g_ClientGlobalVariables.frametime	= m_bEnginePaused ? 0 : TICK_INTERVAL;
 
-		IClientEntity *entity = GetPredictable( i );
+		IEngineObjectClient *entity = GetPredictable( i );
 
 		if ( !entity )
 			continue;
 
-		bool islocal = ( localPlayer == entity ) ? true : false;
+		bool islocal = ( localPlayer == entity->GetClientEntity() ) ? true : false;
 
 		// Local player simulates first, if this assert fires then the prediction list isn't sorted 
 		//  correctly (or we started predicting C_World???)
@@ -976,7 +949,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		}
 
 		// Player can't be this so cull other entities here
-		if ( entity->GetEngineObject()->GetFlags() & FL_STATICPROP )
+		if ( entity->GetFlags() & FL_STATICPROP )
 		{
 			continue;
 		}
@@ -987,7 +960,7 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		//	continue;
 		//}
 
-		if ( entitylist->AddDataChangeEvent( entity->GetEngineObject(), DATA_UPDATE_DATATABLE_CHANGED, &entity->GetEngineObject()->DataChangeEventRef()))
+		if ( entitylist->AddDataChangeEvent( entity, DATA_UPDATE_DATATABLE_CHANGED, &entity->DataChangeEventRef()))
 		{
 			entity->OnPreDataChanged( DATA_UPDATE_DATATABLE_CHANGED );
 		}
@@ -1004,11 +977,11 @@ void CPrediction::RunSimulation( int current_command, float curtime, CUserCmd *c
 		//}
 		//else
 		//{
-			entity->PhysicsSimulate();
+			entity->GetClientEntity()->PhysicsSimulate();
 		//}
 
 		// Don't update last networked data here!!!
-		entity->GetEngineObject()->OnLatchInterpolatedVariables( LATCH_SIMULATION_VAR | LATCH_ANIMATION_VAR | INTERPOLATE_OMIT_UPDATE_LAST_NETWORKED );
+		entity->OnLatchInterpolatedVariables( LATCH_SIMULATION_VAR | LATCH_ANIMATION_VAR | INTERPOLATE_OMIT_UPDATE_LAST_NETWORKED );
 	}
 
 	// Always reset after running command
@@ -1028,14 +1001,14 @@ void CPrediction::Untouch( void )
 	int i;
 	for ( i = 0; i < numpredictables; i++ )
 	{
-		IClientEntity *entity = GetPredictable( i );
+		IEngineObjectClient *entity = GetPredictable( i );
 		if ( !entity )
 			continue;
 
-		if ( !entity->GetEngineObject()->GetCheckUntouch() )
+		if ( !entity->GetCheckUntouch() )
 			continue;
 
-		entity->GetEngineObject()->PhysicsCheckForEntityUntouch();
+		entity->PhysicsCheckForEntityUntouch();
 	}
 #endif
 }
@@ -1044,13 +1017,13 @@ void CPrediction::Untouch( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void InvalidateEFlagsRecursive( IClientEntity *pEnt, int nDirtyFlags, int nChildFlags = 0 )
+void InvalidateEFlagsRecursive( IEngineObjectClient *pEnt, int nDirtyFlags, int nChildFlags = 0 )
 {
-	pEnt->GetEngineObject()->AddEFlags( nDirtyFlags );
+	pEnt->AddEFlags( nDirtyFlags );
 	nDirtyFlags |= nChildFlags;
-	for (IEngineObjectClient *pChild = pEnt->GetEngineObject()->FirstMoveChild(); pChild; pChild = pChild->NextMovePeer())
+	for (IEngineObjectClient *pChild = pEnt->FirstMoveChild(); pChild; pChild = pChild->NextMovePeer())
 	{
-		InvalidateEFlagsRecursive(pChild->GetOuter(), nDirtyFlags);
+		InvalidateEFlagsRecursive(pChild, nDirtyFlags);
 	}
 }
 #endif
@@ -1067,7 +1040,7 @@ void CPrediction::StorePredictionResults( int predicted_frame )
 	// Now save off all of the results
 	for ( i = 0; i < numpredictables; i++ )
 	{
-		IClientEntity *entity = GetPredictable( i );
+		IEngineObjectClient *entity = GetPredictable( i );
 		if ( !entity )
 			continue;
 
@@ -1079,7 +1052,7 @@ void CPrediction::StorePredictionResults( int predicted_frame )
 		// FIXME: The lack of this call inexplicably actually creates prediction errors
 		InvalidateEFlagsRecursive( entity, EFL_DIRTY_ABSTRANSFORM | EFL_DIRTY_ABSVELOCITY | EFL_DIRTY_ABSANGVELOCITY );
   
-		entity->GetEngineObject()->SaveData( "StorePredictionResults", predicted_frame, PC_EVERYTHING );
+		entity->SaveData( "StorePredictionResults", predicted_frame, PC_EVERYTHING );
 	}
 #endif
 }
@@ -1112,14 +1085,14 @@ void CPrediction::ShiftIntermediateDataForward( int slots_to_remove, int number_
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = GetPredictable( i );
+		IEngineObjectClient *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
 		if ( !ent->GetPredictable() )
 			continue;
 
-		ent->GetEngineObject()->ShiftIntermediateDataForward( slots_to_remove, number_of_commands_run );
+		ent->ShiftIntermediateDataForward( slots_to_remove, number_of_commands_run );
 	}
 #endif
 }
@@ -1149,14 +1122,14 @@ void CPrediction::RestoreEntityToPredictedFrame( int predicted_frame )
 	int i;
 	for ( i = 0; i < c; i++ )
 	{
-		IClientEntity *ent = GetPredictable( i );
+		IEngineObjectClient *ent = GetPredictable( i );
 		if ( !ent )
 			continue;
 
 		if ( !ent->GetPredictable() )
 			continue;
 
-		ent->GetEngineObject()->RestoreData( "RestoreEntityToPredictedFrame", predicted_frame, PC_EVERYTHING );
+		ent->RestoreData( "RestoreEntityToPredictedFrame", predicted_frame, PC_EVERYTHING );
 	}
 #endif
 }
@@ -1242,10 +1215,10 @@ int CPrediction::ComputeFirstCommandToExecute( bool received_new_world_update, i
 				
 				for ( int i = 0; i < GetPredictableCount(); i++ )
 				{
-					IClientEntity *entity = GetPredictable( i );
+					IEngineObjectClient *entity = GetPredictable( i );
 					if ( entity )
 					{
-						entity->GetEngineObject()->ResetLatched();
+						entity->ResetLatched();
 					}
 				}
 

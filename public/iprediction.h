@@ -27,7 +27,7 @@ abstract_class IPredictableList
 {
 public:
 	// Get predictables by index
-	virtual IClientEntity * GetPredictable(int slot) = 0;
+	virtual IEngineObjectClient* GetPredictable(int slot) = 0;
 	// Get count of predictables
 	virtual int		GetPredictableCount(void) = 0;
 	virtual void	AddToPredictableList(CBaseHandle add) = 0;

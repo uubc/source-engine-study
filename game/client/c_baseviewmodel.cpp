@@ -155,7 +155,7 @@ bool C_BaseViewModel::Interpolate(IInterpolationContext* pContext, float current
 	C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
 
 	// Predicted viewmodels have fixed up interval
-	if ( GetPredictable() /*|| IsClientCreated()*/)
+	if (GetEngineObject()->GetPredictable() /*|| IsClientCreated()*/)
 	{
 		Assert( pPlayer );
 		float curtime = pPlayer ? pPlayer->GetFinalPredictedTime() : gpGlobals->curtime;
@@ -432,7 +432,7 @@ void C_BaseViewModel::UpdateAnimationParity( void )
 	// If we're predicting, then we don't use animation parity because we change the animations on the clientside
 	// while predicting. When not predicting, only the server changes the animations, so a parity mismatch
 	// tells us if we need to reset the animation.
-	if ( m_nOldAnimationParity != m_nAnimationParity && !GetPredictable() )
+	if ( m_nOldAnimationParity != m_nAnimationParity && !GetEngineObject()->GetPredictable() )
 	{
 		float curtime = (pPlayer && GetEngineObject()->IsIntermediateDataAllocated()) ? pPlayer->GetFinalPredictedTime() : gpGlobals->curtime;
 		// FIXME: this is bad

@@ -252,12 +252,11 @@ ShadowType_t C_BaseAnimating::ShadowCastType()
 // Purpose: convert axis rotations to a quaternion
 //-----------------------------------------------------------------------------
 
-void C_BaseAnimating::SetPredictable( bool state )
-{
-	BaseClass::SetPredictable( state );
-
-	GetEngineObject()->UpdateRelevantInterpolatedVars();
-}
+//void C_BaseAnimating::SetPredictable( bool state )
+//{
+//	BaseClass::SetPredictable( state );
+//
+//}
 
 
 //void C_BaseAnimating::OnModelLoadComplete( const model_t* pModel )

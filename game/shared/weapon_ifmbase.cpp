@@ -75,11 +75,6 @@ bool CWeaponIFMBase::IsPredicted() const
 void CWeaponIFMBase::OnDataChanged( DataUpdateType_t type )
 {
 	BaseClass::OnDataChanged( type );
-
-	if ( GetPredictable() && !ShouldPredict() )
-	{
-		ShutdownPredictable();
-	}
 }
 
 bool CWeaponIFMBase::ShouldPredict()

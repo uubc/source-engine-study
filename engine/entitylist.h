@@ -380,6 +380,11 @@ public:
 
 	}
 
+	virtual void UpdateOnRemove(void) 
+	{
+		
+	}
+
 	virtual ~CEngineObjectInternal()
 	{
 		g_pVEngineServer->CleanUpEntityClusterList(&m_PVSInfo);
@@ -8231,6 +8236,7 @@ void CGlobalEntityList<T>::OnRemoveEntity(T* pEnt, CBaseHandle handle)
 	m_iNumEnts--;
 
 	int entnum = handle.GetEntryIndex();
+	m_EngineObjectArray[entnum]->UpdateOnRemove();
 	m_EngineObjectArray[entnum]->PhysicsRemoveTouchedList();
 	m_EngineObjectArray[entnum]->PhysicsRemoveGroundList();
 	m_EngineObjectArray[entnum]->DestroyAllDataObjects();

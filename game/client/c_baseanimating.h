@@ -114,7 +114,7 @@ public:
 	virtual IStudioHdr *OnNewModel( void );
 
 	
-	virtual void SetPredictable( bool state );
+	//virtual void SetPredictable( bool state );
 
 	// C_BaseClientShader **p_ClientShaders;
 

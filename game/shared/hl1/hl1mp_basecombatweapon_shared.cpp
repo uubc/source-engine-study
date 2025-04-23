@@ -98,9 +98,6 @@ void CBaseHL1MPCombatWeapon::EjectShell( CBaseEntity *pPlayer, int iType )
 void CBaseHL1MPCombatWeapon::OnDataChanged( DataUpdateType_t type )
 {
 	BaseClass::OnDataChanged( type );
-
-	if ( GetPredictable() && !ShouldPredict() )
-		ShutdownPredictable();
 }
 
 

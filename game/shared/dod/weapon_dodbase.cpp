@@ -593,9 +593,6 @@ bool CWeaponDODBase::Deploy()
 		}
 
 		BaseClass::OnDataChanged( type );
-
-		if ( GetPredictable() && !ShouldPredict() )
-			ShutdownPredictable();
 	}
 
 	int CWeaponDODBase::GetWorldModelIndex( void )

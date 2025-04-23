@@ -425,6 +425,10 @@ public:
 	virtual void DestroyIntermediateData(void) = 0;
 	virtual void ShiftIntermediateDataForward(int slots_to_remove, int previous_last_slot) = 0;
 
+	virtual void CheckInitPredictable(const char* context) = 0;
+	virtual void InitPredictable(void) = 0;
+	virtual void ShutdownPredictable(void) = 0;
+	virtual bool GetPredictable(void) const = 0;
 	virtual void* GetPredictedFrame(int framenumber) = 0;
 	virtual void* GetOuterPredictedFrame(int framenumber) = 0;
 	virtual void* GetOriginalNetworkDataObject(void) = 0;
@@ -1138,10 +1142,7 @@ public:
 	virtual void OnAddEffects(int nEffects) = 0;
 	virtual void OnRemoveEffects(int nEffects) = 0;
 	virtual void MoveToAimEnt() = 0;
-	virtual void CheckInitPredictable(const char* context) = 0;
-	virtual void InitPredictable(void) = 0;
-	virtual void ShutdownPredictable(void) = 0;
-	virtual bool GetPredictable(void) const = 0;
+	virtual bool ShouldPredict(void) = 0;
 	virtual bool ShouldInterpolate() = 0;
 	virtual float GetInterpolationAmount(int flags) = 0;
 	virtual bool Interpolate(IInterpolationContext* pContext, float currentTime) = 0;

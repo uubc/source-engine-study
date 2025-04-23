@@ -160,9 +160,6 @@ CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
 void CWeaponPortalBase::OnDataChanged( DataUpdateType_t type )
 {
 	BaseClass::OnDataChanged( type );
-
-	if ( GetPredictable() && !ShouldPredict() )
-		ShutdownPredictable();
 }
 
 int CWeaponPortalBase::DrawModel( int flags )

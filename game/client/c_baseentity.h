@@ -615,18 +615,6 @@ public:
 
 	virtual void					SUB_Remove(void);
 
-	// Prediction stuff
-	/////////////////
-	void							CheckInitPredictable(const char* context);
-
-
-
-	void							InitPredictable(void);
-	void							ShutdownPredictable(void);
-
-	virtual void					SetPredictable(bool state);
-	bool							GetPredictable(void) const;
-
 	//bool							GetPredictionEligible( void ) const;
 	//void							SetPredictionEligible( bool canpredict );
 	virtual float							GetFinalPredictedTime() const { return 0.0f; }
@@ -1082,8 +1070,7 @@ private:
 	// For client/server entities, true if the entity goes outside the PVS.
 	// Unused for client only entities.
 	bool							m_bDormant;
-	// Prediction system
-	bool							m_bPredictable;
+
 
 
 

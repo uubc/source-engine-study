@@ -2428,7 +2428,7 @@ void C_EngineObjectInternal::PostDataUpdate(DataUpdateType_t updateType)
 	// Detect simulation changes 
 	bool simulationChanged = originChanged || anglesChanged || simTimeChanged;
 
-	bool bPredictable = m_pOuter->GetPredictable();
+	bool bPredictable = GetPredictable();
 
 	// For non-predicted and non-client only ents, we need to latch network values into the interpolation histories
 	if (!bPredictable /*&& !IsClientCreated()*/)
@@ -2472,7 +2472,7 @@ void C_EngineObjectInternal::PostDataUpdate(DataUpdateType_t updateType)
 		m_nCreationTick = g_ClientGlobalVariables.tickcount;
 	}
 
-	m_pOuter->CheckInitPredictable("PostDataUpdate");
+	CheckInitPredictable("PostDataUpdate");
 
 	if (IsUsingClientSideAnimation())
 	{
@@ -2669,9 +2669,11 @@ void C_EngineObjectInternal::OnDataChanged(DataUpdateType_t type)
 	//	m_pRagdollInfo = NULL;
 	//}
 
-	// See if it needs to allocate prediction stuff
-	m_pOuter->CheckInitPredictable("OnDataChanged");
+	CheckInitPredictable("OnDataChanged");
 	m_pOuter->OnDataChanged(type);
+	// See if it needs to allocate prediction stuff
+	if (GetPredictable() && !m_pOuter->ShouldPredict())
+		ShutdownPredictable();
 }
 
 const Vector& C_EngineObjectInternal::GetOldOrigin()
@@ -2686,7 +2688,7 @@ int C_EngineObjectInternal::GetCreationTick() const
 
 float C_EngineObjectInternal::GetLastChangeTime(int flags)
 {
-	if (m_pOuter->GetPredictable() /*|| IsClientCreated()*/)
+	if (GetPredictable() /*|| IsClientCreated()*/)
 	{
 		return g_ClientGlobalVariables.curtime;
 	}
@@ -3161,7 +3163,7 @@ void C_EngineObjectInternal::OnStoreLastNetworkedValue()
 
 	// Kind of a hack, but we want to latch the actual networked value for origin/angles, not what's sitting in m_vecOrigin in the
 	//  ragdoll case where we don't copy it over in MoveToLastNetworkOrigin
-	if (m_nRenderFX == kRenderFxRagdoll && m_pOuter->GetPredictable())
+	if (m_nRenderFX == kRenderFxRagdoll && GetPredictable())
 	{
 		bRestore = true;
 		savePos = GetLocalOrigin();
@@ -3246,7 +3248,7 @@ int C_EngineObjectInternal::BaseInterpolatePart1(IInterpolationContext* pContext
 	if (GetModelPtr()&&!IsUsingClientSideAnimation())
 		m_iv_flCycle.SetLooping(IsSequenceLooping(GetSequence()));
 
-	if (m_pOuter->GetPredictable() /*|| IsClientCreated()*/)
+	if (GetPredictable() /*|| IsClientCreated()*/)
 	{
 		IClientEntity* localplayer = g_EntityList.GetLocalPlayer();
 		if (localplayer && currentTime == g_ClientGlobalVariables.curtime)
@@ -3728,7 +3730,7 @@ void C_EngineObjectInternal::PreEntityPacketReceived(int commands_acknowledged)
 	// Don't need to copy intermediate data if server did ack any new commands
 	bool copyintermediate = (commands_acknowledged > 0) ? true : false;
 
-	Assert(m_pOuter->GetPredictable());
+	Assert(GetPredictable());
 	ConVarRef cl_predict("cl_predict");
 	Assert(cl_predict.GetInt());
 
@@ -3760,7 +3762,7 @@ void C_EngineObjectInternal::PreEntityPacketReceived(int commands_acknowledged)
 void C_EngineObjectInternal::PostEntityPacketReceived(void)
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	Assert(m_pOuter->GetPredictable());
+	Assert(GetPredictable());
 	ConVarRef cl_predict("cl_predict");
 	Assert(cl_predict.GetInt());
 
@@ -3781,7 +3783,7 @@ bool C_EngineObjectInternal::PostNetworkDataReceived(int commands_acknowledged)
 {
 	bool haderrors = false;
 #if !defined( NO_ENTITY_PREDICTION )
-	Assert(m_pOuter->GetPredictable());
+	Assert(GetPredictable());
 
 	bool errorcheck = (commands_acknowledged > 0) ? true : false;
 
@@ -3963,6 +3965,118 @@ void C_EngineObjectInternal::ShiftIntermediateDataForward(int slots_to_remove, i
 		m_pOuterIntermediateData[slot] = outerSaved[i];
 	}
 #endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *context - 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::CheckInitPredictable(const char* context)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	// Prediction is disabled
+	ConVarRef cl_predict("cl_predict");
+	if (!cl_predict.GetInt())
+		return;
+
+	IClientEntity* player = g_EntityList.GetLocalPlayer();
+
+	if (!player)
+		return;
+
+	//if ( !GetPredictionEligible() )
+	//{
+	//	if ( m_PredictableID.IsActive() &&
+	//		( player->index - 1 ) == m_PredictableID.GetPlayer() )
+	//	{
+	//		// If it comes through with an ID, it should be eligible
+	//		SetPredictionEligible( true );
+	//	}
+	//	else
+	//	{
+	//		return;
+	//	}
+	//}
+
+	//if ( IsClientCreated() )
+	//	return;
+
+	if (!m_pOuter->ShouldPredict())
+		return;
+
+	if (IsIntermediateDataAllocated())
+		return;
+
+	// Msg( "Predicting init %s at %s\n", GetClassname(), context );
+
+	InitPredictable();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::ShutdownPredictable(void)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	Assert(GetPredictable());
+
+	g_pClientSidePrediction->RemoveFromPredictablesList(GetRefEHandle());
+	DestroyIntermediateData();
+	SetPredictable(false);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Turn entity into something the predicts locally
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::InitPredictable(void)
+{
+#if !defined( NO_ENTITY_PREDICTION )
+	Assert(!GetPredictable());
+
+	// Mark as predictable
+	SetPredictable(true);
+	// Allocate buffers into which we copy data
+	AllocateIntermediateData();
+	// Add to list of predictables
+	g_pClientSidePrediction->AddToPredictableList(GetRefEHandle());
+	// Copy everything from "this" into the original_state_data
+	//  object.  Don't care about client local stuff, so pull from slot 0 which
+
+	//  should be empty anyway...
+	PostNetworkDataReceived(0);
+
+	// Copy original data into all prediction slots, so we don't get an error saying we "mispredicted" any
+	//  values which are still at their initial values
+	for (int i = 0; i < MULTIPLAYER_BACKUP; i++)
+	{
+		SaveData("InitPredictable", i, PC_EVERYTHING);
+	}
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : state - 
+//-----------------------------------------------------------------------------
+void C_EngineObjectInternal::SetPredictable(bool state)
+{
+	m_bPredictable = state;
+
+	// update interpolation times
+	Interp_UpdateInterpolationAmounts();
+	UpdateRelevantInterpolatedVars();
+
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Output : Returns true on success, false on failure.
+//-----------------------------------------------------------------------------
+bool C_EngineObjectInternal::GetPredictable(void) const
+{
+	return m_bPredictable;
 }
 
 //-----------------------------------------------------------------------------
@@ -7560,7 +7674,7 @@ void C_EngineObjectInternal::UpdateRelevantInterpolatedVars()
 {
 	MDLCACHE_CRITICAL_SECTION();
 	// Remove any interpolated vars that need to be removed.
-	if (!m_pOuter->GetPredictable() /*&& !IsClientCreated()*/ && GetModelPtr() && GetModelPtr()->SequencesAvailable())
+	if (!GetPredictable() /*&& !IsClientCreated()*/ && GetModelPtr() && GetModelPtr()->SequencesAvailable())
 	{
 		AddBaseAnimatingInterpolatedVars();
 	}

@@ -208,7 +208,7 @@ void CPDumpPanel::DumpEntity( IClientEntity *ent, int commands_acknowledged )
 	bool data_type_original		= TD_OFFSET_PACKED;
 	bool data_type_predicted	= TD_OFFSET_PACKED;
 
-	if ( ent->GetPredictable() )
+	if ( ent->GetEngineObject()->GetPredictable() )
 	{
 		original_state_data		= ent->GetEngineObject()->GetOuterOriginalNetworkDataObject();
 		predicted_state_data	= ent->GetEngineObject()->GetOuterPredictedFrame( commands_acknowledged - 1 );

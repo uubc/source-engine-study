@@ -582,7 +582,7 @@ bool C_HL1MP_Player::ShouldPredict( void )
 		// disable prediction for 3 seconds after touching a moving entity
 		if ( ( gpGlobals->curtime - m_fLastPredFreeze ) < 3 )
 		{
-			if ( GetPredictable() )
+			if (GetEngineObject()->GetPredictable() )
 			{
 				QuickShutdownPredictable();
 			}
@@ -590,7 +590,7 @@ bool C_HL1MP_Player::ShouldPredict( void )
 			return false;
 		}
 
-		if ( !GetPredictable() && IsIntermediateDataAllocated() )
+		if ( !GetEngineObject()->GetPredictable() && IsIntermediateDataAllocated() )
 		{
 			QuickInitPredictable();
 		}

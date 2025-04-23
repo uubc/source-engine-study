@@ -2729,7 +2729,7 @@ float C_BasePlayer::GetFOV( void )
 			float deltaTime = (float)( gpGlobals->curtime - m_flFOVTime ) / m_Local.m_flFOVRate;
 
 #if !defined( NO_ENTITY_PREDICTION )
-			if ( GetPredictable() )
+			if (GetEngineObject()->GetPredictable() )
 			{
 				// m_flFOVTime was set to a predicted time in the future, because the FOV change was predicted.
 				deltaTime = (float)( GetFinalPredictedTime() - m_flFOVTime );

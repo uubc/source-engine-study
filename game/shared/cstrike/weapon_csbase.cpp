@@ -1304,9 +1304,6 @@ void CWeaponCSBase::DefaultTouch(IServerEntity *pOther)
 	void CWeaponCSBase::OnDataChanged( DataUpdateType_t type )
 	{
 		BaseClass::OnDataChanged( type );
-
-		if ( GetPredictable() && !ShouldPredict() )
-			ShutdownPredictable();
 	}
 
 
