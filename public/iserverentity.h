@@ -520,6 +520,10 @@ public:
 	virtual void MarkForDeletion() = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
 	virtual bool IsMarkedForDeletion() const = 0;
+	virtual void SetBlocksLOS(bool bBlocksLOS) = 0;
+	virtual void SetAIWalkable(bool bBlocksLOS) = 0;
+	virtual bool IsAIWalkable(void) = 0;
+	virtual bool BlocksLOS(void) = 0;
 	virtual int GetSpawnFlags(void) const = 0;
 	virtual void SetSpawnFlags(int nFlags) = 0;
 	virtual void AddSpawnFlags(int nFlags) = 0;
@@ -1202,7 +1206,6 @@ public:
 	virtual const char* GetNewLandmarkName() = 0;
 	virtual bool IsNodeEnt() = 0;
 	virtual bool IsAlive(void) = 0;
-	virtual bool IsAIWalkable(void) = 0;
 	virtual bool IsStandable() const = 0;
 	virtual bool CanStandOn(IServerEntity* pSurface) const = 0;
 	virtual bool IsMoving(void) = 0;
@@ -1215,8 +1218,6 @@ public:
 	virtual bool HasNPCsOnIt() = 0;
 	virtual int GetTextureFrameIndex(void) = 0;
 	virtual void SetTextureFrameIndex(int iIndex) = 0;
-	virtual void SetBlocksLOS(bool bBlocksLOS) = 0;
-	virtual bool BlocksLOS(void) = 0;
 	virtual int ShouldTransmit(const CCheckTransmitInfo* pInfo) = 0;
 	virtual int GetTransmitState(void) = 0;
 	virtual int SetTransmitState(int nFlag) = 0;

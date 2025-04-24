@@ -140,7 +140,7 @@ void CPropAPC::Precache( void )
 void CPropAPC::Spawn( void )
 {
 	BaseClass::Spawn();
-	SetBlocksLOS( true );
+	GetEngineObject()->SetBlocksLOS( true );
 	m_iHealth = m_iMaxHealth = sk_apc_health.GetFloat();
 	GetEngineObject()->SetCycle( 0 );
 	m_iMachineGunBurstLeft = MACHINE_GUN_BURST_SIZE;

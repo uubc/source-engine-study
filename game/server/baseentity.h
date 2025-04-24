@@ -652,14 +652,7 @@ public:
 	int			 GetTextureFrameIndex( void );
 	void		 SetTextureFrameIndex( int iIndex );
 
-	// Entities block Line-Of-Sight for NPCs by default.
-	// Set this to false if you want to change this behavior.
-	void		 SetBlocksLOS( bool bBlocksLOS );
-	bool		 BlocksLOS( void );
 
-
-	void		 SetAIWalkable( bool bBlocksLOS );
-	bool		 IsAIWalkable( void );
 private:
 	//int SaveDataDescBlock( ISave &save, datamap_t *dmap );
 	//int RestoreDataDescBlock( IRestore &restore, datamap_t *dmap );
@@ -1459,11 +1452,7 @@ private:
 	void ShadowCastDistThink( );
 
 public:
-	// Precache model sounds + particles
-	static void PrecacheModelComponents( int nModelIndex );
-	static void PrecacheSoundHelper( const char *pName );
-
-
+	
 	virtual void SetLightingOriginRelative(CBaseEntity* pLightingOriginRelative);
 	void SetLightingOriginRelative(string_t strLightingOriginRelative);
 	CBaseEntity* GetLightingOriginRelative();

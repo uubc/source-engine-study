@@ -306,7 +306,7 @@ public:
 //-----------------------------------------------------------------------------
 	virtual bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
 	{
-		if (!pHandleEntity->BlocksLOS())
+		if (!pHandleEntity->GetEngineObject()->BlocksLOS())
 			return false;
 
 		return CTraceFilterSimple::ShouldHitEntity(pHandleEntity, contentsMask);

@@ -331,7 +331,7 @@ bool C_PhysPropClientside::Initialize()
 
 	GetEngineObject()->UpdatePartition();
 
-	SetBlocksLOS( false ); // this should be a small object
+	GetEngineObject()->SetBlocksLOS( false ); // this should be a small object
 
 	// Set up shadows; do it here so that objects can change shadowcasting state
 	GetEngineObject()->CreateShadow();

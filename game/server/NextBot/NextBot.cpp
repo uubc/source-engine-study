@@ -203,7 +203,7 @@ bool VisionTraceFilterFunction( IHandleEntity *pServerEntity, int contentsMask )
 {
 	// Honor BlockLOS also to allow seeing through partially-broken doors
 	CBaseEntity *entity = EntityFromEntityHandle( pServerEntity );
-	return ( entity->MyCombatCharacterPointer() == NULL && entity->BlocksLOS() );
+	return ( entity->MyCombatCharacterPointer() == NULL && entity->GetEngineObject()->BlocksLOS() );
 }
 
 

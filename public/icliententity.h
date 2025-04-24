@@ -474,6 +474,10 @@ public:
 	virtual bool IsDormant(void) = 0;
 	virtual void SetDormant(bool bDormant) = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
+	virtual void SetBlocksLOS(bool bBlocksLOS) = 0;
+	virtual bool BlocksLOS(void) = 0;
+	virtual void SetAIWalkable(bool bBlocksLOS) = 0;
+	virtual bool IsAIWalkable(void) = 0;
 	virtual int GetSpawnFlags(void) const = 0;
 	virtual void SetCheckUntouch(bool check) = 0;
 	virtual bool GetCheckUntouch() const = 0;
@@ -1102,8 +1106,8 @@ public:
 	virtual IServerEntity* AsServerEntity() { return NULL; }
 	virtual bool IsClientEntity() { return true; }
 	virtual IClientEntity* AsClientEntity() { return this; }
-	virtual bool IsNetworkable(void) = 0;
 	virtual int entindex() const { return IClientUnknown::entindex(); }
+	virtual bool IsNetworkable(void) { return entindex() >= 0 && entindex() < MAX_EDICTS; }
 	virtual char const* GetClassname(void) const = 0;
 	virtual char const* GetDebugName(void) const = 0;
 	virtual IEngineObjectClient* GetEngineObject() = 0;
@@ -1157,8 +1161,6 @@ public:
 	virtual int CalcOverrideModelIndex() = 0;
 	virtual void ValidateModelIndex(void) = 0;
 	virtual IStudioHdr* OnNewModel() = 0;
-	virtual void SetBlocksLOS(bool bBlocksLOS) = 0;
-	virtual bool BlocksLOS(void) = 0;
 	virtual bool GetAttachmentVelocity(int number, Vector& originVel, Quaternion& angleVel) = 0;
 	virtual void OnAddEffects(int nEffects) = 0;
 	virtual void OnRemoveEffects(int nEffects) = 0;

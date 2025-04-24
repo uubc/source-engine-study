@@ -3114,8 +3114,8 @@ void CGrabControllerInternal::AttachEntity(IServerEntity* pPlayer, IServerEntity
 	}
 
 	// Carried entities can never block LOS
-	m_bCarriedEntityBlocksLOS = pEntity->BlocksLOS();
-	pEntity->SetBlocksLOS(false);
+	m_bCarriedEntityBlocksLOS = pEntity->GetEngineObject()->BlocksLOS();
+	pEntity->GetEngineObject()->SetBlocksLOS(false);
 	m_controller = gEntList.PhysGetEnv()->CreateMotionController(this);
 	m_controller->AttachObject(pPhys, true);
 	// Don't do this, it's causing trouble with constraint solvers.
@@ -3210,7 +3210,7 @@ void CGrabControllerInternal::DetachEntity(bool bClearVelocity)
 	if (pEntity)
 	{
 		// Restore the LS blocking state
-		pEntity->SetBlocksLOS(m_bCarriedEntityBlocksLOS);
+		pEntity->GetEngineObject()->SetBlocksLOS(m_bCarriedEntityBlocksLOS);
 		IPhysicsObject* pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 		int count = pEntity->GetEngineObject()->VPhysicsGetObjectList(pList, ARRAYSIZE(pList));
 		for (int i = 0; i < count; i++)
@@ -5493,6 +5493,40 @@ void CEngineObjectInternal::SetCheckUntouch(bool check)
 	{
 		RemoveEFlags(EFL_CHECK_UNTOUCH);
 	}
+}
+
+void CEngineObjectInternal::SetBlocksLOS(bool bBlocksLOS)
+{
+	if (bBlocksLOS)
+	{
+		RemoveEFlags(EFL_DONTBLOCKLOS);
+	}
+	else
+	{
+		AddEFlags(EFL_DONTBLOCKLOS);
+	}
+}
+
+bool CEngineObjectInternal::BlocksLOS(void)
+{
+	return !IsEFlagSet(EFL_DONTBLOCKLOS);
+}
+
+void CEngineObjectInternal::SetAIWalkable(bool bBlocksLOS)
+{
+	if (bBlocksLOS)
+	{
+		RemoveEFlags(EFL_DONTWALKON);
+	}
+	else
+	{
+		AddEFlags(EFL_DONTWALKON);
+	}
+}
+
+bool CEngineObjectInternal::IsAIWalkable(void)
+{
+	return !IsEFlagSet(EFL_DONTWALKON);
 }
 
 bool CEngineObjectInternal::HasDataObjectType(int type) const

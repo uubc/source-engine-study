@@ -458,7 +458,7 @@ void CPropJeepEpisodic::Spawn( void )
 {
 	BaseClass::Spawn();
 
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 
 	CBasePlayer	*pPlayer = ToBasePlayer(EntityList()->GetLocalPlayer());
 	if ( pPlayer != NULL )

@@ -47,6 +47,8 @@
 //#include "physics.h"
 #include "igameevents.h"
 #include "EventLog.h"
+#include "eventlist.h"
+#include "scriptevent.h"
 #include "datacache/idatacache.h"
 #include "engine/ivdebugoverlay.h"
 #include "shareddefs.h"
@@ -64,6 +66,8 @@
 #include "util.h"
 #include "tier0/icommandline.h"
 #include "datacache/imdlcache.h"
+#include "UtlCachedFileData.h"
+#include "ModelSoundsCache.h"
 //#include "engine/iserverplugin.h"
 #ifdef _WIN32
 #include "ienginevgui.h"
@@ -190,9 +194,6 @@ IServerReplayContext *g_pReplayServerContext = NULL;
 
 IGameSystem *SoundEmitterSystem();
 
-bool ModelSoundsCacheInit();
-void ModelSoundsCacheShutdown();
-
 void SceneManager_ClientActive( CBasePlayer *player );
 
 class IMaterialSystem;
@@ -301,6 +302,120 @@ void EndRestoreEntities()
 	g_ServerGameDLL.ServerActivate(NULL, 0, 0);
 	engine->SetAllowPrecache(false);//CBaseEntity::
 }
+
+IStudioHdr* ModelSoundsCache_LoadModel(const char* filename)
+{
+	// Load the file
+	int idx = engine->PrecacheModel(filename, true, false);
+	if (idx != -1)
+	{
+		model_t* mdl = (model_t*)modelinfo->GetModel(idx);
+		if (mdl)
+		{
+			IStudioHdr* studioHdr = modelinfo->GetStudiomodel(mdl);
+			if (studioHdr->IsValid())
+			{
+				return studioHdr;
+			}
+		}
+	}
+	return NULL;
+}
+
+void ModelSoundsCache_FinishModel(IStudioHdr* hdr)
+{
+	Assert(hdr);
+}
+
+void ModelSoundsCache_PrecacheScriptSound(const char* soundname)
+{
+	g_pSoundEmitterSystem->PrecacheScriptSound(soundname);
+}
+
+static CUtlCachedFileData< CModelSoundsCache > g_ModelSoundsCache("modelsounds.cache", MODELSOUNDSCACHE_VERSION, 0, UTL_CACHED_FILE_USE_FILESIZE, false);
+
+void ClearModelSoundsCache()
+{
+	if (IsX360())
+	{
+		return;
+	}
+
+	g_ModelSoundsCache.Reload();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Output : Returns true on success, false on failure.
+//-----------------------------------------------------------------------------
+bool ModelSoundsCacheInit()
+{
+	if (IsX360())
+	{
+		return true;
+	}
+
+	return g_ModelSoundsCache.Init();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void ModelSoundsCacheShutdown()
+{
+	if (IsX360())
+	{
+		return;
+	}
+
+	g_ModelSoundsCache.Shutdown();
+}
+
+static CUtlSymbolTable g_ModelSoundsSymbolHelper(0, 32, true);
+class CModelSoundsCacheSaver : public CAutoGameSystem
+{
+public:
+	CModelSoundsCacheSaver(const char* name) : CAutoGameSystem(name)
+	{
+	}
+	virtual void LevelInitPostEntity()
+	{
+		if (IsX360())
+		{
+			return;
+		}
+
+		if (g_ModelSoundsCache.IsDirty())
+		{
+			g_ModelSoundsCache.Save();
+		}
+	}
+	virtual void LevelShutdownPostEntity()
+	{
+		if (IsX360())
+		{
+			// Unforunate that this table must persist through duration of level.
+			// It is the common case that PrecacheModel() still gets called (and needs this table),
+			// after LevelInitPostEntity, as PrecacheModel() redundantly precaches.
+			g_ModelSoundsSymbolHelper.RemoveAll();
+			return;
+		}
+
+		if (g_ModelSoundsCache.IsDirty())
+		{
+			g_ModelSoundsCache.Save();
+		}
+	}
+};
+
+static CModelSoundsCacheSaver g_ModelSoundsCacheSaver("CModelSoundsCacheSaver");
+
+// HACK:  This must match the #define in cl_animevent.h in the client .dll code!!!
+#define CL_EVENT_SOUND				5004
+#define CL_EVENT_FOOTSTEP_LEFT		6004
+#define CL_EVENT_FOOTSTEP_RIGHT		6005
+#define CL_EVENT_MFOOTSTEP_LEFT		6006
+#define CL_EVENT_MFOOTSTEP_RIGHT	6007
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -2412,10 +2527,196 @@ bool CServerGameDLL::OnEmitSound(int entindex, const char* soundname, soundlevel
 	return CEnvMicrophone::OnSoundPlayed(entindex, soundname, soundlevel, flVolume, iFlags, iPitch, pOrigin, soundtime, soundorigins);
 }
 
-void CServerGameDLL::OnModelPrecached(int nModelIndex) {
+//-----------------------------------------------------------------------------
+// Precache model sound. Requires a local symbol table to prevent
+// a very expensive call to PrecacheScriptSound().
+//-----------------------------------------------------------------------------
+void PrecacheSoundHelper(const char* pName)
+{
+	if (!IsX360())
+	{
+		// 360 only
+		Assert(0);
+		return;
+	}
+
+	if (!pName || !pName[0])
+	{
+		return;
+	}
+
+	if (UTL_INVAL_SYMBOL == g_ModelSoundsSymbolHelper.Find(pName))
+	{
+		g_ModelSoundsSymbolHelper.AddString(pName);
+
+		// very expensive, only call when required
+		g_pSoundEmitterSystem->PrecacheScriptSound(pName);
+	}
+}
+
+void CServerGameDLL::OnModelPrecached(int nModelIndex) 
+{
 	if (nModelIndex != -1)
 	{
-		CBaseEntity::PrecacheModelComponents(nModelIndex);
+		model_t* pModel = (model_t*)modelinfo->GetModel(nModelIndex);
+		if (!pModel || modelinfo->GetModelType(pModel) != mod_studio)
+		{
+			return;
+		}
+
+		// sounds
+		if (IsPC())
+		{
+			const char* name = modelinfo->GetModelName(pModel);
+			if (!g_ModelSoundsCache.EntryExists(name))
+			{
+				char extension[8];
+				Q_ExtractFileExtension(name, extension, sizeof(extension));
+
+				if (Q_stristr(extension, "mdl"))
+				{
+					DevMsg(2, "Late precache of %s, need to rebuild modelsounds.cache\n", name);
+				}
+				else
+				{
+					if (!extension[0])
+					{
+						Warning("Precache of %s ambigious (no extension specified)\n", name);
+					}
+					else
+					{
+						Warning("Late precache of %s (file missing?)\n", name);
+					}
+					return;
+				}
+			}
+
+			CModelSoundsCache* entry = g_ModelSoundsCache.Get(name);
+			Assert(entry);
+			if (entry)
+			{
+				entry->PrecacheSoundList();
+			}
+		}
+
+		// particles
+		{
+			// Check keyvalues for auto-emitting particles
+			KeyValues* pModelKeyValues = new KeyValues("");
+			KeyValues::AutoDelete autodelete_pModelKeyValues(pModelKeyValues);
+			if (pModelKeyValues->LoadFromBuffer(modelinfo->GetModelName(pModel), modelinfo->GetModelKeyValueText(pModel)))
+			{
+				KeyValues* pParticleEffects = pModelKeyValues->FindKey("Particles");
+				if (pParticleEffects)
+				{
+					// Start grabbing the sounds and slotting them in
+					for (KeyValues* pSingleEffect = pParticleEffects->GetFirstSubKey(); pSingleEffect; pSingleEffect = pSingleEffect->GetNextKey())
+					{
+						const char* pParticleEffectName = pSingleEffect->GetString("name", "");
+						PrecacheParticleSystem(pParticleEffectName);
+					}
+				}
+			}
+		}
+
+		// model anim event owned components
+		{
+			// Check animevents for particle events
+			IStudioHdr* studioHdr = modelinfo->GetStudiomodel(pModel);
+			if (studioHdr->IsValid())
+			{
+				// force animation event resolution!!!
+				studioHdr->VerifySequenceIndex();
+
+				int nSeqCount = studioHdr->GetNumSeq();
+				for (int i = 0; i < nSeqCount; ++i)
+				{
+					mstudioseqdesc_t& seq = studioHdr->pSeqdesc(i);
+					int nEventCount = seq.numevents;
+					for (int j = 0; j < nEventCount; ++j)
+					{
+						mstudioevent_t* pEvent = seq.pEvent(j);
+
+						if (!(pEvent->type & AE_TYPE_NEWEVENTSYSTEM) || (pEvent->type & AE_TYPE_CLIENT))
+						{
+							if (pEvent->event == AE_CL_CREATE_PARTICLE_EFFECT)
+							{
+								char token[256];
+								const char* pOptions = pEvent->pszOptions();
+								nexttoken(token, pOptions, ' ');
+								if (token)
+								{
+									PrecacheParticleSystem(token);
+								}
+								continue;
+							}
+						}
+
+						// 360 precaches the model sounds now at init time, the cost is now ~250 msecs worst case.
+						// The disk based solution was not needed. Now at runtime partly due to already crawling the sequences
+						// for the particles and the expensive part was redundant PrecacheScriptSound(), which is now prevented
+						// by a local symbol table.
+						if (IsX360())
+						{
+							switch (pEvent->event)
+							{
+							default:
+							{
+								if ((pEvent->type & AE_TYPE_NEWEVENTSYSTEM) && (pEvent->event == AE_SV_PLAYSOUND))
+								{
+									PrecacheSoundHelper(pEvent->pszOptions());
+								}
+							}
+							break;
+							case CL_EVENT_FOOTSTEP_LEFT:
+							case CL_EVENT_FOOTSTEP_RIGHT:
+							{
+								char soundname[256];
+								char const* options = pEvent->pszOptions();
+								if (!options || !options[0])
+								{
+									options = "NPC_CombineS";
+								}
+
+								Q_snprintf(soundname, sizeof(soundname), "%s.RunFootstepLeft", options);
+								PrecacheSoundHelper(soundname);
+								Q_snprintf(soundname, sizeof(soundname), "%s.RunFootstepRight", options);
+								PrecacheSoundHelper(soundname);
+								Q_snprintf(soundname, sizeof(soundname), "%s.FootstepLeft", options);
+								PrecacheSoundHelper(soundname);
+								Q_snprintf(soundname, sizeof(soundname), "%s.FootstepRight", options);
+								PrecacheSoundHelper(soundname);
+							}
+							break;
+							case AE_CL_PLAYSOUND:
+							{
+								if (!(pEvent->type & AE_TYPE_CLIENT))
+									break;
+
+								if (pEvent->pszOptions()[0])
+								{
+									PrecacheSoundHelper(pEvent->pszOptions());
+								}
+								else
+								{
+									Warning("-- Error --:  empty soundname, .qc error on AE_CL_PLAYSOUND in model %s, sequence %s, animevent # %i\n",
+										studioHdr->pszName(), seq.pszLabel(), j + 1);
+								}
+							}
+							break;
+							case CL_EVENT_SOUND:
+							case SCRIPT_EVENT_SOUND:
+							case SCRIPT_EVENT_SOUND_VOICE:
+							{
+								PrecacheSoundHelper(pEvent->pszOptions());
+							}
+							break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

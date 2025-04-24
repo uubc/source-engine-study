@@ -296,7 +296,7 @@ void CNPC_FloorTurret::Spawn( void )
 
 	BaseClass::Spawn();
 
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 
 	m_HackedGunPos	= Vector( 0, 0, 12.75 );
 	SetViewOffset( EyeOffset( ACT_IDLE ) );

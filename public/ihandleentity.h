@@ -285,6 +285,10 @@ public:
 	virtual SolidType_t GetSolid() const = 0;
 	virtual bool IsSolidFlagSet(int flagMask) const = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
+	virtual void SetBlocksLOS(bool bBlocksLOS) = 0;
+	virtual bool BlocksLOS(void) = 0;
+	virtual void SetAIWalkable(bool bBlocksLOS) = 0;
+	virtual bool IsAIWalkable(void) = 0;
 	virtual bool ComputeHitboxSurroundingBox(Vector* pVecWorldMins, Vector* pVecWorldMaxs) = 0;
 	virtual bool ComputeEntitySpaceHitboxSurroundingBox(Vector* pVecWorldMins, Vector* pVecWorldMaxs) = 0;
 	virtual void CollisionRulesChanged() = 0;
@@ -523,7 +527,6 @@ public:
 	virtual bool IsAlive(void) { return false; }
 	virtual bool IsStandable() const { return false; }
 	virtual bool IsTransparent() const { return false; }
-	virtual bool BlocksLOS(void) { return false; }
 	virtual const Vector& WorldSpaceCenter() const { return *(Vector*)0; }
 	virtual int GetTeamNumber(void) const { return 0; }
 	virtual int GetMaxHealth() const { return 0; }

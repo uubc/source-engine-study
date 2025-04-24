@@ -368,7 +368,7 @@ bool INextBot::IsDebugFilterMatch( const char *name ) const
  */
 bool INextBot::IsAbleToClimbOnto( const CBaseEntity *object ) const
 {
-	if ( object == NULL || !const_cast<CBaseEntity *>(object)->IsAIWalkable() )
+	if ( object == NULL || !const_cast<CBaseEntity *>(object)->GetEngineObject()->IsAIWalkable() )
 	{
 		return false;
 	}

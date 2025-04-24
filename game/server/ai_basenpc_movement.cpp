@@ -278,7 +278,7 @@ float CAI_BaseNPC::OpenDoorAndWait( CBaseEntity *pDoor )
 
 bool CAI_BaseNPC::CanStandOn( IServerEntity *pSurface ) const
 {
-	if ( !pSurface->IsAIWalkable() )
+	if ( !pSurface->GetEngineObject()->IsAIWalkable() )
 	{
 		return false;
 	}

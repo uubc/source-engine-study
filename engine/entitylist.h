@@ -677,6 +677,13 @@ public:
 	// checks to see if the entity is marked for deletion
 	bool IsMarkedForDeletion(void);
 	bool IsMarkedForDeletion() const;
+	// Entities block Line-Of-Sight for NPCs by default.
+// Set this to false if you want to change this behavior.
+	void SetBlocksLOS(bool bBlocksLOS);
+	bool BlocksLOS(void);
+
+	void SetAIWalkable(bool bBlocksLOS);
+	bool IsAIWalkable(void);
 	int GetSpawnFlags(void) const;
 	void SetSpawnFlags(int nFlags);
 	void AddSpawnFlags(int nFlags);

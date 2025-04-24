@@ -285,7 +285,7 @@ void CNPC_Furniture::Spawn( )
 	NPCInit();
 
 	// Furniture needs to block LOS
-	SetBlocksLOS( true );
+	GetEngineObject()->SetBlocksLOS( true );
 
 	// Furniture just wastes CPU doing sensing code, since all they do is idle and play scripts
 	GetSenses()->AddSensingFlags( SENSING_FLAGS_DONT_LOOK | SENSING_FLAGS_DONT_LISTEN );

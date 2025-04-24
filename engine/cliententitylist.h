@@ -840,6 +840,12 @@ public:
 	virtual void SetDormant(bool bDormant);
 	// checks to see if the entity is marked for deletion
 	bool IsMarkedForDeletion(void);
+	// Entities block Line-Of-Sight for NPCs by default.
+// Set this to false if you want to change this behavior.
+	void SetBlocksLOS(bool bBlocksLOS);
+	bool BlocksLOS(void);
+	void SetAIWalkable(bool bBlocksLOS);
+	bool IsAIWalkable(void);
 	int GetSpawnFlags(void) const;
 	void SetCheckUntouch(bool check);
 	bool GetCheckUntouch() const;

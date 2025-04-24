@@ -319,43 +319,6 @@ const Vector &CBaseEntity::WorldSpaceCenter( ) const
 	return GetEngineObject()->WorldSpaceCenter();
 }
 
-void CBaseEntity::SetBlocksLOS( bool bBlocksLOS )
-{
-	if ( bBlocksLOS )
-	{
-		GetEngineObject()->RemoveEFlags( EFL_DONTBLOCKLOS );
-	}
-	else
-	{
-		GetEngineObject()->AddEFlags( EFL_DONTBLOCKLOS );
-	}
-}
-
-bool CBaseEntity::BlocksLOS( void ) 
-{ 
-	return !GetEngineObject()->IsEFlagSet(EFL_DONTBLOCKLOS);
-}
-
-void CBaseEntity::SetAIWalkable( bool bBlocksLOS )
-{
-	if ( bBlocksLOS )
-	{
-		GetEngineObject()->RemoveEFlags( EFL_DONTWALKON );
-	}
-	else
-	{
-		GetEngineObject()->AddEFlags( EFL_DONTWALKON );
-	}
-}
-
-bool CBaseEntity::IsAIWalkable( void ) 
-{ 
-	return !GetEngineObject()->IsEFlagSet(EFL_DONTWALKON);
-}
-
-
-
-
 //-----------------------------------------------------------------------------
 // Parse data from a map file
 //-----------------------------------------------------------------------------

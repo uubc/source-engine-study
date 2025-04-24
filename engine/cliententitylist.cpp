@@ -1442,8 +1442,8 @@ void C_GrabControllerInternal::AttachEntity(IClientEntity* pPlayer, IClientEntit
 
 
 	// Carried entities can never block LOS
-	m_bCarriedEntityBlocksLOS = pEntity->BlocksLOS();
-	pEntity->SetBlocksLOS(false);
+	m_bCarriedEntityBlocksLOS = pEntity->GetEngineObject()->BlocksLOS();
+	pEntity->GetEngineObject()->SetBlocksLOS(false);
 	m_controller = g_EntityList.PhysGetEnv()->CreateMotionController(this);
 	m_controller->AttachObject(pPhys, true);
 	// Don't do this, it's causing trouble with constraint solvers.
@@ -1509,7 +1509,7 @@ void C_GrabControllerInternal::DetachEntity(bool bClearVelocity)
 	if (pEntity)
 	{
 		// Restore the LS blocking state
-		pEntity->SetBlocksLOS(m_bCarriedEntityBlocksLOS);
+		pEntity->GetEngineObject()->SetBlocksLOS(m_bCarriedEntityBlocksLOS);
 		IPhysicsObject* pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 		int count = pEntity->GetEngineObject()->VPhysicsGetObjectList(pList, ARRAYSIZE(pList));
 		for (int i = 0; i < count; i++)
@@ -4417,6 +4417,40 @@ void C_EngineObjectInternal::SetDormant(bool bDormant)
 	bool bOldDormant = m_bDormant;
 	m_bDormant = bDormant;
 	m_pOuter->AfterSetDormant(bOldDormant);
+}
+
+void C_EngineObjectInternal::SetBlocksLOS(bool bBlocksLOS)
+{
+	if (bBlocksLOS)
+	{
+		RemoveEFlags(EFL_DONTBLOCKLOS);
+	}
+	else
+	{
+		AddEFlags(EFL_DONTBLOCKLOS);
+	}
+}
+
+bool C_EngineObjectInternal::BlocksLOS(void)
+{
+	return !IsEFlagSet(EFL_DONTBLOCKLOS);
+}
+
+void C_EngineObjectInternal::SetAIWalkable(bool bBlocksLOS)
+{
+	if (bBlocksLOS)
+	{
+		RemoveEFlags(EFL_DONTWALKON);
+	}
+	else
+	{
+		AddEFlags(EFL_DONTWALKON);
+	}
+}
+
+bool C_EngineObjectInternal::IsAIWalkable(void)
+{
+	return !IsEFlagSet(EFL_DONTWALKON);
 }
 
 //-----------------------------------------------------------------------------

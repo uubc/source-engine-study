@@ -5306,7 +5306,7 @@ void CBasePlayer::Spawn( void )
 	GetEngineObject()->SetAnimatedEveryTick( true );
 
 	m_ArmorValue		= SpawnArmorValue();
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 	m_iMaxHealth		= m_iHealth;
 
 	// Clear all flags except for FL_FULLEDICT

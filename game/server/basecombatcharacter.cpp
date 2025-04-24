@@ -765,7 +765,7 @@ void CBaseCombatCharacter::Spawn( void )
 {
 	BaseClass::Spawn();
 	
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 	m_aliveTimer.Start();
 	m_hasBeenInjured = 0;
 

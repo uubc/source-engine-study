@@ -306,14 +306,14 @@ void CBaseProp::CalculateBlockLOS( void )
 			continue;
 
 		// Dimension smaller than 30.
-		SetBlocksLOS( false );
+		GetEngineObject()->SetBlocksLOS( false );
 		return;
 	}
 
 	if ( !bFoundLarge )
 	{
 		// No dimension larger than 40
-		SetBlocksLOS( false );
+		GetEngineObject()->SetBlocksLOS( false );
 	}
 }
 
@@ -1465,8 +1465,8 @@ void CBreakableProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t
 	SetPhysicsAttacker( pPhysGunUser, gpGlobals->curtime );
 
 	// Store original BlockLOS, and disable BlockLOS
-	m_bOriginalBlockLOS = BlocksLOS();
-	SetBlocksLOS( false );
+	m_bOriginalBlockLOS = GetEngineObject()->BlocksLOS();
+	GetEngineObject()->SetBlocksLOS( false );
 
 #ifdef HL2_EPISODIC
 	if ( HasInteraction( PROPINTER_PHYSGUN_CREATE_FLARE ) )
@@ -1528,7 +1528,7 @@ void CBreakableProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Rea
 	}
 
 	// Restore original BlockLOS
-	SetBlocksLOS( m_bOriginalBlockLOS );
+	GetEngineObject()->SetBlocksLOS( m_bOriginalBlockLOS );
 }
 
 //-----------------------------------------------------------------------------

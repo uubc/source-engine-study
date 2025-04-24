@@ -6798,7 +6798,7 @@ void CAI_BaseNPC::NPCInit ( void )
 
 	m_flOriginalYaw = GetEngineObject()->GetAbsAngles().y;
 
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 
 	GetEngineObject()->SetGravity(1.0);	// Don't change
 	m_takedamage		= DAMAGE_YES;

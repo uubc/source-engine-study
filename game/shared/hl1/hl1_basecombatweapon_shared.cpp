@@ -64,7 +64,7 @@ void CBaseHL1CombatWeapon::Spawn( void )
 
 	m_takedamage = DAMAGE_EVENTS_ONLY;
 
-	SetBlocksLOS( false );
+	GetEngineObject()->SetBlocksLOS( false );
 
 	// Default to non-removeable, because we don't want the
 	// game_weapon_manager entity to remove weapons that have

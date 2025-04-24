@@ -160,7 +160,6 @@ public:
 	C_BaseEntity();
 	virtual							~C_BaseEntity();
 
-	virtual bool IsNetworkable(void) { return entindex() >= 0 && entindex() < MAX_EDICTS; }
 	static int GetEngineObjectTypeStatic() { return ENGINEOBJECT_BASE; }
 	//static C_BaseEntity				*CreatePredictedEntityByName( const char *classname, const char *module, int line, bool persist = false );
 
@@ -191,16 +190,6 @@ public:
 	virtual bool					KeyValue(const char* szKeyName, float flValue);
 	virtual bool					KeyValue(const char* szKeyName, const Vector& vecValue);
 	virtual bool					GetKeyValue(const char* szKeyName, char* szValue, int iMaxLen);
-
-	// Entities block Line-Of-Sight for NPCs by default.
-// Set this to false if you want to change this behavior.
-	void							SetBlocksLOS(bool bBlocksLOS);
-	bool							BlocksLOS(void);
-	void							SetAIWalkable(bool bBlocksLOS);
-	bool							IsAIWalkable(void);
-
-
-
 
 	// Called by the CLIENTCLASS macros.
 	virtual bool					Init(int entnum, int iSerialNum);

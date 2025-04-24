@@ -72,8 +72,8 @@ public:
 	int				GetBreakableCount( void ) { return m_iBreakableCount; }
 	void			SetMaxBreakableSize( int iSize ) { m_iMaxBreakableSize = iSize; }
 	int				GetMaxBreakableSize( void ) { return m_iMaxBreakableSize; }
-	void			SetPropDataBlocksLOS( bool bBlocksLOS ) { m_bBlockLOSSetByPropData = true; SetBlocksLOS( bBlocksLOS ); }
-	void			SetPropDataIsAIWalkable( bool b ) { m_bIsWalkableSetByPropData = true; SetAIWalkable( b ); }
+	void			SetPropDataBlocksLOS( bool bBlocksLOS ) { m_bBlockLOSSetByPropData = true; GetEngineObject()->SetBlocksLOS( bBlocksLOS ); }
+	void			SetPropDataIsAIWalkable( bool b ) { m_bIsWalkableSetByPropData = true; GetEngineObject()->SetAIWalkable( b ); }
 	void			SetBasePropData( string_t iszBase ) { m_iszBasePropData = iszBase; }
 	string_t		GetBasePropData( void ) { return m_iszBasePropData; }
 	void			SetInteraction( propdata_interactions_t Interaction ) { m_iInteractions |= (1 << Interaction); }

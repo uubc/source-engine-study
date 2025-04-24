@@ -510,7 +510,7 @@ public:
 				return false;
 
 			// Honor BlockLOS - this lets us see through partially-broken doors, etc
-			if ( !pEntity->BlocksLOS() )
+			if ( !pEntity->GetEngineObject()->BlocksLOS() )
 				return false;
 
 			return true;
@@ -665,7 +665,7 @@ static bool TraceFilterNoCombatCharacters( IHandleEntity *pServerEntity, int con
 {
 	// Honor BlockLOS also to allow seeing through partially-broken doors
 	CBaseEntity *entity = EntityFromEntityHandle( pServerEntity );
-	return ( entity->MyCombatCharacterPointer() == NULL && !entity->MyCombatWeaponPointer() && entity->BlocksLOS() );
+	return ( entity->MyCombatCharacterPointer() == NULL && !entity->MyCombatWeaponPointer() && entity->GetEngineObject()->BlocksLOS() );
 }
 
 bool CBaseCombatCharacter::IsLineOfSightClear( const Vector &pos, LineOfSightCheckType checkType, CBaseEntity *entityToIgnore ) const

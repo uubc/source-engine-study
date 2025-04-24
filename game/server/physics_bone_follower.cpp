@@ -127,7 +127,7 @@ bool CBoneFollowerManager::CreatePhysicsFollower( CBaseAnimating *pParentEntity,
 
 		follow.hFollower = CBoneFollower::Create( pParentEntity, STRING(pParentEntity->GetEngineObject()->GetModelName()), *pSolid, bonePosition, boneAngles );
 		follow.hFollower->SetTraceData( physicsBone, HitGroupFromPhysicsBone( pParentEntity, physicsBone ) );
-		follow.hFollower->SetBlocksLOS( pParentEntity->BlocksLOS() );
+		follow.hFollower->GetEngineObject()->SetBlocksLOS( pParentEntity->GetEngineObject()->BlocksLOS() );
 		return true;
 	}
 	else
