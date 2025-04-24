@@ -471,6 +471,8 @@ public:
 	virtual void AddEFlags(int nEFlagMask) = 0;
 	virtual void RemoveEFlags(int nEFlagMask) = 0;
 	virtual bool IsEFlagSet(int nEFlagMask) const = 0;
+	virtual bool IsDormant(void) = 0;
+	virtual void SetDormant(bool bDormant) = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
 	virtual int GetSpawnFlags(void) const = 0;
 	virtual void SetCheckUntouch(bool check) = 0;
@@ -557,6 +559,7 @@ public:
 	virtual bool IsPointInBounds(const Vector& vecWorldPt) const = 0;
 	virtual void UseTriggerBounds(bool bEnable, float flBloat = 0.0f) = 0;
 	virtual void RefreshScaledCollisionBounds(void) = 0;
+	virtual void UpdatePartitionListEntry() = 0;
 	virtual void MarkPartitionHandleDirty() = 0;
 	virtual bool DoesRotationInvalidateSurroundingBox() const = 0;
 	virtual void MarkSurroundingBoundsDirty() = 0;
@@ -1041,6 +1044,7 @@ public:
 	virtual int GetDefaultFOV() const = 0;
 	virtual float GetFOV(void) = 0;
 	virtual float GetMinFOV() const = 0;
+	virtual float GetFOVDistanceAdjustFactor() = 0;
 	virtual fogparams_t* GetFogParams(void) = 0;
 	virtual void CalcView(Vector& eyeOrigin, QAngle& eyeAngles, float& zNear, float& zFar, float& fov) = 0;
 	virtual void CalcViewModelView(const Vector& eyeOrigin, const QAngle& eyeAngles) = 0;
@@ -1072,6 +1076,13 @@ public:
 class IClientNPC : public IHandleNPC {
 public:
 	
+};
+
+enum CollideType_t
+{
+	ENTITY_SHOULD_NOT_COLLIDE = 0,
+	ENTITY_SHOULD_COLLIDE,
+	ENTITY_SHOULD_RESPOND
 };
 
 //-----------------------------------------------------------------------------
@@ -1121,6 +1132,8 @@ public:
 	virtual bool KeyValue(const char* szKeyName, const char* szValue) = 0;
 	virtual bool KeyValue(const char* szKeyName, float flValue) = 0;
 	virtual bool KeyValue(const char* szKeyName, const Vector& vecValue) = 0;
+	virtual void BeforeSetDormant(bool bNewDormant) = 0;
+	virtual void AfterSetDormant(bool bOldDormant) = 0;
 	virtual void SUB_Remove(void) = 0;
 	virtual void SetRemovalFlag(bool bRemove) = 0;
 	// Delete yourself.
@@ -1168,8 +1181,8 @@ public:
 	virtual void VPhysicsUpdate(IPhysicsObject* pPhysics) = 0;
 	virtual unsigned int PhysicsSolidMaskForEntity(void) const = 0;
 	virtual void ComputeWorldSpaceSurroundingBox(Vector* pVecWorldMins, Vector* pVecWorldMaxs) = 0;
+	virtual CollideType_t GetCollideType(void) = 0;
 	virtual	void RefreshCollisionBounds(void) = 0;
-	virtual void UpdatePartitionListEntry() = 0;
 	virtual bool TestCollision(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr) = 0;
 	virtual bool TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr) = 0;
 	virtual void StartTouch(IClientEntity* pOther) = 0;
@@ -1182,7 +1195,6 @@ public:
 	virtual const QAngle& EyeAngles(void) = 0;
 	virtual const QAngle& LocalEyeAngles(void) = 0;
 	virtual Vector EarPosition(void) = 0;
-	virtual float GetFOVDistanceAdjustFactor() = 0;
 	virtual const Vector& GetViewOffset() const = 0;
 
 	virtual void AccumulateLayers(IBoneSetup& boneSetup, Vector pos[], Quaternion q[], float currentTime) = 0;

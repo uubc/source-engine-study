@@ -98,7 +98,7 @@ public:
 				continue;
 			}
 
-			if ( character->IsDormant() )
+			if ( character->GetEngineObject()->IsDormant() )
 			{
 				continue;
 			}

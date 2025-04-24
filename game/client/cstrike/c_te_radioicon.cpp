@@ -60,7 +60,7 @@ void C_TERadioIcon::PostDataUpdate( DataUpdateType_t updateType )
 	//this could be in a better place.
 	C_CSPlayer *pPlayer = static_cast<C_CSPlayer*>( EntityList()->GetEnt(m_iAttachToClient) );
 
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		// Create the flashy above player's head
 		RadioManager()->UpdateRadioStatus( m_iAttachToClient, 1.5f );

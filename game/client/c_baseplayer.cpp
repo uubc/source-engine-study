@@ -3304,7 +3304,7 @@ void CC_DumpClientSoundscapeData( const CCommand& args )
 	if ( pPlayer->m_Local.m_audio.ent.Get() )
 	{
 		Msg("   entity pos: %.2f %.2f %.2f\n", pPlayer->m_Local.m_audio.ent.Get()->GetEngineObject()->GetAbsOrigin().x, pPlayer->m_Local.m_audio.ent.Get()->GetEngineObject()->GetAbsOrigin().y, pPlayer->m_Local.m_audio.ent.Get()->GetEngineObject()->GetAbsOrigin().z );
-		if ( pPlayer->m_Local.m_audio.ent.Get()->IsDormant() )
+		if ( pPlayer->m_Local.m_audio.ent.Get()->GetEngineObject()->IsDormant() )
 		{
 			Msg("     ENTITY IS DORMANT\n");
 		}

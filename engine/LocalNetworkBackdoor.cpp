@@ -430,7 +430,7 @@ void CLocalNetworkBackdoor::StartBackdoorMode()
 		{
 			ces.m_hEngineObjectClient = entitylist->GetEngineObject(i)->GetRefEHandle();
 			ces.m_iSerialNumber = pClientEntity->GetRefEHandle().GetSerialNumber();
-			ces.m_bDormant = pClientEntity->IsDormant();
+			ces.m_bDormant = pClientEntity->GetEngineObject()->IsDormant();
 			//ces.m_pDataPointer = pNet->GetDataTableBasePtr();
 			m_PrevEntsAlive.Set( i );
 		}

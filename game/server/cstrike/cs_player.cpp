@@ -4192,7 +4192,7 @@ void CCSPlayer::ListPlayers()
 	for ( int i=1; i <= gpGlobals->maxClients; i++ )
 	{
 		CCSPlayer *pPlayer = dynamic_cast< CCSPlayer* >( EntityList()->GetPlayerByIndex( i ) );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			if ( pPlayer->IsBot() )
 			{

@@ -274,7 +274,7 @@ void CMapOverview::UpdatePlayers()
 			continue;
 		
 		// don't update if player is dormant
-		if ( pPlayer->IsDormant() )
+		if ( pPlayer->GetEngineObject()->IsDormant() )
 			continue;
 
 		// update position of active players in our PVS

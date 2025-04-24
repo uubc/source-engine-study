@@ -64,7 +64,7 @@ void CWeaponBaseRifleGrenade::PrimaryAttack( void )
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
 #ifdef CLIENT_DLL
-	if( pPlayer && !pPlayer->IsDormant() )
+	if( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		pPlayer->DoAnimationEvent( PLAYERANIMEVENT_FIRE_GUN );
 #else
 	if( pPlayer )

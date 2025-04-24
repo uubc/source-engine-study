@@ -327,7 +327,7 @@ bool C_PhysPropClientside::Initialize()
 	// player can push it away
 	GetEngineObject()->SetCollisionGroup( COLLISION_GROUP_PUSHAWAY );
 
-	UpdatePartitionListEntry();
+	GetEngineObject()->UpdatePartitionListEntry();
 
 	GetEngineObject()->UpdatePartition();
 
@@ -877,7 +877,7 @@ bool C_FuncPhysicsRespawnZone::Initialize( void )
 
 	GetEngineObject()->AddEffects( EF_NODRAW );
 
-	UpdatePartitionListEntry();
+	GetEngineObject()->UpdatePartitionListEntry();
 
 	GetEngineObject()->UpdatePartition();
 

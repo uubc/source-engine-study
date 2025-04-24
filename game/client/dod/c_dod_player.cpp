@@ -146,7 +146,7 @@ public:
 	{
 		// Create the effect.
 		C_DODPlayer *pPlayer = dynamic_cast< C_DODPlayer* >( m_hPlayer.Get() );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
 		}	
@@ -429,7 +429,7 @@ void C_DODRagdoll::CreateLowViolenceRagdoll()
 		//GetEngineObject()->SetAbsVelocity( m_vecRagdollVelocity );
 
 		C_DODPlayer *pPlayer = dynamic_cast< C_DODPlayer* >( m_hPlayer.Get() );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			// move my current model instance to the ragdoll's so decals are preserved.
 			pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());
@@ -452,7 +452,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 	DevMsg( 2, "CreateDODRagdoll %d %d\n", gpGlobals->framecount, pPlayer ? pPlayer->entindex() : 0 );
 #endif
 	
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		// move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());
@@ -995,7 +995,7 @@ extern ConVar cl_sidespeed;
 
 bool C_DODPlayer::ShouldDraw( void )
 {
-	if( IsDormant() )
+	if(GetEngineObject()->IsDormant() )
 		return false;
 
 	// If we're dead, our ragdoll will be drawn for us instead.
@@ -1024,7 +1024,7 @@ void C_DODPlayer::GetToolRecordingState( KeyValues *msg )
 	BaseEntityRecordingState_t *pBaseEntityState = (BaseEntityRecordingState_t*)msg->GetPtr( "baseentity" );
 	if ( IsLocalPlayer() )
 	{
-		pBaseEntityState->m_bVisible = !IsDormant() && IsAlive() && ( GetTeamNumber() != TEAM_SPECTATOR ) &&
+		pBaseEntityState->m_bVisible = !GetEngineObject()->IsDormant() && IsAlive() && ( GetTeamNumber() != TEAM_SPECTATOR ) &&
 			(GetEngineObject()->GetRenderMode() != kRenderNone ) && (GetObserverMode() != OBS_MODE_DEATHCAM) && !GetEngineObject()->IsEffectActive(EF_NODRAW);
 	}
 #endif
@@ -1394,7 +1394,7 @@ static CEntityFactory<C_FadingPhysPropClientside> g_C_FadingPhysPropClientside_F
 
 void C_DODPlayer::PopHelmet( Vector vecDir, Vector vecForceOrigin, int iModel )
 {
-	if ( IsDormant() )
+	if (GetEngineObject()->IsDormant() )
 		return;	// We can't see them anyway, just bail
 
 	C_FadingPhysPropClientside *pEntity = (C_FadingPhysPropClientside*)EntityList()->CreateEntityByName( "C_FadingPhysPropClientside" );
@@ -2331,7 +2331,7 @@ void C_DODPlayer::UpdateColdBreath( void )
 		return;
 
 	// Don't emit breath if we are dead.
-	if ( !IsAlive() || IsDormant() )
+	if ( !IsAlive() || GetEngineObject()->IsDormant() )
 		return;
 
 	// Check player speed, do emit cold breath when moving quickly.
@@ -2573,7 +2573,7 @@ void C_DODPlayer::AvoidPlayers( CUserCmd *pCmd )
 		++nAvoidPlayerCount;
 
 		// Check to see if the avoid player is dormant.
-		if ( pAvoidPlayer->IsDormant() )
+		if ( pAvoidPlayer->GetEngineObject()->IsDormant() )
 			continue;
 
 		// Is the avoid player solid?

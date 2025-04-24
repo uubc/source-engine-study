@@ -114,7 +114,7 @@ bool C_LowViolenceHostageDeathModel::SetupLowViolenceModel( C_CHostage *pHostage
 	GetEngineObject()->SetSequence(GetEngineObject()->LookupSequence( "death1" ) );
 	GetEngineObject()->ForceClientSideAnimationOn();
 
-	if ( pHostage && !pHostage->IsDormant() )
+	if ( pHostage && !pHostage->GetEngineObject()->IsDormant() )
 	{
 		GetEngineObject()->SetNetworkOrigin( pHostage->GetEngineObject()->GetAbsOrigin() );
 		GetEngineObject()->SetAbsOrigin( pHostage->GetEngineObject()->GetAbsOrigin() );
@@ -440,7 +440,7 @@ void C_CHostage::LookAround( void )
 //-----------------------------------------------------------------------------
 void C_CHostage::UpdateClientSideAnimation()
 {
-	if (IsDormant())
+	if (GetEngineObject()->IsDormant())
 	{
 		return;
 	}

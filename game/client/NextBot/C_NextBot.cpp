@@ -56,7 +56,7 @@ void C_NextBotCombatCharacter::Spawn( void )
 //-----------------------------------------------------------------------------
 void C_NextBotCombatCharacter::UpdateClientSideAnimation()
 {
-	if (IsDormant())
+	if (GetEngineObject()->IsDormant())
 	{
 		return;
 	}

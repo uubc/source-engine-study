@@ -163,7 +163,7 @@ void C_ReplayCamera::CalcChaseCamView( Vector& eyeOrigin, QAngle& eyeAngles, flo
  	if ( !target1 ) 
 		return;
 	
-	if ( target1->IsAlive() && target1->IsDormant() )
+	if ( target1->IsAlive() && target1->GetEngineObject()->IsDormant() )
 		return;
 
 	targetOrigin1 = target1->GetRenderOrigin();
@@ -189,7 +189,7 @@ void C_ReplayCamera::CalcChaseCamView( Vector& eyeOrigin, QAngle& eyeAngles, flo
 		target2 = EntityList()->GetBaseEntity( m_iTarget2 );
 
 		// if target is out PVS and not dead, it's not valid
-		if ( target2 && target2->IsDormant() && target2->IsAlive() )
+		if ( target2 && target2->GetEngineObject()->IsDormant() && target2->IsAlive() )
 			target2 = NULL;
 
 		if ( target2 )

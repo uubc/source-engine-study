@@ -1119,7 +1119,7 @@ bool C_GrabControllerInternal::UpdateObject(IClientEntity* pPlayer, float flErro
 	}
 	Vector playerMins, playerMaxs, nearest;
 	pPlayer->GetEngineObject()->WorldSpaceAABB(&playerMins, &playerMaxs);
-	Vector playerLine = pPlayer->GetEngineObject()->WorldSpaceCenter();
+	Vector playerLine = pPlayer->WorldSpaceCenter();
 	CalcClosestPointOnLine(end, playerLine + Vector(0, 0, playerMins.z), playerLine + Vector(0, 0, playerMaxs.z), nearest, NULL);
 
 
@@ -1701,6 +1701,7 @@ BEGIN_PREDICTION_DATA_NO_BASE(C_EngineObjectInternal)
 	//DEFINE_FIELD(m_nWaterLevel, FIELD_CHARACTER),
 	DEFINE_PRED_FIELD(m_nWaterLevel, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE),
 	DEFINE_FIELD(m_nWaterType, FIELD_CHARACTER),
+	DEFINE_FIELD(m_bDormant, FIELD_BOOLEAN),
 END_PREDICTION_DATA()
 
 #define DEFINE_RAGDOLL_ELEMENT( i ) \
@@ -2952,7 +2953,7 @@ void C_EngineObjectInternal::UpdateWaterState()
 	else
 	{
 		// Check the exact center of the box
-		point[2] = WorldSpaceCenter().z;
+		point[2] = m_pOuter->WorldSpaceCenter().z;
 
 		int midcont = UTIL_PointContents(&g_EntityList, point);
 		if (midcont & MASK_WATER)
@@ -4395,6 +4396,30 @@ void C_EngineObjectInternal::RemoveVar(IInterpolatedVar* watcher, bool bAssert)
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Returns whether this entity is dormant. Client/server entities become
+//			dormant when they leave the PVS on the server. Client side entities
+//			can decide for themselves whether to become dormant.
+//-----------------------------------------------------------------------------
+bool C_EngineObjectInternal::IsDormant(void)
+{
+	if (IsNetworkable())
+	{
+		return m_bDormant;
+	}
+
+	return false;
+}
+
+void C_EngineObjectInternal::SetDormant(bool bDormant)
+{
+	Assert(IsNetworkable());
+	m_pOuter->BeforeSetDormant(bDormant);
+	bool bOldDormant = m_bDormant;
+	m_bDormant = bDormant;
+	m_pOuter->AfterSetDormant(bOldDormant);
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : check - 
 //-----------------------------------------------------------------------------
@@ -5186,6 +5211,22 @@ void C_EngineObjectInternal::SetModelIndex(int index)
 	SetModelPointer(pModel);
 }
 
+void C_EngineObjectInternal::UpdatePartitionListEntry()
+{
+	// Don't add the world entity
+	CollideType_t shouldCollide = m_pOuter->GetCollideType();
+
+	// Choose the list based on what kind of collisions we want
+	int list = PARTITION_CLIENT_NON_STATIC_EDICTS;
+	if (shouldCollide == ENTITY_SHOULD_COLLIDE)
+		list |= PARTITION_CLIENT_SOLID_EDICTS;
+	else if (shouldCollide == ENTITY_SHOULD_RESPOND)
+		list |= PARTITION_CLIENT_RESPONSIVE_EDICTS;
+
+	// add the entity to the KD tree so we will collide against it
+	partition->RemoveAndInsert(PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, list, GetPartitionHandle());
+}
+
 void C_EngineObjectInternal::SetCollisionGroup(int collisionGroup)
 {
 	if ((int)m_CollisionGroup != collisionGroup)
@@ -5846,7 +5887,7 @@ IEngineObjectClient* C_EngineObjectInternal::FindFollowedEntity()
 	if (!follow)
 		return NULL;
 
-	if (follow->GetOuter()->IsDormant())
+	if (follow->IsDormant())
 		return NULL;
 
 	if (!follow->GetModel())
@@ -8353,7 +8394,7 @@ bool C_EngineObjectInternal::InitAsClientRagdoll(const matrix3x4_t* pDeltaBones0
 	SetSequence(SelectWeightedSequence(ACT_DIERAGDOLL));
 	m_nPrevSequence = GetSequence();
 	SetPlaybackRate(0);
-	m_pOuter->UpdatePartitionListEntry();
+	UpdatePartitionListEntry();
 	m_pOuter->UpdateVisibility();
 
 #if defined( REPLAY_ENABLED )
@@ -10913,7 +10954,7 @@ IterationRetval_t C_PortalCollideableEnumerator::EnumElement(IHandleEntity* pHan
 		if (!pEnt->GetEngineObject()->IsSolid())
 			return ITERATION_CONTINUE; //not solid
 
-		Vector ptEntCenter = pEnt->GetEngineObject()->WorldSpaceCenter();
+		Vector ptEntCenter = pEnt->WorldSpaceCenter();
 
 		float fBoundRadius = pEnt->GetEngineObject()->BoundingRadius();
 		float fPtPlaneDist = m_vPlaneNormal.Dot(ptEntCenter) - m_fPlaneDist;

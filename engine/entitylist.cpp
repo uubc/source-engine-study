@@ -2669,7 +2669,7 @@ bool CGrabControllerInternal::UpdateObject(IServerEntity* pPlayer, float flError
 	}
 	Vector playerMins, playerMaxs, nearest;
 	pPlayer->GetEngineObject()->WorldSpaceAABB(&playerMins, &playerMaxs);
-	Vector playerLine = pPlayer->GetEngineObject()->WorldSpaceCenter();
+	Vector playerLine = pPlayer->WorldSpaceCenter();
 	CalcClosestPointOnLine(end, playerLine + Vector(0, 0, playerMins.z), playerLine + Vector(0, 0, playerMaxs.z), nearest, NULL);
 
 	if (!m_bAllowObjectOverhead)
@@ -5331,7 +5331,7 @@ void CEngineObjectInternal::UpdateWaterState()
 	else
 	{
 		// Check the exact center of the box
-		point[2] = WorldSpaceCenter().z;
+		point[2] = m_pOuter->WorldSpaceCenter().z;
 
 		int midcont = UTIL_PointContents(&gEntList, point);
 		if (midcont & MASK_WATER)
@@ -5447,6 +5447,34 @@ void CEngineObjectInternal::WorldToEntitySpace(const Vector& in, Vector* pOut) c
 	{
 		VectorITransform(in, EntityToWorldTransform(), *pOut);
 	}
+}
+
+void CEngineObjectInternal::MakeDormant(void)
+{
+	AddEFlags(EFL_DORMANT);
+
+	// disable thinking for dormant entities
+	//SetThink(NULL);
+	ThinkSet((THINKPTR)NULL, 0, NULL);
+
+	if (entindex() == -1)
+		return;
+
+	//SETBITS( m_iEFlags, EFL_DORMANT );
+
+	// Don't touch
+	AddSolidFlags(FSOLID_NOT_SOLID);
+	// Don't move
+	SetMoveType(MOVETYPE_NONE);
+	// Don't draw
+	AddEffects(EF_NODRAW);
+	// Don't think
+	SetNextThink(TICK_NEVER_THINK);
+}
+
+int CEngineObjectInternal::IsDormant(void)
+{
+	return IsEFlagSet(EFL_DORMANT);
 }
 
 void CEngineObjectInternal::SetCheckUntouch(bool check)
@@ -6963,7 +6991,7 @@ void CEngineObjectInternal::PhysicsDispatchThink(THINKPTR thinkFunc)
 
 	float startTime = 0.0;
 
-	if (m_pOuter->IsDormant())
+	if (IsDormant())
 	{
 		Warning("Dormant entity %s (%s) is thinking!!\n", STRING(GetClassname()), m_pOuter->GetDebugName());
 		Assert(0);
@@ -13172,7 +13200,7 @@ IterationRetval_t CPortalCollideableEnumerator::EnumElement(IHandleEntity* pHand
 		if (!pEnt->GetEngineObject()->IsSolid())
 			return ITERATION_CONTINUE; //not solid
 
-		Vector ptEntCenter = pEnt->GetEngineObject()->WorldSpaceCenter();
+		Vector ptEntCenter = pEnt->WorldSpaceCenter();
 
 		float fBoundRadius = pEnt->GetEngineObject()->BoundingRadius();
 		float fPtPlaneDist = m_vPlaneNormal.Dot(ptEntCenter) - m_fPlaneDist;

@@ -160,7 +160,7 @@ void CHudRadar::MsgFunc_UpdateRadar(bf_read &msg )
 		//		to twitch while you were observing.
 		//=============================================================================
 		// Don't update players if they are in PVS.
-		if (!pPlayer->IsDormant())
+		if (!pPlayer->GetEngineObject()->IsDormant())
 		{
 			continue;
 		}

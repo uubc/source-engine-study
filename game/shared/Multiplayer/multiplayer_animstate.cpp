@@ -1333,7 +1333,7 @@ bool CMultiPlayerAnimState::ShouldUpdateAnimState()
 	// By default, don't update their animation state when they're dead because they're
 	// either a ragdoll or they're not drawn.
 #ifdef CLIENT_DLL
-	if ( GetBasePlayer()->IsDormant() )
+	if ( GetBasePlayer()->GetEngineObject()->IsDormant() )
 		return false;
 #endif
 

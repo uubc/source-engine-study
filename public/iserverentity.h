@@ -515,6 +515,8 @@ public:
 	virtual void AddEFlags(int nEFlagMask) = 0;
 	virtual void RemoveEFlags(int nEFlagMask) = 0;
 	virtual bool IsEFlagSet(int nEFlagMask) const = 0;
+	virtual int IsDormant(void) = 0;
+	virtual void MakeDormant(void) = 0;
 	virtual void MarkForDeletion() = 0;
 	virtual bool IsMarkedForDeletion(void) = 0;
 	virtual bool IsMarkedForDeletion() const = 0;
@@ -1296,8 +1298,6 @@ public:
 	virtual Vector GetSmoothedVelocity(void) = 0;
 	virtual void VelocityPunch(const Vector& vecForce) = 0;
 	virtual void ApplyAbsVelocityImpulse(const Vector& vecImpulse) = 0;
-	virtual int IsDormant(void) = 0;
-	virtual void MakeDormant(void) = 0;
 	virtual IServerEntity* GetActiveWeapon() const = 0;
 	virtual IServerEntity* PhysCannonGetHeldEntity() = 0;
 	virtual int GetMaxHealth() const = 0;

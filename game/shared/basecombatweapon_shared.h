@@ -470,7 +470,7 @@ public:
 
 	// Should this object cast shadows?
 	virtual ShadowType_t	ShadowCastType();
-	virtual void			SetDormant( bool bDormant );
+	virtual void			BeforeSetDormant( bool bNewDormant );
 	virtual void			OnDataChanged( DataUpdateType_t updateType );
 	virtual void			OnRestore();
 

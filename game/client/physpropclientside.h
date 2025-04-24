@@ -27,7 +27,7 @@ public:
 			bool			Initialize();
 			void			Spawn();
 			int				ParsePropData( void );
-	virtual bool			IsDormant( void ) { return false; } // we could add a PVS check here
+	//virtual bool			IsDormant( void ) { return false; } // we could add a PVS check here
 	virtual void			ClientThink( void );
 	virtual CollideType_t	GetCollideType( void ) { return ENTITY_SHOULD_RESPOND; }
 	virtual void			StartTouch( IClientEntity *pOther );

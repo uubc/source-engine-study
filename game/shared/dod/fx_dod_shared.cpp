@@ -201,7 +201,7 @@ void FX_FireBullets(
 	CDODWeaponInfo *pWeaponInfo = static_cast< CDODWeaponInfo* >( GetFileWeaponInfoFromHandle( hWpnInfo ) );
 
 #ifdef CLIENT_DLL
-	if( pPlayer && !pPlayer->IsDormant() )
+	if( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		pPlayer->DoAnimationEvent( PLAYERANIMEVENT_FIRE_GUN );
 #else
 	if( pPlayer )
@@ -315,7 +315,7 @@ void FX_FireBullets(
 				pViewModel->GetEngineObject()->GetAttachment( iAttachment, vecStart, angAttachment );
 			}
 		}
-		else if ( !pPlayer->IsDormant() )
+		else if ( !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			// fill in with third person weapon model index
 			C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();

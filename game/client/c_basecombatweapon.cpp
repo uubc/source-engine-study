@@ -36,15 +36,13 @@ C_BaseCombatWeapon *GetActiveWeapon( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void C_BaseCombatWeapon::SetDormant( bool bDormant )
+void C_BaseCombatWeapon::BeforeSetDormant( bool bNewDormant )
 {
 	// If I'm going from active to dormant and I'm carried by another player, holster me.
-	if ( !IsDormant() && bDormant && GetOwner() && !IsCarriedByLocalPlayer() )
+	if ( !GetEngineObject()->IsDormant() && bNewDormant && GetOwner() && !IsCarriedByLocalPlayer() )
 	{
 		Holster( NULL );
 	}
-
-	BaseClass::SetDormant( bDormant );
 }
 
 //-----------------------------------------------------------------------------

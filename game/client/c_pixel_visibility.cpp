@@ -790,7 +790,7 @@ float GlowSightDistance( const Vector &glowOrigin, bool bShouldTrace )
 	IClientEntity *local = EntityList()->GetLocalPlayer();
 	if ( local )
 	{
-		dist *= local->GetFOVDistanceAdjustFactor();
+		dist *= local->AsHandlePlayer()->GetFOVDistanceAdjustFactor();
 	}
 
 	if ( bShouldTrace )

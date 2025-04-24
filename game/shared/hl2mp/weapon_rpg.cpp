@@ -2258,7 +2258,7 @@ int CLaserDot::DrawModel( int flags )
 
 	C_HL2MP_Player* pOwner = ToHL2MPPlayer(GetEngineObject()->GetOwnerEntity() ? GetEngineObject()->GetOwnerEntity()->GetOuter() : NULL);
 
-	if ( pOwner != NULL && pOwner->IsDormant() == false )
+	if ( pOwner != NULL && pOwner->GetEngineObject()->IsDormant() == false )
 	{
 		// Always draw the dot in front of our faces when in first-person
 		if ( pOwner->IsLocalPlayer() )

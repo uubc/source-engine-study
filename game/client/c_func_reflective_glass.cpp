@@ -81,7 +81,7 @@ bool IsReflectiveGlassInView( const CViewSetup& view, cplane_t &plane )
 
 	for ( ; pReflectiveGlass != NULL; pReflectiveGlass = pReflectiveGlass->m_pNext )
 	{
-		if ( pReflectiveGlass->IsDormant() )
+		if ( pReflectiveGlass->GetEngineObject()->IsDormant() )
 			continue;
 
 		Vector vecMins, vecMaxs;

@@ -128,7 +128,7 @@ public:
 	{
 		// Create the effect.
 		C_CSPlayer *pPlayer = dynamic_cast< C_CSPlayer* >( m_hPlayer.Get() );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
 		}
@@ -392,7 +392,7 @@ void C_CSRagdoll::CreateLowViolenceRagdoll( void )
 	C_CSPlayer *pPlayer = dynamic_cast< C_CSPlayer* >( m_hPlayer.Get() );
 	if ( pPlayer )
 	{
-		if ( !pPlayer->IsDormant() )
+		if ( !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			// move my current model instance to the ragdoll's so decals are preserved.
 			pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());
@@ -421,7 +421,7 @@ void C_CSRagdoll::CreateCSRagdoll()
 	// mark this to prevent model changes from overwriting the death sequence with the server sequence
 	GetEngineObject()->SetReceivedSequence();
 
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		// move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());
@@ -501,7 +501,7 @@ void C_CSRagdoll::CreateCSRagdoll()
 		// poses, so if the player is relevant, use that one regardless of whether the 
 		// player is the local one or not.
 		//=============================================================================
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			pPlayer->GetRagdollInitBoneArrays( boneDelta0, boneDelta1, currentBones, boneDt );
 		}

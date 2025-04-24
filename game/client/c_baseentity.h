@@ -91,14 +91,6 @@ extern ConVar vcollide_wireframe;
 //extern void StopSound(int iEntIndex, int iChannel, const char* pSample);
 //extern void EmitCloseCaption(IRecipientFilter& filter, int entindex, char const* token, CUtlVector< Vector >& soundorigins, float duration, bool warnifmissing = false);
 
-
-enum CollideType_t
-{
-	ENTITY_SHOULD_NOT_COLLIDE = 0,
-	ENTITY_SHOULD_COLLIDE,
-	ENTITY_SHOULD_RESPOND
-};
-
 #define DECLARE_INTERPOLATION()
 
 struct serialentity_t;
@@ -295,8 +287,9 @@ public:
 	virtual void					ValidateModelIndex(void);
 
 	// pvs info. NOTE: Do not override these!!
-	virtual void					SetDormant(bool bDormant);
-	virtual bool					IsDormant(void);
+	virtual void					BeforeSetDormant(bool bNewDormant) {}
+	virtual void					AfterSetDormant(bool bOldDormant);
+	virtual bool					IsDormant(void) { return GetEngineObject()->IsDormant(); }
 
 	// Tells the entity that it's about to be destroyed due to the client receiving
 	// an uncompressed update that's caused it to destroy all entities & recreate them.
@@ -317,12 +310,6 @@ public:
 public:
 	// Called whenever you registered for a think message (with SetNextClientThink).
 	virtual void					ClientThink();
-
-
-
-
-
-
 
 public:
 
@@ -485,7 +472,6 @@ public:
 	// C_BaseEntity local functions
 public:
 
-	void UpdatePartitionListEntry();
 
 	// This can be used to setup the entity as a client-only entity. 
 	// Override this to perform per-entity clientside setup
@@ -731,7 +717,6 @@ public:
 	virtual const QAngle& EyeAngles(void);		// Direction of eyes
 	virtual const QAngle& LocalEyeAngles(void);	// Direction of eyes in local space (pl.v_angle)
 	virtual Vector EarPosition(void);// position of ears
-	virtual float GetFOVDistanceAdjustFactor() { Error("Player should implement this!\n"); }
 	// Called by physics to see if we should avoid a collision test....
 	virtual bool		ShouldCollide(int collisionGroup, int contentsMask) const;
 	virtual	void					RefreshCollisionBounds(void);
@@ -1050,16 +1035,6 @@ private:
 
 private:
 
-
-
-
-	// For client/server entities, true if the entity goes outside the PVS.
-	// Unused for client only entities.
-	bool							m_bDormant;
-
-
-
-
 	//IEngineObjectClient* m_EngineObject;
 
 	CNetworkVarEmbedded( CParticleProperty, m_Particles );
@@ -1237,7 +1212,7 @@ public:
 				break;
 			}
 			IClientEntity* pRet = EntityList()->GetBaseEntityFromHandle(m_CurBaseEntity);
-			if (!pRet->IsDormant())
+			if (!pRet->GetEngineObject()->IsDormant())
 				return dynamic_cast<C_BaseEntity*>(pRet);
 		}
 

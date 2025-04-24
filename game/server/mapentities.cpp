@@ -153,7 +153,7 @@ static void ComputeSpawnHierarchyDepth( int nEntities, HierarchicalSpawn_t *pSpa
 	for (nEntity = 0; nEntity < nEntities; nEntity++)
 	{
 		IServerEntity *pEntity = pSpawnList[nEntity].m_pEntity;
-		if (pEntity && !pEntity->IsDormant())
+		if (pEntity && !pEntity->GetEngineObject()->IsDormant())
 		{
 			pSpawnList[nEntity].m_nDepth = ComputeSpawnHierarchyDepth_r( pEntity );
 		}

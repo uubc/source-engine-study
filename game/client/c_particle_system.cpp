@@ -191,7 +191,7 @@ void ParticleEffectCallback( const CEffectData &data )
 		if ( EntityList()->GetBaseEntityFromHandle(data.m_hEntity) )
 		{
 			C_BaseEntity *pEnt = C_BaseEntity::Instance( data.m_hEntity );
-			if ( pEnt && !pEnt->IsDormant() )
+			if ( pEnt && !pEnt->GetEngineObject()->IsDormant() )
 			{
 				if ( data.m_fFlags & PARTICLE_DISPATCH_RESET_PARTICLES )
 				{

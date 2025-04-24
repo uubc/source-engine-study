@@ -30,7 +30,7 @@ public:
 	{
 		// Create the effect.
 		C_HL1MP_Player *pPlayer = dynamic_cast< C_HL1MP_Player* >( m_hPlayer.Get() );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
 		}	
@@ -412,7 +412,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 	// then we can make ourselves start out exactly where the player is.
 	C_HL1MP_Player *pPlayer = dynamic_cast< C_HL1MP_Player* >( m_hPlayer.Get() );
 	
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		// move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());
@@ -479,7 +479,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 	matrix3x4_t currentBones[MAXSTUDIOBONES];
 	const float boneDt = 0.05f;
 
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		pPlayer->GetRagdollInitBoneArrays( boneDelta0, boneDelta1, currentBones, boneDt );
 	}

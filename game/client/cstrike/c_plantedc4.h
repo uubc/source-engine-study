@@ -33,7 +33,7 @@ public:
 
 	void Explode( void );
 	void Spawn( void );
-	virtual void SetDormant( bool bDormant );
+	virtual void AfterSetDormant( bool bOldDormant );
 
 	void ClientThink( void );
 

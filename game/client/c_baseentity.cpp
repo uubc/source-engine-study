@@ -173,7 +173,7 @@ BEGIN_PREDICTION_DATA_NO_BASE( C_BaseEntity )
 //	DEFINE_FIELD( m_ClientHandle, FIELD_SHORT ),
 //	DEFINE_FIELD( m_Partition, FIELD_SHORT ),
 //	DEFINE_FIELD( m_hRender, FIELD_SHORT ),
-	DEFINE_FIELD( m_bDormant, FIELD_BOOLEAN ),
+//	DEFINE_FIELD( m_bDormant, FIELD_BOOLEAN ),
 //	DEFINE_FIELD( current_position, FIELD_INTEGER ),
 //	DEFINE_FIELD( m_flLastMessageTime, FIELD_FLOAT ),
 //	DEFINE_FIELD( m_vecBaseVelocity, FIELD_VECTOR ),
@@ -461,7 +461,6 @@ const IEngineGhostClient* C_BaseEntity::GetEngineGhost() const
 
 void C_BaseEntity::Clear( void )
 {
-	m_bDormant = true;
 	//m_RefEHandle.Term();
 
 	//index = -1;
@@ -707,7 +706,7 @@ void C_BaseEntity::UpdateVisibility()
 	}
 #endif
 
-	if ( ShouldDraw() && !IsDormant() && ( !ToolsEnabled() || GetEngineObject()->IsEnabledInToolView() ) )
+	if ( ShouldDraw() && !GetEngineObject()->IsDormant() && ( !ToolsEnabled() || GetEngineObject()->IsEnabledInToolView() ) )
 	{
 		// add/update leafsystem
 		GetEngineObject()->AddToLeafSystem();
@@ -1100,7 +1099,7 @@ bool C_BaseEntity::GetSoundSpatialization( SpatializationInfo_t& info )
 	}
 
 	// Out of PVS
-	if ( IsDormant() )
+	if (GetEngineObject()->IsDormant() )
 	{
 		return false;
 	}
@@ -1340,24 +1339,6 @@ void C_BaseEntity::SetupWeights( const matrix3x4_t *pBoneToWorld, int nFlexWeigh
 //{
 //}
 
-
-void C_BaseEntity::UpdatePartitionListEntry()
-{
-	// Don't add the world entity
-	CollideType_t shouldCollide = GetCollideType();
-
-	// Choose the list based on what kind of collisions we want
-	int list = PARTITION_CLIENT_NON_STATIC_EDICTS;
-	if (shouldCollide == ENTITY_SHOULD_COLLIDE)
-		list |= PARTITION_CLIENT_SOLID_EDICTS;
-	else if (shouldCollide == ENTITY_SHOULD_RESPOND)
-		list |= PARTITION_CLIENT_RESPONSIVE_EDICTS;
-
-	// add the entity to the KD tree so we will collide against it
-	partition->RemoveAndInsert( PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, list, GetEngineObject()->GetPartitionHandle() );
-}
-
-
 void C_BaseEntity::NotifyShouldTransmit( ShouldTransmitState_t state )
 {
 	// Init should have been called before we get in here.
@@ -1370,9 +1351,9 @@ void C_BaseEntity::NotifyShouldTransmit( ShouldTransmitState_t state )
 	case SHOULDTRANSMIT_START:
 		{
 			// We've just been sent by the server. Become active.
-			SetDormant( false );
+			GetEngineObject()->SetDormant( false );
 			
-			UpdatePartitionListEntry();
+			GetEngineObject()->UpdatePartitionListEntry();
 
 //#if !defined( NO_ENTITY_PREDICTION )
 //			// Note that predictables get a chance to hook up to their server counterparts here
@@ -1407,7 +1388,7 @@ void C_BaseEntity::NotifyShouldTransmit( ShouldTransmitState_t state )
 			GetEngineObject()->UnlinkFromHierarchy();
 
 			// We're no longer being sent by the server. Become dormant.
-			SetDormant( true );
+			GetEngineObject()->SetDormant( true );
 			
 			// remove the entity from the KD tree so we won't collide against it
 			partition->Remove( PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, GetEngineObject()->GetPartitionHandle() );
@@ -1519,7 +1500,7 @@ void C_BaseEntity::PostDataUpdate( DataUpdateType_t updateType )
 //	}
 //#endif
 
-	UpdatePartitionListEntry();
+	GetEngineObject()->UpdatePartitionListEntry();
 	
 }
 
@@ -2365,31 +2346,15 @@ bool C_BaseEntity::InLocalTeam( void )
 //			NOTE: this is meaningless for client-side only entities.
 // Input  : inside_pvs - 
 //-----------------------------------------------------------------------------
-void C_BaseEntity::SetDormant( bool bDormant )
+void C_BaseEntity::AfterSetDormant( bool bOldDormant )
 {
 	Assert( IsNetworkable() );
-	m_bDormant = bDormant;
-
 	// Kill drawing if we became dormant.
 	UpdateVisibility();
-
-	ParticleProp()->OwnerSetDormantTo( bDormant );
+	ParticleProp()->OwnerSetDormantTo(GetEngineObject()->IsDormant() );
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Returns whether this entity is dormant. Client/server entities become
-//			dormant when they leave the PVS on the server. Client side entities
-//			can decide for themselves whether to become dormant.
-//-----------------------------------------------------------------------------
-bool C_BaseEntity::IsDormant( void )
-{
-	if (IsNetworkable() )
-	{
-		return m_bDormant;
-	}
 
-	return false;
-}
 
 //-----------------------------------------------------------------------------
 // Purpose: Tells the entity that it's about to be destroyed due to the client receiving
@@ -3277,7 +3242,7 @@ void C_BaseEntity::OnSave()
 //-----------------------------------------------------------------------------
 void C_BaseEntity::OnRestore()
 {	
-	UpdatePartitionListEntry();
+	GetEngineObject()->UpdatePartitionListEntry();
 	GetEngineObject()->UpdatePartition();
 
 	UpdateVisibility();
@@ -3342,7 +3307,7 @@ void C_BaseEntity::GetToolRecordingState( KeyValues *msg )
 	state.m_pModelName = modelinfo->GetModelName(GetEngineObject()->GetModel() );
 	state.m_nOwner = pOwner ? pOwner->entindex() : -1;
 	state.m_nEffects = GetEngineObject()->GetEffects();
-	state.m_bVisible = ShouldDraw() && !IsDormant();
+	state.m_bVisible = ShouldDraw() && !GetEngineObject()->IsDormant();
 	state.m_bRecordFinalVisibleSample = false;
 	state.m_vecRenderOrigin = GetRenderOrigin();
 	state.m_vecRenderAngles = GetRenderAngles();
@@ -3582,7 +3547,7 @@ void CC_CL_Find_Ent( const CCommand& args )
 		if ( bMatches )
 		{
 			iCount++;
-			Msg("   '%s' (entindex %d) %s \n", pszClassname ? pszClassname : "[NO NAME]", ent->entindex(), ent->IsDormant() ? "(DORMANT)" : "" );
+			Msg("   '%s' (entindex %d) %s \n", pszClassname ? pszClassname : "[NO NAME]", ent->entindex(), ent->GetEngineObject()->IsDormant() ? "(DORMANT)" : "" );
 		}
 	}
 
@@ -3604,7 +3569,7 @@ void CC_CL_Find_Ent_Index( const CCommand& args )
 	if ( ent )
 	{
 		const char *pszClassname = ent->GetClassname();
-		Msg("   '%s' (entindex %d) %s \n", pszClassname ? pszClassname : "[NO NAME]", iIndex, ent->IsDormant() ? "(DORMANT)" : "" );
+		Msg("   '%s' (entindex %d) %s \n", pszClassname ? pszClassname : "[NO NAME]", iIndex, ent->GetEngineObject()->IsDormant() ? "(DORMANT)" : "" );
 	}
 	else
 	{

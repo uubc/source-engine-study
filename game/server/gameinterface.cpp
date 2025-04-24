@@ -1161,7 +1161,7 @@ void CServerGameDLL::ServerActivate( IServerEntity *pEdictList, int edictCount, 
 
 	for ( IServerEntity *pEntity = EntityList()->FirstEnt(); pEntity != NULL; pEntity = EntityList()->NextEnt(pEntity) )
 	{
-		if (pEntity && !pEntity->IsDormant() )
+		if (pEntity && !pEntity->GetEngineObject()->IsDormant() )
 		{
 			MDLCACHE_CRITICAL_SECTION();
 

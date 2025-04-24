@@ -4463,7 +4463,7 @@ void CViewRender::DrawMonitors( const CViewSetup &cameraView )
 	int cameraNum;
 	for ( cameraNum = 0; pCameraEnt != NULL; pCameraEnt = pCameraEnt->m_pNext )
 	{
-		if ( !pCameraEnt->IsActive() || pCameraEnt->IsDormant() )
+		if ( !pCameraEnt->IsActive() || pCameraEnt->GetEngineObject()->IsDormant() )
 			continue;
 
 		if ( !DrawOneMonitor( pCameraTarget, cameraNum, pCameraEnt, cameraView, player, 0, 0, width, height ) )
@@ -4655,7 +4655,7 @@ void CRendering3dView::UpdateRenderablesOpacity()
 	IClientEntity *pLocal = EntityList()->GetLocalPlayer();
 	if ( pLocal )
 	{
-		flFactor = pLocal->GetFOVDistanceAdjustFactor();
+		flFactor = pLocal->AsHandlePlayer()->GetFOVDistanceAdjustFactor();
 	}
 
 	if ( cl_leveloverview.GetFloat() > 0 )

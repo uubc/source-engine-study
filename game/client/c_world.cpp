@@ -1480,7 +1480,7 @@ void C_World::FireGameEvent(IGameEvent* event)
 			IAchievement* pAchievement = pAchievementMgr->GetAchievementByID(iAchievement);
 			if (pAchievement)
 			{
-				if (!pPlayer->IsDormant() && pPlayer->ShouldAnnounceAchievement())
+				if (!pPlayer->GetEngineObject()->IsDormant() && pPlayer->ShouldAnnounceAchievement())
 				{
 					pPlayer->SetNextAchievementAnnounceTime(gpGlobals->curtime + ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME);
 

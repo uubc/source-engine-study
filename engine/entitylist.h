@@ -669,6 +669,9 @@ public:
 	void AddEFlags(int nEFlagMask);
 	void RemoveEFlags(int nEFlagMask);
 	bool IsEFlagSet(int nEFlagMask) const;
+	// makes the entity inactive
+	void MakeDormant(void);
+	int IsDormant(void);
 	// Marks for deletion
 	void MarkForDeletion();
 	// checks to see if the entity is marked for deletion
@@ -6175,7 +6178,7 @@ int CGlobalEntityList<T>::RestoreEntity(T* pEntity, IRestore* pRestore, entityta
 				return -1;
 			else if (!datamap_t::FStrEq(STRING(g_ServerGlobalVariables.mapname), g_pVEngineServer->GlobalEntity_GetMap(globalIndex)))
 			{
-				pEntity->MakeDormant();	// Hasn't been moved to this level yet, wait but stay alive
+				pEntity->GetEngineObject()->MakeDormant();	// Hasn't been moved to this level yet, wait but stay alive
 			}
 			// In this level & not dead, continue on as normal
 		}
@@ -6280,7 +6283,7 @@ void CGlobalEntityList<T>::PostRestore()
 	for (int i = m_RestoredEntities.Count() - 1; i >= 0; --i)
 	{
 		T* pEntity = (T*)GetBaseEntityFromHandle(m_RestoredEntities[i]);
-		if (pEntity && !pEntity->IsDormant())
+		if (pEntity && !pEntity->GetEngineObject()->IsDormant())
 		{
 			MDLCACHE_CRITICAL_SECTION();
 			m_EngineObjectArray[pEntity->entindex()]->OnRestore();
@@ -6593,7 +6596,7 @@ int CGlobalEntityList<T>::ComputeEntitySaveFlags(T* pEntity)
 	{
 		flags |= FENTTABLE_MOVEABLE;
 	}
-	if (pEntity->GetEngineObject()->GetGlobalname() != NULL_STRING && !pEntity->IsDormant())
+	if (pEntity->GetEngineObject()->GetGlobalname() != NULL_STRING && !pEntity->GetEngineObject()->IsDormant())
 	{
 		flags |= FENTTABLE_GLOBAL;
 	}
@@ -7023,7 +7026,7 @@ int CGlobalEntityList<T>::DispatchSpawn(IServerEntity* pEntity)
 				}
 				else if (!datamap_t::FStrEq(STRING(g_ServerGlobalVariables.mapname), g_pVEngineServer->GlobalEntity_GetMap(globalIndex)))
 				{
-					pEntity->MakeDormant();	// Hasn't been moved to this level yet, wait but stay alive
+					pEntity->GetEngineObject()->MakeDormant();	// Hasn't been moved to this level yet, wait but stay alive
 				}
 				// In this level & not dead, continue on as normal
 			}

@@ -82,7 +82,7 @@ void C_FuncTrackTrain::OnDataChanged( DataUpdateType_t updateType )
 bool C_FuncTrackTrain::GetSoundSpatialization( SpatializationInfo_t& info )
 {
 	// Out of PVS
-	if ( IsDormant() )
+	if (GetEngineObject()->IsDormant() )
 		return false;
 	
 	if ( info.pflRadius )

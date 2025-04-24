@@ -193,7 +193,7 @@ int C_RopeKeyframe::DrawModel( int flags )
 	}
 
 	// If our start & end entities have models, but are nodraw, then we don't draw
-	if (GetEngineRope()->GetStartEntity() && GetEngineRope()->GetStartEntity()->IsDormant() && GetEngineRope()->GetEndEntity() && GetEngineRope()->GetEndEntity()->IsDormant())
+	if (GetEngineRope()->GetStartEntity() && GetEngineRope()->GetStartEntity()->GetEngineObject()->IsDormant() && GetEngineRope()->GetEndEntity() && GetEngineRope()->GetEndEntity()->GetEngineObject()->IsDormant())
 	{
 		// Check models because rope endpoints are point entities
 		if (GetEngineRope()->GetStartEntity()->GetEngineObject()->GetModelIndex() && GetEngineRope()->GetEndEntity()->GetEngineObject()->GetModelIndex())

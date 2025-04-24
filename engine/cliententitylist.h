@@ -368,7 +368,6 @@ public:
 	//ClientClass* GetClientClass() { return NULL; }
 	void* GetDataTableBasePtr() { return this; }
 	void NotifyShouldTransmit(ShouldTransmitState_t state) { m_pOuter->NotifyShouldTransmit(state); }
-	bool IsDormant(void) { return m_pOuter->IsDormant(); }
 	void ReceiveMessage(int classID, bf_read& msg) { m_pOuter->ReceiveMessage(classID, msg); }
 	void SetDestroyedOnRecreateEntities(void) { m_pOuter->SetDestroyedOnRecreateEntities(); }
 	// This just picks one of the routes to IClientUnknown.
@@ -519,6 +518,7 @@ public:
 		m_nSimulationTick = -1;
 		m_bPredictable = false;
 		m_hThink = INVALID_THINK_HANDLE;
+		m_bDormant = true;
 
 	}
 
@@ -836,6 +836,8 @@ public:
 	void AddEFlags(int nEFlagMask);
 	void RemoveEFlags(int nEFlagMask);
 	bool IsEFlagSet(int nEFlagMask) const;
+	bool IsDormant(void);
+	virtual void SetDormant(bool bDormant);
 	// checks to see if the entity is marked for deletion
 	bool IsMarkedForDeletion(void);
 	int GetSpawnFlags(void) const;
@@ -914,6 +916,7 @@ public:
 		m_nSimulationTick = -1;
 		m_bPredictable = false;
 		m_hThink = INVALID_THINK_HANDLE;
+		m_bDormant = true;
 
 	}
 
@@ -1002,6 +1005,7 @@ public:
 	bool IsPointInBounds(const Vector& vecWorldPt) const;
 	void UseTriggerBounds(bool bEnable, float flBloat = 0.0f);
 	void RefreshScaledCollisionBounds(void);
+	void UpdatePartitionListEntry();
 	void MarkPartitionHandleDirty();
 	bool DoesRotationInvalidateSurroundingBox() const;
 	void MarkSurroundingBoundsDirty();
@@ -1643,7 +1647,9 @@ protected:
 
 	IClientEntityList* const m_pClientEntityList = NULL;
 	const CBaseHandle m_RefEHandle;
-	friend class IClientEntity;
+	// For client/server entities, true if the entity goes outside the PVS.
+// Unused for client only entities.
+	bool							m_bDormant;
 	CThreadFastMutex m_CalcAbsolutePositionMutex;
 	CThreadFastMutex m_CalcAbsoluteVelocityMutex;
 	Vector							m_vecOrigin = Vector(0,0,0);

@@ -2073,7 +2073,7 @@ int CDetailObjectSystem::SortSpritesBackToFront( int nLeaf, const Vector &viewOr
 	IClientEntity *pLocalPlayer = entitylist->GetLocalPlayer();
 	if ( pLocalPlayer )
 	{
-		flFactor = 1.0 / pLocalPlayer->GetFOVDistanceAdjustFactor();
+		flFactor = 1.0 / pLocalPlayer->AsHandlePlayer()->GetFOVDistanceAdjustFactor();
 	}
 
 	float flMaxSqDist;
@@ -2828,7 +2828,7 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 	IClientEntity *local = entitylist->GetLocalPlayer();
 	if ( local )
 	{
-		factor = local->GetFOVDistanceAdjustFactor();
+		factor = local->AsHandlePlayer()->GetFOVDistanceAdjustFactor();
 	}
 
 	// Compute factors to optimize rendering of the detail models

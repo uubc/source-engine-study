@@ -64,10 +64,8 @@ C_PlantedC4::~C_PlantedC4()
 	//=============================================================================
 }
 
-void C_PlantedC4::SetDormant( bool bDormant )
-{
-	BaseClass::SetDormant( bDormant );
-	
+void C_PlantedC4::AfterSetDormant( bool bDormant )
+{	
 	// Remove us from the list of planted C4s.
 	if ( bDormant )
 	{
@@ -92,7 +90,7 @@ void C_PlantedC4::ClientThink( void )
 	BaseClass::ClientThink();
 
 	// If it's dormant, don't beep or anything..
-	if ( IsDormant() )
+	if (GetEngineObject()->IsDormant() )
 		return;
 
 	if ( !m_bBombTicking )
@@ -212,7 +210,7 @@ void C_PlantedC4::Explode( void )
 {
 	m_pC4Explosion = ParticleProp()->Create( "bomb_explosion_huge", PATTACH_ABSORIGIN );
 	GetEngineObject()->AddEffects( EF_NODRAW );
-	SetDormant( true );
+	GetEngineObject()->SetDormant( true );
 }
 //=============================================================================
 // HPE_END

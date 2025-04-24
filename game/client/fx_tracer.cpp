@@ -39,7 +39,7 @@ Vector GetTracerOrigin( const CEffectData &data )
 
 // This check should probably be for all multiplayer games, investigate later
 #if defined( HL2MP ) || defined( TF_CLIENT_DLL )
-		if ( pEnt && pEnt->IsDormant() )
+		if ( pEnt && pEnt->GetEngineObject()->IsDormant() )
 			return vecStart;
 #endif
 

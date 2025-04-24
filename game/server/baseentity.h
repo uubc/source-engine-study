@@ -525,9 +525,7 @@ public:
 	virtual void OnSetEffects(int nEffects);
 	virtual bool OnSetLocalAngularVelocity(const QAngle& vecAngVelocity);
 
-	// makes the entity inactive
-	void		MakeDormant( void );
-	int			IsDormant( void );
+
 
 	virtual void		RemoveDeferred( void );	// Sets the entity invisible, and makes it remove itself on the next frame
 

@@ -118,14 +118,12 @@ public:
 	//-----------------------------------------------------------------------------
 	// Purpose: 
 	//-----------------------------------------------------------------------------
-	virtual void SetDormant( bool bDormant )
+	virtual void BeforeSetDormant( bool bNewDormant )
 	{
-		if ( !IsDormant() && bDormant )
+		if ( !GetEngineObject()->IsDormant() && bNewDormant )
 		{
 			RemoveAndUnlockCommentaryHudGroup();
 		}
-
-		BaseClass::SetDormant( bDormant );
 	}
 
 	//-----------------------------------------------------------------------------

@@ -13,6 +13,7 @@
 #include "glow_overlay.h"
 #include "iviewrender.h"
 #include "particle_litsmokeemitter.h"
+#include "c_baseplayer.h"
 
 class CFireOverlay;
 

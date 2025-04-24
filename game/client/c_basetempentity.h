@@ -59,7 +59,7 @@ public:
 	virtual void					PostDataUpdate( DataUpdateType_t updateType );
 	virtual void					OnPreDataChanged( DataUpdateType_t updateType );
 	virtual void					OnDataChanged( DataUpdateType_t updateType );
-	virtual void					SetDormant( bool bDormant );
+	//virtual void					SetDormant( bool bDormant );
 	virtual bool					IsDormant( void );
 	//virtual int						entindex( void ) const;
 	virtual void					ReceiveMessage( int classID, bf_read &msg );

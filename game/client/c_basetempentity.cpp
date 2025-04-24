@@ -189,7 +189,7 @@ void C_BaseTempEntity::PreDataUpdate( DataUpdateType_t updateType )
 void C_BaseTempEntity::PostDataUpdate( DataUpdateType_t updateType ) { Assert( 0 ); }
 void C_BaseTempEntity::OnPreDataChanged( DataUpdateType_t updateType ) { Assert( 0 ); }
 void C_BaseTempEntity::OnDataChanged( DataUpdateType_t updateType ) { Assert( 0 ); }
-void C_BaseTempEntity::SetDormant( bool bDormant ) { Assert( 0 ); }
+//void C_BaseTempEntity::SetDormant( bool bDormant ) { Assert( 0 ); }
 bool C_BaseTempEntity::IsDormant( void ) { Assert( 0 ); return false; };
 void C_BaseTempEntity::ReceiveMessage( int classID, bf_read &msg ) { Assert( 0 ); }
 void C_BaseTempEntity::SetDestroyedOnRecreateEntities( void ) { Assert(0); }

@@ -209,7 +209,7 @@ void C_GrenadeTrail::Update( float fTimeDelta )
 		return;
 
 	// Grenades thrown out of the PVS should not draw particles at the world origin
-	if ( IsDormant() )
+	if (GetEngineObject()->IsDormant() )
 		return;
 
 	Vector	offsetColor;

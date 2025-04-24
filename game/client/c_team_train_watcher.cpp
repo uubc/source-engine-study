@@ -61,7 +61,7 @@ C_TeamTrainWatcher::~C_TeamTrainWatcher()
 void C_TeamTrainWatcher::ClientThink()
 {
 #ifdef GLOWS_ENABLE
-	if ( IsDormant() || ( m_hGlowEnt.Get() == NULL ) )
+	if (GetEngineObject()->IsDormant() || ( m_hGlowEnt.Get() == NULL ) )
 	{
 		DestroyGlowEffect();
 		m_hOldGlowEnt = NULL;

@@ -175,7 +175,7 @@ void FX_FireBullets(
 	CCSWeaponInfo *pWeaponInfo = static_cast< CCSWeaponInfo* >( GetFileWeaponInfoFromHandle( hWpnInfo ) );
 
 	// Do the firing animation event.
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		if ( iMode == Primary_Mode )
 			pPlayer->GetPlayerAnimState()->DoAnimationEvent( PLAYERANIMEVENT_FIRE_GUN_PRIMARY );
@@ -318,7 +318,7 @@ void FX_PlantBomb( int iPlayerIndex, const Vector &vOrigin, PlantBombOption_t op
 #endif
 
 	// Do the firing animation event.
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		switch ( option )
 		{

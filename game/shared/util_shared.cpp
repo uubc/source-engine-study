@@ -213,7 +213,7 @@ void UTIL_ClipTraceToPlayers( const Vector& vecAbsStart, const Vector& vecAbsEnd
 			continue;
 
 #ifdef CLIENT_DLL
-		if ( player->IsDormant() )
+		if ( player->GetEngineObject()->IsDormant() )
 			continue;
 #endif // CLIENT_DLL
 

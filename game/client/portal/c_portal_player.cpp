@@ -60,7 +60,7 @@ public:
 	{
 		// Create the effect.
 		C_Portal_Player *pPlayer = dynamic_cast< C_Portal_Player* >( m_hPlayer.Get() );
-		if ( pPlayer && !pPlayer->IsDormant() )
+		if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
 		}	
@@ -202,7 +202,7 @@ void C_PortalRagdoll::CreatePortalRagdoll()
 	// then we can make ourselves start out exactly where the player is.
 	C_Portal_Player *pPlayer = dynamic_cast<C_Portal_Player*>( m_hPlayer.Get() );
 
-	if ( pPlayer && !pPlayer->IsDormant() )
+	if ( pPlayer && !pPlayer->GetEngineObject()->IsDormant() )
 	{
 		// Move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->GetEngineObject()->SnatchModelInstance( this->GetEngineObject());

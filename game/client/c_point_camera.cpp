@@ -102,7 +102,7 @@ void C_PointCamera::GetToolRecordingState( KeyValues *msg )
 
 	unsigned char r, g, b;
 	static MonitorRecordingState_t state;
-	state.m_bActive = IsActive() && !IsDormant();
+	state.m_bActive = IsActive() && !GetEngineObject()->IsDormant();
 	state.m_flFOV = GetFOV();
 	state.m_bFogEnabled = IsFogEnabled();
 	state.m_flFogStart = GetFogStart();

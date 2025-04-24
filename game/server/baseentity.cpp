@@ -2028,34 +2028,6 @@ bool CBaseEntity::OnSetLocalAngularVelocity(const QAngle& vecAngVelocity)
 	return true;
 }
 
-void CBaseEntity::MakeDormant( void )
-{
-	GetEngineObject()->AddEFlags( EFL_DORMANT );
-
-	// disable thinking for dormant entities
-	SetThink( NULL );
-
-	if ( entindex()==-1 )
-		return;
-
-	//SETBITS( m_iEFlags, EFL_DORMANT );
-	
-	// Don't touch
-	GetEngineObject()->AddSolidFlags( FSOLID_NOT_SOLID );
-	// Don't move
-	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
-	// Don't draw
-	GetEngineObject()->AddEffects( EF_NODRAW );
-	// Don't think
-	GetEngineObject()->SetNextThink( TICK_NEVER_THINK );
-}
-
-int CBaseEntity::IsDormant( void )
-{
-	return GetEngineObject()->IsEFlagSet( EFL_DORMANT );
-}
-
-
 bool CBaseEntity::IsInWorld( void ) const
 {  
 	if ( entindex()==-1 )
