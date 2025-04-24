@@ -573,9 +573,9 @@ public:
 			DestroyIntermediateData();
 		}
 		// If it's play simulated, remove from simulation list if the player still exists...
-		//if ( IsPlayerSimulated() && (C_BasePlayer*)EntityList()->GetLocalPlayer() )
+		//if ( IsPlayerSimulated() && EntityList()->GetLocalPlayer() )
 		//{
-		//	(C_BasePlayer*)EntityList()->GetLocalPlayer()->RemoveFromPlayerSimulationList( this );
+		//	EntityList()->GetLocalPlayer()->RemoveFromPlayerSimulationList( this );
 		//}
 #endif	
 		{
@@ -6311,8 +6311,8 @@ template<class T>
 void CClientEntityList<T>::RemoveFromDeleteList(CBaseHandle hEnt)
 {
 	// Sanity check!
-	Assert(hEnt != EntityList()->InvalidHandle());
-	if (hEnt == EntityList()->InvalidHandle())
+	Assert(hEnt != InvalidHandle());
+	if (hEnt == InvalidHandle())
 		return;
 
 	int nSize = m_aDeleteList.Count();
