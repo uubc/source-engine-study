@@ -126,7 +126,7 @@ void C_TeamTrainWatcher::OnDataChanged( DataUpdateType_t updateType )
 
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	if ( m_iOldTrainSpeedLevel != m_iTrainSpeedLevel || m_nOldNumCappers != m_nNumCappers )

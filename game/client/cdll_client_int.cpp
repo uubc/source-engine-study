@@ -1047,7 +1047,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( ClientEffectPrecacheSystem() );
 	//IGameSystem::Add( g_pClientShadowMgr );
 	IGameSystem::Add( g_pColorCorrectionMgr );	// NOTE: This must happen prior to ClientThinkList (color correction is updated there)
-	IGameSystem::Add( ClientThinkList() );
+	//IGameSystem::Add( ClientThinkList() );
 	IGameSystem::Add( ClientSoundscapeSystem() );
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
@@ -2047,7 +2047,7 @@ void SimulateEntities()
 	VPROF_BUDGET("Client SimulateEntities", VPROF_BUDGETGROUP_CLIENT_SIM);
 
 	// Service timer events (think functions).
-  	ClientThinkList()->PerformThinkFunctions();
+	EntityList()->PerformThinkFunctions();
 
 	// TODO: make an ISimulateable interface so C_BaseNetworkables can simulate?
 	{

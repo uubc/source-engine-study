@@ -202,7 +202,7 @@ C_Prop_Portal::~C_Prop_Portal( void )
 void C_Prop_Portal::Spawn( void )
 {
 	SetThink( &C_Prop_Portal::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	//m_matrixThisToLinked.Identity(); //don't accidentally teleport objects to zero space
 	BaseClass::Spawn();
@@ -244,7 +244,7 @@ void C_Prop_Portal::ClientThink( void )
 
 	if( bDidAnything == false )
 	{
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 }
 
@@ -587,13 +587,13 @@ void C_Prop_Portal::OnDataChanged( DataUpdateType_t updateType )
 
 			m_fOpenAmount = 0.0f;
 			//m_fStaticAmount = 1.0f; // This will cause the portal we are opening to show the static effect
-			SetNextClientThink( CLIENT_THINK_ALWAYS ); //we need this to help open up
+			GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS ); //we need this to help open up
 
 			//add static to the remote
 			if( pRemote )
 			{
 				pRemote->m_fStaticAmount = 1.0f; // This will cause the other portal to show the static effect
-				pRemote->SetNextClientThink( CLIENT_THINK_ALWAYS );
+				pRemote->GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 			}
 
 			dlight_t *pFakeLight = NULL;
@@ -862,7 +862,7 @@ int C_Prop_Portal::DrawModel( int flags )
 
 	if ( pLinkedPortal == NULL )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS ); // we need this to help fade out
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS ); // we need this to help fade out
 	}
 
 	if ( !g_pViewRender->ShouldUseStencilsToRenderPortals() )

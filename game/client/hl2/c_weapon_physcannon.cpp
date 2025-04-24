@@ -62,7 +62,7 @@ C_WeaponPhysCannon::C_WeaponPhysCannon( void )
 void C_WeaponPhysCannon::OnDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnDataChanged( updateType );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 //-----------------------------------------------------------------------------

@@ -106,7 +106,7 @@ void C_EnvScreenOverlay::PostDataUpdate( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 void C_EnvScreenOverlay::StopOverlays( void )
 {
-	SetNextClientThink( CLIENT_THINK_NEVER );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 
 	if ( m_bWasActive && !m_bIsActive )
 	{
@@ -122,7 +122,7 @@ void C_EnvScreenOverlay::StartOverlays( void )
 	m_iCurrentOverlay = 0;
 	m_flCurrentOverlayTime = 0;
 	m_iCachedDesiredOverlay	= 0;
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	StartCurrentOverlay();
 	HandleOverlaySwitch();

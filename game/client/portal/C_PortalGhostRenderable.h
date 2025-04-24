@@ -110,7 +110,6 @@ public:
 	//virtual IClientRenderable*		GetClientRenderable() { return this; };
 	//virtual IClientEntity*			GetIClientEntity() { return NULL; };
 	//virtual C_BaseEntity*			GetBaseEntity() { return NULL; };
-	//virtual IClientThinkable*		GetClientThinkable() { return NULL; };
 };
 
 #endif //#ifndef C_PORTALGHOSTRENDERABLE_H

@@ -169,22 +169,6 @@ bool C_BaseAnimating::Init(int entnum, int iSerialNum) {
 
 void C_BaseAnimating::UpdateOnRemove(void)
 {
-	IEngineObjectClient* pChild = GetEngineObject()->GetEffectEntity();
-
-	if (pChild && pChild->IsMarkedForDeletion() == false)
-	{
-		EntityList()->DestroyEntity(pChild->GetHandleEntity());// ->Release();
-	}
-
-	if (GetThinkHandle() != INVALID_THINK_HANDLE)
-	{
-		ClientThinkList()->RemoveThinkable(GetClientHandle());
-	}
-	//EntityList()->RemoveEntity( this );
-
-	partition->Remove(PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, GetEngineObject()->GetPartitionHandle());
-	GetEngineObject()->RemoveFromLeafSystem();
-
 	BaseClass::UpdateOnRemove();
 }
 //-----------------------------------------------------------------------------
@@ -2379,7 +2363,7 @@ C_BaseEntity *C_BaseAnimating::BecomeRagdollOnClient()
 	pRagdoll->GetEngineObject()->SetSkin(GetEngineObject()->GetSkin());
 	pRagdoll->GetEngineObject()->SetVecForce(GetEngineObject()->GetVecForce());
 	pRagdoll->GetEngineObject()->SetForceBone(GetEngineObject()->GetForceBone());
-	pRagdoll->SetNextClientThink(CLIENT_THINK_ALWAYS);
+	pRagdoll->GetEngineObject()->SetNextClientThink(CLIENT_THINK_ALWAYS);
 
 	pRagdoll->GetEngineObject()->SetModelName(AllocPooledString(pModelName));
 	pRagdoll->GetEngineObject()->SetModelScale(GetEngineObject()->GetModelScale());

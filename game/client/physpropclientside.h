@@ -158,7 +158,7 @@ private:
 		int						iSkin;
 		int						iHealth;
 		int						iSpawnFlags;
-		ClientEntityHandle_t	hClientEntity;
+		CBaseHandle				hClientEntity;
 	};
 	CUtlVector<clientsideproprespawn_t> m_PropList;
 };

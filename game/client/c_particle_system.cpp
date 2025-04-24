@@ -95,7 +95,7 @@ void C_ParticleSystem::PostDataUpdate( DataUpdateType_t updateType )
 		if ( m_bActive )
 		{
 			// Delayed here so that we don't get invalid abs queries on level init with active particle systems
-			SetNextClientThink( gpGlobals->curtime );
+			GetEngineObject()->SetNextClientThink( gpGlobals->curtime );
 		}
 	}
 	else
@@ -105,7 +105,7 @@ void C_ParticleSystem::PostDataUpdate( DataUpdateType_t updateType )
 			if ( m_bActive )
 			{
 				// Delayed here so that we don't get invalid abs queries on level init with active particle systems
-				SetNextClientThink( gpGlobals->curtime );
+				GetEngineObject()->SetNextClientThink( gpGlobals->curtime );
 			}
 			else
 			{

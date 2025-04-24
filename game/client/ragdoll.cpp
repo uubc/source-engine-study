@@ -398,7 +398,7 @@ C_EntityFlame* FireEffect(C_BaseAnimating* pTarget, C_BaseEntity* pServerFire, f
 		CPASAttenuationFilter filter(pTarget);
 		g_pSoundEmitterSystem->EmitSound(filter, pTarget->GetSoundSourceIndex(), "General.BurningFlesh");//pTarget->
 
-		pFire->SetNextClientThink(gpGlobals->curtime + 7.0f);
+		pFire->GetEngineObject()->SetNextClientThink(gpGlobals->curtime + 7.0f);
 	}
 
 	return pFire;
@@ -522,7 +522,7 @@ void C_ClientRagdoll::OnRestore(void)
 		GetEngineObject()->SetEffectEntity(pNewFireChild->GetEngineObject());
 	}
 
-	SetNextClientThink(CLIENT_THINK_ALWAYS);
+	GetEngineObject()->SetNextClientThink(CLIENT_THINK_ALWAYS);
 	if (m_bFadeOut == true)
 	{
 		EntityList()->MoveToTopOfLRU(this, m_bImportant);
@@ -704,7 +704,7 @@ void C_ClientRagdoll::FadeOut(void)
 void C_ClientRagdoll::SUB_Remove(void)
 {
 	m_bFadingOut = true;
-	SetNextClientThink(CLIENT_THINK_ALWAYS);
+	GetEngineObject()->SetNextClientThink(CLIENT_THINK_ALWAYS);
 }
 
 void C_ClientRagdoll::IgniteRagdoll(C_BaseEntity* pSource)

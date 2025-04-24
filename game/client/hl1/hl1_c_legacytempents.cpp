@@ -23,7 +23,7 @@ public:
 public:
 	virtual void	Init( void );
 	virtual void	LevelInit();
-	void	MuzzleFlash( const Vector &pos1, const QAngle &angles, int type, ClientEntityHandle_t hEntity, bool firstPerson = false );
+	void	MuzzleFlash( const Vector &pos1, const QAngle &angles, int type, CBaseHandle hEntity, bool firstPerson = false );
 
 private:
 	CHL1TempEnts( const CHL1TempEnts & );
@@ -57,7 +57,7 @@ void CHL1TempEnts::Init( void )
 }
 
 
-void CHL1TempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type, ClientEntityHandle_t hEntity, bool firstPerson )
+void CHL1TempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type, CBaseHandle hEntity, bool firstPerson )
 {
 	C_LocalTempEntity	*pTemp;
 	int					index;

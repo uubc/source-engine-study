@@ -51,7 +51,7 @@ void C_DODSmokeGrenade::OnDataChanged( DataUpdateType_t updateType )
 
 	if(updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 }
 

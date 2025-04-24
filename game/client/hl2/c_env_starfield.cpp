@@ -76,7 +76,7 @@ void C_EnvStarfield::OnDataChanged( DataUpdateType_t updateType )
 			bitsPARTICLE_TRAIL_VELOCITY_DAMPEN | bitsPARTICLE_TRAIL_FADE | bitsPARTICLE_TRAIL_FADE_IN );
 
 		// Start thinking
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	BaseClass::OnDataChanged( updateType );

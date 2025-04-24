@@ -855,7 +855,7 @@ void CWeaponPhysCannon::OnDataChanged( DataUpdateType_t type )
 
 	if ( type == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 		AutoAllowBoneAccess boneaccess( true, false );
 		StartEffects();

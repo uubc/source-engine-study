@@ -78,7 +78,7 @@ void C_NPC_AntlionGuard::OnDataChanged( DataUpdateType_t type )
 
 	if ( (type == DATA_UPDATE_CREATED) && m_bCavernBreed && m_bInCavern )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 

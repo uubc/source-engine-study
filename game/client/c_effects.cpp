@@ -267,7 +267,7 @@ void CClient_Precipitation::OnDataChanged( DataUpdateType_t updateType )
 	// Simulate every frame.
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		if ( m_nPrecipType == PRECIPITATION_TYPE_SNOWFALL )
 		{
 			SnowFallManagerCreate( this );
@@ -1228,7 +1228,7 @@ void C_EnvWind::OnDataChanged( DataUpdateType_t updateType )
 		m_EnvWindShared.m_flStartTime, m_EnvWindShared.m_iInitialWindDir,
 		m_EnvWindShared.m_flInitialWindSpeed );
 
-	SetNextClientThink(0.0f);
+	GetEngineObject()->SetNextClientThink(0.0f);
 
 	BaseClass::OnDataChanged( updateType );
 }
@@ -1237,7 +1237,7 @@ void C_EnvWind::ClientThink( )
 {
 	// Update the wind speed
 	float flNextThink = m_EnvWindShared.WindThink( gpGlobals->curtime );
-	SetNextClientThink(flNextThink);
+	GetEngineObject()->SetNextClientThink(flNextThink);
 }
 
 
@@ -1708,7 +1708,7 @@ void CSnowFallManager::SpawnClientEntity( void )
 	m_iSnowFallArea = SNOWFALL_NONE;
 
 	// Have the Snow Fall Manager think for all the snow fall entities.
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 //-----------------------------------------------------------------------------

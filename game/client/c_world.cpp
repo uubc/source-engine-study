@@ -226,7 +226,6 @@ bool C_World::Init( int entnum, int iSerialNum )
 
 void C_World::UpdateOnRemove()
 {
-
 	//Term();
 	BaseClass::UpdateOnRemove();
 }

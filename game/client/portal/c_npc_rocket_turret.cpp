@@ -76,7 +76,7 @@ C_NPC_RocketTurret::~C_NPC_RocketTurret( void )
 void C_NPC_RocketTurret::Spawn( void )
 {
 	SetThink( &C_NPC_RocketTurret::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	m_pBeam = NULL;
 	m_fPulseOffset = RandomFloat( 0.0f, 2.0f * M_PI );

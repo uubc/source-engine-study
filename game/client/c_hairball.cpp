@@ -164,7 +164,7 @@ C_Hairball::C_Hairball()
 void C_Hairball::Init()
 {
 	//EntityList()->AddNonNetworkableEntity( this );
-	ClientThinkList()->SetNextClientThink( GetClientHandle(), CLIENT_THINK_ALWAYS );
+	EntityList()->SetNextClientThink(GetRefEHandle(), CLIENT_THINK_ALWAYS );
 	
 	GetEngineObject()->AddToLeafSystem( RENDER_GROUP_OPAQUE_ENTITY );
 

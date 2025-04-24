@@ -68,7 +68,7 @@ void C_CrossbowBolt::OnDataChanged( DataUpdateType_t updateType )
 	{
 		m_bUpdated = false;
 		m_vecLastOrigin = GetEngineObject()->GetAbsOrigin();
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 }
 

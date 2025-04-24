@@ -65,7 +65,7 @@ void C_AlyxEmpEffect::OnDataChanged( DataUpdateType_t updateType )
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
 		m_tParticleSpawn.Init( 32 );
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		SetupEmitters();
 	}
 }
@@ -449,13 +449,13 @@ void C_AlyxEmpEffect::NotifyShouldTransmit( ShouldTransmitState_t state )
 	// Turn off
 	if ( state == SHOULDTRANSMIT_END )
 	{
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 
 	// Turn on
 	if ( state == SHOULDTRANSMIT_START )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 }
 

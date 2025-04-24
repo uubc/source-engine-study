@@ -66,7 +66,7 @@ void C_NPC_Vortigaunt::OnDataChanged( DataUpdateType_t updateType )
 	// start thinking if we need to fade.
 	if ( m_flBlackFade != (m_bIsBlack ? 1.0f : 0.0f) )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 }
 
@@ -85,7 +85,7 @@ void C_NPC_Vortigaunt::ClientThink( void )
 		if ( m_flBlackFade >= 1.0f )
 		{
 			m_flBlackFade = 1.0f;
-			SetNextClientThink( CLIENT_THINK_NEVER );
+			GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		}
 		else // interpolate there
 		{
@@ -103,7 +103,7 @@ void C_NPC_Vortigaunt::ClientThink( void )
 		if ( m_flBlackFade <= 0.0f )
 		{
 			m_flBlackFade = 0.0f;
-			SetNextClientThink( CLIENT_THINK_NEVER );
+			GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		}
 		else // interpolate there
 		{

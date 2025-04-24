@@ -56,7 +56,7 @@ void C_Tesla::ReceiveMessage( int classID, bf_read &msg )
 	g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
 
 	m_QueuedCommands.AddToTail( teslaInfo );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 
@@ -67,7 +67,7 @@ void C_Tesla::ClientThink()
 		FX_Tesla( m_QueuedCommands[i] );
 	}
 	m_QueuedCommands.Purge();
-	SetNextClientThink( CLIENT_THINK_NEVER );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 }
 
 

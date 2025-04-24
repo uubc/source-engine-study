@@ -1074,7 +1074,7 @@ void C_Portal_Player::OnDataChanged( DataUpdateType_t type )
 			g_pColorCorrectionMgr->SetColorCorrectionWeight( m_CCDeathHandle, 0.0f );
 		}
 
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	UpdateVisibility();

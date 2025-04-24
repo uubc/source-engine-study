@@ -138,7 +138,7 @@ void C_RotorWashEmitter::OnDataChanged( DataUpdateType_t updateType )
 
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( gpGlobals->curtime + ROTORWASH_THINK_INTERVAL );
+		GetEngineObject()->SetNextClientThink( gpGlobals->curtime + ROTORWASH_THINK_INTERVAL );
 
 #ifndef _XBOX
 		InitSpawner();
@@ -151,7 +151,7 @@ void C_RotorWashEmitter::OnDataChanged( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 void C_RotorWashEmitter::ClientThink( void )
 {
-	SetNextClientThink( gpGlobals->curtime + ROTORWASH_THINK_INTERVAL );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + ROTORWASH_THINK_INTERVAL );
 
 	trace_t	tr;
 	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin()+(Vector(0, 0, -1024)), (MASK_SOLID_BRUSHONLY|CONTENTS_WATER|CONTENTS_SLIME), NULL, COLLISION_GROUP_NONE, &tr );

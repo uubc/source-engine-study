@@ -72,13 +72,13 @@ void C_EnvHeadcrabCanister::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	// Stop client-side simulation on landing
 	if ( m_bLanded )
 	{
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 }
 

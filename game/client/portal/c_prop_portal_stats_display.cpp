@@ -58,7 +58,7 @@ void C_PropPortalStatsDisplay::Spawn( void )
 
 	m_bHasCheated = false;
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 void C_PropPortalStatsDisplay::OnPreDataChanged( DataUpdateType_t updateType )

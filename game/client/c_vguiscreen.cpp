@@ -285,7 +285,7 @@ bool C_VGuiScreen::IsVisibleToTeam( int nTeam )
 //-----------------------------------------------------------------------------
 void C_VGuiScreen::GainFocus( )
 {
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	m_bLoseThinkNextFrame = false;
 	m_nOldButtonState = 0;
 }
@@ -448,7 +448,7 @@ void C_VGuiScreen::ClientThink( void )
 	if ( m_bLoseThinkNextFrame == true )
 	{
 		m_bLoseThinkNextFrame = false;
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 
 	g_pGameRules->DeactivateInGameVGuiContext( );

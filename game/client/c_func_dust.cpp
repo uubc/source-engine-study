@@ -161,7 +161,7 @@ void C_Func_Dust::OnDataChanged( DataUpdateType_t updateType )
 		m_Effect.SetSortOrigin( WorldSpaceCenter( ) );
 
 		// Let us think each frame.
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		
 		// If we're setup to be frozen, just make a bunch of particles initially.
 		if( m_DustFlags & DUSTFLAGS_FROZEN )

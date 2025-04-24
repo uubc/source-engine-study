@@ -243,7 +243,6 @@ public:
 	virtual IClientRenderable* GetClientRenderable() { return GetEngineObject(); }
 	virtual IClientEntity* GetIClientEntity() { return this; }
 	virtual C_BaseEntity* GetBaseEntity() { return this; }
-	virtual IClientThinkable* GetClientThinkable() { return this; }
 
 
 	// Methods of IClientRenderable
@@ -319,8 +318,7 @@ public:
 	// Called whenever you registered for a think message (with SetNextClientThink).
 	virtual void					ClientThink();
 
-	virtual ClientThinkHandle_t		GetThinkHandle();
-	virtual void					SetThinkHandle(ClientThinkHandle_t hThink);
+
 
 
 
@@ -520,7 +518,7 @@ public:
 	// Returns the aiment render origin + angles
 	virtual void					GetAimEntOrigin(IClientEntity* pAttachedTo, Vector* pAbsOrigin, QAngle* pAbsAngles);
 
-	inline ClientEntityHandle_t		GetClientHandle() const { return ClientEntityHandle_t(GetRefEHandle()); }
+	//inline ClientEntityHandle_t		GetClientHandle() const { return ClientEntityHandle_t(GetRefEHandle()); }
 
 	virtual RenderGroup_t			GetRenderGroup();
 
@@ -568,9 +566,6 @@ public:
 	virtual float					GetTextureAnimationStartTime();
 	// Indicates that a texture animation has wrapped
 	virtual void					TextureAnimationWrapped();
-
-	// Set the next think time. Pass in CLIENT_THINK_ALWAYS to have Think() called each frame.
-	virtual void					SetNextClientThink(float nextThinkTime);
 
 	// anything that has health can override this...
 	virtual void					SetHealth(int iHealth) {}
@@ -1051,15 +1046,6 @@ private:
 //#endif
 
 
-	
-
-	
-
-	
-
-
-
-	ClientThinkHandle_t				m_hThink;
 
 
 private:

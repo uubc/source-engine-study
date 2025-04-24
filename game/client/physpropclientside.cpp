@@ -338,7 +338,7 @@ bool C_PhysPropClientside::Initialize()
 
 	UpdateVisibility();
 
-	SetNextClientThink( CLIENT_THINK_NEVER );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 
 	return true;
 }
@@ -417,7 +417,7 @@ void C_PhysPropClientside::ClientThink( void )
 {
 	if ( m_fDeathTime < 0 )
 	{
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		return;
 	}
 
@@ -435,14 +435,14 @@ void C_PhysPropClientside::ClientThink( void )
 
 	GetEngineObject()->SetRenderColorA( alpha * 256 );
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 void C_PhysPropClientside::StartFadeOut( float fDelay )
 {
 	m_fDeathTime = gpGlobals->curtime + fDelay + FADEOUT_TIME;
 
-	SetNextClientThink( gpGlobals->curtime + fDelay );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + fDelay );
 }
 
 
@@ -883,7 +883,7 @@ bool C_FuncPhysicsRespawnZone::Initialize( void )
 
 	UpdateVisibility();
 
-	SetNextClientThink( gpGlobals->curtime + (cl_phys_props_respawnrate.GetFloat() * RandomFloat(1.0,1.1)) );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + (cl_phys_props_respawnrate.GetFloat() * RandomFloat(1.0,1.1)) );
 
 	return true;
 }
@@ -921,7 +921,7 @@ void C_FuncPhysicsRespawnZone::InitializePropsWithin( void )
 			m_PropList[index].iSkin = pProp->GetEngineObject()->GetSkin();
 			m_PropList[index].iHealth = pProp->m_iHealth;
 			m_PropList[index].iSpawnFlags = pProp->m_spawnflags;
-			m_PropList[index].hClientEntity = pProp->GetClientHandle();
+			m_PropList[index].hClientEntity = pProp->GetRefEHandle();
 		}
 	}
 }
@@ -933,7 +933,7 @@ void C_FuncPhysicsRespawnZone::PropDestroyed( C_PhysPropClientside *pProp )
 {
 	for ( int i = 0; i < m_PropList.Count(); i++ )
 	{
-		if ( pProp->GetClientHandle() == m_PropList[i].hClientEntity )
+		if ( pProp->GetRefEHandle() == m_PropList[i].hClientEntity )
 		{
 			m_PropList[i].hClientEntity = INVALID_CLIENTENTITY_HANDLE;
 			return;
@@ -1000,7 +1000,7 @@ void C_FuncPhysicsRespawnZone::RespawnProps( void )
 				else
 				{
 					pEntity->SetRespawnZone( this );
-					m_PropList[i].hClientEntity = pEntity->GetClientHandle();
+					m_PropList[i].hClientEntity = pEntity->GetRefEHandle();
 				}
 			}
 		}
@@ -1039,5 +1039,5 @@ void C_FuncPhysicsRespawnZone::ClientThink( void )
 {
 	RespawnProps();
 
-	SetNextClientThink( gpGlobals->curtime + (cl_phys_props_respawnrate.GetFloat() * RandomFloat(1.0,1.1)) );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + (cl_phys_props_respawnrate.GetFloat() * RandomFloat(1.0,1.1)) );
 }

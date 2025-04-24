@@ -382,7 +382,87 @@ public:
 
 	virtual void UpdateOnRemove(void) 
 	{
-		
+		//Msg("%p ===== %s \n", this, GetClassName());
+
+		m_pServerEntityList->SetReceivedChainedUpdateOnRemove(true);
+
+		// Notifies entity listeners, etc
+		//EntityList()->NotifyRemoveEntity(this);
+		AddEFlags(EFL_KILLME);
+		AddFlag(FL_KILLME);
+		if (!m_pOuter->IsNetworkable() || entindex() != -1)
+		{
+			if (GetFlags() & FL_GRAPHED)
+			{
+				/*	<<TODO>>
+				// this entity was a LinkEnt in the world node graph, so we must remove it from
+				// the graph since we are removing it from the world.
+				for ( int i = 0 ; i < WorldGraph.m_cLinks ; i++ )
+				{
+					if ( WorldGraph.m_pLinkPool [ i ].m_pLinkEnt == pev )
+					{
+						// if this link has a link ent which is the same ent that is removing itself, remove it!
+						WorldGraph.m_pLinkPool [ i ].m_pLinkEnt = NULL;
+					}
+				}
+				*/
+			}
+		}
+
+		if (GetGlobalname() != NULL_STRING)
+		{
+			// NOTE: During level shutdown the global list will suppress this
+			// it assumes your changing levels or the game will end
+			// causing the whole list to be flushed
+			g_pVEngineServer->GlobalEntity_SetState(GetGlobalname(), GLOBAL_DEAD);
+		}
+
+		VPhysicsDestroyObject();
+
+		// This is only here to allow the MOVETYPE_NONE to be set without the
+		// assertion triggering. Why do we bother setting the MOVETYPE to none here?
+		RemoveEffects(EF_BONEMERGE);
+		SetMoveType(MOVETYPE_NONE);
+
+		// If we have a parent, unlink from it.
+		m_pOuter->BeforeParentChanged(NULL);
+		UnlinkFromParent();
+
+		// Any children still connected are orphans, mark all for delete
+		CUtlVector<IEngineObjectServer*> childrenList;
+		GetAllChildren(childrenList);
+		if (childrenList.Count())
+		{
+			DevMsg(2, "Warning: Deleting orphaned children of %s\n", GetClassname());
+			for (int i = childrenList.Count() - 1; i >= 0; --i)
+			{
+				m_pServerEntityList->DestroyEntity(childrenList[i]->GetOuter());
+			}
+		}
+
+		SetGroundEntity(NULL);
+
+		//if (m_bDynamicModelPending)
+		//{
+		//	sg_DynamicLoadHandlers.Remove(this);
+		//}
+
+		//if (IsDynamicModelIndex(m_nModelIndex))
+		//{
+		//	modelinfo->ReleaseDynamicModel(m_nModelIndex); // no-op if not dynamic
+		//	m_nModelIndex = -1;
+		//}
+
+		// Need to remove references to this entity before EHANDLES go null
+		{
+			m_pServerEntityList->SetDisableEhandleAccess(false);
+			SetGroundEntity(NULL); // remove us from the ground entity if we are on it
+			m_pServerEntityList->SetDisableEhandleAccess(true);
+
+			// Remove this entity from the ent list (NOTE:  This Makes EHANDLES go NULL)
+			//EntityList()->DestroyEntity( this );
+		}
+		SetOwnerEntity(NULL);
 	}
 
 	virtual ~CEngineObjectInternal()

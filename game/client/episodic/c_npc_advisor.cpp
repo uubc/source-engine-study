@@ -129,7 +129,7 @@ void C_NPC_Advisor::ClientThink( void )
 	// if the elight has gone away, bail out
 	if (m_ElightKey == 0)
 	{
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		return;
 	}
 
@@ -140,7 +140,7 @@ void C_NPC_Advisor::ClientThink( void )
 		// the elight has been invalidated. bail out.
 		m_ElightKey = 0;
 
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		return;
 	}
 	else
@@ -216,7 +216,7 @@ void C_NPC_Advisor::StartElight()
 			el->decay	= 0.0f;
 			el->die = gpGlobals->curtime + 2000.0f; // 1000 just means " a long time "
 
-			SetNextClientThink( CLIENT_THINK_ALWAYS );
+			GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		}
 		else
 		{	// null out the light value

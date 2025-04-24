@@ -109,7 +109,7 @@ bool C_LowViolenceHostageDeathModel::SetupLowViolenceModel( C_CHostage *pHostage
 	}
 
 	m_flFadeOutStart = gpGlobals->curtime + 5.0f;
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	GetEngineObject()->SetSequence(GetEngineObject()->LookupSequence( "death1" ) );
 	GetEngineObject()->ForceClientSideAnimationOn();
@@ -176,7 +176,7 @@ void C_CHostage::RecvProxy_Rescued( const CRecvProxyData *pData, void *pStruct, 
 		// hostage was rescued
 		pHostage->m_flDeadOrRescuedTime = gpGlobals->curtime + 2;
 		pHostage->GetEngineObject()->SetRenderMode( kRenderGlow );
-		pHostage->SetNextClientThink( gpGlobals->curtime );
+		pHostage->GetEngineObject()->SetNextClientThink( gpGlobals->curtime );
 	}
 
 	pHostage->m_isRescued = isRescued;
@@ -483,7 +483,7 @@ void C_CHostage::ClientThink()
 
 	if (GetEngineObject()->GetRenderColor().a > 0 )
 	{
-		SetNextClientThink( gpGlobals->curtime + 0.001 );
+		GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 0.001 );
 	}
 }
 

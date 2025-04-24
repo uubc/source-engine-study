@@ -542,7 +542,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 
 	// Fade out the ragdoll in a while
 	StartFadeOut( cl_ragdoll_fade_time.GetFloat() );
-	SetNextClientThink( gpGlobals->curtime + 5.0f );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 5.0f );
 }
 
 void C_DODRagdoll::OnDataChanged( DataUpdateType_t type )
@@ -596,7 +596,7 @@ bool C_DODRagdoll::IsRagdollVisible()
 
 void C_DODRagdoll::ClientThink( void )
 {
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	if ( m_bFadingOut == true )
 	{
@@ -644,7 +644,7 @@ void C_DODRagdoll::ClientThink( void )
 		if ( vDir.Length() > cl_ragdoll_pronecheck_distance.GetInt() ) 
 			continue;
 
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		m_bFadingOut = true;
 		return;
 	}
@@ -666,7 +666,7 @@ void C_DODRagdoll::ClientThink( void )
 void C_DODRagdoll::StartFadeOut( float fDelay )
 {
 	m_fDeathTime = gpGlobals->curtime + fDelay;
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 // ------------------------------------------------------------------------------------------ //
@@ -1331,7 +1331,7 @@ void C_DODPlayer::OnDataChanged( DataUpdateType_t type )
 
 	if ( type == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	UpdateVisibility();

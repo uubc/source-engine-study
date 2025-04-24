@@ -252,7 +252,7 @@ void C_SceneEntity::SetupClientOnlyScene( const char *pszFilename, C_BaseFlex *p
 			}
 		}
 
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	if ( m_hOwner.Get() )
@@ -371,7 +371,7 @@ void C_SceneEntity::PostDataUpdate( DataUpdateType_t updateType )
 				}
 			}
 
-			SetNextClientThink( CLIENT_THINK_ALWAYS );
+			GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		}
 	}
 

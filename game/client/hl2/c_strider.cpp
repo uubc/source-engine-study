@@ -689,7 +689,7 @@ void C_Strider::OnDataChanged( DataUpdateType_t updateType )
 	{
 		// We need to have our render bounds defined or shadow creation won't work correctly
 		ClientThink();
-		ClientThinkList()->SetNextClientThink( GetClientHandle(), CLIENT_THINK_ALWAYS );
+		EntityList()->SetNextClientThink(GetRefEHandle(), CLIENT_THINK_ALWAYS );
 	}
 
 	BaseClass::OnDataChanged( updateType );

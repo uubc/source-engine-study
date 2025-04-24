@@ -202,7 +202,7 @@ void CSprite::Spawn( void )
 	GetEngineObject()->AddEffects( EF_NOSHADOW | EF_NORECEIVESHADOW );
 
 #if defined( CLIENT_DLL )
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 #endif
 
 #if !defined( CLIENT_DLL )
@@ -710,7 +710,7 @@ void CSprite::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 
 	// Only think when sapping
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
 		m_flStartScale = m_flDestScale = m_flSpriteScale;

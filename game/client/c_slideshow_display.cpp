@@ -64,7 +64,7 @@ void C_SlideshowDisplay::Spawn( void )
 
 	m_NextSlideTime = 0;
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 void C_SlideshowDisplay::OnDataChanged( DataUpdateType_t updateType )

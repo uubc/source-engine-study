@@ -64,7 +64,7 @@ void C_SpotlightEnd::OnDataChanged(DataUpdateType_t updateType)
 {
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink(CLIENT_THINK_ALWAYS);
+		GetEngineObject()->SetNextClientThink(CLIENT_THINK_ALWAYS);
 	}
 }
 
@@ -145,7 +145,7 @@ void C_SpotlightEnd::ClientThink(void)
 	VectorCopy( m_vSpotlightDir, m_pModelLight->m_Direction );
 	*/
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 IMPLEMENT_CLIENTCLASS_DT(C_SpotlightEnd, DT_SpotlightEnd, CSpotlightEnd)

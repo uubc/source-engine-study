@@ -151,7 +151,7 @@ void C_PropVehicleDriveable::OnDataChanged( DataUpdateType_t updateType )
 	if ( m_hPlayer && !m_hPrevPlayer )
 	{
 		OnEnteredVehicle( m_hPlayer );
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		g_ClientVirtualReality.AlignTorsoAndViewToWeapon();
 	}
 	else if ( !m_hPlayer && m_hPrevPlayer )
@@ -163,7 +163,7 @@ void C_PropVehicleDriveable::OnDataChanged( DataUpdateType_t updateType )
 		// animation doesn't have fadeout 0 specified in the QC, so we fail to
 		// catch it in VehicleViewSmoothing. Catch it here instead.
 		m_ViewSmoothingData.bWasRunningAnim = false;
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 	}
 }
 

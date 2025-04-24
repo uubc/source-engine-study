@@ -68,7 +68,7 @@ C_NPC_Portal_FloorTurret::~C_NPC_Portal_FloorTurret( void )
 void C_NPC_Portal_FloorTurret::Spawn( void )
 {
 	SetThink( &C_NPC_Portal_FloorTurret::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	m_pBeam = NULL;
 	m_fPulseOffset = RandomFloat( 0.0f, 2.0f * M_PI );

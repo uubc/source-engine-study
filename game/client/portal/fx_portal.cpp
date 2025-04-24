@@ -57,12 +57,12 @@ void C_PortalBlast::Create( bool bIsPortal2, PortalPlacedByType ePlacedBy, const
 void C_PortalBlast::Init( bool bIsPortal2, PortalPlacedByType ePlacedBy, const Vector &vStart, const Vector &vEnd, const QAngle &qAngles, float fDeathTime )
 {
 	//EntityList()->AddNonNetworkableEntity( this );
-	ClientThinkList()->SetNextClientThink( GetClientHandle(), CLIENT_THINK_ALWAYS );
+	EntityList()->SetNextClientThink(GetRefEHandle(), CLIENT_THINK_ALWAYS );
 
 	GetEngineObject()->AddToLeafSystem( RENDER_GROUP_OPAQUE_ENTITY );
 
 	SetThink( &C_PortalBlast::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	m_ptCreationPoint = vStart;
 	m_ptDeathPoint = vEnd;

@@ -87,7 +87,7 @@ void C_PlayerResource::OnDataChanged(DataUpdateType_t updateType)
 	BaseClass::OnDataChanged( updateType );
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( gpGlobals->curtime + PLAYER_RESOURCE_THINK_INTERVAL );
+		GetEngineObject()->SetNextClientThink( gpGlobals->curtime + PLAYER_RESOURCE_THINK_INTERVAL );
 	}
 }
 
@@ -121,7 +121,7 @@ void C_PlayerResource::ClientThink()
 		UpdatePlayerName( i );
 	}
 
-	SetNextClientThink( gpGlobals->curtime + PLAYER_RESOURCE_THINK_INTERVAL );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + PLAYER_RESOURCE_THINK_INTERVAL );
 }
 
 //-----------------------------------------------------------------------------

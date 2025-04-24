@@ -84,7 +84,7 @@ void C_PlantedC4::Spawn( void )
 {
 	BaseClass::Spawn();
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 void C_PlantedC4::ClientThink( void )
@@ -98,7 +98,7 @@ void C_PlantedC4::ClientThink( void )
 	if ( !m_bBombTicking )
 	{
 		// disable C4 thinking if not armed
-		SetNextClientThink( CLIENT_THINK_NEVER );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_NEVER );
 		return;
 	}
 

@@ -119,7 +119,7 @@ void C_HL1Gib::ClientThink( void )
 		return;
 	}
 
-	SetNextClientThink( gpGlobals->curtime + 1.0f );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 1.0f );
 }
 
 //-----------------------------------------------------------------------------

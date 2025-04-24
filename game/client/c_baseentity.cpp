@@ -464,8 +464,6 @@ void C_BaseEntity::Clear( void )
 	m_bDormant = true;
 	//m_RefEHandle.Term();
 
-	m_hThink = INVALID_THINK_HANDLE;
-
 	//index = -1;
 	if (entindex() >= 0) {
 		GetEngineObject()->SetLocalOrigin(vec3_origin);
@@ -585,7 +583,7 @@ bool C_BaseEntity::InitializeAsClientEntityByIndex( int iIndex, RenderGroup_t re
 
 	// Add the client entity to the master entity list.
 	//EntityList()->AddNonNetworkableEntity( this );//GetIClientUnknown()
-	Assert( GetClientHandle() != EntityList()->InvalidHandle() );
+	Assert(GetRefEHandle() != EntityList()->InvalidHandle() );
 
 	// Add the client entity to the renderable "leaf system." (Renderable)
 	GetEngineObject()->AddToLeafSystem( renderGroup );
@@ -1388,7 +1386,7 @@ void C_BaseEntity::NotifyShouldTransmit( ShouldTransmitState_t state )
 //				{
 //					Assert( otherEntity->IsClientCreated() );
 //					Assert( otherEntity->m_PredictableID.IsActive() );
-//					Assert( EntityList()->IsHandleValid( otherEntity->GetClientHandle() ) );
+//					Assert( EntityList()->IsHandleValid( otherEntity->GetRefEHandle() ) );
 //
 //					otherEntity->m_PredictableID.SetAcknowledged( true );
 //
@@ -1781,16 +1779,7 @@ void C_BaseEntity::OnDataChanged( DataUpdateType_t type )
 	}
 }
 
-ClientThinkHandle_t C_BaseEntity::GetThinkHandle()
-{
-	return m_hThink;
-}
 
-
-void C_BaseEntity::SetThinkHandle( ClientThinkHandle_t hThink )
-{
-	m_hThink = hThink;
-}
 
 
 //-----------------------------------------------------------------------------
@@ -2370,13 +2359,6 @@ bool C_BaseEntity::InLocalTeam( void )
 }
 
 
-void C_BaseEntity::SetNextClientThink( float nextThinkTime )
-{
-	Assert( GetClientHandle() != INVALID_CLIENTENTITY_HANDLE );
-	ClientThinkList()->SetNextClientThink( GetClientHandle(), nextThinkTime );
-}
-
-
 //-----------------------------------------------------------------------------
 // Purpose: Flags this entity as being inside or outside of this client's PVS
 //			on the server.
@@ -2746,7 +2728,7 @@ CON_COMMAND_F( dlight_debug, "Creates a dlight in front of the player", FCVAR_CH
 //	//EntityList()->AddNonNetworkableEntity( ent );
 //
 //	//  and predictables
-//	g_Predictables.AddToPredictableList( ent->GetClientHandle() );
+//	g_Predictables.AddToPredictableList( ent->GetRefEHandle() );
 //
 //	// Duhhhh..., but might as well be safe
 //	Assert( !ent->GetPredictable() );
@@ -2832,20 +2814,6 @@ void C_BaseEntity::ChangeTeam( int iTeamNum )
 //-----------------------------------------------------------------------------
 void C_BaseEntity::UpdateOnRemove( void )
 {
-
-	if (GetClientHandle() != INVALID_CLIENTENTITY_HANDLE)
-	{
-		if (GetThinkHandle() != INVALID_THINK_HANDLE)
-		{
-			ClientThinkList()->RemoveThinkable(GetClientHandle());
-		}
-
-		// Remove from the client entity list.
-		//EntityList()->RemoveEntity( this );
-
-		//m_RefEHandle = INVALID_CLIENTENTITY_HANDLE;
-	}
-
 	// Are we in the partition?
 	//GetEngineObject()->DestroyPartitionHandle();
 

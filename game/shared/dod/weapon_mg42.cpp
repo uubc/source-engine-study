@@ -158,7 +158,7 @@ void CWeaponMG42::Spawn( void )
 			Assert( m_pEmitter.IsValid() );
 		}
 
-		ClientThinkList()->SetNextClientThink( GetClientHandle(), CLIENT_THINK_ALWAYS );
+		EntityList()->SetNextClientThink(GetRefEHandle(), CLIENT_THINK_ALWAYS );
 	}
 
 	// Client Think emits smoke particles based on heat

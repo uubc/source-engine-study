@@ -87,7 +87,7 @@ void C_DynamicLight::OnDataChanged(DataUpdateType_t updateType)
 {
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink(gpGlobals->curtime + 0.05);
+		GetEngineObject()->SetNextClientThink(gpGlobals->curtime + 0.05);
 	}
 
 	BaseClass::OnDataChanged( updateType );
@@ -232,6 +232,6 @@ void C_DynamicLight::ClientThink(void)
 		}
 	}
 
-	SetNextClientThink(gpGlobals->curtime + 0.001);
+	GetEngineObject()->SetNextClientThink(gpGlobals->curtime + 0.001);
 }
 

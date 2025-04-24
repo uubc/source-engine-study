@@ -125,7 +125,7 @@ void C_Fish::Spawn( void )
 	m_errorHistoryCount = 0;
 	m_averageError = 0.0f;
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 

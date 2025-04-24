@@ -257,7 +257,6 @@ public:
 	virtual IClientNetworkable*	GetClientNetworkable()	{ return 0; }
 	virtual IClientEntity*		GetIClientEntity()		{ return 0; }
 	virtual IClientEntity*		GetBaseEntity()			{ return 0; }
-	virtual IClientThinkable*	GetClientThinkable()	{ return 0; }
 
 public:
 	ClientRenderHandle_t m_hRenderHandle;

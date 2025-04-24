@@ -85,7 +85,7 @@ void C_EntityDissolve::OnDataChanged( DataUpdateType_t updateType )
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
 		m_flNextSparkTime = m_flStartTime;
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 }
 
@@ -554,7 +554,7 @@ void C_EntityDissolve::ClientThink( void )
 	{
 		// Do NOT remove from the client entity list. It'll confuse the local network backdoor, and the entity will never get destroyed
 		// because when the server says to destroy it, the client won't be able to find it.
-		// EntityList()->RemoveEntity( GetClientHandle() );
+		// EntityList()->RemoveEntity( GetRefEHandle() );
 
 		partition->Remove( PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, GetEngineObject()->GetPartitionHandle() );
 

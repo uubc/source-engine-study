@@ -84,7 +84,7 @@ bool C_Gib::InitializeGib( const char *pszModelName, Vector vecOrigin, Vector ve
 		return false;
 	}
 
-	SetNextClientThink( gpGlobals->curtime + flLifetime );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + flLifetime );
 
 	return true;
 }
@@ -106,7 +106,7 @@ void C_Gib::ClientThink( void )
 		return;
 	}
 
-	SetNextClientThink( gpGlobals->curtime + 1.0f );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 1.0f );
 }
 
 //-----------------------------------------------------------------------------

@@ -156,7 +156,7 @@ void CViewAngleAnimation::Spawn( void )
 	m_bFinished = true;	// don't run right away
 
 	//EntityList()->AddNonNetworkableEntity(	this );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 void CViewAngleAnimation::DeleteKeyFrames()

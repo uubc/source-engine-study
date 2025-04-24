@@ -518,11 +518,39 @@ public:
 		m_vecBaseVelocity.Init();
 		m_nSimulationTick = -1;
 		m_bPredictable = false;
+		m_hThink = INVALID_THINK_HANDLE;
 
 	}
 
 	virtual void UpdateOnRemove(void) 
 	{
+		IEngineObjectClient* pChild = GetEffectEntity();
+
+		if (pChild && pChild->IsMarkedForDeletion() == false)
+		{
+			m_pClientEntityList->DestroyEntity(pChild->GetHandleEntity());// ->Release();
+		}
+
+		if (GetThinkHandle() != INVALID_THINK_HANDLE)
+		{
+			m_pClientEntityList->RemoveThinkable(GetRefEHandle());
+		}
+		if (GetRefEHandle() != NULL)
+		{
+			if (GetThinkHandle() != INVALID_THINK_HANDLE)
+			{
+				m_pClientEntityList->RemoveThinkable(GetRefEHandle());
+			}
+
+			// Remove from the client entity list.
+			//EntityList()->RemoveEntity( this );
+
+			//m_RefEHandle = INVALID_CLIENTENTITY_HANDLE;
+		}
+		//EntityList()->RemoveEntity( this );
+
+		partition->Remove(PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, GetPartitionHandle());
+		RemoveFromLeafSystem();
 		// Nothing for now, if it's a predicted entity, could flag as "delete" or dormant
 		if (GetPredictable() /*|| IsClientCreated()*/)
 		{
@@ -885,6 +913,7 @@ public:
 		m_vecBaseVelocity.Init();
 		m_nSimulationTick = -1;
 		m_bPredictable = false;
+		m_hThink = INVALID_THINK_HANDLE;
 
 	}
 
@@ -1027,6 +1056,10 @@ public:
 	bool PhysicsRunThink(thinkmethods_t thinkMethod = THINK_FIRE_ALL_FUNCTIONS);
 	bool PhysicsRunSpecificThink(int nContextIndex, CTHINKPTR thinkFunc);
 	void PhysicsDispatchThink(CTHINKPTR thinkFunc);
+	virtual ClientThinkHandle_t GetThinkHandle();
+	virtual void SetThinkHandle(ClientThinkHandle_t hThink);
+	// Set the next think time. Pass in CLIENT_THINK_ALWAYS to have Think() called each frame.
+	virtual void SetNextClientThink(float nextThinkTime);
 
 	MoveType_t GetMoveType(void) const;
 	MoveCollide_t GetMoveCollide(void) const;
@@ -1698,6 +1731,8 @@ protected:
 	int								m_nLastThinkTick;
 	CUtlVector< clientthinkfunc_t >		m_aThinkFunctions;
 	int								m_iCurrentThinkContext;
+	ClientThinkHandle_t				m_hThink;
+
 	// Object movetype
 	unsigned char					m_MoveType;
 	unsigned char					m_MoveCollide;
@@ -3401,6 +3436,21 @@ private:
 	static float s_flLastTimeStamp;
 };
 
+struct ThinkEntry_t
+{
+	CBaseHandle				m_hEnt;
+	float					m_flNextClientThink;
+	float					m_flLastClientThink;
+	int						m_nIterEnum;
+};
+
+struct ThinkListChanges_t
+{
+	CBaseHandle				m_hEnt;
+	ClientThinkHandle_t		m_hThink;
+	float					m_flNextTime;
+};
+
 //
 // This is the IClientEntityList implemenation. It serves two functions:
 //
@@ -3509,7 +3559,6 @@ public:
 	IClientRenderable*		GetClientRenderableFromHandle( CBaseHandle hEnt );
 	IClientEntity*			GetBaseEntityFromHandle( CBaseHandle hEnt ) const;
 	ICollideable*			GetCollideableFromHandle( CBaseHandle hEnt );
-	IClientThinkable*		GetClientThinkableFromHandle( CBaseHandle hEnt );
 
 	CBaseHandle				FirstHandle() const { return BaseClass::FirstHandle(); }
 	CBaseHandle				NextHandle(CBaseHandle hEnt) const { return BaseClass::NextHandle(hEnt); }
@@ -3958,6 +4007,23 @@ public:
 		return (m_nStatusPushed > 0) ? true : false;
 	}
 
+	// Set the next time at which you want to think. You can also use
+// one of the CLIENT_THINK_ defines.
+	void					SetNextClientThink(CBaseHandle hEnt, float nextTime);
+
+	// Remove an entity from the think list.
+	void					RemoveThinkable(CBaseHandle hEnt);
+
+	// Use to initialize your think handles in IClientThinkables.
+	ClientThinkHandle_t		GetInvalidThinkHandle();
+
+	// This is called after network updating and before rendering.
+	void					PerformThinkFunctions();
+
+	// Call this to destroy a thinkable object - deletes the object post think.
+	void					AddToDeleteList(CBaseHandle hEnt);
+	void					RemoveFromDeleteList(CBaseHandle hEnt);
+
 	// CBaseEntityList overrides.
 protected:
 
@@ -4125,6 +4191,14 @@ private:
 		return false;
 	}
 	
+	void			SetNextClientThink(ClientThinkHandle_t hThink, float nextTime);
+	void			RemoveThinkable(ClientThinkHandle_t hThink);
+	void			PerformThinkFunction(ThinkEntry_t* pEntry, float curtime);
+	ThinkEntry_t* GetThinkEntry(ClientThinkHandle_t hThink);
+	void			CleanUpDeleteList();
+
+	// Add entity to frame think list
+	void			AddEntityToFrameThinkList(ThinkEntry_t* pEntry, bool bAlwaysChain, int& nCount, ThinkEntry_t** ppFrameThinkList);
 private:
 
 	CEntityFactoryDictionary m_EntityFactoryDictionary;
@@ -4240,6 +4314,14 @@ private:
 	IHandleEntity* m_pSuppressHost;
 	int m_nStatusPushed;
 
+	CUtlLinkedList<ThinkEntry_t, unsigned short>	m_ThinkEntries;
+
+	CUtlVector<CBaseHandle>				m_aDeleteList;
+	CUtlVector<ThinkListChanges_t>		m_aChangeList;
+
+	// Makes sure the entries are thinked once per frame in the face of hierarchy
+	int m_nIterEnum;
+	bool m_bInThinkLoop;
 };
 
 template<class T>
@@ -4793,6 +4875,8 @@ bool CClientEntityList<T>::Init()
 	}
 	pWorld->AsHandleWorld()->Init();
 	m_bLockWorld = true;
+	m_nIterEnum = 0;
+	m_bInThinkLoop = false;
 	return true;
 }
 
@@ -4836,6 +4920,7 @@ void CClientEntityList<T>::LevelInitPreEntity()
 	}
 	m_StaticCollisionPolyhedronCache.LevelInitPreEntity();
 	m_pWorld->LevelInitPreEntity();
+	m_nIterEnum = 0;
 }
 
 #define DEFAULT_XBOX_CLIENT_VPHYSICS_TICK	0.025		// 25ms ticks on xbox ragdolls
@@ -5086,13 +5171,6 @@ ICollideable* CClientEntityList<T>::GetCollideableFromHandle(CBaseHandle hEnt)
 {
 	T* pEnt = GetClientUnknownFromHandle(hEnt);
 	return pEnt ? pEnt->GetCollideable() : 0;
-}
-
-template<class T>
-IClientThinkable* CClientEntityList<T>::GetClientThinkableFromHandle(CBaseHandle hEnt)
-{
-	T* pEnt = GetClientUnknownFromHandle(hEnt);
-	return pEnt ? pEnt->GetClientThinkable() : 0;
 }
 
 template<class T>
@@ -6192,6 +6270,361 @@ template<class T>
 CCallQueue* CClientEntityList<T>::GetPostTouchQueue()
 {
 	return m_nTouchDepth > 0 ? &m_PostTouchQueue : NULL;
+}
+
+template<class T>
+ClientThinkHandle_t CClientEntityList<T>::GetInvalidThinkHandle()
+{
+	return (ClientThinkHandle_t)(uintp)m_ThinkEntries.InvalidIndex();
+}
+
+//-----------------------------------------------------------------------------
+// Queued-up entity deletion
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::AddToDeleteList(CBaseHandle hEnt)
+{
+	// Sanity check!
+	Assert(hEnt != InvalidHandle());
+	if (hEnt == InvalidHandle())
+		return;
+
+	// Check to see if entity is networkable -- don't let it release!
+	IClientEntity* pEntity = GetBaseEntityFromHandle(hEnt);
+	if (pEntity)
+	{
+		// Check to see if the entity is already being removed!
+		if (pEntity->GetEngineObject()->IsMarkedForDeletion())
+			return;
+
+		// Don't add networkable entities to delete list -- the server should
+		// take care of this.  The delete list is for client-side only entities.
+		if (!pEntity->GetClientNetworkable())
+		{
+			m_aDeleteList.AddToTail(hEnt);
+			pEntity->SetRemovalFlag(true);
+		}
+	}
+}
+
+template<class T>
+void CClientEntityList<T>::RemoveFromDeleteList(CBaseHandle hEnt)
+{
+	// Sanity check!
+	Assert(hEnt != EntityList()->InvalidHandle());
+	if (hEnt == EntityList()->InvalidHandle())
+		return;
+
+	int nSize = m_aDeleteList.Count();
+	for (int iHandle = 0; iHandle < nSize; ++iHandle)
+	{
+		if (m_aDeleteList[iHandle] == hEnt)
+		{
+			m_aDeleteList[iHandle] = InvalidHandle();
+
+			IClientEntity* pEntity = GetBaseEntityFromHandle(hEnt);
+			if (pEntity)
+			{
+				pEntity->SetRemovalFlag(false);
+			}
+		}
+	}
+}
+
+template<class T>
+void CClientEntityList<T>::CleanUpDeleteList()
+{
+	int nThinkCount = m_aDeleteList.Count();
+	for (int iThink = 0; iThink < nThinkCount; ++iThink)
+	{
+		CBaseHandle handle = m_aDeleteList[iThink];
+		if (handle != InvalidHandle())
+		{
+			IClientEntity* pEntity = GetBaseEntityFromHandle(handle);
+			if (pEntity)
+			{
+				pEntity->SetRemovalFlag(false);
+			}
+
+			IClientEntity* pThink = GetBaseEntityFromHandle(handle);
+			if (pThink)
+			{
+				pThink->Release();
+			}
+		}
+	}
+
+	m_aDeleteList.RemoveAll();
+}
+
+//-----------------------------------------------------------------------------
+// Sets the client think
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::SetNextClientThink(ClientThinkHandle_t hThink, float flNextTime)
+{
+	if (hThink == INVALID_THINK_HANDLE)
+		return;
+
+	if (m_bInThinkLoop)
+	{
+		// Queue up all changes
+		int i = m_aChangeList.AddToTail();
+		m_aChangeList[i].m_hEnt = NULL;
+		m_aChangeList[i].m_hThink = hThink;
+		m_aChangeList[i].m_flNextTime = flNextTime;
+		return;
+	}
+
+	if (flNextTime == CLIENT_THINK_NEVER)
+	{
+		RemoveThinkable(hThink);
+	}
+	else
+	{
+		GetThinkEntry(hThink)->m_flNextClientThink = flNextTime;
+	}
+}
+
+template<class T>
+void CClientEntityList<T>::SetNextClientThink(CBaseHandle hEnt, float flNextTime)
+{
+	if (flNextTime == CLIENT_THINK_NEVER)
+	{
+		RemoveThinkable(hEnt);
+		return;
+	}
+
+	IEngineObjectClient* pThink = GetEngineObjectFromHandle(hEnt);
+	if (!pThink)
+		return;
+
+	ClientThinkHandle_t hThink = pThink->GetThinkHandle();
+
+	if (m_bInThinkLoop)
+	{
+		// Queue up all changes
+		int i = m_aChangeList.AddToTail();
+		m_aChangeList[i].m_hEnt = hEnt;
+		m_aChangeList[i].m_hThink = hThink;
+		m_aChangeList[i].m_flNextTime = flNextTime;
+		return;
+	}
+
+	// Add it to the list if it's not already in there.
+	if (hThink == INVALID_THINK_HANDLE)
+	{
+		hThink = (ClientThinkHandle_t)(uintp)m_ThinkEntries.AddToTail();
+		pThink->SetThinkHandle(hThink);
+
+		ThinkEntry_t* pEntry = GetThinkEntry(hThink);
+		pEntry->m_hEnt = hEnt;
+		pEntry->m_nIterEnum = -1;
+		pEntry->m_flLastClientThink = 0.0f;
+	}
+
+	Assert(GetThinkEntry(hThink)->m_hEnt == hEnt);
+	GetThinkEntry(hThink)->m_flNextClientThink = flNextTime;
+}
+
+
+//-----------------------------------------------------------------------------
+// Removes the thinkable from the list
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::RemoveThinkable(ClientThinkHandle_t hThink)
+{
+	if (hThink == INVALID_THINK_HANDLE)
+		return;
+
+	if (m_bInThinkLoop)
+	{
+		// Queue up all changes
+		int i = m_aChangeList.AddToTail();
+		m_aChangeList[i].m_hEnt = NULL;
+		m_aChangeList[i].m_hThink = hThink;
+		m_aChangeList[i].m_flNextTime = CLIENT_THINK_NEVER;
+		return;
+	}
+
+	ThinkEntry_t* pEntry = GetThinkEntry(hThink);
+	IEngineObjectClient* pThink = GetEngineObjectFromHandle(pEntry->m_hEnt);
+	if (pThink)
+	{
+		pThink->SetThinkHandle(INVALID_THINK_HANDLE);
+	}
+	m_ThinkEntries.Remove((uintp)hThink);
+}
+
+
+//-----------------------------------------------------------------------------
+// Removes the thinkable from the list
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::RemoveThinkable(CBaseHandle hEnt)
+{
+	IEngineObjectClient* pThink = GetEngineObjectFromHandle(hEnt);
+	if (pThink)
+	{
+		ClientThinkHandle_t hThink = pThink->GetThinkHandle();
+		if (hThink != INVALID_THINK_HANDLE)
+		{
+			Assert(GetThinkEntry(hThink)->m_hEnt == hEnt);
+			RemoveThinkable(hThink);
+		}
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Performs the think function
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::PerformThinkFunction(ThinkEntry_t* pEntry, float flCurtime)
+{
+	IClientEntity* pThink = GetBaseEntityFromHandle(pEntry->m_hEnt);
+	if (!pThink)
+	{
+		RemoveThinkable(pEntry->m_hEnt);
+		return;
+	}
+
+	if (pEntry->m_flNextClientThink == CLIENT_THINK_ALWAYS)
+	{
+		// NOTE: The Think function here could call SetNextClientThink
+		// which would cause it to be removed + readded into the list
+		pThink->ClientThink();
+	}
+	else if (pEntry->m_flNextClientThink == FLT_MAX)
+	{
+		// This is an entity that doesn't need to think again; remove it
+		RemoveThinkable(pEntry->m_hEnt);
+	}
+	else
+	{
+		Assert(pEntry->m_flNextClientThink <= flCurtime);
+
+		// Indicate we're not going to think again
+		pEntry->m_flNextClientThink = FLT_MAX;
+
+		// NOTE: The Think function here could call SetNextClientThink
+		// which would cause it to be readded into the list
+		pThink->ClientThink();
+	}
+
+	// Set this after the Think calls in case they look at LastClientThink
+	pEntry->m_flLastClientThink = flCurtime;
+}
+
+
+//-----------------------------------------------------------------------------
+// Add entity to frame think list
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::AddEntityToFrameThinkList(ThinkEntry_t* pEntry, bool bAlwaysChain, int& nCount, ThinkEntry_t** ppFrameThinkList)
+{
+	// We may already have processed this owing to hierarchy rules
+	if (pEntry->m_nIterEnum == m_nIterEnum)
+		return;
+
+	// If we're not thinking this frame, we don't have to worry about thinking after our parents
+	bool bThinkThisInterval = (pEntry->m_flNextClientThink == CLIENT_THINK_ALWAYS) ||
+		(pEntry->m_flNextClientThink <= g_ClientGlobalVariables.curtime);
+
+	// This logic makes it so that if a child thinks,
+	// *all* hierarchical parents + grandparents will think first, even if some
+	// of the parents don't need to think this frame
+	if (!bThinkThisInterval && !bAlwaysChain)
+		return;
+
+	// Respect hierarchy
+	IEngineObjectClient* pEntity = GetEngineObjectFromHandle(pEntry->m_hEnt);
+	if (pEntity)
+	{
+		IEngineObjectClient* pParent = pEntity->GetMoveParent();
+		if (pParent && (pParent->GetThinkHandle() != INVALID_THINK_HANDLE))
+		{
+			ThinkEntry_t* pParentEntry = GetThinkEntry(pParent->GetThinkHandle());
+			AddEntityToFrameThinkList(pParentEntry, true, nCount, ppFrameThinkList);
+		}
+	}
+
+	if (!bThinkThisInterval)
+		return;
+
+	// Add the entry into the list
+	pEntry->m_nIterEnum = m_nIterEnum;
+	ppFrameThinkList[nCount++] = pEntry;
+}
+
+//-----------------------------------------------------------------------------
+// Think for all entities that need it
+//-----------------------------------------------------------------------------
+template<class T>
+void CClientEntityList<T>::PerformThinkFunctions()
+{
+	VPROF_("Client Thinks", 1, VPROF_BUDGETGROUP_CLIENT_SIM, false, BUDGETFLAG_CLIENT);
+
+	int nMaxList = m_ThinkEntries.Count();
+	if (nMaxList == 0)
+		return;
+
+	++m_nIterEnum;
+
+	// Build a list of entities to think this frame, in order of hierarchy.
+	// Do this because the list may be modified during the thinking and also to
+	// prevent bad situations where an entity can think more than once in a frame.
+	ThinkEntry_t** ppThinkEntryList = (ThinkEntry_t**)stackalloc(nMaxList * sizeof(ThinkEntry_t*));
+	int nThinkCount = 0;
+	for (unsigned short iCur = m_ThinkEntries.Head(); iCur != m_ThinkEntries.InvalidIndex(); iCur = m_ThinkEntries.Next(iCur))
+	{
+		AddEntityToFrameThinkList(&m_ThinkEntries[iCur], false, nThinkCount, ppThinkEntryList);
+		Assert(nThinkCount <= nMaxList);
+	}
+
+	// While we're in the loop, no changes to the think list are allowed
+	m_bInThinkLoop = true;
+
+	// Perform thinks on all entities that need it
+	int i;
+	for (i = 0; i < nThinkCount; ++i)
+	{
+		PerformThinkFunction(ppThinkEntryList[i], g_ClientGlobalVariables.curtime);
+	}
+
+	m_bInThinkLoop = false;
+
+	// Apply changes to the think list
+	int nCount = m_aChangeList.Count();
+	for (i = 0; i < nCount; ++i)
+	{
+		ClientThinkHandle_t hThink = m_aChangeList[i].m_hThink;
+		if (hThink != INVALID_THINK_HANDLE)
+		{
+			// This can happen if the same think handle was removed twice
+			if (!m_ThinkEntries.IsInList((uintp)hThink))
+				continue;
+
+			// NOTE: This is necessary for the case where the client entity handle
+			// is slammed to NULL during a think interval; the hThink will get stuck
+			// in the list and can never leave.
+			SetNextClientThink(hThink, m_aChangeList[i].m_flNextTime);
+		}
+		else
+		{
+			SetNextClientThink(m_aChangeList[i].m_hEnt, m_aChangeList[i].m_flNextTime);
+		}
+	}
+	m_aChangeList.RemoveAll();
+
+	// Clear out the client-side entity deletion list.
+	CleanUpDeleteList();
+}
+
+template<class T>
+ThinkEntry_t* CClientEntityList<T>::GetThinkEntry(ClientThinkHandle_t hThink)
+{
+	return &m_ThinkEntries[(uintp)hThink];
 }
 
 #endif // CLIENTENTITYLIST_H

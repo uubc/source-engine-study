@@ -71,7 +71,7 @@ void C_Portal_Dinosaur::Spawn()
 	m_flOldBlend = 0.0f;
 	BaseClass::Spawn();
 	SetThink( &C_Portal_Dinosaur::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 }
 
 C_Portal_Dinosaur::~C_Portal_Dinosaur( void )

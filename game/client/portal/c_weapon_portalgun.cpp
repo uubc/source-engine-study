@@ -753,7 +753,7 @@ void C_WeaponPortalgun::OnDataChanged( DataUpdateType_t updateType )
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
 		// Start thinking (Baseclass stops it)
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 		{
 			AutoAllowBoneAccess boneaccess( true, true );

@@ -336,7 +336,7 @@ void C_BaseTeamObjectiveResource::SetCappingTeam( int index, int team )
 	m_bWarnedOnFinalCap[index] = false;
 
 	m_flCapLastThinkTime[index] = gpGlobals->curtime;
-	SetNextClientThink( gpGlobals->curtime + RESOURCE_THINK_TIME );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + RESOURCE_THINK_TIME );
 	UpdateControlPoint( "controlpoint_updatecapping", index );
 }
 
@@ -469,5 +469,5 @@ void C_BaseTeamObjectiveResource::ClientThink()
 	}
 
 
-	SetNextClientThink( gpGlobals->curtime + RESOURCE_THINK_TIME );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + RESOURCE_THINK_TIME );
 }

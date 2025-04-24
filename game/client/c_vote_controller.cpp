@@ -55,7 +55,7 @@ void C_VoteController::RecvProxy_VoteOption( const CRecvProxyData *pData, void *
 	
 	pMe->m_nVoteOptionCount[index] = pData->m_Value.m_Int;
 	pMe->m_bVotesDirty = true;
-	pMe->SetNextClientThink( gpGlobals->curtime + 0.001 );
+	pMe->GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 0.001 );
 }
 
 //-----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ void C_VoteController::Spawn( void )
 {
 	ResetData();
 	BaseClass::Spawn();
-	SetNextClientThink( gpGlobals->curtime );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime );
 }
 
 //-----------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void C_VoteController::ClientThink()
 		m_bVotesDirty = false;
 	}
 
-	SetNextClientThink( gpGlobals->curtime + 0.5f );
+	GetEngineObject()->SetNextClientThink( gpGlobals->curtime + 0.5f );
 }
 
 //-----------------------------------------------------------------------------

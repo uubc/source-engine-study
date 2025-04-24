@@ -502,7 +502,7 @@ void C_HL2MP_Player::OnDataChanged( DataUpdateType_t type )
 
 	if ( type == DATA_UPDATE_CREATED )
 	{
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 	}
 
 	UpdateVisibility();

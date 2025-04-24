@@ -49,6 +49,8 @@ namespace vgui
 }
 class CViewSetup;
 class IClientVehicle;
+class CClientThinkHandlePtr;
+typedef CClientThinkHandlePtr* ClientThinkHandle_t;
 
 class VarMapEntry_t
 {
@@ -597,6 +599,11 @@ public:
 	virtual int GetFirstThinkTick() = 0;	// get first tick thinking on any context
 	virtual bool PhysicsRunThink(thinkmethods_t thinkMethod = THINK_FIRE_ALL_FUNCTIONS) = 0;
 	virtual bool PhysicsRunSpecificThink(int nContextIndex, CTHINKPTR thinkFunc) = 0;
+	// Called when you're added to the think list.
+	// GetThinkHandle's return value must be initialized to INVALID_THINK_HANDLE.
+	virtual ClientThinkHandle_t	GetThinkHandle() = 0;
+	virtual void SetThinkHandle(ClientThinkHandle_t hThink) = 0;
+	virtual void SetNextClientThink(float nextThinkTime) = 0;
 
 	virtual MoveType_t GetMoveType(void) const = 0;
 	virtual MoveCollide_t GetMoveCollide(void) const = 0;
@@ -1070,7 +1077,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: All client entities must implement this interface.
 //-----------------------------------------------------------------------------
-abstract_class IClientEntity : public IClientUnknown, public IClientNetworkable, public IClientThinkable
+abstract_class IClientEntity : public IClientUnknown, public IClientNetworkable
 {
 public:
 	virtual ~IClientEntity() {}
@@ -1115,6 +1122,7 @@ public:
 	virtual bool KeyValue(const char* szKeyName, float flValue) = 0;
 	virtual bool KeyValue(const char* szKeyName, const Vector& vecValue) = 0;
 	virtual void SUB_Remove(void) = 0;
+	virtual void SetRemovalFlag(bool bRemove) = 0;
 	// Delete yourself.
 	virtual void Release(void) = 0;
 
@@ -1152,7 +1160,7 @@ public:
 	virtual void UpdateClientSideAnimation() = 0;
 	virtual void PhysicsSimulate(void) = 0;
 	virtual void Think(void) = 0;
-	virtual void SetNextClientThink(float nextThinkTime) = 0;
+	virtual void ClientThink() = 0;
 	virtual void OnPositionChanged() = 0;
 	virtual void OnAnglesChanged() = 0;
 	virtual void OnAnimationChanged() = 0;
@@ -1366,7 +1374,6 @@ public:
 	virtual IClientNetworkable* GetClientNetworkableFromHandle(CBaseHandle hEnt) = 0;
 	virtual IClientUnknown* GetClientUnknownFromHandle(CBaseHandle hEnt) const = 0;
 	virtual IClientRenderable* GetClientRenderableFromHandle(CBaseHandle hEnt) = 0;
-	virtual IClientThinkable* GetClientThinkableFromHandle(CBaseHandle hEnt) = 0;
 
 	// NOTE: This function is only a convenience wrapper.
 	// It returns GetClientNetworkable( entnum )->GetIClientEntity().
@@ -1449,11 +1456,18 @@ public:
 	virtual void PushDisableSuppress(void) = 0;
 	virtual void PopDisableSuppress(void) = 0;
 
+	
+	virtual void SetNextClientThink(CBaseHandle hEnt, float nextTime) = 0;
+	virtual void RemoveThinkable(CBaseHandle hEnt) = 0;
+	virtual ClientThinkHandle_t GetInvalidThinkHandle() = 0;
+	virtual void PerformThinkFunctions() = 0;
 };
 
 extern IClientEntityList* entitylist;
 
 #define VCLIENTENTITYLIST_INTERFACE_VERSION	"VClientEntityList003"
+#define INVALID_THINK_HANDLE entitylist->GetInvalidThinkHandle()
+
 
 // Used for debugging. Will produce asserts if someone tries to setup bones or
 	// attachments before it's allowed.

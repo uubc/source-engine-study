@@ -389,7 +389,7 @@ void C_ParticleSmokeGrenade::Start(CParticleMgr *pParticleMgr, IPrototypeArgAcce
 	}
 
 	m_bStarted = true;
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 #if CSTRIKE_DLL
 	C_CSPlayer *pPlayer = C_CSPlayer::GetLocalCSPlayer();

@@ -129,7 +129,7 @@ void C_ScriptIntro::PostDataUpdate( DataUpdateType_t updateType )
 {
 	BaseClass::PostDataUpdate( updateType );
 
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	// Fill out the intro data
 	m_IntroData.m_vecCameraView = m_vecCameraView;

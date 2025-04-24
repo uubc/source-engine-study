@@ -5723,6 +5723,23 @@ void C_EngineObjectInternal::PhysicsDispatchThink(CTHINKPTR thinkFunc)
 	}
 }
 
+ClientThinkHandle_t C_EngineObjectInternal::GetThinkHandle()
+{
+	return m_hThink;
+}
+
+
+void C_EngineObjectInternal::SetThinkHandle(ClientThinkHandle_t hThink)
+{
+	m_hThink = hThink;
+}
+
+void C_EngineObjectInternal::SetNextClientThink(float nextThinkTime)
+{
+	Assert(GetRefEHandle() != NULL);
+	g_EntityList.SetNextClientThink(GetRefEHandle(), nextThinkTime);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : val - 
@@ -13649,7 +13666,7 @@ void C_EngineRopeInternal::FinishInit(const char* pMaterialName)
 	SetCollisionBounds(Vector(-10, -10, -10), Vector(10, 10, 10));
 
 	// We want to think every frame.
-	m_pOuter->SetNextClientThink(CLIENT_THINK_ALWAYS);
+	SetNextClientThink(CLIENT_THINK_ALWAYS);
 }
 
 void C_EngineRopeInternal::RunRopeSimulation(float flSeconds)

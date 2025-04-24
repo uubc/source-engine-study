@@ -205,7 +205,7 @@ void C_PlasmaBeamNode::OnDataChanged(DataUpdateType_t updateType)
 		float  flVel = VectorNormalize(vMoveDir);
 		m_pFirePlasmaSpray->m_ParticleCollision.Setup(GetEngineObject()->GetAbsOrigin(), &vMoveDir, 0.3,
 											flVel-50, flVel+50, 800, 0.5 );
-		SetNextClientThink(gpGlobals->curtime + 0.01);
+		GetEngineObject()->SetNextClientThink(gpGlobals->curtime + 0.01);
 	}
 	C_BaseEntity::OnDataChanged(updateType);
 }
@@ -270,7 +270,7 @@ void C_PlasmaBeamNode::ClientThink(void)
 		}
 	}
 
-	SetNextClientThink(gpGlobals->curtime + 0.05);
+	GetEngineObject()->SetNextClientThink(gpGlobals->curtime + 0.05);
 }
 
 IMPLEMENT_CLIENTCLASS_DT(C_PlasmaBeamNode, DT_PlasmaBeamNode, CPlasmaBeamNode )

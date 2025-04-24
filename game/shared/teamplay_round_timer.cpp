@@ -308,7 +308,7 @@ void CTeamRoundTimer::Spawn( void )
 	Precache();
 
 #ifdef CLIENT_DLL
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 #else
 
 	int nTimerTime = 0;

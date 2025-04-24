@@ -212,10 +212,10 @@ void C_FireSmoke::Start( void )
 //-----------------------------------------------------------------------------
 //void C_FireSmoke::RemoveClientOnly(void)
 //{
-//	ClientThinkList()->RemoveThinkable( GetClientHandle() );
+//	EntityList()->RemoveThinkable( GetRefEHandle() );
 //
 //	// Remove from the client entity list.
-//	EntityList()->RemoveEntity( GetClientHandle() );
+//	EntityList()->RemoveEntity( GetRefEHandle() );
 //
 //	partition->Remove( PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_RESPONSIVE_EDICTS | PARTITION_CLIENT_NON_STATIC_EDICTS, GetEngineObject()->GetPartitionHandle() );
 //

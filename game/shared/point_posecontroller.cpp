@@ -351,7 +351,7 @@ END_RECV_TABLE()
 void C_PoseController::Spawn( void )
 {
 	SetThink( &C_PoseController::ClientThink );
-	SetNextClientThink( CLIENT_THINK_ALWAYS );
+	GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 	m_fCurrentFMod = 0.0f;
 	m_PoseTransitionValue.Init( 0.0f, 0.0f, 0.0f );
@@ -366,7 +366,7 @@ void C_PoseController::OnDataChanged( DataUpdateType_t updateType )
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
 		// Start thinking (Baseclass stops it)
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 		m_bOldPoseValueParity = m_bPoseValueParity;
 		m_fCurrentPoseValue = m_fPoseValue;

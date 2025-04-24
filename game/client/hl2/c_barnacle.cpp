@@ -125,7 +125,7 @@ void C_NPC_Barnacle::OnDataChanged( DataUpdateType_t updateType )
 		InitTonguePhysics();
 
 		// We want to think every frame.
-		SetNextClientThink( CLIENT_THINK_ALWAYS );
+		GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 		return;
 	}
 }

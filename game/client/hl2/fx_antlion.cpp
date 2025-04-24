@@ -85,7 +85,7 @@ void CAntlionGibManager::Update( float frametime )
 
 	if ( m_LRU[ i ].Get() )
 	{
-		 m_LRU[ i ].Get()->SetNextClientThink( gpGlobals->curtime );
+		 m_LRU[ i ].Get()->GetEngineObject()->SetNextClientThink( gpGlobals->curtime );
 	}
 
 	m_LRU.Remove(i);

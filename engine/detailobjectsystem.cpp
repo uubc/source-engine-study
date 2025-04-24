@@ -153,7 +153,6 @@ public:
 	virtual IClientRenderable*	GetClientRenderable()	{ return this; }
 	virtual IClientEntity*		GetIClientEntity()		{ return 0; }
 	virtual IClientEntity*		GetBaseEntity()			{ return 0; }
-	virtual IClientThinkable*	GetClientThinkable()	{ return 0; }
 
 	// IClientRenderable overrides.
 public:
