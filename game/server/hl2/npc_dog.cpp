@@ -850,7 +850,7 @@ void CNPC_Dog::ThrowObject( const char *pAttachmentName )
 					// Fix up an impossible throw so dog will at least toss the box in the target's general direction instead of dropping it.
 					// Also toss it up in the air so it will fall down and break. (Just throw the box up at a 45 degree angle)
 					Vector forward, up;
-					GetVectors( &forward, NULL, &up );
+					GetEngineObject()->GetVectors( &forward, NULL, &up );
 
 					vecToss = forward + up;
 					VectorNormalize( vecToss );

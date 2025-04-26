@@ -1392,7 +1392,7 @@ void CPropJeep::CreateDangerSounds( void )
 	Vector vecStart = GetEngineObject()->GetAbsOrigin();
 	Vector vecDir, vecRight;
 
-	GetVectors( &vecDir, &vecRight, NULL );
+	GetEngineObject()->GetVectors( &vecDir, &vecRight, NULL );
 
 	const float soundDuration = 0.25;
 	float speed = GetEngineVehicle()->GetHLSpeed();

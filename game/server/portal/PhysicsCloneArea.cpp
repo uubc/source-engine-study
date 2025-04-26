@@ -143,7 +143,7 @@ void CPhysicsCloneArea::CloneNearbyEntities( void )
 	CBaseEntity*	pList[ 1024 ];
 
 	Vector vForward, vUp, vRight;
-	GetVectors( &vForward, &vRight, &vUp );
+	GetEngineObject()->GetVectors( &vForward, &vRight, &vUp );
 
 	Vector ptOrigin = GetEngineObject()->GetAbsOrigin();
 	QAngle qAngles = GetEngineObject()->GetAbsAngles();

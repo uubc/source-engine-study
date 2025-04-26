@@ -2587,7 +2587,7 @@ int CNPC_Strider::MeleeAttack1Conditions( float flDot, float flDist )
 
 	// strider will cross his feet, but only 6ft over
 	Vector right;
-	GetVectors( NULL, &right, NULL );
+	GetEngineObject()->GetVectors( NULL, &right, NULL );
 	if ( DotProduct( pEnemy->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin(), right ) > 72 )
 	{
 		return COND_NONE;
@@ -3928,7 +3928,7 @@ void CNPC_Strider::UpdateMinigunControls( float &yaw, float &pitch )
 void CNPC_Strider::GetViewCone( StriderMinigunViewcone_t &cone )
 {
 	cone.origin = EyePosition();
-	GetVectors( &cone.axis, NULL, NULL );
+	GetEngineObject()->GetVectors( &cone.axis, NULL, NULL );
 	cone.cosAngle = 0.5; // 60 degree cone
 	cone.length = 2048;
 }
@@ -4437,7 +4437,7 @@ void CNPC_Strider::StompHit( int followerBoneIndex )
 
 	CTakeDamageInfo damageInfo( this, this, 500, DMG_CRUSH );
 	Vector forward;
-	pEnemy->GetVectors( &forward, NULL, NULL );
+	pEnemy->GetEngineObject()->GetVectors( &forward, NULL, NULL );
 	damageInfo.SetDamagePosition( hitPosition );
 	damageInfo.SetDamageForce( -50 * 300 * forward );
 	pEnemy->TakeDamage( damageInfo );
@@ -5087,7 +5087,7 @@ void CStriderMinigun::StartShooting( IStriderMinigunHost *pHost, CBaseEntity *pT
 
 				// Move it to one side of the other randomly, just to get it off center.
 				Vector right;
-				pPlayer->GetVectors( NULL, &right, NULL );
+				pPlayer->GetEngineObject()->GetVectors( NULL, &right, NULL );
 				m_vecAnchor += right * random->RandomFloat( -100, 100 );
 				bHasSetAnchor = true;
 			}
@@ -5099,7 +5099,7 @@ void CStriderMinigun::StartShooting( IStriderMinigunHost *pHost, CBaseEntity *pT
 		m_vecAnchor = pTarget->WorldSpaceCenter();
 
 		Vector right;
-		pTarget->GetVectors( NULL, &right, NULL );
+		pTarget->GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 		// Start 5 or 10 feet off target.
 		Vector offset = right * random->RandomFloat( 60, 120 );
@@ -5213,7 +5213,7 @@ void CStriderMinigun::SetTarget( IStriderMinigunHost *pHost, CBaseEntity *pTarge
 		if( m_vecAnchor == vec3_invalid )
 		{
 			Vector right;
-			pHost->GetEntity()->GetVectors( NULL, &right, NULL );
+			pHost->GetEntity()->GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 			m_vecAnchor = pTarget->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 256 );
 			m_vecAnchor += right * random->RandomFloat( -60.0f, 60.0f );

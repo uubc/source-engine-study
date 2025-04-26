@@ -3290,7 +3290,7 @@ void CNPC_Hunter::TaskFindDodgeActivity()
 
 	Vector vecUp;
 	Vector vecRight;
-	GetVectors( NULL, &vecRight, &vecUp );
+	GetEngineObject()->GetVectors( NULL, &vecRight, &vecUp );
 
 	// TODO: find most perpendicular 8-way dodge when we get the anims
 	Vector vecEnemyDir = GetEnemy()->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin();
@@ -3591,7 +3591,7 @@ void CNPC_Hunter::StartTask( const Task_t *pTask )
 			else
 			{
 				Vector vecUp;
-				GetVectors( NULL, NULL, &vecUp );
+				GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 				
 				Vector vecEnemyDir = GetEnemy()->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin();
 				Vector vecDir = CrossProduct( vecEnemyDir, vecUp );
@@ -4005,7 +4005,7 @@ void CNPC_Hunter::ChargeLookAhead( void )
 #if 0
 	trace_t	tr;
 	Vector vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 	Vector vecTestPos = GetAbsOrigin() + ( vecForward * m_flGroundSpeed * 0.75 );
 	Vector testHullMins = GetHullMins();
 	testHullMins.z += (StepHeight() * 2);
@@ -4034,7 +4034,7 @@ float CNPC_Hunter::ChargeSteer()
 	const float	testLength = GetEngineObject()->GetGroundSpeed() * 0.15f;
 
 	//Get our facing
-	GetVectors( &forward, &right, NULL );
+	GetEngineObject()->GetVectors( &forward, &right, NULL );
 
 	steer = forward;
 
@@ -4440,7 +4440,7 @@ void CNPC_Hunter::HandleAnimEvent( animevent_t *pEvent )
 		if ( !bGotAttachment )
 		{	
 			vecOrigin = WorldSpaceCenter();
-			GetVectors( &vecDir, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 		}
 		
 		UTIL_BloodSpray( vecOrigin, vecDir, BLOOD_COLOR_RED, 4, FX_BLOODSPRAY_ALL );
@@ -4991,7 +4991,7 @@ int CNPC_Hunter::MeleeAttack1Conditions ( float flDot, float flDist )
 	vecMaxs.z = vecMaxs.x;
 
 	Vector forward;
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	trace_t	tr;
 	AI_TraceHull(EntityList(), WorldSpaceCenter(), WorldSpaceCenter() + forward * HUNTER_MELEE_REACH, vecMins, vecMaxs, MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
@@ -5656,7 +5656,7 @@ void CNPC_Hunter::ConsiderFlinching( const ITakeDamageInfo&info )
 	Activity eGesture = ACT_HUNTER_FLINCH_N;
 
 	Vector forward;
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 	
 	Vector vecForceDir = info.GetDamageForce();
 	VectorNormalize( vecForceDir );
@@ -6220,10 +6220,10 @@ void CNPC_Hunter::GetShootDir( Vector &vecDir, const Vector &vecSrc, CBaseEntity
 		{
 			Vector vecTargetForward;
 			Vector vecTargetRight;
-			pTargetEntity->GetVectors( &vecTargetForward, &vecTargetRight, NULL );
+			pTargetEntity->GetEngineObject()->GetVectors( &vecTargetForward, &vecTargetRight, NULL );
 
 			Vector vecForward;
-			GetVectors( &vecForward, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 			float flDot = DotProduct( vecTargetForward, vecForward );
 
@@ -6287,7 +6287,7 @@ bool CNPC_Hunter::ClampShootDir( Vector &vecDir )
 	vecDir2D.z = 0;
 	
 	Vector vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 	Vector vecForward2D = vecForward;
 	vecForward2D.z = 0;

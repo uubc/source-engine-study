@@ -711,7 +711,7 @@ int CNPC_Ichthyosaur::MeleeAttack1Conditions( float flDot, float flDist )
 	float	flPredictedDist = VectorNormalize( predictedDir );
 	
 	Vector	vBodyDir;
-	GetVectors( &vBodyDir, NULL, NULL );
+	GetEngineObject()->GetVectors( &vBodyDir, NULL, NULL );
 
 	float	flPredictedDot	= DotProduct( predictedDir, vBodyDir );
 

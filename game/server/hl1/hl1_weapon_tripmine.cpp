@@ -522,7 +522,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 
 		trace_t stuckOnTrace;
 		Vector forward;
-		GetVectors( &forward, NULL, NULL );
+		GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 		UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() - forward * 12.0f, MASK_SOLID, this, COLLISION_GROUP_NONE, &stuckOnTrace );
 

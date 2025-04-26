@@ -598,26 +598,26 @@ void CPropVehicleDriveable::OnRestore( void )
 //-----------------------------------------------------------------------------
 // Purpose: Vehicles are permanently oriented off angle for vphysics.
 //-----------------------------------------------------------------------------
-void CPropVehicleDriveable::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
-{
-	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
-	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
-
-	if (pForward != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 1, *pForward ); 
-	}
-
-	if (pRight != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 0, *pRight ); 
-	}
-
-	if (pUp != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 2, *pUp ); 
-	}
-}
+//void CPropVehicleDriveable::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
+//{
+//	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
+//	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
+//
+//	if (pForward != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 1, *pForward ); 
+//	}
+//
+//	if (pRight != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 0, *pRight ); 
+//	}
+//
+//	if (pUp != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 2, *pUp ); 
+//	}
+//}
 
 //-----------------------------------------------------------------------------
 // Purpose: AngleVectors equivalent that accounts for the hacked 90 degree rotation of vehicles
@@ -1357,7 +1357,7 @@ void CFourWheelServerVehicle::NPC_DriveVehicle( void )
 		if ( m_nNPCButtons )
 		{
 			Vector vecForward, vecRight;
-			GetFourWheelVehicle()->GetVectors( &vecForward, &vecRight, NULL );
+			GetFourWheelVehicle()->GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 			if ( m_nNPCButtons & IN_FORWARD )
 			{
 				NDebugOverlay::Line( GetFourWheelVehicle()->GetEngineObject()->GetAbsOrigin(), GetFourWheelVehicle()->GetEngineObject()->GetAbsOrigin() + vecForward * 200, 0,255,0, true, 0.1 );

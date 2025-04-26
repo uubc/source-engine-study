@@ -114,6 +114,7 @@ public:
 	}
 
 	// CBaseEntity
+	static int GetEngineObjectTypeStatic() { return ENGINEOBJECT_VEHICLE; }
 	virtual void	Precache( void );
 	void			Spawn( void );
 	void			Activate( void );
@@ -162,7 +163,7 @@ public:
 	// Crane handling
 	void			GetCraneTipPosition( Vector *vecOrigin, QAngle *vecAngles );
 	void			RecalculateCraneTip( void );
-	void			GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const;
+	//void			GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const;
 
 	void			SetNPCDriver( CNPC_VehicleDriver *pDriver );
 

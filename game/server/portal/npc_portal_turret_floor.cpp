@@ -581,7 +581,7 @@ void CNPC_Portal_FloorTurret::Shoot( const Vector &vecSrc, const Vector &vecDirT
 
 	// If a turret is partially tipped the recoil with each shot so that it can knock itself over
 	Vector	up;
-	GetVectors( NULL, NULL, &up );
+	GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 	if ( up.z < 0.9f )
 	{
@@ -689,7 +689,7 @@ inline bool CNPC_Portal_FloorTurret::OnSide( void )
 		return true;
 
 	Vector	up;
-	GetVectors( NULL, NULL, &up );
+	GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 	return ( DotProduct( up, Vector(0,0,1) ) < 0.5f );
 }
@@ -1441,7 +1441,7 @@ void CNPC_Portal_FloorTurret::StartTouch( IServerEntity *pOther )
 
 			// If impulse is too much along the forward or back axis, skew it
 			Vector vTurretForward, vTurretRight;
-			GetVectors( &vTurretForward, &vTurretRight, NULL );
+			GetEngineObject()->GetVectors( &vTurretForward, &vTurretRight, NULL );
 			float fForwardDotImpulse = vTurretForward.Dot( vVelocityImpulse );
 			if ( fForwardDotImpulse > 0.7f || fForwardDotImpulse < -0.7f )
 			{

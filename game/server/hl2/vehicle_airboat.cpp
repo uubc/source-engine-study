@@ -830,7 +830,7 @@ Vector CPropAirboat::GetSmoothedVelocity( void )
 		return vecSmoothedVelocity;
 
 	Vector vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 	vecForward *= MAX( flSpeed, 1.0f );
 	if ( flSpeed <= SMOOTHED_MIN_VELOCITY )
 		return vecForward;
@@ -1731,7 +1731,7 @@ void CPropAirboat::FireGun( )
 		if ( VectorNormalize( vecPerp ) > 1e-3 )
 		{
 			Vector vecCurrentDir;
-			GetVectors( &vecCurrentDir, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecCurrentDir, NULL, NULL );
 			if ( DotProduct( vecPerp, vecCurrentDir ) > 0.0f )
 			{
 				vecPerp *= -1.0f;
@@ -1896,7 +1896,7 @@ void CPropAirboat::CreateDangerSounds( void )
 	Vector vecStart = GetEngineObject()->GetAbsOrigin();
 	Vector vecDir, vecRight;
 
-	GetVectors( &vecDir, &vecRight, NULL );
+	GetEngineObject()->GetVectors( &vecDir, &vecRight, NULL );
 
 	const float soundDuration = 0.25;
 	float speed = GetEngineVehicle()->GetHLSpeed();

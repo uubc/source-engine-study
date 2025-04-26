@@ -176,13 +176,13 @@ bool CPointAngleSensor::IsFacingWithinTolerance(CBaseEntity *pEntity, CBaseEntit
 	}
 
 	Vector forward;
-	pEntity->GetVectors(&forward, NULL, NULL);
+	pEntity->GetEngineObject()->GetVectors(&forward, NULL, NULL);
 
 	Vector dir;
 	// Use either our position relative to the target, or the target's raw facing
 	if (GetEngineObject()->HasSpawnFlags( SF_USE_TARGET_FACING ) )
 	{
-		pTarget->GetVectors(&dir, NULL, NULL);
+		pTarget->GetEngineObject()->GetVectors(&dir, NULL, NULL);
 	}
 	else
 	{
@@ -216,7 +216,7 @@ void CPointAngleSensor::Think(void)
 	if (m_hTargetEntity != NULL)
 	{
 		Vector forward;
-		m_hTargetEntity->GetVectors(&forward, NULL, NULL);
+		m_hTargetEntity->GetEngineObject()->GetVectors(&forward, NULL, NULL);
 		m_TargetDir.Set(forward, this, this);
 
 		if (m_hLookAtEntity != NULL)
@@ -550,7 +550,7 @@ void CPointProximitySensor::Think( void )
 		if (GetEngineObject()->HasSpawnFlags( SF_PROXIMITY_TEST_AGAINST_AXIS ) )
 		{
 			Vector vecDir;
-			GetVectors( &vecDir, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 
 			float flDot = DotProduct( vecTestDir, vecDir );
 			flDist *= fabs( flDot );

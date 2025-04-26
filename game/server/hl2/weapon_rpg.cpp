@@ -372,7 +372,7 @@ void CMissile::Explode( void )
 	// the missile flies off into the distance.
 	Vector forward;
 
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	trace_t tr;
 	UTIL_TraceLine(EntityList(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + forward * 16, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );

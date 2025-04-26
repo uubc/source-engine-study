@@ -933,7 +933,7 @@ bool CTemplateNPCMaker::PlaceNPCInLine( CAI_BaseNPC *pNPC )
 	Vector vecPlace;
 	Vector vecLine;
 
-	GetVectors( &vecLine, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecLine, NULL, NULL );
 
 	// invert this, line up NPC's BEHIND the maker.
 	vecLine *= -1;

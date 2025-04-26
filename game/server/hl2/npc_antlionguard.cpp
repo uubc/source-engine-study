@@ -2842,7 +2842,7 @@ void CNPC_AntlionGuard::ChargeLookAhead( void )
 {
 	trace_t	tr;
 	Vector vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 	Vector vecTestPos = GetEngineObject()->GetAbsOrigin() + ( vecForward * GetEngineObject()->GetGroundSpeed() * 0.75 );
 	Vector testHullMins = GetHullMins();
 	testHullMins.z += (GetStepHeight() * 2);
@@ -2984,7 +2984,7 @@ float CNPC_AntlionGuard::ChargeSteer( void )
 	const float	testLength = GetEngineObject()->GetGroundSpeed() * 0.15f;
 
 	//Get our facing
-	GetVectors( &forward, &right, NULL );
+	GetEngineObject()->GetVectors( &forward, &right, NULL );
 
 	steer = forward;
 

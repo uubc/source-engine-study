@@ -4872,7 +4872,24 @@ void CEngineObjectInternal::ComputeAbsDirection(const Vector& vecLocalDirection,
 
 void CEngineObjectInternal::GetVectors(Vector* forward, Vector* right, Vector* up) const 
 {
-	m_pOuter->GetVectors(forward, right, up);
+	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
+	const matrix3x4_t& entityToWorld = EntityToWorldTransform();
+
+	if (forward != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 0, *forward);
+	}
+
+	if (right != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 1, *right);
+		*right *= -1.0f;
+	}
+
+	if (up != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 2, *up);
+	}
 }
 
 const matrix3x4_t& CEngineObjectInternal::GetParentToWorldTransform(matrix3x4_t& tempMatrix)
@@ -17079,7 +17096,9 @@ CEngineVehicleInternal::CEngineVehicleInternal(IServerEntityList* pServerEntityL
 //-----------------------------------------------------------------------------
 CEngineVehicleInternal::~CEngineVehicleInternal()
 {
-	gEntList.PhysGetEnv()->DestroyVehicleController(m_pVehicle);
+	if (m_pVehicle) {
+		gEntList.PhysGetEnv()->DestroyVehicleController(m_pVehicle);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -17324,6 +17343,29 @@ bool CEngineVehicleInternal::Initialize(const char* pVehicleScript, unsigned int
 	return true;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Vehicles are permanently oriented off angle for vphysics.
+//-----------------------------------------------------------------------------
+void CEngineVehicleInternal::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
+{
+	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
+	const matrix3x4_t& entityToWorld = EntityToWorldTransform();
+
+	if (pForward != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 1, *pForward);
+	}
+
+	if (pRight != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 0, *pRight);
+	}
+
+	if (pUp != NULL)
+	{
+		MatrixGetColumn(entityToWorld, 2, *pUp);
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Various steering parameters
@@ -17626,21 +17668,23 @@ void CEngineVehicleInternal::VPhysicsUpdate(IPhysicsObject* pPhysics)
 
 	// This is here so we can make the pose parameters of the wheels
 	// reflect their current physics state
-	for (int i = 0; i < m_wheelCount; i++)
+	if (m_pVehicle)
 	{
-		if (pPhysics == m_pWheels[i])
+		for (int i = 0; i < m_wheelCount; i++)
 		{
-			Vector tmp;
-			pPhysics->GetPosition(&m_wheelPosition[i], &m_wheelRotation[i]);
+			if (pPhysics == m_pWheels[i])
+			{
+				Vector tmp;
+				pPhysics->GetPosition(&m_wheelPosition[i], &m_wheelRotation[i]);
 
-			// transform the wheel into body space
-			VectorITransform(m_wheelPosition[i], EntityToWorldTransform(), tmp);
-			SetPoseParameter(m_poseParameters[VEH_FL_WHEEL_HEIGHT + i], (m_wheelBaseHeight[i] - tmp.z) / m_wheelTotalHeight[i]);
-			SetPoseParameter(m_poseParameters[VEH_FL_WHEEL_SPIN + i], -m_wheelRotation[i].z);
-			return;
+				// transform the wheel into body space
+				VectorITransform(m_wheelPosition[i], EntityToWorldTransform(), tmp);
+				SetPoseParameter(m_poseParameters[VEH_FL_WHEEL_HEIGHT + i], (m_wheelBaseHeight[i] - tmp.z) / m_wheelTotalHeight[i]);
+				SetPoseParameter(m_poseParameters[VEH_FL_WHEEL_SPIN + i], -m_wheelRotation[i].z);
+				return;
+			}
 		}
 	}
-
 	BaseClass::VPhysicsUpdate(pPhysics);
 }
 
@@ -18253,6 +18297,10 @@ static int AddPhysToList(IPhysicsObject** pList, int listMax, int count, IPhysic
 
 int CEngineVehicleInternal::VPhysicsGetObjectList(IPhysicsObject** pList, int listMax)
 {
+	if (!m_pVehicle) 
+	{
+		return BaseClass::VPhysicsGetObjectList(pList, listMax);
+	}
 	int count = 0;
 	// add the body
 	count = AddPhysToList(pList, listMax, count, VPhysicsGetObject());

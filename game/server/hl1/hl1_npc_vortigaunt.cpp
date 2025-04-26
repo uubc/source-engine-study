@@ -348,7 +348,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 				GetEngineObject()->SetPlaybackRate(1.5);
 
 			Vector v_forward;
-			GetVectors( &v_forward, NULL, NULL );
+			GetEngineObject()->GetVectors( &v_forward, NULL, NULL );
 
 			CBroadcastRecipientFilter filter;
 			te->DynamicLight( filter, 0.0, &GetEngineObject()->GetAbsOrigin(), 125, 200, 100, 2, 120, 0.2 / GetEngineObject()->GetPlaybackRate(), 0);

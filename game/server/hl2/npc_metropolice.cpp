@@ -1434,7 +1434,7 @@ void CNPC_MetroPolice::PredictShootTargetPosition( float flDeltaTime, float flMi
 	if ( flAddVelocity != 0.0f )
 	{
 		Vector vecForward;
-		pShootTarget->GetVectors( &vecForward, NULL, NULL );
+		pShootTarget->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		VectorMA( vecLeadVector, flAddVelocity, vecForward,	vecLeadVector );
 	}
 
@@ -1464,7 +1464,7 @@ void CNPC_MetroPolice::PredictShootTargetVelocity( float flDeltaTime, Vector *pV
 	// Unless there's a big angular velocity, we can assume he accelerates
 	// along the forward direction. Predict acceleration for
 	Vector vecForward;
-	GetShootTarget()->GetVectors( &vecForward, NULL, NULL );
+	GetShootTarget()->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 //	float flBlendFactor = 1.0f;
 //	VectorMA( *pVecTargetVel, flBlendFactor * VEHICLE_PREDICT_ACCELERATION, vecForward, *pVecTargetVel );
@@ -2808,7 +2808,7 @@ void CNPC_MetroPolice::OnAnimEventDeployManhack( animevent_t *pEvent )
 	ReleaseManhack();
 
 	Vector forward, right;
-	GetVectors( &forward, &right, NULL );
+	GetEngineObject()->GetVectors( &forward, &right, NULL );
 
 	IPhysicsObject *pPhysObj = m_hManhack->GetEngineObject()->VPhysicsGetObject();
 

@@ -1786,7 +1786,7 @@ bool CWeaponPhysCannon::AttachObject( CBaseEntity *pObject, const Vector &vPosit
 		// We just picked up a turret. Is it already upright?
 		Vector vecUp;
 		Vector vecTrueUp(0,0,1);
-		pObject->GetVectors( NULL, NULL, &vecUp );
+		pObject->GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 		float flDot = DotProduct( vecUp, vecTrueUp );
 
 		if( flDot < 0.5f )

@@ -1749,7 +1749,7 @@ void CNPC_PlayerCompanion::UpdateReadiness()
 		const float GRADLENGTH	= 4.0f;
 
 		Vector right;
-		EntityList()->GetPlayerByIndex( 1 )->GetVectors( NULL, &right, NULL );
+		EntityList()->GetPlayerByIndex( 1 )->GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 		if ( IsInScriptedReadinessState() )
  		{
@@ -2177,7 +2177,7 @@ void CNPC_PlayerCompanion::AimGun()
 				// just point the weapon down.
 				Vector vecSpot = EyePosition();
 				Vector forward, up;
-				GetVectors( &forward, NULL, &up );
+				GetEngineObject()->GetVectors( &forward, NULL, &up );
 				vecSpot += forward * 128 + up * -64;
 
 				vecAimDir = vecSpot - Weapon_ShootPosition();

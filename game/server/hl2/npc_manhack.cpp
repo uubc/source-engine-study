@@ -1348,7 +1348,7 @@ void CNPC_Manhack::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 
 	// calc relative banking targets
 	Vector forward, right;
-	GetVectors( &forward, &right, NULL );
+	GetEngineObject()->GetVectors( &forward, &right, NULL );
 	m_vTargetBanking.x	= 40 * DotProduct( forward, targetDir );
 	m_vTargetBanking.z	= 40 * DotProduct( right, targetDir );
 	m_vTargetBanking.y	= 0.0;

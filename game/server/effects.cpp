@@ -1224,7 +1224,7 @@ void CC_BloodSpray( const CCommand &args )
 	while ( ( pEnt = EntityList()->FindEntityGeneric( pEnt, args[1] ) ) != NULL )
 	{
 		Vector forward;
-		pEnt->GetVectors(&forward, NULL, NULL);
+		pEnt->GetEngineObject()->GetVectors(&forward, NULL, NULL);
 		UTIL_BloodSpray( (forward * 4 ) + ( pEnt->EyePosition() + pEnt->WorldSpaceCenter() ) * 0.5f, forward, BLOOD_COLOR_RED, 4, FX_BLOODSPRAY_ALL );
 	}
 }

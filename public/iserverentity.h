@@ -1281,7 +1281,6 @@ public:
 	virtual bool IsTriggered(IServerEntity* pActivator) = 0;
 	virtual void StartGroundContact(IServerEntity* ground) = 0;
 	virtual void EndGroundContact(IServerEntity* ground) = 0;
-	virtual void GetVectors(Vector* forward, Vector* right, Vector* up) const = 0;
 	virtual void GetVelocity(Vector* vVelocity, AngularImpulse* vAngVelocity = NULL) = 0;
 	virtual bool FInViewCone(IServerEntity* pEntity) = 0;
 	virtual bool FInViewCone(const Vector& vecSpot) = 0;

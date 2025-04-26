@@ -74,7 +74,7 @@ Activity GetDeathPoseActivity( CBaseAnimating *entity, const ITakeDamageInfo&inf
 	Activity aActivity;
 
 	Vector vForward, vRight;
-	entity->GetVectors( &vForward, &vRight, NULL );
+	entity->GetEngineObject()->GetVectors( &vForward, &vRight, NULL );
 
 	Vector vDir = -info.GetDamageForce();
 	VectorNormalize( vDir );

@@ -387,7 +387,7 @@ void CPropTelescopicArm::AimAt( Vector vTarget )
 	vNormalToTarget = vWorldToLocalRotation.InverseTR().ApplyRotation( vNormalToTarget );
 
 	Vector vUp;
-	GetVectors( NULL, NULL, &vUp );
+	GetEngineObject()->GetVectors( NULL, NULL, &vUp );
 
 	QAngle qAnglesToTarget;
 	VectorAngles( vNormalToTarget, vUp, qAnglesToTarget );

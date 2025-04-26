@@ -922,7 +922,7 @@ void CAI_Hint::InputDisableHint( inputdata_t &inputdata )
 void CAI_Hint::Spawn( void )
 {
 	// Cache off the forward vector
-	GetVectors( &m_vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &m_vecForward, NULL, NULL );
 
 	if( m_nodeFOV != 360 )
 	{

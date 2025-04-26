@@ -531,7 +531,7 @@ void CNPC_FloorTurret::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup
 
 		// We want to use preferred carry angles if we're not nicely upright
 		Vector	forward, up;
-		GetVectors( &forward, NULL, &up );
+		GetEngineObject()->GetVectors( &forward, NULL, &up );
 
 		bool bUpright = DotProduct( up, Vector(0,0,1) ) > 0.9f;
 		bool bBehind = DotProduct( vecToTurret, forward ) < 0.85f;
@@ -595,7 +595,7 @@ bool CNPC_FloorTurret::OnAttemptPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGu
 	if ( reason == PICKED_UP_BY_CANNON && IRelationType( pPhysGunUser ) == D_HT )
 	{
 		Vector vecForward;
-		GetVectors( &vecForward, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		Vector vecForce = (pPhysGunUser->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin());
 		float flDistance = VectorNormalize( vecForce );
 
@@ -1537,7 +1537,7 @@ void CNPC_FloorTurret::HackFindEnemy( void )
 inline bool CNPC_FloorTurret::OnSide( void )
 {
 	Vector	up;
-	GetVectors( NULL, NULL, &up );
+	GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 	return ( DotProduct( up, Vector(0,0,1) ) < 0.5f );
 }
@@ -1581,7 +1581,7 @@ bool CNPC_FloorTurret::PreThink( turretState_e state )
 			if ( g_debug_turret.GetBool() )
 			{
 				Vector	up;
-				GetVectors( NULL, NULL, &up );
+				GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 				NDebugOverlay::Line(GetEngineObject()->GetAbsOrigin()+(up*32), GetEngineObject()->GetAbsOrigin()+(up*128), 0, 255, 0, false, 2.0f );
 				NDebugOverlay::Cross3D(GetEngineObject()->GetAbsOrigin()+(up*32), -Vector(2,2,2), Vector(2,2,2), 0, 255, 0, false, 2.0f );
@@ -1635,7 +1635,7 @@ bool CNPC_FloorTurret::PreThink( turretState_e state )
 			if ( g_debug_turret.GetBool() )
 			{
 				Vector	up;
-				GetVectors( NULL, NULL, &up );
+				GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 				NDebugOverlay::Line(GetEngineObject()->GetAbsOrigin()+(up*32), GetEngineObject()->GetAbsOrigin()+(up*128), 255, 0, 0, false, 2.0f );
 				NDebugOverlay::Cross3D(GetEngineObject()->GetAbsOrigin()+(up*32), -Vector(2,2,2), Vector(2,2,2), 255, 0, 0, false, 2.0f );
@@ -1937,7 +1937,7 @@ int CNPC_FloorTurret::VPhysicsTakeDamage( const ITakeDamageInfo&info )
 	if ( bShouldIgnoreFromFront )
 	{
 		Vector vecForward;
-		GetVectors( &vecForward, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		Vector vecForce = info.GetDamageForce();
 		VectorNormalize( vecForce );
 		float flDot = DotProduct( vecForward, vecForce );
@@ -2148,7 +2148,7 @@ void CNPC_FloorTurret::PlayerPenetratingVPhysics( void )
 void CNPC_FloorTurret::BreakThink( void )
 {
 	Vector vecUp;
-	GetVectors( NULL, NULL, &vecUp );
+	GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 	Vector vecOrigin = WorldSpaceCenter() + ( vecUp * 12.0f );
 
 	// Our effect
@@ -2267,7 +2267,7 @@ void CNPC_FloorTurret::InputSelfDestruct( inputdata_t &inputdata )
 	if ( m_hFizzleEffect != NULL )
 	{
 		Vector vecUp;
-		GetVectors( NULL, NULL, &vecUp );
+		GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 
 		// Setup our basic parameters
 		m_hFizzleEffect->KeyValue( "start_active", "1" );

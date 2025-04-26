@@ -569,7 +569,7 @@ void CPhysicsProp::HandleAnyCollisionInteractions( int index, gamevcollisioneven
 		}
 		else
 		{
-			GetVectors( &forward, NULL, NULL );
+			GetEngineObject()->GetVectors( &forward, NULL, NULL );
 		}
 
 		float speed = DotProduct( forward, vel );
@@ -4973,7 +4973,7 @@ bool CPropDoorRotating::IsHingeOnLeft()
 	// If it does, the door is hinged on its left.
 	//
 	Vector vecRight;
-	GetVectors( NULL, &vecRight, NULL );
+	GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 	float flDot = DotProduct( vecPointCheck, vecRight );
 
 	return ( flDot > 0 );
@@ -5272,7 +5272,7 @@ void CPropDoorRotating::BeginOpening(CBaseEntity *pOpenAwayFrom)
 		if (pOpenAwayFrom != NULL)
 		{
 			Vector vecForwardDoor;
-			GetVectors(&vecForwardDoor, NULL, NULL);
+			GetEngineObject()->GetVectors(&vecForwardDoor, NULL, NULL);
 
 			if (vecForwardDoor.Dot(pOpenAwayFrom->GetEngineObject()->GetAbsOrigin()) > vecForwardDoor.Dot(GetEngineObject()->GetAbsOrigin()))
 			{

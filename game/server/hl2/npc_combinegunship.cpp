@@ -2209,7 +2209,7 @@ void CNPC_CombineGunship::Flight( void )
 	}
 
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	Vector goalUp = accel;
 	VectorNormalize( goalUp );
@@ -2367,7 +2367,7 @@ void CNPC_CombineGunship::UpdateFacingDirection( void )
 		}
 		else
 		{
-			GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
+			GetEngineObject()->GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
 		}
 	}
 	VectorNormalize( m_vecDesiredFaceDir ); 

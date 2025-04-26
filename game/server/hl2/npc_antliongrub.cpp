@@ -272,7 +272,7 @@ void CAntlionGrub::CreateNugget( void )
 	if ( pPhys )
 	{
 		Vector vecForward;
-		GetVectors( &vecForward, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		
 		Vector vecVelocity = RandomVector( -35.0f, 35.0f ) + ( vecForward * -RandomFloat( 50.0f, 75.0f ) );
 		AngularImpulse vecAngImpulse = RandomAngularImpulse( -100.0f, 100.0f );
@@ -455,7 +455,7 @@ void CAntlionGrub::AttachToSurface( void )
 {
 	// Get our downward direction
 	Vector vecForward, vecRight, vecDown;
-	GetVectors( &vecForward, &vecRight, &vecDown );
+	GetEngineObject()->GetVectors( &vecForward, &vecRight, &vecDown );
 	vecDown.Negate();
 	
 	Vector vecOffset = ( vecDown * -8.0f );
@@ -722,7 +722,7 @@ void CAntlionGrub::SpawnSquashedGrub( void )
 		return;
 
 	Vector vecUp;
-	GetVectors( NULL, NULL, &vecUp );
+	GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 	CBaseEntity *pGib = CreateRagGib( ANTLIONGRUB_SQUASHED_MODEL, GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(), vecUp * 16.0f );
 	if ( pGib )
 	{
@@ -739,7 +739,7 @@ void CAntlionGrub::MakeSquashDecals( const Vector &vecOrigin )
 	Vector	vecStart;
 	Vector	vecTraceDir;
 
-	GetVectors( NULL, NULL, &vecTraceDir );
+	GetEngineObject()->GetVectors( NULL, NULL, &vecTraceDir );
 	vecTraceDir.Negate();
 
 	for ( int i = 0 ; i < 8; i++ )

@@ -191,7 +191,7 @@ void CAI_PassengerBehavior::AddPhysicsPush( float force )
 	IPhysicsObject *pObject = GetOuter()->GetEngineObject()->VPhysicsGetObject();
 	Vector vecVelocity;
 	pObject->GetVelocity( &vecVelocity, NULL );
-	GetOuter()->GetVectors( NULL, NULL, &vecDir );
+	GetOuter()->GetEngineObject()->GetVectors( NULL, NULL, &vecDir );
 	vecDir.Negate();
 
 	Vector vecForce = vecDir * force;
@@ -1469,7 +1469,7 @@ void CAI_PassengerBehavior::ModifyOrAppendCriteria( AI_CriteriaSet& criteriaSet 
 	// Note what angle we're at (extreme or normal)
 	Vector vecUp( 0.0f, 0.0f, 1.0f );
 	Vector vecVehicleUp;
-	m_hVehicle->GetVectors( NULL, NULL, &vecVehicleUp );
+	m_hVehicle->GetEngineObject()->GetVectors( NULL, NULL, &vecVehicleUp );
 
 	float flVehicleUp = DotProduct( vecVehicleUp, vecUp );
 	criteriaSet.AppendCriteria( "vehicle_tilt", UTIL_VarArgs( "%.2f", flVehicleUp ) );

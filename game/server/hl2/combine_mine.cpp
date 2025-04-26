@@ -502,7 +502,7 @@ void CBounceBomb::BounceThink()
 
 		Vector up;
 
-		GetVectors( NULL, NULL, &up );
+		GetEngineObject()->GetVectors( NULL, NULL, &up );
 		pPhysicsObject->Wake();
 		pPhysicsObject->ApplyForceCenter( up * force );
 
@@ -572,7 +572,7 @@ void CBounceBomb::CavernBounceThink()
 
 		Vector up;
 
-		GetVectors( NULL, NULL, &up );
+		GetEngineObject()->GetVectors( NULL, NULL, &up );
 		
 		pPhysicsObject->Wake();
 		pPhysicsObject->ApplyForceCenter( up * force );
@@ -682,7 +682,7 @@ void CBounceBomb::SettleThink()
 
 				// Check for upside-down
 				Vector vecUp;
-				GetVectors( NULL, NULL, &vecUp );
+				GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 				if( vecUp.z <= 0.8 )
 				{
 					// Landed upside down. Right self
@@ -744,7 +744,7 @@ void CBounceBomb::UpdateLight( bool bTurnOn, unsigned int r, unsigned int g, uns
 		if( !m_hSprite.Get() )
 		{
 			Vector up;
-			GetVectors( NULL, NULL, &up );
+			GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 			// Light isn't on.
 			m_hSprite = CSprite::SpriteCreate( "sprites/glow01.vmt", GetEngineObject()->GetAbsOrigin() + up * 10.0f, false );

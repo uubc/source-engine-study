@@ -794,7 +794,7 @@ void CPropJeepEpisodic::UpdateWheelDust( void )
 		{
 			// Angle the dust out away from the wheels
 			Vector vecForward, vecRight, vecUp;
-			GetVectors( &vecForward, &vecRight, &vecUp );
+			GetEngineObject()->GetVectors( &vecForward, &vecRight, &vecUp );
 			
 			const vehicle_controlparams_t *vehicleControls = this->GetVehicleControlParams();
 			float flWheelDir = ( i & 1 ) ? 1.0f : -1.0f;
@@ -1193,7 +1193,7 @@ static void SolveBlockingProps( CPropJeepEpisodic *pVehicleEntity, IPhysicsObjec
 	CUtlVector<CBaseEntity *> solveList;
 	float vehicleMass = pVehiclePhysics->GetMass();
 	Vector vehicleUp;
-	pVehicleEntity->GetVectors( NULL, NULL, &vehicleUp );
+	pVehicleEntity->GetEngineObject()->GetVectors( NULL, NULL, &vehicleUp );
 	IPhysicsFrictionSnapshot *pSnapshot = pVehiclePhysics->CreateFrictionSnapshot();
 	while ( pSnapshot->IsValid() )
 	{

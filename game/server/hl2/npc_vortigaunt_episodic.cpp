@@ -2096,7 +2096,7 @@ void CNPC_Vortigaunt::CreateBeamBlast( const Vector &vecOrigin )
 void CNPC_Vortigaunt::ZapBeam( int nHand )
 {
 	Vector forward;
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	Vector vecSrc = GetEngineObject()->GetAbsOrigin() + GetViewOffset();
 	Vector vecAim = GetShootEnemyDir( vecSrc, false );	// We want a clear shot to their core

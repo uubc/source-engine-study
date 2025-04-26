@@ -290,7 +290,7 @@ void CNPC_Ichthyosaur::Spawn( void )
 
 	Vector	forward;
 
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	m_vecCurrentVelocity	= forward * m_flGroundSpeed;
 
@@ -451,7 +451,7 @@ void CNPC_Ichthyosaur::DragVictim( float moveDist )
 	width	= ( maxs.y - mins.y ) * 0.5f;
 
 	Vector	forward, up;
-	GetVectors( &forward, NULL, &up );
+	GetEngineObject()->GetVectors( &forward, NULL, &up );
 
 	Vector	newPos = GetEngineObject()->GetAbsOrigin() + ( (forward+(up*0.25f)) * ( moveDist + width + DRAG_OFFSET ) );
 
@@ -587,7 +587,7 @@ void CNPC_Ichthyosaur::AddSwimNoise( Vector *velocity )
 {
 	Vector	right, up;
 
-	GetVectors( NULL, &right, &up );
+	GetEngineObject()->GetVectors( NULL, &right, &up );
 
 	float	lNoise, vNoise;
 
@@ -612,7 +612,7 @@ void CNPC_Ichthyosaur::DoMovement( float flInterval, const Vector &MoveTarget, i
 	Vector forward, right, up;
 
 	//Get our orientation vectors.
-	GetVectors( &forward, &right, &up);
+	GetEngineObject()->GetVectors( &forward, &right, &up);
 
 	if ( ( GetActivity() == ACT_MELEE_ATTACK1 ) && ( GetEnemy() != NULL ) )
 	{
@@ -789,7 +789,7 @@ bool CNPC_Ichthyosaur::SteerAvoidObstacles(Vector &Steer, const Vector &Velocity
 
 	Vector	forward;
 
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	//If we're hitting our enemy, just continue on
 	if ( ( GetEnemy() != NULL ) && ( tr.m_pEnt == GetEnemy() ) )
@@ -989,7 +989,7 @@ int CNPC_Ichthyosaur::MeleeAttack1Conditions( float flDot, float flDist )
 	float	flPredictedDist = VectorNormalize( predictedDir );
 	
 	Vector	vBodyDir;
-	GetVectors( &vBodyDir, NULL, NULL );
+	GetEngineObject()->GetVectors( &vBodyDir, NULL, NULL );
 
 	float	flPredictedDot	= DotProduct( predictedDir, vBodyDir );
 

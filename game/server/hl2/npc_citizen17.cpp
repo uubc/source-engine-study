@@ -2127,7 +2127,7 @@ Vector CNPC_Citizen::GetActualShootPosition( const Vector &shootOrigin )
 		if ( FClassnameIs( GetEnemy(), "npc_combinegunship" ) )
 		{
 			Vector vecRight;
-			GetVectors( NULL, &vecRight, NULL );
+			GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 			// Random height
 			vecRight.z = 0;
 
@@ -3678,7 +3678,7 @@ void	CNPC_Citizen::TossHealthKit(CBaseCombatCharacter *pThrowAt, const Vector &o
 	Assert( pThrowAt );
 
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 	Vector medKitOriginPoint = WorldSpaceCenter() + ( forward * 20.0f );
 	Vector destinationPoint;
 	// this doesn't work without a moveparent: pThrowAt->ComputeAbsPosition( offset, &destinationPoint );

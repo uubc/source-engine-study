@@ -251,7 +251,7 @@ void CAI_RappelBehavior::RunTask( const Task_t *pTask )
 				{
 					// try to shove the player in the opposite direction as they are facing (so they'll see me)
 					Vector vecForward;
-					pGroundEnt->GetVectors( &vecForward, NULL, NULL );
+					pGroundEnt->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 					pGroundEnt->GetEngineObject()->SetAbsVelocity( vecForward * -500 );
 					break;
 				}
@@ -353,7 +353,7 @@ void CAI_RappelBehavior::BeginRappel()
 	if( tr.m_pEnt != NULL && tr.m_pEnt->IsNPC() )
 	{
 		Vector forward;
-		GetOuter()->GetVectors( &forward, NULL, NULL );
+		GetOuter()->GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 		CSoundEnt::InsertSound( SOUND_DANGER, tr.m_pEnt->EarPosition() - forward * 12.0f, 32.0f, 0.2f, GetOuter() );
 	}

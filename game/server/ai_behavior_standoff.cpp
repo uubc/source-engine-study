@@ -353,7 +353,7 @@ void CAI_StandoffBehavior::PrescheduleThink()
 			{
 				Vector normal;
 
-				pLine->GetVectors( &normal, NULL, NULL );
+				pLine->GetEngineObject()->GetVectors( &normal, NULL, NULL );
 
 				NDebugOverlay::Line( pLine->GetEngineObject()->GetAbsOrigin() - Vector( 0, 0, 64 ), pLine->GetEngineObject()->GetAbsOrigin() + Vector(0,0,64), 0,255,0, false, 0.1 );
 			}

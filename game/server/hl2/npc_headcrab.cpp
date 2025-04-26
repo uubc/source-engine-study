@@ -1442,7 +1442,7 @@ void CBaseHeadcrab::StartTask( const Task_t *pTask )
 			{
 				Vector forward, up;
 
-				GetVectors( &forward, NULL, &up );
+				GetEngineObject()->GetVectors( &forward, NULL, &up );
 
 				m_vecCommittedJumpPos = GetEngineObject()->GetAbsOrigin();
 				m_vecCommittedJumpPos += up * random->RandomFloat( 80, 150 );
@@ -2916,7 +2916,7 @@ void CFastHeadcrab::StartTask( const Task_t *pTask )
 			bool fJumpIsLeft;
 			trace_t tr;
 
-			GetVectors( &vecForward, &vecRight, NULL );
+			GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 
 			fJumpIsLeft = false;
 			if( random->RandomInt( 0, 100 ) < 50 )

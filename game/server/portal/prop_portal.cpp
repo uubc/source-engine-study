@@ -323,7 +323,7 @@ void CProp_Portal::TestRestingSurfaceThink( void )
 	Vector vOrigin = GetEngineObject()->GetAbsOrigin();
 
 	Vector vForward, vRight, vUp;
-	GetVectors( &vForward, &vRight, &vUp );
+	GetEngineObject()->GetVectors( &vForward, &vRight, &vUp );
 
 	trace_t tr;
 	CTraceFilterSimpleClassnameList baseFilter( NULL, COLLISION_GROUP_NONE );
@@ -438,7 +438,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 			if ( pLinkedPortal )
 			{
 				Vector vLinkedForward;
-				pLinkedPortal->GetVectors( &vLinkedForward, NULL, NULL );
+				pLinkedPortal->GetEngineObject()->GetVectors( &vLinkedForward, NULL, NULL );
 				fxData.m_vStart = pLink3edPortal->GetAbsOrigin() + vLinkedForward * 5.0f;
 			}*/
 
@@ -489,13 +489,13 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 			if ( !GetEnginePortal()->IsPortal2() )
 			{
 				Vector vLinkedForward;
-				m_hLinkedPortal->GetVectors( &vLinkedForward, NULL, NULL );
+				m_hLinkedPortal->GetEngineObject()->GetVectors( &vLinkedForward, NULL, NULL );
 				fxData.m_vOrigin = m_hLinkedPortal->GetEngineObject()->GetAbsOrigin() + vLinkedForward * 16.0f;
 				fxData.m_vAngles = m_hLinkedPortal->GetEngineObject()->GetAbsAngles();
 			}
 			else
 			{
-				GetVectors( &vForward, NULL, NULL );
+				GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 				fxData.m_vOrigin = GetEngineObject()->GetAbsOrigin() + vForward * 16.0f;
 				fxData.m_vAngles = GetEngineObject()->GetAbsAngles();
 			}
@@ -513,13 +513,13 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 			if (GetEnginePortal()->IsPortal2())
 			{
 				Vector vLinkedForward;
-				m_hLinkedPortal->GetVectors( &vLinkedForward, NULL, NULL );
+				m_hLinkedPortal->GetEngineObject()->GetVectors( &vLinkedForward, NULL, NULL );
 				fxData.m_vOrigin = m_hLinkedPortal->GetEngineObject()->GetAbsOrigin() + vLinkedForward * 16.0f;
 				fxData.m_vAngles = m_hLinkedPortal->GetEngineObject()->GetAbsAngles();
 			}
 			else
 			{
-				GetVectors( &vForward, NULL, NULL );
+				GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 				fxData.m_vOrigin = GetEngineObject()->GetAbsOrigin() + vForward * 16.0f;
 				fxData.m_vAngles = GetEngineObject()->GetAbsAngles();
 			}
@@ -650,7 +650,7 @@ void CProp_Portal::PunchPenetratingPlayer( CBaseEntity *pPlayer )
 			if ( UTIL_IsBoxIntersectingPortal( ( vMin + vMax ) / 2.0f, ( vMax - vMin ) / 2.0f, this->GetEnginePortal()))
 			{
 				Vector vForward;
-				GetVectors( &vForward, 0, 0 );
+				GetEngineObject()->GetVectors( &vForward, 0, 0 );
 				vForward *= 100.0f;
 				pPlayer->VelocityPunch( vForward );
 			}
@@ -1283,7 +1283,7 @@ void CProp_Portal::Touch( IServerEntity *pOther )
 			if ( !FClassnameIs( pOther, "func_physbox" ) && !FClassnameIs( pOther, "simple_physics_brush" ) )	// except CPhysBox
 			{
 				Vector vForward;
-				GetVectors( &vForward, NULL, NULL );
+				GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 
 				Vector vMin, vMax;
 				pOther->GetCollideable()->WorldSpaceSurroundingBounds( &vMin, &vMax );
@@ -1494,7 +1494,7 @@ void CProp_Portal::WakeNearbyEntities( void )
 	CBaseEntity*	pList[ 1024 ];
 
 	Vector vForward, vUp, vRight;
-	GetVectors( &vForward, &vRight, &vUp );
+	GetEngineObject()->GetVectors( &vForward, &vRight, &vUp );
 
 	Vector ptOrigin = GetEngineObject()->GetAbsOrigin();
 	QAngle qAngles = GetEngineObject()->GetAbsAngles();
@@ -1615,7 +1615,7 @@ void CProp_Portal::WakeNearbyEntities( void )
 //	Vector ptPortalCenter = GetEngineObject()->GetAbsOrigin();
 //	Vector vPortalCenterToEntityCenter = ptCenter - ptPortalCenter;
 //	Vector vPortalForward;
-//	GetVectors( &vPortalForward, NULL, NULL );
+//	GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 //	Vector ptProjectedEntityCenter = ptPortalCenter + ( vPortalForward * vPortalCenterToEntityCenter.Dot( vPortalForward ) );
 //
 //	Vector ptDest;
@@ -1924,7 +1924,7 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles )
 	// Fast moving objects can pass through the hole this frame while it's in the old location.
 	GetEnginePortal()->ReleaseAllEntityOwnership();//m_hPortalSimulator->
 	Vector vOldForward;
-	GetVectors( &vOldForward, 0, 0 );
+	GetEngineObject()->GetVectors( &vOldForward, 0, 0 );
 
 	m_vPrevForward = vOldForward;
 
@@ -2019,7 +2019,7 @@ void CProp_Portal::InputSetActivatedState( inputdata_t &inputdata )
 		vOrigin = GetEngineObject()->GetAbsOrigin();
 
 		Vector vForward, vUp;
-		GetVectors( &vForward, 0, &vUp );
+		GetEngineObject()->GetVectors( &vForward, 0, &vUp );
 
 		CTraceFilterSimpleClassnameList baseFilter( this, COLLISION_GROUP_NONE );
 		UTIL_Portal_Trace_Filter( &baseFilter );

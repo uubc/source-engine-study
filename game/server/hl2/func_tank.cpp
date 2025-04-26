@@ -4207,7 +4207,7 @@ void CFuncTankCombineCannon::Spawn()
 
 	m_bShouldHarrass = true;
 
-	GetVectors( &m_vecTrueForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &m_vecTrueForward, NULL, NULL );
 	m_bLastTargetWasNPC = false;
 }
 

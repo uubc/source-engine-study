@@ -3979,7 +3979,7 @@ void CAI_BaseNPC::NPCThink( void )
 				Vector vecPoint;
 
 				vecPoint = EyePosition() + Vector( 0, 0, 12 );
-				GetVectors( NULL, &right, NULL );
+				GetEngineObject()->GetVectors( NULL, &right, NULL );
 				NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), color, 0, 0, false , 1.0 );
 				NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 16 ) + right * 16, color, 0, 0, false , 1.0 );
 				NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 16 ) - right * 16, color, 0, 0, false , 1.0 );
@@ -4786,7 +4786,7 @@ void CAI_BaseNPC::RunAI( void )
 			Vector vecPoint;
 
 			vecPoint = EyePosition() + Vector( 0, 0, 12 );
-			GetVectors( NULL, &right, NULL );
+			GetEngineObject()->GetVectors( NULL, &right, NULL );
 			NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), 0, 255, 0, false , 0.1 );
 			NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) + right * 32, 0, 255, 0, false , 0.1 );
 			NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) - right * 32, 0, 255, 0, false , 0.1 );
@@ -4807,7 +4807,7 @@ void CAI_BaseNPC::RunAI( void )
 
 		vecPoint = EyePosition() + Vector( 0, 0, 12 );
 
-		EntityList()->GetLocalPlayer()->GetVectors( NULL, &right, NULL );
+		EntityList()->GetLocalPlayer()->GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), 255, 0, 0, false , 0.1 );
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) + right * 32, 255, 0, 0, false , 0.1 );
@@ -9737,7 +9737,7 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 		if (random->RandomInt(0, 4) < 3)
 		{
 			Vector vecEnemyForward;
-			GetEnemy()->GetVectors( &vecEnemyForward, NULL, NULL );
+			GetEnemy()->GetEngineObject()->GetVectors( &vecEnemyForward, NULL, NULL );
 			vecEnemyForward.z = 0;
 
 			// Lead up to a second ahead of them unless they are moving backwards.
@@ -9764,7 +9764,7 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 		{
 			// Aim at a point a few feet in front of the player's eyes
 			Vector vecEnemyForward;
-			GetEnemy()->GetVectors( &vecEnemyForward, NULL, NULL );
+			GetEnemy()->GetEngineObject()->GetVectors( &vecEnemyForward, NULL, NULL );
 
 			Vector vecAimPos = GetEnemy()->EyePosition() + (120.0f * vecEnemyForward );
 
@@ -14104,7 +14104,7 @@ bool CAI_BaseNPC::IsCrouchedActivity( Activity activity )
 Vector CAI_BaseNPC::Weapon_ShootPosition( void )
 {
 	Vector right;
-	GetVectors( NULL, &right, NULL );
+	GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 	bool bStanding = !IsCrouching();
 	if ( bStanding && (CapabilitiesGet() & bits_CAP_DUCK) )

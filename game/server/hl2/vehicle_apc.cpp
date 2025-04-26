@@ -601,7 +601,7 @@ void CPropAPC::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMoveData )
 	Vector vecStart = GetEngineObject()->GetAbsOrigin();
 	Vector vecDir;
 
-	GetVectors( &vecDir, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 
 	// Make danger sounds ahead of the APC
 	trace_t	tr;
@@ -1003,7 +1003,7 @@ void CPropAPC::FireRocket( void )
 	static float s_pSide[] = { 0.966, 0.866, 0.5, -0.5, -0.866, -0.966 };
 
 	Vector forward;
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	Vector vecDir;
 	CrossProduct( Vector( 0, 0, 1 ), forward, vecDir );

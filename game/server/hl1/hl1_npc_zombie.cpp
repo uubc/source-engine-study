@@ -112,7 +112,7 @@ void CNPC_Zombie::HandleAnimEvent( animevent_t *pEvent )
 				{
 					pHurt->ViewPunch( QAngle( 5, 0, 18 ) );
 					
-					GetVectors( &v_forward, &v_right, NULL );
+					GetEngineObject()->GetVectors( &v_forward, &v_right, NULL );
 
 					pHurt->GetEngineObject()->SetAbsVelocity( pHurt->GetEngineObject()->GetAbsVelocity() - v_right * 100 );
 				}
@@ -145,7 +145,7 @@ void CNPC_Zombie::HandleAnimEvent( animevent_t *pEvent )
 				{
 					pHurt->ViewPunch( QAngle ( 5, 0, -18 ) );
 					
-					GetVectors( &v_forward, &v_right, NULL );
+					GetEngineObject()->GetVectors( &v_forward, &v_right, NULL );
 
 					pHurt->GetEngineObject()->SetAbsVelocity( pHurt->GetEngineObject()->GetAbsVelocity() - v_right * 100 );
 				}
@@ -179,7 +179,7 @@ void CNPC_Zombie::HandleAnimEvent( animevent_t *pEvent )
 				{
 					pHurt->ViewPunch( QAngle ( 5, 0, 0 ) );
 					
-					GetVectors( &v_forward, &v_right, NULL );
+					GetEngineObject()->GetVectors( &v_forward, &v_right, NULL );
 					pHurt->GetEngineObject()->SetAbsVelocity( pHurt->GetEngineObject()->GetAbsVelocity() - v_right * 100 );
 				}
 				g_pSoundEmitterSystem->EmitSound( filter3, entindex(), "Zombie.AttackHit" );

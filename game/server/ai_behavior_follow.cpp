@@ -1274,7 +1274,7 @@ void CAI_FollowBehavior::GetFollowTargetViewLoc( Vector *pResult )
 		else
 		{
 			// Not a player. 
-			m_hFollowTarget->GetVectors( &vecDir, NULL, NULL );
+			m_hFollowTarget->GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 		}
 
 		AI_TraceLOS( vecStart, vecStart + vecDir * 8192, m_hFollowTarget, &tr );

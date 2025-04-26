@@ -1536,7 +1536,7 @@ Vector CNPC_Advisor::GetThrowFromPos( CBaseEntity *pEnt )
 	float howFarInFront = advisor_throw_stage_distance.GetFloat() + effecRadius * 1.43f;// clamp(lenToPlayer - posDist + effecRadius,effecRadius*2,90.f + effecRadius);
 	
 	Vector fwd;
-	GetVectors(&fwd,NULL,NULL);
+	GetEngineObject()->GetVectors(&fwd,NULL,NULL);
 	
 	return GetAbsOrigin() + fwd*howFarInFront;
 }

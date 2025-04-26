@@ -2879,7 +2879,7 @@ void CNPC_Alyx::AimGun( void )
 			{
 				// Ignore nodes that are behind her
 				Vector vecForward;
-				GetVectors( &vecForward, NULL, NULL );
+				GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 				float flDot = DotProduct( vecAimDir, vecForward );
 				if ( flDot > 0 )
 				{

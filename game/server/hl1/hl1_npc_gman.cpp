@@ -183,7 +183,7 @@ void CNPC_GMan::RunTask( const Task_t *pTask )
 		{
 			// Just center the head forward.
 			Vector forward;
-			GetVectors( &forward, NULL, NULL );
+			GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 			AddLookTarget(GetEngineObject()->GetAbsOrigin() + forward * 12.0f, 1.0, 1.0 );
 			GetEngineObject()->SetBoneController( 0, 0 );

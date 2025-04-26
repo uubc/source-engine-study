@@ -382,6 +382,10 @@ public:
 
 	virtual void UpdateOnRemove(void) 
 	{
+		if (m_bRemoved) {
+			return;
+		}
+		m_bRemoved = true;
 		//Msg("%p ===== %s \n", this, GetClassName());
 
 		m_pServerEntityList->SetReceivedChainedUpdateOnRemove(true);
@@ -576,7 +580,7 @@ public:
 	// Computes the abs position of a direction specified in local space
 	void ComputeAbsDirection(const Vector& vecLocalDirection, Vector* pAbsDirection);
 
-	void GetVectors(Vector* forward, Vector* right, Vector* up) const;
+	virtual void GetVectors(Vector* forward, Vector* right, Vector* up) const;
 
 	// Set the movement parent. Your local origin and angles will become relative to this parent.
 	// If iAttachment is a valid attachment on the parent, then your local origin and angles 
@@ -1441,6 +1445,7 @@ protected:
 	CNetworkVar(CBaseHandle, m_hOwnerEntity);	// only used to point to an edict it won't collide with
 	CNetworkVar(CBaseHandle, m_hEffectEntity);	// Fire/Dissolve entity.
 	CGrabControllerInternal m_grabController;
+	bool m_bRemoved = false;
 };
 
 inline int CEngineObjectNetworkProperty::entindex() const {
@@ -2640,6 +2645,7 @@ public:
 
 	// Initializes the vehicle physics so we can drive it
 	bool Initialize(const char* pScriptName, unsigned int nVehicleType);
+	virtual void GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const;
 
 	void Teleport(matrix3x4_t& relativeTransform);
 	void VPhysicsUpdate(IPhysicsObject* pPhysics);
@@ -7096,6 +7102,7 @@ void CGlobalEntityList<T>::DestroyEntity(IHandleEntity* oldObj)
 	}
 	SetReceivedChainedUpdateOnRemove(false);
 	pEntity->UpdateOnRemove();
+	m_EngineObjectArray[pEntity->entindex()]->UpdateOnRemove();
 
 	Assert(IsReceivedChainedUpdateOnRemove());
 

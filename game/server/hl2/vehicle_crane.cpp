@@ -798,26 +798,26 @@ void CPropCrane::GetCraneTipPosition( Vector *vecOrigin, QAngle *vecAngles )
 //-----------------------------------------------------------------------------
 // Purpose: Vehicles are permanently oriented off angle for vphysics.
 //-----------------------------------------------------------------------------
-void CPropCrane::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
-{
-	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
-	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
-
-	if (pForward != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 1, *pForward ); 
-	}
-
-	if (pRight != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 0, *pRight ); 
-	}
-
-	if (pUp != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 2, *pUp ); 
-	}
-}
+//void CPropCrane::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
+//{
+//	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
+//	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
+//
+//	if (pForward != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 1, *pForward ); 
+//	}
+//
+//	if (pRight != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 0, *pRight ); 
+//	}
+//
+//	if (pUp != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 2, *pUp ); 
+//	}
+//}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -987,7 +987,7 @@ void CCraneServerVehicle::NPC_DriveVehicle( void )
 		if ( m_nNPCButtons )
 		{
 			Vector vecForward, vecRight;
-			GetCrane()->GetVectors( &vecForward, &vecRight, NULL );
+			GetCrane()->GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 			if ( m_nNPCButtons & IN_FORWARD )
 			{
 				NDebugOverlay::Line( GetCrane()->GetEngineObject()->GetAbsOrigin(), GetCrane()->GetEngineObject()->GetAbsOrigin() + vecForward * 200, 0,255,0, true, 0.1 );

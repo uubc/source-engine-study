@@ -387,7 +387,7 @@ void CBaseHelicopter::DoWashPushOnAirboat( CBaseEntity *pAirboat,
 	
 	// Get the actual up direction vector
 	Vector vecUp;
-	pAirboat->GetVectors( NULL, NULL, &vecUp );
+	pAirboat->GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 	if ( vecUp.z < MAX_AIRBOAT_ROLL_COSANGLE )
 		return;
 
@@ -1425,7 +1425,7 @@ void CBaseHelicopter::InputMoveTopSpeed( inputdata_t &inputdata )
 	float flLength = VectorNormalize( vecVelocity );
 	if (flLength < 1e-3)
 	{
-		GetVectors( &vecVelocity, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecVelocity, NULL, NULL );
 	}
 
 	vecVelocity *= GetMaxSpeed();
@@ -1444,7 +1444,7 @@ void CBaseHelicopter::InputMoveSpecifiedSpeed( inputdata_t &inputdata )
 	float flLength = VectorNormalize( vecVelocity );
 	if (flLength < 1e-3)
 	{
-		GetVectors( &vecVelocity, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecVelocity, NULL, NULL );
 	}
 
 	float flSpeed = inputdata.value.Float();

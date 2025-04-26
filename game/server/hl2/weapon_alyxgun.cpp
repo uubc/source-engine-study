@@ -169,7 +169,7 @@ int CWeaponAlyxGun::WeaponRangeAttack1Condition( float flDot, float flDist )
 	{
 		Vector vecRoughDirection = ( GetOwner()->GetEnemy()->WorldSpaceCenter() - WorldSpaceCenter() );
 		Vector vecRight;
-		GetVectors( NULL, &vecRight, NULL );
+		GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 		bool bRightSide = ( DotProduct( vecRoughDirection, vecRight ) > 0.0f );
 		float flTargetDot = ( bRightSide ) ? -0.7f : 0.0f;
 		

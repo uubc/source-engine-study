@@ -3053,27 +3053,10 @@ bool CBaseEntity::IsMoving()
 //			right - Receives the entity's right vector.
 //			up - Receives the entity's up vector.
 //-----------------------------------------------------------------------------
-void CBaseEntity::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
-{
-	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
-	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
-
-	if (pForward != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 0, *pForward ); 
-	}
-
-	if (pRight != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 1, *pRight ); 
-		*pRight *= -1.0f;
-	}
-
-	if (pUp != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 2, *pUp ); 
-	}
-}
+//void CBaseEntity::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
+//{
+//
+//}
 
 
 //-----------------------------------------------------------------------------

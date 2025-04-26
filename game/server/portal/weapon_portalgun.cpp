@@ -539,7 +539,7 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 			Vector vPortalForward;
 
 			ptPortalCenter = pPlayerPortal->GetEngineObject()->GetAbsOrigin();
-			pPlayerPortal->GetVectors( &vPortalForward, NULL, NULL );
+			pPlayerPortal->GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 
 			Vector vEyeToPortalCenter = ptPortalCenter - vEye;
 

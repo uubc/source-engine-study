@@ -1379,7 +1379,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 void CAI_BaseActor::MakeRandomLookTarget( AILookTargetArgs_t *pArgs, float minTime, float maxTime )
 {
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	// DevMsg("random view\n");
 

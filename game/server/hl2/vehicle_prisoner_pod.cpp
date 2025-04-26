@@ -89,6 +89,7 @@ public:
 	}
 
 	// CBaseEntity
+	static int GetEngineObjectTypeStatic() { return ENGINEOBJECT_VEHICLE; }
 	virtual void	Precache( void );
 	void			Spawn( void );
 	void			Think(void);
@@ -106,7 +107,7 @@ public:
 
 	virtual bool OverridePropdata() { return true; }
 
-	void			GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const;
+	//void			GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const;
 
 	bool ShouldForceExit() { return m_bForcedExit; }
 	void ClearForcedExit() { m_bForcedExit = false; }
@@ -551,26 +552,26 @@ void CPropVehiclePrisonerPod::ResetUseKey( CBasePlayer *pPlayer )
 //-----------------------------------------------------------------------------
 // Purpose: Vehicles are permanently oriented off angle for vphysics.
 //-----------------------------------------------------------------------------
-void CPropVehiclePrisonerPod::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
-{
-	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
-	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
-
-	if (pForward != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 1, *pForward ); 
-	}
-
-	if (pRight != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 0, *pRight ); 
-	}
-
-	if (pUp != NULL)
-	{
-		MatrixGetColumn( entityToWorld, 2, *pUp ); 
-	}
-}
+//void CPropVehiclePrisonerPod::GetVectors(Vector* pForward, Vector* pRight, Vector* pUp) const
+//{
+//	// This call is necessary to cause m_rgflCoordinateFrame to be recomputed
+//	const matrix3x4_t &entityToWorld = GetEngineObject()->EntityToWorldTransform();
+//
+//	if (pForward != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 1, *pForward ); 
+//	}
+//
+//	if (pRight != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 0, *pRight ); 
+//	}
+//
+//	if (pUp != NULL)
+//	{
+//		MatrixGetColumn( entityToWorld, 2, *pUp ); 
+//	}
+//}
 
 
 //-----------------------------------------------------------------------------

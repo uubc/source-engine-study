@@ -358,7 +358,7 @@ void CNPC_BaseScanner::StartTask( const Task_t *pTask )
 			{
 				// Pick a random forward and down direction.
 				Vector forward;
-				GetVectors( &forward, NULL, NULL );
+				GetEngineObject()->GetVectors( &forward, NULL, NULL );
 				m_vecDiveBombDirection = forward + Vector( random->RandomFloat( -10, 10 ), random->RandomFloat( -10, 10 ), random->RandomFloat( -20, -10 ) );
 			}
 			VectorNormalize( m_vecDiveBombDirection );
@@ -1277,7 +1277,7 @@ void CNPC_BaseScanner::MoveToTarget( float flInterval, const Vector &vecMoveTarg
 
 	// calc relative banking targets
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	m_vCurrentBanking.x	= targetDir.x;
 	m_vCurrentBanking.z	= 120.0f * DotProduct( right, targetDir );

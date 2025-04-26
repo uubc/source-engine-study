@@ -140,7 +140,7 @@ public:
 	{
 		Vector vForward;
 
-		GetVectors( &vForward, 0, 0 );
+		GetEngineObject()->GetVectors( &vForward, 0, 0 );
 
 		return vForward * 10.0f;
 	}
@@ -721,7 +721,7 @@ void CNPC_SecurityCamera::ActiveThink( void )
 	VectorAngles( vecDirToEnemyEyes, vecAnglesToEnemy );
 
 	Vector vForward, vRight, vUp;
-	GetVectors( &vForward, &vRight, &vUp );
+	GetEngineObject()->GetVectors( &vForward, &vRight, &vUp );
 
 	vecAnglesToEnemy.x = acosf( vecDirToEnemyEyes.Dot( -vUp ) ) * ( 180.0f / M_PI );
 
@@ -1027,7 +1027,7 @@ void CNPC_SecurityCamera::InputRagdoll( inputdata_t &inputdata )
 	
 	// Leave decal on wall (may want to disable this once decal for where cam touches wall is made)
 	Vector vForward;
-	GetVectors( &vForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 
 	trace_t tr;
 	UTIL_TraceLine (EntityList(), GetEngineObject()->GetAbsOrigin() + 10.0f * vForward, GetEngineObject()->GetAbsOrigin() -60.0f * vForward, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );

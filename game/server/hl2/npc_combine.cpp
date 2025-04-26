@@ -769,7 +769,7 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 				{
 					Vector right, tosound;
 
-					GetVectors( NULL, &right, NULL );
+					GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 					tosound = pSound->GetSoundReactOrigin() - GetEngineObject()->GetAbsOrigin();
 					VectorNormalize( tosound);
@@ -2428,7 +2428,7 @@ void CNPC_Combine::HandleAnimEvent( animevent_t *pEvent )
 					// Grenades thrown from a script do not count against grenades remaining for the AI to use.
 					Vector forward, up, vecThrow;
 
-					GetVectors( &forward, NULL, &up );
+					GetEngineObject()->GetVectors( &forward, NULL, &up );
 					vecThrow = forward * 750 + up * 175;
 					Fraggrenade_Create( vecStart, vec3_angle, vecThrow, vecSpin, this, COMBINE_GRENADE_TIMER, true );
 				}
@@ -2545,7 +2545,7 @@ Vector CNPC_Combine::Weapon_ShootPosition( )
 {
 	bool bStanding = !IsCrouching();
 	Vector right;
-	GetVectors( NULL, &right, NULL );
+	GetEngineObject()->GetVectors( NULL, &right, NULL );
 
 	if ((CapabilitiesGet() & bits_CAP_DUCK) )
 	{

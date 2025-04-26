@@ -1026,7 +1026,7 @@ void CNPC_Zombine::ReleaseGrenade( Vector vPhysgunPos )
 	Activity aActivity;
 
 	Vector vForward, vRight;
-	GetVectors( &vForward, &vRight, NULL );
+	GetEngineObject()->GetVectors( &vForward, &vRight, NULL );
 
 	float flDotForward	= DotProduct( vForward, vDir );
 	float flDotRight	= DotProduct( vRight, vDir );

@@ -924,7 +924,7 @@ void CKeepUpright::Spawn()
 	// align the object's local Z axis
 	m_localTestAxis.Init( 0, 0, 1 );
 	// Use our Up axis so mapmakers can orient us arbitrarily
-	GetVectors( NULL, NULL, &m_worldGoalAxis );
+	GetEngineObject()->GetVectors( NULL, NULL, &m_worldGoalAxis );
 
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 

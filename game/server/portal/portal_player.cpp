@@ -2162,7 +2162,7 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 		{		
 			Vector ptPortalCenter = pPortal->GetEngineObject()->GetAbsOrigin();
 			Vector vPortalForward;
-			pPortal->GetVectors( &vPortalForward, NULL, NULL );
+			pPortal->GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 
 			Vector eyeOrigin = EyePosition();
 			Vector vEyeToPortalCenter = ptPortalCenter - eyeOrigin;

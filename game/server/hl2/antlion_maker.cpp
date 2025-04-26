@@ -834,7 +834,7 @@ bool CAntlionTemplateMaker::FindPositionOnVehicle( Vector &origin, float radius,
 	{
 		Vector vForward, vRight;
 		
-		pTarget->GetVectors( &vForward, &vRight, NULL );
+		pTarget->GetEngineObject()->GetVectors( &vForward, &vRight, NULL );
 
 		float flSpeed = (pTarget->GetSmoothedVelocity().Length() * m_flVehicleSpawnDistance) * random->RandomFloat( 1.0f, 1.5f );
 	

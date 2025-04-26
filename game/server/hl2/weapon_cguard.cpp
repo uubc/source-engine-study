@@ -313,7 +313,7 @@ void CWeaponCGuard::UpdateLasers( void )
 	if ( pPlayer == NULL )
 		return;
 
-	pPlayer->GetVectors( &v_forward, &v_right, &v_up );
+	pPlayer->GetEngineObject()->GetVectors( &v_forward, &v_right, &v_up );
 
 	//Get the position of the laser
 	start = pPlayer->Weapon_ShootPosition( );

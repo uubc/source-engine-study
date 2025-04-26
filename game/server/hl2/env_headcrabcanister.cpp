@@ -278,7 +278,7 @@ void CEnvHeadcrabCanister::Spawn( void )
 		if ( !GetEngineObject()->HasSpawnFlags( SF_LAND_AT_INITIAL_POSITION ) )
 		{
 			Vector vecForward;
-			GetVectors( &vecForward, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 			vecForward *= -1.0f;
 
 			trace_t trace;
@@ -352,7 +352,7 @@ void CEnvHeadcrabCanister::ComputeWorldEntryPoint( Vector *pStartPosition, QAngl
 	SetupWorldModel();
 
 	Vector vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 	// Raycast up to the place where we should start from (start raycast slightly off the ground,
 	// since it'll be buried in the ground oftentimes)
@@ -389,7 +389,7 @@ CSkyCamera *CEnvHeadcrabCanister::PlaceCanisterInWorld()
 			SetupWorldModel();
 
 			Vector vecForward, vecImpactDirection;
-			GetVectors( &vecForward, NULL, NULL );
+			GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 			VectorMultiply( vecForward, -1.0f, vecImpactDirection );
 
 			m_Shared.InitInWorld( gpGlobals->curtime, pLaunchPos->GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsAngles(),
@@ -406,7 +406,7 @@ CSkyCamera *CEnvHeadcrabCanister::PlaceCanisterInWorld()
 		GetEngineObject()->SetSolid( SOLID_NONE );
 
 		Vector vecForward;
-		GetVectors( &vecForward, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		vecForward *= -1.0f;
 
 		m_Shared.InitInSkybox( gpGlobals->curtime, m_vecImpactPosition, GetEngineObject()->GetAbsAngles(), vecForward,

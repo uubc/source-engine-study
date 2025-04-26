@@ -180,7 +180,7 @@ void CAI_PassengerBehaviorCompanion::GatherVehicleCollisionConditions( const Vec
 	{
 		// Detect an upcoming collision
 		Vector vForward;
-		m_hVehicle->GetVectors( &vForward, NULL, NULL );
+		m_hVehicle->GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 
 		// Use a smaller bounding box to make it detect mostly head-on impacts
 		Vector	mins, maxs;
@@ -269,7 +269,7 @@ void CAI_PassengerBehaviorCompanion::SpeakVehicleConditions( void )
 	{
 		// Make Alyx look at the impending impact 
 		Vector vecForward;
-		m_hVehicle->GetVectors( &vecForward, NULL, NULL );
+		m_hVehicle->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 		Vector vecLookPos = m_hVehicle->WorldSpaceCenter() + ( vecForward * 64.0f );
 		GetOuter()->AddLookTarget( vecLookPos, 1.0f, 1.0f );
 
@@ -554,7 +554,7 @@ void CAI_PassengerBehaviorCompanion::AimGun( void )
 
 	// Otherwise try and shoot down the barrel
 	Vector vecForward, vecRight, vecUp;
-	GetOuter()->GetVectors( &vecForward, &vecRight, &vecUp );
+	GetOuter()->GetEngineObject()->GetVectors( &vecForward, &vecRight, &vecUp );
 	Vector vecTorso = GetAbsOrigin() + ( vecUp * 48.0f );
 
 	Vector vecShootDir = GetOuter()->GetShootEnemyDir( vecTorso, false );
@@ -804,7 +804,7 @@ bool CAI_PassengerBehaviorCompanion::CanEnterVehicleImmediately( int *pResultSeq
 
 	// Categorize the passenger in terms of being on the left or right side of the vehicle
 	Vector vecRight;
-	m_hVehicle->GetVectors( NULL, &vecRight, NULL );
+	m_hVehicle->GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 	
 	CPlane lateralPlane;
 	lateralPlane.InitializePlane( vecRight, m_hVehicle->WorldSpaceCenter() );
@@ -1179,7 +1179,7 @@ bool CAI_PassengerBehaviorCompanion::GetStuckExitPos( Vector *vecResult )
 {
 	// Get our right direction
 	Vector vecVehicleRight;
-	m_hVehicle->GetVectors( NULL, &vecVehicleRight, NULL );
+	m_hVehicle->GetEngineObject()->GetVectors( NULL, &vecVehicleRight, NULL );
 	
 	// Get the vehicle's rough horizontal bounds
 	float	flVehicleRadius = m_hVehicle->GetEngineObject()->BoundingRadius2D();
@@ -1326,7 +1326,7 @@ void CAI_PassengerBehaviorCompanion::StartTask( const Task_t *pTask )
 
 			// Find the passenger offset we're going for
 			Vector vecRight;
-			m_hVehicle->GetVectors( NULL, &vecRight, NULL );
+			m_hVehicle->GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 			Vector vecTargetOffset = vecRight * 64.0f;
 
 			// Try and find a path near there
@@ -1767,7 +1767,7 @@ bool CAI_PassengerBehaviorCompanion::CanExitVehicle( void )
 
 	// If we're tipped too much, we can't exit
 	Vector vecUp;
-	GetOuter()->GetVectors( NULL, NULL, &vecUp );
+	GetOuter()->GetEngineObject()->GetVectors( NULL, NULL, &vecUp );
 	if ( DotProduct( vecUp, Vector(0,0,1) ) < DOT_45DEGREE )
 		return false;
 

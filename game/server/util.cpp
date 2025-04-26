@@ -1813,7 +1813,7 @@ bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, const Vector &vecPositi
 		return false;
 
 	Vector forward;
-	pViewer->GetVectors( &forward, NULL, NULL );
+	pViewer->GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	Vector dir = vecPosition - pViewer->GetEngineObject()->GetAbsOrigin();
 	VectorNormalize( dir );

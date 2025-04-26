@@ -1593,7 +1593,7 @@ void CNPC_Antlion::StartTask( const Task_t *pTask )
 				// Jump behind the other NPC so I don't block their path.
 				Vector vecJumpDir; 
 
-				pGroundEnt->GetVectors( &vecJumpDir, NULL, NULL );
+				pGroundEnt->GetEngineObject()->GetVectors( &vecJumpDir, NULL, NULL );
 
 				GetEngineObject()->SetGroundEntity( NULL );
 				
@@ -1892,7 +1892,7 @@ void CNPC_Antlion::RunTask( const Task_t *pTask )
 				// Jump behind the other NPC so I don't block their path.
 				Vector vecJumpDir; 
 
-				pGroundEnt->GetVectors( &vecJumpDir, NULL, NULL );
+				pGroundEnt->GetEngineObject()->GetVectors( &vecJumpDir, NULL, NULL );
 
 				GetEngineObject()->SetGroundEntity( NULL );
 				
@@ -2176,8 +2176,8 @@ bool CNPC_Antlion::ShouldJump( void )
 
 	Vector vEnemyForward, vForward;
 
-	GetEnemy()->GetVectors( &vEnemyForward, NULL, NULL );
-	GetVectors( &vForward, NULL, NULL );
+	GetEnemy()->GetEngineObject()->GetVectors( &vEnemyForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vForward, NULL, NULL );
 
 	float flDot = DotProduct( vForward, vEnemyForward );
 

@@ -3595,7 +3595,7 @@ int CNPC_AttackHelicopter::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 		// Knock the helicopter off of the level, too.
 		Vector vecRight, vecForce;
 		float flDot;
-		GetVectors( NULL, &vecRight, NULL );
+		GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 		vecForce = info.GetDamageForce();
 		VectorNormalize( vecForce );
 
@@ -3666,7 +3666,7 @@ void Chopper_BecomeChunks( CBaseEntity *pChopper )
 {
 	QAngle vecChunkAngles = pChopper->GetEngineObject()->GetAbsAngles();
 	Vector vecForward, vecUp;
-	pChopper->GetVectors( &vecForward, NULL, &vecUp );
+	pChopper->GetEngineObject()->GetVectors( &vecForward, NULL, &vecUp );
 
 #ifdef HL2_EPISODIC
 	CNPC_AttackHelicopter *pAttackHelicopter;
@@ -3699,7 +3699,7 @@ void Chopper_BecomeChunks( CBaseEntity *pChopper )
 		// We need to get a right hand vector to toss the cockpit and tail pieces
 		// so their motion looks like a continuation of the tailspin animation
 		// that the chopper plays before crashing.
-		pChopper->GetVectors( NULL, &vecRight, NULL );
+		pChopper->GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 	}
 
 	// Body
@@ -4008,7 +4008,7 @@ void CNPC_AttackHelicopter::ComputeVelocity( const Vector &vecTargetPosition,
 	}
 
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	// First, attenuate the current force
 	float flForceBlend = GetEnemyVehicle() ? HELICOPTER_FORCE_BLEND_VEHICLE : HELICOPTER_FORCE_BLEND;
@@ -4075,7 +4075,7 @@ void CNPC_AttackHelicopter::ComputeAngularVelocity( const Vector &vecGoalUp, con
 	if ( m_lifeState != LIFE_DYING || (m_lifeState == LIFE_DYING && GetCrashPoint() != NULL) )
 	{
 		Vector forward, right, up;
-		GetVectors( &forward, &right, &up );
+		GetEngineObject()->GetVectors( &forward, &right, &up );
 
 		Vector goalUp = vecGoalUp;
 		VectorNormalize( goalUp );
@@ -4313,7 +4313,7 @@ void CNPC_AttackHelicopter::UpdateFacingDirection( const Vector &vecActualDesire
 			}
 			else
 			{
-				GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
+				GetEngineObject()->GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
 			}
 		}
 		else
@@ -5232,7 +5232,7 @@ void CGrenadeHelicopter::WarningBlinkerThink()
 	if( !m_hWarningSprite.Get() )
 	{
 		Vector up;
-		GetVectors( NULL, NULL, &up );
+		GetEngineObject()->GetVectors( NULL, NULL, &up );
 
 		// Light isn't on, so create the sprite.
 		m_hWarningSprite = CSprite::SpriteCreate( "sprites/redglow1.vmt", GetAbsOrigin() + up * 10.0f, false );

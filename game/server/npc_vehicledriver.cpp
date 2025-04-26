@@ -320,7 +320,7 @@ int	CNPC_VehicleDriver::RangeAttack1Conditions( float flDot, float flDist )
 	Vector vecForward;
 	Vector vecToTarget = (GetEnemy()->GetEngineObject()->GetAbsOrigin() - GetEngineObject()->GetAbsOrigin());
 	VectorNormalize(vecToTarget);
-	m_hVehicleEntity->GetVectors( &vecForward, NULL, NULL );
+	m_hVehicleEntity->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 	float flForwardDot = DotProduct( vecForward, vecToTarget );
 	if ( flForwardDot < 0 && fabs(flDot) < 0.5 )
 		return COND_NOT_FACING_ATTACK;
@@ -787,7 +787,7 @@ bool CNPC_VehicleDriver::OverridePathMove( float flInterval )
 
 	// Decrease speed according to the turn we're trying to make
 	Vector vecRight;
-	m_hVehicleEntity->GetVectors( NULL, &vecRight, NULL );
+	m_hVehicleEntity->GetEngineObject()->GetVectors( NULL, &vecRight, NULL );
 	Vector vecNormVel = m_vecDesiredVelocity;
 	VectorNormalize( vecNormVel );
 	float flDotRight = DotProduct( vecRight, vecNormVel );
@@ -875,7 +875,7 @@ void CNPC_VehicleDriver::DriveVehicle( void )
 
 	// Is our target in front or behind us?
 	Vector vecForward, vecRight;
-	m_hVehicleEntity->GetVectors( &vecForward, &vecRight, NULL );
+	m_hVehicleEntity->GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 	float flDot = DotProduct( vecForward, m_vecDesiredVelocity );
 	bool bBehind = ( flDot < 0 );
 	float flVelDot = DotProduct( vecVelocity, m_vecDesiredVelocity );

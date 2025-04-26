@@ -533,7 +533,7 @@ void CNPC_GroundTurret::Shoot()
 	Vector vecSrc = EyePosition();
 	Vector vecDir;
 
-	GetVectors( &vecDir, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 
 	for( int i = 0 ; i < 1 ; i++ )
 	{
@@ -542,7 +542,7 @@ void CNPC_GroundTurret::Shoot()
 		if( i > 0 || !GetEnemy()->IsPlayer() )
 		{
 			// Subsequent shots or shots at non-players random
-			GetVectors( &info.m_vecDirShooting, NULL, NULL );
+			GetEngineObject()->GetVectors( &info.m_vecDirShooting, NULL, NULL );
 			info.m_vecSpread = m_vecSpread;
 		}
 		else

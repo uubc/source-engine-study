@@ -1529,7 +1529,7 @@ void CProtoSniper::OnListened()
 	AISoundIter_t iter;
 	Vector forward;
 
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	CSound *pCurrentSound = GetSenses()->GetFirstHeardSound( &iter );
 	while ( pCurrentSound )

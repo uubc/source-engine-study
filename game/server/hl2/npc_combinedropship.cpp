@@ -1148,7 +1148,7 @@ void CNPC_CombineDropship::Flight( void )
 							GetLandingState() == LANDING_HOVER_DESCEND );
 
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	float finspeed = 0;
 	float swayspeed = 0;
@@ -1443,7 +1443,7 @@ void CNPC_CombineDropship::UpdateFacingDirection( void )
 		}
 		else
 		{
-			GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
+			GetEngineObject()->GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
 		}
 	}
 	VectorNormalize( m_vecDesiredFaceDir ); 
@@ -2350,7 +2350,7 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 void CNPC_CombineDropship::DoRotorWash( void )
 {
 	Vector	vecForward;
-	GetVectors( &vecForward, NULL, NULL );
+	GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 	Vector vecRotorHub = GetEngineObject()->GetAbsOrigin() + vecForward * -64;
 

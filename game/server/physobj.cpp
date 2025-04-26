@@ -1994,7 +1994,7 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 	
 	if (GetEngineObject()->HasSpawnFlags( SF_PUSH_DIRECTIONAL ) )
 	{
-		GetVectors( &vecPushDir, NULL, NULL );
+		GetEngineObject()->GetVectors( &vecPushDir, NULL, NULL );
 	}
 	else
 	{

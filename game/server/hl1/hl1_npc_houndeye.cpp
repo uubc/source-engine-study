@@ -320,7 +320,7 @@ void CNPC_Houndeye::HandleAnimEvent( animevent_t *pEvent )
 			{
 				float flGravity = GetCurrentGravity();
 				Vector v_forward;
-				GetVectors( &v_forward, NULL, NULL );
+				GetEngineObject()->GetVectors( &v_forward, NULL, NULL );
 
 				GetEngineObject()->SetGroundEntity( NULL );
 
@@ -908,7 +908,7 @@ int CNPC_Houndeye::SelectSchedule( void )
 				{
 					trace_t trace;
 					Vector v_forward;
-					GetVectors( &v_forward, NULL, NULL );
+					GetEngineObject()->GetVectors( &v_forward, NULL, NULL );
 					EntityList()->GetEngineWorld()->TraceEntity( this->GetEngineObject(), GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsOrigin() + v_forward * -128, MASK_SOLID, &trace);
 					
 					if ( trace.fraction == 1.0 )

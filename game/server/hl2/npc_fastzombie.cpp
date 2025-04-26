@@ -1226,7 +1226,7 @@ void CFastZombie::HandleAnimEvent( animevent_t *pEvent )
 
 			// TODO: We need to make this content driven -- jdw
 			Vector vecForward, vecRight, vecUp;
-			GetVectors( &vecForward, &vecRight, &vecUp );
+			GetEngineObject()->GetVectors( &vecForward, &vecRight, &vecUp );
 
 			vecVelocity += ( vecForward * -2500.0f ) + ( vecRight * 200.0f ) + ( vecUp * 300 );
 			
@@ -1382,7 +1382,7 @@ void CFastZombie::StartTask( const Task_t *pTask )
 				// Jump off the pipe backwards!
 				Vector forward;
 
-				GetVectors( &forward, NULL, NULL );
+				GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 				ApplyAbsVelocityImpulse( forward * -200 );
 			}

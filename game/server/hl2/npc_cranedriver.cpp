@@ -586,7 +586,7 @@ void CNPC_CraneDriver::DriveVehicle( void )
 
 	// Then figure out if we need to rotate. Do it all in 2D space.
 	Vector vecRight, vecForward;
-	m_hCrane->GetVectors( &vecForward, &vecRight, NULL );
+	m_hCrane->GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 	vecRight.z = 0;
 	vecForward.z = 0;
 	VectorNormalize( vecRight );

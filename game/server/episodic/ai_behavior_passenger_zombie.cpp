@@ -440,7 +440,7 @@ void CAI_PassengerBehaviorZombie::StartDismount( void )
 
 	// Get the velocity
 	Vector vecUp, vecJumpDir;
-	GetOuter()->GetVectors( &vecJumpDir, NULL, &vecUp );
+	GetOuter()->GetEngineObject()->GetVectors( &vecJumpDir, NULL, &vecUp );
 
 	// Move back and up
 	vecJumpDir *= random->RandomFloat( -400.0f, -500.0f );
@@ -587,7 +587,7 @@ float CAI_PassengerBehaviorZombie::GetEntryPointCost( const Vector &vecEntryPos 
 	
 	// Get our current facing
 	Vector vecDir;
-	GetOuter()->GetVectors( &vecDir, NULL, NULL );
+	GetOuter()->GetEngineObject()->GetVectors( &vecDir, NULL, NULL );
 
 	// Scale our cost by how closely it matches our facing
 	float flDot = DotProduct( vecEntryDir, vecDir );

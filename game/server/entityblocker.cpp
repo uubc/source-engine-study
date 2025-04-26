@@ -62,7 +62,7 @@ void CC_Test_Entity_Blocker( void )
 {
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();
 	Vector vecForward;
-	pPlayer->GetVectors( &vecForward, NULL, NULL );
+	pPlayer->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 	trace_t tr;
 	Vector vecOrigin = pPlayer->GetEngineObject()->GetAbsOrigin() + (vecForward * 256);

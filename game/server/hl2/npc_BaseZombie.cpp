@@ -575,7 +575,7 @@ int CNPC_BaseZombie::MeleeAttack1Conditions ( float flDot, float flDist )
 	vecMaxs.z = vecMaxs.x;
 
 	Vector forward;
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	trace_t	tr;
 	CTraceFilterNav traceFilter( this, false, this, COLLISION_GROUP_NONE );
@@ -1426,7 +1426,7 @@ void CNPC_BaseZombie::PoundSound()
 	trace_t		tr;
 	Vector		forward;
 
-	GetVectors( &forward, NULL, NULL );
+	GetEngineObject()->GetVectors( &forward, NULL, NULL );
 
 	AI_TraceLine(EntityList(), EyePosition(), EyePosition() + forward * 128, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr );
 
@@ -2741,7 +2741,7 @@ void CNPC_BaseZombie::TranslateNavGoal( CBaseEntity *pEnemy, Vector &chasePositi
 	if ( pBCC && pBCC->IsInAVehicle() )
 	{
 		Vector vecForward, vecRight;
-		pBCC->GetVectors( &vecForward, &vecRight, NULL );
+		pBCC->GetEngineObject()->GetVectors( &vecForward, &vecRight, NULL );
 
 		chasePosition = pBCC->WorldSpaceCenter() + ( vecForward * 24.0f ) + ( vecRight * 48.0f );
 		return;

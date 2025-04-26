@@ -1131,7 +1131,7 @@ public:
 
 	virtual Vector	BodyTarget( const Vector &posSrc, bool bNoisy = true);		// position to shoot at
 	virtual Vector	HeadTarget( const Vector &posSrc );
-	virtual void	GetVectors(Vector* forward, Vector* right, Vector* up) const;
+	//virtual void	GetVectors(Vector* forward, Vector* right, Vector* up) const;
 
 	virtual const Vector &GetViewOffset() const;
 	virtual void SetViewOffset( const Vector &v );

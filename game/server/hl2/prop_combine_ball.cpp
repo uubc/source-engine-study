@@ -928,7 +928,7 @@ void CPropCombineBall::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t R
 	{
 		// Choose a random direction (forward facing)
 		Vector vecForward;
-		pPhysGunUser->GetVectors( &vecForward, NULL, NULL );
+		pPhysGunUser->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 
 		QAngle shotAng;
 		VectorAngles( vecForward, shotAng );

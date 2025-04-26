@@ -296,7 +296,7 @@ void CSoundEnt::Think ( void )
 			if( displaysoundlist.GetBool() )
 			{
 				Vector forward, right, up;
-				GetVectors( &forward, &right, &up );
+				GetEngineObject()->GetVectors( &forward, &right, &up );
 				byte r, g, b;
 
 				// Default to yellow.

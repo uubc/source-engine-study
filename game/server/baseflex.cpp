@@ -2712,7 +2712,7 @@ void CFlexCycler::Think( void )
 
 
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	IServerEntity *pPlayer = EntityList()->GetLocalPlayer();
 	if (pPlayer)

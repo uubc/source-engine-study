@@ -2495,7 +2495,7 @@ void CNPC_CScanner::MoveToTarget( float flInterval, const Vector &vecMoveTarget 
 
 	// calc relative banking targets
 	Vector forward, right, up;
-	GetVectors( &forward, &right, &up );
+	GetEngineObject()->GetVectors( &forward, &right, &up );
 
 	m_vCurrentBanking.x	= targetDir.x;
 	m_vCurrentBanking.z	= 120.0f * DotProduct( right, targetDir );
