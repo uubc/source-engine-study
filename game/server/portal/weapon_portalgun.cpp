@@ -531,15 +531,15 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 
 		// Check if the players eye is behind the portal they're in and translate it
 		VMatrix matThisToLinked;
-		CProp_Portal *pPlayerPortal = pPlayer->GetPortalEnvironment();
+		IEnginePortalServer *pPlayerPortal = pPlayer->GetEnginePlayer()->GetPortalEnvironment();
 
 		if ( pPlayerPortal )
 		{
 			Vector ptPortalCenter;
 			Vector vPortalForward;
 
-			ptPortalCenter = pPlayerPortal->GetEngineObject()->GetAbsOrigin();
-			pPlayerPortal->GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
+			ptPortalCenter = pPlayerPortal->AsEngineObject()->GetAbsOrigin();
+			pPlayerPortal->AsEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 
 			Vector vEyeToPortalCenter = ptPortalCenter - vEye;
 

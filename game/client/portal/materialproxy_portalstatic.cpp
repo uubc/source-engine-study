@@ -46,7 +46,7 @@ bool CPortalStaticProxy::Init( IMaterial *pMaterial, KeyValues *pKeyValues )
 
 float CPortalStaticProxy::ComputeStaticAmount( CPortalRenderable_FlatBasic *pFlatBasic )
 {
-	float flStaticAmount = pFlatBasic->m_fStaticAmount;
+	float flStaticAmount = pFlatBasic->GetEnginePortal()->GetStaticAmount();
 
 	if ( !pFlatBasic->GetLinkedPortal() )
 	{

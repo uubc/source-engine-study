@@ -118,7 +118,6 @@ public:
 	//CPortalRenderable_FlatBasic	*m_pLinkedPortal;
 	Vector			m_ptOrigin;
 	Vector			m_vForward, m_vUp, m_vRight;
-	float			m_fStaticAmount;
 	float			m_fSecondaryStaticAmount; // used to help kludge the end of our recursive rendering chain
 	float			m_fOpenAmount;	
 	//bool			m_bIsPortal2; //for any set of portals, one must be portal 1, and the other portal 2. Uses different render targets

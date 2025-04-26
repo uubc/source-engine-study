@@ -138,7 +138,7 @@ void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMov
 	mv = pMove;
 	mv->m_flMaxSpeed = sv_maxspeed.GetFloat();
 	
-	m_bInPortalEnv = (((CPortal_Player *)pPlayer)->GetPortalEnvironment() != NULL);
+	m_bInPortalEnv = (pPlayer->GetEnginePlayer()->GetPortalEnvironment() != NULL);
 
 	g_bAllowForcePortalTrace = m_bInPortalEnv;
 	g_bForcePortalTrace = m_bInPortalEnv;
@@ -401,7 +401,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	VPROF( "TracePlayerBBoxForGround" );
 
 	CPortal_Player *pPortalPlayer = dynamic_cast<CPortal_Player *>(player);
-	CProp_Portal *pPlayerPortal = pPortalPlayer->GetPortalEnvironment();
+	IEnginePortal *pPlayerPortal = pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment();
 
 #ifndef CLIENT_DLL
 	if( pPlayerPortal && pPlayerPortal->IsReadyToSimulate() == false )//m_hPortalSimulator->
@@ -420,7 +420,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	ray.Init( start, end, mins, maxs );
 
 	if (pPlayerPortal)
-		UTIL_Portal_TraceRay(pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
+		UTIL_Portal_TraceRay(pPlayerPortal, ray, fMask, player, collisionGroup, &pm);
 	else
 		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
@@ -437,7 +437,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
-		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
+		UTIL_Portal_TraceRay( pPlayerPortal, ray, fMask, player, collisionGroup, &pm);
 	else
 		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
@@ -454,7 +454,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
-		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
+		UTIL_Portal_TraceRay( pPlayerPortal, ray, fMask, player, collisionGroup, &pm);
 	else
 		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
@@ -471,7 +471,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
-		UTIL_Portal_TraceRay( pPlayerPortal->GetEnginePortal(), ray, fMask, player, collisionGroup, &pm);
+		UTIL_Portal_TraceRay( pPlayerPortal, ray, fMask, player, collisionGroup, &pm);
 	else
 		UTIL_TraceRay(EntityList(), ray, fMask, player, collisionGroup, &pm );
 
@@ -621,9 +621,9 @@ int CPortalGameMovement::CheckStuck( void )
 
 		//try to fix it, then recheck
 		Vector vIndecisive;
-		if( pPortalPlayer->GetPortalEnvironment())
+		if( pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment())
 		{
-			pPortalPlayer->GetPortalEnvironment()->GetEngineObject()->GetVectors( &vIndecisive, NULL, NULL );
+			pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetVectors( &vIndecisive, NULL, NULL );
 		}
 		else
 		{
@@ -631,7 +631,7 @@ int CPortalGameMovement::CheckStuck( void )
 		}
 		Vector ptOldOrigin = pPortalPlayer->GetEngineObject()->GetAbsOrigin();
 
-		if( pPortalPlayer->GetPortalEnvironment())
+		if( pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment())
 		{
 			if( !pPortalPlayer->FindClosestPassableSpace( vIndecisive ) )
 			{
@@ -693,14 +693,14 @@ void CPortalGameMovement::TracePlayerBBox( const Vector& start, const Vector& en
 	CTraceFilterTranslateClones traceFilter( &baseFilter );
 #endif
 
-	UTIL_Portal_TraceRay_With(EntityList(), pPortalPlayer->GetPortalEnvironment() ? pPortalPlayer->GetPortalEnvironment()->GetEnginePortal() : NULL, ray, fMask, &traceFilter, &pm);
+	UTIL_Portal_TraceRay_With(EntityList(), pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment(), ray, fMask, &traceFilter, &pm);
 
 	// If we're moving through a portal and failed to hit anything with the above ray trace
 	// Use UTIL_Portal_TraceEntity to test this movement through a portal and override the trace with the result
 	if ( pm.fraction == 1.0f && UTIL_DidTraceTouchPortals(EntityList(), ray, pm ) && sv_player_trace_through_portals.GetBool() )
 	{
 		trace_t tempTrace;
-		UTIL_Portal_TraceEntity(pPortalPlayer->GetPortalEnvironment() ? pPortalPlayer->GetPortalEnvironment()->GetEnginePortal() : NULL, pPortalPlayer, start, end, fMask, &traceFilter, &tempTrace );
+		UTIL_Portal_TraceEntity(pPortalPlayer->GetEnginePlayer()->GetPortalEnvironment(), pPortalPlayer, start, end, fMask, &traceFilter, &tempTrace );
 
 		if ( tempTrace.DidHit() && tempTrace.fraction < pm.fraction && !tempTrace.startsolid && !tempTrace.allsolid )
 		{

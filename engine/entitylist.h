@@ -2506,6 +2506,8 @@ public:
 	void SetPortal2(bool bPortal2) { m_bIsPortal2 = bPortal2; }
 	void UpdateCorners(void);			// Updates the four corners of this portal on spawn and placement
 	const Vector& GetPortalCorners(int iCorner) const { return m_vPortalCorners[iCorner]; }
+	const Vector& GetPrevForward() { return m_vPrevForward; }
+	void SetPrevForward(const Vector& vPrevForward) { m_vPrevForward = vPrevForward; }
 	unsigned int m_EntFlags[MAX_EDICTS]; //flags maintained for every entity in the world based on its index
 	void ConvertBrushListToClippedPolyhedronList(const int* pBrushes, int iBrushCount, const float* pOutwardFacingClipPlanes, int iClipPlaneCount, float fClipEpsilon, CUtlVector<CPolyhedron*>* pPolyhedronList);
 private:
@@ -2526,6 +2528,8 @@ private:
 	cplane_t m_OldPlane;
 	// The four corners of the portal in worldspace, updated on placement. The four points will be coplanar on the portal plane.
 	Vector m_vPortalCorners[4];
+	Vector	m_vPrevForward; //used for the indecisive push in find closest passable spaces when portal is moved
+
 };
 
 //inline const VMatrix& CProp_Portal::MatrixThisToLinked() const

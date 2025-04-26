@@ -98,7 +98,7 @@ public:
 
 	inline bool		IsCloseToPortal( void ) //it's usually a good idea to turn on draw hacks when this is true
 	{
-		return ((PortalEyeInterpolation.m_bEyePositionIsInterpolating) || (GetPortalEnvironment() != NULL));
+		return ((PortalEyeInterpolation.m_bEyePositionIsInterpolating) || (GetEnginePlayer()->GetPortalEnvironment() != NULL));
 	} 
 
 	bool	CanSprint( void );
@@ -116,7 +116,7 @@ public:
 	CWeaponPortalBase* GetActivePortalWeapon() const;
 
 	bool IsSuppressingCrosshair( void ) { return m_bSuppressingCrosshair; }
-	C_Prop_Portal* GetPortalEnvironment();
+
 private:
 
 	C_Portal_Player( const C_Portal_Player & );
@@ -177,7 +177,7 @@ private:
 
 	struct PreDataChanged_Backup_t
 	{
-		CHandle<C_Prop_Portal>	m_hPortalEnvironment;
+		CHandle<IClientEntity>	m_hPortalEnvironment;
 		CHandle<C_Func_LiquidPortal>	m_hSurroundingLiquidPortal;
 		//Vector					m_ptPlayerPosition;
 		QAngle					m_qEyeAngles;
@@ -185,7 +185,7 @@ private:
 
 	Vector	m_ptEyePosition_LastCalcView;
 	QAngle	m_qEyeAngles_LastCalcView; //we've got some VERY persistent single frame errors while teleporting, this will be updated every frame in CalcView() and will serve as a central source for fixed angles
-	C_Prop_Portal *m_pPortalEnvironment_LastCalcView;
+	IEnginePortalClient *m_pPortalEnvironment_LastCalcView;
 
 	ClientCCHandle_t	m_CCDeathHandle;	// handle to death cc effect
 	float				m_flDeathCCWeight;	// for fading in cc effect	

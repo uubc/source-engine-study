@@ -1347,8 +1347,6 @@ public:
 	}
 	virtual CBaseEntity* NPCPhysics_CreateSolver(IServerEntity* pPhysicsObject, bool disableCollisions, float separationDuration);
 	virtual CBaseEntity* EntityPhysics_CreateSolver(IServerEntity* pPhysicsBlocker, bool disableCollisions, float separationDuration);
-	virtual void			PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity) {}
-	virtual void			PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity) {}
 	bool FindClosestPassableSpace(const Vector& vIndecisivePush, unsigned int fMask = MASK_SOLID); //assumes the object is already in a mostly passable space
 public:
 //#if !defined( NO_ENTITY_PREDICTION )

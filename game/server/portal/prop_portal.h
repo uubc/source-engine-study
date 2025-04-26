@@ -39,8 +39,6 @@ public:
 	const CProp_Portal* GetLinkedPortal() const { return (const CProp_Portal*)CPortalSimulator::GetLinkedPortal(); }
 	//VMatrix					m_matrixThisToLinked; //the matrix that will transform a point relative to this portal, to a point relative to the linked portal
 
-	Vector	m_vPrevForward; //used for the indecisive push in find closest passable spaces when portal is moved
-
 	bool	m_bSharedEnvironmentConfiguration; //this will be set by an instance of CPortal_Environment when two environments are in close proximity
 
 	EHANDLE	m_hMicrophone; //the microphone for teleporting sound

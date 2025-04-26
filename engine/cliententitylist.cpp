@@ -10570,7 +10570,7 @@ END_RECV_TABLE()
 IMPLEMENT_CLIENTCLASS_NO_FACTORY(C_EnginePortalInternal, DT_EnginePortal, CEnginePortalInternal)
 
 C_EnginePortalInternal::C_EnginePortalInternal(IClientEntityList* pClientEntityList, int iForceEdictIndex, int iSerialNum)
-:C_EngineObjectInternal(pClientEntityList, iForceEdictIndex, iSerialNum), m_DataAccess(m_InternalData)
+:C_EngineObjectInternal(pClientEntityList, iForceEdictIndex, iSerialNum), m_DataAccess(m_InternalData), m_fStaticAmount(0.0f)
 {
 	static int s_iPortalSimulatorGUIDAllocator = 0;
 	m_iPortalSimulatorGUID = s_iPortalSimulatorGUIDAllocator++;

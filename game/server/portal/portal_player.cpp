@@ -655,7 +655,7 @@ void CPortal_Player::PostThink( void )
 	// Try to fix the player if they're stuck
 	if ( m_bStuckOnPortalCollisionObject )
 	{
-		Vector vForward = GetPortalEnvironment()->m_vPrevForward;
+		Vector vForward = GetEnginePlayer()->GetPortalEnvironment()->GetPrevForward();
 		Vector vNewPos = GetEngineObject()->GetAbsOrigin() + vForward * gpGlobals->frametime * -1000.0f;
 		Teleport( &vNewPos, NULL, &vForward );
 		m_bStuckOnPortalCollisionObject = false;
@@ -757,8 +757,8 @@ void CPortal_Player::PlayerDeathThink(void)
 
 void CPortal_Player::UpdatePortalPlaneSounds( void )
 {
-	CProp_Portal *pPortal = GetPortalEnvironment();
-	if ( pPortal && pPortal->GetEnginePortal()->IsActivated())
+	IEnginePortalServer *pPortal = GetEnginePlayer()->GetPortalEnvironment();
+	if ( pPortal && pPortal->IsActivated())
 	{
 		Vector vVelocity;
 		GetVelocity( &vVelocity, NULL );
@@ -775,7 +775,7 @@ void CPortal_Player::UpdatePortalPlaneSounds( void )
 			{
 				vDiagonal *= 0.25f;
 
-				if ( UTIL_IsBoxIntersectingPortal( vEarCenter, vDiagonal, pPortal->GetEnginePortal() ) )
+				if ( UTIL_IsBoxIntersectingPortal( vEarCenter, vDiagonal, pPortal ) )
 				{
 					m_bIntersectingPortalPlane = true;
 
@@ -795,7 +795,7 @@ void CPortal_Player::UpdatePortalPlaneSounds( void )
 			{
 				vDiagonal *= 0.30f;
 
-				if ( !UTIL_IsBoxIntersectingPortal( vEarCenter, vDiagonal, pPortal->GetEnginePortal() ) )
+				if ( !UTIL_IsBoxIntersectingPortal( vEarCenter, vDiagonal, pPortal ) )
 				{
 					m_bIntersectingPortalPlane = false;
 
@@ -1123,7 +1123,7 @@ void CPortal_Player::Teleport( const Vector *newPosition, const QAngle *newAngle
 
 void CPortal_Player::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 {
-	if(GetPortalEnvironment() == NULL )
+	if(GetEnginePlayer()->GetPortalEnvironment() == NULL )
 		return BaseClass::VPhysicsShadowUpdate( pPhysics );
 
 
@@ -1255,14 +1255,14 @@ void CPortal_Player::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 
 			CTraceFilterSimple OriginalTraceFilter( this, COLLISION_GROUP_PLAYER_MOVEMENT );
 			CTraceFilterTranslateClones traceFilter( &OriginalTraceFilter );
-			UTIL_Portal_TraceRay_With(EntityList(), GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, & traceFilter, & trace);
+			UTIL_Portal_TraceRay_With(EntityList(), GetEnginePlayer()->GetPortalEnvironment(), ray, MASK_PLAYERSOLID, & traceFilter, & trace);
 
 			// current position is not ok, fixup
 			if ( trace.allsolid || trace.startsolid )
 			{
 				//try again with new position
 				ray.Init( newPosition, newPosition, GetEngineObject()->WorldAlignMins(), GetEngineObject()->WorldAlignMaxs() );
-				UTIL_Portal_TraceRay_With(EntityList(), GetPortalEnvironment() ? GetPortalEnvironment()->GetEnginePortal() : NULL, ray, MASK_PLAYERSOLID, &traceFilter, &trace);
+				UTIL_Portal_TraceRay_With(EntityList(), GetEnginePlayer()->GetPortalEnvironment(), ray, MASK_PLAYERSOLID, &traceFilter, &trace);
 
 				if( trace.startsolid == false )
 				{
@@ -1273,8 +1273,8 @@ void CPortal_Player::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 					if( !this->FindClosestPassableSpace( newPosition - GetEngineObject()->GetAbsOrigin(), MASK_PLAYERSOLID ) )
 					{
 						// Try moving the player closer to the center of the portal
-						CProp_Portal *pPortal = GetPortalEnvironment();
-						newPosition += ( pPortal->GetEngineObject()->GetAbsOrigin() - WorldSpaceCenter() ) * 0.1f;
+						IEnginePortalServer *pPortal = GetEnginePlayer()->GetPortalEnvironment();
+						newPosition += ( pPortal->AsEngineObject()->GetAbsOrigin() - WorldSpaceCenter() ) * 0.1f;
 						GetEngineObject()->SetAbsOrigin( newPosition );
 
 						DevMsg( "Hurting the player for FindClosestPassableSpaceFailure!" );
@@ -2152,17 +2152,17 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 	// At this point the EyePosition has been added as a view origin, but if we are currently stuck
 	// in a portal, our EyePosition may return a point in solid. Find the reflected eye position
 	// and use that as a vis origin instead.
-	if (GetPortalEnvironment())
+	if (GetEnginePlayer()->GetPortalEnvironment())
 	{
-		CProp_Portal *pPortal = NULL, *pRemotePortal = NULL;
-		pPortal = GetPortalEnvironment();
+		IEnginePortalServer *pPortal = NULL, *pRemotePortal = NULL;
+		pPortal = GetEnginePlayer()->GetPortalEnvironment();
 		pRemotePortal = pPortal->GetLinkedPortal();
 
-		if ( pPortal && pRemotePortal && pPortal->GetEnginePortal()->IsActivated() && pRemotePortal->GetEnginePortal()->IsActivated())
+		if ( pPortal && pRemotePortal && pPortal->IsActivated() && pRemotePortal->IsActivated())
 		{		
-			Vector ptPortalCenter = pPortal->GetEngineObject()->GetAbsOrigin();
+			Vector ptPortalCenter = pPortal->AsEngineObject()->GetAbsOrigin();
 			Vector vPortalForward;
-			pPortal->GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
+			pPortal->AsEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 
 			Vector eyeOrigin = EyePosition();
 			Vector vEyeToPortalCenter = ptPortalCenter - eyeOrigin;
@@ -2184,22 +2184,6 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 	}
 
 	PortalSetupVisibility( this, area, pvs, pvssize );
-}
-
-void CPortal_Player::PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity)
-{
-	this->GetEnginePlayer()->SetPortalEnvironment(pEntity);
-}
-
-void CPortal_Player::PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity)
-{
-	if(this->GetEnginePlayer()->GetPortalEnvironment() && this->GetEnginePlayer()->GetPortalEnvironment() == pEntity)
-		this->GetEnginePlayer()->SetPortalEnvironment(NULL);
-}
-
-CProp_Portal* CPortal_Player::GetPortalEnvironment()
-{
-	return GetEnginePlayer()->GetPortalEnvironment() ? (CProp_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity() : NULL;
 }
 
 #ifdef PORTAL_MP

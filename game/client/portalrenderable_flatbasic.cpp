@@ -78,7 +78,6 @@ CPortalRenderable_FlatBasic::CPortalRenderable_FlatBasic( void )
 	m_vForward( 1.0f, 0.0f, 0.0f ),
 	m_vUp( 0.0f, 0.0f, 1.0f ),
 	m_vRight( 0.0f, 1.0f, 0.0f ),
-	m_fStaticAmount( 0.0f ),
 	m_fSecondaryStaticAmount( 0.0f ),
 	m_fOpenAmount( 0.0f )
 	//,m_bIsPortal2( false )
@@ -114,7 +113,7 @@ void CPortalRenderable_FlatBasic::GetToolRecordingState( bool bActive, KeyValues
 	static PortalRecordingState_t state;
 	state.m_nPortalId = this->entindex();
 	state.m_nLinkedPortalId = pLinkedPortal ? pLinkedPortal->entindex() : -1;
-	state.m_fStaticAmount = m_fStaticAmount;
+	state.m_fStaticAmount = GetEnginePortal()->GetStaticAmount();
 	state.m_fSecondaryStaticAmount = m_fSecondaryStaticAmount;
 	state.m_fOpenAmount = m_fOpenAmount;
 	state.m_bIsPortal2 = GetEnginePortal()->IsPortal2();
@@ -424,7 +423,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( const CViewSetup
 {
 	VPROF( "CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer" );
 
-	if( m_fStaticAmount == 1.0f )
+	if(GetEnginePortal()->GetStaticAmount() == 1.0f)
 		return; //not going to see anything anyways
 
 	if( GetLinkedPortal() == NULL ) //not linked to any portal, so we'll be all static anyways
@@ -528,7 +527,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( const CViewSetup
 
 void CPortalRenderable_FlatBasic::RenderPortalViewToTexture( const CViewSetup &cameraView )
 {
-	if( m_fStaticAmount == 1.0f )
+	if(GetEnginePortal()->GetStaticAmount() == 1.0f)
 		return; //not going to see anything anyways
 
 	if( GetLinkedPortal() == NULL ) //not linked to any portal, so we'll be all static anyways
@@ -698,14 +697,14 @@ bool CPortalRenderable_FlatBasic::ShouldUpdateDepthDoublerTexture( const CViewSe
 {
 	return	( (m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration) && 
 		(GetLinkedPortal() != NULL) &&
-		(m_fStaticAmount < 1.0f) );
+		(GetEnginePortal()->GetStaticAmount() < 1.0f) );
 }
 
 void CPortalRenderable_FlatBasic::HandlePortalPlaybackMessage( KeyValues *pKeyValues )
 {
 	int nLinkedPortalId = pKeyValues->GetInt( "linkedPortalId" );
 	m_fOpenAmount = pKeyValues->GetFloat( "openAmount" );
-	m_fStaticAmount = pKeyValues->GetFloat( "staticAmount" );
+	GetEnginePortal()->SetStaticAmount(pKeyValues->GetFloat( "staticAmount" ));
 	m_fSecondaryStaticAmount = pKeyValues->GetFloat( "secondaryStaticAmount" );
 	GetEnginePortal()->SetPortal2(pKeyValues->GetInt( "isPortal2" ) != 0);
 	//GetLinkedPortal() = nLinkedPortalId >= 0 ? (CPortalRenderable_FlatBasic *)FindRecordedPortal( nLinkedPortalId ) : NULL;
@@ -928,7 +927,7 @@ void CPortalRenderable_FlatBasic::DrawRenderFixMesh( const IMaterial *pMaterialO
 	if( vPortalCenterToCamera.LengthSqr() < (PORTAL_HALF_HEIGHT * PORTAL_HALF_HEIGHT) ) //FIXME: Player closeness check might need reimplementation
 	{
 		//if the player is this close to the portal, immediately get rid of any static it has as well as draw the fix
-		m_fStaticAmount = 0.0f;
+		GetEnginePortal()->SetStaticAmount(0.0f);
 		//m_fSecondaryStaticAmount = 0.0f;
 
 		float fOldDist = m_InternallyMaintainedData.m_BoundingPlanes[PORTALRENDERFIXMESH_OUTERBOUNDPLANES].m_Dist;
@@ -1255,7 +1254,7 @@ bool CPortalRenderable_FlatBasic::ShouldUpdatePortalView_BasedOnView( const CVie
 	if( GetLinkedPortal() == NULL )
 		return false;
 
-	if( m_fStaticAmount == 1.0f )
+	if(GetEnginePortal()->GetStaticAmount() == 1.0f)
 		return false;
 
 	Vector vCameraPos = currentView.origin;

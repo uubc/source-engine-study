@@ -216,11 +216,11 @@ void C_Prop_Portal::Activate( void )
 void C_Prop_Portal::ClientThink( void )
 {
 	bool bDidAnything = false;
-	if( m_fStaticAmount > 0.0f )
+	if(GetEnginePortal()->GetStaticAmount() > 0.0f)
 	{
-		m_fStaticAmount -= gpGlobals->absoluteframetime;
-		if( m_fStaticAmount < 0.0f ) 
-			m_fStaticAmount = 0.0f;
+		GetEnginePortal()->SetStaticAmount(GetEnginePortal()->GetStaticAmount() - gpGlobals->absoluteframetime);
+		if(GetEnginePortal()->GetStaticAmount() < 0.0f )
+			GetEnginePortal()->SetStaticAmount(0.0f);
 
 		bDidAnything = true;
 	}
@@ -592,7 +592,7 @@ void C_Prop_Portal::OnDataChanged( DataUpdateType_t updateType )
 			//add static to the remote
 			if( pRemote )
 			{
-				pRemote->m_fStaticAmount = 1.0f; // This will cause the other portal to show the static effect
+				pRemote->GetEnginePortal()->SetStaticAmount(1.0f); // This will cause the other portal to show the static effect
 				pRemote->GetEngineObject()->SetNextClientThink( CLIENT_THINK_ALWAYS );
 			}
 

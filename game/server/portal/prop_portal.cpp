@@ -56,7 +56,6 @@ BEGIN_DATADESC( CProp_Portal )
 	DEFINE_FIELD( m_hLinkedPortal,		FIELD_EHANDLE ),
 	DEFINE_KEYFIELD( m_iLinkageGroupID,	FIELD_CHARACTER,	"LinkageGroupID" ),
 	//DEFINE_FIELD( m_matrixThisToLinked, FIELD_VMATRIX ),
-	DEFINE_FIELD( m_vPrevForward,		FIELD_VECTOR ),
 	DEFINE_FIELD( m_hMicrophone,		FIELD_EHANDLE ),
 	DEFINE_FIELD( m_hSpeaker,			FIELD_EHANDLE ),
 
@@ -102,7 +101,6 @@ LINK_ENTITY_TO_CLASS( prop_portal, CProp_Portal );
 
 CProp_Portal::CProp_Portal( void )
 {
-	m_vPrevForward = Vector( 0.0f, 0.0f, 0.0f );
 	//m_hPortalSimulator = (CPortalSimulator*)EntityList()->CreateEntityByName("portal_simulator");
 	//SetPortalSimulatorCallbacks( this );//m_hPortalSimulator->
 
@@ -1249,7 +1247,7 @@ void CProp_Portal::TeleportTouchingEntity( CBaseEntity *pOther )
 	//if( bPlayer )
 	//	NDebugOverlay::EntityBounds( pOther, 0, 255, 0, 128, 60.0f );
 
-	Assert( (bPlayer == false) || (pOtherAsPlayer->GetPortalEnvironment() == m_hLinkedPortal.Get()) );
+	Assert((bPlayer == false) || (pOtherAsPlayer->GetEnginePlayer()->GetPortalEnvironment() == (m_hLinkedPortal.Get() ? m_hLinkedPortal.Get()->GetEnginePortal() : NULL)));
 }
 
 
@@ -1261,7 +1259,7 @@ void CProp_Portal::Touch( IServerEntity *pOther )
 	if( !GetEnginePortal()->IsActivated() || (m_hLinkedPortal.Get() == NULL))
 	{
 		Assert( !GetEnginePortal()->OwnsEntity( pOther ) );//m_hPortalSimulator->
-		Assert( !pOther->IsPlayer() || (((CPortal_Player *)pOther)->GetPortalEnvironment() != this) );
+		Assert( !pOther->IsPlayer() || (pOther->GetEnginePlayer()->GetPortalEnvironment() != this->GetEnginePortal()) );
 		
 		//I'd really like to fix the root cause, but this will keep the game going
 		GetEnginePortal()->ReleaseOwnershipOfEntity( pOther );//m_hPortalSimulator->
@@ -1926,7 +1924,7 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles )
 	Vector vOldForward;
 	GetEngineObject()->GetVectors( &vOldForward, 0, 0 );
 
-	m_vPrevForward = vOldForward;
+	GetEnginePortal()->SetPrevForward(vOldForward);
 
 	WakeNearbyEntities();
 

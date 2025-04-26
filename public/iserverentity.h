@@ -240,6 +240,8 @@ public:
 	virtual void SetPortal2(bool bPortal2) = 0;
 	virtual void UpdateCorners(void) = 0;
 	virtual const Vector& GetPortalCorners(int iCorner)  const = 0;
+	virtual const Vector& GetPrevForward() = 0;
+	virtual void SetPrevForward(const Vector& vPrevForward) = 0;
 };
 
 class IEngineShadowCloneServer : public IEngineShadowClone {
@@ -1333,8 +1335,6 @@ public:
 	virtual int GetVehicleAnalogControlBias() = 0;
 	virtual void SetVehicleAnalogControlBias(int bias) = 0;
 	virtual bool PhysicsSplash(const Vector& centerPoint, const Vector& normal, float rawSpeed, float scaledSpeed) = 0;
-	virtual void PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
-	virtual void PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity) = 0;
 	virtual bool FindClosestPassableSpace(const Vector& vIndecisivePush, unsigned int fMask = MASK_SOLID) = 0;
 	virtual void DispatchTraceAttack(const ITakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator = NULL) = 0;
 	virtual IServerEntity* EntityPhysics_CreateSolver(IServerEntity* pPhysicsBlocker, bool disableCollisions, float separationDuration) = 0;

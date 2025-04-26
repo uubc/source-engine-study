@@ -2952,6 +2952,8 @@ public:
 	bool IsActivated() const { return m_bActivated; }
 	bool IsPortal2() const { return m_bIsPortal2; }
 	void SetPortal2(bool bPortal2) { m_bIsPortal2 = bPortal2; }
+	float GetStaticAmount() { return m_fStaticAmount; }
+	void SetStaticAmount(float fStaticAmount) { m_fStaticAmount = fStaticAmount; }
 	bool IsPortal() { return true; }
 	C_EnginePortalInternal* AsEnginePortal() { return this; }
 	const C_EnginePortalInternal* AsEnginePortal() const { return this; }
@@ -2961,6 +2963,7 @@ private:
 	//IPhysicsEnvironment* pPhysicsEnvironment = NULL;
 	bool				m_bActivated; //a portal can exist and not be active
 	bool				m_bIsPortal2; //For teleportation, this doesn't matter, but for drawing and moving, it matters
+	float				m_fStaticAmount;
 	CBaseHandle			m_hLinkedPortal;
 	bool				m_bSimulateVPhysics;
 	bool				m_bLocalDataIsReady; //this side of the portal is properly setup, no guarantees as to linkage to another portal

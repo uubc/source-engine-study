@@ -210,6 +210,8 @@ public:
 	virtual bool IsActivated() const = 0;
 	virtual bool IsPortal2() const = 0;
 	virtual void SetPortal2(bool bPortal2) = 0;
+	virtual float GetStaticAmount() = 0;
+	virtual void SetStaticAmount(float fStaticAmount) = 0;
 };
 
 class IEngineShadowCloneClient : public IEngineShadowClone {

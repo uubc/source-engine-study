@@ -12761,6 +12761,7 @@ BEGIN_DATADESC(CEnginePortalInternal)
 	DEFINE_KEYFIELD(m_bActivated, FIELD_BOOLEAN, "Activated"),
 	DEFINE_KEYFIELD(m_bIsPortal2, FIELD_BOOLEAN, "PortalTwo"),
 	DEFINE_ARRAY(m_vPortalCorners, FIELD_POSITION_VECTOR, 4),
+	DEFINE_FIELD(m_vPrevForward, FIELD_VECTOR),
 END_DATADESC()
 
 IMPLEMENT_SERVERCLASS(CEnginePortalInternal, DT_EnginePortal)
@@ -12778,6 +12779,7 @@ CEnginePortalInternal::CEnginePortalInternal(IServerEntityList* pServerEntityLis
 	{
 		m_vPortalCorners[i] = Vector(0, 0, 0);
 	}
+	m_vPrevForward = Vector(0.0f, 0.0f, 0.0f);
 	gEntList.m_ActivePortals.AddToTail(this);
 }
 
@@ -15366,7 +15368,10 @@ void CEnginePortalInternal::TakeOwnershipOfEntity(IServerEntity* pEntity)
 
 	UpdateShadowClonesPortalSimulationFlags(pEntity, PSEF_IS_IN_PORTAL_HOLE, m_EntFlags[pEntity->entindex()]);
 
-	pEntity->PortalSimulator_TookOwnershipOfEntity(this);
+	if (pEntity->IsPlayer()) 
+	{
+		pEntity->GetEnginePlayer()->SetPortalEnvironment(this);
+	}
 
 	if (IsSimulatingVPhysics())
 		TakePhysicsOwnership(pEntity);
@@ -15445,7 +15450,11 @@ void CEnginePortalInternal::ReleaseOwnershipOfEntity(IServerEntity* pEntity, boo
 		RecheckEntityCollision(pEntity);
 	}
 
-	pEntity->PortalSimulator_ReleasedOwnershipOfEntity(this);
+	if (pEntity->IsPlayer()) 
+	{
+		if (pEntity->GetEnginePlayer()->GetPortalEnvironment() && pEntity->GetEnginePlayer()->GetPortalEnvironment() == this)
+			pEntity->GetEnginePlayer()->SetPortalEnvironment(NULL);
+	}
 
 	CUtlVector<IEngineObjectServer*> childrenList;
 	pEntity->GetEngineObject()->GetAllChildren( childrenList);

@@ -171,10 +171,7 @@ public:
 	CNetworkHandle( CBaseEntity, m_hRagdoll );	// networked entity handle
 
 	void SuppressCrosshair( bool bState ) { m_bSuppressingCrosshair = bState; }
-	virtual void			PortalSimulator_TookOwnershipOfEntity(IEnginePortalServer* pEntity);
-	virtual void			PortalSimulator_ReleasedOwnershipOfEntity(IEnginePortalServer* pEntity);
 
-	CProp_Portal* GetPortalEnvironment();
 private:
 
 	virtual CAI_Expresser* CreateExpresser( void );

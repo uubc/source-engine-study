@@ -1023,8 +1023,8 @@ const IEngineObjectClient* C_Portal_Player::GetRepresentativeRagdoll() const
 
 void C_Portal_Player::OnPreDataChanged( DataUpdateType_t type )
 {
-	Assert( m_pPortalEnvironment_LastCalcView == GetPortalEnvironment() );
-	PreDataChanged_Backup.m_hPortalEnvironment = GetPortalEnvironment();
+	Assert( m_pPortalEnvironment_LastCalcView == GetEnginePlayer()->GetPortalEnvironment() );
+	PreDataChanged_Backup.m_hPortalEnvironment = GetEnginePlayer()->GetPortalEnvironment() ? GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity()->AsClientEntity() : NULL;
 	PreDataChanged_Backup.m_hSurroundingLiquidPortal = m_hSurroundingLiquidPortal;
 	PreDataChanged_Backup.m_qEyeAngles = m_iv_angEyeAngles.GetCurrent();
 
@@ -1290,10 +1290,10 @@ void C_Portal_Player::UpdatePortalEyeInterpolation( void )
 	{
 		PortalEyeInterpolation.m_bUpdatePosition_FreeMove = false;
 
-		C_Prop_Portal *pOldPortal = PreDataChanged_Backup.m_hPortalEnvironment.Get();
+		IClientEntity *pOldPortal = PreDataChanged_Backup.m_hPortalEnvironment.Get();
 		if( pOldPortal )
 		{
-			UTIL_Portal_PointTransform( pOldPortal->MatrixThisToLinked(), PortalEyeInterpolation.m_vEyePosition_Interpolated, PortalEyeInterpolation.m_vEyePosition_Interpolated );
+			UTIL_Portal_PointTransform( pOldPortal->GetEnginePortal()->MatrixThisToLinked(), PortalEyeInterpolation.m_vEyePosition_Interpolated, PortalEyeInterpolation.m_vEyePosition_Interpolated);
 			//PortalEyeInterpolation.m_vEyePosition_Interpolated = pOldPortal->m_matrixThisToLinked * PortalEyeInterpolation.m_vEyePosition_Interpolated;
 
 			//Vector vForward;
@@ -1391,7 +1391,7 @@ void C_Portal_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNe
 
 	QAngle qEyeAngleBackup = EyeAngles();
 	Vector ptEyePositionBackup = EyePosition();
-	C_Prop_Portal *pPortalBackup = GetPortalEnvironment();
+	IEnginePortalClient *pPortalBackup = GetEnginePlayer()->GetPortalEnvironment();
 
 	if ( m_lifeState != LIFE_ALIVE )
 	{
@@ -1451,7 +1451,7 @@ void C_Portal_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNe
 			else
 			{
 				CalcPlayerView( eyeOrigin, eyeAngles, fov );
-				if(GetPortalEnvironment() != NULL )
+				if(GetEnginePlayer()->GetPortalEnvironment() != NULL )
 				{
 					//time for hax
 					m_bEyePositionIsTransformedByPortal = bEyeTransform_Backup;
@@ -1494,11 +1494,6 @@ void C_Portal_Player::SetViewAngles( const QAngle& ang )
 	}
 }
 
-C_Prop_Portal* C_Portal_Player::GetPortalEnvironment()
-{
-	return GetEnginePlayer()->GetPortalEnvironment() ? (C_Prop_Portal*)GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity() : NULL;
-}
-
 void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 {
 	//although we already ran CalcPlayerView which already did these copies, they also fudge these numbers in ways we don't like, so recopy
@@ -1508,10 +1503,10 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 	//Re-apply the screenshake (we just stomped it)
 	vieweffects->ApplyShake( eyeOrigin, eyeAngles, 1.0 );
 
-	C_Prop_Portal *pPortal = GetPortalEnvironment();
+	IEnginePortalClient *pPortal = GetEnginePlayer()->GetPortalEnvironment();
 	assert( pPortal );
 
-	C_Prop_Portal *pRemotePortal = pPortal->GetLinkedPortal();
+	IEnginePortalClient *pRemotePortal = pPortal->GetLinkedPortal();
 	if( !pRemotePortal )
 	{
 		return; //no hacks possible/necessary
@@ -1520,8 +1515,8 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 	Vector ptPortalCenter;
 	Vector vPortalForward;
 
-	ptPortalCenter = pPortal->GetEngineObject()->GetNetworkOrigin();
-	pPortal->GetEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
+	ptPortalCenter = pPortal->AsEngineObject()->AsEngineObjectClient()->GetNetworkOrigin();
+	pPortal->AsEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
 	float fPortalPlaneDist = vPortalForward.Dot( ptPortalCenter );
 
 	bool bOverrideSpecialEffects = false; //sometimes to get the best effect we need to kill other effects that are simply for cleanliness
@@ -1530,7 +1525,7 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 	bool bTransformEye = false;
 	if( fEyeDist < 0.0f ) //eye behind portal
 	{
-		if( pPortal->EntityIsInPortalHole( this ) ) //player standing in portal m_hPortalSimulator->
+		if( pPortal->EntityIsInPortalHole( this->GetEngineObject() ) ) //player standing in portal m_hPortalSimulator->
 		{
 			bTransformEye = true;
 		}
@@ -1548,7 +1543,7 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 				Vector vIntersectionTest = ptPlaneIntersection - ptPortalCenter;
 
 				Vector vPortalRight, vPortalUp;
-				pPortal->GetEngineObject()->GetVectors( NULL, &vPortalRight, &vPortalUp );
+				pPortal->AsEngineObject()->GetVectors( NULL, &vPortalRight, &vPortalUp );
 
 				if( (vIntersectionTest.Dot( vPortalRight ) <= PORTAL_HALF_WIDTH) &&
 					(vIntersectionTest.Dot( vPortalUp ) <= PORTAL_HALF_HEIGHT) )
@@ -1599,8 +1594,8 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 
 	if( bOverrideSpecialEffects )
 	{		
-		m_iForceNoDrawInPortalSurface = ((pRemotePortal->GetEnginePortal()->IsPortal2())?(2):(1));
-		pRemotePortal->m_fStaticAmount = 0.0f;
+		m_iForceNoDrawInPortalSurface = ((pRemotePortal->IsPortal2())?(2):(1));
+		pRemotePortal->SetStaticAmount(0.0f);
 	}
 }
 
