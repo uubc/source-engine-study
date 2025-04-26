@@ -18,7 +18,7 @@
 	void UTIL_ClipPunchAngleOffset( QAngle &in, const QAngle &punch, const QAngle &clip );
 #endif
 
-class CPortal_Player;
+//class CPortal_Player;
 
 // These are the names of the ammo types that go in the CAmmoDefs and that the 
 // weapon script files reference.
@@ -84,7 +84,7 @@ public:
 	virtual bool	IsPredicted() const;
 
 	CBasePlayer* GetPlayerOwner() const;
-	CPortal_Player* GetPortalPlayerOwner() const;
+	//CPortal_Player* GetPortalPlayerOwner() const;
 
 	// Get specific Portal weapon ID (ie: WEAPON_PORTALGUN, etc)
 	virtual PortalWeaponID GetWeaponID( void ) const { return WEAPON_NONE; }

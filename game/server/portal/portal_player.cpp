@@ -160,7 +160,6 @@ SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11, SPROP_CHANGES_OFTEN )
 SendPropEHandle( SENDINFO( m_hRagdoll ) ),
 SendPropInt( SENDINFO( m_iSpawnInterpCounter), 4 ),
 SendPropInt( SENDINFO( m_iPlayerSoundType), 3 ),
-SendPropBool( SENDINFO( m_bPitchReorientation ) ),
 SendPropEHandle( SENDINFO( m_hSurroundingLiquidPortal ) ),
 SendPropBool( SENDINFO( m_bSuppressingCrosshair ) ),
 SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
@@ -179,7 +178,6 @@ BEGIN_DATADESC( CPortal_Player )
 	DEFINE_FIELD( m_StatsThisLevel.fNumSecondsTaken, FIELD_FLOAT ),
 	DEFINE_FIELD( m_fTimeLastNumSecondsUpdate, FIELD_TIME ),
 	DEFINE_FIELD( m_iNumCamerasDetatched, FIELD_INTEGER ),
-	DEFINE_FIELD( m_bPitchReorientation, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bIsRegenerating, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fNeuroToxinDamageTime, FIELD_TIME ),
 	DEFINE_FIELD( m_flExpressionLoopTime, FIELD_TIME ),
@@ -189,9 +187,6 @@ BEGIN_DATADESC( CPortal_Player )
 	DEFINE_FIELD( m_hRagdoll, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_angEyeAngles, FIELD_VECTOR ),
 	DEFINE_FIELD( m_iPlayerSoundType, FIELD_INTEGER ),
-	DEFINE_FIELD( m_qPrePortalledViewAngles, FIELD_VECTOR ),
-	DEFINE_FIELD( m_bFixEyeAnglesFromPortalling, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_matLastPortalled, FIELD_VMATRIX_WORLDSPACE ),
 	DEFINE_FIELD( m_vWorldSpaceCenterHolder, FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( m_hSurroundingLiquidPortal, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_bSuppressingCrosshair, FIELD_BOOLEAN ),
@@ -245,7 +240,6 @@ CPortal_Player::CPortal_Player()
 
 	m_bIntersectingPortalPlane = false;
 
-	m_bPitchReorientation = false;
 
 
 	m_iszExpressionScene = NULL_STRING;
@@ -908,6 +902,10 @@ bool CPortal_Player::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, c
 	return true;
 }
 
+void CPortal_Player::DoPrimaryAttactAnimationEvent(int nData)
+{
+	DoAnimationEvent(PLAYERANIMEVENT_ATTACK_PRIMARY, nData);
+}
 
 void CPortal_Player::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 {
@@ -1550,24 +1548,6 @@ void CPortal_Player::PlayerUse( void )
 
 void CPortal_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 {
-	if( m_bFixEyeAnglesFromPortalling )
-	{
-		//the idea here is to handle the notion that the player has portalled, but they sent us an angle update before receiving that message.
-		//If we don't handle this here, we end up sending back their old angles which makes them hiccup their angles for a frame
-		float fOldAngleDiff = fabs( AngleDistance( ucmd->viewangles.x, m_qPrePortalledViewAngles.x ) );
-		fOldAngleDiff += fabs( AngleDistance( ucmd->viewangles.y, m_qPrePortalledViewAngles.y ) );
-		fOldAngleDiff += fabs( AngleDistance( ucmd->viewangles.z, m_qPrePortalledViewAngles.z ) );
-
-		float fCurrentAngleDiff = fabs( AngleDistance( ucmd->viewangles.x, pl.v_angle.x ) );
-		fCurrentAngleDiff += fabs( AngleDistance( ucmd->viewangles.y, pl.v_angle.y ) );
-		fCurrentAngleDiff += fabs( AngleDistance( ucmd->viewangles.z, pl.v_angle.z ) );
-
-		if( fCurrentAngleDiff > fOldAngleDiff )
-			ucmd->viewangles = TransformAnglesToWorldSpace( ucmd->viewangles, m_matLastPortalled.As3x4() );
-
-		m_bFixEyeAnglesFromPortalling = false;
-	}
-
 	BaseClass::PlayerRunCommand( ucmd, moveHelper );
 }
 
@@ -1914,30 +1894,6 @@ int CPortal_Player::OnTakeDamage_Alive( const ITakeDamageInfo&info )
 	return 1;
 }
 
-
-void CPortal_Player::ForceDuckThisFrame( void )
-{
-	if( m_Local.m_bDucked != true )
-	{
-		//m_Local.m_bDucking = false;
-		m_Local.m_bDucked = true;
-		ForceButtons( IN_DUCK );
-		GetEngineObject()->AddFlag( FL_DUCKING );
-		GetEnginePlayer()->SetVCollisionState(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsVelocity(), VPHYS_CROUCH );
-	}
-}
-
-void CPortal_Player::UnDuck( void )
-{
-	if( m_Local.m_bDucked != false )
-	{
-		m_Local.m_bDucked = false;
-		UnforceButtons( IN_DUCK );
-		GetEngineObject()->RemoveFlag( FL_DUCKING );
-		GetEnginePlayer()->SetVCollisionState(GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetAbsVelocity(), VPHYS_WALK );
-	}
-}
-
 //-----------------------------------------------------------------------------
 // Purpose: Overload for portal-- Our player can lift his own mass.
 // Input  : *pObject - The object to lift
@@ -2021,169 +1977,9 @@ void CPortal_Player::ResetThisLevelStats( void )
 		SetBonusProgress( 0 );
 }
 
-
-//-----------------------------------------------------------------------------
-// Purpose: Update the area bits variable which is networked down to the client to determine
-//			which area portals should be closed based on visibility.
-// Input  : *pvs - pvs to be used to determine visibility of the portals
-//-----------------------------------------------------------------------------
-void CPortal_Player::UpdatePortalViewAreaBits( unsigned char *pvs, int pvssize )
-{
-	Assert ( pvs );
-
-	int iPortalCount = EntityList()->GetPortalCount();
-	if( iPortalCount == 0 )
-		return;
-
-	int *portalArea = (int *)stackalloc( sizeof( int ) * iPortalCount );
-	bool *bUsePortalForVis = (bool *)stackalloc( sizeof( bool ) * iPortalCount );
-
-	unsigned char *portalTempBits = (unsigned char *)stackalloc( sizeof( unsigned char ) * 32 * iPortalCount );
-	COMPILE_TIME_ASSERT( (sizeof( unsigned char ) * 32) >= sizeof( ((CPlayerLocalData*)0)->m_chAreaBits ) );
-
-	// setup area bits for these portals
-	for ( int i = 0; i < iPortalCount; ++i )
-	{
-		IEnginePortalServer* pLocalPortal = EntityList()->GetPortal(i);
-		// Make sure this portal is active before adding it's location to the pvs
-		if ( pLocalPortal && pLocalPortal->IsActivated() )
-		{
-			const IEnginePortalServer* pRemotePortal = pLocalPortal->GetLinkedPortal();
-
-			// Make sure this portal's linked portal is in the PVS before we add what it can see
-			if ( pRemotePortal && pRemotePortal->IsActivated() &&//&& pRemotePortal->NetworkProp() 
-				((IEngineObjectServer*)pRemotePortal->AsEngineObject())->IsInPVS( this, pvs, pvssize ) )
-			{
-				portalArea[ i ] = engine->GetArea(pLocalPortal->AsEngineObject()->GetAbsOrigin() );
-
-				if ( portalArea [ i ] >= 0 )
-				{
-					bUsePortalForVis[ i ] = true;
-				}
-
-				engine->GetAreaBits( portalArea[ i ], &portalTempBits[ i * 32 ], sizeof( unsigned char ) * 32 );
-			}
-		}
-	}
-
-	// Use the union of player-view area bits and the portal-view area bits of each portal
-	for ( int i = 0; i < m_Local.m_chAreaBits.Count(); i++ )
-	{
-		for ( int j = 0; j < iPortalCount; ++j )
-		{
-			// If this portal is active, in PVS and it's location is valid
-			if ( bUsePortalForVis[ j ]  )
-			{
-				m_Local.m_chAreaBits.Set( i, m_Local.m_chAreaBits[ i ] | portalTempBits[ (j * 32) + i ] );
-			}
-		}
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-// AddPortalCornersToEnginePVS
-// Subroutine to wrap the adding of portal corners to the PVS which is called once for the setup of each portal.
-// input - pPortal: the portal we are viewing 'out of' which needs it's corners added to the PVS
-//////////////////////////////////////////////////////////////////////////
-void AddPortalCornersToEnginePVS(IEnginePortalServer* pPortal )
-{
-	Assert ( pPortal );
-
-	if ( !pPortal )
-		return;
-
-	Vector vForward, vRight, vUp;
-	pPortal->AsEngineObject()->GetVectors( &vForward, &vRight, &vUp );
-
-	// Center of the remote portal
-	Vector ptOrigin			= pPortal->AsEngineObject()->GetAbsOrigin();
-
-	// Distance offsets to the different edges of the portal... Used in the placement checks
-	Vector vToTopEdge = vUp * ( PORTAL_HALF_HEIGHT - PORTAL_BUMP_FORGIVENESS );
-	Vector vToBottomEdge = -vToTopEdge;
-	Vector vToRightEdge = vRight * ( PORTAL_HALF_WIDTH - PORTAL_BUMP_FORGIVENESS );
-	Vector vToLeftEdge = -vToRightEdge;
-
-	// Distance to place PVS points away from portal, to avoid being in solid
-	Vector vForwardBump		= vForward * 1.0f;
-
-	// Add center and edges to the engine PVS
-	engine->AddOriginToPVS( ptOrigin + vForwardBump);
-	engine->AddOriginToPVS( ptOrigin + vToTopEdge + vToLeftEdge + vForwardBump );
-	engine->AddOriginToPVS( ptOrigin + vToTopEdge + vToRightEdge + vForwardBump );
-	engine->AddOriginToPVS( ptOrigin + vToBottomEdge + vToLeftEdge + vForwardBump );
-	engine->AddOriginToPVS( ptOrigin + vToBottomEdge + vToRightEdge + vForwardBump );
-}
-
-void PortalSetupVisibility( CBaseEntity *pPlayer, int area, unsigned char *pvs, int pvssize )
-{
-	int iPortalCount = EntityList()->GetPortalCount();
-	if( iPortalCount == 0 )
-		return;
-
-	for( int i = 0; i != iPortalCount; ++i )
-	{
-		IEnginePortalServer *pPortal = EntityList()->GetPortal(i);
-
-		if ( pPortal && pPortal->IsActivated() )
-		{
-			if ( pPortal->AsEngineObject()->AsEngineObjectServer()->IsInPVS( pPlayer, pvs, pvssize ) )
-			{
-				if ( engine->CheckAreasConnected( area, pPortal->AsEngineObject()->AsEngineObjectServer()->AreaNum() ) )
-				{
-					IEnginePortalServer *pLinkedPortal = pPortal->GetLinkedPortal();
-					if ( pLinkedPortal )
-					{
-						AddPortalCornersToEnginePVS ( pLinkedPortal );
-					}
-				}
-			}
-		}
-	}
-}
-
 void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs, int pvssize )
 {
 	BaseClass::SetupVisibility( pViewEntity, pvs, pvssize );
-
-	int area = pViewEntity ? pViewEntity->GetEngineObject()->AreaNum() : GetEngineObject()->AreaNum();
-
-	// At this point the EyePosition has been added as a view origin, but if we are currently stuck
-	// in a portal, our EyePosition may return a point in solid. Find the reflected eye position
-	// and use that as a vis origin instead.
-	if (GetEnginePlayer()->GetPortalEnvironment())
-	{
-		IEnginePortalServer *pPortal = NULL, *pRemotePortal = NULL;
-		pPortal = GetEnginePlayer()->GetPortalEnvironment();
-		pRemotePortal = pPortal->GetLinkedPortal();
-
-		if ( pPortal && pRemotePortal && pPortal->IsActivated() && pRemotePortal->IsActivated())
-		{		
-			Vector ptPortalCenter = pPortal->AsEngineObject()->GetAbsOrigin();
-			Vector vPortalForward;
-			pPortal->AsEngineObject()->GetVectors( &vPortalForward, NULL, NULL );
-
-			Vector eyeOrigin = EyePosition();
-			Vector vEyeToPortalCenter = ptPortalCenter - eyeOrigin;
-
-			float fPortalDist = vPortalForward.Dot( vEyeToPortalCenter );
-			if( fPortalDist > 0.0f ) //eye point is behind portal
-			{
-				// Move eye origin to it's transformed position on the other side of the portal
-				UTIL_Portal_PointTransform( pPortal->MatrixThisToLinked(), eyeOrigin, eyeOrigin );
-
-				// Use this as our view origin (as this is where the client will be displaying from)
-				engine->AddOriginToPVS( eyeOrigin );
-				if ( !pViewEntity || pViewEntity->IsPlayer() )
-				{
-					area = engine->GetArea( eyeOrigin );
-				}	
-			}
-		}
-	}
-
-	PortalSetupVisibility( this, area, pvs, pvssize );
 }
 
 #ifdef PORTAL_MP

@@ -191,9 +191,7 @@ private:
 	float				m_flDeathCCWeight;	// for fading in cc effect	
 
 public:
-	bool	m_bPitchReorientation;
-	float	m_fReorientationRate;
-	bool	m_bEyePositionIsTransformedByPortal; //when the eye and body positions are not on the same side of a portal
+
 
 	CHandle<C_Func_LiquidPortal>	m_hSurroundingLiquidPortal; //a liquid portal whose volume the player is standing in
 };

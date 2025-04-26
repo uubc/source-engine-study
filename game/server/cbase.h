@@ -105,6 +105,7 @@ typedef CHandle<CBaseEntity> EHANDLE;
 #include "ndebugoverlay.h"
 #include "recipientfilter.h"
 #include "gamemovement.h"
+#include "soundenvelope.h"
 #include "portal_util_shared.h"
 #include "util_shared.h"
 #include "util.h"

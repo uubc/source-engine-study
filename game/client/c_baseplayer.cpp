@@ -293,6 +293,7 @@ END_RECV_TABLE()
 #if defined USES_ECON_ITEMS
 		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(NULL, 0, 0) ),
 #endif
+		RecvPropBool(RECVINFO(m_bPitchReorientation)),
 
 	END_RECV_TABLE()
 
@@ -429,6 +430,8 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePla
 	m_bFiredWeapon = false;
 
 	m_nForceVisionFilterFlags = 0;
+	m_bPitchReorientation = false;
+	m_fReorientationRate = 0.0f;
 
 	ListenForGameEvent( "base_player_teleported" );
 }

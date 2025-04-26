@@ -23,13 +23,13 @@ extern IVModelInfo* modelinfo;
 
 	#include "vgui/ISurface.h"
 	#include "vgui_controls/Controls.h"
-	#include "c_portal_player.h"
+	//#include "c_portal_player.h"
 	#include "hud_crosshair.h"
 	#include "PortalRender.h"
 
 #else
 
-	#include "portal_player.h"
+	//#include "portal_player.h"
 	#include "vphysics/constraints.h"
 
 #endif
@@ -150,10 +150,10 @@ CBasePlayer* CWeaponPortalBase::GetPlayerOwner() const
 	return dynamic_cast< CBasePlayer* >( GetOwner() );
 }
 
-CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
-{
-	return dynamic_cast< CPortal_Player* >( GetOwner() );
-}
+//CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
+//{
+//	return dynamic_cast< CPortal_Player* >( GetOwner() );
+//}
 
 #ifdef CLIENT_DLL
 	

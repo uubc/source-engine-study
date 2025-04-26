@@ -6,7 +6,7 @@
 
 #include "cbase.h"
 
-#include "c_portal_player.h"
+//#include "c_portal_player.h"
 #include "c_te_effect_dispatch.h"
 #include "iviewrender_beams.h"
 #include "model_types.h"
@@ -597,7 +597,7 @@ void C_WeaponPortalgun::DoEffectReady( void )
 		m_Beams[i].SetVisible3rdPerson( false );
 	}
 
-	CPortal_Player* pPlayer = (CPortal_Player*)GetOwner();
+	C_BasePlayer* pPlayer = (C_BasePlayer*)GetOwner();
 	if ( pPlayer )
 	{
 		RumbleEffect( RUMBLE_PHYSCANNON_OPEN, 0, RUMBLE_FLAG_STOP );
@@ -776,7 +776,7 @@ void C_WeaponPortalgun::OnDataChanged( DataUpdateType_t updateType )
 
 void C_WeaponPortalgun::ClientThink( void )
 {
-	CPortal_Player *pPlayer = ToPortalPlayer( GetOwner() );
+	C_BasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 
 	if ( pPlayer && dynamic_cast<C_WeaponPortalgun*>( pPlayer->GetActiveWeapon() ) )
 	{

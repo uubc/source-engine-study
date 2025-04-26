@@ -7,6 +7,7 @@
 #include "cbase.h"
 #include "weapon_portalbasecombatweapon.h"
 
+#include "hl2_player_shared.h"
 #include "portal_player_shared.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -123,7 +124,7 @@ bool CBasePortalCombatWeapon::Deploy( void )
 	// We have to ask the player if the last time it checked, the weapon was lowered
 	if ( GetOwner() && GetOwner()->IsPlayer() )
 	{
-		CPortal_Player *pPlayer = assert_cast<CPortal_Player*>( GetOwner() );
+		CHL2_Player *pPlayer = assert_cast<CHL2_Player*>( GetOwner() );
 		if ( pPlayer->IsWeaponLowered() )
 		{
 			if (GetEngineObject()->SelectWeightedSequence( ACT_VM_IDLE_LOWERED ) != ACTIVITY_NOT_AVAILABLE )

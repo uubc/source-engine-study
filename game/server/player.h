@@ -273,6 +273,7 @@ public:
 	
 	// Networking is about to update this entity, let it override and specify it's own pvs
 	virtual void			SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs, int pvssize );
+	virtual void			UpdatePortalViewAreaBits(unsigned char* pvs, int pvssize);
 	virtual int				UpdateTransmitState();
 	virtual int				ShouldTransmit( const CCheckTransmitInfo *pInfo );
 
@@ -450,6 +451,7 @@ public:
 
 	Class_T					Classify ( void );
 	virtual void			SetAnimation( PLAYER_ANIM playerAnim );
+	virtual void			DoPrimaryAttactAnimationEvent(int nData) {}
 	void					SetWeaponAnimType( const char *szExtention );
 
 	// custom player functions
@@ -1150,10 +1152,13 @@ protected:
 	friend class CHL2GameMovement;
 	friend class CDODGameMovement;
 	friend class CPortalGameMovement;
+	friend class CProp_Portal;
 	
 	// Accessors for gamemovement
 	bool IsDucked( void ) const { return m_Local.m_bDucked; }
 	bool IsDucking( void ) const { return m_Local.m_bDucking; }
+	void ForceDuckThisFrame(void);
+	void UnDuck(void);
 	float GetStepSize( void ) const { return m_Local.m_flStepSize; }
 
 	CNetworkVar( float,  m_flLaggedMovementValue );
@@ -1223,6 +1228,13 @@ private:
 
 public:
 	virtual unsigned int PlayerSolidMask( bool brushOnly = false ) const;	// returns the solid mask for the given player, so bots can have a more-restrictive set
+
+	virtual void IncrementPortalsPlaced(void) {}
+
+	QAngle						m_qPrePortalledViewAngles;
+	bool						m_bFixEyeAnglesFromPortalling;
+	VMatrix						m_matLastPortalled;
+	CNetworkVar(bool, m_bPitchReorientation);
 
 };
 

@@ -110,7 +110,7 @@ void CTriggerPortalCleanser::Touch( IServerEntity *pOther )
 
 	if ( pOther->IsPlayer() )
 	{
-		CPortal_Player *pPlayer = ToPortalPlayer( pOther );
+		CBasePlayer *pPlayer = ToBasePlayer( pOther );
 
 		if ( pPlayer )
 		{
@@ -225,7 +225,7 @@ void CTriggerPortalCleanser::Touch( IServerEntity *pOther )
 
 		if ( pOldPhys && ( pOldPhys->GetGameFlags() & FVPHYSICS_PLAYER_HELD ) )
 		{
-			CPortal_Player *pPlayer = (CPortal_Player *)EntityList()->GetPlayerHoldingEntity( pBaseAnimating );
+			CBasePlayer *pPlayer = (CBasePlayer*)EntityList()->GetPlayerHoldingEntity( pBaseAnimating );
 			if( pPlayer )
 			{
 				// Modify the velocity for held objects so it gets away from the player

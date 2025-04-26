@@ -669,6 +669,10 @@ public:
 	bool  ShouldGoSouth( Vector vNPCForward, Vector vNPCRight ); //Such a bad name.
 
 	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld;	}
+
+	bool	m_bPitchReorientation;
+	float	m_fReorientationRate;
+	bool	m_bEyePositionIsTransformedByPortal; //when the eye and body positions are not on the same side of a portal
 };
 
 EXTERN_RECV_TABLE(DT_BasePlayer);

@@ -23,7 +23,7 @@
 #include "PhysicsCloneArea.h"
 #include "portal_gamestats.h"
 #include "prop_portal_shared.h"
-#include "weapon_portalgun.h"
+//#include "weapon_portalgun.h"
 #include "portal_placement.h"
 #include "physicsshadowclone.h"
 #include "particle_parse.h"
@@ -291,11 +291,11 @@ void CProp_Portal::DelayedPlacementThink( void )
 		DoFizzleEffect( PORTAL_FIZZLE_CLOSE, false );
 	}
 
-	CWeaponPortalgun *pPortalGun = dynamic_cast<CWeaponPortalgun*>( m_hPlacedBy.Get() );
+	CBaseCombatWeapon *pPortalGun = dynamic_cast<CBaseCombatWeapon*>( m_hPlacedBy.Get() );
 
 	if( pPortalGun )
 	{
-		CPortal_Player *pFiringPlayer = dynamic_cast<CPortal_Player *>( pPortalGun->GetOwner() );
+		CBasePlayer *pFiringPlayer = dynamic_cast<CBasePlayer*>( pPortalGun->GetOwner() );
 		if( pFiringPlayer )
 		{
 			pFiringPlayer->IncrementPortalsPlaced();
@@ -407,7 +407,7 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 	ep.m_pOrigin = &m_vAudioOrigin;
 
 	// Rumble effects on the firing player (if one exists)
-	CWeaponPortalgun *pPortalGun = dynamic_cast<CWeaponPortalgun*>( m_hPlacedBy.Get() );
+	CBaseCombatWeapon *pPortalGun = dynamic_cast<CBaseCombatWeapon*>( m_hPlacedBy.Get() );
 
 	if ( pPortalGun && (iEffect != PORTAL_FIZZLE_CLOSE ) 
 				    && (iEffect != PORTAL_FIZZLE_SUCCESS )
@@ -875,13 +875,13 @@ void CProp_Portal::TeleportTouchingEntity( CBaseEntity *pOther )
 
 	bool bPlayer = pOther->IsPlayer();
 	QAngle qPlayerEyeAngles;
-	CPortal_Player *pOtherAsPlayer;
+	CBasePlayer *pOtherAsPlayer;
 
 	
 	if( bPlayer )
 	{
 		//NDebugOverlay::EntityBounds( pOther, 255, 0, 0, 128, 60.0f );
-		pOtherAsPlayer = (CPortal_Player *)pOther;
+		pOtherAsPlayer = (CBasePlayer*)pOther;
 		qPlayerEyeAngles = pOtherAsPlayer->pl.v_angle;
 	}
 	else
@@ -1157,7 +1157,7 @@ void CProp_Portal::TeleportTouchingEntity( CBaseEntity *pOther )
 	IPhysicsObject *pPhys = pOther->GetEngineObject()->VPhysicsGetObject();
 	if( (pPhys != NULL) && (pPhys->GetGameFlags() & FVPHYSICS_PLAYER_HELD) )
 	{
-		CPortal_Player *pHoldingPlayer = (CPortal_Player *)EntityList()->GetPlayerHoldingEntity( pOther );
+		CBasePlayer *pHoldingPlayer = (CBasePlayer*)EntityList()->GetPlayerHoldingEntity( pOther );
 		pHoldingPlayer->GetEnginePlayer()->ToggleHeldObjectOnOppositeSideOfPortal();
 		if ( pHoldingPlayer->GetEnginePlayer()->IsHeldObjectOnOppositeSideOfPortal() )
 			pHoldingPlayer->GetEnginePlayer()->SetHeldObjectPortal( this->GetEnginePortal() );
@@ -1427,7 +1427,7 @@ void CProp_Portal::EndTouch( IServerEntity *pOther )
 	else if( pOther->IsPlayer() && //player
 			(GetVectorForward().z < -0.7071f) && //most likely falling out of the portal m_hPortalSimulator->
 			(GetPortalPlane().normal.Dot(pOther->WorldSpaceCenter()) < GetPortalPlane().dist) && //but behind the portal plane m_hPortalSimulator->
-			(((CPortal_Player *)pOther)->m_Local.m_bInDuckJump) ) //while ducking
+			(((CBasePlayer*)pOther)->m_Local.m_bInDuckJump) ) //while ducking
 	{
 		//player has pulled their feet up (moving their center instantaneously) while falling downward out of the portal, send them back (probably only for a frame)
 		
@@ -1875,11 +1875,11 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 		else if ( fPlacementSuccess == PORTAL_ANALOG_SUCCESS_PASSTHROUGH_SURFACE )
 			m_iDelayedFailure = PORTAL_FIZZLE_NONE;
 
-		CWeaponPortalgun *pPortalGun = dynamic_cast<CWeaponPortalgun*>( m_hPlacedBy.Get() );
+		CBaseCombatWeapon *pPortalGun = dynamic_cast<CBaseCombatWeapon*>( m_hPlacedBy.Get() );
 
 		if( pPortalGun )
 		{
-			CPortal_Player *pFiringPlayer = dynamic_cast<CPortal_Player *>( pPortalGun->GetOwner() );
+			CBasePlayer *pFiringPlayer = dynamic_cast<CBasePlayer*>( pPortalGun->GetOwner() );
 			if( pFiringPlayer )
 			{
 				g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );
@@ -1904,11 +1904,11 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 		m_iDelayedFailure = PORTAL_FIZZLE_SUCCESS;
 	}
 
-	CWeaponPortalgun *pPortalGun = dynamic_cast<CWeaponPortalgun*>( m_hPlacedBy.Get() );
+	CBaseCombatWeapon *pPortalGun = dynamic_cast<CBaseCombatWeapon*>( m_hPlacedBy.Get() );
 
 	if( pPortalGun )
 	{
-		CPortal_Player *pFiringPlayer = dynamic_cast<CPortal_Player *>( pPortalGun->GetOwner() );
+		CBasePlayer *pFiringPlayer = dynamic_cast<CBasePlayer*>( pPortalGun->GetOwner() );
 		if( pFiringPlayer )
 		{
 			g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );

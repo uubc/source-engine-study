@@ -278,7 +278,6 @@ RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
 RecvPropEHandle( RECVINFO( m_hRagdoll ) ),
 RecvPropInt( RECVINFO( m_iSpawnInterpCounter ) ),
 RecvPropInt( RECVINFO( m_iPlayerSoundType ) ),
-RecvPropBool( RECVINFO( m_bPitchReorientation ) ),
 RecvPropEHandle( RECVINFO( m_hSurroundingLiquidPortal ) ),
 RecvPropBool( RECVINFO( m_bSuppressingCrosshair ) ),
 END_RECV_TABLE()
@@ -313,8 +312,6 @@ C_Portal_Player::C_Portal_Player()
 	m_flStartLookTime = 0.0f;
 
 
-	m_bPitchReorientation = false;
-	m_fReorientationRate = 0.0f;
 
 	m_angEyeAngles.Init();
 

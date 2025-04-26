@@ -126,7 +126,7 @@ extern ConVar tf_mm_servermode;
 
 #ifdef PORTAL
 #include "prop_portal_shared.h"
-#include "portal_player.h"
+//#include "portal_player.h"
 #endif
 
 #if defined( REPLAY_ENABLED )
@@ -3677,14 +3677,14 @@ void CServerGameClients::ClientSetupVisibility(const IServerEntity *pViewEntity,
 		// Update the area bits that get sent to the client.
 		pPlayer->m_Local.UpdateAreaBits( pPlayer, portalBits );
 
-#ifdef PORTAL 
+//#ifdef PORTAL 
 		// *After* the player's view has updated its area bits, add on any other areas seen by portals
-		CPortal_Player* pPortalPlayer = dynamic_cast<CPortal_Player*>( pPlayer );
-		if ( pPortalPlayer )
+//		CPortal_Player* pPortalPlayer = dynamic_cast<CPortal_Player*>( pPlayer );
+//		if ( pPortalPlayer )
 		{
-			pPortalPlayer->UpdatePortalViewAreaBits( pvs, pvssize );
+			pPlayer->UpdatePortalViewAreaBits( pvs, pvssize );
 		}
-#endif //PORTAL
+//#endif //PORTAL
 	}
 }
 

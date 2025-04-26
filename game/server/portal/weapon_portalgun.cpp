@@ -7,7 +7,8 @@
 #include "cbase.h"
 
 #include "BasePropDoor.h"
-#include "portal_player.h"
+//#include "portal_player.h"
+#include "multiplayer_animstate.h"
 #include "te_effect_dispatch.h"
 #include "gameinterface.h"
 #include "prop_combine_ball.h"
@@ -189,7 +190,7 @@ void CWeaponPortalgun::Think( void )
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 0.1f );
 
-	CPortal_Player *pPlayer = ToPortalPlayer( GetOwner() );
+	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 
 	if ( !pPlayer || pPlayer->GetActiveWeapon() != this )
 	{
@@ -517,11 +518,11 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 
 	if( bPlayer )
 	{
-		CPortal_Player *pPlayer = (CPortal_Player *)pOwner;
+		CBasePlayer *pPlayer = (CBasePlayer*)pOwner;
 
 		if ( !bTest && pPlayer )
 		{
-			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY, 0 );
+			pPlayer->DoPrimaryAttactAnimationEvent( 0 );//PLAYERANIMEVENT_ATTACK_PRIMARY
 		}
 
 		Vector forward, right, up;
@@ -686,7 +687,7 @@ void CWeaponPortalgun::DoEffectNone( void )
 
 void CC_UpgradePortalGun( void )
 {
-	CPortal_Player *pPlayer = ToPortalPlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 
 	CWeaponPortalgun *pPortalGun = static_cast<CWeaponPortalgun*>( pPlayer->Weapon_OwnsThisType( "weapon_portalgun" ) );
 	if ( pPortalGun )
@@ -711,7 +712,7 @@ static void change_portalgun_linkage_id_f( const CCommand &args )
 
 	unsigned char iNewID = (unsigned char)atoi( args[1] );
 
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = (CBasePlayer*)UTIL_GetCommandClient();
 
 	int iWeaponCount = pPlayer->WeaponCount();
 	for( int i = 0; i != iWeaponCount; ++i )

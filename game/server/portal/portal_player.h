@@ -109,7 +109,6 @@ public:
 	virtual void UpdateOnRemove( void );
 
 	virtual void SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs, int pvssize );
-	virtual void UpdatePortalViewAreaBits( unsigned char *pvs, int pvssize );
 	
 	bool	ValidatePlayerModel( const char *pModel );
 
@@ -133,10 +132,10 @@ public:
 	
 	int	  GetPlayerModelType( void ) { return m_iPlayerSoundType; }
 
-	void ForceDuckThisFrame( void );
-	void UnDuck ( void );
+
 	inline void ForceJumpThisFrame( void ) { ForceButtons( IN_JUMP ); }
 
+	void DoPrimaryAttactAnimationEvent(int nData);
 	void DoAnimationEvent( PlayerAnimEvent_t event, int nData );
 	//void SetupBones( matrix3x4_t *pBoneToWorld, int boneMask );
 
@@ -201,9 +200,7 @@ private:
 
 	int		m_iNumCamerasDetatched;
 
-	QAngle						m_qPrePortalledViewAngles;
-	bool						m_bFixEyeAnglesFromPortalling;
-	VMatrix						m_matLastPortalled;
+
 	CAI_Expresser				*m_pExpresser;
 	string_t					m_iszExpressionScene;
 	EHANDLE						m_hExpressionSceneEnt;
@@ -217,7 +214,6 @@ private:
 
 public:
 
-	CNetworkVar( bool, m_bPitchReorientation );
 	CNetworkHandle( CFunc_LiquidPortal, m_hSurroundingLiquidPortal ); //if the player is standing in a liquid portal, this will point to it
 
 	friend class CProp_Portal;
