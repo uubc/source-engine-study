@@ -8,7 +8,7 @@
 #include "cbase.h"
 #include "C_PortalGhostRenderable.h"
 #include "PortalRender.h"
-#include "c_portal_player.h"
+//#include "c_portal_player.h"
 #include "model_types.h"
 
 static CEntityFactory<C_PortalGhostRenderable> g_C_PortalGhostRenderable_Factory("","C_PortalGhostRenderable");
@@ -122,7 +122,7 @@ int C_PortalGhostRenderable::DrawModel( int flags )
 	{
 		if( m_bLocalPlayer )
 		{
-			C_Portal_Player *pPlayer = C_Portal_Player::GetLocalPlayer();
+			C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
 
 			if ( !pPlayer->IsAlive() )
 			{

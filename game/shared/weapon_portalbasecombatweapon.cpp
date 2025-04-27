@@ -7,8 +7,8 @@
 #include "cbase.h"
 #include "weapon_portalbasecombatweapon.h"
 
-#include "hl2_player_shared.h"
-#include "portal_player_shared.h"
+//#include "hl2_player_shared.h"
+//#include "portal_player_shared.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -47,7 +47,7 @@ BEGIN_PREDICTION_DATA( CBasePortalCombatWeapon )
 END_PREDICTION_DATA()
 #endif
 
-extern ConVar sk_auto_reload_time;
+//extern ConVar sk_auto_reload_time;
 
 CBasePortalCombatWeapon::CBasePortalCombatWeapon( void )
 {
@@ -70,6 +70,7 @@ void CBasePortalCombatWeapon::ItemHolsterFrame( void )
 		return;
 
 	// If it's been longer than three seconds, reload
+	ConVarRef sk_auto_reload_time("sk_auto_reload_time");
 	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
 	{
 		// Just load the clip with no animations
@@ -124,7 +125,7 @@ bool CBasePortalCombatWeapon::Deploy( void )
 	// We have to ask the player if the last time it checked, the weapon was lowered
 	if ( GetOwner() && GetOwner()->IsPlayer() )
 	{
-		CHL2_Player *pPlayer = assert_cast<CHL2_Player*>( GetOwner() );
+		CBasePlayer *pPlayer = assert_cast<CBasePlayer*>( GetOwner() );
 		if ( pPlayer->IsWeaponLowered() )
 		{
 			if (GetEngineObject()->SelectWeightedSequence( ACT_VM_IDLE_LOWERED ) != ACTIVITY_NOT_AVAILABLE )

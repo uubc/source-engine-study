@@ -21,7 +21,7 @@
 #include "hierarchy.h"
 //#include "physics_saverestore.h"
 #include "PhysicsCloneArea.h"
-#include "portal_gamestats.h"
+//#include "portal_gamestats.h"
 #include "prop_portal_shared.h"
 //#include "weapon_portalgun.h"
 #include "portal_placement.h"
@@ -1882,7 +1882,7 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 			CBasePlayer *pFiringPlayer = dynamic_cast<CBasePlayer*>( pPortalGun->GetOwner() );
 			if( pFiringPlayer )
 			{
-				g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );
+				//g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );
 			}
 		}
 
@@ -1911,7 +1911,7 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 		CBasePlayer *pFiringPlayer = dynamic_cast<CBasePlayer*>( pPortalGun->GetOwner() );
 		if( pFiringPlayer )
 		{
-			g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );
+			//g_PortalGameStats.Event_PortalPlacement( pFiringPlayer->GetEngineObject()->GetAbsOrigin(), vOrigin, m_iDelayedFailure );
 		}
 	}	
 }

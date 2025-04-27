@@ -9,7 +9,7 @@
 #include "in_buttons.h"
 #include "takedamageinfo.h"
 #include "ammodef.h"
-#include "portal_gamerules.h"
+//#include "portal_gamerules.h"
 
 
 #ifdef CLIENT_DLL

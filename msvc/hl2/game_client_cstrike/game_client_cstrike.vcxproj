@@ -175,7 +175,9 @@
     <ClCompile Include="..\..\..\game\client\c_playerresource.cpp" />
     <ClCompile Include="..\..\..\game\client\c_point_camera.cpp" />
     <ClCompile Include="..\..\..\game\client\c_point_commentary_node.cpp" />
+    <ClCompile Include="..\..\..\game\client\C_PortalGhostRenderable.cpp" />
     <ClCompile Include="..\..\..\game\client\c_props.cpp" />
+    <ClCompile Include="..\..\..\game\client\c_prop_portal.cpp" />
     <ClCompile Include="..\..\..\game\client\c_prop_vehicle.cpp" />
     <ClCompile Include="..\..\..\game\client\c_ragdoll_manager.cpp" />
     <ClCompile Include="..\..\..\game\client\c_recipientfilter.cpp" />
@@ -248,6 +250,7 @@
     <ClCompile Include="..\..\..\game\client\c_vguiscreen.cpp" />
     <ClCompile Include="..\..\..\game\client\c_vote_controller.cpp" />
     <ClCompile Include="..\..\..\game\client\C_WaterLODControl.cpp" />
+    <ClCompile Include="..\..\..\game\client\c_weapon_portalgun.cpp" />
     <ClCompile Include="..\..\..\game\client\c_world.cpp" />
     <ClCompile Include="..\..\..\game\client\dummyproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\EffectsClient.cpp" />
@@ -531,10 +534,12 @@
     <ClCompile Include="..\..\..\game\shared\point_posecontroller.cpp" />
     <ClCompile Include="..\..\..\game\shared\PortalSimulation.cpp" />
     <ClCompile Include="..\..\..\game\shared\portal_shareddefs.cpp" />
+    <ClCompile Include="..\..\..\game\shared\portal_weapon_parse.cpp" />
     <ClCompile Include="..\..\..\game\shared\precache_register.cpp" />
     <ClCompile Include="..\..\..\game\shared\predictableid.cpp" />
     <ClCompile Include="..\..\..\game\shared\predicted_viewmodel.cpp" />
     <ClCompile Include="..\..\..\game\shared\props_shared.cpp" />
+    <ClCompile Include="..\..\..\game\shared\prop_portal_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\sceneentity_shared.cpp" />
     <ClCompile Include="..\..\..\game\shared\sheetsimulator.cpp" />
     <ClCompile Include="..\..\..\game\shared\simtimer.cpp" />
@@ -556,6 +561,9 @@
     <ClCompile Include="..\..\..\game\shared\voice_banmgr.cpp" />
     <ClCompile Include="..\..\..\game\shared\voice_status.cpp" />
     <ClCompile Include="..\..\..\game\shared\weapon_parse.cpp" />
+    <ClCompile Include="..\..\..\game\shared\weapon_portalbase.cpp" />
+    <ClCompile Include="..\..\..\game\shared\weapon_portalbasecombatweapon.cpp" />
+    <ClCompile Include="..\..\..\game\shared\weapon_portalgun_shared.cpp" />
     <ClCompile Include="..\..\..\public\bone_accessor.cpp" />
     <ClCompile Include="..\..\..\public\bone_setup.cpp" />
     <ClCompile Include="..\..\..\public\client_class.cpp" />

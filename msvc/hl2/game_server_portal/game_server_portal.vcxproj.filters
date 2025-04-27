@@ -1683,22 +1683,7 @@
     <ClCompile Include="..\..\..\game\shared\portal\portal_usermessages.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal\portal_weapon_parse.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal\prop_portal_shared.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\shared\portal\StaticCollisionPolyhedronCache.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal\weapon_portalbase.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal\weapon_portalbasecombatweapon.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\shared\portal\weapon_portalgun_shared.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\cbaseanimatingprojectile.cpp">
@@ -1716,16 +1701,7 @@
     <ClCompile Include="..\..\..\game\server\portal\func_liquidportal.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\func_noportal_volume.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\func_portal_bumper.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\func_portal_detector.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\func_portal_orientation.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\neurotoxin_countdown.cpp">
@@ -1743,12 +1719,6 @@
     <ClCompile Include="..\..\..\game\server\portal\npc_security_camera.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\PhysicsCloneArea.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\physicsshadowclone.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\portal_client.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
@@ -1759,9 +1729,6 @@
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\portal_physics_collisionevent.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\portal_placement.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\portal_player.cpp">
@@ -1776,9 +1743,6 @@
     <ClCompile Include="..\..\..\game\server\portal\prop_glados_core.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\prop_portal.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\prop_portal_stats_display.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
@@ -1789,9 +1753,6 @@
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\server\portal\weapon_physcannon.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\server\portal\weapon_portalgun.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\shared\Multiplayer\multiplayer_animstate.cpp">
@@ -1831,6 +1792,45 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\public\variant_t.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\prop_portal.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\func_portal_detector.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\PhysicsCloneArea.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\portal_placement.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\physicsshadowclone.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\func_portal_orientation.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\shared\prop_portal_shared.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\func_noportal_volume.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\shared\portal_weapon_parse.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\shared\weapon_portalbase.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\shared\weapon_portalbasecombatweapon.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\shared\weapon_portalgun_shared.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\server\weapon_portalgun.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

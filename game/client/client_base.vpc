@@ -499,6 +499,20 @@ $Project
 		$File	"Portal_DynamicMeshRenderingUtils.h"
 		$File	"$SRCDIR\game\shared\portal_shareddefs.cpp"
 		$File	"$SRCDIR\game\shared\portal_shareddefs.h"
+		$File	"C_PortalGhostRenderable.cpp"
+		$File	"C_PortalGhostRenderable.h"
+		$File	"c_prop_portal.cpp"
+		$File	"c_prop_portal.h"
+		$File	"$SRCDIR\game\shared\weapon_portalbase.cpp"
+		$File	"$SRCDIR\game\shared\weapon_portalbase.h"
+		$File	"$SRCDIR\game\shared\weapon_portalbasecombatweapon.cpp"
+		$File	"$SRCDIR\game\shared\weapon_portalbasecombatweapon.h"
+		$File	"$SRCDIR\game\shared\weapon_portalgun_shared.cpp"
+		$File	"$SRCDIR\game\shared\weapon_portalgun_shared.h"
+		$File	"c_weapon_portalgun.cpp"
+		$File	"c_weapon_portalgun.h"
+		
+		
 		$Folder	"Sixense"
 		{
 			$File	"sixense\in_sixense.cpp"

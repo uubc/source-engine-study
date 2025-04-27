@@ -272,6 +272,7 @@ public:
 	virtual C_BaseCombatWeapon *GetLastWeapon( void ) { return m_hLastWeapon.Get(); }
 	void						ResetAutoaim( void );
 	virtual void 				SelectItem( const char *pstr, int iSubType = 0 );
+	virtual bool				IsWeaponLowered(void) { return false; }
 
 	virtual void				UpdateClientData( void );
 

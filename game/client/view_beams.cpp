@@ -280,10 +280,8 @@ bool ComputeBeamEntPosition( IClientEntity *pEnt, int nAttachment, bool bInterpr
 
 Beam_t::Beam_t()
 {
-#ifdef PORTAL
 	m_bDrawInMainRender = true;
 	m_bDrawInPortalRender = true;
-#endif
 
 	Reset();
 }
@@ -437,13 +435,11 @@ extern ConVar r_drawviewmodel;
 
 int Beam_t::DrawModel( int flags )
 {
-#ifdef PORTAL
 	if ( ( !g_pViewRender->IsRenderingPortal() && !m_bDrawInMainRender ) ||
 		(g_pViewRender->IsRenderingPortal() && !m_bDrawInPortalRender ) )
 	{
 		return 0;
 	}
-#endif //#ifdef PORTAL
 
 	// Tracker 16432:  If rendering a savegame screenshot don't draw beams 
 	//   who have viewmodels as their attached entity

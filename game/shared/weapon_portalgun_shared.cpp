@@ -315,6 +315,7 @@ void CWeaponPortalgun::ItemHolsterFrame( void )
 		return;
 
 	// If it's been longer than three seconds, reload
+	ConVarRef sk_auto_reload_time("sk_auto_reload_time");
 	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
 	{
 		// Reset the timer

@@ -50,10 +50,8 @@ BEGIN_DATADESC( CSprite )
 	DEFINE_KEYFIELD( m_flSpriteScale, FIELD_FLOAT, "scale" ),
 	DEFINE_KEYFIELD( m_flSpriteFramerate, FIELD_FLOAT, "framerate" ),
 	DEFINE_KEYFIELD( m_flFrame, FIELD_FLOAT, "frame" ),
-#ifdef PORTAL
 	DEFINE_FIELD( m_bDrawInMainRender, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bDrawInPortalRender, FIELD_BOOLEAN ),
-#endif
 	DEFINE_KEYFIELD( m_flHDRColorScale, FIELD_FLOAT, "HDRColorScale" ),
 
 	DEFINE_KEYFIELD( m_flGlowProxySize,	FIELD_FLOAT, "GlowProxySize" ),
@@ -95,10 +93,8 @@ BEGIN_PREDICTION_DATA( CSprite )
 	DEFINE_PRED_FIELD( m_flSpriteScale, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flSpriteFramerate, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flFrame, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
-#ifdef PORTAL
 	DEFINE_PRED_FIELD( m_bDrawInMainRender, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bDrawInPortalRender, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
-#endif
 	DEFINE_PRED_FIELD( m_flBrightnessTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_nBrightness, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 
@@ -146,10 +142,8 @@ BEGIN_NETWORK_TABLE( CSprite, DT_Sprite )
 
 	SendPropFloat( SENDINFO(m_flSpriteFramerate ), 8,	SPROP_ROUNDUP,	0,	60.0f),
 	SendPropFloat( SENDINFO(m_flFrame),		20, SPROP_ROUNDDOWN,	0.0f,   256.0f),
-#ifdef PORTAL
 	SendPropBool( SENDINFO(m_bDrawInMainRender) ),
 	SendPropBool( SENDINFO(m_bDrawInPortalRender) ),
-#endif //#ifdef PORTAL
 	SendPropFloat( SENDINFO(m_flBrightnessTime ), 0,	SPROP_NOSCALE ),
 	SendPropInt( SENDINFO(m_nBrightness), 8, SPROP_UNSIGNED ),
 	SendPropBool( SENDINFO(m_bWorldSpaceScale) ),
@@ -164,10 +158,8 @@ BEGIN_NETWORK_TABLE( CSprite, DT_Sprite )
 	RecvPropFloat( RECVINFO(m_flHDRColorScale )),
 
 	RecvPropFloat(RECVINFO(m_flFrame)),
-#ifdef PORTAL
 	RecvPropBool( RECVINFO(m_bDrawInMainRender) ),
 	RecvPropBool( RECVINFO(m_bDrawInPortalRender) ),
-#endif //#ifdef PORTAL
 	RecvPropFloat(RECVINFO(m_flBrightnessTime)),
 	RecvPropInt(RECVINFO(m_nBrightness)),
 	RecvPropBool( RECVINFO(m_bWorldSpaceScale) ),
@@ -180,10 +172,8 @@ CSprite::CSprite() : BaseClass()
 	m_flGlowProxySize = 2.0f;
 	m_flHDRColorScale = 1.0f;
 
-#ifdef PORTAL
 	m_bDrawInMainRender = true;
 	m_bDrawInPortalRender = true;
-#endif
 }
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -754,13 +744,11 @@ int CSprite::DrawModel( int flags )
 	if ( !IsVisible() || (GetEngineObject()->IsReadyToDraw() == false))
 		return 0;
 
-#ifdef PORTAL
 	if ( ( !g_pViewRender->IsRenderingPortal() && !m_bDrawInMainRender ) ||
 		(g_pViewRender->IsRenderingPortal() && !m_bDrawInPortalRender ) )
 	{
 		return 0;
 	}
-#endif //#ifdef PORTAL
 
 	// Tracker 16432:  If rendering a savegame screenshot then don't draw sprites 
 	//   who have viewmodels as their moveparent

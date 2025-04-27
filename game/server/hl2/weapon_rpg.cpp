@@ -2162,10 +2162,8 @@ void CWeaponRPG::StartLaserEffects( void )
 		m_hLaserBeam->SetEndWidth( 0.5f );
 		m_hLaserBeam->SetBrightness( 128 );
 		m_hLaserBeam->SetBeamFlags( SF_BEAM_SHADEIN );
-#ifdef PORTAL
 		m_hLaserBeam->m_bDrawInMainRender = true;
 		m_hLaserBeam->m_bDrawInPortalRender = false;
-#endif
 	}
 	else
 	{
@@ -2183,10 +2181,8 @@ void CWeaponRPG::StartLaserEffects( void )
 			return;
 		}
 
-#ifdef PORTAL
 		m_hLaserMuzzleSprite->m_bDrawInMainRender = true;
 		m_hLaserMuzzleSprite->m_bDrawInPortalRender = false;
-#endif
 
 		m_hLaserMuzzleSprite->SetAttachment( pOwner->GetViewModel(), GetEngineObject()->LookupAttachment( "laser" ) );
 		m_hLaserMuzzleSprite->SetTransparency( kRenderTransAdd, 255, 255, 255, 255, kRenderFxNoDissipation );
