@@ -28,7 +28,9 @@
 
 extern ISaveRestoreOps *responseSystemSaveRestoreOps;
 
+#if !defined(HL1_DLL)
 LINK_ENTITY_TO_CLASS( env_speaker, CSpeaker );
+#endif
 
 BEGIN_DATADESC( CSpeaker )
 

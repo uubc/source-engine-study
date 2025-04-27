@@ -9,12 +9,12 @@
 #include "portal_weapon_parse.h"
 #include "ammodef.h"
 
+#ifdef PORTAL
 FileWeaponInfo_t* CreateWeaponInfo()
 {
 	return new CPortalSWeaponInfo;
 }
-
-
+#endif // PORTAL
 
 CPortalSWeaponInfo::CPortalSWeaponInfo()
 {
