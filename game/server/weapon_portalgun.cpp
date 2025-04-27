@@ -11,7 +11,7 @@
 //#include "multiplayer_animstate.h"
 #include "te_effect_dispatch.h"
 #include "gameinterface.h"
-#include "prop_combine_ball.h"
+//#include "prop_combine_ball.h"
 #include "portal_shareddefs.h"
 #include "triggers.h"
 #include "collisionutils.h"

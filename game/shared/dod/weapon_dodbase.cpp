@@ -41,12 +41,10 @@ extern IVModelInfo* modelinfo;
 // ----------------------------------------------------------------------------- //
 // Global functions.
 // ----------------------------------------------------------------------------- //
-#ifdef PORTAL
 bool IsAmmoType( int iAmmoType, const char *pAmmoName )
 {
 	return GetAmmoDef()->Index( pAmmoName ) == iAmmoType;
 }
-#endif
 
 //--------------------------------------------------------------------------------------------------------
 //
