@@ -16,7 +16,7 @@
 #include "triggers.h"
 #include "collisionutils.h"
 //#include "cbaseanimatingprojectile.h"
-#include "weapon_physcannon.h"
+//#include "weapon_physcannon.h"
 #include "prop_portal_shared.h"
 #include "portal_placement.h"
 #include "weapon_portalgun_shared.h"

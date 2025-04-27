@@ -9,7 +9,7 @@
 #include "cbase.h"
 #include "player.h"
 #include "mathlib/mathlib.h"
-#include "env_speaker.h"
+#include "hl2/env_speaker.h"
 #include "ai_speech.h"
 #include "stringregistry.h"
 #include "game.h"

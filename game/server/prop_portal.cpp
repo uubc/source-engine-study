@@ -11,7 +11,7 @@
 //#include "portal/weapon_physcannon.h"
 #include "physics_npc_solver.h"
 #include "envmicrophone.h"
-#include "env_speaker.h"
+#include "hl2/env_speaker.h"
 #include "func_portal_detector.h"
 #include "model_types.h"
 #include "te_effect_dispatch.h"
