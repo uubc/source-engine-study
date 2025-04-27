@@ -64,8 +64,9 @@ class CDODPlayer;
 // Given an ammo type (like from a weapon's GetPrimaryAmmoType()), this compares it
 // against the ammo name you specify.
 // MIKETODO: this should use indexing instead of searching and strcmp()'ing all the time.
+#ifdef PORTAL
 bool IsAmmoType( int iAmmoType, const char *pAmmoName );
-
+#endif // PORTAL
 
 typedef enum
 {
