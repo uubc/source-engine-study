@@ -503,6 +503,8 @@ $Project
 		$File	"C_PortalGhostRenderable.h"
 		$File	"c_prop_portal.cpp"
 		$File	"c_prop_portal.h"
+		$File	"$SRCDIR\game\shared\prop_portal_shared.cpp"
+		$File	"$SRCDIR\game\shared\prop_portal_shared.h"
 		$File	"$SRCDIR\game\shared\weapon_portalbase.cpp"
 		$File	"$SRCDIR\game\shared\weapon_portalbase.h"
 		$File	"$SRCDIR\game\shared\weapon_portalbasecombatweapon.cpp"
