@@ -505,6 +505,8 @@ $Project
 		$File	"c_prop_portal.h"
 		$File	"$SRCDIR\game\shared\prop_portal_shared.cpp"
 		$File	"$SRCDIR\game\shared\prop_portal_shared.h"
+		$File	"$SRCDIR\game\shared\portal_weapon_parse.cpp"
+		$File	"$SRCDIR\game\shared\portal_weapon_parse.h"
 		$File	"$SRCDIR\game\shared\weapon_portalbase.cpp"
 		$File	"$SRCDIR\game\shared\weapon_portalbase.h"
 		$File	"$SRCDIR\game\shared\weapon_portalbasecombatweapon.cpp"
