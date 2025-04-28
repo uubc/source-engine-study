@@ -442,7 +442,7 @@ void CCSWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
 //	engine->ForceExactFile( UTIL_VarArgs("scripts/%s.ctx", szWeaponName ) );
 
 	// Model bounds are rounded to the nearest integer, then extended by 1
-	engine->ForceModelBounds( szWorldModel, Vector( -15, -12, -18 ), Vector( 44, 16, 19 ) );
+	engine->ForceModelBounds( szWorldModel, Vector( -27, -12, -18 ), Vector( 44, 16, 19 ) );//Vector( -15, -12, -18 )
 	if ( m_szAddonModel[0] )
 	{
 		engine->ForceModelBounds( m_szAddonModel, Vector( -5, -5, -6 ), Vector( 13, 5, 7 ) );

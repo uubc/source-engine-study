@@ -331,6 +331,7 @@
     <ClCompile Include="..\..\..\game\client\IsNPCProxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lampbeamproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lamphaloproxy.cpp" />
+    <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp" />
     <ClCompile Include="..\..\..\game\client\mathproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\matrixproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\menu.cpp" />

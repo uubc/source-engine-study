@@ -311,6 +311,7 @@
     <ClCompile Include="..\..\..\game\client\IsNPCProxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lampbeamproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lamphaloproxy.cpp" />
+    <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp" />
     <ClCompile Include="..\..\..\game\client\mathproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\matrixproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\menu.cpp" />
@@ -353,7 +354,6 @@
     <ClCompile Include="..\..\..\game\client\portal\c_weapon_stubs_portal.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\fx_portal.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\hud_quickinfo.cpp" />
-    <ClCompile Include="..\..\..\game\client\portal\materialproxy_portalstatic.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\MaterialProxy_Portal_PickAlphaMask.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\portal_credits.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\portal_hud_crosshair.cpp" />

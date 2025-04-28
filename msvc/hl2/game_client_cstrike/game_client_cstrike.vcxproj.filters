@@ -1797,6 +1797,9 @@
     <ClCompile Include="..\..\..\game\shared\portal_weapon_parse.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\public\client_class.h">

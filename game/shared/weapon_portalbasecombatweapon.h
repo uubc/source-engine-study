@@ -37,6 +37,8 @@ public:
 
 	CBasePortalCombatWeapon();
 
+	// derive this function if you mod uses encrypted weapon info files
+	virtual const unsigned char* GetEncryptionKey(void) { return NULL; }
 	virtual bool	WeaponShouldBeLowered( void );
 
 			bool	CanLower( void );

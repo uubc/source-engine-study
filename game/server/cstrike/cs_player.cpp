@@ -982,7 +982,7 @@ void CCSPlayer::Spawn()
 	m_cycleLatchTimer.Start( RandomFloat( 0.0f, CycleLatchInterval ) );
 
 	StockPlayerAmmo();
-	}
+}
 
 void CCSPlayer::ShowViewPortPanel( const char * name, bool bShow, KeyValues *data )
 {
@@ -1026,12 +1026,18 @@ void CCSPlayer::GiveDefaultItems()
 	{
 		GiveNamedItem( "weapon_knife" );
 		GiveNamedItem( "weapon_usp" );
+		if (!IsBot()) {
+			GiveNamedItem("weapon_portalgun");
+		}
 		GiveAmmo( 24, BULLET_PLAYER_45ACP );
 	}
 	else if ( GetTeamNumber() == TEAM_TERRORIST )
 	{
 		GiveNamedItem( "weapon_knife" );
 		GiveNamedItem( "weapon_glock" );
+		if (!IsBot()) {
+			GiveNamedItem("weapon_portalgun");
+		}
 		GiveAmmo( 40, BULLET_PLAYER_9MM );
 	}
 }

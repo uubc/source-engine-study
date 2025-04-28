@@ -1297,7 +1297,7 @@ bool CCSBot::BumpWeapon( CBaseCombatWeapon *pWeapon )
 		}
 	}
 
-	return BaseClass::BumpWeapon( droppedGun );
+	return BaseClass::BumpWeapon( pWeapon );
 }
 
 

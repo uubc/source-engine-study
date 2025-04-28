@@ -1578,9 +1578,6 @@
     <ClCompile Include="..\..\..\game\client\portal\MaterialProxy_Portal_PickAlphaMask.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\portal\materialproxy_portalstatic.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\portal\portal_credits.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
@@ -1690,6 +1687,9 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\shared\portal_weapon_parse.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
