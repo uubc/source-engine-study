@@ -95,7 +95,11 @@ void CWeaponPortalgun::Spawn( void )
 			m_iPortalLinkageGroupID = pOwner->entindex();
 
 		Assert( (m_iPortalLinkageGroupID >= 0) && (m_iPortalLinkageGroupID < 256) );
-	}	
+	}
+#ifndef PORTAL
+	SetCanFirePortal1();
+	SetCanFirePortal2();
+#endif // !PORTAL
 }
 
 void CWeaponPortalgun::Activate()

@@ -71,6 +71,7 @@ public:
 	void ItemHolsterFrame( void );
 	bool Holster( CBaseCombatWeapon *pSwitchingTo = NULL );
 	bool Deploy( void );
+	void Drop(const Vector& vecVelocity);
 
 	void SetCanFirePortal1( bool bCanFire = true );
 	void SetCanFirePortal2( bool bCanFire = true );

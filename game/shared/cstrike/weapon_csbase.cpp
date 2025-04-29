@@ -368,8 +368,6 @@ CWeaponCSBase::CWeaponCSBase()
 {
 	//SetPredictionEligible( true );
 	m_bDelayFire = true;
-	m_nextPrevOwnerTouchTime = 0.0;
-	m_prevOwner = NULL;
 
 #ifdef CLIENT_DLL
 	m_iCrosshairTextureID = 0;
@@ -1539,8 +1537,7 @@ void CWeaponCSBase::DefaultTouch(IServerEntity *pOther)
 
 		SetExtraAmmoCount( m_iDefaultExtraAmmo );	//Start with no additional ammo
 
-		m_nextPrevOwnerTouchTime = 0.0;
-		m_prevOwner = NULL;
+		
 
         //=============================================================================
         // HPE_BEGIN:

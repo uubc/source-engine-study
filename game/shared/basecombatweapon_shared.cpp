@@ -101,6 +101,8 @@ CBaseCombatWeapon::CBaseCombatWeapon() : BASECOMBATWEAPON_DERIVED_FROM()
 	m_nCritChecks = 1;
 	m_nCritSeedRequests = 0;
 #endif // TF
+	m_nextPrevOwnerTouchTime = 0.0;
+	m_prevOwner = NULL;
 }
 
 #ifdef GAME_DLL
@@ -185,6 +187,8 @@ void CBaseCombatWeapon::Spawn( void )
 	m_iState = WEAPON_NOT_CARRIED;
 	// Assume 
 	m_nViewModelIndex = 0;
+	m_nextPrevOwnerTouchTime = 0.0;
+	m_prevOwner = NULL;
 
 	GiveDefaultAmmo();
 
@@ -684,7 +688,7 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 	GetEngineObject()->RemoveEffects( EF_NODRAW );
 	FallInit();
 	GetEngineObject()->SetGroundEntity( NULL );
-	SetThink( &CBaseCombatWeapon::SetPickupTouch );
+	SetThink(&CBaseCombatWeapon::SetPickupTouch); 
 	SetTouch(NULL);
 
 	if( hl2_episodic.GetBool() )
@@ -707,6 +711,8 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 
 	GetEngineObject()->SetNextThink( gpGlobals->curtime + 1.0f );
 	GetEngineObject()->SetOwnerEntity( NULL );
+	m_nextPrevOwnerTouchTime = gpGlobals->curtime + 0.8f;
+	m_prevOwner = GetOwner();
 	SetOwner( NULL );
 
 	// If we're not allowing to spawn due to the gamerules,
@@ -825,6 +831,10 @@ void CBaseCombatWeapon::GiveTo( CBaseEntity *pOther )
 #ifdef GAME_DLL
 void CBaseCombatWeapon::DefaultTouch( IServerEntity *pOther )
 {
+	if ((m_prevOwner != NULL) && (pOther == m_prevOwner) && (gpGlobals->curtime < m_nextPrevOwnerTouchTime))
+	{
+		return;
+	}
 #if !defined( CLIENT_DLL )
 	// Can't pick up dissolving weapons
 	if ( IsDissolving() )

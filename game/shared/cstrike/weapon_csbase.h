@@ -239,10 +239,6 @@ public:
 	// HPE_BEGIN:	
 	//=============================================================================
 
-    // [tj] Accessors for the previous owner of the gun
-	void SetPreviousOwner(CCSPlayer* player) { m_prevOwner = player; }
-	CCSPlayer* GetPreviousOwner() { return m_prevOwner; }
-
     // [tj] Accessors for the donor system
     void SetDonor(CCSPlayer* player) { m_donor = player; }
     CCSPlayer* GetDonor() { return m_donor; }
@@ -268,9 +264,6 @@ private:
 	CWeaponCSBase( const CWeaponCSBase & );
 
 	int		m_iExtraPrimaryAmmo;
-
-	float	m_nextPrevOwnerTouchTime;
-	CCSPlayer *m_prevOwner;
 
 	int m_iDefaultExtraAmmo;
 

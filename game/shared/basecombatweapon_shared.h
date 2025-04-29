@@ -534,9 +534,14 @@ public:
 	virtual void			HideThink( void );
 	virtual bool			CanReload( void );
 
+	// [tj] Accessors for the previous owner of the gun
+	void SetPreviousOwner(CBaseCombatCharacter* player) { m_prevOwner = player; }
+	CBaseCombatCharacter* GetPreviousOwner() { return m_prevOwner; }
 private:
 	typedef CHandle< CBaseCombatCharacter > CBaseCombatCharacterHandle;
 	CNetworkVar( CBaseCombatCharacterHandle, m_hOwner );				// Player carrying this weapon
+	float	m_nextPrevOwnerTouchTime;
+	CBaseCombatCharacterHandle m_prevOwner;
 
 protected:
 #if defined ( TF_CLIENT_DLL ) || defined ( TF_DLL )

@@ -376,6 +376,55 @@ bool CWeaponPortalgun::Deploy( void )
 	return bReturn;
 }
 
+void CWeaponPortalgun::Drop(const Vector& vecVelocity)
+{
+
+#ifdef CLIENT_DLL
+	BaseClass::Drop(vecVelocity);
+	return;
+#else
+
+	// Once somebody drops a gun, it's fair game for removal when/if
+	// a game_weapon_manager does a cleanup on surplus weapons in the
+	// world.
+	SetRemoveable(true);
+
+	StopAnimation();
+	GetEngineObject()->StopFollowingEntity();
+	GetEngineObject()->SetMoveType(MOVETYPE_FLYGRAVITY);
+	// clear follow stuff, setup for collision
+	GetEngineObject()->SetGravity(1.0);
+	m_iState = WEAPON_NOT_CARRIED;
+	GetEngineObject()->RemoveEffects(EF_NODRAW);
+	FallInit();
+	GetEngineObject()->SetGroundEntity(NULL);
+
+	m_bInReload = false; // stop reloading
+
+	SetThink(NULL);
+	m_nextPrevOwnerTouchTime = gpGlobals->curtime + 0.8f;
+	m_prevOwner = GetPlayerOwner();
+
+	SetTouch(&CWeaponPortalgun::DefaultTouch);
+
+	IPhysicsObject* pObj = GetEngineObject()->VPhysicsGetObject();
+	if (pObj != NULL)
+	{
+		AngularImpulse	angImp(300, 300, 300);
+		pObj->AddVelocity(&vecVelocity, &angImp);
+	}
+	else
+	{
+		GetEngineObject()->SetAbsVelocity(vecVelocity);
+	}
+
+	GetEngineObject()->SetNextThink(gpGlobals->curtime);
+
+	GetEngineObject()->SetOwnerEntity(NULL);
+	SetOwner(NULL);
+#endif
+}
+
 void CWeaponPortalgun::WeaponIdle( void )
 {
 	//See if we should idle high or low
