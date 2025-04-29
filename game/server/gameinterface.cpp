@@ -124,10 +124,10 @@ extern ConVar tf_mm_servermode;
 #include "bot/bot.h"
 #endif
 
-#ifdef PORTAL
+//#ifdef PORTAL
 #include "prop_portal_shared.h"
 //#include "portal_player.h"
-#endif
+//#endif
 
 #if defined( REPLAY_ENABLED )
 #include "replay/ireplaysystem.h"
@@ -3535,7 +3535,7 @@ void CServerGameClients::ClientSettingsChanged( int pEdict )
 }
 
 
-#ifdef PORTAL
+//#ifdef PORTAL
 //-----------------------------------------------------------------------------
 // Purpose: Runs CFuncAreaPortalBase::UpdateVisibility on each portal
 // Input  : pAreaPortal - The Area portal to test for visibility from portals
@@ -3574,7 +3574,7 @@ int TestAreaPortalVisibilityThroughPortals ( CFuncAreaPortalBase* pAreaPortal, I
 	
 	return 0;
 }
-#endif
+//#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: A client can have a separate "view entity" indicating that his/her view should depend on the origin of that
@@ -3638,13 +3638,13 @@ void CServerGameClients::ClientSetupVisibility(const IServerEntity *pViewEntity,
 		portalNums[iOutPortal] = pCur->m_portalNumber;
 		isOpen[iOutPortal] = pCur->UpdateVisibility( org, fovDistanceAdjustFactor, bIsOpenOnClient );
 
-#ifdef PORTAL
+//#ifdef PORTAL
 		// If the client doesn't need this open, test if portals might need this area portal open
 		if ( isOpen[iOutPortal] == 0 )
 		{
 			isOpen[iOutPortal] = TestAreaPortalVisibilityThroughPortals( pCur, (IServerEntity*)pViewEntity, pvs, pvssize );
 		}
-#endif
+//#endif
 
 		++iOutPortal;
 		if ( iOutPortal >= ARRAYSIZE( portalNums ) )

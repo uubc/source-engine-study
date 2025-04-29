@@ -22,9 +22,9 @@
 #include "view_shared.h"
 #include "iviewrender.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "prop_portal_shared.h"
-#endif
+//#endif
 
 ConVar r_DrawBeams( "r_DrawBeams", "1", FCVAR_CHEAT, "0=Off, 1=Normal, 2=Wireframe" );
 

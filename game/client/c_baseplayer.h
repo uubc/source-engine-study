@@ -670,6 +670,10 @@ public:
 	bool  ShouldGoSouth( Vector vNPCForward, Vector vNPCRight ); //Such a bad name.
 
 	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld;	}
+	virtual bool		IsCloseToPortal(void) //it's usually a good idea to turn on draw hacks when this is true
+	{
+		return GetEnginePlayer()->GetPortalEnvironment() != NULL;
+	}
 
 	bool	m_bPitchReorientation;
 	float	m_fReorientationRate;

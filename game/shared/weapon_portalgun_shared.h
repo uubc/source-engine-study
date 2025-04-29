@@ -37,6 +37,6 @@ enum
 	EFFECT_HOLDING,
 };
 
-//extern ConVar sk_auto_reload_time;
+extern ConVar sk_auto_reload_time;
 
 #endif // WEAPON_PORTALGUN_SHARED_H

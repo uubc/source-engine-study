@@ -44,12 +44,12 @@
 #include "tier1/callqueue.h"
 #include "vphysics/constraints.h"
 
-#ifdef PORTAL
-#include "portal_physics_collisionevent.h"
+//#ifdef PORTAL
+//#include "portal_physics_collisionevent.h"
 #include "physicsshadowclone.h"
 #include "PortalSimulation.h"
 #include "prop_portal.h"
-#endif
+//#endif
 
 //#include "physics_shared.h"
 #include "te_effect_dispatch.h"

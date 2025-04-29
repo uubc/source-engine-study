@@ -1613,6 +1613,14 @@ bool CBaseCombatWeapon::IsAllowedToWithdrawFromCritBucket( float flDamage )
 }
 #endif // TF_DLL
 
+bool CBaseCombatWeapon::ShouldRemoveOnRoundRestart()
+{
+	if (dynamic_cast<CBasePlayer*>(GetOwner()))
+		return false;
+	else
+		return true;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

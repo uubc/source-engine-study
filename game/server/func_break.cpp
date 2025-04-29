@@ -22,11 +22,11 @@
 #include "physics_impact_damage.h"
 #include "tier0/icommandline.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "portal_shareddefs.h"
 	#include "portal_util_shared.h"
 	#include "prop_portal_shared.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -897,7 +897,7 @@ void CBreakable::ResetOnGroundFlags(void)
 		}
 	}
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	// !!! HACK  This should work!
 	// Tell touching portals to fizzle
 	int iPortalCount = EntityList()->GetPortalCount();
@@ -919,7 +919,7 @@ void CBreakable::ResetOnGroundFlags(void)
 			}
 		}
 	}
-#endif
+//#endif
 }
 
 

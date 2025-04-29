@@ -16,9 +16,9 @@
 #include "sun_shared.h"
 #include "c_pixel_visibility.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 //#include "c_prop_portal.h" //MAX_PORTAL_RECURSIVE_VIEWS
-#endif
+//#endif
 
 extern float g_flOverlayRange;
 

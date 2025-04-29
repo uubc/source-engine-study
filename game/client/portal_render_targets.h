@@ -17,9 +17,9 @@
 #include "baseclientrendertargets.h" // Base class, with interfaces called by engine and inherited members to init common render targets
 #include "materialsystem/MaterialSystemUtil.h"
 
-#ifndef PORTAL 
+//#ifndef PORTAL 
 //#pragma message ( "This file should only be built with portal builds" )
-#endif
+//#endif
 
 // externs
 class IMaterialSystem;

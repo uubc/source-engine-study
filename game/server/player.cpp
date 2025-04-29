@@ -1240,10 +1240,10 @@ bool CBasePlayer::ShouldTakeDamageInCommentaryMode( const ITakeDamageInfo&inputI
 	if ( inputInfo.GetInflictor() == this && inputInfo.GetAttacker() == this )
 		return true;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	if ( inputInfo.GetDamageType() & DMG_ACID )
 		return true;
-#endif
+//#endif
 
 	// In commentary, ignore all damage except for falling and leeches
 	if ( !(inputInfo.GetDamageType() & (DMG_BURN | DMG_PLASMA | DMG_FALL | DMG_CRUSH)) && inputInfo.GetDamageType() != DMG_GENERIC )
@@ -5143,9 +5143,9 @@ void CBasePlayer::PostThink()
 				if ( m_hUseEntity->OnControls( this ) && 
 					( !GetActiveWeapon() || GetActiveWeapon()->GetEngineObject()->IsEffectActive( EF_NODRAW ) ||
 					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 
-	#ifdef PORTAL // Portalgun view model stays up when holding an object -Jeep
+	//#ifdef PORTAL // Portalgun view model stays up when holding an object -Jeep
 					|| FClassnameIs( GetActiveWeapon(), "weapon_portalgun" ) 
-	#endif //#ifdef PORTAL			
+	//#endif //#ifdef PORTAL			
 					) )
 				{  
 					m_hUseEntity->Use( this, this, USE_SET, 2 );	// try fire the gun

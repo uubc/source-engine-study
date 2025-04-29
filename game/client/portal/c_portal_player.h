@@ -96,7 +96,7 @@ public:
 	CBaseEntity*	FindUseEntity( void );
 	CBaseEntity*	FindUseEntityThroughPortal( void );
 
-	inline bool		IsCloseToPortal( void ) //it's usually a good idea to turn on draw hacks when this is true
+	virtual bool		IsCloseToPortal( void ) //it's usually a good idea to turn on draw hacks when this is true
 	{
 		return ((PortalEyeInterpolation.m_bEyePositionIsInterpolating) || (GetEnginePlayer()->GetPortalEnvironment() != NULL));
 	} 

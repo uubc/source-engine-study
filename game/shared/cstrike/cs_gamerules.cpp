@@ -4825,7 +4825,7 @@ called each time a player is spawned into the game
 		IServerEntity *pCur = EntityList()->FirstEnt();
 		while ( pCur )
 		{
-			CWeaponCSBase *pWeapon = dynamic_cast< CWeaponCSBase* >( pCur );
+			CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon* >( pCur );
 			// Weapons with owners don't want to be removed..
 			if ( pWeapon )
 			{

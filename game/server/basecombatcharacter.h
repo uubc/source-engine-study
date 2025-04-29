@@ -135,17 +135,17 @@ public:
 	virtual bool		FVisible( const Vector &vecTarget, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL )	{ return BaseClass::FVisible( vecTarget, traceMask, ppBlocker ); }
 	static void			ResetVisibilityCache( CBaseCombatCharacter *pBCC = NULL );
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	virtual	bool		FVisibleThroughPortal( const IEnginePortalServer *pPortal, CBaseEntity *pEntity, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL );
-#endif
+//#endif
 
 	virtual bool		FInViewCone( IServerEntity *pEntity );
 	virtual bool		FInViewCone( const Vector &vecSpot );
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	virtual IEnginePortalServer*	FInViewConeThroughPortal( CBaseEntity *pEntity );
 	virtual IEnginePortalServer*	FInViewConeThroughPortal( const Vector &vecSpot );
-#endif
+//#endif
 
 	virtual bool		FInAimCone( CBaseEntity *pEntity );
 	virtual bool		FInAimCone( const Vector &vecSpot );

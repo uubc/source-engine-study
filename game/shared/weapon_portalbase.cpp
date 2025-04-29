@@ -151,6 +151,14 @@ CBasePlayer* CWeaponPortalBase::GetPlayerOwner() const
 	return dynamic_cast< CBasePlayer* >( GetOwner() );
 }
 
+bool CWeaponPortalBase::ShouldRemoveOnRoundRestart()
+{
+	if (GetPlayerOwner())
+		return false;
+	else
+		return true;
+}
+
 //CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
 //{
 //	return dynamic_cast< CPortal_Player* >( GetOwner() );

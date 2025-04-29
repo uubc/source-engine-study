@@ -145,9 +145,9 @@ protected:
 	// Purpose: Computes the actual world list info based on the render flags
 	void			PruneWorldListInfo();
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	virtual bool	ShouldDrawPortals() { return true; }
-#endif
+//#endif
 
 	void ReleaseLists();
 

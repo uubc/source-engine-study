@@ -47,7 +47,7 @@ BEGIN_PREDICTION_DATA( CBasePortalCombatWeapon )
 END_PREDICTION_DATA()
 #endif
 
-//extern ConVar sk_auto_reload_time;
+extern ConVar sk_auto_reload_time;
 
 CBasePortalCombatWeapon::CBasePortalCombatWeapon( void )
 {
@@ -70,7 +70,6 @@ void CBasePortalCombatWeapon::ItemHolsterFrame( void )
 		return;
 
 	// If it's been longer than three seconds, reload
-	ConVarRef sk_auto_reload_time("sk_auto_reload_time");
 	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
 	{
 		// Just load the clip with no animations

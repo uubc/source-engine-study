@@ -19,9 +19,9 @@
 #include "utlmultilist.h"
 #include "tier1/callqueue.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "portal_util_shared.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

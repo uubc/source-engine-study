@@ -1629,8 +1629,8 @@ void C_Portal_Player::CalcViewModelView( const Vector& eyeOrigin, const QAngle& 
 	}
 }
 
-bool LocalPlayerIsCloseToPortal( void )
-{
-	return C_Portal_Player::GetLocalPlayer()->IsCloseToPortal();
-}
+//bool LocalPlayerIsCloseToPortal( void )
+//{
+//	return C_Portal_Player::GetLocalPlayer()->IsCloseToPortal();
+//}
 

@@ -34,11 +34,11 @@
 #include "cdll_int.h"
 #include "filesystem.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 #include "PortalSimulation.h"
 #include "prop_portal.h"
 //#include "Portal_PhysicsEnvironmentMgr.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

@@ -87,6 +87,7 @@ public:
 
 	CBasePlayer* GetPlayerOwner() const;
 	//CPortal_Player* GetPortalPlayerOwner() const;
+	virtual bool	ShouldRemoveOnRoundRestart();
 
 	// Get specific Portal weapon ID (ie: WEAPON_PORTALGUN, etc)
 	virtual PortalWeaponID GetWeaponID( void ) const { return WEAPON_NONE; }

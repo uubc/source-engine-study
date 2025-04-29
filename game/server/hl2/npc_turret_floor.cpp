@@ -23,10 +23,10 @@
 #include "props.h"
 #include "particle_parse.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "prop_portal_shared.h"
 	#include "portal_util_shared.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1263,7 +1263,7 @@ bool CNPC_FloorTurret::IsValidEnemy( CBaseEntity *pEnemy )
 	//	- Can only aim +-15 degrees, + the 10 degree slop they're allowed.
 	Vector vEnemyPos = pEnemy->EyePosition();
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	if ( !FInViewCone( pEnemy ) || !FVisible( pEnemy ) )
 	{
 		IEnginePortalServer *pPortal = FInViewConeThroughPortal( pEnemy );
@@ -1274,7 +1274,7 @@ bool CNPC_FloorTurret::IsValidEnemy( CBaseEntity *pEnemy )
 			UTIL_Portal_PointTransform( pPortal->GetLinkedPortal()->MatrixThisToLinked(), vEnemyPos, vEnemyPos);
 		}
 	}
-#endif
+//#endif
 
 	Vector los = ( vEnemyPos - EyePosition() );
 

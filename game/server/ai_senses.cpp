@@ -14,9 +14,9 @@
 #include "ai_basenpc.h"
 #include "saverestore_utlvector.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "portal_util_shared.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -173,12 +173,12 @@ bool CAI_Senses::CanSeeEntity( CBaseEntity *pSightEnt )
 	return ( GetOuter()->FInViewCone( pSightEnt ) && GetOuter()->FVisible( pSightEnt ) );
 }
 
-#ifdef PORTAL
+//#ifdef PORTAL
 bool CAI_Senses::CanSeeEntityThroughPortal( const IEnginePortalServer *pPortal, CBaseEntity *pSightEnt )
 {
 	return GetOuter()->FVisibleThroughPortal( pPortal, pSightEnt );
 }
-#endif
+//#endif
 
 //-----------------------------------------------------------------------------
 
@@ -372,7 +372,7 @@ bool CAI_Senses::Look( CBaseEntity *pSightEnt )
 	return false;
 }
 
-#ifdef PORTAL
+//#ifdef PORTAL
 bool CAI_Senses::LookThroughPortal( const IEnginePortalServer *pPortal, CBaseEntity *pSightEnt )
 {
 	if ( WaitingUntilSeen( pSightEnt ) )
@@ -384,7 +384,7 @@ bool CAI_Senses::LookThroughPortal( const IEnginePortalServer *pPortal, CBaseEnt
 	}
 	return false;
 }
-#endif
+//#endif
 
 //-----------------------------------------------------------------------------
 
@@ -412,7 +412,7 @@ int CAI_Senses::LookForHighPriorityEntities( int iDistance )
 				{
 					nSeen++;
 				}
-#ifdef PORTAL
+//#ifdef PORTAL
 				else
 				{
 					IEnginePortalServer *pPortal = GetOuter()->FInViewConeThroughPortal((CBaseEntity*)pPlayer );
@@ -421,7 +421,7 @@ int CAI_Senses::LookForHighPriorityEntities( int iDistance )
 						nSeen++;
 					}
 				}
-#endif
+//#endif
 			}
 		}
 	

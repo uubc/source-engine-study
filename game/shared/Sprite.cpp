@@ -16,9 +16,9 @@
 	#include "iclientmode.h"
 	#include "iviewrender.h"
 	#include "c_baseviewmodel.h"
-#	ifdef PORTAL
+//#	ifdef PORTAL
 		#include "c_prop_portal.h"
-#	endif //ifdef PORTAL
+//#	endif //ifdef PORTAL
 #else
 	#include "baseviewmodel.h"
 #endif

@@ -29,9 +29,9 @@
 #include "gamestats.h"
 #include "IEffects.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "portal_util_shared.h"
-#endif
+//#endif
 
 #ifdef HL2_DLL
 	extern int g_interactionPlayerLaunchedRPG;
@@ -1964,15 +1964,15 @@ void CWeaponRPG::UpdateLaserPosition( Vector vecMuzzlePos, Vector vecEndPos )
 	trace_t	tr;
 	
 	// Trace out for the endpoint
-#ifdef PORTAL
+//#ifdef PORTAL
 	g_bBulletPortalTrace = true;
 	Ray_t rayLaser;
 	rayLaser.Init( vecMuzzlePos, vecEndPos );
 	UTIL_Portal_TraceRay(EntityList(), rayLaser, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
 	g_bBulletPortalTrace = false;
-#else
-	UTIL_TraceLine(EntityList(), vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
-#endif
+//#else
+//	UTIL_TraceLine(EntityList(), vecMuzzlePos, vecEndPos, (MASK_SHOT & ~CONTENTS_WINDOW), this, COLLISION_GROUP_NONE, &tr );
+//#endif
 
 	// Move the laser sprite
 	if ( m_hLaserDot != NULL )

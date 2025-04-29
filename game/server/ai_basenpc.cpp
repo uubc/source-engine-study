@@ -88,9 +88,9 @@
 #include "npc_alyx_episodic.h"
 #endif
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "prop_portal_shared.h"
-#endif
+//#endif
 
 #include "env_debughistory.h"
 #include "collisionutils.h"
@@ -9529,7 +9529,7 @@ Vector CAI_BaseNPC::GetShootEnemyDir( const Vector &shootOrigin, bool bNoisy )
 
 		Vector vecEnemyOffset = pEnemy->BodyTarget( shootOrigin, bNoisy ) - pEnemy->GetEngineObject()->GetAbsOrigin();
 
-#ifdef PORTAL
+//#ifdef PORTAL
 		// Translate the enemy's position across the portals if it's only seen in the portal view cone
 		if ( !FInViewCone( vecEnemyLKP ) || !FVisible( vecEnemyLKP ) )
 		{
@@ -9540,7 +9540,7 @@ Vector CAI_BaseNPC::GetShootEnemyDir( const Vector &shootOrigin, bool bNoisy )
 				UTIL_Portal_PointTransform( pPortal->GetLinkedPortal()->MatrixThisToLinked(), vecEnemyLKP, vecEnemyLKP);
 			}
 		}
-#endif
+//#endif
 
 		Vector retval = vecEnemyOffset + vecEnemyLKP - shootOrigin;
 		VectorNormalize( retval );
@@ -9612,7 +9612,7 @@ Vector CAI_BaseNPC::GetActualShootPosition( const Vector &shootOrigin )
 	Vector vecEnemyOffset = GetEnemy()->BodyTarget( shootOrigin ) - GetEnemy()->GetEngineObject()->GetAbsOrigin();
 	Vector vecTargetPosition = vecEnemyOffset + vecEnemyLKP;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	// Check if it's also visible through portals
 	IEnginePortalServer *pPortal = FInViewConeThroughPortal( vecEnemyLKP );
 	if ( pPortal )
@@ -9634,7 +9634,7 @@ Vector CAI_BaseNPC::GetActualShootPosition( const Vector &shootOrigin )
 			vecTargetPosition = vecTargetPositionTransformed;
 		}
 	}
-#endif
+//#endif
 
 	// lead for some fraction of a second.
 	return (vecTargetPosition + ( GetEnemy()->GetSmoothedVelocity() * ai_lead_time.GetFloat() ));

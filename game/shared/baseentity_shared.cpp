@@ -47,9 +47,9 @@ ConVar hl2_episodic( "hl2_episodic", "1", FCVAR_REPLICATED );
 ConVar hl2_episodic( "hl2_episodic", "0", FCVAR_REPLICATED );
 #endif//HL2_EPISODIC
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "prop_portal_shared.h"
-#endif
+//#endif
 
 #ifdef TF_DLL
 #include "tf_gamerules.h"
@@ -1022,16 +1022,16 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 		vecEnd = info.m_vecSrc + vecDir * info.m_flDistance;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 		IEnginePortal *pShootThroughPortal = NULL;
 		float fPortalFraction = 2.0f;
-#endif
+//#endif
 
 
 		if( IsPlayer() && info.m_iShots > 1 && iShot % 2 )
 		{
 			// Half of the shotgun pellets are hulls that make it easier to hit targets with the shotgun.
-#ifdef PORTAL
+//#ifdef PORTAL
 			Ray_t rayBullet;
 			rayBullet.Init( info.m_vecSrc, vecEnd );
 			pShootThroughPortal = UTIL_Portal_FirstAlongRay(EntityList(), rayBullet, fPortalFraction );
@@ -1039,13 +1039,13 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			{
 				pShootThroughPortal = NULL;
 			}
-#else
-			AI_TraceHull(EntityList(), info.m_vecSrc, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
-#endif //#ifdef PORTAL
+//#else
+//			AI_TraceHull(EntityList(), info.m_vecSrc, vecEnd, Vector( -3, -3, -3 ), Vector( 3, 3, 3 ), MASK_SHOT, &traceFilter, &tr );
+//#endif //#ifdef PORTAL
 		}
 		else
 		{
-#ifdef PORTAL
+//#ifdef PORTAL
 			Ray_t rayBullet;
 			rayBullet.Init( info.m_vecSrc, vecEnd );
 			pShootThroughPortal = UTIL_Portal_FirstAlongRay(EntityList(), rayBullet, fPortalFraction );
@@ -1053,7 +1053,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			{
 				pShootThroughPortal = NULL;
 			}
-#elif TF_DLL
+#if TF_DLL
 			CTraceFilterIgnoreFriendlyCombatItems traceFilterCombatItem( this, COLLISION_GROUP_NONE, GetTeamNumber() );
 			if ( TFGameRules() && TFGameRules()->GameModeUsesUpgrades() )
 			{
@@ -1065,7 +1065,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				AI_TraceLine(info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
 			}
 #else
-			AI_TraceLine(EntityList(), info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
+//			AI_TraceLine(EntityList(), info.m_vecSrc, vecEnd, MASK_SHOT, &traceFilter, &tr);
 #endif //#ifdef PORTAL
 		}
 
@@ -1081,13 +1081,13 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 		}
 
 	// bullet's final direction can be changed by passing through a portal
-#ifdef PORTAL
+//#ifdef PORTAL
 		if ( !tr.startsolid )
 		{
 			vecDir = tr.endpos - tr.startpos;
 			VectorNormalize( vecDir );
 		}
-#endif
+//#endif
 
 #ifdef GAME_DLL
 		if ( ai_debug_shoot_positions.GetBool() )
@@ -1100,16 +1100,16 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			Vector vBubbleStart = info.m_vecSrc;
 			Vector vBubbleEnd = tr.endpos;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 			if ( pShootThroughPortal )
 			{
 				vBubbleEnd = info.m_vecSrc + ( vecEnd - info.m_vecSrc ) * fPortalFraction;
 			}
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 
 			CreateBubbleTrailTracer( vBubbleStart, vBubbleEnd, vecDir );
 			
-#ifdef PORTAL
+//#ifdef PORTAL
 			if ( pShootThroughPortal )
 			{
 				Vector vTransformedIntersection;
@@ -1117,7 +1117,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 				CreateBubbleTrailTracer( vTransformedIntersection, tr.endpos, vecDir );
 			}
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 
 #endif //#ifdef GAME_DLL
 			bHitWater = true;
@@ -1265,16 +1265,16 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				Tracer = tr;
 				Tracer.endpos = vecTracerDest;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 				if ( pShootThroughPortal )
 				{
 					Tracer.endpos = info.m_vecSrc + ( vecEnd - info.m_vecSrc ) * fPortalFraction;
 				}
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 
 				MakeTracer( vecTracerSrc, Tracer, pAmmoDef->TracerType(info.m_iAmmoType) );
 
-#ifdef PORTAL
+//#ifdef PORTAL
 				if ( pShootThroughPortal )
 				{
 					Vector vTransformedIntersection;
@@ -1295,7 +1295,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				{
 					g_MultiDamage.SetDamagePosition ( info.m_vecSrc );
 				}
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 			}
 			else
 			{

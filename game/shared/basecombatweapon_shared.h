@@ -246,6 +246,8 @@ public:
 	virtual bool			HolsterOnDetach() { return false; }
 	virtual bool			IsHolstered(){ return false; }
 	virtual void			Detach() {}
+	virtual bool			ShouldRemoveOnRoundRestart();
+	virtual void			OnRoundRestart() {}
 
 	// Weapon behaviour
 	virtual void			ItemPreFrame( void );					// called each frame by the player PreThink

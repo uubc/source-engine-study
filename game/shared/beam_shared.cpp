@@ -21,9 +21,9 @@
 #include "iclientmode.h"
 #include "iviewrender.h"
 #include "beamdraw.h"
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "c_prop_portal.h"
-#endif //ifdef PORTAL
+//#endif //ifdef PORTAL
 
 #endif
 
@@ -686,7 +686,7 @@ void CBeam::RelinkBeam( void )
 	Vector vecAbsExtra1, vecAbsExtra2;
 	bool bUseExtraPoints = false;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	IHandleEntity *pStartEntity = GetStartEntityPtr();
 	
 	CTraceFilterSkipClassname traceFilter( pStartEntity, "prop_energy_ball", COLLISION_GROUP_NONE );
@@ -698,7 +698,7 @@ void CBeam::RelinkBeam( void )
 	CTraceFilterChain traceFilterChain( &traceFilter, pEntityBeamTraceFilter );
 
 	bUseExtraPoints = UTIL_Portal_Trace_Beam( this, startPos, endPos, vecAbsExtra1, vecAbsExtra2, &traceFilterChain );
-#endif
+//#endif
 
 	// UNDONE: Should we do this to make the boxes smaller?
 	//SetAbsOrigin( startPos );
@@ -956,9 +956,9 @@ int CBeam::DrawDebugTextOverlays(void)
 //}
 
 extern ConVar r_drawviewmodel;
-#ifdef PORTAL
+//#ifdef PORTAL
 bool bBeamDrawingThroughPortal = false;
-#endif
+//#endif
 void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 {
 
@@ -982,7 +982,7 @@ void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 	beamInfo.m_flBrightness = pbeam->GetFxBlend();
 	beamInfo.m_flSpeed = pbeam->GetScrollRate();
 
-#ifdef PORTAL	// Beams need to recursively draw through portals
+//#ifdef PORTAL	// Beams need to recursively draw through portals
 	// Trace to see if we've intersected a portal
 	float fEndFraction;
 	Ray_t rayBeam;
@@ -1088,7 +1088,7 @@ void CBeam::DrawBeam(C_Beam* pbeam, ITraceFilter* pEntityBeamTraceFilter)
 	}
 
 	bBeamDrawingThroughPortal = false;
-#endif
+//#endif
 
 	beams->SetupBeam(&beam, beamInfo);
 
@@ -1316,7 +1316,7 @@ void CBeam::ComputeBounds( Vector& mins, Vector& maxs )
 	bool bUseExtraPoints = false;
 	Vector vecAbsExtra1, vecAbsExtra2;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	IHandleEntity *pStartEntity = GetStartEntityPtr();
 
 	CTraceFilterSkipClassname traceFilter( pStartEntity, "prop_energy_ball", COLLISION_GROUP_NONE );
@@ -1328,7 +1328,7 @@ void CBeam::ComputeBounds( Vector& mins, Vector& maxs )
 	CTraceFilterChain traceFilterChain( &traceFilter, pEntityBeamTraceFilter );
 
 	bUseExtraPoints = UTIL_Portal_Trace_Beam( this, vecAbsStart, vecAbsEnd, vecAbsExtra1, vecAbsExtra2, &traceFilterChain );
-#endif
+//#endif
 
 	switch( GetType() )
 	{

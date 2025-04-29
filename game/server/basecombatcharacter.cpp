@@ -45,11 +45,11 @@
 #include "hl2_gamerules.h"
 #endif
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	#include "portal_util_shared.h"
 	#include "prop_portal_shared.h"
 	#include "portal_shareddefs.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -438,7 +438,7 @@ void CBaseCombatCharacter::ResetVisibilityCache( CBaseCombatCharacter *pBCC )
 	}
 }
 
-#ifdef PORTAL
+//#ifdef PORTAL
 bool CBaseCombatCharacter::FVisibleThroughPortal( const IEnginePortalServer *pPortal, CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker )
 {
 	VPROF( "CBaseCombatCharacter::FVisible" );
@@ -499,7 +499,7 @@ bool CBaseCombatCharacter::FVisibleThroughPortal( const IEnginePortalServer *pPo
 
 	return true;// line of sight is valid.
 }
-#endif
+//#endif
 
 //-----------------------------------------------------------------------------
 
@@ -536,7 +536,7 @@ bool CBaseCombatCharacter::FInViewCone( const Vector &vecSpot )
 	return false;
 }
 
-#ifdef PORTAL
+//#ifdef PORTAL
 //=========================================================
 // FInViewCone - returns true is the passed ent is in
 // the caller's forward view cone. The dot product is performed
@@ -638,7 +638,7 @@ IEnginePortalServer* CBaseCombatCharacter::FInViewConeThroughPortal( const Vecto
 
 	return pBestPortal;
 }
-#endif
+//#endif
 
 
 //=========================================================

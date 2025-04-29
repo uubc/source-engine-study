@@ -15,11 +15,11 @@
 #include "materialsystem/imaterialvar.h"
 #include "materialsystem/itexture.h"
 
-#ifdef PORTAL
+//#ifdef PORTAL
 //#include "C_Portal_Player.h"
 #include "portal_render_targets.h"
 #include "PortalRender.h"
-#endif
+//#endif
 
 //-----------------------------------------------------------------------------
 // debugging overlays

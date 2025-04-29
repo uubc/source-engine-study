@@ -103,12 +103,12 @@ CGlowOverlay::CGlowOverlay()
 		m_Sprites[i].m_pMaterial	= NULL;
 	}
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	for( int i = 0; i != MAX_PORTAL_RECURSIVE_VIEWS; ++i )
 	{
 		m_skyObstructionScaleBackups[i] = 1.0f;
 	}
-#endif
+//#endif
 }
 
 
