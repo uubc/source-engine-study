@@ -449,8 +449,8 @@ bool CBaseCombatCharacter::FVisibleThroughPortal( const IEnginePortalServer *pPo
 #if HL1_DLL
 	// FIXME: only block LOS through opaque water
 	// don't look through water
-	if ((m_nWaterLevel != 3 && pEntity->m_nWaterLevel == 3) 
-		|| (m_nWaterLevel == 3 && pEntity->m_nWaterLevel == 0))
+	if ((GetEngineObject()->GetWaterLevel() != 3 && pEntity->GetEngineObject()->GetWaterLevel() == 3)
+		|| (GetEngineObject()->GetWaterLevel() == 3 && pEntity->GetEngineObject()->GetWaterLevel() == 0))
 		return false;
 #endif
 
