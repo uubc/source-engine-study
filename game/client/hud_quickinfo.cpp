@@ -14,7 +14,9 @@
 #include "vgui_controls/Controls.h"
 #include "vgui_controls/Panel.h"
 #include "vgui/ISurface.h"
+#ifdef PORTAL
 #include "c_portal_player.h"
+#endif // PORTAL
 #include "c_weapon_portalgun.h"
 #include "IGameUIFuncs.h"
 
@@ -174,15 +176,17 @@ bool CHUDQuickInfo::ShouldDraw( void )
 	if ( !m_icon_c || !m_icon_rb || !m_icon_rbe || !m_icon_lb || !m_icon_lbe )
 		return false;
 
-	C_Portal_Player *player = ToPortalPlayer(EntityList()->GetLocalPlayer());
+	IClientEntity *player = EntityList()->GetLocalPlayer();
 	if ( player == NULL )
 		return false;
 
 	if ( !crosshair.GetBool() )
 		return false;
 
-	if ( player->IsSuppressingCrosshair() )
+#ifdef PORTAL
+	if (ToPortalPlayer(player)->IsSuppressingCrosshair() )
 		return false;
+#endif // PORTAL
 
 	return ( CHudElement::ShouldDraw() && !engine->IsDrawingLoadingImage() );
 }
@@ -190,7 +194,7 @@ bool CHUDQuickInfo::ShouldDraw( void )
 
 void CHUDQuickInfo::Paint()
 {
-	C_Portal_Player *pPortalPlayer = (C_Portal_Player*)EntityList()->GetLocalPlayer();
+	IClientEntity *pPortalPlayer = EntityList()->GetLocalPlayer();
 	if ( pPortalPlayer == NULL )
 		return;
 

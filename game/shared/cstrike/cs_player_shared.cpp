@@ -308,19 +308,19 @@ static bool TraceToExit(Vector &start, Vector &dir, Vector &end, float flStepSiz
 	return false;
 }
 
-inline void UTIL_TraceLineIgnoreTwoEntities( const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask,
-					 const IHandleEntity *ignore, const IHandleEntity *ignore2, int collisionGroup, trace_t *ptr )
-{
-	Ray_t ray;
-	ray.Init( vecAbsStart, vecAbsEnd );
-	CTraceFilterSkipTwoEntities traceFilter( ignore, ignore2, collisionGroup );
-	enginetrace->TraceRay( ray, mask, &traceFilter, ptr );
-	ConVarRef r_visualizetraces("r_visualizetraces");
-	if( r_visualizetraces.GetBool() )
-	{
-		EntityList()->GetWorld()->DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
-	}
-}
+//inline void UTIL_TraceLineIgnoreTwoEntities( const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask,
+//					 const IHandleEntity *ignore, const IHandleEntity *ignore2, int collisionGroup, trace_t *ptr )
+//{
+//	Ray_t ray;
+//	ray.Init(vecAbsStart, vecAbsEnd);
+//	CTraceFilterSkipTwoEntities traceFilter(ignore, ignore2, collisionGroup);
+//	enginetrace->TraceRay(ray, mask, &traceFilter, ptr);
+//	ConVarRef r_visualizetraces("r_visualizetraces");
+//	if (r_visualizetraces.GetBool())
+//	{
+//		EntityList()->GetWorld()->DebugDrawLine(ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f);
+//	}
+//}
 
 void CCSPlayer::FireBullet(
 	Vector vecSrc,	// shooting postion
@@ -422,7 +422,30 @@ void CCSPlayer::FireBullet(
 
 		trace_t tr; // main enter bullet trace
 
-		UTIL_TraceLineIgnoreTwoEntities( vecSrc, vecEnd, CS_MASK_SHOOT|CONTENTS_HITBOX, this, lastPlayerHit, COLLISION_GROUP_NONE, &tr );
+		//UTIL_TraceLineIgnoreTwoEntities( vecSrc, vecEnd, CS_MASK_SHOOT|CONTENTS_HITBOX, this, lastPlayerHit, COLLISION_GROUP_NONE, &tr );
+		IEnginePortal* pShootThroughPortal = NULL;
+		float fPortalFraction = 2.0f;
+
+		Ray_t ray;
+		ray.Init(vecSrc, vecEnd);
+		CTraceFilterSkipTwoEntities traceFilter(this, lastPlayerHit, COLLISION_GROUP_NONE);
+		pShootThroughPortal = UTIL_Portal_FirstAlongRay(EntityList(), ray, fPortalFraction);
+		if (!UTIL_Portal_TraceRay_Bullets(EntityList(), pShootThroughPortal, ray, CS_MASK_SHOOT | CONTENTS_HITBOX, &traceFilter, &tr))
+		{
+			pShootThroughPortal = NULL;
+		}
+		//enginetrace->TraceRay(ray, mask, &traceFilter, ptr);
+		ConVarRef r_visualizetraces("r_visualizetraces");
+		if (r_visualizetraces.GetBool())
+		{
+			EntityList()->GetWorld()->DebugDrawLine(tr.startpos, tr.endpos, 255, 0, 0, true, -1.0f);
+		}
+
+		if (!tr.startsolid)
+		{
+			vecDir = tr.endpos - tr.startpos;
+			VectorNormalize(vecDir);
+		}
 		{
 			CTraceFilterSkipTwoEntities filter( this, lastPlayerHit, COLLISION_GROUP_NONE );
 

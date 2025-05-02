@@ -1569,19 +1569,7 @@
     <ClCompile Include="..\..\..\game\client\portal\clientmode_portal.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\portal\fx_portal.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\client\portal\hud_quickinfo.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\client\portal\MaterialProxy_Portal_PickAlphaMask.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\portal\portal_credits.cpp">
-      <Filter>源文件\Portal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\game\client\portal\portal_hud_crosshair.cpp">
       <Filter>源文件\Portal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\client\portal\vgui_neurotoxin_countdown_screen.cpp">
@@ -1690,6 +1678,18 @@
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\client\portal_hud_crosshair.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\client\MaterialProxy_Portal_PickAlphaMask.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\client\fx_portal.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\game\client\hud_quickinfo.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

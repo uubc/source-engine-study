@@ -1078,6 +1078,7 @@ public:
 	virtual void ThirdPersonSwitch(bool bThirdperson) = 0;
 	virtual bool IsAutoAimTarget() = 0;
 	virtual bool IsCloseToPortal(void) = 0;
+	virtual bool IsInVGuiInputMode() const = 0;
 };
 
 class IClientNPC : public IHandleNPC {

@@ -50,6 +50,7 @@ void RegisterUserMessages()
 	usermessages->Register( "UpdateRadar", -1 );
 	usermessages->Register( "KillCam", -1 );
 	usermessages->Register( "MarkAchievement", -1 );
+	usermessages->Register("EntityPortalled", sizeof(long) + sizeof(long) + sizeof(Vector) + sizeof(QAngle)); //something got teleported through a portal
 
 	// Voting
 	usermessages->Register( "CallVoteFailed", -1 );

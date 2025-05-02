@@ -9,7 +9,7 @@
 #include "hud.h"
 #include "portal_hud_crosshair.h"
 #include "iclientmode.h"
-#include "c_portal_player.h"
+//#include "c_portal_player.h"
 #include "weapon_portalbase.h"
 #include "vgui_controls/Controls.h"
 #include "vgui/ISurface.h"
@@ -59,12 +59,12 @@ bool CHudPortalCrosshair::ShouldDraw()
 {
 	// NOTE: Portal crosshair should no longer be in use, but I'm leaving the code here until X360 lock down... we don't want to draw this ever. -Jeep
 	return false;
-	C_Portal_Player *pPlayer = C_Portal_Player::GetLocalPortalPlayer();
+	IClientEntity *pPlayer = EntityList()->GetLocalPlayer();
 
 	if ( !pPlayer )
 		return false;
 
-	CWeaponPortalBase *pWeapon = dynamic_cast<CWeaponPortalBase*>( pPlayer->GetActiveWeapon() );
+	CWeaponPortalBase *pWeapon = dynamic_cast<CWeaponPortalBase*>( pPlayer->AsHandlePlayer()->GetActiveWeapon());
 
 	if ( !pWeapon )
 		return false;
@@ -76,8 +76,8 @@ bool CHudPortalCrosshair::ShouldDraw()
 			g_pGameRules->ShouldDrawCrosshair() &&
 			!( pPlayer->GetEngineObject()->GetFlags() & FL_FROZEN ) &&
 			( pPlayer->entindex() == render->GetViewEntity() ) &&
-			!pPlayer->IsInVGuiInputMode() &&
-			( pPlayer->IsAlive() ||	( pPlayer->GetObserverMode() == OBS_MODE_IN_EYE ) || ( cl_observercrosshair.GetBool() && pPlayer->GetObserverMode() == OBS_MODE_ROAMING ) );
+			!pPlayer->AsHandlePlayer()->IsInVGuiInputMode() &&
+			( pPlayer->IsAlive() ||	( pPlayer->AsHandlePlayer()->GetObserverMode() == OBS_MODE_IN_EYE ) || ( cl_observercrosshair.GetBool() && pPlayer->AsHandlePlayer()->GetObserverMode() == OBS_MODE_ROAMING ) );
 
 	return ( bNeedsDraw && CHudElement::ShouldDraw() );
 }

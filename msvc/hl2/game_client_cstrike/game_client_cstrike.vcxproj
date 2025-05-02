@@ -268,6 +268,7 @@
     <ClCompile Include="..\..\..\game\client\fx_impact.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_interpvalue.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_line.cpp" />
+    <ClCompile Include="..\..\..\game\client\fx_portal.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_quad.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_shelleject.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_sparks.cpp" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\..\..\game\client\hud_msg.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_numericdisplay.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_pdump.cpp" />
+    <ClCompile Include="..\..\..\game\client\hud_quickinfo.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_redraw.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_vehicle.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_voicestatus.cpp" />
@@ -332,6 +334,7 @@
     <ClCompile Include="..\..\..\game\client\lampbeamproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lamphaloproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp" />
+    <ClCompile Include="..\..\..\game\client\MaterialProxy_Portal_PickAlphaMask.cpp" />
     <ClCompile Include="..\..\..\game\client\mathproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\matrixproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\menu.cpp" />
@@ -361,6 +364,7 @@
     <ClCompile Include="..\..\..\game\client\PortalRender.cpp" />
     <ClCompile Include="..\..\..\game\client\portalrenderable_flatbasic.cpp" />
     <ClCompile Include="..\..\..\game\client\Portal_DynamicMeshRenderingUtils.cpp" />
+    <ClCompile Include="..\..\..\game\client\portal_hud_crosshair.cpp" />
     <ClCompile Include="..\..\..\game\client\portal_render_targets.cpp" />
     <ClCompile Include="..\..\..\game\client\proxyentity.cpp" />
     <ClCompile Include="..\..\..\game\client\ProxyHealth.cpp" />

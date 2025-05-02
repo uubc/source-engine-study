@@ -44,7 +44,11 @@
 #define MAXIMUM_PORTAL_EXIT_VELOCITY 1000.0f
 
 ConVar sv_portal_debug_touch("sv_portal_debug_touch", "0", FCVAR_REPLICATED );
-ConVar sv_portal_placement_never_fail("sv_portal_placement_never_fail", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+#ifndef PORTAL
+ConVar sv_portal_placement_never_fail("sv_portal_placement_never_fail", "1", FCVAR_REPLICATED | FCVAR_CHEAT);
+#else
+ConVar sv_portal_placement_never_fail("sv_portal_placement_never_fail", "0", FCVAR_REPLICATED | FCVAR_CHEAT);
+#endif // !PORTAL
 ConVar sv_portal_new_velocity_check("sv_portal_new_velocity_check", "1", FCVAR_CHEAT );
 
 static CUtlVector<CProp_Portal *> s_PortalLinkageGroups[256];
@@ -2168,8 +2172,8 @@ CProp_Portal *CProp_Portal::FindPortal( unsigned char iLinkageGroupID, bool bPor
 	if( bCreateIfNothingFound )
 	{
 		CProp_Portal *pPortal = (CProp_Portal *)EntityList()->CreateEntityByName( "prop_portal" );
-		EntityList()->DispatchSpawn(pPortal);
 		pPortal->m_iLinkageGroupID = iLinkageGroupID;
+		EntityList()->DispatchSpawn(pPortal);
 		pPortal->GetEnginePortal()->SetPortal2(bPortal2);
 		return pPortal;
 	}

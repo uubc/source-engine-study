@@ -516,6 +516,12 @@ $Project
 		$File	"c_weapon_portalgun.cpp"
 		$File	"c_weapon_portalgun.h"
 		$File	"materialproxy_portalstatic.cpp"
+		$File	"portal_hud_crosshair.cpp"
+		$File	"portal_hud_crosshair.h"
+		$File	"MaterialProxy_Portal_PickAlphaMask.cpp"
+		$File	"fx_portal.cpp"
+		$File	"hud_quickinfo.cpp"
+
 		
 		
 		$Folder	"Sixense"

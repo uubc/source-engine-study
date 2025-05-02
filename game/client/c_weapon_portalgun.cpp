@@ -216,6 +216,14 @@ void C_WeaponPortalgun::StartEffects( void )
 		pModelView = pModelWorld;
 	}
 
+	MDLHandle_t hModelViewMDL = mdlcache->FindMDL(GetWpnData().szViewModel);
+	IStudioHdr* pModelViewHdr = mdlcache->GetIStudioHdr(hModelViewMDL);
+	MDLHandle_t hpModelWorldMDL = mdlcache->FindMDL(GetWpnData().szWorldModel);
+	IStudioHdr* pModelWorldHdr = mdlcache->GetIStudioHdr(hpModelWorldMDL);
+	if (!pModelViewHdr) {
+		pModelViewHdr = pModelWorldHdr;
+	}
+
 	// ------------------------------------------
 	// Lights
 	// ------------------------------------------
@@ -224,7 +232,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_GRAVLIGHT].GetScale().SetAbsolute( 0.018f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_GRAVLIGHT].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_GRAVLIGHT].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_GRAVLIGHT].SetAttachment(pModelViewHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_GRAVLIGHT].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_GRAVLIGHT].SetMaterial( PORTALGUN_GRAV_ACTIVE_GLOW ) == false )
@@ -238,7 +246,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].GetScale().SetAbsolute( 0.03f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].SetAttachment(pModelWorldHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_GRAVLIGHT_WORLD].SetMaterial( PORTALGUN_GRAV_ACTIVE_GLOW ) == false )
@@ -252,7 +260,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_PORTAL1LIGHT].GetScale().SetAbsolute( 0.018f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_PORTAL1LIGHT].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_PORTAL1LIGHT].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_PORTAL1LIGHT].SetAttachment(pModelViewHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_PORTAL1LIGHT].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_PORTAL1LIGHT].SetMaterial( PORTALGUN_PORTAL1_FIRED_LAST_GLOW ) == false )
@@ -266,7 +274,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].GetScale().SetAbsolute( 0.03f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].SetAttachment(pModelWorldHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_PORTAL1LIGHT_WORLD].SetMaterial( PORTALGUN_PORTAL1_FIRED_LAST_GLOW ) == false )
@@ -280,7 +288,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_PORTAL2LIGHT].GetScale().SetAbsolute( 0.018f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_PORTAL2LIGHT].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_PORTAL2LIGHT].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_PORTAL2LIGHT].SetAttachment(pModelViewHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_PORTAL2LIGHT].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_PORTAL2LIGHT].SetMaterial( PORTALGUN_PORTAL2_FIRED_LAST_GLOW ) == false )
@@ -294,7 +302,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].GetScale().SetAbsolute( 0.03f * SPRITE_SCALE );
 		m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( "Body_light" ) );
+		m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].SetAttachment(pModelWorldHdr->Studio_FindAttachment( "Body_light" )+1 );
 		m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].SetVisible( false );
 
 		if ( m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].SetMaterial( PORTALGUN_PORTAL2_FIRED_LAST_GLOW ) == false )
@@ -328,7 +336,7 @@ void C_WeaponPortalgun::StartEffects( void )
 		m_Parameters[i].GetAlpha().SetAbsolute( 24.0f );
 
 		// Different for different views
-		m_Parameters[i].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( attachNamesGlow[i-PORTALGUN_GLOW1] ) );
+		m_Parameters[i].SetAttachment(pModelViewHdr->Studio_FindAttachment( attachNamesGlow[i-PORTALGUN_GLOW1] )+1 );
 		m_Parameters[i].SetColor( Vector( 255, 128, 0 ) );
 		m_Parameters[i].SetVisible( false );
 
@@ -349,7 +357,7 @@ void C_WeaponPortalgun::StartEffects( void )
 		m_Parameters[i].GetAlpha().SetAbsolute( 24.0f );
 
 		// Different for different views
-		m_Parameters[i].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( attachNamesGlow[i-PORTALGUN_GLOW1_WORLD] ) );
+		m_Parameters[i].SetAttachment(pModelWorldHdr->Studio_FindAttachment( attachNamesGlow[i-PORTALGUN_GLOW1_WORLD] )+1 );
 		m_Parameters[i].SetColor( Vector( 255, 128, 0 ) );
 		m_Parameters[i].SetVisible( false );
 
@@ -379,7 +387,7 @@ void C_WeaponPortalgun::StartEffects( void )
 
 		m_Parameters[i].GetScale().SetAbsolute( 0.02f * SPRITE_SCALE );
 		m_Parameters[i].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[i].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( attachNamesEndCap[i-PORTALGUN_ENDCAP1] ) );
+		m_Parameters[i].SetAttachment(pModelViewHdr->Studio_FindAttachment( attachNamesEndCap[i-PORTALGUN_ENDCAP1] )+1 );
 		m_Parameters[i].SetVisible( false );
 
 		if ( m_Parameters[i].SetMaterial( PORTALGUN_ENDCAP_SPRITE ) == false )
@@ -397,7 +405,7 @@ void C_WeaponPortalgun::StartEffects( void )
 
 		m_Parameters[i].GetScale().SetAbsolute( 0.04f * SPRITE_SCALE );
 		m_Parameters[i].GetAlpha().SetAbsolute( 128.0f );
-		m_Parameters[i].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( attachNamesEndCap[i-PORTALGUN_ENDCAP1_WORLD] ) );
+		m_Parameters[i].SetAttachment(pModelWorldHdr->Studio_FindAttachment( attachNamesEndCap[i-PORTALGUN_ENDCAP1_WORLD] )+1 );
 		m_Parameters[i].SetVisible( false );
 
 		if ( m_Parameters[i].SetMaterial( PORTALGUN_ENDCAP_SPRITE ) == false )
@@ -418,7 +426,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[i].GetScale().SetAbsolute( 0.025f * SPRITE_SCALE );
 		m_Parameters[i].GetAlpha().SetAbsolute( 64.0f );
-		m_Parameters[i].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( "Inside_effects" ) );
+		m_Parameters[i].SetAttachment(pModelViewHdr->Studio_FindAttachment( "Inside_effects" )+1 );
 		m_Parameters[i].SetVisible( false );
 
 		if ( m_Parameters[i].SetMaterial( PORTALGUN_PORTAL_MUZZLE_GLOW_SPRITE ) == false )
@@ -435,7 +443,7 @@ void C_WeaponPortalgun::StartEffects( void )
 	{
 		m_Parameters[i].GetScale().SetAbsolute( 0.025f * SPRITE_SCALE );
 		m_Parameters[i].GetAlpha().SetAbsolute( 64.0f );
-		m_Parameters[i].SetAttachment( pModelWorld->GetEngineObject()->LookupAttachment( "Inside_effects" ) );
+		m_Parameters[i].SetAttachment(pModelWorldHdr->Studio_FindAttachment( "Inside_effects" )+1 );
 		m_Parameters[i].SetVisible( false );
 
 		if ( m_Parameters[i].SetMaterial( PORTALGUN_PORTAL_MUZZLE_GLOW_SPRITE ) == false )
@@ -465,7 +473,7 @@ void C_WeaponPortalgun::StartEffects( void )
 		{
 			m_Parameters[i].GetScale().SetAbsolute( cl_portalgun_beam_size.GetFloat() * SPRITE_SCALE );
 			m_Parameters[i].GetAlpha().SetAbsolute( 255.0f );
-			m_Parameters[i].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( attachNamesTubeBeam[i-PORTALGUN_TUBE_BEAM1] ) );
+			m_Parameters[i].SetAttachment(pModelViewHdr->Studio_FindAttachment( attachNamesTubeBeam[i-PORTALGUN_TUBE_BEAM1] )+1 );
 			m_Parameters[i].SetVisible( false );
 
 			if ( m_Parameters[i].SetMaterial( PORTALGUN_PORTAL_TUBE_BEAM_SPRITE ) == false )
@@ -483,7 +491,7 @@ void C_WeaponPortalgun::StartEffects( void )
 		{
 			m_Parameters[i].GetScale().SetAbsolute( cl_portalgun_beam_size.GetFloat() * SPRITE_SCALE );
 			m_Parameters[i].GetAlpha().SetAbsolute( 255.0f );
-			m_Parameters[i].SetAttachment( pModelView->GetEngineObject()->LookupAttachment( attachNamesTubeBeam[i-PORTALGUN_TUBE_BEAM1_WORLD] ) );
+			m_Parameters[i].SetAttachment(pModelViewHdr->Studio_FindAttachment( attachNamesTubeBeam[i-PORTALGUN_TUBE_BEAM1_WORLD] )+1 );
 			m_Parameters[i].SetVisible( false );
 
 			if ( m_Parameters[i].SetMaterial( PORTALGUN_PORTAL_TUBE_BEAM_SPRITE ) == false )
@@ -501,20 +509,20 @@ void C_WeaponPortalgun::StartEffects( void )
 	// Setup the beams
 	int iBeam = 0;
 
-	if ( pModelView != pModelWorld )
+	if (pModelViewHdr != pModelWorldHdr)
 	{
-		m_Beams[iBeam++].Init( pModelView->GetEngineObject()->LookupAttachment( "Arm1_attach3" ), pModelView->GetEngineObject()->LookupAttachment( "muzzle" ), pModelView, true );
-		m_Beams[iBeam++].Init( pModelView->GetEngineObject()->LookupAttachment( "Arm2_attach3" ), pModelView->GetEngineObject()->LookupAttachment( "muzzle" ), pModelView, true );
-		m_Beams[iBeam++].Init( pModelView->GetEngineObject()->LookupAttachment( "Arm3_attach3" ), pModelView->GetEngineObject()->LookupAttachment( "muzzle" ), pModelView, true );
+		m_Beams[iBeam++].Init(pModelViewHdr->Studio_FindAttachment( "Arm1_attach3" )+1, pModelViewHdr->Studio_FindAttachment( "muzzle" )+1, pModelView, true );
+		m_Beams[iBeam++].Init(pModelViewHdr->Studio_FindAttachment( "Arm2_attach3" )+1, pModelViewHdr->Studio_FindAttachment( "muzzle" )+1, pModelView, true );
+		m_Beams[iBeam++].Init(pModelViewHdr->Studio_FindAttachment( "Arm3_attach3" )+1, pModelViewHdr->Studio_FindAttachment( "muzzle" )+1, pModelView, true );
 	}
 	else
 	{
 		iBeam += 3;
 	}
 
-	m_Beams[iBeam++].Init( pModelWorld->GetEngineObject()->LookupAttachment( "Arm1_attach3" ), pModelWorld->GetEngineObject()->LookupAttachment( "muzzle" ), pModelWorld, false );
-	m_Beams[iBeam++].Init( pModelWorld->GetEngineObject()->LookupAttachment( "Arm2_attach3" ), pModelWorld->GetEngineObject()->LookupAttachment( "muzzle" ), pModelWorld, false );
-	m_Beams[iBeam++].Init( pModelWorld->GetEngineObject()->LookupAttachment( "Arm3_attach3" ), pModelWorld->GetEngineObject()->LookupAttachment( "muzzle" ), pModelWorld, false );
+	m_Beams[iBeam++].Init(pModelWorldHdr->Studio_FindAttachment( "Arm1_attach3" )+1, pModelWorldHdr->Studio_FindAttachment( "muzzle" )+1, pModelWorld, false );
+	m_Beams[iBeam++].Init(pModelWorldHdr->Studio_FindAttachment( "Arm2_attach3" )+1, pModelWorldHdr->Studio_FindAttachment( "muzzle" )+1, pModelWorld, false );
+	m_Beams[iBeam++].Init(pModelWorldHdr->Studio_FindAttachment( "Arm3_attach3" )+1, pModelWorldHdr->Studio_FindAttachment( "muzzle" )+1, pModelWorld, false );
 }
 
 void C_WeaponPortalgun::DestroyEffects( void )
@@ -944,7 +952,7 @@ void C_WeaponPortalgun::DrawEffectSprite( EffectType_t effectID, bool b3rdPerson
 	GetEffectParameters( effectID, color, scale, &pMaterial, vecAttachment, b3rdPerson );
 
 	// Don't render fully translucent objects
-	if ( color.a <= 0.0f )
+	if ( !pMaterial || color.a <= 0.0f )
 		return;
 
 	// Draw the sprite

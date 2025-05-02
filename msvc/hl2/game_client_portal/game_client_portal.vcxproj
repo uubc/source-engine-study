@@ -199,6 +199,7 @@
     <ClCompile Include="..\..\..\game\client\fx_impact.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_interpvalue.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_line.cpp" />
+    <ClCompile Include="..\..\..\game\client\fx_portal.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_quad.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_shelleject.cpp" />
     <ClCompile Include="..\..\..\game\client\fx_sparks.cpp" />
@@ -298,6 +299,7 @@
     <ClCompile Include="..\..\..\game\client\hud_msg.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_numericdisplay.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_pdump.cpp" />
+    <ClCompile Include="..\..\..\game\client\hud_quickinfo.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_redraw.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_squadstatus.cpp" />
     <ClCompile Include="..\..\..\game\client\hud_vehicle.cpp" />
@@ -312,6 +314,7 @@
     <ClCompile Include="..\..\..\game\client\lampbeamproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\lamphaloproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\materialproxy_portalstatic.cpp" />
+    <ClCompile Include="..\..\..\game\client\MaterialProxy_Portal_PickAlphaMask.cpp" />
     <ClCompile Include="..\..\..\game\client\mathproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\matrixproxy.cpp" />
     <ClCompile Include="..\..\..\game\client\menu.cpp" />
@@ -352,14 +355,11 @@
     <ClCompile Include="..\..\..\game\client\portal\c_prop_portal_stats_display.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\c_weapon_physcannon.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\c_weapon_stubs_portal.cpp" />
-    <ClCompile Include="..\..\..\game\client\portal\fx_portal.cpp" />
-    <ClCompile Include="..\..\..\game\client\portal\hud_quickinfo.cpp" />
-    <ClCompile Include="..\..\..\game\client\portal\MaterialProxy_Portal_PickAlphaMask.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\portal_credits.cpp" />
-    <ClCompile Include="..\..\..\game\client\portal\portal_hud_crosshair.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\vgui_neurotoxin_countdown_screen.cpp" />
     <ClCompile Include="..\..\..\game\client\portal\vgui_portal_stats_display_screen.cpp" />
     <ClCompile Include="..\..\..\game\client\Portal_DynamicMeshRenderingUtils.cpp" />
+    <ClCompile Include="..\..\..\game\client\portal_hud_crosshair.cpp" />
     <ClCompile Include="..\..\..\game\client\portal_render_targets.cpp" />
     <ClCompile Include="..\..\..\game\client\proxyentity.cpp" />
     <ClCompile Include="..\..\..\game\client\ProxyHealth.cpp" />
