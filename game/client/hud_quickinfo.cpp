@@ -39,17 +39,17 @@ extern ConVar crosshair;
 
 /*
 ==================================================
-CHUDQuickInfo 
+CHUDQuickInfoPortal 
 ==================================================
 */
 
 using namespace vgui;
 
-class CHUDQuickInfo : public CHudElement, public vgui::Panel
+class CHUDQuickInfoPortal : public CHudElement, public vgui::Panel
 {
-	DECLARE_CLASS_SIMPLE( CHUDQuickInfo, vgui::Panel );
+	DECLARE_CLASS_SIMPLE( CHUDQuickInfoPortal, vgui::Panel );
 public:
-	CHUDQuickInfo( const char *pElementName );
+	CHUDQuickInfoPortal( const char *pElementName );
 	void Init( void );
 	void VidInit( void );
 	bool ShouldDraw( void );
@@ -82,9 +82,9 @@ private:
 	CHudTexture	*m_icon_lbnone;	// left bracket
 };
 
-DECLARE_HUDELEMENT( CHUDQuickInfo );
+DECLARE_HUDELEMENT( CHUDQuickInfoPortal );
 
-CHUDQuickInfo::CHUDQuickInfo( const char *pElementName ) :
+CHUDQuickInfoPortal::CHUDQuickInfoPortal( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HUDQuickInfo" )
 {
 	vgui::Panel *pParent = g_pGameRules->GetViewport();
@@ -96,7 +96,7 @@ CHUDQuickInfo::CHUDQuickInfo( const char *pElementName ) :
 	m_bLastPlacedAlphaCountingUp[0] = m_bLastPlacedAlphaCountingUp[1] = true;
 }
 
-void CHUDQuickInfo::ApplySchemeSettings( IScheme *scheme )
+void CHUDQuickInfoPortal::ApplySchemeSettings( IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
 
@@ -104,13 +104,13 @@ void CHUDQuickInfo::ApplySchemeSettings( IScheme *scheme )
 }
 
 
-void CHUDQuickInfo::Init( void )
+void CHUDQuickInfoPortal::Init( void )
 {
 	m_flLastEventTime   = 0.0f;
 }
 
 
-void CHUDQuickInfo::VidInit( void )
+void CHUDQuickInfoPortal::VidInit( void )
 {
 	Init();
 
@@ -139,7 +139,7 @@ void CHUDQuickInfo::VidInit( void )
 }
 
 
-void CHUDQuickInfo::DrawWarning( int x, int y, CHudTexture *icon, float &time )
+void CHUDQuickInfoPortal::DrawWarning( int x, int y, CHudTexture *icon, float &time )
 {
 	float scale	= (int)( fabs(sin(gpGlobals->curtime*8.0f)) * 128.0);
 
@@ -171,7 +171,7 @@ void CHUDQuickInfo::DrawWarning( int x, int y, CHudTexture *icon, float &time )
 // costly traversal.  Called per frame, return true if thinking and 
 // painting need to occur.
 //-----------------------------------------------------------------------------
-bool CHUDQuickInfo::ShouldDraw( void )
+bool CHUDQuickInfoPortal::ShouldDraw( void )
 {
 	if ( !m_icon_c || !m_icon_rb || !m_icon_rbe || !m_icon_lb || !m_icon_lbe )
 		return false;
@@ -188,11 +188,19 @@ bool CHUDQuickInfo::ShouldDraw( void )
 		return false;
 #endif // PORTAL
 
+	C_BaseCombatWeapon* pWeapon = GetActiveWeapon();
+	if (pWeapon == NULL)
+		return false;
+
+	C_WeaponPortalgun* pPortalgun = dynamic_cast<C_WeaponPortalgun*>(pWeapon);
+	if (pPortalgun == NULL)
+		return false;
+
 	return ( CHudElement::ShouldDraw() && !engine->IsDrawingLoadingImage() );
 }
 
 
-void CHUDQuickInfo::Paint()
+void CHUDQuickInfoPortal::Paint()
 {
 	IClientEntity *pPortalPlayer = EntityList()->GetLocalPlayer();
 	if ( pPortalPlayer == NULL )
@@ -368,7 +376,7 @@ void CHUDQuickInfo::Paint()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHUDQuickInfo::UpdateEventTime( void )
+void CHUDQuickInfoPortal::UpdateEventTime( void )
 {
 	m_flLastEventTime = gpGlobals->curtime;
 }
@@ -377,7 +385,7 @@ void CHUDQuickInfo::UpdateEventTime( void )
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CHUDQuickInfo::EventTimeElapsed( void )
+bool CHUDQuickInfoPortal::EventTimeElapsed( void )
 {
 	if (( gpGlobals->curtime - m_flLastEventTime ) > QUICKINFO_EVENT_DURATION )
 		return true;
