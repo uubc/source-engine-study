@@ -98,10 +98,19 @@ protected:
 	// Handles both ground friction and water friction
 	void			Friction( void );
 
+	void			FunnelIntoPortal(IEnginePortal* pPortal, Vector& wishdir);
+
 	virtual void	AirAccelerate( Vector& wishdir, float wishspeed, float accel );
 
 	virtual void	AirMove( void );
-	virtual float	GetAirSpeedCap( void ) { return 30.f; }
+	virtual float	GetAirSpeedCap( void ) 
+	{ 
+#ifdef PORTAL
+		return 60.0f;
+#else
+		return 30.f;
+#endif // PORTAL
+	}
 	
 	virtual bool	CanAccelerate();
 	virtual void	Accelerate( Vector& wishdir, float wishspeed, float accel);
@@ -184,6 +193,7 @@ protected:
 	// 0x02 == step / wall
 	int				ClipVelocity( Vector& in, Vector& normal, Vector& out, float overbounce );
 
+	virtual int		CheckStuckInternal(void);
 	// If pmove.origin is in a solid position,
 	// try nudging slightly on all axis to
 	// allow for the cut precision of the net coordinates
@@ -284,6 +294,8 @@ public:
 	void			ForceDuck( void );
 
 #endif
+	bool	m_bInPortalEnv;
+
 };
 
 

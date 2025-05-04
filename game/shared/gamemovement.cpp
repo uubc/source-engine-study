@@ -14,10 +14,21 @@
 #include "decals.h"
 #include "coordsize.h"
 #include "rumble_shared.h"
+#ifdef GAME_DLL
+#include "physicsshadowclone.h"
+#endif // GAME_DLL
 
 #if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
 	#include "hl_movedata.h"
 #endif
+#ifdef PORTAL
+#if defined( CLIENT_DLL )
+#include "c_portal_player.h"
+#else
+#include "portal_player.h"
+#endif
+#endif // PORTAL
+
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -60,9 +71,14 @@ ConVar option_duck_method("option_duck_method", "1", FCVAR_REPLICATED|FCVAR_ARCH
 ConVar debug_latch_reset_onduck( "debug_latch_reset_onduck", "1", FCVAR_CHEAT );
 #endif
 #endif
+ConVar sv_player_trace_through_portals("sv_player_trace_through_portals", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Causes player movement traces to trace through portals.");
+ConVar sv_player_funnel_into_portals("sv_player_funnel_into_portals", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Causes the player to auto correct toward the center of floor portals.");
+ConVar sv_enableboost("sv_enableboost", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow boost exploits");
 
 // [MD] I'll remove this eventually. For now, I want the ability to A/B the optimizations.
 bool g_bMovementOptimizations = true;
+extern bool g_bAllowForcePortalTrace;
+extern bool g_bForcePortalTrace;
 
 // Roughly how often we want to update the info about the ground surface we're on.
 // We don't need to do this very often.
@@ -79,6 +95,7 @@ bool g_bMovementOptimizations = true;
 #define CHECK_LADDER_TICK_INTERVAL		( (int)( CHECK_LADDER_INTERVAL / TICK_INTERVAL ) )
 
 #define	NUM_CROUCH_HINTS	3
+#define PORTAL_FUNNEL_AMOUNT 6.0f
 
 extern IGameMovement *g_pGameMovement;
 
@@ -783,13 +800,30 @@ inline void CGameMovement::TracePlayerBBox( const Vector& start, const Vector& e
 
 CBaseHandle CGameMovement::TestPlayerPosition( const Vector& pos, int collisionGroup, trace_t& pm )
 {
-	Ray_t ray;
-	ray.Init( pos, pos, GetPlayerMins(), GetPlayerMaxs() );
-	UTIL_TraceRay(EntityList(), ray, PlayerSolidMask(), mv->m_nPlayerHandle, collisionGroup, &pm );
-	if ( (pm.contents & PlayerSolidMask()) && pm.m_pEnt )
+	//Ray_t ray;
+	//ray.Init( pos, pos, GetPlayerMins(), GetPlayerMaxs() );
+	//UTIL_TraceRay(EntityList(), ray, PlayerSolidMask(), mv->m_nPlayerHandle, collisionGroup, &pm );
+	TracePlayerBBox(pos, pos, PlayerSolidMask(), collisionGroup, pm); //hook into the existing portal special trace functionality
+	if (
+#ifdef PORTAL
+		pm.startsolid &&
+#endif // PORTAL
+		(pm.contents & PlayerSolidMask()) && pm.m_pEnt )
 	{
 		return pm.m_pEnt->GetRefEHandle();
 	}
+#ifdef PORTAL
+#ifndef CLIENT_DLL
+	else if (pm.startsolid && pm.m_pEnt && ((IEngineObjectServer*)pm.m_pEnt->GetEngineObject())->IsPortal())
+	{
+		// Stuck in a portal environment object, so unstick them!
+		CPortal_Player* pPortalPlayer = (CPortal_Player*)((CBaseEntity*)mv->m_nPlayerHandle);
+		pPortalPlayer->SetStuckOnPortalCollisionObject();
+
+		return NULL;
+	}
+#endif
+#endif // PORTAL
 	else
 	{	
 		return NULL;
@@ -1153,6 +1187,10 @@ void CGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove )
 	mv = pMove;
 	mv->m_flMaxSpeed = pPlayer->GetPlayerMaxSpeed();
 
+	m_bInPortalEnv = (pPlayer->GetEnginePlayer()->GetPortalEnvironment() != NULL);
+
+	g_bAllowForcePortalTrace = m_bInPortalEnv;
+	g_bForcePortalTrace = m_bInPortalEnv;
 	// CheckV( player->CurrentCommandNumber(), "StartPos", mv->GetAbsOrigin() );
 
 	DiffPrint( "start %f %f %f", mv->GetAbsOrigin().x, mv->GetAbsOrigin().y, mv->GetAbsOrigin().z );
@@ -1163,6 +1201,16 @@ void CGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove )
 	FinishMove();
 
 	DiffPrint( "end %f %f %f", mv->GetAbsOrigin().x, mv->GetAbsOrigin().y, mv->GetAbsOrigin().z );
+
+	g_bAllowForcePortalTrace = false;
+	g_bForcePortalTrace = false;
+
+#ifdef PORTAL
+#ifndef CLIENT_DLL
+	pPlayer->UnforceButtons(IN_DUCK);
+	pPlayer->UnforceButtons(IN_JUMP);
+#endif
+#endif // PORTAL
 
 	// CheckV( player->CurrentCommandNumber(), "EndPos", mv->GetAbsOrigin() );
 
@@ -1700,6 +1748,64 @@ void CGameMovement::FinishGravity( void )
 	CheckVelocity();
 }
 
+void CGameMovement::FunnelIntoPortal(IEnginePortal* pPortal, Vector& wishdir)
+{
+	// Make sure there's a portal
+	if (!pPortal)
+		return;
+
+	// Get portal vectors
+	Vector vPortalForward, vPortalRight, vPortalUp;
+	pPortal->AsEngineObject()->GetVectors(&vPortalForward, &vPortalRight, &vPortalUp);
+
+	// Make sure it's a floor portal
+	if (vPortalForward.z < 0.8f)
+		return;
+
+	vPortalRight.z = 0.0f;
+	vPortalUp.z = 0.0f;
+	VectorNormalize(vPortalRight);
+	VectorNormalize(vPortalUp);
+
+	// Make sure the player is looking downward
+	//CPortal_Player* pPlayer = GetPortalPlayer();
+
+	Vector vPlayerForward;
+	player->EyeVectors(&vPlayerForward);
+
+	if (vPlayerForward.z > -0.1f)
+		return;
+
+	Vector vPlayerOrigin = player->GetEngineObject()->GetAbsOrigin();
+	Vector vPlayerToPortal = pPortal->AsEngineObject()->GetAbsOrigin() - vPlayerOrigin;
+
+	// Make sure the player is trying to air control, they're falling downward and they are vertically close to the portal
+	if (fabsf(wishdir[0]) > 64.0f || fabsf(wishdir[1]) > 64.0f || mv->m_vecVelocity[2] > -165.0f || vPlayerToPortal.z < -512.0f)
+		return;
+
+	// Make sure we're in the 2D portal rectangle
+	if ((vPlayerToPortal.Dot(vPortalRight) * vPortalRight).Length() > PORTAL_HALF_WIDTH * 1.5f)
+		return;
+	if ((vPlayerToPortal.Dot(vPortalUp) * vPortalUp).Length() > PORTAL_HALF_HEIGHT * 1.5f)
+		return;
+
+	if (vPlayerToPortal.z > -8.0f)
+	{
+		// We're too close the the portal to continue correcting, but zero the velocity so our fling velocity is nice
+		mv->m_vecVelocity[0] = 0.0f;
+		mv->m_vecVelocity[1] = 0.0f;
+	}
+	else
+	{
+		// Funnel toward the portal
+		float fFunnelX = vPlayerToPortal.x * PORTAL_FUNNEL_AMOUNT - mv->m_vecVelocity[0];
+		float fFunnelY = vPlayerToPortal.y * PORTAL_FUNNEL_AMOUNT - mv->m_vecVelocity[1];
+
+		wishdir[0] += fFunnelX;
+		wishdir[1] += fFunnelY;
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : wishdir - 
@@ -1777,6 +1883,44 @@ void CGameMovement::AirMove( void )
 	wishvel[2] = 0;             // Zero out z part of velocity
 
 	VectorCopy (wishvel, wishdir);   // Determine maginitude of speed of move
+#ifdef PORTAL
+
+	//
+	// Don't let the player screw their fling because of adjusting into a floor portal
+	//
+	if (mv->m_vecVelocity[0] * mv->m_vecVelocity[0] + mv->m_vecVelocity[1] * mv->m_vecVelocity[1] > MIN_FLING_SPEED * MIN_FLING_SPEED)
+	{
+		if (mv->m_vecVelocity[0] > MIN_FLING_SPEED * 0.5f && wishdir[0] < 0.0f)
+			wishdir[0] = 0.0f;
+		else if (mv->m_vecVelocity[0] < -MIN_FLING_SPEED * 0.5f && wishdir[0] > 0.0f)
+			wishdir[0] = 0.0f;
+
+		if (mv->m_vecVelocity[1] > MIN_FLING_SPEED * 0.5f && wishdir[1] < 0.0f)
+			wishdir[1] = 0.0f;
+		else if (mv->m_vecVelocity[1] < -MIN_FLING_SPEED * 0.5f && wishdir[1] > 0.0f)
+			wishdir[1] = 0.0f;
+	}
+
+	//
+	// Try to autocorrect the player to fall into the middle of the portal
+	//
+	else if (sv_player_funnel_into_portals.GetBool())
+	{
+		int iPortalCount = EntityList()->GetPortalCount();
+		if (iPortalCount != 0)
+		{
+			for (int i = 0; i != iPortalCount; ++i)
+			{
+				IEnginePortal* pTempPortal = EntityList()->GetPortal(i);
+				if (pTempPortal->IsActivedAndLinked())
+				{
+					FunnelIntoPortal(pTempPortal, wishdir);
+				}
+			}
+		}
+	}
+#endif // PORTAL
+
 	wishspeed = VectorNormalize(wishdir);
 
 	//
@@ -3378,7 +3522,7 @@ void ResetStuckOffsets( CBasePlayer *pPlayer )
 // Input  : &input - 
 // Output : int
 //-----------------------------------------------------------------------------
-int CGameMovement::CheckStuck( void )
+int CGameMovement::CheckStuckInternal( void )
 {
 	Vector base;
 	Vector offset;
@@ -3460,6 +3604,51 @@ int CGameMovement::CheckStuck( void )
 	}
 
 	return 1;
+}
+
+int CGameMovement::CheckStuck(void)
+{
+	if (CheckStuckInternal())
+	{
+		//try to fix it, then recheck
+		Vector vIndecisive;
+		if (player->GetEnginePlayer()->GetPortalEnvironment())
+		{
+			player->GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetVectors(&vIndecisive, NULL, NULL);
+		}
+		else
+		{
+			vIndecisive.Init(0.0f, 0.0f, 1.0f);
+		}
+		Vector ptOldOrigin = player->GetEngineObject()->GetAbsOrigin();
+
+		if (player->GetEnginePlayer()->GetPortalEnvironment())
+		{
+			if (!player->FindClosestPassableSpace(vIndecisive))
+			{
+#ifndef CLIENT_DLL
+				DevMsg("Hurting the player for FindClosestPassableSpaceFailure!");
+
+				CTakeDamageInfo info(player, player, vec3_origin, vec3_origin, 1e10, DMG_CRUSH);
+				player->OnTakeDamage(info);
+#endif
+			}
+
+			//make sure we didn't get put behind the portal >_<
+			Vector ptCurrentOrigin = player->GetEngineObject()->GetAbsOrigin();
+			if (vIndecisive.Dot(ptCurrentOrigin - ptOldOrigin) < 0.0f)
+			{
+				player->GetEngineObject()->SetAbsOrigin(ptOldOrigin + (vIndecisive * 5.0f)); //this is an anti-bug hack, since this would have probably popped them out of the world, we're just going to move them forward a few units
+			}
+		}
+
+		mv->SetAbsOrigin(player->GetEngineObject()->GetAbsOrigin());
+		return CheckStuckInternal();
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -3770,6 +3959,7 @@ void CGameMovement::TryTouchGroundInQuadrants( const Vector& start, const Vector
 
 	pm.fraction = fraction;
 	pm.endpos = endpos;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -3781,8 +3971,10 @@ void CGameMovement::CategorizePosition( void )
 	Vector point;
 	trace_t pm;
 
+#ifndef PORTAL
 	// Reset this each time we-recategorize, otherwise we have bogus friction when we jump into water and plunge downward really quickly
 	player->m_surfaceFriction = 1.0f;
+#endif // !PORTAL
 
 	// if the player hull point one unit down is solid, the player
 	// is on ground
@@ -3818,6 +4010,7 @@ void CGameMovement::CategorizePosition( void )
 	bool bMovingUp = zvel > 0.0f;
 	bool bMovingUpRapidly = zvel > NON_JUMP_VELOCITY;
 	float flGroundEntityVelZ = 0.0f;
+#ifndef PORTAL
 	if ( bMovingUpRapidly )
 	{
 		// Tracker 73219, 75878:  ywb 8/2/07
@@ -3833,6 +4026,7 @@ void CGameMovement::CategorizePosition( void )
 			bMovingUpRapidly = ( zvel - flGroundEntityVelZ ) > NON_JUMP_VELOCITY;
 		}
 	}
+#endif // !PORTAL
 
 	// Was on ground, but now suddenly am not
 	if ( bMovingUpRapidly || 
@@ -3843,15 +4037,24 @@ void CGameMovement::CategorizePosition( void )
 	else
 	{
 		// Try and move down.
-		TryTouchGround( bumpOrigin, point, GetPlayerMins(), GetPlayerMaxs(), MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, pm );
+		TracePlayerBBox( bumpOrigin, point, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, pm );//GetPlayerMins(), GetPlayerMaxs(), 
 		
 		// Was on ground, but now suddenly am not.  If we hit a steep plane, we are not on ground
-		if ( !pm.m_pEnt || pm.plane.normal[2] < 0.7 )
+		if ( 
+#ifndef PORTAL
+			!pm.m_pEnt || 
+#endif // !PORTAL
+			pm.plane.normal[2] < 0.7 
+			)
 		{
 			// Test four sub-boxes, to see if any of them would have found shallower slope we could actually stand on
 			TryTouchGroundInQuadrants( bumpOrigin, point, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, pm );
 
-			if ( !pm.m_pEnt || pm.plane.normal[2] < 0.7 )
+			if ( 
+#ifndef PORTAL
+				!pm.m_pEnt || 
+#endif // !PORTAL
+				pm.plane.normal[2] < 0.7 )
 			{
 				SetGroundEntity( NULL );
 				// probably want to add a check for a +z velocity too!
@@ -3870,6 +4073,28 @@ void CGameMovement::CategorizePosition( void )
 		{
 			SetGroundEntity( &pm );  // Otherwise, point to index of ent under us.
 		}
+
+#ifdef PORTAL
+		// If we are on something...
+		if (player->GetEngineObject()->GetGroundEntity() != NULL)
+		{
+			// Then we are not in water jump sequence
+			player->m_flWaterJumpTime = 0;
+
+			// If we could make the move, drop us down that 1 pixel
+			if (player->GetEngineObject()->GetWaterLevel() < WL_Waist && !pm.startsolid && !pm.allsolid)
+			{
+				// check distance we would like to move -- this is supposed to just keep up
+				// "on the ground" surface not stap us back to earth (i.e. on move origin to
+				// end position when the ground is within .5 units away) (2 units)
+				if (pm.fraction)
+					//				if( pm.fraction < 0.5)
+				{
+					mv->SetAbsOrigin(pm.endpos);
+				}
+			}
+		}
+#endif // PORTAL
 
 #ifndef CLIENT_DLL
 		
@@ -4910,13 +5135,58 @@ void CGameMovement::TracePlayerBBox( const Vector& start, const Vector& end, uns
 {
 	VPROF( "CGameMovement::TracePlayerBBox" );
 
+#if !defined(PORTAL) && 0
+
 	Ray_t ray;
 	ray.Init( start, end, GetPlayerMins(), GetPlayerMaxs() );
 	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm );
 
+#else
+
+	CBasePlayer* pPlayer = (CBasePlayer*)((CBaseEntity*)mv->m_nPlayerHandle);
+
+	Ray_t ray;
+	ray.Init(start, end, GetPlayerMins(), GetPlayerMaxs());
+
+#ifdef CLIENT_DLL
+	CTraceFilterSimple traceFilter(mv->m_nPlayerHandle, collisionGroup);
+#else
+	CTraceFilterSimple baseFilter(mv->m_nPlayerHandle, collisionGroup);
+	CTraceFilterTranslateClones traceFilter(&baseFilter);
+#endif
+
+	UTIL_Portal_TraceRay_With(EntityList(), pPlayer->GetEnginePlayer()->GetPortalEnvironment(), ray, fMask, &traceFilter, &pm);
+
+	// If we're moving through a portal and failed to hit anything with the above ray trace
+	// Use UTIL_Portal_TraceEntity to test this movement through a portal and override the trace with the result
+	if (pm.fraction == 1.0f && UTIL_DidTraceTouchPortals(EntityList(), ray, pm) && sv_player_trace_through_portals.GetBool())
+	{
+		trace_t tempTrace;
+		UTIL_Portal_TraceEntity(pPlayer->GetEnginePlayer()->GetPortalEnvironment(), pPlayer, start, end, fMask, &traceFilter, &tempTrace);
+
+		if (tempTrace.DidHit() && tempTrace.fraction < pm.fraction && !tempTrace.startsolid && !tempTrace.allsolid)
+		{
+			pm = tempTrace;
+		}
+	}
+
+#endif // !PORTAL
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: used by the TryTouchGround function to exclude non-standables from 
+// consideration
+//-----------------------------------------------------------------------------
 
+bool CheckForStandable(IHandleEntity* pHandleEntity, int contentsMask)
+{
+	CBaseEntity* pEntity = EntityFromEntityHandle(pHandleEntity);
+
+	if (!pEntity)
+		return false;
+
+	return (pEntity->IsPlayer() && pEntity->GetEngineObject()->GetGroundEntity() != NULL) || pEntity->IsStandable();
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: overridded by game classes to limit results (to standable objects for example)
@@ -4925,8 +5195,31 @@ void  CGameMovement::TryTouchGround( const Vector& start, const Vector& end, con
 {
 	VPROF( "CGameMovement::TryTouchGround" );
 
+#if !defined(PORTAL) && 0
+
 	Ray_t ray;
 	ray.Init( start, end, mins, maxs );
 	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm );
+
+#else
+
+	IEnginePortal* pPlayerPortal = player->GetEnginePlayer()->GetPortalEnvironment();
+
+#ifndef CLIENT_DLL
+	if (pPlayerPortal && pPlayerPortal->IsReadyToSimulate() == false)//m_hPortalSimulator->
+		pPlayerPortal = NULL;
+#endif
+
+	Ray_t ray;
+	ray.Init(start, end, mins, maxs);
+
+	ShouldHitFunc_t pStandingTestCallback = sv_enableboost.GetBool() ? NULL : CheckForStandable;
+
+	if (pPlayerPortal)
+		UTIL_Portal_TraceRay(pPlayerPortal, ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm, pStandingTestCallback);
+	else
+		UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm, pStandingTestCallback);
+
+#endif
 }
 

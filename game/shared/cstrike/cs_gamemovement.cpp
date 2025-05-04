@@ -27,7 +27,6 @@
 extern bool g_bMovementOptimizations;
 
 ConVar sv_timebetweenducks( "sv_timebetweenducks", "0", FCVAR_REPLICATED, "Minimum time before recognizing consecutive duck key", true, 0.0, true, 2.0 );
-ConVar sv_enableboost( "sv_enableboost", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow boost exploits");
 ConVar cs_autojump( "cs_autojump", "0", FCVAR_REPLICATED | FCVAR_NOTIFY );
 
 class CCSGameMovement : public CGameMovement
@@ -76,7 +75,7 @@ public:
 	virtual float ClimbSpeed( void ) const;
 	virtual float LadderLateralMultiplier( void ) const;
 
-	virtual void  TryTouchGround( const Vector& start, const Vector& end, const Vector& mins, const Vector& maxs, unsigned int fMask, int collisionGroup, trace_t& pm );
+	//virtual void  TryTouchGround( const Vector& start, const Vector& end, const Vector& mins, const Vector& maxs, unsigned int fMask, int collisionGroup, trace_t& pm );
 
 
 protected:
@@ -96,15 +95,15 @@ public:
 // consideration
 //-----------------------------------------------------------------------------
 
-bool CheckForStandable( IHandleEntity *pHandleEntity, int contentsMask )
-{
-	CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
-
-	if ( !pEntity )
-		return false;
-
-	return ( pEntity->IsPlayer() && pEntity->GetEngineObject()->GetGroundEntity() != NULL ) || pEntity->IsStandable();
-}
+//bool CheckForStandable( IHandleEntity *pHandleEntity, int contentsMask )
+//{
+//	CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
+//
+//	if ( !pEntity )
+//		return false;
+//
+//	return ( pEntity->IsPlayer() && pEntity->GetEngineObject()->GetGroundEntity() != NULL ) || pEntity->IsStandable();
+//}
 
 
 // Expose our interface.
@@ -1133,15 +1132,15 @@ void CCSGameMovement::OnLand( float fVelocity )
 // Purpose: Essentially the same as TracePlayerBBox, but adds a callback to 
 // exclude entities that are not standable (except for other players)
 //-----------------------------------------------------------------------------
-void  CCSGameMovement::TryTouchGround( const Vector& start, const Vector& end, const Vector& mins, const Vector& maxs, unsigned int fMask, int collisionGroup, trace_t& pm )
-{
-	VPROF( "CCSGameMovement::TryTouchGround" );
-
-	Ray_t ray;
-	ray.Init( start, end, mins, maxs );
-
-	ShouldHitFunc_t pStandingTestCallback = sv_enableboost.GetBool() ? NULL : CheckForStandable;
-
-	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm,  pStandingTestCallback );
-
-}
+//void  CCSGameMovement::TryTouchGround( const Vector& start, const Vector& end, const Vector& mins, const Vector& maxs, unsigned int fMask, int collisionGroup, trace_t& pm )
+//{
+//	VPROF( "CCSGameMovement::TryTouchGround" );
+//
+//	Ray_t ray;
+//	ray.Init( start, end, mins, maxs );
+//
+//	ShouldHitFunc_t pStandingTestCallback = sv_enableboost.GetBool() ? NULL : CheckForStandable;
+//
+//	UTIL_TraceRay(EntityList(), ray, fMask, mv->m_nPlayerHandle, collisionGroup, &pm,  pStandingTestCallback );
+//
+//}
