@@ -36,6 +36,7 @@ void RegisterUserMessages( void )
 	usermessages->Register( "HintText", -1 );	// Displays hint text display
 	usermessages->Register( "KeyHintText", -1 );	// Displays hint text display
 	usermessages->Register( "AmmoDenied", 2 );
+	usermessages->Register("EntityPortalled", sizeof(long) + sizeof(long) + sizeof(Vector) + sizeof(QAngle)); //something got teleported through a portal
 
 	// NVNT register haptic user messages
 	RegisterHapticMessages();

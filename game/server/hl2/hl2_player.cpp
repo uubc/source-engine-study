@@ -1141,7 +1141,7 @@ void CHL2_Player::Spawn(void)
 #endif 
 
 	GetPlayerProxy();
-
+	GiveNamedItem("weapon_portalgun");
 	SetFlashlightPowerDrainScale( 1.0f );
 }
 

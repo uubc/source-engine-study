@@ -48,6 +48,7 @@ void RegisterUserMessages()
 	usermessages->Register( "UpdateRadar", -1 );
 	usermessages->Register( "KillCam", -1 );
 	usermessages->Register( "DeathStats", 9 );
+	usermessages->Register("EntityPortalled", sizeof(long) + sizeof(long) + sizeof(Vector) + sizeof(QAngle)); //something got teleported through a portal
 
 	usermessages->Register( "AchievementEvent", -1 );
 	usermessages->Register( "DODPlayerStatsUpdate", -1 );
