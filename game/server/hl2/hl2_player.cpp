@@ -290,9 +290,9 @@ void CC_ToggleDuck( void )
 static ConCommand toggle_duck("toggle_duck", CC_ToggleDuck, "Toggles duck" );
 
 #ifndef HL2MP
-#ifndef PORTAL
+//#ifndef PORTAL
 LINK_ENTITY_TO_CLASS( player, CHL2_Player );
-#endif
+//#endif
 #endif
 
 PRECACHE_REGISTER(player);
@@ -1111,9 +1111,9 @@ void CHL2_Player::Spawn(void)
 {
 
 #ifndef HL2MP
-#ifndef PORTAL
+//#ifndef PORTAL
 	SetModel( "models/player.mdl" );
-#endif
+//#endif
 #endif
 
 	BaseClass::Spawn();
@@ -1141,7 +1141,9 @@ void CHL2_Player::Spawn(void)
 #endif 
 
 	GetPlayerProxy();
+#ifndef PORTAL
 	GiveNamedItem("weapon_portalgun");
+#endif // !PORTAL
 	SetFlashlightPowerDrainScale( 1.0f );
 }
 

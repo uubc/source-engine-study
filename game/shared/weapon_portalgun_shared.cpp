@@ -41,7 +41,11 @@ CWeaponPortalgun::CWeaponPortalgun( void )
 
 	// TODO: specify these in hammer instead of assuming every gun has blue chip
 	m_bCanFirePortal1 = true;
+#ifndef PORTAL
+	m_bCanFirePortal2 = true;
+#else
 	m_bCanFirePortal2 = false;
+#endif // !PORTAL
 
 	m_iLastFiredPortal = 0;
 	m_fCanPlacePortal1OnThisSurface = 1.0f;

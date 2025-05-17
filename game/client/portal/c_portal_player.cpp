@@ -270,7 +270,7 @@ void C_PortalRagdoll::OnDataChanged( DataUpdateType_t type )
 }
 
 
-LINK_ENTITY_TO_CLASS( player, C_Portal_Player );
+//LINK_ENTITY_TO_CLASS( player, C_Portal_Player );
 
 IMPLEMENT_CLIENTCLASS_DT(C_Portal_Player, DT_Portal_Player, CPortal_Player)
 RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),

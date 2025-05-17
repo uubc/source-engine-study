@@ -184,8 +184,8 @@ bool CHUDQuickInfoPortal::ShouldDraw( void )
 		return false;
 
 #ifdef PORTAL
-	if (ToPortalPlayer(player)->IsSuppressingCrosshair() )
-		return false;
+	//if (ToPortalPlayer(player)->IsSuppressingCrosshair() )
+	//	return false;
 #endif // PORTAL
 
 	C_BaseCombatWeapon* pWeapon = GetActiveWeapon();

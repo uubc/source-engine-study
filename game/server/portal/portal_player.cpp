@@ -137,7 +137,7 @@ END_DATADESC()
 
 
 
-LINK_ENTITY_TO_CLASS( player, CPortal_Player );
+//LINK_ENTITY_TO_CLASS( player, CPortal_Player );
 
 IMPLEMENT_SERVERCLASS_ST(CPortal_Player, DT_Portal_Player)
 SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),	

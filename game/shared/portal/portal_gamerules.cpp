@@ -302,7 +302,7 @@ called each time a player is spawned into the game
 
 	void CPortalGameWorld::ClientActive(int pEdict, bool bLoadGame)
 	{
-		CPortal_Player* pPlayer = dynamic_cast<CPortal_Player*>(EntityList()->GetBaseEntity(pEdict));
+		CBasePlayer* pPlayer = dynamic_cast<CBasePlayer*>(EntityList()->GetBaseEntity(pEdict));
 		Assert(pPlayer);
 
 		pPlayer->InitialSpawn();
