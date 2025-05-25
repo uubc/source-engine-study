@@ -177,8 +177,6 @@ private:
 
 	ISoundPatch		*m_pWooshSound;
 
-	CNetworkQAngle( m_angEyeAngles );
-
 	CPortalPlayerAnimState*   m_PlayerAnimState;
 
 	int m_iLastWeaponFireUsercmd;

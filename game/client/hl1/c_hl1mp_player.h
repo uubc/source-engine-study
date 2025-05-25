@@ -73,7 +73,7 @@ private:
 
     EHANDLE m_hRagdoll;
 
-    QAngle m_angEyeAngles;
+    //QAngle m_angEyeAngles;
 
 	//CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
 

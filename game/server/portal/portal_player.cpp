@@ -137,7 +137,7 @@ END_DATADESC()
 
 
 
-//LINK_ENTITY_TO_CLASS( player, CPortal_Player );
+LINK_ENTITY_TO_CLASS( player, CPortal_Player );
 
 IMPLEMENT_SERVERCLASS_ST(CPortal_Player, DT_Portal_Player)
 SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),	
@@ -155,8 +155,8 @@ SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),
 SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 
 
-SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11, SPROP_CHANGES_OFTEN ),
-SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11, SPROP_CHANGES_OFTEN ),
+//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11, SPROP_CHANGES_OFTEN ),
+//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11, SPROP_CHANGES_OFTEN ),
 SendPropEHandle( SENDINFO( m_hRagdoll ) ),
 SendPropInt( SENDINFO( m_iSpawnInterpCounter), 4 ),
 SendPropInt( SENDINFO( m_iPlayerSoundType), 3 ),
@@ -185,7 +185,6 @@ BEGIN_DATADESC( CPortal_Player )
 	DEFINE_FIELD( m_hExpressionSceneEnt, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_vecTotalBulletForce, FIELD_VECTOR ),
 	DEFINE_FIELD( m_hRagdoll, FIELD_EHANDLE ),
-	DEFINE_FIELD( m_angEyeAngles, FIELD_VECTOR ),
 	DEFINE_FIELD( m_iPlayerSoundType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_vWorldSpaceCenterHolder, FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( m_hSurroundingLiquidPortal, FIELD_EHANDLE ),
@@ -231,7 +230,7 @@ CPortal_Player::CPortal_Player()
 	m_PlayerAnimState = CreatePortalPlayerAnimState( this );
 	CreateExpresser();
 
-	m_angEyeAngles.Init();
+	//m_angEyeAngles.Init();
 
 	m_iLastWeaponFireUsercmd = 0;
 
@@ -1111,10 +1110,10 @@ const Vector& CPortal_Player::WorldSpaceCenter( ) const
 
 void CPortal_Player::Teleport( const Vector *newPosition, const QAngle *newAngles, const Vector *newVelocity )
 {
-	Vector oldOrigin = GetEngineObject()->GetLocalOrigin();
-	QAngle oldAngles = GetEngineObject()->GetLocalAngles();
+	//Vector oldOrigin = GetEngineObject()->GetLocalOrigin();
+	//QAngle oldAngles = GetEngineObject()->GetLocalAngles();
 	BaseClass::Teleport( newPosition, newAngles, newVelocity );
-	m_angEyeAngles = pl.v_angle;
+	//m_angEyeAngles = pl.v_angle;
 
 	m_PlayerAnimState->Teleport( newPosition, newAngles, this );
 }

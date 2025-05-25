@@ -94,9 +94,9 @@ private:
 
 	CPlayerAnimState m_PlayerAnimState;
 
-	QAngle	m_angEyeAngles;
+	//QAngle	m_angEyeAngles;
 
-	CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
+	//CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
 
 	EHANDLE	m_hRagdoll;
 

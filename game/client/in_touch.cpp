@@ -39,9 +39,9 @@ extern ConVar touch_pitch;
 extern ConVar touch_yaw;
 extern ConVar default_fov;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 extern bool g_bUpsideDown;
-#endif
+//#endif
 
 ConVar touch_enable_accel( "touch_enable_accel", "0", FCVAR_ARCHIVE );
 ConVar touch_accel( "touch_accel", "1.f", FCVAR_ARCHIVE );

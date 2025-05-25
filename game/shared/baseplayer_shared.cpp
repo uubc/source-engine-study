@@ -350,6 +350,7 @@ Vector CBasePlayer::EyePosition( )
 				}
 			}
 		}
+		return PortalEyeInterpolation.m_vEyePosition_Interpolated;
 #endif
 		return BaseClass::EyePosition();
 	}
@@ -1540,38 +1541,146 @@ void CBasePlayer::ResetObserverMode()
 //-----------------------------------------------------------------------------
 void CBasePlayer::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov )
 {
-#if defined( CLIENT_DLL )
-	IClientVehicle *pVehicle; 
-#else
-	IServerVehicle *pVehicle;
-#endif
-	pVehicle = GetVehicle();
+#ifdef CLIENT_DLL
 
-	if ( !pVehicle )
+	DetectAndHandlePortalTeleportation();
+	//if( DetectAndHandlePortalTeleportation() )
+	//	DevMsg( "Teleported within OnDataChanged\n" );
+
+	m_iForceNoDrawInPortalSurface = -1;
+	bool bEyeTransform_Backup = m_bEyePositionIsTransformedByPortal;
+	m_bEyePositionIsTransformedByPortal = false; //assume it's not transformed until it provably is
+	UpdatePortalEyeInterpolation();
+
+	QAngle qEyeAngleBackup = EyeAngles();
+	Vector ptEyePositionBackup = EyePosition();
+	IEnginePortalClient* pPortalBackup = GetEnginePlayer()->GetPortalEnvironment();
+
+#if 0
+	if (m_lifeState != LIFE_ALIVE)
 	{
-#if defined( CLIENT_DLL )
-		if( UseVR() )
-			g_ClientVirtualReality.CancelTorsoTransformOverride();
-#endif
-
-		if ( IsObserver() )
+		if (g_pGameRules->GetKillCamMode() != 0)
 		{
-			CalcObserverView( eyeOrigin, eyeAngles, fov );
+			return;
+		}
+
+		Vector origin = EyePosition();
+
+		C_BaseEntity* pRagdoll = m_hRagdoll.Get();
+
+		if (pRagdoll)
+		{
+			origin = pRagdoll->GetEngineObject()->GetAbsOrigin();
+#if !PORTAL_HIDE_PLAYER_RAGDOLL
+			origin.z += VEC_DEAD_VIEWHEIGHT_SCALED(this).z; // look over ragdoll, not through
+#endif //PORTAL_HIDE_PLAYER_RAGDOLL
+		}
+
+		//BaseClass::CalcView(eyeOrigin, eyeAngles, zNear, zFar, fov);
+		IClientVehicle* pVehicle = GetVehicle();
+		if (!pVehicle)
+		{
+			if (UseVR())
+				g_ClientVirtualReality.CancelTorsoTransformOverride();
+
+			if (IsObserver())
+			{
+				CalcObserverView(eyeOrigin, eyeAngles, fov);
+			}
+			else
+			{
+				CalcPlayerView(eyeOrigin, eyeAngles, fov);
+			}
 		}
 		else
 		{
-			CalcPlayerView( eyeOrigin, eyeAngles, fov );
+			CalcVehicleView(pVehicle, eyeOrigin, eyeAngles, zNear, zFar, fov);
+		}
+
+		eyeOrigin = origin;
+
+		Vector vForward;
+		AngleVectors(eyeAngles, &vForward);
+
+		VectorNormalize(vForward);
+#if !PORTAL_HIDE_PLAYER_RAGDOLL
+		VectorMA(origin, -CHASE_CAM_DISTANCE_MAX, vForward, eyeOrigin);
+#endif //PORTAL_HIDE_PLAYER_RAGDOLL
+
+		Vector WALL_MIN(-WALL_OFFSET, -WALL_OFFSET, -WALL_OFFSET);
+		Vector WALL_MAX(WALL_OFFSET, WALL_OFFSET, WALL_OFFSET);
+
+		trace_t trace; // clip against world
+		EntityList()->PushEnableAbsRecomputations(false); // HACK don't recompute positions while doing RayTrace
+		UTIL_TraceHull(EntityList(), origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace);
+		EntityList()->PopEnableAbsRecomputations();
+
+		if (trace.fraction < 1.0)
+		{
+			eyeOrigin = trace.endpos;
+		}
+	}
+	else
+#endif // 0
+	{
+		IClientVehicle* pVehicle;
+		pVehicle = GetVehicle();
+
+		if (!pVehicle)
+		{
+			if (IsObserver())
+			{
+				CalcObserverView(eyeOrigin, eyeAngles, fov);
+			}
+			else
+			{
+				CalcPlayerView(eyeOrigin, eyeAngles, fov);
+				if (GetEnginePlayer()->GetPortalEnvironment() != NULL)
+				{
+					//time for hax
+					m_bEyePositionIsTransformedByPortal = bEyeTransform_Backup;
+					CalcPortalView(eyeOrigin, eyeAngles);
+				}
+			}
+		}
+		else
+		{
+			CalcVehicleView(pVehicle, eyeOrigin, eyeAngles, zNear, zFar, fov);
+		}
+	}
+
+	m_qEyeAngles_LastCalcView = qEyeAngleBackup;
+	m_ptEyePosition_LastCalcView = ptEyePositionBackup;
+	m_pPortalEnvironment_LastCalcView = pPortalBackup;
+
+#ifdef WIN32
+	// NVNT Inform haptics module of fov
+	if (IsLocalPlayer())
+		haptics->UpdatePlayerFOV(fov);
+#endif
+
+#else
+
+	IServerVehicle* pVehicle;
+	pVehicle = GetVehicle();
+
+	if (!pVehicle)
+	{
+		if (IsObserver())
+		{
+			CalcObserverView(eyeOrigin, eyeAngles, fov);
+		}
+		else
+		{
+			CalcPlayerView(eyeOrigin, eyeAngles, fov);
 		}
 	}
 	else
 	{
-		CalcVehicleView( pVehicle, eyeOrigin, eyeAngles, zNear, zFar, fov );
+		CalcVehicleView(pVehicle, eyeOrigin, eyeAngles, zNear, zFar, fov);
 	}
-	// NVNT update fov on the haptics dll for input scaling.
-#if defined( CLIENT_DLL )
-	if(IsLocalPlayer() && haptics)
-		haptics->UpdatePlayerFOV(fov);
-#endif
+
+#endif // CLIENT_DLL
 }
 
 

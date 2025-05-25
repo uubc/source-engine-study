@@ -337,7 +337,8 @@ private:
 	bool	m_bHasHelmet;
 	int		m_iClass;
 	int		m_ArmorValue;
-	QAngle	m_angEyeAngles;
+	//QAngle	m_angEyeAngles;
+	//CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
 	bool	m_bHasDefuser;
 	bool	m_bInHostageRescueZone;
 	float	m_fNextThinkPushAway;
@@ -351,7 +352,6 @@ private:
 
 	Vector m_vecRagdollVelocity;
 
-	CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
 
 	// ID Target
 	int					m_iIDEntIndex;

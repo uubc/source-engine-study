@@ -58,6 +58,7 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 #include "ivmodemanager.h"
+#include "ivieweffects.h"		// for screenshake
 
 #ifdef HL2_CLIENT_DLL
 #include "c_basehlplayer.h"
@@ -71,7 +72,9 @@
 #undef CBasePlayer	
 #endif
 
-
+#define REORIENTATION_RATE 120.0f
+#define REORIENTATION_ACCELERATION_RATE 400.0f
+#define ENABLE_PORTAL_EYE_INTERPOLATION_CODE
 
 extern ConVar mp_forcecamera; // in gamevars_shared.h
 
@@ -88,7 +91,7 @@ extern ConVar default_fov;
 #ifndef _XBOX
 extern ConVar sensitivity;
 #endif
-
+extern bool g_bUpsideDown;
 
 static ConVar	cl_customsounds ( "cl_customsounds", "1", 0, "Enable customized player sound playback" );
 static ConVar	spec_track		( "spec_track", "0", 0, "Tracks an entity in spec mode" );
@@ -124,6 +127,7 @@ ConVar demo_fov_override( "demo_fov_override", "0", FCVAR_CLIENTDLL | FCVAR_DONT
 // This value is found by hand, and a good value depends more on the in-game models than on actual human shapes.
 ConVar cl_meathook_neck_pivot_ingame_up( "cl_meathook_neck_pivot_ingame_up", "7.0" );
 ConVar cl_meathook_neck_pivot_ingame_fwd( "cl_meathook_neck_pivot_ingame_fwd", "3.0" );
+ConVar cl_reorient_in_air("cl_reorient_in_air", "1", FCVAR_ARCHIVE, "Allows the player to only reorient from being upside down while in the air.");
 
 //void RecvProxy_LocalVelocityX( const CRecvProxyData *pData, void *pStruct, void *pOut );
 //void RecvProxy_LocalVelocityY( const CRecvProxyData *pData, void *pStruct, void *pOut );
@@ -294,7 +298,8 @@ END_RECV_TABLE()
 		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(NULL, 0, 0) ),
 #endif
 		RecvPropBool(RECVINFO(m_bPitchReorientation)),
-
+		RecvPropFloat(RECVINFO(m_angEyeAngles[0])),
+		RecvPropFloat(RECVINFO(m_angEyeAngles[1])),
 	END_RECV_TABLE()
 
 BEGIN_PREDICTION_DATA_NO_BASE( CPlayerState )
@@ -397,7 +402,9 @@ LINK_ENTITY_TO_CLASS( player, C_BasePlayer );
 // -------------------------------------------------------------------------------- //
 // Functions.
 // -------------------------------------------------------------------------------- //
-C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePlayer::m_iv_vecViewOffset", &m_vecViewOffset, LATCH_SIMULATION_VAR)
+C_BasePlayer::C_BasePlayer() :
+	m_iv_angEyeAngles(gpGlobals->curtime, "C_BasePlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR),
+	m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePlayer::m_iv_vecViewOffset", &m_vecViewOffset, LATCH_SIMULATION_VAR)
 {
 #ifdef _DEBUG																
 	m_vecLadderNormal.Init();
@@ -432,6 +439,7 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePla
 	m_nForceVisionFilterFlags = 0;
 	m_bPitchReorientation = false;
 	m_fReorientationRate = 0.0f;
+	m_angEyeAngles.Init();
 
 	ListenForGameEvent( "base_player_teleported" );
 }
@@ -439,6 +447,7 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset(gpGlobals->curtime, "C_BasePla
 bool C_BasePlayer::Init(int entnum, int iSerialNum) {
 	bool ret = BaseClass::Init(entnum, iSerialNum);
 	GetEngineObject()->AddVar(&m_iv_vecViewOffset);//, LATCH_SIMULATION_VAR
+	GetEngineObject()->AddVar(&m_iv_angEyeAngles);//&m_angEyeAngles, , LATCH_SIMULATION_VAR
 	return ret;
 }
 
@@ -775,6 +784,9 @@ void C_BasePlayer::OnPreDataChanged( DataUpdateType_t updateType )
 
 	m_bWasFreezeFraming = (GetObserverMode() == OBS_MODE_FREEZECAM);
 	m_hOldFogController = m_Local.m_PlayerFog.m_hCtrl;
+	Assert(m_pPortalEnvironment_LastCalcView == GetEnginePlayer()->GetPortalEnvironment());
+	PreDataChanged_Backup.m_hPortalEnvironment = GetEnginePlayer()->GetPortalEnvironment() ? GetEnginePlayer()->GetPortalEnvironment()->AsEngineObject()->GetHandleEntity()->AsClientEntity() : NULL;
+	PreDataChanged_Backup.m_qEyeAngles = m_iv_angEyeAngles.GetCurrent();
 
 	BaseClass::OnPreDataChanged( updateType );
 }
@@ -1007,6 +1019,11 @@ void C_BasePlayer::OnDataChanged( DataUpdateType_t updateType )
 		{
 			FogControllerChanged( updateType == DATA_UPDATE_CREATED );
 		}
+	}
+
+	if (updateType == DATA_UPDATE_CREATED)
+	{
+		GetEngineObject()->SetNextClientThink(CLIENT_THINK_ALWAYS);
 	}
 }
 
@@ -1972,6 +1989,80 @@ void C_BasePlayer::UpdateClientData( void )
 		if ( GetWeapon(i) )  // each item updates it's successors
 			GetWeapon(i)->UpdateClientData( this );
 	}
+}
+
+void C_BasePlayer::ClientThink(void)
+{
+	BaseClass::ClientThink();
+	//PortalEyeInterpolation.m_bNeedToUpdateEyePosition = true;
+
+	Vector vForward;
+	AngleVectors(GetEngineObject()->GetLocalAngles(), &vForward);
+
+	FixTeleportationRoll();
+
+	//QAngle vAbsAngles = EyeAngles();
+
+	// Look at the thing that killed you
+	//if ( !IsAlive() )
+	//{
+	//	C_BaseEntity *pEntity1 = g_eKillTarget1.Get();
+	//	C_BaseEntity *pEntity2 = g_eKillTarget2.Get();
+
+	//	if ( pEntity2 && pEntity1 )
+	//	{
+	//		//engine->GetViewAngles( vAbsAngles );
+
+	//		Vector vLook = pEntity1->GetAbsOrigin() - pEntity2->GetAbsOrigin();
+	//		VectorNormalize( vLook );
+
+	//		QAngle qLook;
+	//		VectorAngles( vLook, qLook );
+
+	//		if ( qLook[PITCH] > 180.0f )
+	//		{
+	//			qLook[PITCH] -= 360.0f;
+	//		}
+
+	//		if ( vAbsAngles[YAW] < 0.0f )
+	//		{
+	//			vAbsAngles[YAW] += 360.0f;
+	//		}
+
+	//		if ( vAbsAngles[PITCH] < qLook[PITCH] )
+	//		{
+	//			vAbsAngles[PITCH] += gpGlobals->frametime * 120.0f;
+	//			if ( vAbsAngles[PITCH] > qLook[PITCH] )
+	//				vAbsAngles[PITCH] = qLook[PITCH];
+	//		}
+	//		else if ( vAbsAngles[PITCH] > qLook[PITCH] )
+	//		{
+	//			vAbsAngles[PITCH] -= gpGlobals->frametime * 120.0f;
+	//			if ( vAbsAngles[PITCH] < qLook[PITCH] )
+	//				vAbsAngles[PITCH] = qLook[PITCH];
+	//		}
+
+	//		if ( vAbsAngles[YAW] < qLook[YAW] )
+	//		{
+	//			vAbsAngles[YAW] += gpGlobals->frametime * 240.0f;
+	//			if ( vAbsAngles[YAW] > qLook[YAW] )
+	//				vAbsAngles[YAW] = qLook[YAW];
+	//		}
+	//		else if ( vAbsAngles[YAW] > qLook[YAW] )
+	//		{
+	//			vAbsAngles[YAW] -= gpGlobals->frametime * 240.0f;
+	//			if ( vAbsAngles[YAW] < qLook[YAW] )
+	//				vAbsAngles[YAW] = qLook[YAW];
+	//		}
+
+	//		if ( vAbsAngles[YAW] > 180.0f )
+	//		{
+	//			vAbsAngles[YAW] -= 360.0f;
+	//		}
+
+	//		engine->SetViewAngles( vAbsAngles );
+	//	}
+	//}
 }
 
 // Prediction stuff
@@ -3291,6 +3382,404 @@ void C_BasePlayer::PlayerPortalled(CPortalRenderable_FlatBasic* pEnteredPortal)
 
 		if (IsLocalPlayer())
 			g_pViewRender->EnteredPortal(pEnteredPortal);
+	}
+}
+
+//CalcView() gets called between OnPreDataChanged() and OnDataChanged(), and these changes need to be known about in both before CalcView() gets called, and if CalcView() doesn't get called
+bool C_BasePlayer::DetectAndHandlePortalTeleportation(void)
+{
+	if (m_bPortalledMessagePending)
+	{
+		m_bPortalledMessagePending = false;
+
+		//C_Prop_Portal *pOldPortal = PreDataChanged_Backup.m_hPortalEnvironment.Get();
+		//Assert( pOldPortal );
+		//if( pOldPortal )
+		{
+			Vector ptNewPosition = GetEngineObject()->GetNetworkOrigin();
+
+			UTIL_Portal_PointTransform(m_PendingPortalMatrix, PortalEyeInterpolation.m_vEyePosition_Interpolated, PortalEyeInterpolation.m_vEyePosition_Interpolated);
+			UTIL_Portal_PointTransform(m_PendingPortalMatrix, PortalEyeInterpolation.m_vEyePosition_Uninterpolated, PortalEyeInterpolation.m_vEyePosition_Uninterpolated);
+
+			PortalEyeInterpolation.m_bEyePositionIsInterpolating = true;
+
+			UTIL_Portal_AngleTransform(m_PendingPortalMatrix, m_qEyeAngles_LastCalcView, m_angEyeAngles);
+			m_angEyeAngles.x = AngleNormalize(m_angEyeAngles.x);
+			m_angEyeAngles.y = AngleNormalize(m_angEyeAngles.y);
+			m_angEyeAngles.z = AngleNormalize(m_angEyeAngles.z);
+			m_iv_angEyeAngles.Reset(gpGlobals->curtime); //copies from m_angEyeAngles
+
+			if (engine->IsPlayingDemo())
+			{
+				pl.v_angle = m_angEyeAngles;
+				engine->SetViewAngles(pl.v_angle);
+			}
+
+			engine->ResetDemoInterpolation();
+			if (IsLocalPlayer())
+			{
+				//DevMsg( "FPT: %.2f %.2f %.2f\n", m_angEyeAngles.x, m_angEyeAngles.y, m_angEyeAngles.z );
+				GetEngineObject()->SetLocalAngles(m_angEyeAngles);
+			}
+
+			//m_PlayerAnimState->Teleport(&ptNewPosition, &GetEngineObject()->GetNetworkAngles(), this);
+
+			// Reorient last facing direction to fix pops in view model lag
+			for (int i = 0; i < MAX_VIEWMODELS; i++)
+			{
+				CBaseViewModel* vm = GetViewModel(i);
+				if (!vm)
+					continue;
+
+				UTIL_Portal_VectorTransform(m_PendingPortalMatrix, vm->m_vecLastFacing, vm->m_vecLastFacing);
+			}
+		}
+		m_bPortalledMessagePending = false;
+	}
+
+	return false;
+}
+
+void C_BasePlayer::FixTeleportationRoll(void)
+{
+	if (IsInAVehicle()) //HL2 compatibility fix. do absolutely nothing to the view in vehicles
+		return;
+
+	if (!IsLocalPlayer())
+		return;
+
+	// Normalize roll from odd portal transitions
+	QAngle vAbsAngles = EyeAngles();
+
+
+	Vector vCurrentForward, vCurrentRight, vCurrentUp;
+	AngleVectors(vAbsAngles, &vCurrentForward, &vCurrentRight, &vCurrentUp);
+
+	if (vAbsAngles[ROLL] == 0.0f)
+	{
+		m_fReorientationRate = 0.0f;
+		g_bUpsideDown = (vCurrentUp.z < 0.0f);
+		return;
+	}
+
+	bool bForcePitchReorient = (vAbsAngles[ROLL] > 175.0f && vCurrentForward.z > 0.99f);
+	bool bOnGround = (GetEngineObject()->GetGroundEntity() != NULL);
+
+	if (bForcePitchReorient)
+	{
+		m_fReorientationRate = REORIENTATION_RATE * ((bOnGround) ? (2.0f) : (1.0f));
+	}
+	else
+	{
+		// Don't reorient in air if they don't want to
+		if (!cl_reorient_in_air.GetBool() && !bOnGround)
+		{
+			g_bUpsideDown = (vCurrentUp.z < 0.0f);
+			return;
+		}
+	}
+
+	if (vCurrentUp.z < 0.75f)
+	{
+		m_fReorientationRate += gpGlobals->frametime * REORIENTATION_ACCELERATION_RATE;
+
+		// Upright faster if on the ground
+		float fMaxReorientationRate = REORIENTATION_RATE * ((bOnGround) ? (2.0f) : (1.0f));
+		if (m_fReorientationRate > fMaxReorientationRate)
+			m_fReorientationRate = fMaxReorientationRate;
+	}
+	else
+	{
+		if (m_fReorientationRate > REORIENTATION_RATE * 0.5f)
+		{
+			m_fReorientationRate -= gpGlobals->frametime * REORIENTATION_ACCELERATION_RATE;
+			if (m_fReorientationRate < REORIENTATION_RATE * 0.5f)
+				m_fReorientationRate = REORIENTATION_RATE * 0.5f;
+		}
+		else if (m_fReorientationRate < REORIENTATION_RATE * 0.5f)
+		{
+			m_fReorientationRate += gpGlobals->frametime * REORIENTATION_ACCELERATION_RATE;
+			if (m_fReorientationRate > REORIENTATION_RATE * 0.5f)
+				m_fReorientationRate = REORIENTATION_RATE * 0.5f;
+		}
+	}
+
+	if (!m_bPitchReorientation && !bForcePitchReorient)
+	{
+		// Randomize which way we roll if we're completely upside down
+		if (vAbsAngles[ROLL] == 180.0f && RandomInt(0, 1) == 1)
+		{
+			vAbsAngles[ROLL] = -180.0f;
+		}
+
+		if (vAbsAngles[ROLL] < 0.0f)
+		{
+			vAbsAngles[ROLL] += gpGlobals->frametime * m_fReorientationRate;
+			if (vAbsAngles[ROLL] > 0.0f)
+				vAbsAngles[ROLL] = 0.0f;
+			engine->SetViewAngles(vAbsAngles);
+		}
+		else if (vAbsAngles[ROLL] > 0.0f)
+		{
+			vAbsAngles[ROLL] -= gpGlobals->frametime * m_fReorientationRate;
+			if (vAbsAngles[ROLL] < 0.0f)
+				vAbsAngles[ROLL] = 0.0f;
+			engine->SetViewAngles(vAbsAngles);
+			m_angEyeAngles = vAbsAngles;
+			m_iv_angEyeAngles.Reset(gpGlobals->curtime);
+		}
+	}
+	else
+	{
+		if (vAbsAngles[ROLL] != 0.0f)
+		{
+			if (vCurrentUp.z < 0.2f)
+			{
+				float fDegrees = gpGlobals->frametime * m_fReorientationRate;
+				if (vCurrentForward.z > 0.0f)
+				{
+					fDegrees = -fDegrees;
+				}
+
+				// Rotate around the right axis
+				VMatrix mAxisAngleRot = SetupMatrixAxisRot(vCurrentRight, fDegrees);
+
+				vCurrentUp = mAxisAngleRot.VMul3x3(vCurrentUp);
+				vCurrentForward = mAxisAngleRot.VMul3x3(vCurrentForward);
+
+				VectorAngles(vCurrentForward, vCurrentUp, vAbsAngles);
+
+				engine->SetViewAngles(vAbsAngles);
+				m_angEyeAngles = vAbsAngles;
+				m_iv_angEyeAngles.Reset(gpGlobals->curtime);
+			}
+			else
+			{
+				if (vAbsAngles[ROLL] < 0.0f)
+				{
+					vAbsAngles[ROLL] += gpGlobals->frametime * m_fReorientationRate;
+					if (vAbsAngles[ROLL] > 0.0f)
+						vAbsAngles[ROLL] = 0.0f;
+					engine->SetViewAngles(vAbsAngles);
+					m_angEyeAngles = vAbsAngles;
+					m_iv_angEyeAngles.Reset(gpGlobals->curtime);
+				}
+				else if (vAbsAngles[ROLL] > 0.0f)
+				{
+					vAbsAngles[ROLL] -= gpGlobals->frametime * m_fReorientationRate;
+					if (vAbsAngles[ROLL] < 0.0f)
+						vAbsAngles[ROLL] = 0.0f;
+					engine->SetViewAngles(vAbsAngles);
+					m_angEyeAngles = vAbsAngles;
+					m_iv_angEyeAngles.Reset(gpGlobals->curtime);
+				}
+			}
+		}
+	}
+
+	// Keep track of if we're upside down for look control
+	vAbsAngles = EyeAngles();
+	AngleVectors(vAbsAngles, NULL, NULL, &vCurrentUp);
+
+	if (bForcePitchReorient)
+		g_bUpsideDown = (vCurrentUp.z < 0.0f);
+	else
+		g_bUpsideDown = false;
+}
+
+Vector C_BasePlayer::EyeFootPosition(const QAngle& qEyeAngles)
+{
+#if 0
+	static int iPrintCounter = 0;
+	++iPrintCounter;
+	if (iPrintCounter == 50)
+	{
+		QAngle vAbsAngles = qEyeAngles;
+		DevMsg("Eye Angles: %f %f %f\n", vAbsAngles.x, vAbsAngles.y, vAbsAngles.z);
+		iPrintCounter = 0;
+	}
+#endif
+
+	//interpolate between feet and normal eye position based on view roll (gets us wall/ceiling & ceiling/ceiling teleportations without an eye position pop)
+	float fFootInterp = fabs(qEyeAngles[ROLL]) * ((1.0f / 180.0f) * 0.75f); //0 when facing straight up, 0.75 when facing straight down
+	return (BaseClass::EyePosition() - (fFootInterp * m_vecViewOffset)); //TODO: Find a good Up vector for this rolled player and interpolate along actual eye/foot axis
+}
+
+void C_BasePlayer::UpdatePortalEyeInterpolation(void)
+{
+#ifdef ENABLE_PORTAL_EYE_INTERPOLATION_CODE
+	//PortalEyeInterpolation.m_bEyePositionIsInterpolating = false;
+	if (PortalEyeInterpolation.m_bUpdatePosition_FreeMove)
+	{
+		PortalEyeInterpolation.m_bUpdatePosition_FreeMove = false;
+
+		IClientEntity* pOldPortal = PreDataChanged_Backup.m_hPortalEnvironment.Get();
+		if (pOldPortal)
+		{
+			UTIL_Portal_PointTransform(pOldPortal->GetEnginePortal()->MatrixThisToLinked(), PortalEyeInterpolation.m_vEyePosition_Interpolated, PortalEyeInterpolation.m_vEyePosition_Interpolated);
+			//PortalEyeInterpolation.m_vEyePosition_Interpolated = pOldPortal->m_matrixThisToLinked * PortalEyeInterpolation.m_vEyePosition_Interpolated;
+
+			//Vector vForward;
+			//m_hPortalEnvironment.Get()->GetVectors( &vForward, NULL, NULL );
+
+			PortalEyeInterpolation.m_vEyePosition_Interpolated = EyeFootPosition();
+
+			PortalEyeInterpolation.m_bEyePositionIsInterpolating = true;
+		}
+	}
+
+	if (IsInAVehicle())
+		PortalEyeInterpolation.m_bEyePositionIsInterpolating = false;
+
+	if (!PortalEyeInterpolation.m_bEyePositionIsInterpolating)
+	{
+		PortalEyeInterpolation.m_vEyePosition_Uninterpolated = EyeFootPosition();
+		PortalEyeInterpolation.m_vEyePosition_Interpolated = PortalEyeInterpolation.m_vEyePosition_Uninterpolated;
+		return;
+	}
+
+	Vector vThisFrameUninterpolatedPosition = EyeFootPosition();
+
+	//find offset between this and last frame's uninterpolated movement, and apply this as freebie movement to the interpolated position
+	PortalEyeInterpolation.m_vEyePosition_Interpolated += (vThisFrameUninterpolatedPosition - PortalEyeInterpolation.m_vEyePosition_Uninterpolated);
+	PortalEyeInterpolation.m_vEyePosition_Uninterpolated = vThisFrameUninterpolatedPosition;
+
+	Vector vDiff = vThisFrameUninterpolatedPosition - PortalEyeInterpolation.m_vEyePosition_Interpolated;
+	float fLength = vDiff.Length();
+	float fFollowSpeed = gpGlobals->frametime * 100.0f;
+	const float fMaxDiff = 150.0f;
+	if (fLength > fMaxDiff)
+	{
+		//camera lagging too far behind, give it a speed boost to bring it within maximum range
+		fFollowSpeed = fLength - fMaxDiff;
+	}
+	else if (fLength < fFollowSpeed)
+	{
+		//final move
+		PortalEyeInterpolation.m_bEyePositionIsInterpolating = false;
+		PortalEyeInterpolation.m_vEyePosition_Interpolated = vThisFrameUninterpolatedPosition;
+		return;
+	}
+
+	if (fLength > 0.001f)
+	{
+		vDiff *= (fFollowSpeed / fLength);
+		PortalEyeInterpolation.m_vEyePosition_Interpolated += vDiff;
+	}
+	else
+	{
+		PortalEyeInterpolation.m_vEyePosition_Interpolated = vThisFrameUninterpolatedPosition;
+	}
+
+
+
+#else
+	PortalEyeInterpolation.m_vEyePosition_Interpolated = BaseClass::EyePosition();
+#endif
+}
+
+void C_BasePlayer::CalcPortalView(Vector& eyeOrigin, QAngle& eyeAngles)
+{
+	//although we already ran CalcPlayerView which already did these copies, they also fudge these numbers in ways we don't like, so recopy
+	VectorCopy(EyePosition(), eyeOrigin);
+	VectorCopy(EyeAngles(), eyeAngles);
+
+	//Re-apply the screenshake (we just stomped it)
+	vieweffects->ApplyShake(eyeOrigin, eyeAngles, 1.0);
+
+	IEnginePortalClient* pPortal = GetEnginePlayer()->GetPortalEnvironment();
+	assert(pPortal);
+
+	IEnginePortalClient* pRemotePortal = pPortal->GetLinkedPortal();
+	if (!pRemotePortal)
+	{
+		return; //no hacks possible/necessary
+	}
+
+	Vector ptPortalCenter;
+	Vector vPortalForward;
+
+	ptPortalCenter = pPortal->AsEngineObject()->AsEngineObjectClient()->GetNetworkOrigin();
+	pPortal->AsEngineObject()->GetVectors(&vPortalForward, NULL, NULL);
+	float fPortalPlaneDist = vPortalForward.Dot(ptPortalCenter);
+
+	bool bOverrideSpecialEffects = false; //sometimes to get the best effect we need to kill other effects that are simply for cleanliness
+
+	float fEyeDist = vPortalForward.Dot(eyeOrigin) - fPortalPlaneDist;
+	bool bTransformEye = false;
+	if (fEyeDist < 0.0f) //eye behind portal
+	{
+		if (pPortal->EntityIsInPortalHole(this->GetEngineObject())) //player standing in portal m_hPortalSimulator->
+		{
+			bTransformEye = true;
+		}
+		else if (vPortalForward.z < -0.01f) //there's a weird case where the player is ducking below a ceiling portal. As they unduck their eye moves beyond the portal before the code detects that they're in the portal hole.
+		{
+			Vector ptPlayerOrigin = GetEngineObject()->GetAbsOrigin();
+			float fOriginDist = vPortalForward.Dot(ptPlayerOrigin) - fPortalPlaneDist;
+
+			if (fOriginDist > 0.0f)
+			{
+				float fInvTotalDist = 1.0f / (fOriginDist - fEyeDist); //fEyeDist is negative
+				Vector ptPlaneIntersection = (eyeOrigin * fOriginDist * fInvTotalDist) - (ptPlayerOrigin * fEyeDist * fInvTotalDist);
+				Assert(fabs(vPortalForward.Dot(ptPlaneIntersection) - fPortalPlaneDist) < 0.01f);
+
+				Vector vIntersectionTest = ptPlaneIntersection - ptPortalCenter;
+
+				Vector vPortalRight, vPortalUp;
+				pPortal->AsEngineObject()->GetVectors(NULL, &vPortalRight, &vPortalUp);
+
+				if ((vIntersectionTest.Dot(vPortalRight) <= PORTAL_HALF_WIDTH) &&
+					(vIntersectionTest.Dot(vPortalUp) <= PORTAL_HALF_HEIGHT))
+				{
+					bTransformEye = true;
+				}
+			}
+		}
+	}
+
+	if (bTransformEye)
+	{
+		m_bEyePositionIsTransformedByPortal = true;
+
+		//DevMsg( 2, "transforming portal view from <%f %f %f> <%f %f %f>\n", eyeOrigin.x, eyeOrigin.y, eyeOrigin.z, eyeAngles.x, eyeAngles.y, eyeAngles.z );
+
+		VMatrix matThisToLinked = pPortal->MatrixThisToLinked();
+		UTIL_Portal_PointTransform(matThisToLinked, eyeOrigin, eyeOrigin);
+		UTIL_Portal_AngleTransform(matThisToLinked, eyeAngles, eyeAngles);
+
+		//DevMsg( 2, "transforming portal view to   <%f %f %f> <%f %f %f>\n", eyeOrigin.x, eyeOrigin.y, eyeOrigin.z, eyeAngles.x, eyeAngles.y, eyeAngles.z );
+
+		if (GetEngineObject()->IsToolRecording())
+		{
+			static EntityTeleportedRecordingState_t state;
+
+			KeyValues* msg = new KeyValues("entity_teleported");
+			msg->SetPtr("state", &state);
+			state.m_bTeleported = false;
+			state.m_bViewOverride = true;
+			state.m_vecTo = eyeOrigin;
+			state.m_qaTo = eyeAngles;
+			MatrixInvert(matThisToLinked.As3x4(), state.m_teleportMatrix);
+
+			// Post a message back to all IToolSystems
+			Assert((int)GetEngineObject()->GetToolHandle() != 0);
+			ToolFramework_PostToolMessage(GetEngineObject()->GetToolHandle(), msg);
+
+			msg->deleteThis();
+		}
+
+		bOverrideSpecialEffects = true;
+	}
+	else
+	{
+		m_bEyePositionIsTransformedByPortal = false;
+	}
+
+	if (bOverrideSpecialEffects)
+	{
+		m_iForceNoDrawInPortalSurface = ((pRemotePortal->IsPortal2()) ? (2) : (1));
+		pRemotePortal->SetStaticAmount(0.0f);
 	}
 }
 

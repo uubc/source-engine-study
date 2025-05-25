@@ -814,7 +814,7 @@ private:
 	int m_iLastWeaponFireUsercmd;
 
 	// Copyed from EyeAngles() so we can send it to the client.
-	CNetworkQAngle( m_angEyeAngles );
+	//CNetworkQAngle( m_angEyeAngles );
 
 	bool m_bVCollisionInitted;
 

@@ -41,9 +41,9 @@
 // left / right
 #define	YAW		1
 
-#ifdef PORTAL
+//#ifdef PORTAL
 	bool g_bUpsideDown = false; // Set when the player is upside down in Portal to invert the mouse.
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 
 extern ConVar lookstrafe;
 extern ConVar cl_pitchdown;
@@ -457,13 +457,13 @@ void CUserInput::ApplyMouse( QAngle& viewangles, CUserCmd *cmd, float mouse_x, f
 {
 	if ( !((in_strafe.state & 1) || lookstrafe.GetInt()) )
 	{
-#ifdef PORTAL
+//#ifdef PORTAL
 		if ( g_bUpsideDown )
 		{
 			viewangles[ YAW ] += m_yaw.GetFloat() * mouse_x;
 		}
 		else
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 		{
 			if ( CAM_IsThirdPerson() && thirdperson_platformer.GetInt() )
 			{
@@ -499,13 +499,13 @@ void CUserInput::ApplyMouse( QAngle& viewangles, CUserCmd *cmd, float mouse_x, f
 	//  to adjust view pitch.
 	if (!(in_strafe.state & 1))
 	{
-#ifdef PORTAL
+//#ifdef PORTAL
 		if ( g_bUpsideDown )
 		{
 			viewangles[PITCH] -= m_pitch->GetFloat() * mouse_y;
 		}
 		else
-#endif //#ifdef PORTAL
+//#endif //#ifdef PORTAL
 		{
 			if ( CAM_IsThirdPerson() && thirdperson_platformer.GetInt() )
 			{

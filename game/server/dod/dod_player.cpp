@@ -313,8 +313,8 @@ IMPLEMENT_SERVERCLASS_ST( CDODPlayer, DT_DODPlayer )
 	SendPropDataTable( "dodlocaldata", 0, &REFERENCE_SEND_TABLE(DT_DODLocalPlayerExclusive), SendProxy_SendLocalDataTable ),
 	SendPropDataTable( "dodnonlocaldata", 0, &REFERENCE_SEND_TABLE(DT_DODNonLocalPlayerExclusive), SendProxy_SendNonLocalDataTable ),
 
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 13, SPROP_CHANGES_OFTEN ),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 13, SPROP_CHANGES_OFTEN ),
+	//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 13, SPROP_CHANGES_OFTEN ),
+	//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 13, SPROP_CHANGES_OFTEN ),
 	SendPropEHandle( SENDINFO( m_hRagdoll ) ),
 	SendPropBool( SENDINFO( m_bSpawnInterpCounter ) ),
 	SendPropInt( SENDINFO( m_iAchievementAwardsMask ), NUM_ACHIEVEMENT_AWARDS, SPROP_UNSIGNED ),
@@ -351,7 +351,7 @@ CDODPlayer::CDODPlayer()
 	m_PlayerAnimState = CreatePlayerAnimState( this );
 	m_Shared.Init( this );
 
-	m_angEyeAngles.Init();
+	//m_angEyeAngles.Init();
 
 	SetViewOffset( DOD_PLAYER_VIEW_OFFSET );
 	

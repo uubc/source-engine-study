@@ -1231,12 +1231,16 @@ public:
 	virtual unsigned int PlayerSolidMask( bool brushOnly = false ) const;	// returns the solid mask for the given player, so bots can have a more-restrictive set
 
 	virtual void IncrementPortalsPlaced(void) {}
+	virtual void Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity);
+
 
 	QAngle						m_qPrePortalledViewAngles;
 	bool						m_bFixEyeAnglesFromPortalling;
 	VMatrix						m_matLastPortalled;
 	CNetworkVar(bool, m_bPitchReorientation);
 
+	// Copyed from EyeAngles() so we can send it to the client.
+	CNetworkQAngle(m_angEyeAngles);
 };
 
 typedef CHandle<CBasePlayer> CBasePlayerHandle;

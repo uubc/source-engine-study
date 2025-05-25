@@ -68,7 +68,7 @@ public:
 private:
     CNetworkHandle( CBaseEntity, m_hRagdoll );
 	CNetworkVar( int, m_iSpawnInterpCounter );
-	CNetworkQAngle( m_angEyeAngles );
+	//CNetworkQAngle( m_angEyeAngles );
 
     IHL1MPPlayerAnimState*		m_PlayerAnimState;
 	float						m_flNextModelChangeTime;

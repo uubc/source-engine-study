@@ -70,8 +70,8 @@ IMPLEMENT_SERVERCLASS_ST( CHL1MP_Player, DT_HL1MP_PLAYER )
 //	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
 	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11 ),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11 ),
+	//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11 ),
+	//SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11 ),
 
     SendPropEHandle( SENDINFO( m_hRagdoll ) ),
 	SendPropInt( SENDINFO( m_iSpawnInterpCounter), 4 ),
@@ -96,7 +96,7 @@ CHL1MP_Player::CHL1MP_Player()
 	m_PlayerAnimState = CreatePlayerAnimState( this );
 //	item_list = 0;
 
-	m_angEyeAngles.Init();
+	//m_angEyeAngles.Init();
 //	m_pCurStateInfo = NULL;
 	m_lifeState = LIFE_DEAD; // Start "dead".
 

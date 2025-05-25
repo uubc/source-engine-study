@@ -36,7 +36,6 @@ public:
 	bool Init(int entnum, int iSerialNum);
 
 	void ClientThink( void );
-	void FixTeleportationRoll( void );
 
 	static inline C_Portal_Player* GetLocalPortalPlayer()
 	{
@@ -70,7 +69,6 @@ public:
 	virtual const QAngle&	EyeAngles();
 	virtual void			OnPreDataChanged( DataUpdateType_t type );
 	virtual void			OnDataChanged( DataUpdateType_t type );
-	bool					DetectAndHandlePortalTeleportation( void ); //detects if the player has portalled and fixes views
 	virtual float			GetFOV( void );
 	virtual IStudioHdr*		OnNewModel( void );
 	virtual void			TraceAttack( const ITakeDamageInfo&info, const Vector &vecDir, trace_t *ptr );
@@ -85,21 +83,16 @@ public:
 	virtual void			PreThink( void );
 	virtual void			DoImpactEffect( trace_t &tr, int nDamageType );
 
-	virtual Vector			EyePosition();
-	Vector					EyeFootPosition( const QAngle &qEyeAngles );//interpolates between eyes and feet based on view angle roll
-	inline Vector			EyeFootPosition( void ) { return EyeFootPosition( EyeAngles() ); }; 
+	//virtual Vector			EyePosition();
 
-	virtual void	CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
-	void			CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles );
+
+	//virtual void	CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
 	virtual void	CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeAngles);
 
 	CBaseEntity*	FindUseEntity( void );
 	CBaseEntity*	FindUseEntityThroughPortal( void );
 
-	virtual bool		IsCloseToPortal( void ) //it's usually a good idea to turn on draw hacks when this is true
-	{
-		return ((PortalEyeInterpolation.m_bEyePositionIsInterpolating) || (GetEnginePlayer()->GetPortalEnvironment() != NULL));
-	} 
+
 
 	bool	CanSprint( void );
 	void	StartSprinting( void );
@@ -121,12 +114,10 @@ private:
 
 	C_Portal_Player( const C_Portal_Player & );
 
-	void UpdatePortalEyeInterpolation( void );
 	
 	CPortalPlayerAnimState *m_PlayerAnimState;
 
-	QAngle	m_angEyeAngles;
-	CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
+
 
 	virtual const IEngineObjectClient* GetRepresentativeRagdoll() const;
 	EHANDLE	m_hRagdoll;
@@ -156,36 +147,7 @@ private:
 
 	int	  m_iPlayerSoundType;
 
-
-	int	m_iForceNoDrawInPortalSurface; //only valid for one frame, used to temp disable drawing of the player model in a surface because of freaky artifacts
-
-	struct PortalEyeInterpolation_t
-	{
-		bool	m_bEyePositionIsInterpolating; //flagged when the eye position would have popped between two distinct positions and we're smoothing it over
-		Vector	m_vEyePosition_Interpolated; //we'll be giving the interpolation a certain amount of instant movement per frame based on how much an uninterpolated eye would have moved
-		Vector	m_vEyePosition_Uninterpolated; //can't have smooth movement without tracking where we just were
-		//bool	m_bNeedToUpdateEyePosition;
-		//int		m_iFrameLastUpdated;
-
-		int		m_iTickLastUpdated;
-		float	m_fTickInterpolationAmountLastUpdated;
-		bool	m_bDisableFreeMovement; //used for one frame usually when error in free movement is likely to be high
-		bool	m_bUpdatePosition_FreeMove;
-
-		PortalEyeInterpolation_t( void ) : m_iTickLastUpdated(0), m_fTickInterpolationAmountLastUpdated(0.0f), m_bDisableFreeMovement(false), m_bUpdatePosition_FreeMove(false) { };
-	} PortalEyeInterpolation;
-
-	struct PreDataChanged_Backup_t
-	{
-		CHandle<IClientEntity>	m_hPortalEnvironment;
-		CHandle<C_Func_LiquidPortal>	m_hSurroundingLiquidPortal;
-		//Vector					m_ptPlayerPosition;
-		QAngle					m_qEyeAngles;
-	} PreDataChanged_Backup;
-
-	Vector	m_ptEyePosition_LastCalcView;
-	QAngle	m_qEyeAngles_LastCalcView; //we've got some VERY persistent single frame errors while teleporting, this will be updated every frame in CalcView() and will serve as a central source for fixed angles
-	IEnginePortalClient *m_pPortalEnvironment_LastCalcView;
+	CHandle<C_Func_LiquidPortal>	m_hPreSurroundingLiquidPortal;
 
 	ClientCCHandle_t	m_CCDeathHandle;	// handle to death cc effect
 	float				m_flDeathCCWeight;	// for fading in cc effect	

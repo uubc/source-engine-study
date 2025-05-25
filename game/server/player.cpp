@@ -461,6 +461,7 @@ BEGIN_DATADESC( CBasePlayer )
 	DEFINE_FIELD(m_bFixEyeAnglesFromPortalling, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_matLastPortalled, FIELD_VMATRIX_WORLDSPACE),
 	DEFINE_FIELD(m_bPitchReorientation, FIELD_BOOLEAN),
+	DEFINE_FIELD(m_angEyeAngles, FIELD_VECTOR),
 
 END_DATADESC()
 
@@ -8551,7 +8552,8 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 		// Data that only gets sent to the local player.
 		SendPropDataTable( "localdata", 0, &REFERENCE_SEND_TABLE(DT_LocalPlayerExclusive), SendProxy_SendLocalDataTable ),
 		SendPropBool(SENDINFO(m_bPitchReorientation)),
-
+		SendPropAngle(SENDINFO_VECTORELEM(m_angEyeAngles, 0), 13, SPROP_CHANGES_OFTEN),
+		SendPropAngle(SENDINFO_VECTORELEM(m_angEyeAngles, 1), 13, SPROP_CHANGES_OFTEN),
 	END_SEND_TABLE()
 
 //=============================================================================
@@ -8593,6 +8595,14 @@ unsigned int CBasePlayer::PlayerSolidMask( bool brushOnly ) const
 	}
 
 	return MASK_PLAYERSOLID;
+}
+
+void CBasePlayer::Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity)
+{
+	Vector oldOrigin = GetEngineObject()->GetLocalOrigin();
+	QAngle oldAngles = GetEngineObject()->GetLocalAngles();
+	BaseClass::Teleport(newPosition, newAngles, newVelocity);
+	m_angEyeAngles = pl.v_angle;
 }
 
 //-----------------------------------------------------------------------------

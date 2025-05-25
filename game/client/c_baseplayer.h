@@ -107,6 +107,7 @@ public:
 
 	// View model prediction setup
 	virtual void		CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
+	void				CalcPortalView(Vector& eyeOrigin, QAngle& eyeAngles);
 	virtual void		CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeAngles);
 	
 
@@ -157,6 +158,8 @@ public:
 
 	// Eye position..
 	virtual Vector		 EyePosition();
+	Vector					EyeFootPosition(const QAngle& qEyeAngles);//interpolates between eyes and feet based on view angle roll
+	inline Vector			EyeFootPosition(void) { return EyeFootPosition(EyeAngles()); };
 	virtual const QAngle &EyeAngles();		// Direction of eyes
 	void				 EyePositionAndVectors( Vector *pPosition, Vector *pForward, Vector *pRight, Vector *pUp );
 	virtual const QAngle &LocalEyeAngles();		// Direction of eyes
@@ -256,6 +259,8 @@ public:
 
 	// Prediction stuff
 	virtual bool				ShouldPredict( void );
+
+	void ClientThink(void);
 
 	virtual void				PreThink( void );
 	virtual void				PostThink( void );
@@ -672,12 +677,49 @@ public:
 	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld;	}
 	virtual bool		IsCloseToPortal(void) //it's usually a good idea to turn on draw hacks when this is true
 	{
-		return GetEnginePlayer()->GetPortalEnvironment() != NULL;
+		return ((PortalEyeInterpolation.m_bEyePositionIsInterpolating) || (GetEnginePlayer()->GetPortalEnvironment() != NULL));
 	}
+	bool DetectAndHandlePortalTeleportation(void); //detects if the player has portalled and fixes views
+	void UpdatePortalEyeInterpolation(void);
+	void FixTeleportationRoll(void);
+
 
 	bool	m_bPitchReorientation;
 	float	m_fReorientationRate;
 	bool	m_bEyePositionIsTransformedByPortal; //when the eye and body positions are not on the same side of a portal
+
+	QAngle	m_angEyeAngles;
+	CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
+
+	struct PreDataChanged_Backup_t
+	{
+		CHandle<IClientEntity>	m_hPortalEnvironment;
+		//Vector					m_ptPlayerPosition;
+		QAngle					m_qEyeAngles;
+	} PreDataChanged_Backup;
+
+	struct PortalEyeInterpolation_t
+	{
+		bool	m_bEyePositionIsInterpolating; //flagged when the eye position would have popped between two distinct positions and we're smoothing it over
+		Vector	m_vEyePosition_Interpolated; //we'll be giving the interpolation a certain amount of instant movement per frame based on how much an uninterpolated eye would have moved
+		Vector	m_vEyePosition_Uninterpolated; //can't have smooth movement without tracking where we just were
+		//bool	m_bNeedToUpdateEyePosition;
+		//int		m_iFrameLastUpdated;
+
+		int		m_iTickLastUpdated;
+		float	m_fTickInterpolationAmountLastUpdated;
+		bool	m_bDisableFreeMovement; //used for one frame usually when error in free movement is likely to be high
+		bool	m_bUpdatePosition_FreeMove;
+
+		PortalEyeInterpolation_t(void) : m_iTickLastUpdated(0), m_fTickInterpolationAmountLastUpdated(0.0f), m_bDisableFreeMovement(false), m_bUpdatePosition_FreeMove(false) {};
+	} PortalEyeInterpolation;
+
+	Vector	m_ptEyePosition_LastCalcView;
+	QAngle	m_qEyeAngles_LastCalcView; //we've got some VERY persistent single frame errors while teleporting, this will be updated every frame in CalcView() and will serve as a central source for fixed angles
+	IEnginePortalClient* m_pPortalEnvironment_LastCalcView;
+
+	int	m_iForceNoDrawInPortalSurface; //only valid for one frame, used to temp disable drawing of the player model in a surface because of freaky artifacts
+
 };
 
 EXTERN_RECV_TABLE(DT_BasePlayer);

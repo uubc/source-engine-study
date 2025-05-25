@@ -55,8 +55,8 @@ BEGIN_RECV_TABLE_NOBASE( C_TEPlayerAnimEvent, DT_TEPlayerAnimEvent )
 END_RECV_TABLE()
 
 IMPLEMENT_CLIENTCLASS_DT( C_HL1MP_Player, DT_HL1MP_Player, CHL1MP_Player )
-	RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
-	RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
+	//RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
+	//RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
     RecvPropEHandle( RECVINFO( m_hRagdoll ) ),
 	RecvPropInt( RECVINFO( m_iSpawnInterpCounter ) ),    
 	RecvPropInt( RECVINFO( m_iRealSequence ) ),
@@ -74,7 +74,7 @@ C_HL1MP_Player::C_HL1MP_Player( void )
 	//:m_iv_angEyeAngles( "C_HL1MP_Player::m_iv_angEyeAngles" )
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this );
-	m_angEyeAngles.Init();
+	//m_angEyeAngles.Init();
 
 	m_fLastPredFreeze = -1;
 

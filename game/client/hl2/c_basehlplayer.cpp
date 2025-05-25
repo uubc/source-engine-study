@@ -85,6 +85,9 @@ void C_BaseHLPlayer::OnDataChanged( DataUpdateType_t updateType )
 	}
 
 	BaseClass::OnDataChanged( updateType );
+
+	DetectAndHandlePortalTeleportation();
+
 }
 
 //-----------------------------------------------------------------------------

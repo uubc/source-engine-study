@@ -140,7 +140,7 @@ public:
 		
 private:
 
-	CNetworkQAngle( m_angEyeAngles );
+	//CNetworkQAngle( m_angEyeAngles );
 	CPlayerAnimState   m_PlayerAnimState;
 
 	int m_iLastWeaponFireUsercmd;

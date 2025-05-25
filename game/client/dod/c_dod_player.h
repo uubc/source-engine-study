@@ -156,8 +156,8 @@ public:
 	IDODPlayerAnimState *m_PlayerAnimState;
 
 
-	QAngle	m_angEyeAngles;
-	CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
+	//QAngle	m_angEyeAngles;
+	//CInterpolatedVar< QAngle >	m_iv_angEyeAngles;
 
 	void FireBullets( const FireBulletsInfo_t &info );
 	bool CanAttack( void );

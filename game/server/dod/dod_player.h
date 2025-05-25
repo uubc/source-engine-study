@@ -432,7 +432,7 @@ private:
 	IServerEntity *SelectSpawnSpot( CUtlVector<EHANDLE> *pSpawnPoints, int &iLastSpawnIndex );
 
 	// Copyed from EyeAngles() so we can send it to the client.
-	CNetworkQAngle( m_angEyeAngles );
+	//CNetworkQAngle( m_angEyeAngles );
 
 	IDODPlayerAnimState *m_PlayerAnimState;
 

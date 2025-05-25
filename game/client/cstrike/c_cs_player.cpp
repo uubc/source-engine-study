@@ -750,8 +750,8 @@ IMPLEMENT_CLIENTCLASS_DT( C_CSPlayer, DT_CSPlayer, CCSPlayer )
 	RecvPropInt( RECVINFO( m_bInBuyZone ) ),
 	RecvPropInt( RECVINFO( m_iClass ) ),
 	RecvPropInt( RECVINFO( m_ArmorValue ) ),
-	RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
-	RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
+	//RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
+	//RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
 	RecvPropFloat( RECVINFO( m_flStamina ) ),
 	RecvPropInt( RECVINFO( m_bHasDefuser ), 0, RecvProxy_HasDefuser ),
 	RecvPropInt( RECVINFO( m_bNightVisionOn), 0, RecvProxy_NightVision ),
@@ -793,12 +793,12 @@ END_RECV_TABLE()
 
 
 
-C_CSPlayer::C_CSPlayer() :
-	m_iv_angEyeAngles(gpGlobals->curtime, "C_CSPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
+C_CSPlayer::C_CSPlayer() 
+	//:m_iv_angEyeAngles(gpGlobals->curtime, "C_CSPlayer::m_iv_angEyeAngles", &m_angEyeAngles, LATCH_SIMULATION_VAR)
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this, this, LEGANIM_9WAY, true );
 
-	m_angEyeAngles.Init();
+	//m_angEyeAngles.Init();
 
 	m_iLastAddonBits = m_iAddonBits = 0;
 	m_iLastPrimaryAddon = m_iLastSecondaryAddon = WEAPON_NONE;
@@ -826,7 +826,7 @@ C_CSPlayer::C_CSPlayer() :
 
 bool C_CSPlayer::Init(int entnum, int iSerialNum) {
 	bool ret = BaseClass::Init(entnum, iSerialNum);
-	GetEngineObject()->AddVar(&m_iv_angEyeAngles);//&m_angEyeAngles, , LATCH_SIMULATION_VAR
+	//GetEngineObject()->AddVar(&m_iv_angEyeAngles);//&m_angEyeAngles, , LATCH_SIMULATION_VAR
 	return ret;
 }
 
