@@ -547,7 +547,7 @@ public:
 	// physics interactions
 	// mass/size limit set to zero for none
 	static bool				CanPickupObject( IServerEntity *pObject, float massLimit, float sizeLimit );
-
+	IGrabControllerServer* GetGrabController() { return GetEngineObject()->GetGrabController(); }
 
 	void					CheckSuitUpdate();
 	void					SetSuitUpdate(const char *name, int fgroup, int iNoRepeat);

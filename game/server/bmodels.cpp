@@ -1494,7 +1494,7 @@ bool CFuncVPhysicsClip::EntityPassesFilter( CBaseEntity *pOther )
 	if ( pFilter )
 		return pFilter->PassesFilter( this, pOther );
 
-	if ( pOther->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS && pOther->GetEngineObject()->VPhysicsGetObject()->IsMoveable() )
+	if ( pOther->GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS && pOther->GetEngineObject()->VPhysicsGetObject() && pOther->GetEngineObject()->VPhysicsGetObject()->IsMoveable() )
 		return true;
 	
 	return false;

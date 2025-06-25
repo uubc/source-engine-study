@@ -805,9 +805,9 @@ CBaseHandle CGameMovement::TestPlayerPosition( const Vector& pos, int collisionG
 	//UTIL_TraceRay(EntityList(), ray, PlayerSolidMask(), mv->m_nPlayerHandle, collisionGroup, &pm );
 	TracePlayerBBox(pos, pos, PlayerSolidMask(), collisionGroup, pm); //hook into the existing portal special trace functionality
 	if (
-#ifdef PORTAL
+//#ifdef PORTAL
 		pm.startsolid &&
-#endif // PORTAL
+//#endif // PORTAL
 		(pm.contents & PlayerSolidMask()) && pm.m_pEnt )
 	{
 		return pm.m_pEnt->GetRefEHandle();
@@ -1205,12 +1205,12 @@ void CGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove )
 	g_bAllowForcePortalTrace = false;
 	g_bForcePortalTrace = false;
 
-#ifdef PORTAL
+//#ifdef PORTAL
 #ifndef CLIENT_DLL
 	pPlayer->UnforceButtons(IN_DUCK);
 	pPlayer->UnforceButtons(IN_JUMP);
 #endif
-#endif // PORTAL
+//#endif // PORTAL
 
 	// CheckV( player->CurrentCommandNumber(), "EndPos", mv->GetAbsOrigin() );
 
