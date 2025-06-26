@@ -162,9 +162,6 @@
     <ClCompile Include="..\..\..\game\client\camomaterialproxy.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\cdll_bounded_cvars.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\cdll_client_int.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>

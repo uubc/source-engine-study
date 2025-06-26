@@ -3732,8 +3732,7 @@ void C_EngineObjectInternal::PreEntityPacketReceived(int commands_acknowledged)
 	bool copyintermediate = (commands_acknowledged > 0) ? true : false;
 
 	Assert(GetPredictable());
-	ConVarRef cl_predict("cl_predict");
-	Assert(cl_predict.GetInt());
+	Assert(cl_predict->GetInt());
 
 	// First copy in any intermediate predicted data for non-networked fields
 	if (copyintermediate)
@@ -3764,8 +3763,7 @@ void C_EngineObjectInternal::PostEntityPacketReceived(void)
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	Assert(GetPredictable());
-	ConVarRef cl_predict("cl_predict");
-	Assert(cl_predict.GetInt());
+	Assert(cl_predict->GetInt());
 
 	// Always mark as changed
 	g_EntityList.AddDataChangeEvent(this, DATA_UPDATE_DATATABLE_CHANGED, &m_DataChangeEventRef);
@@ -3976,8 +3974,7 @@ void C_EngineObjectInternal::CheckInitPredictable(const char* context)
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	// Prediction is disabled
-	ConVarRef cl_predict("cl_predict");
-	if (!cl_predict.GetInt())
+	if (!cl_predict->GetInt())
 		return;
 
 	IClientEntity* player = g_EntityList.GetLocalPlayer();

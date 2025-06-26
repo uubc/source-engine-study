@@ -200,6 +200,7 @@
     <ClCompile Include="..\..\..\engine\buildcubemaps.cpp" />
     <ClCompile Include="..\..\..\engine\cbenchmark.cpp" />
     <ClCompile Include="..\..\..\engine\ccs.cpp" />
+    <ClCompile Include="..\..\..\engine\cdll_bounded_cvars.cpp" />
     <ClCompile Include="..\..\..\engine\cdll_engine_int.cpp" />
     <ClCompile Include="..\..\..\engine\changeframelist.cpp" />
     <ClCompile Include="..\..\..\engine\cheatcodes.cpp" />

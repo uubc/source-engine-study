@@ -920,5 +920,8 @@
     <ClCompile Include="..\..\..\engine\prediction.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\engine\cdll_bounded_cvars.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

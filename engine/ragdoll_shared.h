@@ -29,6 +29,7 @@ class IStudioHdr;
 #include "tier1/utlpriorityqueue.h"
 #include "tier1/KeyValues.h"
 #include "tier2/tier2.h"
+#include "tier1/convar_serverbounded.h"
 #ifdef _WIN32
 #include "typeinfo"
 // BUGBUG: typeinfo stomps some of the warning settings (in yvals.h)

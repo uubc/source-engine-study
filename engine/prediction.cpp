@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 //#include "cbase.h"
+#include "tier1/convar_serverbounded.h"
 #include "prediction.h"
 #include "shareddefs.h"
 #include "interpolatedvar.h"
@@ -49,6 +50,7 @@ static ConVar	cl_pred_optimize( "cl_pred_optimize", "2", 0, "Optimize for not co
 extern IVEngineClient* engineClient;
 extern CGlobalVarsBase g_ClientGlobalVariables;
 extern IMDLCache* mdlcache;
+extern ConVar_ServerBounded* cl_predict;
 
 void COM_Log( char *pszFile, const char *fmt, ...);
 typedescription_t *FindFieldByName( const char *fieldname, datamap_t *dmap );
@@ -199,8 +201,7 @@ CPrediction::~CPrediction( void )
 void CPrediction::Init( void )
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	ConVarRef cl_predict("cl_predict");
-	m_bOldCLPredictValue = cl_predict.GetInt();
+	m_bOldCLPredictValue = cl_predict->GetInt();
 #endif
 }
 
@@ -226,8 +227,7 @@ void CPrediction::CheckError( int commands_acknowledged )
 		return;
 
 	// Not running prediction
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 		return;
 
 	player = entitylist->GetLocalPlayer();
@@ -391,8 +391,7 @@ void CPrediction::PreEntityPacketReceived ( int commands_acknowledged, int curre
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 	{
 		ShutdownPredictables();
 		return;
@@ -431,8 +430,7 @@ void CPrediction::PostEntityPacketReceived( void )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 		return;
 
 	IClientEntity *current = entitylist->GetLocalPlayer();
@@ -533,8 +531,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	ConVarRef cl_predict("cl_predict");
-	if ( cl_predict.GetInt() )
+	if ( cl_predict->GetInt() )
 	{
 		int showlist = cl_predictionlist.GetInt();
 		int totalsize = 0;
@@ -663,7 +660,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		}
 	}
 #endif
-	if ( cl_predict.GetBool() != m_bOldCLPredictValue )
+	if ( cl_predict->GetBool() != m_bOldCLPredictValue )
 	{
 		if ( !m_bOldCLPredictValue )
 		{
@@ -675,7 +672,7 @@ void CPrediction::PostNetworkDataReceived( int commands_acknowledged )
 		m_nPreviousStartFrame = -1;
 	}
 
-	m_bOldCLPredictValue = cl_predict.GetInt();
+	m_bOldCLPredictValue = cl_predict->GetInt();
 
 #ifndef _XBOX
 	if ( /*dump &&*/ error_check && !entityDumped)
@@ -1077,8 +1074,7 @@ void CPrediction::ShiftIntermediateDataForward( int slots_to_remove, int number_
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 		return;
 
 	int c = GetPredictableCount();
@@ -1114,8 +1110,7 @@ void CPrediction::RestoreEntityToPredictedFrame( int predicted_frame )
 
 	// Don't screw up memory of current player from history buffers if not filling in history buffers
 	//  during prediction!!!
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 		return;
 
 	int c = GetPredictableCount();
@@ -1389,10 +1384,9 @@ void CPrediction::Update( int startframe, bool validframe,
 	bool received_new_world_update = true;
 
 	// Still starting at same frame, so make sure we don't do extra prediction ,etc.
-	ConVarRef cl_predict("cl_predict");
 	if ( ( m_nPreviousStartFrame == startframe ) && 
 		cl_pred_optimize.GetBool() &&
-		cl_predict.GetInt() )
+		cl_predict->GetInt() )
 	{
 		received_new_world_update = false;
 	}
@@ -1433,8 +1427,7 @@ void CPrediction::_Update( bool received_new_world_update, bool validframe,
 	}
 
 	// If we are not doing prediction, copy authoritative value into velocity and angle.
-	ConVarRef cl_predict("cl_predict");
-	if ( !cl_predict.GetInt() )
+	if ( !cl_predict->GetInt() )
 	{
 		// When not predicting, we at least must make sure the player
 		// view angles match the view angles...

@@ -46,6 +46,7 @@ extern ConVar sv_maxvelocity;
 extern ConVar sv_friction;
 extern ConVar sv_stopspeed;
 extern ConVar sv_bounce;
+extern ConVar_ServerBounded* cl_predict;
 
 extern CGlobalVarsBase g_ClientGlobalVariables;
 extern IFileSystem* g_pFileSystem;

@@ -281,8 +281,6 @@ $Project
 		$File	"$SRCDIR\game\shared\cam_thirdperson.h"
 		$File	"camomaterialproxy.cpp"
 		$File	"cdll_client_int.cpp"
-		$File	"cdll_bounded_cvars.cpp"
-		$File	"cdll_bounded_cvars.h"
 		$File	"cdll_util.cpp"
 		$File	"cl_mat_stub.cpp"
 		$File	"client_factorylist.cpp"

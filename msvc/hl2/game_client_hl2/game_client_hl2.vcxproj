@@ -170,7 +170,6 @@
     <ClCompile Include="..\..\..\game\client\basepresence.cpp" />
     <ClCompile Include="..\..\..\game\client\beamdraw.cpp" />
     <ClCompile Include="..\..\..\game\client\camomaterialproxy.cpp" />
-    <ClCompile Include="..\..\..\game\client\cdll_bounded_cvars.cpp" />
     <ClCompile Include="..\..\..\game\client\cdll_client_int.cpp" />
     <ClCompile Include="..\..\..\game\client\cdll_util.cpp" />
     <ClCompile Include="..\..\..\game\client\clienteffectprecachesystem.cpp" />
