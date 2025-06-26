@@ -1667,14 +1667,16 @@ void CHLClient::LevelInitPreEntity()
 	// don't set direct because of FCVAR_USERINFO
 	if ( gpGlobals->maxClients > 1 )
 	{
-		if ( !cl_predict->GetInt() )
+		ConVarRef cl_predict("cl_predict");
+		if ( cl_predict.GetInt() )
 		{
 			engine->ClientCmd( "cl_predict 1" );
 		}
 	}
 	else
 	{
-		if ( cl_predict->GetInt() )
+		ConVarRef cl_predict("cl_predict");
+		if ( cl_predict.GetInt() )
 		{
 			engine->ClientCmd( "cl_predict 0" );
 		}

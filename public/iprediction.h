@@ -47,6 +47,8 @@ public:
 
 	virtual bool	InPrediction(void) const = 0;
 	virtual bool	IsFirstTimePredicted(void) const = 0;
+	virtual bool	IsForceCLPredictOff() = 0;
+	virtual void	ForceCLPredictOff(bool bForceCLPredictOff) = 0;
 
 	// Run prediction
 	virtual void	Update

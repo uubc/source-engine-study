@@ -20,7 +20,7 @@
 #include <vgui/IScheme.h>
 #include <vgui/ILocalize.h>
 #include "tier0/vprof.h"
-#include "cdll_bounded_cvars.h"
+//#include "cdll_bounded_cvars.h"
 
 #include "materialsystem/imaterialsystem.h"
 #include "materialsystem/imesh.h"
@@ -64,6 +64,8 @@ static ConVar	net_graphproportionalfont( "net_graphproportionalfont", "1", FCVAR
 #define COLOR_SKIPPED	2
 #define COLOR_CHOKED	3
 #define COLOR_NORMAL	4
+
+extern float GetClientInterpAmount();
 
 //-----------------------------------------------------------------------------
 // Purpose: Displays the NetGraph 

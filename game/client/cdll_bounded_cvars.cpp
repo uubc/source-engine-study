@@ -9,9 +9,8 @@
 #include "cdll_bounded_cvars.h"
 #include "convar_serverbounded.h"
 #include "tier0/icommandline.h"
+#include "iprediction.h"
 
-
-bool g_bForceCLPredictOff = false;
 
 // ------------------------------------------------------------------------------------------ //
 // cl_predict.
@@ -35,7 +34,7 @@ public:
 	  virtual float GetFloat() const
 	  {
 		  // Used temporarily for CS kill cam.
-		  if ( g_bForceCLPredictOff )
+		  if (g_pClientSidePrediction->IsForceCLPredictOff() )
 			  return 0;
 
 		  static const ConVar *pClientPredict = g_pCVar->FindVar( "sv_client_predict" );
@@ -123,22 +122,5 @@ public:
 static CBoundedCvar_Interp cl_interp_var;
 ConVar_ServerBounded *cl_interp = &cl_interp_var;
 
-float GetClientInterpAmount()
-{
-	static const ConVar *pUpdateRate = g_pCVar->FindVar( "cl_updaterate" );
-	if ( pUpdateRate )
-	{
-		// #define FIXME_INTERP_RATIO
-		return MAX( cl_interp->GetFloat(), cl_interp_ratio->GetFloat() / pUpdateRate->GetFloat() );
-	}
-	else
-	{
-		if (!CommandLine()->FindParm("-hushasserts"))
-		{
-			AssertMsgOnce( false, "GetInterpolationAmount: can't get cl_updaterate cvar." );
-		}
-	
-		return 0.1;
-	}
-}
+
 

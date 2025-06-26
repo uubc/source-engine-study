@@ -16,7 +16,7 @@
 
 	#include "panelmetaclassmgr.h"
 	#include "iprediction.h"
-	#include "cdll_bounded_cvars.h"
+	//#include "cdll_bounded_cvars.h"
 
 #else
 	#include "player.h"
@@ -209,7 +209,7 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 
 		if (m_nKillCamMode > OBS_MODE_NONE)
 		{
-			g_bForceCLPredictOff = false;
+			g_pClientSidePrediction->ForceCLPredictOff(false);
 		}
 
 		m_nKillCamMode = OBS_MODE_NONE;

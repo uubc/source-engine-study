@@ -28,7 +28,7 @@
 	#include "dod_hud_chat.h"
 	#include "c_playerresource.h"
 	#include "panelmetaclassmgr.h"
-	#include "cdll_bounded_cvars.h"
+	//#include "cdll_bounded_cvars.h"
 
 
 #else
@@ -5456,12 +5456,12 @@ void MsgFunc_KillCam(bf_read& msg)
 		if (DODGameRules()->m_nKillCamMode == OBS_MODE_NONE)
 		{
 			// kill cam is switch on, turn off prediction
-			g_bForceCLPredictOff = true;
+			g_pClientSidePrediction->ForceCLPredictOff(true);
 		}
 		else if (newMode == OBS_MODE_NONE)
 		{
 			// kill cam is switched off, restore old prediction setting is we switch back to normal mode
-			g_bForceCLPredictOff = false;
+			g_pClientSidePrediction->ForceCLPredictOff(false);
 		}
 #endif
 		DODGameRules()->m_nKillCamMode = newMode;
@@ -5499,7 +5499,7 @@ void CDODGameWorld::LevelInit()
 #if !defined( NO_ENTITY_PREDICTION )
 	if (m_nKillCamMode > OBS_MODE_NONE)
 	{
-		g_bForceCLPredictOff = false;
+		g_pClientSidePrediction->ForceCLPredictOff(false);
 	}
 #endif
 

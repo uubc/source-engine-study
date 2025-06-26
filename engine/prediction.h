@@ -52,6 +52,14 @@ public:
 
 	virtual bool	InPrediction( void ) const;
 	virtual bool	IsFirstTimePredicted( void ) const;
+	virtual bool	IsForceCLPredictOff() 
+	{
+		return m_bForceCLPredictOff;
+	}
+	virtual void	ForceCLPredictOff(bool bForceCLPredictOff) 
+	{
+		m_bForceCLPredictOff = bForceCLPredictOff;
+	}
 
 #if !defined( NO_ENTITY_PREDICTION )
 	virtual int		GetIncomingPacketNumber( void ) const;
@@ -127,6 +135,7 @@ private:
 	int				m_nServerCommandsAcknowledged;
 	int				m_bPreviousAckHadErrors;
 	int				m_nIncomingPacketNumber;
+	bool			m_bForceCLPredictOff = false;
 
 #endif
 	float			m_flIdealPitch;

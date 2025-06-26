@@ -36,10 +36,11 @@
 #include "toolframework/itoolframework.h"
 #include "toolframework_client.h"
 #include "decals.h"
-#include "cdll_bounded_cvars.h"
+//#include "cdll_bounded_cvars.h"
 #include "inetchannelinfo.h"
 #include "proto_version.h"
 #include "predictioncopy.h"
+#include "tier0/icommandline.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -3151,6 +3152,27 @@ static float AdjustInterpolationAmount( C_BaseEntity *pEntity, float baseInterpo
 	}
 
 	return baseInterpolation;
+}
+
+float GetClientInterpAmount()
+{
+	static const ConVar* pUpdateRate = g_pCVar->FindVar("cl_updaterate");
+	if (pUpdateRate)
+	{
+		ConVarRef cl_interp("cl_interp");
+		ConVarRef cl_interp_ratio("cl_interp_ratio");
+		// #define FIXME_INTERP_RATIO
+		return MAX(cl_interp.GetFloat(), cl_interp_ratio.GetFloat() / pUpdateRate->GetFloat());
+	}
+	else
+	{
+		if (!CommandLine()->FindParm("-hushasserts"))
+		{
+			AssertMsgOnce(false, "GetInterpolationAmount: can't get cl_updaterate cvar.");
+		}
+
+		return 0.1;
+	}
 }
 
 //-------------------------------------

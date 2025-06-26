@@ -23,7 +23,7 @@
 #include "view_shared.h"
 #include "movevars_shared.h"
 #include "iprediction.h"
-#include "cdll_bounded_cvars.h"
+//#include "cdll_bounded_cvars.h"
 #include "tier0/vprof.h"
 #include "filesystem.h"
 #include "bitbuf.h"
@@ -3051,7 +3051,8 @@ void C_BasePlayer::GetRagdollInitBoneArrays( matrix3x4_t *pDeltaBones0, matrix3x
 void C_BasePlayer::GetPredictionErrorSmoothingVector( Vector &vOffset )
 {
 #if !defined( NO_ENTITY_PREDICTION )
-	if ( engine->IsPlayingDemo() || !cl_smooth.GetInt() || !cl_predict->GetInt() || engine->IsPaused() )
+	ConVarRef cl_predict("cl_predict");
+	if ( engine->IsPlayingDemo() || !cl_smooth.GetInt() || !cl_predict.GetInt() || engine->IsPaused() )
 	{
 		vOffset.Init();
 		return;

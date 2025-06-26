@@ -56,7 +56,7 @@
 
 #include "iviewrender_beams.h"			// flashlight beam
 #include "ragdoll.h"
-#include "cdll_bounded_cvars.h"
+//#include "cdll_bounded_cvars.h"
 #include "ivmodemanager.h"
 
 //=============================================================================
