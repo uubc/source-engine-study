@@ -167,7 +167,7 @@ void UTIL_Portal_TraceRay_With(IEntityList* pEntityList, const IEnginePortal *pP
 		trace_t PortalTrace;
 		UTIL_Portal_TraceRay( pPortal, ray, fMask, pTraceFilter, &PortalTrace, bTraceHolyWall );
 
-		if( !g_bForcePortalTrace && !RealTrace.startsolid && PortalTrace.fraction <= RealTrace.fraction )
+		if( (!g_bForcePortalTrace && !RealTrace.startsolid && PortalTrace.fraction <= RealTrace.fraction )|| RealTrace.IsDispSurface())
 		{
 			*pTrace = RealTrace;
 			return;
