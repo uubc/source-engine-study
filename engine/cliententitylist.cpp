@@ -11103,7 +11103,7 @@ void C_EnginePortalInternal::TraceRay(const Ray_t& ray, unsigned int fMask, ITra
 
 		//solid entities
 		C_PortalCollideableEnumerator enumerator(this);
-		partition->EnumerateElementsAlongRay(PARTITION_ENGINE_SOLID_EDICTS | PARTITION_ENGINE_STATIC_PROPS, ray, false, &enumerator);
+		partition->EnumerateElementsAlongRay(PARTITION_CLIENT_SOLID_EDICTS | PARTITION_CLIENT_STATIC_PROPS, ray, false, &enumerator);
 		for (counter = 0; counter != enumerator.m_iHandleCount; ++counter)
 		{
 			if (staticpropmgr->IsStaticProp(enumerator.m_pHandles[counter]))
