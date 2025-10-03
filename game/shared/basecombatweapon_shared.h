@@ -185,6 +185,7 @@ public:
 	// Subtypes are used to manage multiple weapons of the same type on the player.
 	virtual int				GetSubType( void ) { return m_iSubType; }
 	virtual void			SetSubType( int iType ) { m_iSubType = iType; }
+	virtual bool			IsA(int id) const { return false; }
 
 	virtual void			Equip( CBaseCombatCharacter *pOwner );
 	virtual void			Drop( const Vector &vecVelocity );

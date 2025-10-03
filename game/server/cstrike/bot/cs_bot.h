@@ -1320,7 +1320,7 @@ inline bool CCSBot::IsNotMoving( float minDuration ) const
 
 inline CWeaponCSBase *CCSBot::GetActiveCSWeapon( void ) const
 {
-	return reinterpret_cast<CWeaponCSBase *>( GetActiveWeapon() );
+	return dynamic_cast<CWeaponCSBase *>( GetActiveWeapon() );
 }
 
 

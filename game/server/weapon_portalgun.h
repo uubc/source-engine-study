@@ -59,6 +59,10 @@ public:
 	void DoEffectBlast( bool bPortal2, int iPlacedBy, const Vector &ptStart, const Vector &ptFinalPos, const QAngle &qStartAngles, float fDelay );
 	virtual void OnPickedUp( CBaseCombatCharacter *pNewOwner );
 
+	bool IsA(int id) const {
+		return false;
+	}
+
 	virtual bool ShouldDrawCrosshair( void );
 	float GetPortal1Placablity( void ) { return m_fCanPlacePortal1OnThisSurface; }
 	float GetPortal2Placablity( void ) { return m_fCanPlacePortal2OnThisSurface; }

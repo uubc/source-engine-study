@@ -7024,7 +7024,7 @@ void C_EngineObjectInternal::LockStudioHdr()
 	}
 
 	const model_t* mdl = GetModel();
-	if (!mdl)
+	if (!mdl || modelinfoclient->GetModelType(mdl) != mod_studio)
 		return;
 
 	m_hStudioHdr = modelinfoclient->GetCacheHandle(mdl);

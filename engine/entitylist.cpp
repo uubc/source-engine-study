@@ -9871,7 +9871,7 @@ void CEngineObjectInternal::LockStudioHdr()
 {
 	AUTO_LOCK(m_StudioHdrInitLock);
 	const model_t* mdl = GetModel();
-	if (mdl)
+	if (mdl && modelinfo->GetModelType(mdl) == mod_studio)
 	{
 		MDLHandle_t hStudioHdr = modelinfo->GetCacheHandle(mdl);
 		if (hStudioHdr != MDLHANDLE_INVALID)

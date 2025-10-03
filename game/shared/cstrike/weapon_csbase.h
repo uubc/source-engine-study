@@ -144,7 +144,7 @@ public:
 	virtual CSWeaponID GetWeaponID( void ) const		{ return WEAPON_NONE; }
 
 	// return true if this weapon is an instance of the given weapon type (ie: "IsA" WEAPON_GLOCK)
-	bool IsA( CSWeaponID id ) const						{ return GetWeaponID() == id; }
+	bool IsA( int id ) const						{ return GetWeaponID() == id; }
 
 	// return true if this weapon is a kinf of the given weapon type (ie: "IsKindOf" WEAPONTYPE_RIFLE )
 	bool IsKindOf( CSWeaponType type ) const			{ return GetCSWpnData().m_WeaponType == type; }
