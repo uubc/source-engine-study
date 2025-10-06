@@ -31,6 +31,7 @@ class CBounceBomb : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
 
 public:
 	CBounceBomb() { m_pWarnSound = NULL; m_bPlacedByPlayer = false; }
+	bool IsBaseAnimating() { return true; }
 	void Precache();
 	void Spawn();
 	void OnRestore();

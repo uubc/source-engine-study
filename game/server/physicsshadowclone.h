@@ -33,6 +33,7 @@ public:
 	CPhysicsShadowClone( void );
 	virtual ~CPhysicsShadowClone( void );
 	
+	bool IsBaseAnimating() { return true; }
 	static int GetEngineObjectTypeStatic() { return ENGINEOBJECT_SHADOWCLONE; }
 
 

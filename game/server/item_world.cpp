@@ -28,6 +28,7 @@ class CWorldItem : public CBaseAnimating
 public:
 	DECLARE_CLASS( CWorldItem, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	bool	KeyValue( const char *szKeyName, const char *szValue ); 
 	void	Spawn( void );
 

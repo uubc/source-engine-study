@@ -28,6 +28,7 @@ public:
 
 	static CWindowPane* CreateWindowPane(  const Vector &vecOrigin, const QAngle &vecAngles );
 
+	bool IsBaseAnimating() { return true; }
 	void			Spawn( void );
 	void			Precache( void );
 	void			PaneTouch( IServerEntity *pOther );

@@ -496,6 +496,7 @@ class CWateryDeathLeech : public CBaseAnimating
 public:
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( void );
 	void Precache( void );
 	void LeechThink( void );

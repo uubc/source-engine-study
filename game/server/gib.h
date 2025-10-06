@@ -35,6 +35,7 @@ class CGib : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
 public:
 	DECLARE_CLASS( CGib, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( const char *szGibModel );
 	void Spawn( const char *szGibModel, float flLifetime );
 
@@ -107,6 +108,7 @@ class CRagGib : public CBaseAnimating
 public:
 	DECLARE_CLASS( CRagGib, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( const char *szModel, const Vector &vecOrigin, const Vector &vecForce, float flFadeTime );
 };
 

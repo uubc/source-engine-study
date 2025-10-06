@@ -19,6 +19,7 @@ class CActAnimating : public CBaseAnimating
 public:
 	DECLARE_CLASS( CActAnimating, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void			SetActivity( Activity act );
 	inline Activity	GetActivity( void ) { return m_Activity; }
 

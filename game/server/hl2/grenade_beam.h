@@ -29,6 +29,7 @@ public:
 	DECLARE_CLASS( CGrenadeBeamChaser, CBaseAnimating );
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	static CGrenadeBeamChaser* ChaserCreate( CGrenadeBeam *pTarget );
 
 	void			Spawn( void );

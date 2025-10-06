@@ -31,6 +31,7 @@ public:
 	C_PlantedC4();
 	virtual ~C_PlantedC4();
 
+	bool IsBaseAnimating() { return true; }
 	void Explode( void );
 	void Spawn( void );
 	virtual void AfterSetDormant( bool bOldDormant );

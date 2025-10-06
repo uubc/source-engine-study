@@ -27,6 +27,7 @@ public:
 	CRagdollProp( void );
 	~CRagdollProp( void );
 
+	bool IsBaseAnimating() { return true; }
 	virtual void UpdateOnRemove( void );
 
 	void DrawDebugGeometryOverlays();

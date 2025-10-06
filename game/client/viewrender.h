@@ -230,6 +230,7 @@ public:
 	{
 		m_pViewRenderCallBack = pViewRenderCallBack;
 	}
+	void Register(IClientEffect* effect);
 
 	const CViewSetup *GetPlayerViewSetup( ) const;
 
@@ -299,6 +300,7 @@ public:
 	void			LevelInit( void );
 	void			LevelInitPreEntity();
 	void			LevelShutdownPreEntity();
+	void			LevelShutdownPostEntity();
 	void			LevelShutdown( void );
 
 	// Add entity to transparent entity queue
@@ -674,6 +676,8 @@ private:
 	int g_viewscene_refractUpdateFrame = 0;
 	bool g_bAllowMultipleRefractUpdatesPerScenePerFrame = false;
 	IViewRenderCallBack* m_pViewRenderCallBack = NULL;
+	CUtlVector< IClientEffect* >	m_Effects;
+
 };
 
 #endif // VIEWRENDER_H

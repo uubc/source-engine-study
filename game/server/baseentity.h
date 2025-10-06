@@ -435,7 +435,7 @@ public:
 	virtual void Spawn( void );
 	virtual void Precache( void ) {}
 
-
+	virtual bool IsBaseAnimating() { return false; }
 	virtual void SetModel( const char *szModelName );
 public:
 	// Notification on model load. May be called multiple times for dynamic models.

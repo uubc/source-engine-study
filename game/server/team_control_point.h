@@ -30,6 +30,7 @@ public:
 
 	CTeamControlPoint();
 
+	bool IsBaseAnimating() { return true; }
 	// Derived, game-specific control points must override these functions
 public:
 	// Used to find game specific entities

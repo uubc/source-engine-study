@@ -28,6 +28,7 @@ public:
 
 // IParticleEffect overrides.
 public:
+	bool IsBaseAnimating() { return true; }
 	virtual bool	ShouldSimulate() const { return m_bSimulate; }
 	virtual void	SetShouldSimulate( bool bSim ) { m_bSimulate = bSim; }
 

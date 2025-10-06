@@ -17,6 +17,7 @@ public:
 	DECLARE_SERVERCLASS();
 
 	CPropScalable();
+	bool IsBaseAnimating() { return true; }
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex);
 	virtual void Spawn( void );
 	virtual void Precache( void );

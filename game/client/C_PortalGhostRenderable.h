@@ -32,6 +32,7 @@ public:
 	C_PortalGhostRenderable( );
 	virtual ~C_PortalGhostRenderable( void );
 
+	bool IsBaseAnimating() { return true; }
 	void Init(C_Prop_Portal* pOwningPortal, C_BaseEntity* pGhostSource, RenderGroup_t sourceRenderGroup, const VMatrix& matGhostTransform, float* pSharedRenderClipPlane, bool bLocalPlayer);
 	void UpdateOnRemove(void);
 	void PerFrameUpdate( void ); //called once per frame for misc updating

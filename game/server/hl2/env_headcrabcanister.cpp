@@ -84,6 +84,7 @@ public:
 	// Initialization
 	CEnvHeadcrabCanister();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void		Precache( void );
 	virtual void		Spawn( void );
 	virtual void		UpdateOnRemove();

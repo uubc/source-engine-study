@@ -26,6 +26,7 @@ public:
 
 	C_PropCrane();
 	
+	bool IsBaseAnimating() { return true; }
 	void PreDataUpdate( DataUpdateType_t updateType );
 	void PostDataUpdate( DataUpdateType_t updateType );
 

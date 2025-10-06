@@ -32,6 +32,7 @@ public:
 	DECLARE_CLASS( C_Fish, C_BaseAnimating );
 	DECLARE_CLIENTCLASS();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Spawn( void );
 	virtual void ClientThink();
 

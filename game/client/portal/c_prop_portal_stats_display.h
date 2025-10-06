@@ -23,6 +23,7 @@ public:
 	C_PropPortalStatsDisplay();
 	virtual ~C_PropPortalStatsDisplay();
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( void );
 
 	virtual void	OnPreDataChanged( DataUpdateType_t updateType );

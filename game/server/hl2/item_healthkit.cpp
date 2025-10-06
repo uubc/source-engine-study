@@ -446,6 +446,7 @@ class CNewWallHealth : public CBaseAnimating
 public:
 	DECLARE_CLASS( CNewWallHealth, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( );
 	void Precache( void );
 	int  DrawDebugTextOverlays(void);

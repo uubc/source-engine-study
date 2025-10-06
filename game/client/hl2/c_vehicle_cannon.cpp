@@ -31,6 +31,7 @@ public:
 
 	C_PropCannon();
 	
+	bool IsBaseAnimating() { return true; }
 	void PreDataUpdate( DataUpdateType_t updateType );
 
 public:

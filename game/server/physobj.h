@@ -183,6 +183,7 @@ public:
 	CPhysMagnet();
 	~CPhysMagnet();
 
+	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );
 	void	Precache( void );
 	void	Touch( IServerEntity *pOther );

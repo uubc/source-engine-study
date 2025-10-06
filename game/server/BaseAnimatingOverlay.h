@@ -146,7 +146,7 @@ class CBaseAnimatingOverlay : public CBaseAnimating
 	DECLARE_CLASS( CBaseAnimatingOverlay, CBaseAnimating );
 
 public:
-
+	bool IsBaseAnimating() { return true; }
 private:
 	CUtlVector< CAnimationLayer	> m_AnimOverlay;
 	//int				m_nActiveLayers;

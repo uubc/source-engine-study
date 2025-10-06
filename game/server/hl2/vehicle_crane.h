@@ -62,6 +62,7 @@ public:
 		}
 	}
 
+	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );
 	void	Precache( void );
 

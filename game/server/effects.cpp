@@ -1389,6 +1389,7 @@ class CItemSoda : public CBaseAnimating
 public:
 	DECLARE_CLASS( CItemSoda, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );
 	void	Precache( void );
 	void	CanThink ( void );

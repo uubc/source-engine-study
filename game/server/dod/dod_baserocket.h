@@ -30,6 +30,7 @@ public:
 	CDODBaseRocket();
 	~CDODBaseRocket();
 	
+	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );
 	void	Precache( void );
 	void	RocketTouch( IServerEntity *pOther );

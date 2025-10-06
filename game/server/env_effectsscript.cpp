@@ -95,6 +95,7 @@ public:
 	DECLARE_CLASS( CEnvEffectsScript, CBaseAnimating );
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Precache();
 	virtual void Spawn();
 	virtual int  UpdateTransmitState();

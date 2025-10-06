@@ -66,6 +66,7 @@ public:
 
 	C_LocalTempEntity();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void					Prepare( const model_t *pmodel, float time );
 
 	virtual bool					IsActive( void );

@@ -68,6 +68,7 @@ enum
 class CBlobElement : public CBaseAnimating
 {
 public:
+	bool IsBaseAnimating() { return true; }
 	void Precache();
 	void Spawn();
 	int	DrawDebugTextOverlays(void); 

@@ -29,6 +29,7 @@ public:
 	C_EnvHeadcrabCanister();
 	~C_EnvHeadcrabCanister();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void OnDataChanged( DataUpdateType_t updateType );
 	virtual void ClientThink();
 

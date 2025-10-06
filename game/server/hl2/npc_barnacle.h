@@ -45,6 +45,7 @@ class CBarnacleTongueTip : public CBaseAnimating
 public:
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Spawn( void );
 	virtual void Precache( void );
 	virtual void UpdateOnRemove( );

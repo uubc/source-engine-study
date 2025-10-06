@@ -530,7 +530,7 @@ public:
 	// Deal with EF_* flags
 	virtual void					CreateLightEffects(void);
 
-
+	virtual bool					IsBaseAnimating() { return false; }
 
 	// Reset internal fields
 	virtual void					Clear(void);

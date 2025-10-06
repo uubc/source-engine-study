@@ -20,6 +20,7 @@ public:
 	C_WaterBullet( void ) {};
 	~C_WaterBullet( void ) {};
 
+	bool IsBaseAnimating() { return true; }
 	void OnDataChanged( DataUpdateType_t updateType )
 	{
 		BaseClass::OnDataChanged( updateType );

@@ -36,6 +36,7 @@ public:
 
 	CBaseProjectile();
 
+	bool IsBaseAnimating() { return true; }
 #ifdef GAME_DLL
 	virtual int GetDestroyableHitCount( void ) const { return m_iDestroyableHitCount; }
 	void IncrementDestroyableHitCount( void ) { ++m_iDestroyableHitCount; }

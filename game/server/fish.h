@@ -32,6 +32,7 @@ public:
 	CFish( void );
 	virtual ~CFish();
 
+	bool IsBaseAnimating() { return true; }
 	void Initialize( CFishPool *pool, unsigned int id );
 	
 	virtual void Spawn( void );

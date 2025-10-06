@@ -44,6 +44,7 @@ public:
 							CBaseViewModel( void );
 							~CBaseViewModel( void );
 
+	bool IsBaseAnimating() { return true; }
 #ifdef CLIENT_DLL
 	bool Init(int entnum, int iSerialNum);
 #endif // CLIENT_DLL

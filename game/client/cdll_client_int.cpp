@@ -1044,7 +1044,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	//IGameSystem::Add( ClientLeafSystem() );
 	//IGameSystem::Add( DetailObjectSystem() );
 	IGameSystem::Add( ViewportClientSystem() );
-	IGameSystem::Add( ClientEffectPrecacheSystem() );
+	//IGameSystem::Add( ClientEffectPrecacheSystem() );
 	//IGameSystem::Add( g_pClientShadowMgr );
 	IGameSystem::Add( g_pColorCorrectionMgr );	// NOTE: This must happen prior to ClientThinkList (color correction is updated there)
 	//IGameSystem::Add( ClientThinkList() );
@@ -1704,6 +1704,9 @@ void CHLClient::LevelInitPreEntity()
 	g_pViewRender->LevelInitPreEntity();
 
 	IGameSystem::LevelInitPreEntityAllSystems();//pMapName
+
+	// Now, cache off our material handles
+	FX_CacheMaterialHandles();
 }
 
 

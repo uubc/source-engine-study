@@ -35,7 +35,7 @@ public:
 class CGlowOverlay
 {
 public:
-
+	friend class CGlowOverlaySystem;
 					CGlowOverlay();
 	virtual			~CGlowOverlay();
 
@@ -74,12 +74,7 @@ public:
 	void			Activate();
 	void			Deactivate();
 	
-	// Render all the active overlays.
-	static void		DrawOverlays( bool bCacheFullSceneState );
-	static void		UpdateSkyOverlays( float zFar, bool bCacheFullSceneState );
 
-	static void		BackupSkyOverlayData( int iBackupToSlot );
-	static void		RestoreSkyOverlayData( int iRestoreFromSlot );
 
 protected:
 

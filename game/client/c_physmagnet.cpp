@@ -21,6 +21,7 @@ public:
 	C_PhysMagnet();
 	virtual	~C_PhysMagnet();
 
+	bool IsBaseAnimating() { return true; }
 	void	PostDataUpdate( DataUpdateType_t updateType );
 	bool	GetShadowCastDirection( Vector *pDirection, ShadowType_t shadowType ) const;
 	

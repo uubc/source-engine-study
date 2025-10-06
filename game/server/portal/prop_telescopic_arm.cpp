@@ -30,6 +30,7 @@ public:
 	DECLARE_CLASS( CPropTelescopicArm, CBaseAnimating );
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void UpdateOnRemove( void );
 	virtual void Spawn( void );
 	virtual void Precache( void );

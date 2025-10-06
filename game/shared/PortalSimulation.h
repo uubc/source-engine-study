@@ -69,6 +69,8 @@ public:
 
 	CPortalSimulator( void );
 	~CPortalSimulator( void );
+
+	bool IsBaseAnimating() { return true; }
 	//static bool IsNetworkableStatic(void) { return false; }
 	//virtual bool IsNetworkable(void) { return CPortalSimulator::IsNetworkableStatic(); }
 	static int GetEngineObjectTypeStatic() { return ENGINEOBJECT_PORTAL; }

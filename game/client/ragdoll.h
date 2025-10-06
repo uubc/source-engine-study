@@ -81,6 +81,7 @@ public:
 
 	C_ServerRagdoll(void);
 
+	bool IsBaseAnimating() { return true; }
 	bool Init(int entnum, int iSerialNum);
 
 	virtual void PostDataUpdate(DataUpdateType_t updateType);
@@ -121,6 +122,7 @@ public:
 	DECLARE_CLASS(C_ClientRagdoll, C_BaseAnimating);
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	bool Init(int entnum, int iSerialNum);
 
 	void IgniteRagdoll(C_BaseEntity* pSource);

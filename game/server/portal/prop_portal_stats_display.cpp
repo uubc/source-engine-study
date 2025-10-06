@@ -27,6 +27,7 @@ public:
 
 	virtual ~CPropPortalStatsDisplay();
 
+	bool IsBaseAnimating() { return true; }
 	virtual int  UpdateTransmitState();
 	virtual void SetTransmit( CCheckTransmitInfo *pInfo, bool bAlways );
 

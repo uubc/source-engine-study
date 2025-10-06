@@ -360,6 +360,7 @@ class CNewRecharge : public CBaseAnimating
 public:
 	DECLARE_CLASS( CNewRecharge, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( );
 	bool CreateVPhysics();
 	int DrawDebugTextOverlays(void);

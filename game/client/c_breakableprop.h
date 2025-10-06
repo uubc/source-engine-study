@@ -22,7 +22,7 @@ public:
 
 	C_BreakableProp();
 	
-
+	bool IsBaseAnimating() { return true; }
 	// Copy fade from another breakable prop
 	void CopyFadeFrom( C_BreakableProp *pSource );
 };

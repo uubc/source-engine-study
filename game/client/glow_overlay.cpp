@@ -24,7 +24,7 @@ CLIENTEFFECT_MATERIAL( "sun/overlay" )
 CLIENTEFFECT_MATERIAL( "sprites/light_glow02_add_noz" )
 CLIENTEFFECT_REGISTER_END()
 
-class CGlowOverlaySystem : public CAutoGameSystem
+class CGlowOverlaySystem : public CAutoGameSystem, public IGlowOverlaySystem
 {
 public:
 	CGlowOverlaySystem() : CAutoGameSystem( "CGlowOverlaySystem" )
@@ -49,9 +49,18 @@ public:
 			m_GlowOverlays.Remove( handle );
 		}
 	}
+
+	// Render all the active overlays.
+	void		DrawOverlays(bool bCacheFullSceneState);
+	void		UpdateSkyOverlays(float zFar, bool bCacheFullSceneState);
+
+	void		BackupSkyOverlayData(int iBackupToSlot);
+	void		RestoreSkyOverlayData(int iRestoreFromSlot);
+
 	CUtlLinkedList<CGlowOverlay*, unsigned short> m_GlowOverlays;
 };
 CGlowOverlaySystem g_GlowOverlaySystem;
+IGlowOverlaySystem* g_pGlowOverlaySystem = &g_GlowOverlaySystem;
 
 ConVar cl_ShowSunVectors( "cl_ShowSunVectors", "0", 0 );
 
@@ -507,7 +516,7 @@ void CGlowOverlay::Deactivate()
 }
 
 
-void CGlowOverlay::DrawOverlays( bool bCacheFullSceneState )
+void CGlowOverlaySystem::DrawOverlays( bool bCacheFullSceneState )
 {
 	VPROF("CGlowOverlay::DrawOverlays()");
 
@@ -516,10 +525,10 @@ void CGlowOverlay::DrawOverlays( bool bCacheFullSceneState )
 	bool bClippingEnabled = pRenderContext->EnableClipping( true );
 
 	unsigned short iNext;
-	for( unsigned short i=g_GlowOverlaySystem.m_GlowOverlays.Head(); i != g_GlowOverlaySystem.m_GlowOverlays.InvalidIndex(); i = iNext )
+	for( unsigned short i=m_GlowOverlays.Head(); i != m_GlowOverlays.InvalidIndex(); i = iNext )
 	{
-		iNext = g_GlowOverlaySystem.m_GlowOverlays.Next( i );
-		CGlowOverlay *pOverlay = g_GlowOverlaySystem.m_GlowOverlays[i];
+		iNext = m_GlowOverlays.Next( i );
+		CGlowOverlay *pOverlay = m_GlowOverlays[i];
 		
 		if( !pOverlay->m_bActivated )
 			continue;
@@ -538,13 +547,13 @@ void CGlowOverlay::DrawOverlays( bool bCacheFullSceneState )
 	pRenderContext->EnableClipping( bClippingEnabled ); //restore clipping to original state
 }
 
-void CGlowOverlay::UpdateSkyOverlays( float zFar, bool bCacheFullSceneState )
+void CGlowOverlaySystem::UpdateSkyOverlays( float zFar, bool bCacheFullSceneState )
 {
 	unsigned short iNext;
-	for( unsigned short i=g_GlowOverlaySystem.m_GlowOverlays.Head(); i != g_GlowOverlaySystem.m_GlowOverlays.InvalidIndex(); i = iNext )
+	for( unsigned short i=m_GlowOverlays.Head(); i != m_GlowOverlays.InvalidIndex(); i = iNext )
 	{
-		iNext = g_GlowOverlaySystem.m_GlowOverlays.Next( i );
-		CGlowOverlay *pOverlay = g_GlowOverlaySystem.m_GlowOverlays[i];
+		iNext = m_GlowOverlays.Next( i );
+		CGlowOverlay *pOverlay = m_GlowOverlays[i];
 		
 		if( !pOverlay->m_bActivated || !pOverlay->m_bDirectional || !pOverlay->m_bInSky )
 			continue;
@@ -554,13 +563,13 @@ void CGlowOverlay::UpdateSkyOverlays( float zFar, bool bCacheFullSceneState )
 }
 
 
-void CGlowOverlay::BackupSkyOverlayData( int iBackupToSlot )
+void CGlowOverlaySystem::BackupSkyOverlayData( int iBackupToSlot )
 {
 	unsigned short iNext;
-	for( unsigned short i=g_GlowOverlaySystem.m_GlowOverlays.Head(); i != g_GlowOverlaySystem.m_GlowOverlays.InvalidIndex(); i = iNext )
+	for( unsigned short i=m_GlowOverlays.Head(); i != m_GlowOverlays.InvalidIndex(); i = iNext )
 	{
-		iNext = g_GlowOverlaySystem.m_GlowOverlays.Next( i );
-		CGlowOverlay *pOverlay = g_GlowOverlaySystem.m_GlowOverlays[i];
+		iNext = m_GlowOverlays.Next( i );
+		CGlowOverlay *pOverlay = m_GlowOverlays[i];
 
 		if( !pOverlay->m_bActivated || !pOverlay->m_bDirectional || !pOverlay->m_bInSky )
 			continue;
@@ -569,13 +578,13 @@ void CGlowOverlay::BackupSkyOverlayData( int iBackupToSlot )
 	}
 }
 
-void CGlowOverlay::RestoreSkyOverlayData( int iRestoreFromSlot )
+void CGlowOverlaySystem::RestoreSkyOverlayData( int iRestoreFromSlot )
 {
 	unsigned short iNext;
-	for( unsigned short i=g_GlowOverlaySystem.m_GlowOverlays.Head(); i != g_GlowOverlaySystem.m_GlowOverlays.InvalidIndex(); i = iNext )
+	for( unsigned short i=m_GlowOverlays.Head(); i != m_GlowOverlays.InvalidIndex(); i = iNext )
 	{
-		iNext = g_GlowOverlaySystem.m_GlowOverlays.Next( i );
-		CGlowOverlay *pOverlay = g_GlowOverlaySystem.m_GlowOverlays[i];
+		iNext = m_GlowOverlays.Next( i );
+		CGlowOverlay *pOverlay = m_GlowOverlays[i];
 
 		if( !pOverlay->m_bActivated || !pOverlay->m_bDirectional || !pOverlay->m_bInSky )
 			continue;

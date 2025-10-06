@@ -19,6 +19,7 @@ class C_DODBombTarget : public C_BaseAnimating
 	DECLARE_NETWORKCLASS();
 
 public:
+	bool IsBaseAnimating() { return true; }
 	virtual int DrawModel( int flags );
 	virtual void NotifyShouldTransmit( ShouldTransmitState_t state );
 	virtual void ClientThink( void );

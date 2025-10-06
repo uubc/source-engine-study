@@ -17,6 +17,7 @@ public:
 					C_DODBaseRocket();
 	virtual			~C_DODBaseRocket();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Spawn();
 	virtual int DrawModel( int flags );
 	virtual void PostDataUpdate( DataUpdateType_t type );

@@ -69,6 +69,7 @@ public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( void );
 	void Precache( void );
 	void Activate( void );

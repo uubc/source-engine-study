@@ -83,6 +83,7 @@ class CAntlionGrub : public CBaseAnimating
 public:
 	DECLARE_CLASS( CAntlionGrub, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	virtual void	Activate( void );
 	virtual void	Spawn( void );
 	virtual void	Precache( void );

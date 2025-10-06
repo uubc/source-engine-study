@@ -25,6 +25,7 @@ class CBaseAnimatingProjectile : public CBaseAnimating
 	DECLARE_CLASS( CBaseAnimatingProjectile, CBaseAnimating );
 
 public:
+	bool IsBaseAnimating() { return true; }
 	void Touch( IServerEntity *pOther );
 
 	void Spawn(	char *pszModel,

@@ -99,6 +99,7 @@ public:
 	DECLARE_CLIENTCLASS();
 	DECLARE_DATADESC();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void OnPreDataChanged( DataUpdateType_t type );
 	virtual void OnDataChanged( DataUpdateType_t type );
 

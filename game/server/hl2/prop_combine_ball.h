@@ -33,6 +33,7 @@ public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Precache();
 	virtual void Spawn();
 	virtual bool IsCombineBall() const { return true; }

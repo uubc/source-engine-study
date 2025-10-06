@@ -330,6 +330,7 @@ class CHelicopterChunk : public CBaseAnimating
 public:
 	DECLARE_CLASS( CHelicopterChunk, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	virtual void Spawn( void );
 	virtual void VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
 

@@ -615,6 +615,7 @@ class CItem_AmmoCrate : public CBaseAnimating
 public:
 	DECLARE_CLASS( CItem_AmmoCrate, CBaseAnimating );
 
+	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );
 	void	Precache( void );
 	bool	CreateVPhysics( void );

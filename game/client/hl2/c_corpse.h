@@ -18,6 +18,7 @@ public:
 
 						C_Corpse( void );
 
+			bool IsBaseAnimating() { return true; }
 	virtual int			DrawModel( int flags );
 
 public:

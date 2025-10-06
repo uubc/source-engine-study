@@ -12,60 +12,12 @@
 #pragma once
 #endif
 
-#include "igamesystem.h"
+//#include "igamesystem.h"
+#include "iviewrender.h"
 #include "commonmacros.h"
 #include "utlvector.h"
 #include "materialsystem/imaterialsystem.h"
 #include "materialsystem/imaterial.h"
-
-//-----------------------------------------------------------------------------
-// Interface to automated system for precaching materials
-//-----------------------------------------------------------------------------
-class IClientEffect
-{
-public:
-	virtual void Cache( bool precache = true )	= 0;
-};
-
-//-----------------------------------------------------------------------------
-// Responsible for managing precaching of particles
-//-----------------------------------------------------------------------------
-
-class CClientEffectPrecacheSystem : public IGameSystem
-{
-public:
-	virtual char const *Name() { return "CCLientEffectPrecacheSystem"; }
-
-	virtual bool	IsPerFrame() { return false; }
-
-	// constructor, destructor
-	CClientEffectPrecacheSystem() {}
-	virtual ~CClientEffectPrecacheSystem() {}
-
-	// Init, shutdown
-	virtual bool Init() { return true; }
-	virtual void PostInit() {}
-	virtual void Shutdown();
-
-	// Level init, shutdown
-	virtual void LevelInitPreEntity();
-	virtual void LevelInitPostEntity() {}
-	virtual void LevelShutdownPreEntity();
-	virtual void LevelShutdownPostEntity();
-
-	virtual void OnSave() {}
-	virtual void OnRestore() {}
-	virtual void SafeRemoveIfDesired() {}
-
-	void Register( IClientEffect *effect );
-
-protected:
-
-	CUtlVector< IClientEffect * >	m_Effects;
-};
-
-//Singleton accessor
-extern CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem();
 
 //-----------------------------------------------------------------------------
 // Deals with automated registering and precaching of materials for effects
@@ -75,11 +27,7 @@ class CClientEffect : public IClientEffect
 {
 public:
 
-	CClientEffect( void )
-	{
-		//Register with the main effect system
-		ClientEffectPrecacheSystem()->Register( this );
-	}
+	CClientEffect(void);
 
 //-----------------------------------------------------------------------------
 // Purpose: Precache a material by artificially incrementing its reference counter
@@ -102,7 +50,11 @@ public:
 			}
 		}
 	}
+
+	CClientEffect* m_pNextClientEffect = NULL;
 };
+
+extern CClientEffect* s_pClientEffectHead;
 
 //Automatic precache macros
 

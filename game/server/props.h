@@ -27,6 +27,7 @@ class CBaseProp : public CBaseAnimating
 	DECLARE_CLASS( CBaseProp, CBaseAnimating );
 public:
 
+	bool IsBaseAnimating() { return true; }
 	void Spawn( void );
 	void Precache( void );
 	void Activate( void );

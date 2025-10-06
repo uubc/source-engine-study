@@ -16,6 +16,7 @@ public:
 
 	C_PropScalable();
 
+	bool IsBaseAnimating() { return true; }
 	virtual void ApplyBoneMatrixTransform( matrix3x4_t& transform );
 	virtual void GetRenderBounds( Vector &theMins, Vector &theMaxs );
 

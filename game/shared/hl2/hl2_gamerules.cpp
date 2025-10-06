@@ -465,6 +465,7 @@ called each time a player is spawned into the game
 		DECLARE_CLASS( CCorpse, CBaseAnimating );
 		DECLARE_SERVERCLASS();
 
+		bool IsBaseAnimating() { return true; }
 		virtual int ObjectCaps( void ) { return FCAP_DONT_SAVE; }	
 
 	public:

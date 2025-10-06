@@ -7,14 +7,14 @@
 //#include "cbase.h"
 #include "iviewrender.h"
 #include "view_shared.h"
-#include "ivieweffects.h"
+#include "ivieweffects.h"// aaa
 #include "model_types.h"
-#include "clientsideeffects.h"
-#include "particlemgr.h"
+#include "clientsideeffects.h"// aaa
+#include "particlemgr.h"// aaa
 #include "viewrender.h"
-#include "iclientmode.h"
-#include "voice_status.h"
-#include "glow_overlay.h"
+//#include "iclientmode.h"
+#include "voice_status.h"// aaa
+//#include "glow_overlay.h"
 #include "materialsystem/imesh.h"
 #include "materialsystem/itexture.h"
 #include "materialsystem/imaterial.h"
@@ -32,7 +32,7 @@
 #include "particles_ez.h"
 #include "engine/IStaticPropMgr.h"
 #include "engine/ivdebugoverlay.h"
-#include "c_pixel_visibility.h"
+//#include "c_pixel_visibility.h"
 #include "clienteffectprecachesystem.h"
 //#include "c_rope.h"
 #include "c_effects.h"
@@ -1085,6 +1085,19 @@ void CViewRender::LevelInitPreEntity()
 	// Same with Kleiner's lab (d1_trainstation_05)
 	g_bAllowMultipleRefractUpdatesPerScenePerFrame = datamap_t::FStrEq(MapName(), "ep1_citadel_03") || datamap_t::FStrEq(MapName(), "d1_trainstation_05");
 #endif
+	for (CClientEffect* pCur = s_pClientEffectHead; pCur; pCur = pCur->m_pNextClientEffect)
+	{
+		Register(pCur);
+	}
+	//Precache all known effects
+	for (int i = 0; i < m_Effects.Size(); i++)
+	{
+		m_Effects[i]->Cache();
+	}
+
+	//FIXME: Double check this
+	//Finally, force the cache of these materials
+	materials->CacheUsedMaterials();
 }
 
 void CViewRender::LevelShutdownPreEntity() 
@@ -1095,6 +1108,15 @@ void CViewRender::LevelShutdownPreEntity()
 		EntityList()->DestroyEntity(m_RecordedPortals[i].m_pActivePortal->GetClientEntity());
 	}
 	m_RecordedPortals.RemoveAll();
+}
+
+void CViewRender::LevelShutdownPostEntity()
+{
+	// mark all known effects as free
+	for (int i = 0; i < m_Effects.Size(); i++)
+	{
+		m_Effects[i]->Cache(false);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1116,8 +1138,19 @@ void CViewRender::Shutdown(void)
 	m_UnderWaterOverlayMaterial.Shutdown();
 	beams->ShutdownBeams();
 	tempents->Shutdown();
+	//Release all effects
+	m_Effects.Purge();
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Adds the effect to the list to be precached
+// Input  : *effect - system to precache
+//-----------------------------------------------------------------------------
+void CViewRender::Register(IClientEffect* effect)
+{
+	//Hold onto this effect for precaching later
+	m_Effects.AddToTail(effect);
+}
 
 //-----------------------------------------------------------------------------
 // Returns the worldlists build number
@@ -2599,7 +2632,7 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 
 	// Here are the overlays...
 
-	CGlowOverlay::DrawOverlays( view.m_bCacheFullSceneState );
+	g_pGlowOverlaySystem->DrawOverlays( view.m_bCacheFullSceneState );
 
 	// issue the pixel visibility tests
 	if ( IsMainView( CurrentViewID() ) )
@@ -4015,7 +4048,7 @@ void CViewRender::ViewDrawScene_PortalStencil( const CViewSetup &viewIn, ViewCus
 	// Disable fog for the rest of the stuff
 	DisableFog();
 
-	CGlowOverlay::DrawOverlays( view.m_bCacheFullSceneState );
+	g_pGlowOverlaySystem->DrawOverlays( view.m_bCacheFullSceneState );
 
 	// Draw rain..
 	DrawPrecipitation();
@@ -4319,7 +4352,7 @@ void CViewRender::ViewDrawScene_Intro( const CViewSetup &view, int nClearFlags, 
 	DisableFog();
 	
 	// Here are the overlays...
-	CGlowOverlay::DrawOverlays( view.m_bCacheFullSceneState );
+	g_pGlowOverlaySystem->DrawOverlays( view.m_bCacheFullSceneState );
 
 	// issue the pixel visibility tests
 	PixelVisibility_EndCurrentView();
@@ -6115,7 +6148,7 @@ void CSkyboxView::DrawInternal( view_id_t iSkyBoxViewID, bool bInvokePreAndPostR
 
 	m_pMainView->DisableFog();
 
-	CGlowOverlay::UpdateSkyOverlays( zFar, m_bCacheFullSceneState );
+	g_pGlowOverlaySystem->UpdateSkyOverlays( zFar, m_bCacheFullSceneState );
 
 	PixelVisibility_EndCurrentView();
 
@@ -8025,7 +8058,7 @@ bool CViewRender::DrawPortalsUsingStencils()
 				pRenderContext->GetFogColor(fogColorBackup);
 				float fFogStartBackup, fFogEndBackup, fFogZBackup;
 				pRenderContext->GetFogDistances(&fFogStartBackup, &fFogEndBackup, &fFogZBackup);
-				CGlowOverlay::BackupSkyOverlayData(m_iViewRecursionLevel);
+				g_pGlowOverlaySystem->BackupSkyOverlayData(m_iViewRecursionLevel);
 
 				Assert(m_PortalViewIDNodeChain[m_iViewRecursionLevel]->ChildNodes.Count() > pCurrentPortal->GetPortalViewIDNodeIndex());
 
@@ -8035,7 +8068,7 @@ bool CViewRender::DrawPortalsUsingStencils()
 
 				m_PortalViewIDNodeChain[m_iViewRecursionLevel + 1] = NULL;
 
-				CGlowOverlay::RestoreSkyOverlayData(m_iViewRecursionLevel);
+				g_pGlowOverlaySystem->RestoreSkyOverlayData(m_iViewRecursionLevel);
 				memcpy((void*)pViewSetup, &ViewBackup, sizeof(CViewSetup));
 				this->m_pActiveRenderer->EnableWorldFog();
 

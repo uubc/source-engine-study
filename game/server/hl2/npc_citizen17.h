@@ -414,6 +414,7 @@ private:
 class CSquadInsignia : public CBaseAnimating
 {
 	DECLARE_CLASS( CSquadInsignia, CBaseAnimating );
+	bool IsBaseAnimating() { return true; }
 	void Spawn();
 };
 

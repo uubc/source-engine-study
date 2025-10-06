@@ -47,6 +47,7 @@ public:
 	C_LowViolenceHostageDeathModel();
 	~C_LowViolenceHostageDeathModel();
 
+	bool IsBaseAnimating() { return true; }
 	bool SetupLowViolenceModel( C_CHostage *pHostage );
 
 	// fading out

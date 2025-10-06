@@ -18,8 +18,9 @@
 #include "icommandline.h"
 #include "sourcevr/isourcevirtualreality.h"
 #include "shared_classnames.h"
-#include "c_baseentity.h"
+//#include "c_baseentity.h"
 #include "util_shared.h"
+#include "igamesystem.h"
 
 static void PixelvisDrawChanged( IConVar *pPixelvisVar, const char *pOld, float flOldValue );
 

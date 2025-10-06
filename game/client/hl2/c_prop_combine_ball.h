@@ -19,6 +19,7 @@ public:
 
 	C_PropCombineBall( void );
 
+	bool IsBaseAnimating() { return true; }
 	virtual RenderGroup_t GetRenderGroup( void );
 
 	virtual void	OnDataChanged( DataUpdateType_t updateType );

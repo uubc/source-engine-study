@@ -167,6 +167,15 @@ public:
 	virtual void PostRenderView(const CViewSetup& view, int nClearFlags, int whatToDraw) = 0;
 };
 
+//-----------------------------------------------------------------------------
+// Interface to automated system for precaching materials
+//-----------------------------------------------------------------------------
+class IClientEffect
+{
+public:
+	virtual void Cache(bool precache = true) = 0;
+};
+
 abstract_class IViewRender
 {
 public:
@@ -185,6 +194,7 @@ public:
 	virtual void		Shutdown( void ) = 0;
 
 	virtual void		InstallCallBack(IViewRenderCallBack* pViewRenderCallBack) = 0;
+	virtual void		Register(IClientEffect* effect) = 0;
 
 	// RENDERING
 	// Called right before simulation. It must setup the view model origins and angles here so 
@@ -410,5 +420,16 @@ static inline float ScaleFOVByWidthRatio(float fovDegrees, float ratio)
 	float retDegrees = (180.0f / M_PI) * atan(t);
 	return retDegrees * 2.0f;
 }
+
+abstract_class IGlowOverlaySystem{
+public:
+	virtual void		DrawOverlays(bool bCacheFullSceneState) = 0;
+	virtual void		UpdateSkyOverlays(float zFar, bool bCacheFullSceneState) = 0;
+
+	virtual void		BackupSkyOverlayData(int iBackupToSlot) = 0;
+	virtual void		RestoreSkyOverlayData(int iRestoreFromSlot) = 0;
+};
+
+extern IGlowOverlaySystem* g_pGlowOverlaySystem;
 
 #endif // IVIEWRENDER_H

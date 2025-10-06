@@ -28,6 +28,7 @@ public:
 
 	C_BaseAnimatingOverlay();
 
+	bool IsBaseAnimating() { return true; }
 	virtual IStudioHdr *OnNewModel();
 
 	C_AnimationLayer* GetAnimOverlay( int i );

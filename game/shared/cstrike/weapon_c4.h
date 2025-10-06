@@ -40,6 +40,7 @@
 		CPlantedC4();
 		virtual ~CPlantedC4();
 
+		bool IsBaseAnimating() { return true; }
 		virtual int  UpdateTransmitState();
 		virtual void SetTransmit( CCheckTransmitInfo *pInfo, bool bAlways );
 		virtual int  ShouldTransmit( const CCheckTransmitInfo *pInfo );

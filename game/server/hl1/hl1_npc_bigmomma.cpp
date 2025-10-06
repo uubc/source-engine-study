@@ -112,6 +112,7 @@ class CBMortar : public CBaseAnimating
 {
 	DECLARE_CLASS( CBMortar, CBaseAnimating );
 public:
+	bool IsBaseAnimating() { return true; }
 	void Spawn( void );
 
 	virtual void Precache();
