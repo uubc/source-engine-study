@@ -73,46 +73,46 @@ public:
 	C_BaseAnimating();
 	~C_BaseAnimating();
 
-	bool Init(int entnum, int iSerialNum);
-	void UpdateOnRemove(void);
+	//bool Init(int entnum, int iSerialNum);
+	//void UpdateOnRemove(void);
 
-	bool					IsBaseAnimating() { return true; }
+	//bool					IsBaseAnimating() { return true; }
 	//virtual C_BaseAnimating*		GetBaseAnimating() { return this; }
 
-	bool UsesPowerOfTwoFrameBufferTexture( void );
+	//bool UsesPowerOfTwoFrameBufferTexture( void );
 
-	virtual bool	Interpolate(IInterpolationContext* pContext, float currentTime );
-	virtual void	Simulate();	
+	//virtual bool	Interpolate(IInterpolationContext* pContext, float currentTime );
+	//virtual void	Simulate();	
 
-	float	GetAnimTimeInterval( void ) const;
+	//float	GetAnimTimeInterval( void ) const;
 
-	virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pAbsOrigin, QAngle *pAbsAngles );
+	//virtual void	GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pAbsOrigin, QAngle *pAbsAngles );
 
-	virtual void ApplyBoneMatrixTransform( matrix3x4_t& transform );
+	//virtual void ApplyBoneMatrixTransform( matrix3x4_t& transform );
 
-	virtual void CalculateIKLocks( float currentTime );
-	virtual bool ShouldDraw();
-	virtual int DrawModel( int flags );
-	virtual int	InternalDrawModel( int flags );
+	//virtual void CalculateIKLocks( float currentTime );
+	//virtual bool ShouldDraw();
+	//virtual int DrawModel( int flags );
+	//virtual int	InternalDrawModel( int flags );
 
-	void		DoInternalDrawModel( ClientModelRenderInfo_t *pInfo, DrawModelState_t *pState, matrix3x4_t *pBoneToWorldArray = NULL );
+	//void		DoInternalDrawModel( ClientModelRenderInfo_t *pInfo, DrawModelState_t *pState, matrix3x4_t *pBoneToWorldArray = NULL );
 
 	//
 	
 	// override in sub-classes
-	virtual void DoAnimationEvents( IStudioHdr *pStudio );
-	virtual void FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
-	virtual void FireObsoleteEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
-	virtual const char* ModifyEventParticles( const char* token ) { return token; }
+	//virtual void DoAnimationEvents( IStudioHdr *pStudio );
+	//virtual void FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
+	//virtual void FireObsoleteEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
+	//virtual const char* ModifyEventParticles( const char* token ) { return token; }
 
 	// Parses and distributes muzzle flash events
-	virtual bool DispatchMuzzleEffect( const char *options, bool isFirstPerson );
+	//virtual bool DispatchMuzzleEffect( const char *options, bool isFirstPerson );
 
 	// virtual	void AllocateMaterials( void );
 	// virtual	void FreeMaterials( void );
 
-	virtual void ValidateModelIndex( void );
-	virtual IStudioHdr *OnNewModel( void );
+	//virtual void ValidateModelIndex( void );
+	//virtual IStudioHdr *OnNewModel( void );
 
 	
 	//virtual void SetPredictable( bool state );
@@ -145,24 +145,24 @@ public:
 	//bool solveIK(float a, float b, const Vector &Foot, const Vector &Knee1, Vector &Knee2);
 	//void DebugIK( mstudioikchain_t *pikchain );
 
-	virtual void					PreDataUpdate( DataUpdateType_t updateType );
-	virtual void					PostDataUpdate( DataUpdateType_t updateType );
+	//virtual void					PreDataUpdate( DataUpdateType_t updateType );
+	//virtual void					PostDataUpdate( DataUpdateType_t updateType );
 	//virtual int						RestoreData( const char *context, int slot, int type );
-	virtual void					OnPostRestoreData();
+	//virtual void					OnPostRestoreData();
 
-	virtual void					NotifyShouldTransmit( ShouldTransmitState_t state );
-	virtual void					OnPreDataChanged( DataUpdateType_t updateType );
-	virtual void					OnDataChanged( DataUpdateType_t updateType );
-	virtual void					AddEntity( void );
+	//virtual void					NotifyShouldTransmit( ShouldTransmitState_t state );
+	//virtual void					OnPreDataChanged( DataUpdateType_t updateType );
+	//virtual void					OnDataChanged( DataUpdateType_t updateType );
+	//virtual void					AddEntity( void );
 
 	//virtual bool					IsSelfAnimating();
 
 	// implements these so ragdolls can handle frustum culling & leaf visibility
-	virtual void					GetRenderBounds( Vector& theMins, Vector& theMaxs );
-	virtual const Vector&			GetRenderOrigin( void );
-	virtual const QAngle&			GetRenderAngles( void );
+	//virtual void					GetRenderBounds( Vector& theMins, Vector& theMaxs );
+	//virtual const Vector&			GetRenderOrigin( void );
+	//virtual const QAngle&			GetRenderAngles( void );
 
-	virtual bool					GetSoundSpatialization( SpatializationInfo_t& info );
+	//virtual bool					GetSoundSpatialization( SpatializationInfo_t& info );
 
 	// Attachments.
 	//bool							GetAttachment( const char *szName, Vector &absOrigin );
@@ -172,39 +172,39 @@ public:
 
 	
 	// Returns the attachment in local space
-	bool							GetAttachmentLocal( int iAttachment, matrix3x4_t &attachmentToLocal );
-	bool							GetAttachmentLocal( int iAttachment, Vector &origin, QAngle &angles );
-	bool                            GetAttachmentLocal( int iAttachment, Vector &origin );
+	//bool							GetAttachmentLocal( int iAttachment, matrix3x4_t &attachmentToLocal );
+	//bool							GetAttachmentLocal( int iAttachment, Vector &origin, QAngle &angles );
+	//bool                            GetAttachmentLocal( int iAttachment, Vector &origin );
 
 
 	// Should this object cast render-to-texture shadows?
-	virtual ShadowType_t			ShadowCastType();
+	//virtual ShadowType_t			ShadowCastType();
 
 	// Should we collide?
-	virtual CollideType_t			GetCollideType( void );
+	//virtual CollideType_t			GetCollideType( void );
 
-	virtual bool					TestCollision( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
-	virtual bool					TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
+	//virtual bool					TestCollision( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
+	//virtual bool					TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
 
-	virtual C_ClientRagdoll*		CreateRagdollCopy();
-	virtual C_BaseEntity*			BecomeRagdollOnClient();
+	//virtual C_ClientRagdoll*		CreateRagdollCopy();
+	//virtual C_BaseEntity*			BecomeRagdollOnClient();
 
 
-	virtual void					Clear( void );
-	void							ForceSetupBonesAtTime( matrix3x4_t *pBonesOut, float flTime );
-	virtual void					GetRagdollInitBoneArrays( matrix3x4_t *pDeltaBones0, matrix3x4_t *pDeltaBones1, matrix3x4_t *pCurrentBones, float boneDt );
+	//virtual void					Clear( void );
+	//void							ForceSetupBonesAtTime( matrix3x4_t *pBonesOut, float flTime );
+	//virtual void					GetRagdollInitBoneArrays( matrix3x4_t *pDeltaBones0, matrix3x4_t *pDeltaBones1, matrix3x4_t *pCurrentBones, float boneDt );
 
 	// For shadows rendering the correct body + sequence...
 	//virtual int GetBody()			{ return GetEngineObject()->GetBody(); }
 	//virtual int GetSkin()			{ return GetEngineObject()->GetSkin(); }
 
 
-	virtual void					StudioFrameAdvance(); // advance animation frame to some time in the future
+	//virtual void					StudioFrameAdvance(); // advance animation frame to some time in the future
 
 	// Clientside animation
-	virtual float					FrameAdvance( float flInterval = 0.0f );
-	virtual void					UpdateClientSideAnimation();
-	virtual unsigned int			ComputeClientSideAnimationFlags();
+	//virtual float					FrameAdvance( float flInterval = 0.0f );
+	//virtual void					UpdateClientSideAnimation();
+	//virtual unsigned int			ComputeClientSideAnimationFlags();
 
 
 	//virtual bool					IsActivityFinished( void ) { return m_bSequenceFinished; }
@@ -216,33 +216,33 @@ public:
 	// If you're drawing something inside of a view model's DrawModel() function, then you want the
 	// original attachment origin instead of the adjusted one. To get that, call this on the 
 	// adjusted attachment origin.
-	virtual void					UncorrectViewModelAttachment( Vector &vOrigin ) {}
+	//virtual void					UncorrectViewModelAttachment( Vector &vOrigin ) {}
 	
 
 	// Purpose: My physics object has been updated, react or extract data
-	virtual void					VPhysicsUpdate( IPhysicsObject *pPhysics );
+	//virtual void					VPhysicsUpdate( IPhysicsObject *pPhysics );
 
 
 
 	// This is called to do the actual muzzle flash effect.
-	virtual void ProcessMuzzleFlashEvent();
+	//virtual void ProcessMuzzleFlashEvent();
 	
 	
 
 	// Load the model's keyvalues section and create effects listed inside it
-	void InitModelEffects( void );
+	//void InitModelEffects( void );
 
 	// Sometimes the server wants to update the client's cycle to get the two to run in sync (for proper hit detection)
-	virtual void SetServerIntendedCycle( float intended ) { (void)intended; }
-	virtual float GetServerIntendedCycle( void ) { return -1.0f; }
+	//virtual void SetServerIntendedCycle( float intended ) { (void)intended; }
+	//virtual float GetServerIntendedCycle( void ) { return -1.0f; }
 
-	virtual void					GetToolRecordingState( KeyValues *msg );
-	virtual void					CleanupToolRecordingState( KeyValues *msg );
+	//virtual void					GetToolRecordingState( KeyValues *msg );
+	//virtual void					CleanupToolRecordingState( KeyValues *msg );
 
-	virtual bool					ShouldResetSequenceOnNewModel( void );
+	//virtual bool					ShouldResetSequenceOnNewModel( void );
 
-	virtual bool					IsViewModel() const;
-	void							TermRopes();
+	//virtual bool					IsViewModel() const;
+	//void							TermRopes();
 
 protected:
 	
@@ -250,7 +250,7 @@ protected:
 	
 
 	// Models used in a ModelPanel say yes to this
-	virtual bool					IsMenuModel() const;
+	//virtual bool					IsMenuModel() const;
 
 	// Allow studio models to tell C_BaseEntity what their m_nBody value is
 	//virtual int						GetStudioBody( void ) { return m_nBody; }
@@ -258,10 +258,10 @@ protected:
 
 private:
 
-	CBoneList*						RecordBones( IStudioHdr *hdr, matrix3x4_t *pBoneState );
+	//CBoneList*						RecordBones( IStudioHdr *hdr, matrix3x4_t *pBoneState );
 
 
-	void							DelayedInitModelEffects( void );
+	//void							DelayedInitModelEffects( void );
 
 
 
@@ -273,7 +273,7 @@ public:
 
 protected:
 
-	int								m_iEyeAttachment;
+	//int								m_iEyeAttachment;
 
 
 
@@ -308,11 +308,11 @@ private:
 
 
 	// Ropes that got spawned when the model was created.
-	CUtlLinkedList<C_RopeKeyframe*,unsigned short> m_Ropes;
+	//CUtlLinkedList<C_RopeKeyframe*,unsigned short> m_Ropes;
 
 	// event processing info
-	float							m_flPrevEventCycle;
-	int								m_nEventSequence;
+	//float							m_flPrevEventCycle;
+	//int								m_nEventSequence;
 
 
 
@@ -320,7 +320,7 @@ private:
 
 
 
-	int								m_nPrevResetEventsParity;
+	//int								m_nPrevResetEventsParity;
 
 
 
@@ -329,7 +329,7 @@ private:
 	// Current cycle location from server
 protected:
 
-	bool							m_bNoModelParticles;
+	//bool							m_bNoModelParticles;
 
 private:
 
@@ -344,7 +344,7 @@ private:
 
 
 
-	bool							m_bInitModelEffects;
+	//bool							m_bInitModelEffects;
 
 	// Dynamic models
 	//bool							m_bDynamicModelAllowed;

@@ -62,9 +62,9 @@ class C_BaseCombatCharacter;
 class CEntityMapData;
 class ConVar;
 class CDmgAccumulator;
-
+class C_ClientRagdoll;
 struct CSoundParameters;
-
+class C_RopeKeyframe;
 
 
 extern void RecvProxy_IntToColor32( const CRecvProxyData *pData, void *pStruct, void *pOut );
@@ -236,6 +236,9 @@ public:
 	virtual bool					UsesPowerOfTwoFrameBufferTexture();
 	virtual bool					UsesFullFrameBufferTexture();
 	virtual int						DrawModel(int flags);
+	virtual int	InternalDrawModel(int flags);
+
+	void		DoInternalDrawModel(ClientModelRenderInfo_t* pInfo, DrawModelState_t* pState, matrix3x4_t* pBoneToWorldArray = NULL);
 	virtual bool OnInternalDrawModel(ClientModelRenderInfo_t* pInfo);
 	virtual bool OnPostInternalDrawModel(ClientModelRenderInfo_t* pInfo);
 	virtual void					ComputeFxBlend(void);
@@ -253,14 +256,43 @@ public:
 	virtual bool					TestCollision(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr);
 	virtual bool					TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr);
 
+	virtual C_ClientRagdoll* CreateRagdollCopy();
+	virtual C_BaseEntity* BecomeRagdollOnClient();
+
+	void							ForceSetupBonesAtTime(matrix3x4_t* pBonesOut, float flTime);
+	virtual void					GetRagdollInitBoneArrays(matrix3x4_t* pDeltaBones0, matrix3x4_t* pDeltaBones1, matrix3x4_t* pCurrentBones, float boneDt);
+
+	virtual void					StudioFrameAdvance(); // advance animation frame to some time in the future
+
+	virtual float					FrameAdvance(float flInterval = 0.0f);
+	virtual void					UpdateClientSideAnimation();
+	virtual unsigned int			ComputeClientSideAnimationFlags();
+
+	// This is called to do the actual muzzle flash effect.
+	virtual void ProcessMuzzleFlashEvent();
+
+	// Load the model's keyvalues section and create effects listed inside it
+	void InitModelEffects(void);
+
+	virtual void SetServerIntendedCycle(float intended) { (void)intended; }
+	virtual float GetServerIntendedCycle(void) { return -1.0f; }
+
+	virtual bool					ShouldResetSequenceOnNewModel(void);
+
+	void							TermRopes();
+
+	// Models used in a ModelPanel say yes to this
+	virtual bool					IsMenuModel() const;
+
+	void							DelayedInitModelEffects(void);
 
 	// This function returns a value that scales all damage done by this entity.
 	// Use CDamageModifier to hook in damage modifiers on a guy.
 	virtual float					GetAttackDamageScale(IHandleEntity* pVictim);
-	virtual void					ApplyBoneMatrixTransform(matrix3x4_t& transform) {}
+	virtual void					ApplyBoneMatrixTransform(matrix3x4_t& transform);
 	virtual void					AccumulateLayers(IBoneSetup& boneSetup, Vector pos[], Quaternion q[], float currentTime) {}
 	virtual	void					AfterStandardBlendingRules(IStudioHdr* pStudioHdr, Vector pos[], Quaternion q[], float currentTime, int boneMask) {}
-	virtual void					CalculateIKLocks(float currentTime) {}
+	virtual void					CalculateIKLocks(float currentTime);
 	// View models scale their attachment positions to account for FOV. To get the unmodified
 	// attachment position (like if you're rendering something else during the view model's DrawModel call),
 	// use TransformViewModelAttachmentToWorld.
@@ -351,7 +383,14 @@ public:
 public:
 	virtual void					SetupWeights(const matrix3x4_t* pBoneToWorld, int nFlexWeightCount, float* pFlexWeights, float* pFlexDelayedWeights);
 	virtual bool					UsesFlexDelayedWeights() { return false; }
-	//virtual void					DoAnimationEvents( void );
+	virtual void					DoAnimationEvents(IStudioHdr* pStudioHdr);
+	virtual void FireEvent(const Vector& origin, const QAngle& angles, int event, const char* options);
+	virtual void FireObsoleteEvent(const Vector& origin, const QAngle& angles, int event, const char* options);
+	virtual const char* ModifyEventParticles(const char* token) { return token; }
+
+	// Parses and distributes muzzle flash events
+	virtual bool DispatchMuzzleEffect(const char* options, bool isFirstPerson);
+
 
 	// Add entity to visible entities list?
 	virtual void					AddEntity(void);
@@ -401,6 +440,10 @@ public:
 	bool							GetAttachment(const char* szName, Vector& absOrigin, QAngle& absAngles) {
 		return GetEngineObject()->GetAttachment(GetEngineObject()->LookupAttachment(szName), absOrigin, absAngles);
 	}
+
+	bool							GetAttachmentLocal(int iAttachment, matrix3x4_t& attachmentToLocal);
+	bool							GetAttachmentLocal(int iAttachment, Vector& origin, QAngle& angles);
+	bool                            GetAttachmentLocal(int iAttachment, Vector& origin);
 
 	// Team handling
 	virtual C_Team* GetTeam(void);
@@ -474,6 +517,7 @@ public:
 	// It dispatches events like OnDataChanged(), and calls the legacy function AddEntity().
 	virtual void					Simulate();
 
+	float	GetAnimTimeInterval(void) const;
 
 	// This event is triggered during the simulation phase if an entity's data has changed. It is 
 	// better to hook this instead of PostDataUpdate() because in PostDataUpdate(), server entity origins
@@ -852,8 +896,8 @@ public:
 	virtual unsigned char	GetClientSideFade(void);
 	virtual void SetFadeMinMax(float fademin, float fademax);
 	bool IsOnFire() { return ((GetEngineObject()->GetFlags() & FL_ONFIRE) != 0); }
-	virtual unsigned int ComputeClientSideAnimationFlags() { return FCLIENTANIM_SEQUENCE_CYCLE; }
-	virtual void UpdateClientSideAnimation() {}
+	//virtual unsigned int ComputeClientSideAnimationFlags() { return FCLIENTANIM_SEQUENCE_CYCLE; }
+	//virtual void UpdateClientSideAnimation() {}
 public:	
 
 	// Determine what entity this corresponds to
@@ -926,7 +970,7 @@ public:
 	virtual C_BaseEntity 			*GetShadowUseOtherEntity( void ) const;
 	virtual void					SetShadowUseOtherEntity( C_BaseEntity *pEntity );
 
-	virtual C_BaseEntity*			BecomeRagdollOnClient() { return NULL; }
+	//virtual C_BaseEntity*			BecomeRagdollOnClient() { return NULL; }
 	virtual bool					AddRagdollToFadeQueue( void ) { return true; }
 
 	// used by SourceTV since move-parents may be missing when child spawns.
@@ -1081,6 +1125,19 @@ protected:
 	RenderMode_t m_PreviousRenderMode;
 	color32 m_PreviousRenderColor;
 #endif
+
+
+	int								m_iEyeAttachment;
+
+	// Ropes that got spawned when the model was created.
+	CUtlLinkedList<C_RopeKeyframe*, unsigned short> m_Ropes;
+
+	float							m_flPrevEventCycle;
+	int								m_nEventSequence;
+	int								m_nPrevResetEventsParity;
+	bool							m_bNoModelParticles;
+	bool							m_bInitModelEffects;
+
 };
 
 EXTERN_RECV_TABLE(DT_BaseEntity);

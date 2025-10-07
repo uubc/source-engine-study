@@ -54,7 +54,7 @@ public:
 		);
 
 	// Create a client-only rope and initialize it with the parameters from the KeyValues.
-	static C_RopeKeyframe* CreateFromKeyValues( C_BaseAnimating *pEnt, KeyValues *pValues );
+	static C_RopeKeyframe* CreateFromKeyValues( C_BaseEntity *pEnt, KeyValues *pValues );
 
 	// Find ropes (with both endpoints connected) that intersect this AABB. This is just an approximation.
 	static int GetRopesIntersectingAABB( C_RopeKeyframe **pRopes, int nMaxRopes, const Vector &vAbsMin, const Vector &vAbsMax );

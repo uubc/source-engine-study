@@ -117,7 +117,7 @@ C_RopeKeyframe* C_RopeKeyframe::Create(
 }
 
 
-C_RopeKeyframe* C_RopeKeyframe::CreateFromKeyValues( C_BaseAnimating *pEnt, KeyValues *pValues )
+C_RopeKeyframe* C_RopeKeyframe::CreateFromKeyValues( C_BaseEntity *pEnt, KeyValues *pValues )
 {
 	C_RopeKeyframe *pRope = C_RopeKeyframe::Create( 
 		pEnt,
