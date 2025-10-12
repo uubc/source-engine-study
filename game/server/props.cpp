@@ -6030,7 +6030,7 @@ CPhysicsProp* CreatePhysicsProp( const char *pModelName, const Vector &vTraceSta
 //-----------------------------------------------------------------------------
 // Purpose: Scale the object to a new size, taking its render verts and physical verts into account
 //-----------------------------------------------------------------------------
-bool UTIL_CreateScaledPhysObject( CBaseAnimating *pInstance, float flScale )
+bool UTIL_CreateScaledPhysObject( CBaseEntity *pInstance, float flScale )
 {
 	// Don't scale NPCs
 	if ( pInstance->MyCombatCharacterPointer() )

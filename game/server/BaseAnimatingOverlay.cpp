@@ -348,7 +348,7 @@ void CBaseAnimatingOverlay::StudioFrameAdvance ()
 //=========================================================
 // DispatchAnimEvents
 //=========================================================
-void CBaseAnimatingOverlay::DispatchAnimEvents ( CBaseAnimating *eventHandler )
+void CBaseAnimatingOverlay::DispatchAnimEvents ( CBaseEntity *eventHandler )
 {
 	BaseClass::DispatchAnimEvents( eventHandler );
 
@@ -361,7 +361,7 @@ void CBaseAnimatingOverlay::DispatchAnimEvents ( CBaseAnimating *eventHandler )
 	}
 }
 
-void CAnimationLayer::DispatchAnimEvents( CBaseAnimating *eventHandler, CBaseAnimating *pOwner )
+void CAnimationLayer::DispatchAnimEvents( CBaseEntity *eventHandler, CBaseEntity *pOwner )
 {
   	animevent_t	event;
 

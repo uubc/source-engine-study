@@ -34,6 +34,7 @@ class CRecipientFilter;
 class IStudioHdr;
 class CServerGameDLL;
 class ITraceFilter;
+class CRagdollProp;
 
 // Matching the high level concept is significantly better than other criteria
 // FIXME:  Could do this in the script file by making it required and bumping up weighting there instead...
@@ -433,7 +434,7 @@ public:
 
 	// initialization
 	virtual void Spawn( void );
-	virtual void Precache( void ) {}
+	virtual void Precache(void);
 
 	virtual bool IsBaseAnimating() { return false; }
 	virtual void SetModel( const char *szModelName );
@@ -722,18 +723,56 @@ public:
 	float		m_flPrevAnimTime;
 
 
+	float	GetAnimTimeInterval(void) const;
 
-	virtual void	StudioFrameAdvance() {}
+	// Basic NPC Animation functions
+	virtual float	GetIdealSpeed() const;
+	virtual float	GetIdealAccel() const;
+	virtual void	StudioFrameAdvance(); // advance animation frame to some time in the future
+	virtual void StudioFrameAdvanceManual(float flInterval);
+	//virtual void	StudioFrameAdvance() {}
 
 //#if !defined( NO_ENTITY_PREDICTION )
 //	// Certain entities (projectiles) can be created on the client and thus need a matching id number
 //	CNetworkVar( CPredictableId, m_PredictableID );
 //#endif
 
-	void OnResetSequence(int nSequence) {}
+	void OnResetSequence(int nSequence);
+	void StudioFrameAdvanceInternal(float flInterval);
 
+	inline void StopAnimation(void) { GetEngineObject()->SetPlaybackRate(0); }
+
+	virtual CRagdollProp* CreateRagdollProp();
+	virtual CBaseEntity* CreateServerRagdoll(int forceBone, const ITakeDamageInfo& info, int collisionGroup, bool bUseLRURetirement = false);
+	virtual void ClampRagdollForce(const Vector& vecForceIn, Vector* vecForceOut) { *vecForceOut = vecForceIn; } // Base class does nothing.
+	//virtual bool BecomeRagdollOnClient( const Vector &force );
+	virtual bool CanBecomeRagdoll(void); //Check if this entity will ragdoll when dead.
+	virtual void FixupBurningServerRagdoll(CBaseEntity* pRagdoll) {}
+	virtual	void GetSkeleton(IStudioHdr* pStudioHdr, Vector pos[], Quaternion q[], int boneMask);
+
+	virtual void CalculateIKLocks(float currentTime);
+	//virtual void Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity);
+
+	bool HasAnimEvent(int nSequence, int nEvent);
+	virtual	void DispatchAnimEvents(CBaseEntity* eventHandler); // Handle events that have happend since last time called up until X seconds into the future
+	virtual void HandleAnimEvent(animevent_t* pEvent);
+
+	bool GetAttachmentLocal(const char* szName, Vector& origin, QAngle& angles);
+	bool GetAttachmentLocal(int iAttachment, Vector& origin, QAngle& angles);
+	bool GetAttachmentLocal(int iAttachment, matrix3x4_t& attachmentToLocal);
+
+	void CopyAnimationDataFrom(CBaseEntity* pSource);
+
+	virtual	void			InitBoneControllers(void);
+
+	void InputBecomeRagdoll(inputdata_t& inputdata);
+	void InputSetModelScale(inputdata_t& inputdata);
 protected:
 
+	// The modus operandi for pose parameters is that you should not use the const char * version of the functions
+	// in general code -- it causes many many string comparisons, which is slower than you think. Better is to 
+	// save off your pose parameters in member variables in your derivation of this function:
+	virtual void	PopulatePoseParameters(void);
 
 
 	void RemoveExpiredConcepts( void );
@@ -1171,9 +1210,10 @@ public:
 	virtual Vector	GetSmoothedVelocity( void );
 
 	// FIXME: Figure out what to do about this
-	virtual void	GetVelocity(Vector *vVelocity, AngularImpulse *vAngVelocity = NULL);
+	virtual void	GetVelocityInternal(Vector *vVelocity, AngularImpulse *vAngVelocity = NULL);
+	virtual void	GetVelocity(Vector* vVelocity, AngularImpulse* vAngVelocity = NULL);
 
-
+	virtual	Vector GetGroundSpeedVelocity(void);
 
 
 	virtual	bool FVisible ( CBaseEntity *pEntity, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL );
@@ -1281,9 +1321,9 @@ public:
 	virtual void Deflected( CBaseEntity *pDeflectedBy, Vector &vecDir ) {}
 
 //	void Relink() {}
-	virtual bool CanSkipAnimation(void) { return true; }
-	virtual	void GetSkeleton(IStudioHdr* pStudioHdr, Vector pos[], Quaternion q[], int boneMask) {}
-	virtual void CalculateIKLocks(float currentTime) {}
+	virtual bool CanSkipAnimation(void);// { return true; }
+	//virtual	void GetSkeleton(IStudioHdr* pStudioHdr, Vector pos[], Quaternion q[], int boneMask) {}
+	//virtual void CalculateIKLocks(float currentTime) {}
 public:
 
 	// VPHYSICS Integration -----------------------------------------------

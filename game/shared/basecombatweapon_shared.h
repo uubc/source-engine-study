@@ -166,7 +166,7 @@ public:
 
 							CBaseCombatWeapon();
 	virtual 				~CBaseCombatWeapon();
-
+	bool IsBaseAnimating() { return true; }
 #ifdef GAME_DLL
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex);
 #endif // GAME_DLL

@@ -58,9 +58,11 @@
 #include "EntityDissolve.h"
 //#include "ragdoll_shared.h"
 #include "physics_npc_solver.h"
+#include "physics_prop_ragdoll.h"
 #if defined( TF_DLL )
 #include "tf_gamerules.h"
 #endif
+#include "props.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -208,6 +210,7 @@ CBaseEntity::CBaseEntity()
 	m_fadeMinDist = 0;
 	m_fadeMaxDist = 0;
 	m_flFadeScale = 0.0f;
+	m_flPrevAnimTime = gpGlobals->curtime;
 }
 
 void CBaseEntity::PostConstructor(const char* szClassname, int iForceEdictIndex)
@@ -266,6 +269,9 @@ void CBaseEntity::PostConstructor(const char* szClassname, int iForceEdictIndex)
 
 	GetEngineObject()->CheckHasThinkFunction(false);
 	GetEngineObject()->CheckHasGamePhysicsSimulation();
+	if (IsBaseAnimating()) {
+		GetEngineObject()->SetAnimTime(gpGlobals->curtime);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -816,6 +822,60 @@ int CBaseEntity::DrawDebugTextOverlays(void)
 		NDebugOverlay::Cross3D( EyePosition(), 16, 255, 0, 0, true, 0.05f );
 	}
 
+	if (IsBaseAnimating()) {
+		int text_offset = offset;// BaseClass::DrawDebugTextOverlays();
+
+		if (m_debugOverlays & OVERLAY_TEXT_BIT)
+		{
+			// ----------------
+			// Print Look time
+			// ----------------
+			char tempstr[1024];
+			Q_snprintf(tempstr, sizeof(tempstr), "Sequence: (%3d) %s", GetEngineObject()->GetSequence(), GetEngineObject()->GetSequenceName(GetEngineObject()->GetSequence()));
+			EntityText(text_offset, tempstr, 0);
+			text_offset++;
+			const char* pActname = GetEngineObject()->GetSequenceActivityName(GetEngineObject()->GetSequence());
+			if (pActname && strlen(pActname))
+			{
+				Q_snprintf(tempstr, sizeof(tempstr), "Activity %s", pActname);
+				EntityText(text_offset, tempstr, 0);
+				text_offset++;
+			}
+
+			Q_snprintf(tempstr, sizeof(tempstr), "Cycle: %.5f (%.5f)", GetEngineObject()->GetCycle(), GetEngineObject()->GetAnimTime());
+			EntityText(text_offset, tempstr, 0);
+			text_offset++;
+		}
+
+		// Visualize attachment points
+		if (m_debugOverlays & OVERLAY_ATTACHMENTS_BIT)
+		{
+			IStudioHdr* pStudioHdr = GetEngineObject()->GetModelPtr();
+
+			if (pStudioHdr)
+			{
+				Vector	vecPos, vecForward, vecRight, vecUp;
+				char tempstr[256];
+
+				// Iterate all the stored attachments
+				for (int i = 1; i <= pStudioHdr->GetNumAttachments(); i++)
+				{
+					GetEngineObject()->GetAttachment(i, vecPos, &vecForward, &vecRight, &vecUp);
+
+					// Red - forward, green - right, blue - up
+					NDebugOverlay::Line(vecPos, vecPos + (vecForward * 4.0f), 255, 0, 0, true, 0.05f);
+					NDebugOverlay::Line(vecPos, vecPos + (vecRight * 4.0f), 0, 255, 0, true, 0.05f);
+					NDebugOverlay::Line(vecPos, vecPos + (vecUp * 4.0f), 0, 0, 255, true, 0.05f);
+
+					Q_snprintf(tempstr, sizeof(tempstr), " < %s (%d)", pStudioHdr->pAttachment(i - 1).pszName(), i);
+					NDebugOverlay::Text(vecPos, tempstr, true, 0.05f);
+				}
+			}
+		}
+
+		return text_offset;
+	}
+
 	return offset;
 }
 
@@ -1017,6 +1077,17 @@ void CBaseEntity::Activate( void )
 
 	SetLightingOrigin(m_iszLightingOrigin);
 	SetLightingOriginRelative(m_iszLightingOriginRelative);
+
+	if (IsBaseAnimating()) {
+		// Scaled physics objects (re)create their physics here
+		if (GetEngineObject()->GetModelScale() != 1.0f && GetEngineObject()->VPhysicsGetObject())
+		{
+			// sanity check to make sure 'm_flModelScale' is in sync with the 
+			Assert(GetEngineObject()->GetModelScale() > 0.0f);
+
+			UTIL_CreateScaledPhysObject(this, GetEngineObject()->GetModelScale());
+		}
+	}
 }
 
 ////////////////////////////  old CBaseEntity stuff ///////////////////////////////////
@@ -1519,6 +1590,8 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "IgniteLifetime", InputIgniteLifetime ),
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "IgniteNumHitboxFires", InputIgniteNumHitboxFires ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "IgniteHitboxFireScale", InputIgniteHitboxFireScale ),
+	DEFINE_INPUTFUNC(FIELD_VOID, "BecomeRagdoll", InputBecomeRagdoll),
+	DEFINE_INPUTFUNC(FIELD_VECTOR, "SetModelScale", InputSetModelScale),
 
 	// Function Pointers
 	DEFINE_FUNCTION( SUB_Remove ),
@@ -2160,6 +2233,13 @@ void CBaseEntity::OnRestore()
 		GetEngineObject()->AddEffects( EF_NODRAW );
 		GetEngineObject()->RemoveFlag( FL_DISSOLVING | FL_ONFIRE );
 	}
+
+	if (IsBaseAnimating()) {
+		if (GetEngineObject()->GetSequence() != -1 && GetEngineObject()->GetModelPtr() && !GetEngineObject()->IsValidSequence(GetEngineObject()->GetSequence()))
+			GetEngineObject()->SetSequence(0);
+
+		PopulatePoseParameters();
+	}
 }
 
 
@@ -2230,6 +2310,32 @@ void CBaseEntity::FunctionCheck( void *pFunction, const char *name )
 
 bool CBaseEntity::TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace )
 {
+	if (IsBaseAnimating()) {
+		// Return a special case for scaled physics objects
+		if (GetEngineObject()->GetModelScale() != 1.0f)
+		{
+			IPhysicsObject* pPhysObject = GetEngineObject()->VPhysicsGetObject();
+			Vector vecPosition;
+			QAngle vecAngles;
+			pPhysObject->GetPosition(&vecPosition, &vecAngles);
+			const CPhysCollide* pScaledCollide = pPhysObject->GetCollide();
+			EntityList()->PhysGetCollision()->TraceBox(ray, pScaledCollide, vecPosition, vecAngles, &trace);
+
+			return trace.DidHit();
+		}
+
+		if (GetEngineObject()->IsSolidFlagSet(FSOLID_CUSTOMRAYTEST))
+		{
+			if (!TestHitboxes(ray, mask, trace))
+				return true;
+
+			return trace.DidHit();
+		}
+
+		// We shouldn't get here.
+		Assert(0);
+		return false;
+	}
 	return false;
 }
 
@@ -2238,13 +2344,50 @@ bool CBaseEntity::TestCollision( const Ray_t &ray, unsigned int mask, trace_t& t
 //-----------------------------------------------------------------------------
 bool CBaseEntity::TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr )
 {
+	if (IsBaseAnimating()) {
+		IStudioHdr* pStudioHdr = GetEngineObject()->GetModelPtr();
+		if (!pStudioHdr)
+		{
+			Assert(!"CBaseAnimating::GetHitboxBonePosition: model missing");
+			return false;
+		}
+
+		mstudiohitboxset_t* set = pStudioHdr->pHitboxSet(GetEngineObject()->GetHitboxSet());
+		if (!set || !set->numhitboxes)
+			return false;
+
+		const matrix3x4_t* hitboxbones[MAXSTUDIOBONES];
+		GetEngineObject()->GetHitboxBoneTransforms(hitboxbones);
+
+		if (TraceToStudio(EntityList()->PhysGetProps(), ray, pStudioHdr, set, hitboxbones, fContentsMask, GetEngineObject()->GetAbsOrigin(), GetEngineObject()->GetModelScale(), tr))
+		{
+			mstudiobbox_t* pbox = set->pHitbox(tr.hitbox);
+			mstudiobone_t* pBone = pStudioHdr->pBone(pbox->bone);
+			tr.surface.name = "**studio**";
+			tr.surface.flags = SURF_HITBOX;
+			tr.surface.surfaceProps = EntityList()->PhysGetProps()->GetSurfaceIndex(pBone->pszSurfaceProp());
+		}
+		return true;
+	}
 	return false;
 }
 
 void CBaseEntity::Spawn( void ) 
 {
+	if (IsBaseAnimating()) {
+		GetEngineObject()->InitStepHeightAdjust();
+	}
 }
 
+void CBaseEntity::Precache()
+{
+	if (IsBaseAnimating()) {
+#if !defined( TF_DLL )
+		// Anything derived from this class can potentially burn - true, but do we want it to!
+		PrecacheParticleSystem("burning_character");
+#endif
+	}
+}
 
 CBaseEntity* CBaseEntity::Instance( const CBaseHandle &hEnt )
 {
@@ -2894,6 +3037,20 @@ void CBaseEntity::InputDispatchEffect( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CBaseEntity::GetInputDispatchEffectPosition( const char *sInputString, Vector &pOrigin, QAngle &pAngles )
 {
+	if (IsBaseAnimating()) {
+		// See if there's a specified attachment point
+		int iAttachment;
+		if (GetEngineObject()->GetModelPtr() && sscanf(sInputString, "%d", &iAttachment))
+		{
+			if (!GetEngineObject()->GetAttachment(iAttachment, pOrigin, pAngles))
+			{
+				Msg("ERROR: Mapmaker tried to spawn DispatchEffect %s, but %s has no attachment %d\n",
+					sInputString, STRING(GetEngineObject()->GetModelName()), iAttachment);
+			}
+			return;
+		}
+	}
+
 	pOrigin = GetEngineObject()->GetAbsOrigin();
 	pAngles = GetEngineObject()->GetAbsAngles();
 }
@@ -3020,7 +3177,7 @@ void CBaseEntity::InputClearParent( inputdata_t &inputdata )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CBaseEntity::GetVelocity(Vector *vVelocity, AngularImpulse *vAngVelocity)
+void CBaseEntity::GetVelocityInternal(Vector *vVelocity, AngularImpulse *vAngVelocity)
 {
 	if (GetEngineObject()->GetMoveType()==MOVETYPE_VPHYSICS && GetEngineObject()->VPhysicsGetObject())
 	{
@@ -3038,6 +3195,68 @@ void CBaseEntity::GetVelocity(Vector *vVelocity, AngularImpulse *vAngVelocity)
 			QAngleToAngularImpulse( tmp, *vAngVelocity );
 		}
 	}
+}
+
+void CBaseEntity::GetVelocity(Vector* vVelocity, AngularImpulse* vAngVelocity)
+{
+	if (IsBaseAnimating()) {
+		if (GetEngineObject()->GetMoveType() == MOVETYPE_VPHYSICS)
+		{
+			GetVelocityInternal(vVelocity, vAngVelocity);
+		}
+		else if (!(GetEngineObject()->GetFlags() & FL_ONGROUND))
+		{
+			GetVelocityInternal(vVelocity, vAngVelocity);
+		}
+		else
+		{
+			if (vVelocity != NULL)
+			{
+				Vector	vRawVel;
+
+				GetEngineObject()->GetSequenceLinearMotion(GetEngineObject()->GetSequence(), &vRawVel);
+
+				// Build a rotation matrix from NPC orientation
+				matrix3x4_t fRotateMatrix;
+				AngleMatrix(GetEngineObject()->GetLocalAngles(), fRotateMatrix);
+				VectorRotate(vRawVel, fRotateMatrix, *vVelocity);
+			}
+			if (vAngVelocity != NULL)
+			{
+				QAngle tmp = GetEngineObject()->GetLocalAngularVelocity();
+				QAngleToAngularImpulse(tmp, *vAngVelocity);
+			}
+		}
+	}
+	else {
+		GetVelocityInternal(vVelocity, vAngVelocity);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Converts the ground speed of the animating entity into a true velocity
+// Output : Vector - velocity of the character at its current m_flGroundSpeed
+//-----------------------------------------------------------------------------
+Vector CBaseEntity::GetGroundSpeedVelocity(void)
+{
+	IStudioHdr* pstudiohdr = GetEngineObject()->GetModelPtr();
+	if (!pstudiohdr)
+		return vec3_origin;
+
+	QAngle  vecAngles;
+	Vector	vecVelocity;
+
+	vecAngles.y = GetEngineObject()->GetSequenceMoveYaw(GetEngineObject()->GetSequence());
+	vecAngles.x = 0;
+	vecAngles.z = 0;
+
+	vecAngles.y += GetEngineObject()->GetLocalAngles().y;
+
+	AngleVectors(vecAngles, &vecVelocity);
+
+	vecVelocity = vecVelocity * GetEngineObject()->GetGroundSpeed();
+
+	return vecVelocity;
 }
 
 bool CBaseEntity::IsMoving()
@@ -3058,20 +3277,45 @@ bool CBaseEntity::IsMoving()
 //
 //}
 
-
 //-----------------------------------------------------------------------------
 // Purpose: Sets the model, validates that it's of the appropriate type
 // Input  : *szModelName - 
 //-----------------------------------------------------------------------------
 void CBaseEntity::SetModel( const char *szModelName )
 {
-	int modelIndex = modelinfo->GetModelIndex( szModelName );
-	const model_t *model = modelinfo->GetModel( modelIndex );
-	if ( model && modelinfo->GetModelType( model ) != mod_brush )
+	if (IsBaseAnimating()) 
 	{
-		Msg( "Setting CBaseEntity to non-brush model %s\n", szModelName );
+		MDLCACHE_CRITICAL_SECTION();
+
+		if (szModelName[0])
+		{
+			int modelIndex = modelinfo->GetModelIndex(szModelName);
+			const model_t* model = modelinfo->GetModel(modelIndex);
+			if (model && (modelinfo->GetModelType(model) != mod_studio))
+			{
+				Msg("Setting CBaseAnimating to non-studio model %s  (type:%i)\n", szModelName, modelinfo->GetModelType(model));
+			}
+		}
+
+
+
+		UTIL_SetModel(this, szModelName);
+
+		InitBoneControllers();
+		GetEngineObject()->SetSequence(0);
+
+		PopulatePoseParameters();
 	}
-	UTIL_SetModel( this, szModelName );
+	else 
+	{
+		int modelIndex = modelinfo->GetModelIndex(szModelName);
+		const model_t* model = modelinfo->GetModel(modelIndex);
+		if (model && modelinfo->GetModelType(model) != mod_brush)
+		{
+			Msg("Setting CBaseEntity to non-brush model %s\n", szModelName);
+		}
+		UTIL_SetModel(this, szModelName);
+	}
 }
 
 
@@ -3079,8 +3323,844 @@ void CBaseEntity::SetModel( const char *szModelName )
 
 IStudioHdr *CBaseEntity::OnNewModel()
 {
+	if (IsBaseAnimating()) {
+		IStudioHdr* hdr = GetEngineObject()->GetModelPtr();
+
+		//if ( m_bResetSequenceInfoOnLoad )
+		//{
+		//	m_bResetSequenceInfoOnLoad = false;
+		//	ResetSequenceInfo();
+		//}
+
+		return hdr;
+	}
 	// Do nothing.
 	return NULL;
+}
+
+#define MAX_ANIMTIME_INTERVAL 0.2f
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Output : float
+//-----------------------------------------------------------------------------
+float CBaseEntity::GetAnimTimeInterval(void) const
+{
+	float flInterval;
+	if (GetEngineObject()->GetAnimTime() < gpGlobals->curtime)
+	{
+		// estimate what it'll be this frame
+		flInterval = clamp(gpGlobals->curtime - GetEngineObject()->GetAnimTime(), 0.f, MAX_ANIMTIME_INTERVAL);
+	}
+	else
+	{
+		// report actual
+		flInterval = clamp(GetEngineObject()->GetAnimTime() - m_flPrevAnimTime, 0.f, MAX_ANIMTIME_INTERVAL);
+	}
+	return flInterval;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseEntity::StudioFrameAdvanceManual(float flInterval)
+{
+	IStudioHdr* pStudioHdr = GetEngineObject()->GetModelPtr();
+	if (!pStudioHdr)
+		return;
+
+	GetEngineObject()->UpdateModelScale();
+	GetEngineObject()->SetAnimTime(gpGlobals->curtime);
+	m_flPrevAnimTime = GetEngineObject()->GetAnimTime() - flInterval;
+	float flCycleRate = GetEngineObject()->GetSequenceCycleRate(pStudioHdr, GetEngineObject()->GetSequence()) * GetEngineObject()->GetPlaybackRate();
+	StudioFrameAdvanceInternal(flInterval * flCycleRate);
+}
+
+//=========================================================
+// StudioFrameAdvance - advance the animation frame up some interval (default 0.1) into the future
+//=========================================================
+void CBaseEntity::StudioFrameAdvance()
+{
+	IStudioHdr* pStudioHdr = GetEngineObject()->GetModelPtr();
+
+	if (!pStudioHdr || !pStudioHdr->SequencesAvailable())
+	{
+		return;
+	}
+
+	GetEngineObject()->UpdateModelScale();
+
+	if (!m_flPrevAnimTime)
+	{
+		m_flPrevAnimTime = GetEngineObject()->GetAnimTime();
+	}
+
+	// Time since last animation
+	float flInterval = gpGlobals->curtime - GetEngineObject()->GetAnimTime();
+	flInterval = clamp(flInterval, 0.f, MAX_ANIMTIME_INTERVAL);
+
+	//Msg( "%i %s interval %f\n", entindex(), GetClassname(), flInterval );
+	if (flInterval <= 0.001f)
+	{
+		// Msg("%s : %s : %5.3f (skip)\n", GetClassname(), GetSequenceName( GetSequence() ), GetCycle() );
+		return;
+	}
+
+	// Latch prev
+	m_flPrevAnimTime = GetEngineObject()->GetAnimTime();
+	// Set current
+	GetEngineObject()->SetAnimTime(gpGlobals->curtime);
+
+	// Drive cycle
+	float flCycleRate = GetEngineObject()->GetSequenceCycleRate(pStudioHdr, GetEngineObject()->GetSequence()) * GetEngineObject()->GetPlaybackRate();
+
+	StudioFrameAdvanceInternal(flInterval * flCycleRate);
+
+	if (ai_sequence_debug.GetBool() == true && m_debugOverlays & OVERLAY_NPC_SELECTED_BIT)
+	{
+		Msg("%5.2f : %s : %s : %5.3f\n", gpGlobals->curtime, GetClassname(), GetEngineObject()->GetSequenceName(GetEngineObject()->GetSequence()), GetEngineObject()->GetCycle());
+	}
+}
+
+float CBaseEntity::GetIdealSpeed() const
+{
+	return GetEngineObject()->GetGroundSpeed();
+}
+
+float CBaseEntity::GetIdealAccel() const
+{
+	// return ideal max velocity change over 1 second.
+	// tuned for run-walk range of humans
+	return GetIdealSpeed() + 50;
+}
+
+void CBaseEntity::OnResetSequence(int nSequence) {
+	if (ai_sequence_debug.GetBool() == true && (m_debugOverlays & OVERLAY_NPC_SELECTED_BIT))
+	{
+		DevMsg("ResetSequence : %s: %s -> %s\n", GetClassname(), GetEngineObject()->GetSequenceName(GetEngineObject()->GetSequence()), GetEngineObject()->GetSequenceName(nSequence));
+	}
+}
+
+void CBaseEntity::StudioFrameAdvanceInternal(float flCycleDelta)
+{
+	float flNewCycle = GetEngineObject()->GetCycle() + flCycleDelta;
+	if (flNewCycle < 0.0 || flNewCycle >= 1.0)
+	{
+		if (GetEngineObject()->SequenceLoops())
+		{
+			flNewCycle -= (int)(flNewCycle);
+		}
+		else
+		{
+			flNewCycle = (flNewCycle < 0.0f) ? 0.0f : 1.0f;
+		}
+		GetEngineObject()->SetSequenceFinished(true);	// just in case it wasn't caught in GetEvents
+	}
+	else if (flNewCycle > GetEngineObject()->GetLastVisibleCycle(GetEngineObject()->GetSequence()))
+	{
+		GetEngineObject()->SetSequenceFinished(true);
+	}
+
+	GetEngineObject()->SetCycle(flNewCycle);
+
+	/*
+	if (!IsPlayer())
+		Msg("%s %6.3f : %6.3f %6.3f (%.3f) %.3f\n",
+			GetClassname(), gpGlobals->curtime,
+			m_flAnimTime.Get(), m_flPrevAnimTime, flInterval, GetCycle() );
+	*/
+
+	GetEngineObject()->SetGroundSpeed(GetEngineObject()->GetSequenceGroundSpeed(GetEngineObject()->GetSequence()) * GetEngineObject()->GetModelScale());
+
+	// Msg("%s : %s : %5.1f\n", GetClassname(), GetSequenceName( GetSequence() ), GetCycle() );
+	GetEngineObject()->InvalidatePhysicsRecursive(ANIMATION_CHANGED);
+
+	GetEngineObject()->InvalidateBoneCacheIfOlderThan(0);
+}
+
+CRagdollProp* CBaseEntity::CreateRagdollProp()
+{
+	CRagdollProp* pRagdoll = (CRagdollProp*)EntityList()->CreateEntityByName("prop_ragdoll");
+	return pRagdoll;
+}
+
+static void SyncAnimatingWithPhysics(CBaseEntity* pAnimating)
+{
+	IPhysicsObject* pPhysics = pAnimating->GetEngineObject()->VPhysicsGetObject();
+	if (pPhysics)
+	{
+		Vector pos;
+		pPhysics->GetShadowPosition(&pos, NULL);
+		pAnimating->GetEngineObject()->SetAbsOrigin(pos);
+	}
+}
+
+CBaseEntity* CBaseEntity::CreateServerRagdoll(int forceBone, const ITakeDamageInfo& info, int collisionGroup, bool bUseLRURetirement)
+{
+	if (info.GetDamageType() & (DMG_VEHICLE | DMG_CRUSH))
+	{
+		// if the entity was killed by physics or a vehicle, move to the vphysics shadow position before creating the ragdoll.
+		SyncAnimatingWithPhysics(this);
+	}
+	//CRagdollProp* pRagdoll = (CRagdollProp*)CBaseEntity::CreateNoSpawn("prop_ragdoll", this->GetEngineObject()->GetAbsOrigin(), vec3_angle, NULL);
+	CRagdollProp* pRagdoll = CreateRagdollProp();
+	if (!pRagdoll)
+	{
+		Assert(!"CreateNoSpawn: only works for CBaseEntities");
+		return NULL;
+	}
+
+	pRagdoll->GetEngineObject()->SetLocalOrigin(this->GetEngineObject()->GetAbsOrigin());
+	pRagdoll->GetEngineObject()->SetLocalAngles(vec3_angle);
+	pRagdoll->GetEngineObject()->SetOwnerEntity(NULL);
+
+	//EntityList()->NotifyCreateEntity(pRagdoll);
+
+	pRagdoll->CopyAnimationDataFrom(this);
+	pRagdoll->GetEngineObject()->SetOwnerEntity(this->GetEngineObject());
+
+	pRagdoll->InitRagdollAnimation();
+	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES], pBoneToWorldNext[MAXSTUDIOBONES];
+
+	float dt = 0.1f;
+
+	// Copy over dissolve state...
+	if (this->GetEngineObject()->IsEFlagSet(EFL_NO_DISSOLVE))
+	{
+		pRagdoll->GetEngineObject()->AddEFlags(EFL_NO_DISSOLVE);
+	}
+
+	// NOTE: This currently is only necessary to prevent manhacks from
+	// colliding with server ragdolls they kill
+	pRagdoll->SetKiller((CBaseEntity*)info.GetInflictor());
+	pRagdoll->SetSourceClassName(this->GetClassname());
+
+	// NPC_STATE_DEAD npc's will have their COND_IN_PVS cleared, so this needs to force SetupBones to happen
+	unsigned short fPrevFlags = this->GetEngineObject()->GetBoneCacheFlags();
+	this->GetEngineObject()->SetBoneCacheFlags(BCF_NO_ANIMATION_SKIP);
+
+	// UNDONE: Extract velocity from bones via animation (like we do on the client)
+	// UNDONE: For now, just move each bone by the total entity velocity if set.
+	// Get Bones positions before
+	// Store current cycle
+	float fSequenceDuration = this->GetEngineObject()->SequenceDuration(this->GetEngineObject()->GetSequence());
+	float fSequenceTime = this->GetEngineObject()->GetCycle() * fSequenceDuration;
+
+	if (fSequenceTime <= dt && fSequenceTime > 0.0f)
+	{
+		// Avoid having negative cycle
+		dt = fSequenceTime;
+	}
+
+	float fPreviousCycle = clamp(this->GetEngineObject()->GetCycle() - (dt * (1 / fSequenceDuration)), 0.f, 1.f);
+	float fCurCycle = this->GetEngineObject()->GetCycle();
+	// Get current bones positions
+	this->GetEngineObject()->SetupBones(pBoneToWorldNext, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, gpGlobals->curtime);
+	// Get previous bones positions
+	this->GetEngineObject()->SetCycle(fPreviousCycle);
+	this->GetEngineObject()->SetupBones(pBoneToWorld, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, gpGlobals->curtime);
+	// Restore current cycle
+	this->GetEngineObject()->SetCycle(fCurCycle);
+
+	// Reset previous bone flags
+	this->GetEngineObject()->ClearBoneCacheFlags(BCF_NO_ANIMATION_SKIP);
+	this->GetEngineObject()->SetBoneCacheFlags(fPrevFlags);
+
+	Vector vel = this->GetEngineObject()->GetAbsVelocity();
+	if ((vel.Length() == 0) && (dt > 0))
+	{
+		// Compute animation velocity
+		IStudioHdr* pstudiohdr = this->GetEngineObject()->GetModelPtr();
+		if (pstudiohdr)
+		{
+			Vector deltaPos;
+			QAngle deltaAngles;
+			if (pstudiohdr->Studio_SeqMovement(
+				this->GetEngineObject()->GetSequence(),
+				fPreviousCycle,
+				this->GetEngineObject()->GetCycle(),
+				this->GetEngineObject()->GetPoseParameterArray(),
+				deltaPos,
+				deltaAngles))
+			{
+				VectorRotate(deltaPos, this->GetEngineObject()->EntityToWorldTransform(), vel);
+				vel /= dt;
+			}
+		}
+	}
+
+	if (vel.LengthSqr() > 0)
+	{
+		int numbones = this->GetEngineObject()->GetModelPtr()->numbones();
+		vel *= dt;
+		for (int i = 0; i < numbones; i++)
+		{
+			Vector pos;
+			MatrixGetColumn(pBoneToWorld[i], 3, pos);
+			pos -= vel;
+			MatrixSetColumn(pos, 3, pBoneToWorld[i]);
+		}
+	}
+
+#if RAGDOLL_VISUALIZE
+	this->DrawRawSkeleton(pBoneToWorld, BONE_USED_BY_ANYTHING, true, 20, false);
+	this->DrawRawSkeleton(pBoneToWorldNext, BONE_USED_BY_ANYTHING, true, 20, true);
+#endif
+	// Is this a vehicle / NPC collision?
+	if ((info.GetDamageType() & DMG_VEHICLE) && this->MyNPCPointer())
+	{
+		// init the ragdoll with no forces
+		pRagdoll->GetEngineObject()->InitRagdoll(vec3_origin, -1, vec3_origin, pBoneToWorld, pBoneToWorldNext, dt, collisionGroup, true);
+		// Make sure it's interactive debris for at most 5 seconds
+		if (collisionGroup == COLLISION_GROUP_INTERACTIVE_DEBRIS)
+		{
+			pRagdoll->SetContextThink(&CRagdollProp::SetDebrisThink, gpGlobals->curtime + 5, s_pDebrisContext);
+		}
+		// apply vehicle forces
+		// Get a list of bones with hitboxes below the plane of impact
+		int boxList[128];
+		Vector normal(0, 0, -1);
+		int count = this->GetEngineObject()->GetHitboxesFrontside(boxList, ARRAYSIZE(boxList), normal, DotProduct(normal, info.GetDamagePosition()));
+
+		// distribute force over mass of entire character
+		float massScale = this->GetEngineObject()->GetModelPtr()->Studio_GetMass();
+		massScale = clamp(massScale, 1.f, 1.e4f);
+		massScale = 1.f / massScale;
+
+		// distribute the force
+		// BUGBUG: This will hit the same bone twice if it has two hitboxes!!!!
+		ragdoll_t* pRagInfo = pRagdoll->GetEngineObject()->GetRagdoll();
+		for (int i = 0; i < count; i++)
+		{
+			int physBone = this->GetEngineObject()->GetPhysicsBone(this->GetEngineObject()->GetHitboxBone(boxList[i]));
+			IPhysicsObject* pPhysics = pRagInfo->list[physBone].pObject;
+			pPhysics->ApplyForceCenter(info.GetDamageForce() * pPhysics->GetMass() * massScale);
+		}
+	}
+	else
+	{
+		pRagdoll->GetEngineObject()->InitRagdoll(info.GetDamageForce(), forceBone, info.GetDamagePosition(), pBoneToWorld, pBoneToWorldNext, dt, collisionGroup, true);
+		// Make sure it's interactive debris for at most 5 seconds
+		if (collisionGroup == COLLISION_GROUP_INTERACTIVE_DEBRIS)
+		{
+			pRagdoll->SetContextThink(&CRagdollProp::SetDebrisThink, gpGlobals->curtime + 5, s_pDebrisContext);
+		}
+	}
+
+	// Are we dissolving?
+	if (this->IsDissolving())
+	{
+		pRagdoll->TransferDissolveFrom(this);
+	}
+	else if (bUseLRURetirement)
+	{
+		pRagdoll->GetEngineObject()->AddSpawnFlags(SF_RAGDOLLPROP_USE_LRU_RETIREMENT);
+		EntityList()->MoveToTopOfLRU(pRagdoll);
+	}
+
+	// Tracker 22598:  If we don't set the OBB mins/maxs to something valid here, then the client will have a zero sized hull
+	//  for the ragdoll for one frame until Vphysics updates the real obb bounds after the first simulation frame.  Having
+	//  a zero sized hull makes the ragdoll think it should be faded/alpha'd to zero for a frame, so you get a blink where
+	//  the ragdoll doesn't draw initially.
+	Vector mins, maxs;
+	mins = this->GetEngineObject()->OBBMins();
+	maxs = this->GetEngineObject()->OBBMaxs();
+	pRagdoll->GetEngineObject()->SetCollisionBounds(mins, maxs);
+
+	GetEngineObject()->AddFlag(FL_TRANSRAGDOLL);
+	//GetEngineObject()->SetRenderFX(kRenderFxRagdoll);//test client ragdoll
+	return pRagdoll;
+}
+
+bool CBaseEntity::CanBecomeRagdoll(void)
+{
+	MDLCACHE_CRITICAL_SECTION();
+	int ragdollSequence = GetEngineObject()->SelectWeightedSequence(ACT_DIERAGDOLL);
+
+	//Can't cause we don't have a ragdoll sequence.
+	if (ragdollSequence == ACTIVITY_NOT_AVAILABLE)
+		return false;
+
+	if (GetEngineObject()->GetFlags() & FL_TRANSRAGDOLL)
+		return false;
+
+	return true;
+}
+
+//=========================================================
+//=========================================================
+
+void CBaseEntity::GetSkeleton(IStudioHdr* pStudioHdr, Vector pos[], Quaternion q[], int boneMask)
+{
+	if (!pStudioHdr)
+	{
+		Assert(!"CBaseAnimating::GetSkeleton() without a model");
+		return;
+	}
+
+	IBoneSetup boneSetup(pStudioHdr, boneMask, GetEngineObject()->GetPoseParameterArray());
+	boneSetup.InitPose(pos, q);
+
+	boneSetup.AccumulatePose(pos, q, GetEngineObject()->GetSequence(), GetEngineObject()->GetCycle(), 1.0, gpGlobals->curtime, GetEngineObject()->GetIk());
+
+	if (GetEngineObject()->GetIk())
+	{
+		CIKContext auto_ik;
+		auto_ik.Init(pStudioHdr, GetEngineObject()->GetAbsAngles(), GetEngineObject()->GetAbsOrigin(), gpGlobals->curtime, 0, boneMask);
+		boneSetup.CalcAutoplaySequences(pos, q, gpGlobals->curtime, &auto_ik);
+	}
+	else
+	{
+		boneSetup.CalcAutoplaySequences(pos, q, gpGlobals->curtime, NULL);
+	}
+	boneSetup.CalcBoneAdj(pos, q, GetEngineObject()->GetEncodedControllerArray());
+}
+
+class CTraceFilterSkipNPCs : public CTraceFilterSimple
+{
+public:
+	CTraceFilterSkipNPCs(const IHandleEntity* passentity, int collisionGroup)
+		: CTraceFilterSimple(passentity, collisionGroup)
+	{
+	}
+
+	virtual bool ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask)
+	{
+		if (CTraceFilterSimple::ShouldHitEntity(pServerEntity, contentsMask))
+		{
+			CBaseEntity* pEntity = EntityFromEntityHandle(pServerEntity);
+			if (pEntity->IsNPC())
+				return false;
+
+			return true;
+		}
+		return false;
+	}
+};
+
+//-----------------------------------------------------------------------------
+// Purpose: Find IK collisions with world
+// Input  : 
+// Output :	fills out m_pIk targets, calcs floor offset for rendering
+//-----------------------------------------------------------------------------
+
+void CBaseEntity::CalculateIKLocks(float currentTime)
+{
+	if (GetEngineObject()->GetIk())
+	{
+		Ray_t ray;
+		CTraceFilterSkipNPCs traceFilter(this, GetEngineObject()->GetCollisionGroup());
+		Vector up;
+		GetEngineObject()->GetVectors(NULL, NULL, &up);
+		// FIXME: check number of slots?
+		for (int i = 0; i < GetEngineObject()->GetIk()->m_target.Count(); i++)
+		{
+			trace_t trace;
+			CIKTarget* pTarget = &GetEngineObject()->GetIk()->m_target[i];
+
+			if (!pTarget->IsActive())
+				continue;
+
+			switch (pTarget->type)
+			{
+			case IK_GROUND:
+			{
+				Vector estGround;
+				estGround = (pTarget->est.pos - GetEngineObject()->GetAbsOrigin());
+				estGround = estGround - (estGround * up) * up;
+				estGround = GetEngineObject()->GetAbsOrigin() + estGround + pTarget->est.floor * up;
+
+				Vector p1, p2;
+				VectorMA(estGround, pTarget->est.height, up, p1);
+				VectorMA(estGround, -pTarget->est.height, up, p2);
+
+				float r = MAX(pTarget->est.radius, 1);
+
+				// don't IK to other characters
+				ray.Init(p1, p2, Vector(-r, -r, 0), Vector(r, r, 1));
+				enginetrace->TraceRay(ray, MASK_SOLID, &traceFilter, &trace);
+
+				/*
+				debugoverlay->AddBoxOverlay( p1, Vector(-r,-r,0), Vector(r,r,1), QAngle( 0, 0, 0 ), 255, 0, 0, 0, 1.0f );
+				debugoverlay->AddBoxOverlay( trace.endpos, Vector(-r,-r,0), Vector(r,r,1), QAngle( 0, 0, 0 ), 255, 0, 0, 0, 1.0f );
+				debugoverlay->AddLineOverlay( p1, trace.endpos, 255, 0, 0, 0, 1.0f );
+				*/
+
+				if (trace.startsolid)
+				{
+					ray.Init(pTarget->trace.hip, pTarget->est.pos, Vector(-r, -r, 0), Vector(r, r, 1));
+
+					enginetrace->TraceRay(ray, MASK_SOLID, &traceFilter, &trace);
+
+					p1 = trace.endpos;
+					VectorMA(p1, -pTarget->est.height, up, p2);
+					ray.Init(p1, p2, Vector(-r, -r, 0), Vector(r, r, 1));
+
+					enginetrace->TraceRay(ray, MASK_SOLID, &traceFilter, &trace);
+				}
+
+				if (!trace.startsolid)
+				{
+					if (trace.DidHitWorld())
+					{
+						pTarget->SetPosWithNormalOffset(trace.endpos, trace.plane.normal);
+						pTarget->SetNormal(trace.plane.normal);
+					}
+					else
+					{
+						pTarget->SetPos(trace.endpos);
+						pTarget->SetAngles(GetEngineObject()->GetAbsAngles());
+					}
+
+				}
+			}
+			break;
+			case IK_ATTACHMENT:
+			{
+				// anything on the server?
+			}
+			break;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Returns true if the given sequence has the anim event, false if not.
+// Input  : nSequence - sequence number to check
+//			nEvent - anim event number to look for
+//-----------------------------------------------------------------------------
+bool CBaseEntity::HasAnimEvent(int nSequence, int nEvent)
+{
+	IStudioHdr* pstudiohdr = GetEngineObject()->GetModelPtr();
+	if (!pstudiohdr)
+	{
+		return false;
+	}
+
+	animevent_t event;
+
+	int index = 0;
+	while ((index = pstudiohdr->GetAnimationEvent(nSequence, &event, 0.0f, 1.0f, index, gpGlobals->curtime)) != 0)
+	{
+		if (event.event == nEvent)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//=========================================================
+// DispatchAnimEvents
+//=========================================================
+void CBaseEntity::DispatchAnimEvents(CBaseEntity* eventHandler)
+{
+	// don't fire events if the framerate is 0
+	if (GetEngineObject()->GetPlaybackRate() == 0.0)
+		return;
+
+	animevent_t	event;
+
+	IStudioHdr* pstudiohdr = GetEngineObject()->GetModelPtr();
+
+	if (!pstudiohdr)
+	{
+		Assert(!"CBaseAnimating::DispatchAnimEvents: model missing");
+		return;
+	}
+
+	if (!pstudiohdr->SequencesAvailable())
+	{
+		return;
+	}
+
+	// skip this altogether if there are no events
+	if (pstudiohdr->pSeqdesc(GetEngineObject()->GetSequence()).numevents == 0)
+	{
+		return;
+	}
+
+	// look from when it last checked to some short time in the future	
+	float flCycleRate = GetEngineObject()->GetSequenceCycleRate(GetEngineObject()->GetSequence()) * GetEngineObject()->GetPlaybackRate();
+	float flStart = GetEngineObject()->GetLastEventCheck();
+	float flEnd = GetEngineObject()->GetCycle();
+
+	if (!GetEngineObject()->SequenceLoops() && GetEngineObject()->IsSequenceFinished())
+	{
+		flEnd = 1.01f;
+	}
+	GetEngineObject()->SetLastEventCheck(flEnd);
+
+	/*
+	if (m_debugOverlays & OVERLAY_NPC_SELECTED_BIT)
+	{
+		Msg( "%s:%s : checking %.2f %.2f (%d)\n", STRING(GetModelName()), pstudiohdr->pSeqdesc( GetSequence() ).pszLabel(), flStart, flEnd, m_bSequenceFinished );
+	}
+	*/
+
+	// FIXME: does not handle negative framerates!
+	int index = 0;
+	while ((index = pstudiohdr->GetAnimationEvent(GetEngineObject()->GetSequence(), &event, flStart, flEnd, index, gpGlobals->curtime)) != 0)
+	{
+		event.pSource = this;
+		// calc when this event should happen
+		if (flCycleRate > 0.0)
+		{
+			float flCycle = event.cycle;
+			if (flCycle > GetEngineObject()->GetCycle())
+			{
+				flCycle = flCycle - 1.0;
+			}
+			event.eventtime = GetEngineObject()->GetAnimTime() + (flCycle - GetEngineObject()->GetCycle()) / flCycleRate + GetAnimTimeInterval();
+		}
+
+		/*
+		if (m_debugOverlays & OVERLAY_NPC_SELECTED_BIT)
+		{
+			Msg( "dispatch %i (%i) cycle %f event cycle %f cyclerate %f\n",
+				(int)(index - 1),
+				(int)event.event,
+				(float)GetCycle(),
+				(float)event.cycle,
+				(float)flCycleRate );
+		}
+		*/
+		eventHandler->HandleAnimEvent(&event);
+
+		// FAILSAFE:
+		// If HandleAnimEvent has somehow reset my internal pointer
+		// to IStudioHdr to something other than it was when we entered 
+		// this function, we will crash on the next call to GetAnimationEvent
+		// because pstudiohdr no longer points at something valid. 
+		// So, catch this case, complain vigorously, and bail out of
+		// the loop.
+		IStudioHdr* pNowStudioHdr = GetEngineObject()->GetModelPtr();
+		if (pNowStudioHdr != pstudiohdr)
+		{
+			AssertMsg2(false, "%s has changed its model while processing AnimEvents on sequence %d. Aborting dispatch.\n", GetDebugName(), GetEngineObject()->GetSequence());
+			Warning("%s has changed its model while processing AnimEvents on sequence %d. Aborting dispatch.\n", GetDebugName(), GetEngineObject()->GetSequence());
+			break;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseEntity::HandleAnimEvent(animevent_t* pEvent)
+{
+	if ((pEvent->type & AE_TYPE_NEWEVENTSYSTEM) && (pEvent->type & AE_TYPE_SERVER))
+	{
+		if (pEvent->event == AE_SV_PLAYSOUND)
+		{
+			const char* soundname = pEvent->options;
+			CPASAttenuationFilter filter(this, soundname);
+
+			EmitSound_t params;
+			params.m_pSoundName = soundname;
+			params.m_flSoundTime = 0.0f;
+			params.m_pflSoundDuration = NULL;
+			params.m_bWarnOnDirectWaveReference = true;
+			g_pSoundEmitterSystem->EmitSound(filter, this->entindex(), params);
+			return;
+		}
+		else if (pEvent->event == AE_RAGDOLL)
+		{
+			// Convert to ragdoll immediately
+			CTakeDamageInfo info;
+			CBaseEntity* pRagdoll = CreateServerRagdoll(GetEngineObject()->GetForceBone(), info, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
+			FixupBurningServerRagdoll(pRagdoll);
+			PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
+			RemoveDeferred();
+			//BecomeRagdollOnClient( vec3_origin );
+			return;
+		}
+#ifdef HL2_EPISODIC
+		else if (pEvent->event == AE_SV_DUSTTRAIL)
+		{
+			char szAttachment[128];
+			float flDuration;
+			float flSize;
+			if (sscanf(pEvent->options, "%s %f %f", szAttachment, &flDuration, &flSize) == 3)
+			{
+				CHandle<DustTrail>	hDustTrail;
+
+				hDustTrail = DustTrail::CreateDustTrail();
+
+				if (hDustTrail)
+				{
+					hDustTrail->m_SpawnRate = 4;    // Particles per second
+					hDustTrail->m_ParticleLifetime = 1.5;   // Lifetime of each particle, In seconds
+					hDustTrail->m_Color.Init(0.5f, 0.46f, 0.44f);
+					hDustTrail->m_StartSize = flSize;
+					hDustTrail->m_EndSize = hDustTrail->m_StartSize * 8;
+					hDustTrail->m_SpawnRadius = 3;    // Each particle randomly offset from the center up to this many units
+					hDustTrail->m_MinSpeed = 4;    // u/sec
+					hDustTrail->m_MaxSpeed = 10;    // u/sec
+					hDustTrail->m_Opacity = 0.5f;
+					hDustTrail->SetLifetime(flDuration);  // Lifetime of the spawner, in seconds
+					hDustTrail->m_StopEmitTime = gpGlobals->curtime + flDuration;
+					hDustTrail->GetEngineObject()->SetParent(this->GetEngineObject(), GetEngineObject()->LookupAttachment(szAttachment));
+					hDustTrail->GetEngineObject()->SetLocalOrigin(vec3_origin);
+				}
+			}
+			else
+			{
+				DevWarning(1, "%s unable to parse AE_SV_DUSTTRAIL event \"%s\"\n", STRING(GetEngineObject()->GetModelName()), pEvent->options);
+			}
+
+			return;
+		}
+#endif
+	}
+
+	// Failed to find a handler
+	const char* pName = mdlcache->EventList_NameForIndex(pEvent->event);
+	if (pName)
+	{
+		DevWarning(1, "Unhandled animation event %s for %s\n", pName, GetClassname());
+	}
+	else
+	{
+		DevWarning(1, "Unhandled animation event %d for %s\n", pEvent->event, GetClassname());
+	}
+}
+
+//=========================================================
+// Each class that wants to use pose parameters should populate
+// static variables in this entry point, rather than calling
+// GetPoseParameter(const char*) every time you want to adjust
+// an animation.
+//
+// Make sure to call BaseClass::PopulatePoseParameters() at 
+// the *bottom* of your function.
+//=========================================================
+void	CBaseEntity::PopulatePoseParameters(void)
+{
+
+}
+
+//-----------------------------------------------------------------------------
+// Returns the attachment in local space
+//-----------------------------------------------------------------------------
+bool CBaseEntity::GetAttachmentLocal(const char* szName, Vector& origin, QAngle& angles)
+{
+	return GetAttachmentLocal(GetEngineObject()->LookupAttachment(szName), origin, angles);
+}
+
+bool CBaseEntity::GetAttachmentLocal(int iAttachment, Vector& origin, QAngle& angles)
+{
+	matrix3x4_t attachmentToEntity;
+
+	bool bRet = GetAttachmentLocal(iAttachment, attachmentToEntity);
+	MatrixAngles(attachmentToEntity, angles, origin);
+	return bRet;
+}
+
+bool CBaseEntity::GetAttachmentLocal(int iAttachment, matrix3x4_t& attachmentToLocal)
+{
+	matrix3x4_t attachmentToWorld;
+	bool bRet = GetEngineObject()->GetAttachment(iAttachment, attachmentToWorld);
+	matrix3x4_t worldToEntity;
+	MatrixInvert(GetEngineObject()->EntityToWorldTransform(), worldToEntity);
+	ConcatTransforms(worldToEntity, attachmentToWorld, attachmentToLocal);
+	return bRet;
+}
+
+void CBaseEntity::CopyAnimationDataFrom(CBaseEntity* pSource)
+{
+	this->GetEngineObject()->SetModelName(pSource->GetEngineObject()->GetModelName());
+	this->GetEngineObject()->SetModelIndex(pSource->GetEngineObject()->GetModelIndex());
+	this->GetEngineObject()->SetCycle(pSource->GetEngineObject()->GetCycle());
+	this->GetEngineObject()->SetEffects(pSource->GetEngineObject()->GetEffects());
+	this->GetEngineObject()->IncrementInterpolationFrame();
+	this->GetEngineObject()->SetSequence(pSource->GetEngineObject()->GetSequence());
+	this->GetEngineObject()->SetAnimTime(pSource->GetEngineObject()->GetAnimTime());
+	this->GetEngineObject()->SetBody(pSource->GetEngineObject()->GetBody());
+	this->GetEngineObject()->SetSkin(pSource->GetEngineObject()->GetSkin());
+	this->GetEngineObject()->GetModelPtr();// LockStudioHdr();
+}
+
+void CBaseEntity::InitBoneControllers(void) // FIXME: rename
+{
+	int i;
+
+	IStudioHdr* pStudioHdr = GetEngineObject()->GetModelPtr();
+	if (!pStudioHdr)
+		return;
+
+	int nBoneControllerCount = pStudioHdr->numbonecontrollers();
+	if (nBoneControllerCount > NUM_BONECTRLS)
+	{
+		nBoneControllerCount = NUM_BONECTRLS;
+
+#ifdef _DEBUG
+		Warning("Model %s has too many bone controllers! (Max %d allowed)\n", pStudioHdr->pszName(), NUM_BONECTRLS);
+#endif
+	}
+
+	for (i = 0; i < nBoneControllerCount; i++)
+	{
+		GetEngineObject()->SetBoneController(i, 0.0);
+	}
+
+	Assert(pStudioHdr->SequencesAvailable());
+
+	if (pStudioHdr->SequencesAvailable())
+	{
+		for (i = 0; i < pStudioHdr->GetNumPoseParameters(); i++)
+		{
+			GetEngineObject()->SetPoseParameter(i, 0.0);
+		}
+	}
+}
+
+void CBaseEntity::InputBecomeRagdoll(inputdata_t& inputdata)
+{
+	CTakeDamageInfo info;
+	CBaseEntity* pRagdoll = CreateServerRagdoll(GetEngineObject()->GetForceBone(), info, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
+	FixupBurningServerRagdoll(pRagdoll);
+	PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
+	RemoveDeferred();
+	//BecomeRagdollOnClient(vec3_origin);
+}
+
+ConVar sv_pvsskipanimation("sv_pvsskipanimation", "1", FCVAR_ARCHIVE, "Skips SetupBones when npc's are outside the PVS");
+
+inline bool CBaseEntity::CanSkipAnimation(void)
+{
+	if (IsBaseAnimating()) {
+		if (!sv_pvsskipanimation.GetBool())
+			return false;
+
+		CAI_BaseNPC* pNPC = MyNPCPointer();
+		if (pNPC && !pNPC->HasCondition(COND_IN_PVS) && (GetEngineObject()->GetBoneCacheFlags() & (BCF_NO_ANIMATION_SKIP | BCF_IS_IN_SPAWN)) == false)
+		{
+			// If we have a player as a child, then we better setup our bones. If we don't,
+			// the PVS will be screwy. 
+			return !GetEngineObject()->DoesHavePlayerChild();
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else {
+		return true;
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: SetModelScale input handler
+//-----------------------------------------------------------------------------
+void CBaseEntity::InputSetModelScale(inputdata_t& inputdata)
+{
+	Vector vecScale;
+	inputdata.value.Vector3D(vecScale);
+
+	GetEngineObject()->SetModelScale(vecScale.x, vecScale.y);
 }
 
 //================================================================================
@@ -3320,6 +4400,14 @@ void CBaseEntity::Teleport( const Vector *newPosition, const QAngle *newAngles, 
 	if (step)
 	{
 		Q_memset( step, 0, sizeof( *step ) );
+	}
+
+	if (IsBaseAnimating()) {
+		if (GetEngineObject()->GetIk())
+		{
+			GetEngineObject()->GetIk()->ClearTargets();
+		}
+		GetEngineObject()->InitStepHeightAdjust();
 	}
 }
 

@@ -34,7 +34,7 @@ public:
 
 	// float	SetBlending( int iBlender, float flValue, CBaseAnimating *pOwner );
 	void	StudioFrameAdvance( float flInterval, CBaseAnimating *pOwner );
-	void	DispatchAnimEvents( CBaseAnimating *eventHandler, CBaseAnimating *pOwner );
+	void	DispatchAnimEvents( CBaseEntity *eventHandler, CBaseEntity *pOwner );
 	void	SetOrder( int nOrder );
 
 	CAnimationLayer& operator=(const CAnimationData& animationData)
@@ -157,7 +157,7 @@ public:
 	virtual void	OnRestore();
 
 	virtual void	StudioFrameAdvance();
-	virtual	void	DispatchAnimEvents ( CBaseAnimating *eventHandler );
+	virtual	void	DispatchAnimEvents ( CBaseEntity *eventHandler );
 	virtual void	GetSkeleton( IStudioHdr *pStudioHdr, Vector pos[], Quaternion q[], int boneMask );
 
 	int		AddGestureSequence( int sequence, bool autokill = true );
