@@ -21,10 +21,10 @@
 //
 //  A piece that falls out of the window
 //#############################################################################
-class CWindowPane : public CBaseAnimating
+class CWindowPane : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CWindowPane, CBaseAnimating );
+	DECLARE_CLASS( CWindowPane, CBaseEntity);
 
 	static CWindowPane* CreateWindowPane(  const Vector &vecOrigin, const QAngle &vecAngles );
 

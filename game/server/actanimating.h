@@ -14,10 +14,10 @@
 
 #include "baseanimating.h"
 
-class CActAnimating : public CBaseAnimating
+class CActAnimating : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CActAnimating, CBaseAnimating );
+	DECLARE_CLASS( CActAnimating, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void			SetActivity( Activity act );

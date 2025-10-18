@@ -173,9 +173,9 @@ struct magnetted_objects_t
 	DECLARE_SIMPLE_DATADESC();
 };
 
-class CPhysMagnet : public CBaseAnimating, public IPhysicsConstraintEvent
+class CPhysMagnet : public CBaseEntity, public IPhysicsConstraintEvent
 {
-	DECLARE_CLASS( CPhysMagnet, CBaseAnimating );
+	DECLARE_CLASS( CPhysMagnet, CBaseEntity);
 public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();

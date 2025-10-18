@@ -31,10 +31,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern ConVar ai_sequence_debug;
+//extern ConVar ai_sequence_debug;
 
 
-BEGIN_DATADESC( CBaseAnimating )
+//BEGIN_DATADESC( CBaseAnimating )
 
 	//DEFINE_FIELD( m_flGroundSpeed, FIELD_FLOAT ),
 	//DEFINE_FIELD( m_flLastEventCheck, FIELD_TIME ),
@@ -87,13 +87,13 @@ BEGIN_DATADESC( CBaseAnimating )
 
 	//DEFINE_FIELD( m_fBoneCacheFlags, FIELD_SHORT ),
 
-END_DATADESC()
+//END_DATADESC()
 
 
 // SendTable stuff.
-IMPLEMENT_SERVERCLASS_ST(CBaseAnimating, DT_BaseAnimating)
+//IMPLEMENT_SERVERCLASS_ST(CBaseAnimating, DT_BaseAnimating)
 
-END_SEND_TABLE()
+//END_SEND_TABLE()
 
 
 //CBaseAnimating::CBaseAnimating()

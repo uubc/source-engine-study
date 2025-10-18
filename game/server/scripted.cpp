@@ -1277,8 +1277,8 @@ void CAI_ScriptedSequence::ModifyScriptedAutoMovement( Vector *vecNewPos )
 			Msg("%s current org: %f %f", m_hInteractionRelativeEntity->GetDebugName(), vecRelativeOrigin.x, vecRelativeOrigin.y );
 		}
 
-		CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating*>(m_hInteractionRelativeEntity.Get());
-		if ( pAnimating )
+		CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(m_hInteractionRelativeEntity.Get());
+		if ( pAnimating && pAnimating->IsBaseAnimating())
 		{
 			Vector vecDeltaPos;
 			QAngle vecDeltaAngles;

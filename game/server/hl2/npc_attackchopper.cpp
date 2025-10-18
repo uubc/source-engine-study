@@ -323,12 +323,12 @@ private:
 //-----------------------------------------------------------------------------
 // This entity is used for helicopter gibs with specific properties
 //-----------------------------------------------------------------------------
-class CHelicopterChunk : public CBaseAnimating
+class CHelicopterChunk : public CBaseEntity
 {
 	DECLARE_DATADESC();
 
 public:
-	DECLARE_CLASS( CHelicopterChunk, CBaseAnimating );
+	DECLARE_CLASS( CHelicopterChunk, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	virtual void Spawn( void );

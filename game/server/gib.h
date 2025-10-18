@@ -30,10 +30,10 @@ enum GibType_e
 	GIB_ALIEN,
 };
 
-class CGib : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
+class CGib : public CBaseEntity//, public CDefaultPlayerPickupVPhysics
 {
 public:
-	DECLARE_CLASS( CGib, CBaseAnimating );
+	DECLARE_CLASS( CGib, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void Spawn( const char *szGibModel );
@@ -103,10 +103,10 @@ private:
 	EHANDLE m_hFlame;
 };
 
-class CRagGib : public CBaseAnimating
+class CRagGib : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CRagGib, CBaseAnimating );
+	DECLARE_CLASS( CRagGib, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void Spawn( const char *szModel, const Vector &vecOrigin, const Vector &vecForce, float flFadeTime );

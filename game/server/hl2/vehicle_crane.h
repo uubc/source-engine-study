@@ -48,9 +48,9 @@ class CPropCrane;
 //-----------------------------------------------------------------------------
 // Purpose: This is the entity we attach to the tip of the crane and dangle the cable from
 //-----------------------------------------------------------------------------
-class CCraneTip : public CBaseAnimating
+class CCraneTip : public CBaseEntity
 {
-	DECLARE_CLASS( CCraneTip, CBaseAnimating );
+	DECLARE_CLASS( CCraneTip, CBaseEntity);
 public:
 	DECLARE_DATADESC();
 
@@ -66,8 +66,8 @@ public:
 	void	Spawn( void );
 	void	Precache( void );
 
-	bool				CreateConstraint( CBaseAnimating *pMagnet, IPhysicsConstraintGroup *pGroup );
-	static CCraneTip	*Create( CBaseAnimating *pCraneMagnet, IPhysicsConstraintGroup *pGroup, const Vector &vecOrigin, const QAngle &vecAngles );
+	bool				CreateConstraint( CBaseEntity *pMagnet, IPhysicsConstraintGroup *pGroup );
+	static CCraneTip	*Create( CBaseEntity *pCraneMagnet, IPhysicsConstraintGroup *pGroup, const Vector &vecOrigin, const QAngle &vecAngles );
 
 public:
 	IPhysicsSpring			*m_pSpring;

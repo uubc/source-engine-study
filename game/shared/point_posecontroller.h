@@ -48,7 +48,7 @@ public:
 
 	float GetPoseValue( void );
 
-	void SetProp( CBaseAnimating *pProp );
+	void SetProp( CBaseEntity *pProp );
 	void SetPropName( const char *pName );
 	void SetPoseParameterName( const char *pName );
 	void SetPoseValue( float fValue );

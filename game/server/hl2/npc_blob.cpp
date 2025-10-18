@@ -65,8 +65,9 @@ enum
 
 //=========================================================
 //=========================================================
-class CBlobElement : public CBaseAnimating
+class CBlobElement : public CBaseEntity
 {
+	DECLARE_CLASS(CBlobElement, CBaseEntity);
 public:
 	bool IsBaseAnimating() { return true; }
 	void Precache();

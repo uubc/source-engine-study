@@ -22,9 +22,9 @@ class RocketTrail;
 //================================================
 // CDODBaseRocket	
 //================================================
-class CDODBaseRocket : public CBaseAnimating
+class CDODBaseRocket : public CBaseEntity
 {
-	DECLARE_CLASS( CDODBaseRocket, CBaseAnimating );
+	DECLARE_CLASS( CDODBaseRocket, CBaseEntity);
 
 public:
 	CDODBaseRocket();

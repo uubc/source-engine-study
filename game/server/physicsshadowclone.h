@@ -23,9 +23,9 @@ class IPhysicsEnvironment;
 
 
 
-class CPhysicsShadowClone : public CBaseAnimating
+class CPhysicsShadowClone : public CBaseEntity
 {
-	DECLARE_CLASS( CPhysicsShadowClone, CBaseAnimating );
+	DECLARE_CLASS( CPhysicsShadowClone, CBaseEntity);
 
 private:
 

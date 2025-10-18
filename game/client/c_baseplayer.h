@@ -192,7 +192,7 @@ public:
 	// Returns the view model if this is the local player. If you're in third person or 
 	// this is a remote player, it returns the active weapon
 	// (and its appropriate left/right weapon if this is TF2).
-	virtual C_BaseAnimating*	GetRenderedWeaponModel();
+	virtual C_BaseEntity*	GetRenderedWeaponModel();
 
 	//virtual bool				IsOverridingViewmodel( void ) { return false; };
 	//virtual int					DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags ) { return 0; };

@@ -19,10 +19,10 @@ enum MoveCollide_t;
 
 //=============================================================================
 //=============================================================================
-class CBaseAnimatingProjectile : public CBaseAnimating
+class CBaseAnimatingProjectile : public CBaseEntity
 {
 	DECLARE_DATADESC();
-	DECLARE_CLASS( CBaseAnimatingProjectile, CBaseAnimating );
+	DECLARE_CLASS( CBaseAnimatingProjectile, CBaseEntity);
 
 public:
 	bool IsBaseAnimating() { return true; }

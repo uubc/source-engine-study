@@ -19,13 +19,14 @@
 //#include <entitylist.h>
 
 
-struct animevent_t;
-struct matrix3x4_t;
-class CIKContext;
-class KeyValues;
-class CRagdollProp;
-FORWARD_DECLARE_HANDLE( memhandle_t );
+//struct animevent_t;
+//struct matrix3x4_t;
+//class CIKContext;
+//class KeyValues;
+//class CRagdollProp;
+//FORWARD_DECLARE_HANDLE( memhandle_t );
 
+/*
 class CBaseAnimating : public CBaseEntity
 {
 public:
@@ -201,7 +202,7 @@ friend class CFlexCycler;
 friend class CCycler;
 friend class CBlendingCycler;
 };
-
+*/
 //-----------------------------------------------------------------------------
 // Purpose: Serves the 90% case of calling SetSequence / ResetSequenceInfo.
 //-----------------------------------------------------------------------------
@@ -214,6 +215,6 @@ inline void CBaseAnimating::ResetSequence(int nSequence)
 }
 */
 
-EXTERN_SEND_TABLE(DT_BaseAnimating);
+//EXTERN_SEND_TABLE(DT_BaseAnimating);
 
 #endif // BASEANIMATING_H

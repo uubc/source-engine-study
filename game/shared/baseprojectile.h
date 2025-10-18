@@ -28,10 +28,10 @@
 // Base Projectile.
 //
 //=============================================================================
-class CBaseProjectile : public CBaseAnimating
+class CBaseProjectile : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CBaseProjectile, CBaseAnimating );
+	DECLARE_CLASS( CBaseProjectile, CBaseEntity);
 	DECLARE_NETWORKCLASS();
 
 	CBaseProjectile();

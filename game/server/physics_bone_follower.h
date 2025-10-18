@@ -28,7 +28,7 @@ struct physfollower_t
 struct vcollide_t;
 
 // create a manager and a list of followers directly from a ragdoll
-void CreateBoneFollowersFromRagdoll( CBaseAnimating *pEntity, class CBoneFollowerManager *pManager, vcollide_t *pCollide );
+void CreateBoneFollowersFromRagdoll( CBaseEntity *pEntity, class CBoneFollowerManager *pManager, vcollide_t *pCollide );
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -41,11 +41,11 @@ public:
 	~CBoneFollowerManager();
 
 	// Use either of these to create the bone followers in your entity's CreateVPhysics()
-	void InitBoneFollowers( CBaseAnimating *pParentEntity, int iNumBones, const char **pFollowerBoneNames );
-	void AddBoneFollower( CBaseAnimating *pParentEntity, const char *pFollowerBoneName, solid_t *pSolid = NULL );	// Adds a single bone follower
+	void InitBoneFollowers( CBaseEntity *pParentEntity, int iNumBones, const char **pFollowerBoneNames );
+	void AddBoneFollower( CBaseEntity *pParentEntity, const char *pFollowerBoneName, solid_t *pSolid = NULL );	// Adds a single bone follower
 
 	// Call this after you move your bones
-	void UpdateBoneFollowers( CBaseAnimating *pParentEntity );
+	void UpdateBoneFollowers( CBaseEntity *pParentEntity );
 
 	// Call this when your entity's removed
 	void DestroyBoneFollowers( void );
@@ -55,7 +55,7 @@ public:
 	int				GetNumBoneFollowers( void ) const { return m_iNumBones; }
 
 private:
-	bool CreatePhysicsFollower( CBaseAnimating *pParentEntity, physfollower_t &follow, const char *pBoneName, solid_t *pSolid );
+	bool CreatePhysicsFollower( CBaseEntity *pParentEntity, physfollower_t &follow, const char *pBoneName, solid_t *pSolid );
 
 private:
 	int							m_iNumBones;

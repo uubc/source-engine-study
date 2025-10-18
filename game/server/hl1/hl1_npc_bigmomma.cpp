@@ -108,9 +108,9 @@ void MortarSpray( const Vector &position, const Vector &direction, int spriteMod
 //=========================================================
 // Mortar shot entity
 //=========================================================
-class CBMortar : public CBaseAnimating
+class CBMortar : public CBaseEntity
 {
-	DECLARE_CLASS( CBMortar, CBaseAnimating );
+	DECLARE_CLASS( CBMortar, CBaseEntity);
 public:
 	bool IsBaseAnimating() { return true; }
 	void Spawn( void );

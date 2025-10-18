@@ -2507,8 +2507,8 @@ int CBaseServerVehicle::FindSeatIndexByName( int nRoleIndex, string_t strSeatNam
 		return -1;
 
 	// Used for attachment polling
-	CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating *>(GetVehicleEnt());
-	if ( pAnimating == NULL )
+	CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(GetVehicleEnt());
+	if ( pAnimating == NULL || !pAnimating->IsBaseAnimating())
 		return -1;
 
 	// Get the index of the named attachment in the model

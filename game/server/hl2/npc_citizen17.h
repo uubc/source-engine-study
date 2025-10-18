@@ -411,9 +411,9 @@ private:
 
 //-------------------------------------
 
-class CSquadInsignia : public CBaseAnimating
+class CSquadInsignia : public CBaseEntity
 {
-	DECLARE_CLASS( CSquadInsignia, CBaseAnimating );
+	DECLARE_CLASS( CSquadInsignia, CBaseEntity);
 	bool IsBaseAnimating() { return true; }
 	void Spawn();
 };

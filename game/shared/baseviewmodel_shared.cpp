@@ -156,7 +156,7 @@ void CBaseViewModel::SpawnControlPanels()
 	// FIXME: Deal with dynamically resizing control panels?
 
 	// If we're attached to an entity, spawn control panels on it instead of use
-	CBaseAnimating *pEntityToSpawnOn = this;
+	CBaseEntity *pEntityToSpawnOn = this;
 	char *pOrgLL = "controlpanel%d_ll";
 	char *pOrgUR = "controlpanel%d_ur";
 	char *pAttachmentNameLL = pOrgLL;

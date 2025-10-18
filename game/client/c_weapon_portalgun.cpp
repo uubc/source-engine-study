@@ -892,7 +892,7 @@ void C_WeaponPortalgun::GetEffectParameters( EffectType_t effectID, color32 &col
 
 	if ( pOwner != NULL )
 	{
-		C_BaseAnimating *pModel;
+		C_BaseEntity *pModel;
 		int originalModelIndex = 0;
 
 		if ( b3rdPerson )

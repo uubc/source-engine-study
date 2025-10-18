@@ -404,10 +404,10 @@ void CFlare::FlareTouch( IServerEntity *pOther )
 		m_flNextDamage = gpGlobals->curtime + 1.0f;
 		*/
 
-		CBaseAnimating *pAnim;
+		CBaseEntity *pAnim;
 
-		pAnim = dynamic_cast<CBaseAnimating*>(pOther);
-		if( pAnim )
+		pAnim = dynamic_cast<CBaseEntity*>(pOther);
+		if( pAnim && pAnim->IsBaseAnimating())
 		{
 			pAnim->Ignite( 30.0f );
 		}

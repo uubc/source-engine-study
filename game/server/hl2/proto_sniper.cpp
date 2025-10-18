@@ -2550,9 +2550,9 @@ Vector CProtoSniper::LeadTarget( CBaseEntity *pTarget )
 		else
 		{
 			// Have to build a velocity vector using the character's current groundspeed.
-			CBaseAnimating *pAnimating;
+			CBaseEntity *pAnimating;
 
-			pAnimating = (CBaseAnimating *)pTarget;
+			pAnimating = (CBaseEntity*)pTarget;
 
 			Assert( pAnimating != NULL );
 

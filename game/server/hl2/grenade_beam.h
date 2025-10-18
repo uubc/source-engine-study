@@ -23,10 +23,10 @@ class CGrenadeBeam;
 class CBeam;
 
 // End of the grenade beam
-class CGrenadeBeamChaser : public CBaseAnimating
+class CGrenadeBeamChaser : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CGrenadeBeamChaser, CBaseAnimating );
+	DECLARE_CLASS( CGrenadeBeamChaser, CBaseEntity);
 	DECLARE_DATADESC();
 
 	bool IsBaseAnimating() { return true; }

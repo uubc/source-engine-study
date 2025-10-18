@@ -6987,7 +6987,7 @@ void CCSPlayer::DropWeapons( bool fromDeath, bool friendlyFire )
 		Vector vForward, vRight;
 		AngleVectors(GetEngineObject()->GetAbsAngles(), &vForward, &vRight, NULL );
 
-		CBaseAnimating *pDefuser = (CBaseAnimating *)CBaseEntity::Create( "item_defuser", WorldSpaceCenter(), GetEngineObject()->GetLocalAngles(), this );
+		CBaseEntity *pDefuser = (CBaseEntity*)CBaseEntity::Create( "item_defuser", WorldSpaceCenter(), GetEngineObject()->GetLocalAngles(), this );
 		pDefuser->ApplyAbsVelocityImpulse( vForward * 200 + vRight * random->RandomFloat( -50, 50 ) );
 
 		RemoveDefuser();

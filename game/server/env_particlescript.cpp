@@ -20,10 +20,10 @@
 //-----------------------------------------------------------------------------
 // An entity which emits other entities at points 
 //-----------------------------------------------------------------------------
-class CEnvParticleScript : public CBaseAnimating
+class CEnvParticleScript : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CEnvParticleScript, CBaseAnimating );
+	DECLARE_CLASS( CEnvParticleScript, CBaseEntity);
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 

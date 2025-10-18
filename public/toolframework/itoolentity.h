@@ -211,8 +211,8 @@ public:
 
 	virtual void SetMoveType( IServerEntity *pEntity, int val ) = 0;
 	virtual void SetMoveType( IServerEntity *pEntity, int val, int moveCollide ) = 0;
-	virtual void ResetSequence( CBaseAnimating *pEntity, int nSequence ) = 0;
-	virtual void ResetSequenceInfo( CBaseAnimating *pEntity ) = 0;
+	virtual void ResetSequence( CBaseEntity *pEntity, int nSequence ) = 0;
+	virtual void ResetSequenceInfo( CBaseEntity *pEntity ) = 0;
 
 	virtual void ClearMultiDamage( void ) = 0;
 	virtual void ApplyMultiDamage( void ) = 0;

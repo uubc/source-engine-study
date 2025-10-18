@@ -5917,7 +5917,7 @@ void __MsgFunc_MatchEndConditions(bf_read& msg);
 
 // This is a temporary entity used to render the player's model while drawing the class selection menu.
 CHandle<C_BaseAnimatingOverlay> g_ClassImagePlayer = NULL;	// player
-CHandle<C_BaseAnimating> g_ClassImageWeapon = NULL;	// weapon
+CHandle<C_BaseEntity> g_ClassImageWeapon = NULL;	// weapon
 STUB_WEAPON_CLASS(cycler_weapon, WeaponCycler, C_BaseCombatWeapon);
 STUB_WEAPON_CLASS(weapon_cubemap, WeaponCubemap, C_BaseCombatWeapon);
 
@@ -6445,7 +6445,7 @@ void CCSGameWorld::FireGameEvent(IGameEvent* event)
 
 void RemoveClassImageEntity()
 {
-	C_BaseAnimating* pEnt = g_ClassImagePlayer;
+	C_BaseEntity* pEnt = g_ClassImagePlayer;
 	if (pEnt)
 	{
 		EntityList()->DestroyEntity(pEnt);// ->Remove();
@@ -6461,7 +6461,7 @@ void RemoveClassImageEntity()
 }
 
 
-bool ShouldRecreateClassImageEntity(C_BaseAnimating* pEnt, const char* pNewModelName)
+bool ShouldRecreateClassImageEntity(C_BaseEntity* pEnt, const char* pNewModelName)
 {
 	if (!pNewModelName || !pNewModelName[0])
 		return false;
@@ -6546,7 +6546,7 @@ void UpdateClassImageEntity(
 		g_ClassImagePlayer = pPlayerModel;
 	}
 
-	C_BaseAnimating* pWeaponModel = g_ClassImageWeapon;
+	C_BaseEntity* pWeaponModel = g_ClassImageWeapon;
 
 	// Does the entity even exist yet?
 	if (recreatePlayer || ShouldRecreateClassImageEntity(pWeaponModel, pWeaponName))
@@ -6554,7 +6554,7 @@ void UpdateClassImageEntity(
 		if (pWeaponModel)
 			EntityList()->DestroyEntity(pWeaponModel);// ->Remove();
 
-		pWeaponModel = (C_BaseAnimating*)EntityList()->CreateEntityByName("C_BaseAnimating");
+		pWeaponModel = (C_BaseEntity*)EntityList()->CreateEntityByName("C_BaseEntity");
 		pWeaponModel->InitializeAsClientEntity(pWeaponName, RENDER_GROUP_OPAQUE_ENTITY);
 		pWeaponModel->GetEngineObject()->AddEffects(EF_NODRAW); // don't let the renderer draw the model normally
 		pWeaponModel->GetEngineObject()->FollowEntity(pPlayerModel->GetEngineObject()); // attach to player model

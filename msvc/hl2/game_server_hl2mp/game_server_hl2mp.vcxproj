@@ -324,6 +324,7 @@
     <ClCompile Include="..\..\..\game\server\pathtrack.cpp" />
     <ClCompile Include="..\..\..\game\server\physconstraint.cpp" />
     <ClCompile Include="..\..\..\game\server\physics.cpp" />
+    <ClCompile Include="..\..\..\game\server\physicsshadowclone.cpp" />
     <ClCompile Include="..\..\..\game\server\physics_bone_follower.cpp" />
     <ClCompile Include="..\..\..\game\server\physics_cannister.cpp" />
     <ClCompile Include="..\..\..\game\server\physics_fx.cpp" />

@@ -1324,15 +1324,15 @@ CBaseEntity *CreateGibsFromList( CUtlVector<breakmodel_t> &list, int modelindex,
 
 	int nSkin = params.nDefaultSkin;
 	CBaseEntity *pOwnerEntity = pEntity;
-	CBaseAnimating *pOwnerAnim = NULL;
+	CBaseEntity *pOwnerAnim = NULL;
 	if ( pPhysics )
 	{
 		pOwnerEntity = static_cast<CBaseEntity *>(pPhysics->GetGameData());
 	}
 	if ( pOwnerEntity )
 	{
-		pOwnerAnim = dynamic_cast<CBaseAnimating*>(pOwnerEntity);
-		if ( pOwnerAnim )
+		pOwnerAnim = dynamic_cast<CBaseEntity*>(pOwnerEntity);
+		if ( pOwnerAnim && pOwnerAnim->IsBaseAnimating())
 		{
 			nSkin = pOwnerAnim->GetEngineObject()->GetSkin();
 		}
@@ -1410,7 +1410,7 @@ CBaseEntity *CreateGibsFromList( CUtlVector<breakmodel_t> &list, int modelindex,
 
 			Vector position = vec3_origin;
 			QAngle angles = params.angles;
-			if ( pOwnerAnim && list[i].placementName[0] )
+			if ( pOwnerAnim && pOwnerAnim->IsBaseAnimating() && list[i].placementName[0])
 			{
 				if ( list[i].placementIsBone )
 				{

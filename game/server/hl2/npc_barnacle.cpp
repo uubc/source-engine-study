@@ -1123,7 +1123,7 @@ void CNPC_Barnacle::LiftRagdoll( float flBiteZOffset )
 		// Apply forces to the attached ragdoll based upon the animations of the enemy, if the enemy is still alive.
 		if ( GetEnemy()->IsAlive() )
 		{
-			CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating*>( GetEnemy() );
+			CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>( GetEnemy() );
 
 			// Get the current bone matrix
 			/*
@@ -1291,7 +1291,7 @@ void CNPC_Barnacle::LiftPrey( void )
 //-----------------------------------------------------------------------------
 // Purpose: Attach a serverside ragdoll prop for the specified entity to our tongue
 //-----------------------------------------------------------------------------
-CRagdollProp *CNPC_Barnacle::AttachRagdollToTongue( CBaseAnimating *pAnimating )
+CRagdollProp *CNPC_Barnacle::AttachRagdollToTongue( CBaseEntity *pAnimating )
 {
 	// Find his head bone
 	m_iGrabbedBoneIndex = -1;
@@ -1491,7 +1491,7 @@ void CNPC_Barnacle::AttachTongueToTarget( CBaseEntity *pTouchEnt, Vector vecGrab
 	SetAltitude( (GetEngineObject()->GetAbsOrigin().z - vecGrabPos.z) );
 	m_bPlayedPullSound  = false;
 
-	CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating*>(pTouchEnt);
+	CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pTouchEnt);
 
 	if ( IsEnemyAPlayer() || IsEnemyAPhysicsObject() )
 	{
@@ -2720,7 +2720,7 @@ void CBarnacleTongueTip::VPhysicsUpdate( IPhysicsObject *pPhysics )
 //-----------------------------------------------------------------------------
 // Purpose: Activate/create the spring
 //-----------------------------------------------------------------------------
-bool CBarnacleTongueTip::CreateSpring( CBaseAnimating *pTongueRoot )
+bool CBarnacleTongueTip::CreateSpring( CBaseEntity *pTongueRoot )
 {
 	IPhysicsObject *pPhysObject = GetEngineObject()->VPhysicsGetObject();
 	IPhysicsObject *pRootPhysObject = pTongueRoot->GetEngineObject()->VPhysicsGetObject();
@@ -2750,7 +2750,7 @@ bool CBarnacleTongueTip::CreateSpring( CBaseAnimating *pTongueRoot )
 //-----------------------------------------------------------------------------
 // Purpose: Create a barnacle tongue tip at the bottom of the tongue
 //-----------------------------------------------------------------------------
-CBarnacleTongueTip *CBarnacleTongueTip::CreateTongueTip( CNPC_Barnacle *pBarnacle, CBaseAnimating *pTongueRoot, const Vector &vecOrigin, const QAngle &vecAngles )
+CBarnacleTongueTip *CBarnacleTongueTip::CreateTongueTip( CNPC_Barnacle *pBarnacle, CBaseEntity *pTongueRoot, const Vector &vecOrigin, const QAngle &vecAngles )
 {
 	CBarnacleTongueTip *pTip = (CBarnacleTongueTip *)CBaseEntity::Create( "npc_barnacle_tongue_tip", vecOrigin, vecAngles );
 	if ( !pTip )

@@ -108,8 +108,8 @@ void CPoseController::BuildPropList( void )
 
 	while ( pEnt && iPropNum < MAX_POSE_CONTROLLED_PROPS )
 	{
-		CBaseAnimating *pProp = dynamic_cast<CBaseAnimating*>( pEnt );
-		if ( pProp )
+		CBaseEntity *pProp = dynamic_cast<CBaseEntity*>( pEnt );
+		if ( pProp && pProp->IsBaseAnimating())
 		{
 			CDynamicProp *pDynamicProp = dynamic_cast<CDynamicProp*>( pProp );
 			if ( pDynamicProp )
@@ -147,9 +147,9 @@ void CPoseController::BuildPoseIndexList( void )
 {
 	for ( int iPropNum = 0; iPropNum < MAX_POSE_CONTROLLED_PROPS; ++iPropNum )
 	{
-		CBaseAnimating *pProp = dynamic_cast<CBaseAnimating*>( m_hProps[ iPropNum ].Get() );
+		CBaseEntity *pProp = dynamic_cast<CBaseEntity*>( m_hProps[ iPropNum ].Get() );
 
-		if ( pProp )
+		if ( pProp && pProp->IsBaseAnimating() )
 		{
 			// Update the pose parameter index
 			SetPoseIndex( iPropNum, pProp->GetEngineObject()->LookupPoseParameter( m_iszPoseParameterName.ToCStr() ) );
@@ -177,7 +177,7 @@ float CPoseController::GetPoseValue( void )
 	return m_fPoseValue;
 }
 
-void CPoseController::SetProp( CBaseAnimating *pProp )
+void CPoseController::SetProp( CBaseEntity *pProp )
 {
 	// Control a prop directly by pointer
 	if ( m_hProps[ 0 ] != pProp )
@@ -530,9 +530,9 @@ void CPoseController::SetCurrentPose( float fCurrentPoseValue )
 	for ( int iPropNum = 0; iPropNum < MAX_POSE_CONTROLLED_PROPS; ++iPropNum )
 	{
 		// Control each model's pose parameter
-		CBaseAnimating *pProp = dynamic_cast<CBaseAnimating*>( m_hProps[ iPropNum ].Get() );
+		CBaseEntity *pProp = dynamic_cast<CBaseEntity*>( m_hProps[ iPropNum ].Get() );
 
-		if ( pProp )
+		if ( pProp && pProp->IsBaseAnimating())
 		{
 			float fPoseValueMin;
 			float fPoseValueMax;

@@ -124,7 +124,7 @@ namespace vgui2
 #if defined USES_ECON_ITEMS
 #define BASECOMBATWEAPON_DERIVED_FROM		CEconEntity
 #else 
-#define BASECOMBATWEAPON_DERIVED_FROM		CBaseAnimating
+#define BASECOMBATWEAPON_DERIVED_FROM		CBaseEntity
 #endif 
 
 //-----------------------------------------------------------------------------

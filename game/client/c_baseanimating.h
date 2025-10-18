@@ -63,10 +63,10 @@ class C_ClientRagdoll;
 class C_BaseAnimating : public C_BaseEntity//, private IModelLoadCallback
 {
 public:
-	DECLARE_CLASS( C_BaseAnimating, C_BaseEntity );
-	DECLARE_CLIENTCLASS();
-	DECLARE_PREDICTABLE();
-	DECLARE_INTERPOLATION();
+	//DECLARE_CLASS( C_BaseAnimating, C_BaseEntity );
+	//DECLARE_CLIENTCLASS();
+	//DECLARE_PREDICTABLE();
+	//DECLARE_INTERPOLATION();
 
 
 

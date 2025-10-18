@@ -89,10 +89,10 @@ CEffectScriptElement::CEffectScriptElement()
 //-----------------------------------------------------------------------------
 // An entity which emits other entities at points 
 //-----------------------------------------------------------------------------
-class CEnvEffectsScript : public CBaseAnimating
+class CEnvEffectsScript : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CEnvEffectsScript, CBaseAnimating );
+	DECLARE_CLASS( CEnvEffectsScript, CBaseEntity);
 	DECLARE_DATADESC();
 
 	bool IsBaseAnimating() { return true; }

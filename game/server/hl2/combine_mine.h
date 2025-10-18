@@ -25,9 +25,9 @@
 #include "player_pickup.h"
 #include "baseanimating.h"
 
-class CBounceBomb : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
+class CBounceBomb : public CBaseEntity//, public CDefaultPlayerPickupVPhysics
 {
-	DECLARE_CLASS( CBounceBomb, CBaseAnimating );
+	DECLARE_CLASS( CBounceBomb, CBaseEntity);
 
 public:
 	CBounceBomb() { m_pWarnSound = NULL; m_bPlacedByPlayer = false; }

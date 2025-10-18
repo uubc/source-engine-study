@@ -465,7 +465,7 @@ void CModelPanel::SetupModel( void )
 	for ( int i = 0 ; i < m_pModelInfo->m_AttachedModelsInfo.Count() ; i++ )
 	{
 		CModelPanelAttachedModelInfo *pInfo = m_pModelInfo->m_AttachedModelsInfo[i];
-		C_BaseAnimating *pTemp = (C_BaseAnimating*)EntityList()->CreateEntityByName( "C_BaseAnimating" );
+		C_BaseEntity *pTemp = (C_BaseEntity*)EntityList()->CreateEntityByName( "C_BaseEntity" );
 
 		if ( pTemp )
 		{

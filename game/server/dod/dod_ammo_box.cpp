@@ -38,7 +38,7 @@ void CAmmoBox::Precache( void )
 
 CAmmoBox *CAmmoBox::Create( const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, int team )
 {
-	CAmmoBox *p = static_cast<CAmmoBox *> ( CBaseAnimating::Create( "dod_ammo_box", vecOrigin, vecAngles, pOwner ) );
+	CAmmoBox *p = static_cast<CAmmoBox *> (CBaseEntity::Create( "dod_ammo_box", vecOrigin, vecAngles, pOwner ) );
 
 	p->SetAmmoTeam( team );
 

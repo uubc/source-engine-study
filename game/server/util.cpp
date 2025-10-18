@@ -1634,8 +1634,8 @@ void UTIL_PredictedPosition( CBaseEntity *pTarget, float flTimeDelta, Vector *ve
 		else
 		{
 			// See if we're an animating entity
-			CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating *>(pTarget);
-			if ( pAnimating != NULL )
+			CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pTarget);
+			if ( pAnimating != NULL && pAnimating->IsBaseAnimating())
 			{
 				vecPredictedVel = pAnimating->GetGroundSpeedVelocity();
 			}
@@ -1696,8 +1696,8 @@ void UTIL_PointAtNamedEntity( IServerEntity *pDest, string_t strTarget )
 //-----------------------------------------------------------------------------
 bool UTIL_TransferPoseParameters( IServerEntity *pSourceEntity, IServerEntity *pDestEntity )
 {
-	CBaseAnimating *pSourceBaseAnimating = dynamic_cast<CBaseAnimating*>( pSourceEntity );
-	CBaseAnimating *pDestBaseAnimating = dynamic_cast<CBaseAnimating*>( pDestEntity );
+	CBaseEntity *pSourceBaseAnimating = dynamic_cast<CBaseEntity*>( pSourceEntity );
+	CBaseEntity *pDestBaseAnimating = dynamic_cast<CBaseEntity*>( pDestEntity );
 
 	if ( !pSourceBaseAnimating || !pDestBaseAnimating )
 		return false;

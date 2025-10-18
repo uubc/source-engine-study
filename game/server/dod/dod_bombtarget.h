@@ -42,10 +42,10 @@ struct DefusingPlayer
 	float m_flDefuseCompleteTime;
 };
 
-class CDODBombTarget : public CBaseAnimating
+class CDODBombTarget : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CDODBombTarget, CBaseAnimating );
+	DECLARE_CLASS( CDODBombTarget, CBaseEntity);
 	DECLARE_DATADESC();
 
 	DECLARE_NETWORKCLASS();

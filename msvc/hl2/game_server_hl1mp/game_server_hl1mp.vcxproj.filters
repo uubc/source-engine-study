@@ -1512,5 +1512,8 @@
     <ClCompile Include="..\..\..\public\variant_t.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\game\server\physicsshadowclone.cpp">
+      <Filter>源文件\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

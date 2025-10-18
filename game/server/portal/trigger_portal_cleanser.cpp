@@ -179,9 +179,9 @@ void CTriggerPortalCleanser::Touch( IServerEntity *pOther )
 		return;
 	}
 
-	CBaseAnimating *pBaseAnimating = dynamic_cast<CBaseAnimating*>( pOther );
+	CBaseEntity *pBaseAnimating = dynamic_cast<CBaseEntity*>( pOther );
 
-	if ( pBaseAnimating && !pBaseAnimating->IsDissolving() )
+	if ( pBaseAnimating && pBaseAnimating->IsBaseAnimating() && !pBaseAnimating->IsDissolving())
 	{
 		int i = 0;
 
@@ -267,8 +267,8 @@ void CTriggerPortalCleanser::Touch( IServerEntity *pOther )
 			EntityList()->DestroyEntity( pBaseAnimating );
 		}
 		
-		CBaseAnimating *pDisolvingAnimating = dynamic_cast<CBaseAnimating*>( pDisolvingObj );
-		if ( pDisolvingAnimating ) 
+		CBaseEntity *pDisolvingAnimating = dynamic_cast<CBaseEntity*>( pDisolvingObj );
+		if ( pDisolvingAnimating && pDisolvingAnimating->IsBaseAnimating()) 
 		{
 			pDisolvingAnimating->Dissolve( "", gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
 		}

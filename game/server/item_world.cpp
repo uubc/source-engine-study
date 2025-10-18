@@ -22,11 +22,11 @@
 
 #define ITEM_PICKUP_BOX_BLOAT		24
 
-class CWorldItem : public CBaseAnimating
+class CWorldItem : public CBaseEntity
 {
 	DECLARE_DATADESC();
 public:
-	DECLARE_CLASS( CWorldItem, CBaseAnimating );
+	DECLARE_CLASS( CWorldItem, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	bool	KeyValue( const char *szKeyName, const char *szValue ); 

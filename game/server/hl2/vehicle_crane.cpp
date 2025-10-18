@@ -1058,7 +1058,7 @@ void CCraneTip::Precache( void )
 //-----------------------------------------------------------------------------
 // Purpose: Activate/create the constraint
 //-----------------------------------------------------------------------------
-bool CCraneTip::CreateConstraint( CBaseAnimating *pCraneMagnet, IPhysicsConstraintGroup *pGroup )
+bool CCraneTip::CreateConstraint( CBaseEntity *pCraneMagnet, IPhysicsConstraintGroup *pGroup )
 {
 	IPhysicsObject *pPhysObject = GetEngineObject()->VPhysicsGetObject();
 	IPhysicsObject *pCraneMagnetPhysObject = pCraneMagnet->GetEngineObject()->VPhysicsGetObject();
@@ -1103,7 +1103,7 @@ bool CCraneTip::CreateConstraint( CBaseAnimating *pCraneMagnet, IPhysicsConstrai
 //-----------------------------------------------------------------------------
 // Purpose: Create a Hydra Impale between the hydra and the entity passed in
 //-----------------------------------------------------------------------------
-CCraneTip *CCraneTip::Create( CBaseAnimating *pCraneMagnet, IPhysicsConstraintGroup *pGroup, const Vector &vecOrigin, const QAngle &vecAngles )
+CCraneTip *CCraneTip::Create( CBaseEntity *pCraneMagnet, IPhysicsConstraintGroup *pGroup, const Vector &vecOrigin, const QAngle &vecAngles )
 {
 	CCraneTip *pCraneTip = (CCraneTip *)CBaseEntity::Create( "crane_tip", vecOrigin, vecAngles );
 	if ( !pCraneTip )

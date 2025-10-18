@@ -30,10 +30,10 @@
 ConVar thumper_show_radius("thumper_show_radius","0",FCVAR_CHEAT,"If true, advisor will use her custom impact damage table.");
 
 
-class CPropThumper : public CBaseAnimating
+class CPropThumper : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CPropThumper, CBaseAnimating );
+	DECLARE_CLASS( CPropThumper, CBaseEntity);
 	DECLARE_DATADESC();
 
 	bool IsBaseAnimating() { return true; }

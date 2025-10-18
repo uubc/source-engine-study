@@ -25,11 +25,11 @@
 #define PLAYER_POINTS_FOR_BOMB_EXPLODED	3
 
 
-class CControlPoint : public CBaseAnimating
+class CControlPoint : public CBaseEntity
 {
 
 public:
-	DECLARE_CLASS( CControlPoint, CBaseAnimating );
+	DECLARE_CLASS( CControlPoint, CBaseEntity);
 	DECLARE_DATADESC();
 
 	CControlPoint();

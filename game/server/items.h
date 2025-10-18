@@ -38,10 +38,10 @@
 #define SF_ITEM_START_CONSTRAINED	0x00000001
 
 
-class CItem : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
+class CItem : public CBaseEntity//, public CDefaultPlayerPickupVPhysics
 {
 public:
-	DECLARE_CLASS( CItem, CBaseAnimating );
+	DECLARE_CLASS( CItem, CBaseEntity);
 
 	CItem();
 

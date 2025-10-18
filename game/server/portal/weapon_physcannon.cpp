@@ -110,8 +110,8 @@ public:
 		int nModelType = modelinfo->GetModelType( pEntity->GetEngineObject()->GetModel() );
 		if ( nModelType == mod_studio )
 		{
-			CBaseAnimating *pAnim = dynamic_cast<CBaseAnimating *>(pEntity);
-			if ( pAnim != NULL )
+			CBaseEntity *pAnim = dynamic_cast<CBaseEntity*>(pEntity);
+			if ( pAnim != NULL && pAnim->IsBaseAnimating())
 			{
 				IStudioHdr *pStudioHdr = pAnim->GetEngineObject()->GetModelPtr();
 				if ( pStudioHdr != NULL && (pStudioHdr->contents() & CONTENTS_GRATE) )
@@ -2358,7 +2358,7 @@ void CWeaponPhysCannon::DoEffectIdle( void )
 			if ( pCore == NULL )
 				return;
 
-			CBaseAnimating *pBeamEnt = pOwner->GetViewModel();
+			CBaseEntity *pBeamEnt = pOwner->GetViewModel();
 			
 			if ( pBeamEnt )
 			{

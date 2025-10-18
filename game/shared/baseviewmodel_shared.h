@@ -27,9 +27,9 @@ class CVGuiScreen;
 
 #define VIEWMODEL_INDEX_BITS 1
 
-class CBaseViewModel : public CBaseAnimating, public IHasOwner
+class CBaseViewModel : public CBaseEntity, public IHasOwner
 {
-	DECLARE_CLASS( CBaseViewModel, CBaseAnimating );
+	DECLARE_CLASS( CBaseViewModel, CBaseEntity);
 public:
 
 	DECLARE_NETWORKCLASS();

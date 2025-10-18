@@ -24,10 +24,10 @@
 #define DEBUG_TELESCOPIC_ARM_AIM 1
 
 
-class CPropTelescopicArm : public CBaseAnimating
+class CPropTelescopicArm : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CPropTelescopicArm, CBaseAnimating );
+	DECLARE_CLASS( CPropTelescopicArm, CBaseEntity);
 	DECLARE_DATADESC();
 
 	bool IsBaseAnimating() { return true; }

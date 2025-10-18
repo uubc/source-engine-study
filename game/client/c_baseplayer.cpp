@@ -1824,7 +1824,7 @@ C_BaseCombatWeapon *C_BasePlayer::GetActiveWeaponForSelection( void )
 	return GetActiveWeapon();
 }
 
-C_BaseAnimating* C_BasePlayer::GetRenderedWeaponModel()
+C_BaseEntity* C_BasePlayer::GetRenderedWeaponModel()
 {
 	// Attach to either their weapon model or their view model.
 	if ( ShouldDrawLocalPlayer() || !IsLocalPlayer() )

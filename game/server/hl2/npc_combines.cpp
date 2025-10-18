@@ -324,9 +324,9 @@ void CNPC_CombineS::Event_Killed( const ITakeDamageInfo&info )
 
 					if( info.GetDamageType() & DMG_DISSOLVE )
 					{
-						CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating*>(pItem);
+						CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pItem);
 
-						if( pAnimating )
+						if( pAnimating && pAnimating->IsBaseAnimating())
 						{
 							pAnimating->Dissolve( NULL, gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
 						}

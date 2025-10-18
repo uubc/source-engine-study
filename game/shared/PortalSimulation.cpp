@@ -304,7 +304,7 @@ bool CPortalSimulator::EntityIsInPortalHole( CBaseEntity *pEntity ) const
 	return GetEnginePortal()->EntityIsInPortalHole(pEntity->GetEngineObject());
 }
 
-bool CPortalSimulator::EntityHitBoxExtentIsInPortalHole( CBaseAnimating *pBaseAnimating ) const
+bool CPortalSimulator::EntityHitBoxExtentIsInPortalHole( CBaseEntity *pBaseAnimating ) const
 {
 	if( GetEnginePortal()->IsLocalDataIsReady() == false)
 		return false;

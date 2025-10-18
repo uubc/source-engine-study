@@ -3320,8 +3320,8 @@ static CBreakableProp *BreakModelCreate_Prop( CBaseEntity *pOwner, breakmodel_t 
 		pEntity->Spawn();
 
 		// If we're burning, break into burning pieces
-		CBaseAnimating *pAnimating = dynamic_cast<CBreakableProp *>(pOwner);
-		if ( pAnimating && pAnimating->IsOnFire() )
+		CBaseEntity *pAnimating = dynamic_cast<CBreakableProp *>(pOwner);
+		if ( pAnimating && pAnimating->IsBaseAnimating() && pAnimating->IsOnFire())
 		{
 			CEntityFlame* pOwnerFlame = dynamic_cast<CEntityFlame*>(pAnimating->GetEngineObject()->GetEffectEntity() ? pAnimating->GetEngineObject()->GetEffectEntity()->GetServerEntity() : NULL);
 
@@ -3342,16 +3342,16 @@ static CBreakableProp *BreakModelCreate_Prop( CBaseEntity *pOwner, breakmodel_t 
 	return pEntity;
 }
 
-static CBaseAnimating *BreakModelCreate_Ragdoll( CBaseEntity *pOwner, breakmodel_t *pModel, const Vector &position, const QAngle &angles )
+static CBaseEntity *BreakModelCreate_Ragdoll( CBaseEntity *pOwner, breakmodel_t *pModel, const Vector &position, const QAngle &angles )
 {
-	CBaseAnimating *pAnimating = CreateServerRagdollSubmodel( dynamic_cast<CBaseAnimating *>(pOwner), pModel->modelName, position, angles, pModel->collisionGroup );
+	CBaseEntity *pAnimating = CreateServerRagdollSubmodel( dynamic_cast<CBaseEntity*>(pOwner), pModel->modelName, position, angles, pModel->collisionGroup );
 	return pAnimating;
 }
 
 CBaseEntity *BreakModelCreateSingle( CBaseEntity *pOwner, breakmodel_t *pModel, const Vector &position, 
 	const QAngle &angles, const Vector &velocity, const AngularImpulse &angVelocity, int nSkin, const breakablepropparams_t &params )
 {
-	CBaseAnimating *pEntity = NULL;
+	CBaseEntity *pEntity = NULL;
 	// stop creating gibs if too many
 	if ( g_ActiveGibCount >= ACTIVE_GIB_LIMIT )
 	{

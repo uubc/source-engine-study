@@ -1058,7 +1058,7 @@ bool CAI_LeadBehavior::Connect( CAI_LeadBehaviorHandler *pSink )
 	m_pSink = pSink;
 	m_hSinkImplementor = dynamic_cast<CBaseEntity *>(pSink);
 
-	if ( m_hSinkImplementor == NULL )
+	if ( m_hSinkImplementor == NULL || !m_hSinkImplementor->IsBaseAnimating())
 		DevMsg( 2, "Note: CAI_LeadBehaviorHandler connected to a sink that isn't an entity. Manual fixup on load will be necessary\n" );
 
 	return true;

@@ -81,7 +81,7 @@
 #ifdef USE_MONITORS
 #include "c_point_camera.h"
 #endif // USE_MONITORS
-
+#include "igamesystem.h"
 // Projective textures
 //#include "C_Env_Projected_Texture.h"
 

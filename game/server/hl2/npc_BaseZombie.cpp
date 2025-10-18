@@ -1145,8 +1145,8 @@ void CNPC_BaseZombie::DieChopped( const ITakeDamageInfo&info )
 	CBaseEntity *pTorsoGib = CreateRagGib( GetTorsoModel(), GetEngineObject()->GetAbsOrigin() + Vector( 0, 0, 64 ), TorsoAngles, forceVector, flFadeTime, ShouldIgniteZombieGib() );
 	if ( pTorsoGib )
 	{
-		CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating*>(pTorsoGib);
-		if( pAnimating )
+		CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pTorsoGib);
+		if( pAnimating && pAnimating->IsBaseAnimating())
 		{
 			pAnimating->GetEngineObject()->SetBodygroup( ZOMBIE_BODYGROUP_HEADCRAB, !m_fIsHeadless );
 		}
@@ -2373,7 +2373,7 @@ bool CNPC_BaseZombie::ShouldPlayFootstepMoan( void )
 #define CRAB_HULL_EXPAND	1.1f
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_BaseZombie::HeadcrabFits( CBaseAnimating *pCrab )
+bool CNPC_BaseZombie::HeadcrabFits( CBaseEntity *pCrab )
 {
 	Vector vecSpawnLoc = pCrab->GetEngineObject()->GetAbsOrigin();
 
@@ -2431,11 +2431,11 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 
 		if ( pGib )
 		{
-			CBaseAnimating *pAnimatingGib = dynamic_cast<CBaseAnimating*>(pGib);
+			CBaseEntity *pAnimatingGib = dynamic_cast<CBaseEntity*>(pGib);
 
 			// don't collide with this thing ever
 			int iCrabAttachment = GetEngineObject()->LookupAttachment( "headcrab" );
-			if (iCrabAttachment > 0 && pAnimatingGib )
+			if (iCrabAttachment > 0 && pAnimatingGib && pAnimatingGib->IsBaseAnimating())
 			{
 				SetHeadcrabSpawnLocation( iCrabAttachment, pAnimatingGib );
 			}
@@ -2558,7 +2558,7 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 
 
 
-void CNPC_BaseZombie::SetHeadcrabSpawnLocation( int iCrabAttachment, CBaseAnimating *pCrab )
+void CNPC_BaseZombie::SetHeadcrabSpawnLocation( int iCrabAttachment, CBaseEntity *pCrab )
 {
 	Assert( iCrabAttachment > 0 );
 

@@ -73,9 +73,9 @@ static const char *s_pHeadcrabThinkContext = "HeadcrabThink";
 //-----------------------------------------------------------------------------
 // HeadcrabCanister Class
 //-----------------------------------------------------------------------------
-class CEnvHeadcrabCanister : public CBaseAnimating
+class CEnvHeadcrabCanister : public CBaseEntity
 {
-	DECLARE_CLASS( CEnvHeadcrabCanister, CBaseAnimating );
+	DECLARE_CLASS( CEnvHeadcrabCanister, CBaseEntity);
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 

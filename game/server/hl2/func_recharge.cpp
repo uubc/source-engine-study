@@ -355,10 +355,10 @@ void CRecharge::Off(void)
 
 
 //NEW
-class CNewRecharge : public CBaseAnimating
+class CNewRecharge : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CNewRecharge, CBaseAnimating );
+	DECLARE_CLASS( CNewRecharge, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void Spawn( );

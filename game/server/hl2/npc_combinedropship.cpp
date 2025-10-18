@@ -312,7 +312,7 @@ private:
 	QAngle	m_vecAngAcceleration;
 	
 	// Misc Vars
-	CHandle<CBaseAnimating>	m_hContainer;
+	CHandle<CBaseEntity>	m_hContainer;
 	EHANDLE		m_hPickupTarget;
 	int			m_iContainerMoveType;
 	bool		m_bWaitForDropoffInput;
@@ -873,7 +873,7 @@ void CNPC_CombineDropship::Spawn( void )
 		break;
 
 	case CRATE_SOLDIER:
-		m_hContainer = (CBaseAnimating*)EntityList()->CreateEntityByName( "prop_dropship_container" );
+		m_hContainer = (CBaseEntity*)EntityList()->CreateEntityByName( "prop_dropship_container" );
 		if ( m_hContainer )
 		{
 			m_hContainer->GetEngineObject()->SetName( "dropship_container" );
@@ -907,7 +907,7 @@ void CNPC_CombineDropship::Spawn( void )
 		break;
 
 	case CRATE_STRIDER:
-		m_hContainer = (CBaseAnimating*)EntityList()->CreateEntityByName( "npc_strider" );
+		m_hContainer = (CBaseEntity*)EntityList()->CreateEntityByName( "npc_strider" );
 		m_hContainer->GetEngineObject()->SetAbsOrigin(GetEngineObject()->GetAbsOrigin() - Vector( 0, 0 , 100 ) );
 		m_hContainer->GetEngineObject()->SetAbsAngles(GetEngineObject()->GetAbsAngles() );
 		m_hContainer->GetEngineObject()->SetParent(this->GetEngineObject(), 0);
@@ -919,7 +919,7 @@ void CNPC_CombineDropship::Spawn( void )
 	case CRATE_APC:
 		{
 			m_soldiersToDrop = 0;
-			m_hContainer = (CBaseAnimating*)EntityList()->FindEntityByName( NULL, m_iszAPCVehicleName );
+			m_hContainer = (CBaseEntity*)EntityList()->FindEntityByName( NULL, m_iszAPCVehicleName );
 			if ( !m_hContainer )
 			{
 				Warning("Unable to find APC %s\n", STRING( m_iszAPCVehicleName ) ); 		
@@ -953,7 +953,7 @@ void CNPC_CombineDropship::Spawn( void )
 		break;
 
 	case CRATE_JEEP:
-		m_hContainer = (CBaseAnimating*)EntityList()->CreateEntityByName( "prop_dynamic_override" );
+		m_hContainer = (CBaseEntity*)EntityList()->CreateEntityByName( "prop_dynamic_override" );
 		if ( m_hContainer )
 		{
 			m_hContainer->SetModel( "models/buggy.mdl" );

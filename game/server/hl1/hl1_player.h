@@ -13,7 +13,7 @@
 #include "player.h"
 
 extern int TrainSpeed(int iSpeed, int iMax);
-extern void CopyToBodyQue( CBaseAnimating *pCorpse );
+extern void CopyToBodyQue( CBaseEntity *pCorpse );
 
 enum HL1PlayerPhysFlag_e
 {

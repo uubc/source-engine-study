@@ -33,7 +33,7 @@ public:
 	void	Init( CBaseAnimatingOverlay *pOverlay );
 
 	// float	SetBlending( int iBlender, float flValue, CBaseAnimating *pOwner );
-	void	StudioFrameAdvance( float flInterval, CBaseAnimating *pOwner );
+	void	StudioFrameAdvance( float flInterval, CBaseEntity *pOwner );
 	void	DispatchAnimEvents( CBaseEntity *eventHandler, CBaseEntity *pOwner );
 	void	SetOrder( int nOrder );
 
@@ -141,9 +141,9 @@ inline float CAnimationLayer::GetFadeout( float flCurTime )
 
 
 
-class CBaseAnimatingOverlay : public CBaseAnimating
+class CBaseAnimatingOverlay : public CBaseEntity
 {
-	DECLARE_CLASS( CBaseAnimatingOverlay, CBaseAnimating );
+	DECLARE_CLASS( CBaseAnimatingOverlay, CBaseEntity);
 
 public:
 	bool IsBaseAnimating() { return true; }

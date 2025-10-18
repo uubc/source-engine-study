@@ -20,7 +20,7 @@ class CAI_Squad;
 class CPropCombineBall;
 
 extern int TrainSpeed(int iSpeed, int iMax);
-extern void CopyToBodyQue( CBaseAnimating *pCorpse );
+extern void CopyToBodyQue( CBaseEntity *pCorpse );
 
 #define ARMOR_DECAY_TIME 3.5f
 

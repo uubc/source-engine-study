@@ -488,7 +488,7 @@ void CNPC_Alyx::CreateEmpTool( void )
 	if (!m_bShouldHaveEMP || m_hEmpTool)
 		return;
 
-	m_hEmpTool = (CBaseAnimating*)EntityList()->CreateEntityByName( "prop_dynamic" );
+	m_hEmpTool = (CBaseEntity*)EntityList()->CreateEntityByName( "prop_dynamic" );
 	if ( m_hEmpTool )
 	{
 		m_hEmpTool->SetModel( "models/alyx_emptool_prop.mdl" );

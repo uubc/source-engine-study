@@ -220,7 +220,7 @@ public:
 	CModelPanelModelInfo			*m_pModelInfo;
 
 	CHandle<CModelPanelModel>				m_hModel;
-	CUtlVector<CHandle<C_BaseAnimating> >	m_AttachedModels;
+	CUtlVector<CHandle<C_BaseEntity> >	m_AttachedModels;
 
 	CHandle<C_SceneEntity>			m_hScene;
 

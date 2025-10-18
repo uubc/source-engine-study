@@ -17,11 +17,11 @@
 #define PORTAL_STATS_DISPLAY_MODEL_NAME "models/props/Round_elevator_body.mdl"
 
 
-class CPropPortalStatsDisplay : public CBaseAnimating
+class CPropPortalStatsDisplay : public CBaseEntity
 {
 public:
 
-	DECLARE_CLASS( CPropPortalStatsDisplay, CBaseAnimating );
+	DECLARE_CLASS( CPropPortalStatsDisplay, CBaseEntity);
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 
@@ -339,7 +339,7 @@ void CPropPortalStatsDisplay::SpawnControlPanels()
 	// FIXME: Deal with dynamically resizing control panels?
 
 	// If we're attached to an entity, spawn control panels on it instead of use
-	CBaseAnimating *pEntityToSpawnOn = this;
+	CBaseEntity *pEntityToSpawnOn = this;
 	char *pOrgLL = "statPanel%d_bl";
 	char *pOrgUR = "statPanel%d_tr";
 	char *pAttachmentNameLL = pOrgLL;
@@ -418,7 +418,7 @@ void CPropPortalStatsDisplay::RestoreControlPanels( void )
 	// FIXME: Deal with dynamically resizing control panels?
 
 	// If we're attached to an entity, spawn control panels on it instead of use
-	CBaseAnimating *pEntityToSpawnOn = this;
+	CBaseEntity *pEntityToSpawnOn = this;
 	char *pOrgLL = "statPanel%d_bl";
 	char *pOrgUR = "statPanel%d_tr";
 	char *pAttachmentNameLL = pOrgLL;

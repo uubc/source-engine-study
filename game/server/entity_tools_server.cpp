@@ -46,8 +46,8 @@ public:
 	//virtual IEntityFactoryDictionary *GetEntityFactoryDictionary( void );
 	virtual void SetMoveType( IServerEntity *pEntity, int val );
 	virtual void SetMoveType( IServerEntity *pEntity, int val, int moveCollide );
-	virtual void ResetSequence( CBaseAnimating *pEntity, int nSequence );
-	virtual void ResetSequenceInfo( CBaseAnimating *pEntity );
+	virtual void ResetSequence( CBaseEntity *pEntity, int nSequence );
+	virtual void ResetSequenceInfo( CBaseEntity *pEntity );
 	virtual void ClearMultiDamage( void );
 	virtual void ApplyMultiDamage( void );
 	virtual void AddMultiDamage( const ITakeDamageInfo&pTakeDamageInfo, IServerEntity *pEntity );
@@ -325,12 +325,12 @@ void CServerTools::SetMoveType( IServerEntity *pEntity, int val, int moveCollide
 	pEntity->GetEngineObject()->SetMoveType( (MoveType_t)val, (MoveCollide_t)moveCollide );
 }
 
-void CServerTools::ResetSequence( CBaseAnimating *pEntity, int nSequence )
+void CServerTools::ResetSequence( CBaseEntity *pEntity, int nSequence )
 {
 	pEntity->GetEngineObject()->ResetSequence( nSequence );
 }
 
-void CServerTools::ResetSequenceInfo( CBaseAnimating *pEntity )
+void CServerTools::ResetSequenceInfo( CBaseEntity *pEntity )
 {
 	pEntity->GetEngineObject()->ResetSequenceInfo();
 }

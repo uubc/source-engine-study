@@ -62,9 +62,9 @@ bool IsInCommentaryMode( void )
 //-----------------------------------------------------------------------------
 // Purpose: An entity that marks a spot for a piece of commentary
 //-----------------------------------------------------------------------------
-class CPointCommentaryNode : public CBaseAnimating
+class CPointCommentaryNode : public CBaseEntity
 {
-	DECLARE_CLASS( CPointCommentaryNode, CBaseAnimating );
+	DECLARE_CLASS( CPointCommentaryNode, CBaseEntity);
 public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();

@@ -78,10 +78,10 @@ LINK_ENTITY_TO_CLASS( item_grubnugget, CGrubNugget );
 //  Simple grub
 //
 
-class CAntlionGrub : public CBaseAnimating
+class CAntlionGrub : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CAntlionGrub, CBaseAnimating );
+	DECLARE_CLASS( CAntlionGrub, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	virtual void	Activate( void );

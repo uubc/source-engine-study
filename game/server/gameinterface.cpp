@@ -2023,11 +2023,11 @@ bool CServerGameDLL::ShouldHideServer( void )
 //-----------------------------------------------------------------------------
 void CServerGameDLL::InvalidateMdlCache()
 {
-	CBaseAnimating *pAnimating;
+	CBaseEntity *pAnimating;
 	for ( IServerEntity *pEntity = EntityList()->FirstEnt(); pEntity != NULL; pEntity = EntityList()->NextEnt(pEntity) )
 	{
-		pAnimating = dynamic_cast<CBaseAnimating *>(pEntity);
-		if ( pAnimating )
+		pAnimating = dynamic_cast<CBaseEntity*>(pEntity);
+		if ( pAnimating && pAnimating->IsBaseAnimating())
 		{
 			pAnimating->GetEngineObject()->InvalidateMdlCache();
 		}

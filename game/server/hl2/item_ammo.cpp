@@ -610,10 +610,10 @@ enum
 
 // Ammo crate
 
-class CItem_AmmoCrate : public CBaseAnimating
+class CItem_AmmoCrate : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CItem_AmmoCrate, CBaseAnimating );
+	DECLARE_CLASS( CItem_AmmoCrate, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );

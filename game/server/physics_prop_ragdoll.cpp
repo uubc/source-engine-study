@@ -893,7 +893,7 @@ public:
 		m_pAttachConstraint = NULL;
 	}
 
-	void InitRagdollAttached( IPhysicsObject *pAttached, const Vector &forceVector, int forceBone, matrix3x4_t *pPrevBones, matrix3x4_t *pBoneToWorld, float dt, int collisionGroup, CBaseAnimating *pFollow, int boneIndexRoot, const Vector &boneLocalOrigin, int parentBoneAttach, const Vector &worldAttachOrigin );
+	void InitRagdollAttached( IPhysicsObject *pAttached, const Vector &forceVector, int forceBone, matrix3x4_t *pPrevBones, matrix3x4_t *pBoneToWorld, float dt, int collisionGroup, CBaseEntity *pFollow, int boneIndexRoot, const Vector &boneLocalOrigin, int parentBoneAttach, const Vector &worldAttachOrigin );
 	void DetachOnNextUpdate();
 	void VPhysicsUpdate( IPhysicsObject *pPhysics );
 
@@ -933,7 +933,7 @@ END_DATADESC()
 
 
 	
-CBaseAnimating *CreateServerRagdollSubmodel( CBaseAnimating *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup )
+CBaseEntity *CreateServerRagdollSubmodel( CBaseEntity *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup )
 {
 	CRagdollProp *pRagdoll = (CRagdollProp *)CBaseEntity::CreateNoSpawn( "prop_ragdoll", position, angles, pOwner );
 	pRagdoll->GetEngineObject()->SetModelName( AllocPooledString( pModelName ) );
@@ -1008,7 +1008,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	matrix3x4_t *pBoneToWorld, 
 	float dt, 
 	int collisionGroup, 
-	CBaseAnimating *pFollow, 
+	CBaseEntity *pFollow, 
 	int boneIndexRoot, 
 	const Vector &boneLocalOrigin, 
 	int parentBoneAttach, 
@@ -1089,7 +1089,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	m_attachmentPointRagdollSpace = vTemp;
 }
 
-CRagdollProp *CreateServerRagdollAttached( CBaseAnimating *pAnimating, const Vector &vecForce, int forceBone, int collisionGroup, IPhysicsObject *pAttached, CBaseAnimating *pParentEntity, int boneAttach, const Vector &originAttached, int parentBoneAttach, const Vector &boneOrigin )
+CRagdollProp *CreateServerRagdollAttached( CBaseEntity *pAnimating, const Vector &vecForce, int forceBone, int collisionGroup, IPhysicsObject *pAttached, CBaseEntity *pParentEntity, int boneAttach, const Vector &originAttached, int parentBoneAttach, const Vector &boneOrigin )
 {
 	// Return immediately if the model doesn't have a vcollide
 	if ( modelinfo->GetVCollide( pAnimating->GetEngineObject()->GetModelIndex() ) == NULL )

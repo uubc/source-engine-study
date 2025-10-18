@@ -80,11 +80,11 @@ static ConVar dbganimmodel( "dbganimmodel", "" );
 // Base Animating
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_CLIENTCLASS_DT(C_BaseAnimating, DT_BaseAnimating, CBaseAnimating)
+//IMPLEMENT_CLIENTCLASS_DT(C_BaseAnimating, DT_BaseAnimating, CBaseAnimating)
 
-END_RECV_TABLE()
+//END_RECV_TABLE()
 
-BEGIN_PREDICTION_DATA( C_BaseAnimating )
+//BEGIN_PREDICTION_DATA( C_BaseAnimating )
 
 	//DEFINE_PRED_FIELD( m_nSkin, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	//DEFINE_PRED_FIELD( m_nBody, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
@@ -130,7 +130,7 @@ BEGIN_PREDICTION_DATA( C_BaseAnimating )
 
 	// DEFINE_FIELD( C_BaseFlex, m_iEyeAttachment, FIELD_INTEGER ),
 
-END_PREDICTION_DATA()
+//END_PREDICTION_DATA()
 
 
 

@@ -320,9 +320,9 @@ called each time a player is spawned into the game
 	//-----------------------------------------------------------------------------
 	// Purpose: MULTIPLAYER BODY QUE HANDLING
 	//-----------------------------------------------------------------------------
-	class CCorpse : public CBaseAnimating
+	class CCorpse : public CBaseEntity
 	{
-		DECLARE_CLASS( CCorpse, CBaseAnimating );
+		DECLARE_CLASS( CCorpse, CBaseEntity);
 	public:
 
 		DECLARE_SERVERCLASS();
@@ -366,7 +366,7 @@ called each time a player is spawned into the game
 	// Purpose: make a body que entry for the given ent so the ent can be respawned elsewhere
 	// GLOBALS ASSUMED SET:  g_eoBodyQueueHead
 	//-----------------------------------------------------------------------------
-	void CopyToBodyQue( CBaseAnimating *pCorpse ) 
+	void CopyToBodyQue( CBaseEntity *pCorpse ) 
 	{
 		if ( pCorpse->GetEngineObject()->IsEffectActive( EF_NODRAW ) )
 			return;

@@ -22,9 +22,9 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class CBaseProp : public CBaseAnimating
+class CBaseProp : public CBaseEntity
 {
-	DECLARE_CLASS( CBaseProp, CBaseAnimating );
+	DECLARE_CLASS( CBaseProp, CBaseEntity);
 public:
 
 	bool IsBaseAnimating() { return true; }

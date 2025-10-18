@@ -2857,7 +2857,7 @@ private:
 	bool		m_bIsFiring;
 
 	string_t	m_iszAirboatGunModel;
-	CHandle<CBaseAnimating> m_hAirboatGunModel;
+	CHandle<CBaseEntity> m_hAirboatGunModel;
 	int			m_nGunBarrelAttachment;
 	float		m_flLastImpactEffectTime;
 };
@@ -2914,8 +2914,8 @@ void CFuncTankAirboatGun::Activate()
 
 	if ( m_iszAirboatGunModel != NULL_STRING )
 	{
-		m_hAirboatGunModel = dynamic_cast<CBaseAnimating*>( EntityList()->FindEntityByName( NULL, m_iszAirboatGunModel ) );
-		if ( m_hAirboatGunModel )
+		m_hAirboatGunModel = dynamic_cast<CBaseEntity*>( EntityList()->FindEntityByName( NULL, m_iszAirboatGunModel ) );
+		if ( m_hAirboatGunModel && m_hAirboatGunModel->IsBaseAnimating())
 		{
 			m_nGunBarrelAttachment = m_hAirboatGunModel->GetEngineObject()->LookupAttachment( "muzzle" );
 		}

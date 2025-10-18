@@ -19,9 +19,9 @@
 //-----------------------------------------------------------------------------
 
 // UNDONE: Move this to a private header
-class CRagdollProp : public CBaseAnimating//, public CDefaultPlayerPickupVPhysics
+class CRagdollProp : public CBaseEntity//, public CDefaultPlayerPickupVPhysics
 {
-	DECLARE_CLASS( CRagdollProp, CBaseAnimating );
+	DECLARE_CLASS( CRagdollProp, CBaseEntity);
 
 public:
 	CRagdollProp( void );
@@ -136,10 +136,10 @@ private:
 
 };
 
-CRagdollProp *CreateServerRagdollAttached( CBaseAnimating *pAnimating, const Vector &vecForce, int forceBone, int collisionGroup, IPhysicsObject *pAttached, CBaseAnimating *pParentEntity, int boneAttach, const Vector &originAttached, int parentBoneAttach, const Vector &boneOrigin );
+CRagdollProp *CreateServerRagdollAttached( CBaseEntity *pAnimating, const Vector &vecForce, int forceBone, int collisionGroup, IPhysicsObject *pAttached, CBaseEntity *pParentEntity, int boneAttach, const Vector &originAttached, int parentBoneAttach, const Vector &boneOrigin );
 void DetachAttachedRagdoll( CBaseEntity *pRagdollIn );
 void DetachAttachedRagdollsForEntity( CBaseEntity *pRagdollParent );
-CBaseAnimating *CreateServerRagdollSubmodel( CBaseAnimating *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup );
+CBaseEntity *CreateServerRagdollSubmodel( CBaseEntity *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup );
 
 bool Ragdoll_IsPropRagdoll( IServerEntity *pEntity );
 void Ragdoll_GetAngleOverrideString( char *pOut, int size, IServerEntity *pEntity );

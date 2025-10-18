@@ -9,10 +9,10 @@
 
 #define COREBALL_MODEL "models/props_combine/coreball.mdl"
 
-class CPropScalable : public CBaseAnimating
+class CPropScalable : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CPropScalable, CBaseAnimating );
+	DECLARE_CLASS( CPropScalable, CBaseEntity);
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 

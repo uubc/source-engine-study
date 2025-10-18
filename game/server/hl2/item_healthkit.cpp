@@ -441,10 +441,10 @@ void CWallHealth::Off(void)
 //-----------------------------------------------------------------------------
 // Wall mounted health kit. Heals the player when used.
 //-----------------------------------------------------------------------------
-class CNewWallHealth : public CBaseAnimating
+class CNewWallHealth : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CNewWallHealth, CBaseAnimating );
+	DECLARE_CLASS( CNewWallHealth, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void Spawn( );

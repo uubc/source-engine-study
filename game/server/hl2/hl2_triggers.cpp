@@ -490,9 +490,9 @@ void CTriggerPhysicsTrap::Touch( IServerEntity *pOther )
 // Purpose: 
 //-----------------------------------------------------------------------------
 
-class CWateryDeathLeech : public CBaseAnimating
+class CWateryDeathLeech : public CBaseEntity
 {
-	DECLARE_CLASS( CWateryDeathLeech, CBaseAnimating );
+	DECLARE_CLASS( CWateryDeathLeech, CBaseEntity);
 public:
 	DECLARE_DATADESC();
 

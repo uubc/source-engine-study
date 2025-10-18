@@ -38,9 +38,9 @@ class CNPC_Barnacle;
 //-----------------------------------------------------------------------------
 // Purpose: This is the entity we place at the top & bottom of the tongue, to create a vphysics spring
 //-----------------------------------------------------------------------------
-class CBarnacleTongueTip : public CBaseAnimating
+class CBarnacleTongueTip : public CBaseEntity
 {
-	DECLARE_CLASS( CBarnacleTongueTip, CBaseAnimating );
+	DECLARE_CLASS( CBarnacleTongueTip, CBaseEntity);
 
 public:
 	DECLARE_DATADESC();
@@ -52,8 +52,8 @@ public:
 	virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
 
 	virtual int	UpdateTransmitState( void );
-	bool						CreateSpring( CBaseAnimating *pTongueRoot );
-	static CBarnacleTongueTip	*CreateTongueTip( CNPC_Barnacle *pBarnacle, CBaseAnimating *pTongueRoot, const Vector &vecOrigin, const QAngle &vecAngles );
+	bool						CreateSpring( CBaseEntity *pTongueRoot );
+	static CBarnacleTongueTip	*CreateTongueTip( CNPC_Barnacle *pBarnacle, CBaseEntity *pTongueRoot, const Vector &vecOrigin, const QAngle &vecAngles );
 	static CBarnacleTongueTip	*CreateTongueRoot( const Vector &vecOrigin, const QAngle &vecAngles );
 
 	IPhysicsSpring			*m_pSpring;
@@ -98,7 +98,7 @@ private:
 	void SwallowPrey( void );
 	void WaitTillDead ( void );
  	void AttachTongueToTarget( CBaseEntity *pTouchEnt, Vector vecGrabPos );
-	CRagdollProp *AttachRagdollToTongue( CBaseAnimating *pAnimating );
+	CRagdollProp *AttachRagdollToTongue( CBaseEntity *pAnimating );
 	void RemoveRagdoll( bool bDestroyRagdoll );
 	void LostPrey( bool bRemoveRagdoll );
 	void BitePrey( void );

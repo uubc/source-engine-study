@@ -42,7 +42,7 @@ struct ViewSmoothingData_t
 	DECLARE_SIMPLE_DATADESC();
 
 	// Fill these out in your vehicle
-	CBaseAnimating	*pVehicle;
+	CBaseEntity	*pVehicle;
 	bool	bClampEyeAngles;	// Perform eye Z clamping
 	float	flPitchCurveZero;	// Pitch values below this are clamped to zero.
 	float	flPitchCurveLinear;	// Pitch values above this are mapped directly.

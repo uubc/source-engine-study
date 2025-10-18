@@ -1344,7 +1344,7 @@ void CEnvBeverage::Use( IServerEntity *pActivator, IServerEntity *pCaller, USE_T
 		return;
 	}
 
-	CBaseAnimating *pCan = (CBaseAnimating *)CBaseEntity::Create( "item_sodacan", GetEngineObject()->GetLocalOrigin(), GetEngineObject()->GetLocalAngles(), this );
+	CBaseEntity *pCan = (CBaseEntity*)CBaseEntity::Create( "item_sodacan", GetEngineObject()->GetLocalOrigin(), GetEngineObject()->GetLocalAngles(), this );
 
 	if ( m_nBeverageType == 6 )
 	{
@@ -1384,10 +1384,10 @@ void CEnvBeverage::Spawn( void )
 //=========================================================
 // Soda can
 //=========================================================
-class CItemSoda : public CBaseAnimating
+class CItemSoda : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CItemSoda, CBaseAnimating );
+	DECLARE_CLASS( CItemSoda, CBaseEntity);
 
 	bool IsBaseAnimating() { return true; }
 	void	Spawn( void );

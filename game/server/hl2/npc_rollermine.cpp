@@ -1920,13 +1920,13 @@ void CNPC_RollerMine::ShockTarget( CBaseEntity *pOther )
 
 	int startAttach = -1;
 
-	CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating *>(pOther);
+	CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pOther);
 
 	if ( pBeam != NULL )
 	{
 		pBeam->EntsInit( pOther, this );
 
-		if ( pAnimating && pAnimating->GetEngineObject()->GetModel() )
+		if ( pAnimating && pAnimating->IsBaseAnimating() && pAnimating->GetEngineObject()->GetModel())
 		{
 			startAttach = pAnimating->GetEngineObject()->LookupAttachment("beam_damage" );
 			pBeam->SetStartAttachment( startAttach );

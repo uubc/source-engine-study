@@ -1471,7 +1471,7 @@ void CPropJeepEpisodic::SpawnRadarPanel()
 	// FIXME: Deal with dynamically resizing control panels?
 
 	// If we're attached to an entity, spawn control panels on it instead of use
-	CBaseAnimating *pEntityToSpawnOn = this;
+	CBaseEntity *pEntityToSpawnOn = this;
 	char *pOrgLL = "controlpanel0_ll";
 	char *pOrgUR = "controlpanel0_ur";
 

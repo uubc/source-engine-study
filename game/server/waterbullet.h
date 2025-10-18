@@ -14,9 +14,9 @@
 
 //=========================================================
 //=========================================================
-class CWaterBullet : public CBaseAnimating
+class CWaterBullet : public CBaseEntity
 {
-	DECLARE_CLASS( CWaterBullet, CBaseAnimating );
+	DECLARE_CLASS( CWaterBullet, CBaseEntity);
 
 public:
 	bool IsBaseAnimating() { return true; }

@@ -3136,8 +3136,8 @@ CVortigauntChargeToken *CVortigauntChargeToken::CreateChargeToken( const Vector 
 	
 	// Start out at the same velocity as our owner
 	Vector vecInitialVelocity;
-	CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating *>(pOwner);
-	if ( pAnimating != NULL )
+	CBaseEntity *pAnimating = dynamic_cast<CBaseEntity*>(pOwner);
+	if ( pAnimating != NULL && pAnimating->IsBaseAnimating())
 	{
 		vecInitialVelocity = pAnimating->GetGroundSpeedVelocity();
 	}

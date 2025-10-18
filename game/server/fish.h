@@ -22,10 +22,10 @@ class CFishPool;
 /**
  * Simple ambient fish
  */
-class CFish : public CBaseAnimating
+class CFish : public CBaseEntity
 {
 public:
-	DECLARE_CLASS( CFish, CBaseAnimating );
+	DECLARE_CLASS( CFish, CBaseEntity);
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 

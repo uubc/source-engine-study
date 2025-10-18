@@ -124,7 +124,7 @@ void CAnimationLayer::Init( CBaseAnimatingOverlay *pOverlay )
 // Output  :
 //------------------------------------------------------------------------------
 
-void CAnimationLayer::StudioFrameAdvance( float flInterval, CBaseAnimating *pOwner )
+void CAnimationLayer::StudioFrameAdvance( float flInterval, CBaseEntity *pOwner )
 {
 	float flCycleRate = pOwner->GetEngineObject()->GetSequenceCycleRate( m_nSequence );
 

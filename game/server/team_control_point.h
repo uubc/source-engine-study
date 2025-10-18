@@ -22,9 +22,9 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class CTeamControlPoint : public CBaseAnimating
+class CTeamControlPoint : public CBaseEntity
 {
-	DECLARE_CLASS( CTeamControlPoint, CBaseAnimating );
+	DECLARE_CLASS( CTeamControlPoint, CBaseEntity);
 public:
 	DECLARE_DATADESC();
 

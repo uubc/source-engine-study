@@ -156,7 +156,7 @@ END_PREDICTION_DATA()
 		// FIXME: Deal with dynamically resizing control panels?
 
 		// If we're attached to an entity, spawn control panels on it instead of use
-		CBaseAnimating *pEntityToSpawnOn = this;
+		CBaseEntity *pEntityToSpawnOn = this;
 		const char *pOrgLL = "controlpanel%d_ll";
 		const char *pOrgUR = "controlpanel%d_ur";
 		const char *pAttachmentNameLL = pOrgLL;

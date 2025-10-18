@@ -26,10 +26,10 @@
 	// CPlantedC4 class.
 	// ------------------------------------------------------------------------------------------ //
 
-	class CPlantedC4 : public CBaseAnimating
+	class CPlantedC4 : public CBaseEntity
 	{
 	public:
-		DECLARE_CLASS( CPlantedC4, CBaseAnimating );
+		DECLARE_CLASS( CPlantedC4, CBaseEntity);
 		DECLARE_DATADESC();
 		DECLARE_SERVERCLASS();
 

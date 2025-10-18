@@ -435,7 +435,7 @@ bool FireSystem_StartFire( const Vector &position, float fireHeight, float attac
 //			type - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool FireSystem_StartFire( CBaseAnimating *pEntity, float fireHeight, float attack, float fuel, int flags, CBaseEntity *owner, fireType_e type )
+bool FireSystem_StartFire( CBaseEntity *pEntity, float fireHeight, float attack, float fuel, int flags, CBaseEntity *owner, fireType_e type )
 {
 	VPROF_FIRE( "FireSystem_StartFire2" );
 

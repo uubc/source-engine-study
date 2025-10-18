@@ -46,7 +46,7 @@ CBoneFollowerManager::~CBoneFollowerManager()
 //			iNumBones - 
 //			**pFollowerBoneNames - 
 //-----------------------------------------------------------------------------
-void CBoneFollowerManager::InitBoneFollowers( CBaseAnimating *pParentEntity, int iNumBones, const char **pFollowerBoneNames )
+void CBoneFollowerManager::InitBoneFollowers( CBaseEntity *pParentEntity, int iNumBones, const char **pFollowerBoneNames )
 {
 	m_iNumBones = iNumBones;
 	m_physBones.EnsureCount( iNumBones );
@@ -61,7 +61,7 @@ void CBoneFollowerManager::InitBoneFollowers( CBaseAnimating *pParentEntity, int
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBoneFollowerManager::AddBoneFollower( CBaseAnimating *pParentEntity, const char *pFollowerBoneName, solid_t *pSolid )
+void CBoneFollowerManager::AddBoneFollower( CBaseEntity *pParentEntity, const char *pFollowerBoneName, solid_t *pSolid )
 {
 	m_iNumBones++;
 
@@ -71,7 +71,7 @@ void CBoneFollowerManager::AddBoneFollower( CBaseAnimating *pParentEntity, const
 
 // walk the hitboxes and find the first one that is attached to the physics bone in question
 // return the hitgroup of that box
-static int HitGroupFromPhysicsBone( CBaseAnimating *pAnim, int physicsBone )
+static int HitGroupFromPhysicsBone( CBaseEntity *pAnim, int physicsBone )
 {
 	IStudioHdr *pStudioHdr = pAnim->GetEngineObject()->GetModelPtr( );
 	mstudiohitboxset_t *set = pStudioHdr->pHitboxSet( pAnim->GetEngineObject()->GetHitboxSet() );
@@ -92,7 +92,7 @@ static int HitGroupFromPhysicsBone( CBaseAnimating *pAnim, int physicsBone )
 //			*pBoneName - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CBoneFollowerManager::CreatePhysicsFollower( CBaseAnimating *pParentEntity, physfollower_t &follow, const char *pBoneName, solid_t *pSolid )
+bool CBoneFollowerManager::CreatePhysicsFollower( CBaseEntity *pParentEntity, physfollower_t &follow, const char *pBoneName, solid_t *pSolid )
 {
 	IStudioHdr *pStudioHdr = pParentEntity->GetEngineObject()->GetModelPtr();
 	matrix3x4_t boneToWorld;
@@ -141,7 +141,7 @@ bool CBoneFollowerManager::CreatePhysicsFollower( CBaseAnimating *pParentEntity,
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBoneFollowerManager::UpdateBoneFollowers( CBaseAnimating *pParentEntity )
+void CBoneFollowerManager::UpdateBoneFollowers( CBaseEntity *pParentEntity )
 {
 	if ( m_iNumBones )
 	{
@@ -460,7 +460,7 @@ LINK_ENTITY_TO_CLASS( phys_bone_follower, CBoneFollower );
 
 
 // create a manager and a list of followers directly from a ragdoll
-void CreateBoneFollowersFromRagdoll( CBaseAnimating *pEntity, CBoneFollowerManager *pManager, vcollide_t *pCollide )
+void CreateBoneFollowersFromRagdoll( CBaseEntity *pEntity, CBoneFollowerManager *pManager, vcollide_t *pCollide )
 {
 	IVPhysicsKeyParser *pParse = EntityList()->PhysGetCollision()->VPhysicsKeyParserCreate( pCollide->pKeyValues );
 	while ( !pParse->Finished() )
