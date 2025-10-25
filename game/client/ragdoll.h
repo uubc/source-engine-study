@@ -72,10 +72,10 @@ bool WasRagdollCreatedOnCurrentTick( C_BaseEntity *pRagdoll );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_ServerRagdoll : public C_BaseAnimating
+class C_ServerRagdoll : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS(C_ServerRagdoll, C_BaseAnimating);
+	DECLARE_CLASS(C_ServerRagdoll, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 	DECLARE_INTERPOLATION();
 
@@ -100,7 +100,7 @@ public:
 private:
 	C_ServerRagdoll(const C_ServerRagdoll& src);
 
-	typedef CHandle<C_BaseAnimating> CBaseAnimatingHandle;
+	typedef CHandle<C_BaseEntity> CBaseAnimatingHandle;
 	//CNetworkVar( CBaseAnimatingHandle, m_hUnragdoll );
 	CNetworkVar(float, m_flBlendWeight);
 };
@@ -114,12 +114,12 @@ enum
 	RAGDOLL_FRICTION_OUT,
 };
 
-class C_ClientRagdoll : public C_BaseAnimating, public IPVSNotify
+class C_ClientRagdoll : public C_BaseEntity, public IPVSNotify
 {
 
 public:
 	C_ClientRagdoll();//bool bRestoring 
-	DECLARE_CLASS(C_ClientRagdoll, C_BaseAnimating);
+	DECLARE_CLASS(C_ClientRagdoll, C_BaseEntity);
 	DECLARE_DATADESC();
 
 	bool IsBaseAnimating() { return true; }

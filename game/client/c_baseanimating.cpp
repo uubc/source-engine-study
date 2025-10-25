@@ -66,9 +66,9 @@
 //const float RUN_SPEED_ESTIMATE_SQR = 150.0f * 150.0f;
 
 // Removed macro used by shared code stuff
-#if defined( CBaseAnimating )
-#undef CBaseAnimating
-#endif
+//#if defined( CBaseAnimating )
+//#undef CBaseAnimating
+//#endif
 
 
 #ifdef DEBUG
@@ -146,21 +146,21 @@ static ConVar dbganimmodel( "dbganimmodel", "" );
 //-----------------------------------------------------------------------------
 // Purpose: convert axis rotations to a quaternion
 //-----------------------------------------------------------------------------
-C_BaseAnimating::C_BaseAnimating()
-{
-	//m_nEventSequence = -1;
-	//m_nPrevResetEventsParity = -1;
-	//m_iEyeAttachment = 0;
-#ifdef _XBOX
-	m_iAccumulatedBoneMask = 0;
-#endif
-	//m_boneIndexAttached = -1;
-	//m_pAttachedTo = NULL;
-	//m_bDynamicModelAllowed = false;
-	//m_bDynamicModelPending = false;
-	//m_bResetSequenceInfoOnLoad = false;
-
-}
+//C_BaseAnimating::C_BaseAnimating()
+//{
+//	//m_nEventSequence = -1;
+//	//m_nPrevResetEventsParity = -1;
+//	//m_iEyeAttachment = 0;
+//#ifdef _XBOX
+//	m_iAccumulatedBoneMask = 0;
+//#endif
+//	//m_boneIndexAttached = -1;
+//	//m_pAttachedTo = NULL;
+//	//m_bDynamicModelAllowed = false;
+//	//m_bDynamicModelPending = false;
+//	//m_bResetSequenceInfoOnLoad = false;
+//
+//}
 
 //bool C_BaseAnimating::Init(int entnum, int iSerialNum) {
 //	bool ret = BaseClass::Init(entnum, iSerialNum);
@@ -174,21 +174,21 @@ C_BaseAnimating::C_BaseAnimating()
 //-----------------------------------------------------------------------------
 // Purpose: cleanup
 //-----------------------------------------------------------------------------
-C_BaseAnimating::~C_BaseAnimating()
-{
-	//TermRopes();
-	//Assert(!m_pRagdoll);
-
-	// Kill off anything bone attached to us.
-	//DestroyBoneAttachments();
-
-	// If we are bone attached to something, remove us from the list.
-	//if ( m_pAttachedTo )
-	//{
-	//	m_pAttachedTo->RemoveBoneAttachment( this );
-	//	m_pAttachedTo = NULL;
-	//}
-}
+//C_BaseAnimating::~C_BaseAnimating()
+//{
+//	//TermRopes();
+//	//Assert(!m_pRagdoll);
+//
+//	// Kill off anything bone attached to us.
+//	//DestroyBoneAttachments();
+//
+//	// If we are bone attached to something, remove us from the list.
+//	//if ( m_pAttachedTo )
+//	//{
+//	//	m_pAttachedTo->RemoveBoneAttachment( this );
+//	//	m_pAttachedTo = NULL;
+//	//}
+//}
 
 //bool C_BaseAnimating::UsesPowerOfTwoFrameBufferTexture( void )
 //{

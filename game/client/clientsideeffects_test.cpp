@@ -18,6 +18,7 @@
 #include "tier0/vprof.h"
 #include "collisionutils.h"
 #include "clienteffectprecachesystem.h"
+#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

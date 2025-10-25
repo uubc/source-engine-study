@@ -12,9 +12,9 @@
 
 #include "c_baseanimating.h"
 
-class C_DODBombTarget : public C_BaseAnimating
+class C_DODBombTarget : public C_BaseEntity
 {
-	DECLARE_CLASS( C_DODBombTarget, C_BaseAnimating );
+	DECLARE_CLASS( C_DODBombTarget, C_BaseEntity);
 
 	DECLARE_NETWORKCLASS();
 

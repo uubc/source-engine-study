@@ -20,6 +20,7 @@
 #include "choreoscene.h"
 #include "choreoactor.h"
 #include "toolframework_client.h"
+#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -338,6 +339,41 @@ void C_BaseFlex::RunFlexRules( IStudioHdr *hdr, float *dest )
 
 	hdr->RunFlexRules( g_flexweight, dest );
 }
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+class CFlexSceneFileManager : CAutoGameSystem
+{
+public:
+
+	CFlexSceneFileManager() : CAutoGameSystem("CFlexSceneFileManager")
+	{
+	}
+
+	virtual bool Init();
+	virtual void Shutdown();
+
+	void EnsureTranslations(IHasLocalToGlobalFlexSettings* instance, const flexsettinghdr_t* pSettinghdr);
+	void* FindSceneFile(IHasLocalToGlobalFlexSettings* instance, const char* filename, bool allowBlockingIO);
+
+private:
+	void DeleteSceneFiles();
+
+	CUtlVector< CFlexSceneFile* > m_FileList;
+};
+
+
+//-----------------------------------------------------------------------------
+// Do we have active expressions?
+//-----------------------------------------------------------------------------
+inline bool C_BaseFlex::HasSceneEvents() const
+{
+	return m_SceneEvents.Count() != 0;
+}
+
+
+EXTERN_RECV_TABLE(DT_BaseFlex);
 
 //-----------------------------------------------------------------------------
 // Purpose: 

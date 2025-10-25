@@ -15,6 +15,7 @@
 #include "view_shared.h"
 #include "tier0/vprof.h"
 #include "materialsystem/imaterialvar.h"
+#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

@@ -2005,7 +2005,7 @@ int C_BaseEntity::DrawModel( int flags )
 			else
 			{
 				// this doesn't draw unless master entity is visible and it's a studio model!!!
-				C_BaseAnimating* follow = (C_BaseAnimating*)GetEngineObject()->FindFollowedEntity()->GetOuter();
+				C_BaseEntity* follow = (C_BaseEntity*)GetEngineObject()->FindFollowedEntity()->GetOuter();
 				if (follow)
 				{
 					// recompute master entity bone structure

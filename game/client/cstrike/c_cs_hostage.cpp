@@ -39,10 +39,10 @@ static const char* InterestingPoseParameters[NumInterestingPoseParameters] =
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-class C_LowViolenceHostageDeathModel : public C_BaseAnimating
+class C_LowViolenceHostageDeathModel : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_LowViolenceHostageDeathModel, C_BaseAnimating );
+	DECLARE_CLASS( C_LowViolenceHostageDeathModel, C_BaseEntity);
 	
 	C_LowViolenceHostageDeathModel();
 	~C_LowViolenceHostageDeathModel();

@@ -46,7 +46,7 @@ void GetBloodColorHL1( int bloodtype, unsigned char &r, unsigned char &g, unsign
 
 class C_HL1Gib : public C_Gib
 {
-	typedef C_BaseAnimating BaseClass;
+	typedef C_BaseEntity BaseClass;
 public:
 	
 	static C_HL1Gib *CreateClientsideGib( const char *pszModelName, Vector vecOrigin, Vector vecForceDir, AngularImpulse vecAngularImp )

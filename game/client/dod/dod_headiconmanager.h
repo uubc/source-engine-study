@@ -12,6 +12,7 @@
 #endif
 
 #include "bitvec.h"
+#include "igamesystem.h"
 
 class IMaterial;
 

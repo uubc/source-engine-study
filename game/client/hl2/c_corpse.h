@@ -10,10 +10,10 @@
 #pragma once
 #endif
 
-class C_Corpse : public C_BaseAnimating
+class C_Corpse : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_Corpse, C_BaseAnimating );
+	DECLARE_CLASS( C_Corpse, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 						C_Corpse( void );

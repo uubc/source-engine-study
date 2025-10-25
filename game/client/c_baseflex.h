@@ -298,40 +298,7 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
-class CFlexSceneFileManager : CAutoGameSystem
-{
-public:
 
-	CFlexSceneFileManager() : CAutoGameSystem( "CFlexSceneFileManager" )
-	{
-	}
-
-	virtual bool Init();
-	virtual void Shutdown();
-
-	void EnsureTranslations( IHasLocalToGlobalFlexSettings *instance, const flexsettinghdr_t *pSettinghdr );
-	void *FindSceneFile( IHasLocalToGlobalFlexSettings *instance, const char *filename, bool allowBlockingIO );
-
-private:
-	void DeleteSceneFiles();
-
-	CUtlVector< CFlexSceneFile * > m_FileList;
-};
-
-
-//-----------------------------------------------------------------------------
-// Do we have active expressions?
-//-----------------------------------------------------------------------------
-inline bool C_BaseFlex::HasSceneEvents() const
-{
-	return m_SceneEvents.Count() != 0;
-}
-
-
-EXTERN_RECV_TABLE(DT_BaseFlex);
 
 float *GetVisemeWeights( int phoneme );
 

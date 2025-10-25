@@ -26,10 +26,10 @@ ConVar FishDebug( "fish_debug", "0", FCVAR_CHEAT, "Show debug info for fish" );
 /**
  * Client-side fish entity
  */
-class C_Fish : public C_BaseAnimating
+class C_Fish : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_Fish, C_BaseAnimating );
+	DECLARE_CLASS( C_Fish, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 	bool IsBaseAnimating() { return true; }

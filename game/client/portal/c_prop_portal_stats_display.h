@@ -14,10 +14,10 @@
 #include "utlvector.h"
 
 
-class C_PropPortalStatsDisplay : public C_BaseAnimating
+class C_PropPortalStatsDisplay : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_PropPortalStatsDisplay, CBaseAnimating );
+	DECLARE_CLASS( C_PropPortalStatsDisplay, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 	C_PropPortalStatsDisplay();

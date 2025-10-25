@@ -358,7 +358,7 @@ void C_Prop_Portal::Simulate()
 			}
 			else if( pEntity->IsPlayer() )
 			{
-				if( !EntityHitBoxExtentIsInPortalHole( (C_BaseAnimating*)pEntity ) )//m_hPortalSimulator->
+				if( !EntityHitBoxExtentIsInPortalHole( (C_BaseEntity*)pEntity ) )//m_hPortalSimulator->
 					continue;
 			}
 			else

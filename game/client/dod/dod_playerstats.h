@@ -11,6 +11,7 @@
 #pragma once
 #endif
 
+#include "igamesystem.h"
 #include "steam/steam_api.h"
 #include "GameEventListener.h"
 #include "dod_shareddefs.h"

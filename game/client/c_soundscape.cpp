@@ -15,6 +15,7 @@
 #include "iviewrender.h"
 #include "engine/ivdebugoverlay.h"
 #include "tier0/icommandline.h"
+#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

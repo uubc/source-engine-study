@@ -990,7 +990,7 @@ void C_CSPlayer::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 	//
 	// What we're doing right here is making sure it only uses the bbox for our lower-body sequences since,
 	// with the current animations and the bug in CalcSequenceBoundingBoxes, are WAY bigger than they need to be.
-	C_BaseAnimating::GetRenderBounds( theMins, theMaxs );
+	C_BaseEntity::GetRenderBounds( theMins, theMaxs );
 
 	// If we're ducking, we should reduce the render height by the difference in standing and ducking heights.
 	// This prevents shadows from drawing above ducking players etc.
@@ -1883,7 +1883,7 @@ bool FindWeaponAttachmentBone( C_BaseCombatWeapon *pWeapon, int &iWeaponBone )
 }
 
 
-bool FindMyAttachmentBone( C_BaseAnimating *pModel, int &iBone, IStudioHdr *pHdr )
+bool FindMyAttachmentBone( C_BaseEntity *pModel, int &iBone, IStudioHdr *pHdr )
 {
 	if ( !pHdr )
 		return false;
@@ -1914,7 +1914,7 @@ inline bool IsBoneChildOf( IStudioHdr *pHdr, int iBone, int iParent )
 }
 
 void ApplyDifferenceTransformToChildren(
-	C_BaseAnimating *pModel,
+	C_BaseEntity *pModel,
 	const matrix3x4_t &mSource,
 	const matrix3x4_t &mDest,
 	int iParentBone )

@@ -44,7 +44,7 @@ class IGameEventManager2;
 class IPhysicsGameTrace;
 class CGlobalVarsBase;
 class IClientTools;
-class C_BaseAnimating;
+//class C_BaseAnimating;
 class IColorCorrectionSystem;
 class IInputSystem;
 class ISceneFileCache;
@@ -166,7 +166,7 @@ const char *GetParticleSystemNameFromIndex( int nIndex );
 //-----------------------------------------------------------------------------
 // Called during bone setup to test perf
 //-----------------------------------------------------------------------------
-void TrackBoneSetupEnt( C_BaseAnimating *pEnt );
+//void TrackBoneSetupEnt( C_BaseEntity *pEnt );
 
 bool IsEngineThreaded();
 

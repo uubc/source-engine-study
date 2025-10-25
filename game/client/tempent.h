@@ -59,10 +59,10 @@ typedef int (*pfnDrawHelper)( C_LocalTempEntity *entity, int flags );
 //-----------------------------------------------------------------------------
 // Purpose: Should this derive from some other class
 //-----------------------------------------------------------------------------
-class C_LocalTempEntity : public C_BaseAnimating, public C_SpriteRenderer
+class C_LocalTempEntity : public C_BaseEntity, public C_SpriteRenderer
 {
 public:
-	DECLARE_CLASS( C_LocalTempEntity, C_BaseAnimating );
+	DECLARE_CLASS( C_LocalTempEntity, C_BaseEntity);
 
 	C_LocalTempEntity();
 

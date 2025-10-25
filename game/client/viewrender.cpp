@@ -35,6 +35,7 @@
 //#include "c_pixel_visibility.h"
 #include "clienteffectprecachesystem.h"
 //#include "c_rope.h"
+#include "igamesystem.h"
 #include "c_effects.h"
 #include "smoke_fog_overlay.h"
 #include "materialsystem/imaterialsystemhardwareconfig.h"
@@ -81,7 +82,6 @@
 #ifdef USE_MONITORS
 #include "c_point_camera.h"
 #endif // USE_MONITORS
-#include "igamesystem.h"
 // Projective textures
 //#include "C_Env_Projected_Texture.h"
 

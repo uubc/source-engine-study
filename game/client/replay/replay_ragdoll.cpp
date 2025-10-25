@@ -35,7 +35,7 @@ static ConVar replay_cache_client_ragdolls( "replay_cache_client_ragdolls", "0",
 //--------------------------------------------------------------------------------
 
 void DrawBones( matrix3x4_t const* pBones, int nNumBones, ragdoll_t const* pRagdoll,
-			    int nRed, int nGreen, int nBlue, C_BaseAnimating* pBaseAnimating )
+			    int nRed, int nGreen, int nBlue, C_BaseEntity* pBaseAnimating )
 {
 	Assert( pBones );
 	Assert( pRagdoll );
@@ -82,7 +82,7 @@ inline int GetServerTickCount()
 
 //--------------------------------------------------------------------------------
 
-RagdollSimulationData_t::RagdollSimulationData_t( C_BaseAnimating* pEntity, int nStartTick, int nNumBones )
+RagdollSimulationData_t::RagdollSimulationData_t(C_BaseEntity* pEntity, int nStartTick, int nNumBones )
 :	m_pEntity( pEntity ),
 	m_nEntityIndex( -1 ),
 	m_nStartTick( nStartTick ),
@@ -243,7 +243,7 @@ void CReplayRagdollRecorder::Shutdown()
 	m_bIsRecording = false;
 }
 
-void CReplayRagdollRecorder::AddEntry( C_BaseAnimating* pEntity, int nStartTick, int nNumBones )
+void CReplayRagdollRecorder::AddEntry(C_BaseEntity* pEntity, int nStartTick, int nNumBones )
 {
 	DevMsg( "Replay: Processing Ragdoll at time %d\n", nStartTick );
 
@@ -256,7 +256,7 @@ void CReplayRagdollRecorder::AddEntry( C_BaseAnimating* pEntity, int nStartTick,
 	m_lstRagdollsToRecord.AddToTail( pNewEntry );
 }
 
-void CReplayRagdollRecorder::StopRecordingRagdoll( C_BaseAnimating* pEntity )
+void CReplayRagdollRecorder::StopRecordingRagdoll(C_BaseEntity* pEntity )
 {
 	Assert( pEntity );
 
@@ -302,7 +302,7 @@ void CReplayRagdollRecorder::StopRecordingSleepingRagdolls()
 	}
 }
 
-bool CReplayRagdollRecorder::FindEntryInRecordingList( C_BaseAnimating* pEntity,
+bool CReplayRagdollRecorder::FindEntryInRecordingList(C_BaseEntity* pEntity,
 													   CReplayRagdollRecorder::Iterator_t& nOutIndex )
 {
 	// Find the entry
@@ -581,7 +581,7 @@ void CReplayRagdollCache::Shutdown()
 ConVar replay_ragdoll_blending( "replay_ragdoll_blending", "1", FCVAR_DEVELOPMENTONLY );
 ConVar replay_ragdoll_tickoffset( "replay_ragdoll_tickoffset", "0", FCVAR_DEVELOPMENTONLY );
 
-bool CReplayRagdollCache::GetFrame( C_BaseAnimating* pEntity, int nTick, bool* pBoneSimulated, CBoneAccessor* pBoneAccessor ) const
+bool CReplayRagdollCache::GetFrame(C_BaseEntity* pEntity, int nTick, bool* pBoneSimulated, CBoneAccessor* pBoneAccessor ) const
 {
 	nTick += replay_ragdoll_tickoffset.GetInt();
 
@@ -669,7 +669,7 @@ bool CReplayRagdollCache::GetFrame( C_BaseAnimating* pEntity, int nTick, bool* p
 	return true;
 }
 
-RagdollSimulationData_t* CReplayRagdollCache::FindRagdollEntry( C_BaseAnimating* pEntity, int nTick )
+RagdollSimulationData_t* CReplayRagdollCache::FindRagdollEntry(C_BaseEntity* pEntity, int nTick )
 {
 	Assert( pEntity );
 

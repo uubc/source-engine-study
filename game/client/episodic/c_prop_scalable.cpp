@@ -6,9 +6,9 @@
 
 #include "cbase.h"
 
-class C_PropScalable : public C_BaseAnimating
+class C_PropScalable : public C_BaseEntity
 {
-	DECLARE_CLASS( C_PropScalable, C_BaseAnimating );
+	DECLARE_CLASS( C_PropScalable, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 	DECLARE_DATADESC();
 

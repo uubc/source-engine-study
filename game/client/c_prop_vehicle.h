@@ -10,10 +10,10 @@
 
 #include "game/client/iclientvehicle.h"
 #include "vehicle_viewblend_shared.h"
-class C_PropVehicleDriveable : public C_BaseAnimating, public IClientVehicle
+class C_PropVehicleDriveable : public C_BaseEntity, public IClientVehicle
 {
 
-	DECLARE_CLASS( C_PropVehicleDriveable, C_BaseAnimating );
+	DECLARE_CLASS( C_PropVehicleDriveable, C_BaseEntity);
 
 public:
 

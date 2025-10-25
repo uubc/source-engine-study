@@ -1264,10 +1264,10 @@ void C_BasePlayer::Flashlight( void )
 	UpdateFlashlight();
 
 	// Check for muzzle flash and apply to view model
-	C_BaseAnimating *ve = this;
+	C_BaseEntity *ve = this;
 	if ( GetObserverMode() == OBS_MODE_IN_EYE )
 	{
-		ve = dynamic_cast< C_BaseAnimating* >( GetObserverTarget() );
+		ve = dynamic_cast<C_BaseEntity* >( GetObserverTarget() );
 	}
 }
 

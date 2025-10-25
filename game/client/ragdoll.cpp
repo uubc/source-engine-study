@@ -359,7 +359,7 @@ void C_ServerRagdollAttached::OnDataChanged( DataUpdateType_t updateType )
 }
 
 
-C_EntityFlame* FireEffect(C_BaseAnimating* pTarget, C_BaseEntity* pServerFire, float* flScaleEnd, float* flTimeStart, float* flTimeEnd)
+C_EntityFlame* FireEffect(C_BaseEntity* pTarget, C_BaseEntity* pServerFire, float* flScaleEnd, float* flTimeStart, float* flTimeEnd)
 {
 	C_EntityFlame* pFire = (C_EntityFlame*)EntityList()->CreateEntityByName("C_EntityFlame");
 

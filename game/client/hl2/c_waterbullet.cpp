@@ -10,12 +10,12 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-class C_WaterBullet : public C_BaseAnimating
+class C_WaterBullet : public C_BaseEntity
 {
 public:
 
 	DECLARE_CLIENTCLASS();
-	DECLARE_CLASS( C_WaterBullet, C_BaseAnimating );
+	DECLARE_CLASS( C_WaterBullet, C_BaseEntity);
 
 	C_WaterBullet( void ) {};
 	~C_WaterBullet( void ) {};

@@ -19,10 +19,10 @@ int ScreenTransform( const Vector& point, Vector& screen );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_PropCannon : public C_BaseAnimating, public IClientVehicle
+class C_PropCannon : public C_BaseEntity, public IClientVehicle
 {
 
-	DECLARE_CLASS( C_PropCannon, C_BaseAnimating );
+	DECLARE_CLASS( C_PropCannon, C_BaseEntity);
 
 public:
 

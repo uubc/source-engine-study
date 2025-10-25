@@ -6633,7 +6633,7 @@ void UpdateClassImageEntity(
 	view.origin = origin + Vector(-110, -5, -5);
 
 	Vector vMins, vMaxs;
-	pPlayerModel->C_BaseAnimating::GetRenderBounds(vMins, vMaxs);
+	pPlayerModel->C_BaseEntity::GetRenderBounds(vMins, vMaxs);
 	view.origin.z += (vMins.z + vMaxs.z) * 0.55f;
 
 	view.angles.Init();

@@ -8,10 +8,10 @@
 #include "c_baseanimating.h"
 
 
-class C_DODBaseRocket : public C_BaseAnimating
+class C_DODBaseRocket : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_DODBaseRocket, C_BaseAnimating );
+	DECLARE_CLASS( C_DODBaseRocket, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 					C_DODBaseRocket();

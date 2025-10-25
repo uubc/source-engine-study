@@ -38,7 +38,7 @@ IterationRetval_t CRagdollExplosionEnumerator::EnumElement( IHandleEntity *pHand
 	if ( pEnt == NULL )
 		return ITERATION_CONTINUE;
 
-	C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
+	C_BaseEntity *pModel = static_cast<C_BaseEntity* >( pEnt );
 
 	// If the ragdoll was created on this tick, then the forces were already applied on the server
 	if ( pModel == NULL || WasRagdollCreatedOnCurrentTick( pEnt ) )
@@ -54,7 +54,7 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 	for (int i = 0; i < m_Entities.Count(); i++ )
 	{
 		C_BaseEntity *pEnt = m_Entities[i];
-		C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
+		C_BaseEntity *pModel = static_cast<C_BaseEntity* >( pEnt );
 
 		Vector	position = pEnt->GetEngineObject()->GetCollisionOrigin();
 

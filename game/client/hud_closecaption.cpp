@@ -22,6 +22,7 @@
 #include "filesystem.h"
 #include "datacache/idatacache.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
+#include "igamesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

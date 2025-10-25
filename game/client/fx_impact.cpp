@@ -41,7 +41,7 @@ IterationRetval_t CRagdollEnumerator::EnumElement( IHandleEntity *pHandleEntity 
 	if ( pEnt == NULL )
 		return ITERATION_CONTINUE;
 
-	C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
+	C_BaseEntity *pModel = static_cast<C_BaseEntity* >( pEnt );
 
 	// If the ragdoll was created on this tick, then the forces were already applied on the server
 	if ( pModel == NULL || WasRagdollCreatedOnCurrentTick( pEnt ) )

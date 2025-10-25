@@ -519,7 +519,7 @@ void C_PoseController::UpdatePoseCycle( float fCycleAmount )
 }
 
 #define CPoseController C_PoseController
-#define CBaseAnimating C_BaseAnimating
+//#define CBaseAnimating C_BaseAnimating
 
 
 #endif //#ifndef CLIENT_DLL

@@ -1691,7 +1691,7 @@ void C_DODPlayer::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 	//
 	// What we're doing right here is making sure it only uses the bbox for our lower-body sequences since,
 	// with the current animations and the bug in CalcSequenceBoundingBoxes, are WAY bigger than they need to be.
-	C_BaseAnimating::GetRenderBounds( theMins, theMaxs );
+	C_BaseEntity::GetRenderBounds( theMins, theMaxs );
 }
 
 

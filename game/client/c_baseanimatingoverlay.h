@@ -17,10 +17,10 @@
 #define CBaseAnimatingOverlay C_BaseAnimatingOverlay
 
 
-class C_BaseAnimatingOverlay : public C_BaseAnimating
+class C_BaseAnimatingOverlay : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_BaseAnimatingOverlay, C_BaseAnimating );
+	DECLARE_CLASS( C_BaseAnimatingOverlay, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 	DECLARE_PREDICTABLE();
 	DECLARE_INTERPOLATION();

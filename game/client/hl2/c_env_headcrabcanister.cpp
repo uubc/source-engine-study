@@ -17,9 +17,9 @@
 //-----------------------------------------------------------------------------
 // Headcrab canister Class (Client-side only!)
 //-----------------------------------------------------------------------------
-class C_EnvHeadcrabCanister :  public C_BaseAnimating
+class C_EnvHeadcrabCanister :  public C_BaseEntity
 {
-	DECLARE_CLASS( C_EnvHeadcrabCanister, C_BaseAnimating );
+	DECLARE_CLASS( C_EnvHeadcrabCanister, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 public:

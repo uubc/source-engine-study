@@ -1589,11 +1589,11 @@ void CHLClient::StartStatsReporting( HANDLE handle, bool bArbitrated )
 //-----------------------------------------------------------------------------
 void CHLClient::InvalidateMdlCache()
 {
-	C_BaseAnimating *pAnimating;
+	C_BaseEntity *pAnimating;
 	for ( C_BaseEntity *pEntity = (C_BaseEntity*)EntityList()->FirstBaseEntity(); pEntity; pEntity = (C_BaseEntity*)EntityList()->NextBaseEntity(pEntity) )
 	{
-		pAnimating = dynamic_cast<C_BaseAnimating *>(pEntity);
-		if ( pAnimating )
+		pAnimating = dynamic_cast<C_BaseEntity*>(pEntity);
+		if ( pAnimating && pAnimating->IsBaseAnimating() )
 		{
 			pAnimating->GetEngineObject()->InvalidateMdlCache();
 		}

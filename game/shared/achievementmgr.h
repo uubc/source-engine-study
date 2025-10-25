@@ -17,6 +17,7 @@
 #ifndef NO_STEAM
 #include "steam/steam_api.h"
 #endif
+#include "igamesystem.h"
 
 #define THINK_CLEAR		-1
 

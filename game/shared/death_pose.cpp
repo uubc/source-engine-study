@@ -9,7 +9,7 @@
 
 #ifdef CLIENT_DLL
 
-void GetRagdollCurSequenceWithDeathPose( C_BaseAnimating *entity, matrix3x4_t *curBones, float flTime, int activity, int frame )
+void GetRagdollCurSequenceWithDeathPose( C_BaseEntity *entity, matrix3x4_t *curBones, float flTime, int activity, int frame )
 {
 	// blow the cached prev bones
 	entity->GetEngineObject()->InvalidateBoneCache();

@@ -24,7 +24,7 @@
 #include "detailobjectsystem.h"
 #include "ehandle.h"
 #include "iclientunknown.h"
-#include "client_thinklist.h"
+//#include "client_thinklist.h"
 //#if !defined( NO_ENTITY_PREDICTION )
 //#include "predictableid.h"
 //#endif
@@ -53,7 +53,7 @@ class CUserCmd;
 struct solid_t;
 class ISave;
 class IRestore;
-class C_BaseAnimating;
+//class C_BaseAnimating;
 class C_AI_BaseNPC;
 struct EmitSound_t;
 class C_RecipientFilter;

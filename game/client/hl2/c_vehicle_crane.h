@@ -14,10 +14,10 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_PropCrane : public C_BaseAnimating, public IClientVehicle
+class C_PropCrane : public C_BaseEntity, public IClientVehicle
 {
 
-	DECLARE_CLASS( C_PropCrane, C_BaseAnimating );
+	DECLARE_CLASS( C_PropCrane, C_BaseEntity);
 
 public:
 

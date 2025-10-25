@@ -9,6 +9,8 @@
 #define RADIO_STATUS_H
 #pragma once
 
+#include "igamesystem.h"
+
 class IMaterial;
 
 class CRadioStatus : public CAutoGameSystem

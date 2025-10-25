@@ -10,7 +10,7 @@
 
 //--------------------------------------------------------------------------------
 
-class C_BaseAnimating;
+class C_BaseEntity;
 
 //--------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ struct RagdollSimulationFrame_t
 
 struct RagdollSimulationData_t
 {
-	RagdollSimulationData_t( C_BaseAnimating* pEntity = NULL, int nStartTick = 0, int nNumBones = 0 );
+	RagdollSimulationData_t(C_BaseEntity* pEntity = NULL, int nStartTick = 0, int nNumBones = 0 );
 
 	void Record();
 
@@ -43,7 +43,7 @@ struct RagdollSimulationData_t
 	typedef unsigned short Iterator_t;
 
 	CUtlLinkedList< RagdollSimulationFrame_t*, Iterator_t > m_lstFrames;
-	C_BaseAnimating* m_pEntity;
+	C_BaseEntity* m_pEntity;
 };
 
 //--------------------------------------------------------------------------------
@@ -64,8 +64,8 @@ public:
 
 	void Think();
 
-	void AddEntry( C_BaseAnimating* pEntity, int nStartTick, int nNumBones );
-	void StopRecordingRagdoll( C_BaseAnimating* pEntity );
+	void AddEntry(C_BaseEntity* pEntity, int nStartTick, int nNumBones );
+	void StopRecordingRagdoll(C_BaseEntity* pEntity );
 
 	void CleanupStartupTicksAndDurations( int nStartTick );
 	bool DumpRagdollsToDisk( char const* pszFilename ) const;
@@ -80,7 +80,7 @@ private:
 	void StopRecordingSleepingRagdolls();
 	void Record();
 
-	bool FindEntryInRecordingList( C_BaseAnimating* pEntity, Iterator_t& nOutIndex );
+	bool FindEntryInRecordingList(C_BaseEntity* pEntity, Iterator_t& nOutIndex );
 
 	void PrintDebug();
 
@@ -111,11 +111,11 @@ public:
 	// Returns false is no frame exists for the given entity at the given tick.
 	// Otherwise, returns a 
 	//
-	bool GetFrame( C_BaseAnimating* pEntity, int nTick, bool* pBoneSimulated, CBoneAccessor* pBoneAccessor ) const;
+	bool GetFrame(C_BaseEntity* pEntity, int nTick, bool* pBoneSimulated, CBoneAccessor* pBoneAccessor ) const;
 
 private:
-	RagdollSimulationData_t* FindRagdollEntry( C_BaseAnimating* pEntity, int nTick );
-	const RagdollSimulationData_t* FindRagdollEntry( C_BaseAnimating* pEntity, int nTick ) const;
+	RagdollSimulationData_t* FindRagdollEntry(C_BaseEntity* pEntity, int nTick );
+	const RagdollSimulationData_t* FindRagdollEntry(C_BaseEntity* pEntity, int nTick ) const;
 
 	bool FindFrame( RagdollSimulationFrame_t*& pFrameOut, RagdollSimulationFrame_t*& pNextFrameOut,
 		const RagdollSimulationData_t* pRagdollEntry, int nTick );
@@ -134,7 +134,7 @@ bool Replay_CacheRagdolls( const char* pFilename, int nStartTick );
 
 //--------------------------------------------------------------------------------
 
-inline const RagdollSimulationData_t* CReplayRagdollCache::FindRagdollEntry( C_BaseAnimating* pEntity, int nTick ) const
+inline const RagdollSimulationData_t* CReplayRagdollCache::FindRagdollEntry(C_BaseEntity* pEntity, int nTick ) const
 {
 	return const_cast< CReplayRagdollCache* >( this )->FindRagdollEntry( pEntity, nTick );
 }

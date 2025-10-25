@@ -431,8 +431,8 @@ void CBasePlayer::CacheVehicleView( void )
 #ifdef CLIENT_DLL
 		if( UseVR() )
 		{
-			C_BaseAnimating *pVehicleAnimating = dynamic_cast<C_BaseAnimating *>( pVehicle );
-			if( pVehicleAnimating )
+			C_BaseEntity *pVehicleAnimating = dynamic_cast<C_BaseEntity*>( pVehicle );
+			if( pVehicleAnimating && pVehicleAnimating->IsBaseAnimating())
 			{
 				int eyeAttachmentIndex = pVehicleAnimating->GetEngineObject()->LookupAttachment( "vehicle_driver_eyes" );
 

@@ -92,9 +92,9 @@ private:
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_PointCommentaryNode : public C_BaseAnimating
+class C_PointCommentaryNode : public C_BaseEntity
 {
-	DECLARE_CLASS( C_PointCommentaryNode, C_BaseAnimating );
+	DECLARE_CLASS( C_PointCommentaryNode, C_BaseEntity);
 public:
 	DECLARE_CLIENTCLASS();
 	DECLARE_DATADESC();

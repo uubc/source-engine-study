@@ -25,7 +25,7 @@
 
 class C_PortalBlast : public C_BaseEntity
 {
-	DECLARE_CLASS( C_PortalBlast, C_BaseAnimating );
+	DECLARE_CLASS( C_PortalBlast, C_BaseEntity);
 
 public:
 

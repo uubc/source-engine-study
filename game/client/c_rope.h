@@ -19,7 +19,7 @@
 
 
 class KeyValues;
-class C_BaseAnimating;
+//class C_BaseAnimating;
 struct RopeSegData_t;
 
 

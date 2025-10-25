@@ -59,7 +59,7 @@ class C_ClientRagdoll;
 //	Quaternion	m_rgBoneQuaternion[MAXSTUDIOBONES];
 //};
 
-
+/*
 class C_BaseAnimating : public C_BaseEntity//, private IModelLoadCallback
 {
 public:
@@ -360,11 +360,11 @@ public:
 private:
 
 };
-
+*/
 // FIXME: move these to somewhere that makes sense
 //void GetColumn( matrix3x4_t& src, int column, Vector &dest );
 //void SetColumn( Vector &src, int column, matrix3x4_t& dest );
 
-EXTERN_RECV_TABLE(DT_BaseAnimating);
+//EXTERN_RECV_TABLE(DT_BaseAnimating);
 
 #endif // C_BASEANIMATING_H

@@ -26,7 +26,7 @@ extern ConVar cl_disablefreezecam;
 class CAddonModel
 {
 public:
-	CHandle<C_BaseAnimating> m_hEnt;	// The model for the addon.
+	CHandle<C_BaseEntity> m_hEnt;	// The model for the addon.
 	int m_iAddon;						// One of the ADDON_ bits telling which model this is.
 	int m_iAttachmentPoint;				// Which attachment point on the player model this guy is on.
 };

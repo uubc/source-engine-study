@@ -1006,7 +1006,7 @@ void C_WeaponPortalgun::ViewModelDrawn( C_BaseViewModel *pBaseViewModel )
 	BaseClass::ViewModelDrawn( pBaseViewModel );
 }
 
-void UpdatePoseParameter( C_BaseAnimating *pBaseAnimating, int iPose, float fValue )
+void UpdatePoseParameter( C_BaseEntity *pBaseAnimating, int iPose, float fValue )
 {
 	pBaseAnimating->GetEngineObject()->SetPoseParameter( iPose, fValue );
 }

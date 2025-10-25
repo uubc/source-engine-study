@@ -18,10 +18,10 @@
 //-----------------------------------------------------------------------------
 // An entity which emits other entities at points 
 //-----------------------------------------------------------------------------
-class C_EnvParticleScript : public C_BaseAnimating, public IParticleEffect
+class C_EnvParticleScript : public C_BaseEntity, public IParticleEffect
 {
 public:
-	DECLARE_CLASS( C_EnvParticleScript, C_BaseAnimating );
+	DECLARE_CLASS( C_EnvParticleScript, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 	C_EnvParticleScript();

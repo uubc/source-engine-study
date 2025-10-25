@@ -22,10 +22,10 @@
 // network vars?
 // ------------------------------------------------------------------------------------------ //
 
-class C_PlantedC4 : public C_BaseAnimating
+class C_PlantedC4 : public C_BaseEntity
 {
 public:
-	DECLARE_CLASS( C_PlantedC4, CBaseAnimating );
+	DECLARE_CLASS( C_PlantedC4, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 
 	C_PlantedC4();

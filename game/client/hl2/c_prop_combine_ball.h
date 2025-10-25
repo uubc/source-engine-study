@@ -11,9 +11,9 @@
 #pragma once
 #endif
 
-class C_PropCombineBall : public C_BaseAnimating
+class C_PropCombineBall : public C_BaseEntity
 {
-	DECLARE_CLASS( C_PropCombineBall, C_BaseAnimating );
+	DECLARE_CLASS( C_PropCombineBall, C_BaseEntity);
 	DECLARE_CLIENTCLASS();
 public:
 

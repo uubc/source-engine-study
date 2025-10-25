@@ -15,6 +15,7 @@
 #include "filesystem.h"
 #include "collisionutils.h"
 #include "tier1/callqueue.h"
+#include "igamesystem.h"
 //#include "portal_collideable_enumerator.h"
 
 #ifndef CLIENT_DLL

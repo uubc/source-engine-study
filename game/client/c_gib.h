@@ -11,12 +11,13 @@
 #endif
 
 #define	DEFAULT_GIB_LIFETIME	4.0f
+#include "igamesystem.h"
 
 // Base client gibs
 
-class C_Gib : public C_BaseAnimating
+class C_Gib : public C_BaseEntity
 {
-	typedef C_BaseAnimating BaseClass;
+	typedef C_BaseEntity BaseClass;
 public:
 
 	~C_Gib( void );

@@ -52,7 +52,7 @@ public:
 		if ( pEnt == NULL )
 			return ITERATION_CONTINUE;
 
-		C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
+		C_BaseEntity *pModel = static_cast<C_BaseEntity* >( pEnt );
 
 		if ( pModel == NULL )
 			return ITERATION_CONTINUE;

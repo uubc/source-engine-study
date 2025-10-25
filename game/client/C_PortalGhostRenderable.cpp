@@ -141,7 +141,7 @@ int C_PortalGhostRenderable::DrawModel( int flags )
 			}
 		}
 
-		return C_BaseAnimating::DrawModel( flags );
+		return C_BaseEntity::DrawModel( flags );
 	}
 	else
 	{

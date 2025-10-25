@@ -14,9 +14,9 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_BreakableProp : public C_BaseAnimating
+class C_BreakableProp : public C_BaseEntity
 {
-	typedef C_BaseAnimating BaseClass;
+	typedef C_BaseEntity BaseClass;
 public:
 	DECLARE_CLIENTCLASS();
 

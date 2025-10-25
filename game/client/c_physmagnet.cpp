@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_PhysMagnet : public C_BaseAnimating
+class C_PhysMagnet : public C_BaseEntity
 {
-	DECLARE_CLASS( C_PhysMagnet, C_BaseAnimating );
+	DECLARE_CLASS( C_PhysMagnet, C_BaseEntity);
 public:
 	DECLARE_CLIENTCLASS();
 
