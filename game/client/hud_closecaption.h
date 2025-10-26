@@ -16,6 +16,7 @@
 #include "captioncompiler.h"
 #include "tier1/UtlSortVector.h"
 #include "tier1/utlsymbol.h"
+#include "datacache/idatacache.h"
 
 class CSentence;
 class C_BaseFlex;

@@ -72,7 +72,7 @@ class CBaseCombatCharacter;
 class CTeam;
 class Vector;
 //struct gamevcollisionevent_t;
-class CBaseAnimating;
+//class CBaseAnimating;
 class CBasePlayer;
 class IServerVehicle;
 struct solid_t;

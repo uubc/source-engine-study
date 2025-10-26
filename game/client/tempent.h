@@ -12,7 +12,7 @@
 #endif
 
 #include "c_baseentity.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #include "c_sprite.h"
 
 // Temporary entity array

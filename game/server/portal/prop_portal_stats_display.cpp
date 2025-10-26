@@ -5,7 +5,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "portal_player.h"
 #include "EnvMessage.h"
 #include "fmtstr.h"

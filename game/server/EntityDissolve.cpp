@@ -11,7 +11,7 @@
 
 #include "cbase.h"
 #include "EntityDissolve.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "physics_prop_ragdoll.h"
 #include "ai_basenpc.h"
 

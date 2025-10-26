@@ -22,7 +22,7 @@
 #include "iviewrender.h"
 #include "usermessages.h"
 #include "hud_macros.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #include "backgroundpanel.h"	// rounded border support
 
 // memdbgon must be the last include file in a .cpp file!!!

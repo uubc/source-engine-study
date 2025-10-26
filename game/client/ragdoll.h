@@ -15,8 +15,9 @@
 #endif
 
 //#include "ragdoll_shared.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
+#define NUM_HITBOX_FIRES	10
 #define RAGDOLL_VISUALIZE	0
 
 class C_BaseEntity;
@@ -100,7 +101,7 @@ public:
 private:
 	C_ServerRagdoll(const C_ServerRagdoll& src);
 
-	typedef CHandle<C_BaseEntity> CBaseAnimatingHandle;
+	//typedef CHandle<C_BaseEntity> CBaseAnimatingHandle;
 	//CNetworkVar( CBaseAnimatingHandle, m_hUnragdoll );
 	CNetworkVar(float, m_flBlendWeight);
 };

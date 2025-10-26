@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "ai_network.h"
 #include "ai_default.h"
 #include "ai_schedule.h"

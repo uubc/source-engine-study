@@ -12,7 +12,8 @@
 #pragma once
 
 
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
+#include "mouthinfo.h"
 #include "c_baseanimatingoverlay.h"
 #include "sceneentity_shared.h"
 

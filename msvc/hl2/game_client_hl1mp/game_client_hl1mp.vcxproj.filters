@@ -354,9 +354,6 @@
     <ClCompile Include="..\..\..\game\client\c_ai_basenpc.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\client\c_baseanimating.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\client\c_baseanimatingoverlay.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>

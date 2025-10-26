@@ -13,7 +13,7 @@
 #endif
 
 #include "cbase.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "smoke_trail.h"
 #include "weapon_dodbase.h"
 

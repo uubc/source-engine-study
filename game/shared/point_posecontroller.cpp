@@ -14,7 +14,7 @@
 // SERVER CLASS
 //-----------------------------------------------------------------------------
 
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "props.h"
 
 

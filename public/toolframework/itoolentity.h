@@ -28,7 +28,7 @@ class IClientRenderable;
 class Vector;
 class QAngle;
 class IServerEntity;
-class CBaseAnimating;
+//class CBaseAnimating;
 class ITakeDamageInfo;
 class ITempEntsSystem;
 class IEntityFactoryDictionary;

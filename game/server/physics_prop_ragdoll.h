@@ -112,7 +112,7 @@ private:
 
 
 
-	typedef CHandle<CBaseAnimating> CBaseAnimatingHandle;
+	//typedef CHandle<CBaseEntity> CBaseAnimatingHandle;
 	//CNetworkVar( CBaseAnimatingHandle, m_hUnragdoll );
 
 

@@ -220,7 +220,6 @@
     <ClCompile Include="..\..\..\game\server\ai_trackpather.cpp" />
     <ClCompile Include="..\..\..\game\server\ai_utils.cpp" />
     <ClCompile Include="..\..\..\game\server\ai_waypoint.cpp" />
-    <ClCompile Include="..\..\..\game\server\baseanimating.cpp" />
     <ClCompile Include="..\..\..\game\server\BaseAnimatingOverlay.cpp" />
     <ClCompile Include="..\..\..\game\server\basebludgeonweapon.cpp" />
     <ClCompile Include="..\..\..\game\server\basecombatcharacter.cpp" />

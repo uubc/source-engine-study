@@ -18,7 +18,7 @@
 #include "game/server/vehicle_sounds.h"
 
 
-class CBaseAnimating;
+//class CBaseAnimating;
 class CFourWheelServerVehicle;
 
 

@@ -12,7 +12,7 @@
 #pragma once
 #endif
 
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "dod_control_point.h"
 
 #define DOD_BOMB_TARGET_MODEL_ARMED			"models/weapons/w_tnt.mdl"

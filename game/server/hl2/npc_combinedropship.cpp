@@ -16,7 +16,7 @@
 #include "IEffects.h"
 #include "props.h"
 #include "TemplateEntities.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "ai_senses.h"
 #include "ammodef.h"
 #include "ndebugoverlay.h"

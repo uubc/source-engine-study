@@ -12,7 +12,7 @@
 #endif
 
 
-#include "baseanimating.h"
+#include "baseentity.h"
 
 class CActAnimating : public CBaseEntity
 {

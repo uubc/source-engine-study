@@ -9,7 +9,7 @@
 #ifdef _WIN32
 #pragma once
 #endif
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: 

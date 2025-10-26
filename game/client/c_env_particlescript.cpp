@@ -6,7 +6,7 @@
 //===========================================================================//
 
 #include "cbase.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #include "particlemgr.h"
 #include "materialsystem/imaterialvar.h"
 #include "cl_animevent.h"

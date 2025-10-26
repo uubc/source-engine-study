@@ -14,9 +14,9 @@
 #include "cbase.h"
 
 #ifdef GAME_DLL
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #else
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #endif
 
 #ifdef CLIENT_DLL

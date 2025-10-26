@@ -5,7 +5,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
 
 class C_DODBaseRocket : public C_BaseEntity

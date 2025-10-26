@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "Sprite.h"
 #include "SpriteTrail.h"
 #include <ctype.h>

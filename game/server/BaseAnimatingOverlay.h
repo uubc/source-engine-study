@@ -14,7 +14,8 @@
 #pragma once
 #endif
 
-#include "baseanimating.h"
+//#include "baseanimating.h"
+#include "ai_activity.h"
 #include "sequence_Transitioner.h"
 
 class CBaseAnimatingOverlay;

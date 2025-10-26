@@ -12,7 +12,7 @@
 #pragma once
 #endif
 
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #include "utlvector.h"
 #include "baseviewmodel_shared.h"
 

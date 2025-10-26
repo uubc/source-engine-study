@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
 class C_DODBombTarget : public C_BaseEntity
 {

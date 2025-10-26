@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "baseanimating.h"
+#include "baseentity.h"
 
 enum MoveType_t;
 enum MoveCollide_t;

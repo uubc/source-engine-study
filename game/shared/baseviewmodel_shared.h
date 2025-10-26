@@ -16,6 +16,7 @@
 #include "baseplayer_shared.h"
 #include "shared_classnames.h"
 #include "econ/ihasowner.h"
+#include "ai_activity.h"
 
 class CBaseCombatWeapon;
 class CBaseCombatCharacter;

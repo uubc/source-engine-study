@@ -486,9 +486,6 @@
     <ClCompile Include="..\..\..\game\server\ai_waypoint.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\game\server\baseanimating.cpp">
-      <Filter>源文件\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\game\server\BaseAnimatingOverlay.cpp">
       <Filter>源文件\Source Files</Filter>
     </ClCompile>

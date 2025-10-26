@@ -219,8 +219,6 @@ $Project
 		$File	"base_transmit_proxy.cpp"
 		$File	"$SRCDIR\game\shared\baseachievement.cpp"
 		$File	"$SRCDIR\game\shared\baseachievement.h"
-		$File	"baseanimating.cpp"
-		$File	"baseanimating.h"
 		$File	"BaseAnimatingOverlay.cpp"
 		$File	"BaseAnimatingOverlay.h"
 		$File	"basecombatcharacter.cpp"

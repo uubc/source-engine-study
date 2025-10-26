@@ -14,7 +14,7 @@
 #pragma once 
 #endif
 
-#include "baseanimating.h"
+#include "baseentity.h"
 #include "player_pickup.h"
 #include "Sprite.h"
 

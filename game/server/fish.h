@@ -12,7 +12,7 @@
 #ifndef _FISH_H_
 #define _FISH_H_
 
-#include "baseanimating.h"
+#include "baseentity.h"
 #include "GameEventListener.h"
 #include "util_shared.h"
 

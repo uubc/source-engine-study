@@ -21,7 +21,7 @@
 #include "iviewrender.h"
 #include "usermessages.h"
 #include "hud_macros.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #include "achievementmgr.h"
 #include "filesystem.h"
 

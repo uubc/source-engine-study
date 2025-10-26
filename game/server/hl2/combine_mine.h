@@ -23,7 +23,7 @@
 #define BOUNCEBOMB_EXPLODE_RADIUS	125.0
 #define BOUNCEBOMB_EXPLODE_DAMAGE	150.0
 #include "player_pickup.h"
-#include "baseanimating.h"
+#include "baseentity.h"
 
 class CBounceBomb : public CBaseEntity//, public CDefaultPlayerPickupVPhysics
 {

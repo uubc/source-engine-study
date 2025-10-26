@@ -11,7 +11,7 @@
 #pragma once
 
 #include "animationlayer.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
 // For shared code.
 #define CBaseAnimatingOverlay C_BaseAnimatingOverlay

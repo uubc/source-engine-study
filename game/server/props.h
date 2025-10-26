@@ -11,7 +11,7 @@
 #endif
 
 #include "props_shared.h"
-#include "baseanimating.h"
+#include "baseentity.h"
 #include "physics_bone_follower.h"
 #include "player_pickup.h"
 #include "positionwatcher.h"

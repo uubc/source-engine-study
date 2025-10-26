@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "SkyCamera.h"
 #include "studio.h"
 #include "gameinterface.h"

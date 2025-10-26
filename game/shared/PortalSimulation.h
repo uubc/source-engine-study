@@ -17,10 +17,10 @@
 #include "tier1/utlmap.h"
 #include "tier1/utlvector.h"
 #ifdef CLIENT_DLL
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #endif // CLIENT_DLL
 #ifdef GAME_DLL
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #endif // GAME_DLL
 
 

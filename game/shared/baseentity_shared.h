@@ -25,7 +25,7 @@ extern ConVar hl2_episodic;
 #if defined( CLIENT_DLL )
 #include "shared_classnames.h"
 #include "c_baseentity.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 #else
 #include "baseentity.h"
 

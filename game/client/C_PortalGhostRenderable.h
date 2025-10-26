@@ -13,7 +13,7 @@
 #endif
 
 //#include "iclientrenderable.h"
-#include "c_baseanimating.h"
+//#include "c_baseanimating.h"
 
 class C_Prop_Portal;
 

@@ -15,7 +15,7 @@
 // Includes
 //-----------------------------------------------------------------------------
 #include "player_pickup.h"	// for combine ball inheritance
-#include "baseanimating.h"
+#include "baseentity.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations

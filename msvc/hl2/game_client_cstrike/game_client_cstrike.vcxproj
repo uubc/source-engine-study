@@ -122,7 +122,6 @@
     <ClCompile Include="..\..\..\game\client\cstrike\vgui_viewc4panel.cpp" />
     <ClCompile Include="..\..\..\game\client\c_ai_basehumanoid.cpp" />
     <ClCompile Include="..\..\..\game\client\c_ai_basenpc.cpp" />
-    <ClCompile Include="..\..\..\game\client\c_baseanimating.cpp" />
     <ClCompile Include="..\..\..\game\client\c_baseanimatingoverlay.cpp" />
     <ClCompile Include="..\..\..\game\client\c_basecombatcharacter.cpp" />
     <ClCompile Include="..\..\..\game\client\c_basecombatweapon.cpp" />

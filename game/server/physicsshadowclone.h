@@ -13,7 +13,7 @@
 #endif
 
 #include "baseentity.h"
-#include "baseanimating.h"
+//#include "baseanimating.h"
 #include "engine/IEngineTrace.h"
 
 class CPhysicsShadowClone;
