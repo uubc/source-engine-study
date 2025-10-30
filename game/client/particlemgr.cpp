@@ -49,8 +49,8 @@ bool g_cl_particle_show_bbox = false;
 int g_cl_particle_show_bbox_cost = 0;
 
 
-static void StatsParticlesStart();
-static void StatsParticlesStop();
+static void StatsParticlesStart(int nClientIndex);
+static void StatsParticlesStop(int nClientIndex);
 
 static ConCommand cl_particle_stats_start( "cl_particle_stats_start", StatsParticlesStart, "Start or restart particle stats - also dumps to particle_stats.csv") ;
 static ConCommand cl_particle_stats_stop( "cl_particle_stats_stop", StatsParticlesStop, "Stop particle stats, or snapshot this frame - also dumps to particle_stats.csv") ;
@@ -2222,7 +2222,7 @@ float Helper_GetFrameTime()
 // Stats-gathering stuff.
 // ------------------------------------------------------------------------------------ //
 
-static void StatsParticlesStart()
+static void StatsParticlesStart(int nClientIndex)
 {
 #ifdef STAGING_ONLY
 	CParticleMgr *pMgr = ParticleMgr();
@@ -2235,7 +2235,7 @@ static void StatsParticlesStart()
 #endif
 }
 
-static void StatsParticlesStop()
+static void StatsParticlesStop(int nClientIndex)
 {
 #ifdef STAGING_ONLY
 	CParticleMgr *pMgr = ParticleMgr();

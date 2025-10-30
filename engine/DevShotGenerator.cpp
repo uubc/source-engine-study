@@ -60,7 +60,7 @@ CDevShotGenerator &DevShotGenerator()
 	return g_DevShotGenerator;
 }
 
-void CL_DevShots_NextMap()
+void CL_DevShots_NextMap(int nClientIndex)
 {
 	DevShotGenerator().NextMap();
 }

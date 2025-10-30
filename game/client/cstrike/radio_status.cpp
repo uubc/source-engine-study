@@ -35,9 +35,9 @@ static CRadioStatus s_RadioStatus;
 //
 
 // Stuff for the Radio Menus
-static void radio1_f( void );
-static void radio2_f( void );
-static void radio3_f( void );
+static void radio1_f(int nClientIndex);
+static void radio2_f(int nClientIndex);
+static void radio3_f(int nClientIndex);
 
 static ConCommand radio1( "radio1", radio1_f, "Opens a radio menu" );
 static ConCommand radio2( "radio2", radio2_f, "Opens a radio menu" );
@@ -92,17 +92,17 @@ void OpenRadioMenu( int index )
 	}
 }
 
-static void radio1_f( void )
+static void radio1_f(int nClientIndex)
 {
 	OpenRadioMenu( 1 );
 }
 
-static void radio2_f( void )
+static void radio2_f(int nClientIndex)
 {
 	OpenRadioMenu( 2 );
 }
 
-static void radio3_f( void )
+static void radio3_f(int nClientIndex)
 {
 	OpenRadioMenu( 3 );
 }

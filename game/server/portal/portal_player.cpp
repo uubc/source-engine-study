@@ -1551,7 +1551,7 @@ void CPortal_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 }
 
 
-bool CPortal_Player::ClientCommand( const CCommand &args )
+bool CPortal_Player::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	if ( FStrEq( args[0], "spectate" ) )
 	{
@@ -1559,7 +1559,7 @@ bool CPortal_Player::ClientCommand( const CCommand &args )
 		return true;
 	}
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 void CPortal_Player::CheatImpulseCommands( int iImpulse )
@@ -2105,7 +2105,7 @@ void CPortal_Player::PickTeam( void )
 
 CON_COMMAND( startadmiregloves, "Starts the admire gloves animation." )
 {
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CPortal_Player *pPlayer = (CPortal_Player *)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if( pPlayer == NULL )
 		pPlayer = GetPortalPlayer( 1 ); //last ditch effort
 
@@ -2115,7 +2115,7 @@ CON_COMMAND( startadmiregloves, "Starts the admire gloves animation." )
 
 CON_COMMAND( displayportalplayerstats, "Displays current level stats for portals placed, steps taken, and seconds taken." )
 {
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CPortal_Player *pPlayer = (CPortal_Player *)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if( pPlayer == NULL )
 		pPlayer = GetPortalPlayer( 1 ); //last ditch effort
 
@@ -2131,7 +2131,7 @@ CON_COMMAND( displayportalplayerstats, "Displays current level stats for portals
 
 CON_COMMAND( startneurotoxins, "Starts the nerve gas timer." )
 {
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CPortal_Player *pPlayer = (CPortal_Player *)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if( pPlayer == NULL )
 		pPlayer = GetPortalPlayer( 1 ); //last ditch effort
 

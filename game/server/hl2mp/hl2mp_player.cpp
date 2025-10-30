@@ -983,7 +983,7 @@ bool CHL2MP_Player::HandleCommand_JoinTeam( int team )
 	return true;
 }
 
-bool CHL2MP_Player::ClientCommand( const CCommand &args )
+bool CHL2MP_Player::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	if ( FStrEq( args[0], "spectate" ) )
 	{
@@ -1013,7 +1013,7 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 		return true;
 	}
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 void CHL2MP_Player::CheatImpulseCommands( int iImpulse )
@@ -1472,7 +1472,7 @@ ReturnSpot:
 
 CON_COMMAND( timeleft, "prints the time remaining in the match" )
 {
-	CHL2MP_Player *pPlayer = ToHL2MPPlayer( UTIL_GetCommandClient() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 
 	int iTimeRemaining = (int)HL2MPRules()->GetMapRemainingTime();
     

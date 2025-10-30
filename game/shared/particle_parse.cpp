@@ -514,9 +514,9 @@ void StopParticleEffects( IHandleEntity *pEntity )
 		}
 	}
 
-	void CC_Particle_Test_Start( const CCommand& args )
+	void CC_Particle_Test_Start( const CCommand& args, int nClientIndex)
 	{
-		Particle_Test_Start( UTIL_GetCommandClient(), args[1], true );
+		Particle_Test_Start(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)), args[1], true );
 	}
 	static ConCommand particle_test_start("particle_test_start", CC_Particle_Test_Start, "Dispatches the test particle system with the parameters specified in particle_test_file,\n particle_test_attach_mode and particle_test_attach_param on the entity the player is looking at.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
@@ -534,9 +534,9 @@ void StopParticleEffects( IHandleEntity *pEntity )
 		}
 	}
 
-	void CC_Particle_Test_Stop( const CCommand& args )
+	void CC_Particle_Test_Stop( const CCommand& args, int nClientIndex)
 	{
-		Particle_Test_Stop( UTIL_GetCommandClient(), args[1], false );
+		Particle_Test_Stop(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)), args[1], false );
 	}
 	static ConCommand particle_test_stop("particle_test_stop", CC_Particle_Test_Stop, "Stops all particle systems on the selected entities.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 

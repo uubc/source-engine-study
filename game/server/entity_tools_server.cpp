@@ -510,7 +510,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CServerChoreoTools, IServerChoreoTools, VSERV
 //------------------------------------------------------------------------------
 // Applies keyvalues to the entity by hammer ID.
 //------------------------------------------------------------------------------
-void CC_Ent_Keyvalue( const CCommand &args )
+void CC_Ent_Keyvalue( const CCommand &args, int nClientIndex)
 {
 	// Must have an odd number of arguments.
 	if ( ( args.ArgC() < 4 ) || ( args.ArgC() & 1 ) )
@@ -519,7 +519,7 @@ void CC_Ent_Keyvalue( const CCommand &args )
 		return;
 	}
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	IServerEntity *pEnt;
 	if ( FStrEq( args[1], "" ) || FStrEq( args[1], "!picker" ) )
 	{

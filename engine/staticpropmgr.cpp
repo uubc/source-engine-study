@@ -2342,7 +2342,7 @@ void CStaticPropMgr::GetStaticPropMaterialColorAndLighting( trace_t* pTrace,
 //-----------------------------------------------------------------------------
 // Little debugger tool to report which prop we're looking at
 //-----------------------------------------------------------------------------
-void Cmd_PropCrosshair_f (void)
+void Cmd_PropCrosshair_f (int nClientIndex)
 {
 	Vector endPoint;
 	VectorMA( MainViewOrigin(), COORD_EXTENT * 1.74f, MainViewForward(), endPoint );

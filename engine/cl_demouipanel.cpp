@@ -571,7 +571,7 @@ void CDemoUIPanel::HandleInput( bool active )
 	m_bInputActive = active;
 }
 
-void DemoUI_f()
+void DemoUI_f(int nClientIndex)
 {
 	if ( !g_pDemoUI )
 		return;
@@ -994,7 +994,7 @@ void CDemoUIPanel2::MakePanelForeground( bool bPutToForeground )
 	}
 }
 
-void DemoUI2_f()
+void DemoUI2_f(int nClientIndex)
 {
 	if ( !g_pDemoUI2 )
 		return;
@@ -1009,7 +1009,7 @@ void DemoUI2_f()
 	}
 }
 
-void DemoUI2_on()
+void DemoUI2_on(int nClientIndex)
 {
 	if ( !g_pDemoUI2 )
 		return;
@@ -1017,7 +1017,7 @@ void DemoUI2_on()
 	g_pDemoUI2->MakePanelForeground( true );
 }
 
-void DemoUI2_off()
+void DemoUI2_off(int nClientIndex)
 {
 	if ( !g_pDemoUI2 )
 		return;

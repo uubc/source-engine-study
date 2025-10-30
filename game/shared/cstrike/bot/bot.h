@@ -230,7 +230,7 @@ public:
 
 	const BotProfile *GetProfile( void ) const		{ return m_profile; }	///< return our personality profile
 
-	virtual bool ClientCommand( const CCommand &args );			///< Do a "client command" - useful for invoking menu choices, etc.
+	virtual bool ClientCommand( const CCommand &args, int nClientIndex);			///< Do a "client command" - useful for invoking menu choices, etc.
 	virtual int Cmd_Argc( void );								///< Returns the number of tokens in the command string
 	virtual char *Cmd_Argv( int argc );							///< Retrieves a specified token
 
@@ -818,7 +818,7 @@ inline byte CBot< PlayerType >::ThrottledMsec( void ) const
  * Do a "client command" - useful for invoking menu choices, etc.
  */
 template < class PlayerType >
-inline bool CBot< PlayerType >::ClientCommand( const CCommand &args )
+inline bool CBot< PlayerType >::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	// Remove old args
 	int i;
@@ -855,7 +855,7 @@ inline bool CBot< PlayerType >::ClientCommand( const CCommand &args )
 	}
 
 	// and pass to the base class
-	return PlayerType::ClientCommand( args );
+	return PlayerType::ClientCommand( args, nClientIndex);
 }
 
 

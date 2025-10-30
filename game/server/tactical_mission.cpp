@@ -30,7 +30,7 @@ public:
 
 CON_COMMAND_F( mission_list, "List all available tactical missions", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CListMissions list;
@@ -55,7 +55,7 @@ public:
 
 CON_COMMAND_F( mission_show, "Show the given mission", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() < 2 )

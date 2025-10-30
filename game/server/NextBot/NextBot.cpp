@@ -104,7 +104,7 @@ bool NextBotDestroyer::operator() ( INextBot *bot  )
 CON_COMMAND_F( nb_delete_all, "Delete all non-player NextBot entities.", FCVAR_CHEAT )
 {
 	// Listenserver host or rcon access only!
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CTeam *team = NULL;
@@ -180,7 +180,7 @@ public:
 CON_COMMAND_F( nb_move_to_cursor, "Tell all NextBots to move to the cursor position", FCVAR_CHEAT )
 {
 	// Listenserver host or rcon access only!
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	NextBotApproacher approach;

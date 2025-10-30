@@ -19,7 +19,7 @@ extern IVEngineServer* engine;
 
 CON_COMMAND(dump_globals, "Dump all global entities/states")
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	engine->DumpGlobals();
@@ -32,7 +32,7 @@ void ShowServerGameTime()
 
 CON_COMMAND(server_game_time, "Gives the game time in seconds (server's curtime)")
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	ShowServerGameTime();

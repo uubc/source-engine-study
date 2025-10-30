@@ -42,7 +42,7 @@ public:
 		BaseClass::Precache();
 	}
 
-	virtual bool		ClientCommand( const CCommand &args );
+	virtual bool		ClientCommand( const CCommand &args, int nClientIndex);
 
 	virtual bool		CanSpeakVoiceCommand( void ) { return true; }
 	virtual bool		ShouldShowVoiceSubtitleToEnemy( void );

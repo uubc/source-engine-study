@@ -54,7 +54,7 @@ void OpenLoadCommentaryDialog( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_LoadCommentary_Test( void )
+void CC_LoadCommentary_Test(int nClientIndex)
 {
 	OpenLoadCommentaryDialog();
 }

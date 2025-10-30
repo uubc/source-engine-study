@@ -4521,65 +4521,65 @@ void ConsoleFireTargets( CBasePlayer *pPlayer, const char *name)
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Name( const CCommand& args )
+void CC_Ent_Name( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_NAME_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_NAME_BIT);
 }
 static ConCommand ent_name("ent_name", CC_Ent_Name, 0, FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_Text( const CCommand& args )
+void CC_Ent_Text( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_TEXT_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_TEXT_BIT);
 }
 static ConCommand ent_text("ent_text", CC_Ent_Text, "Displays text debugging information about the given entity(ies) on top of the entity (See Overlay Text)\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_BBox( const CCommand& args )
+void CC_Ent_BBox( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_BBOX_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_BBOX_BIT);
 }
 static ConCommand ent_bbox("ent_bbox", CC_Ent_BBox, "Displays the movement bounding box for the given entity(ies) in orange.  Some entites will also display entity specific overlays.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 
 //------------------------------------------------------------------------------
-void CC_Ent_AbsBox( const CCommand& args )
+void CC_Ent_AbsBox( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_ABSBOX_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_ABSBOX_BIT);
 }
 static ConCommand ent_absbox("ent_absbox", CC_Ent_AbsBox, "Displays the total bounding box for the given entity(s) in green.  Some entites will also display entity specific overlays.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 
 //------------------------------------------------------------------------------
-void CC_Ent_RBox( const CCommand& args )
+void CC_Ent_RBox( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_RBOX_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_RBOX_BIT);
 }
 static ConCommand ent_rbox("ent_rbox", CC_Ent_RBox, "Displays the total bounding box for the given entity(s) in green.  Some entites will also display entity specific overlays.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_AttachmentPoints( const CCommand& args )
+void CC_Ent_AttachmentPoints( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_ATTACHMENTS_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_ATTACHMENTS_BIT);
 }
 static ConCommand ent_attachments("ent_attachments", CC_Ent_AttachmentPoints, "Displays the attachment points on an entity.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_ViewOffset( const CCommand& args )
+void CC_Ent_ViewOffset( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_VIEWOFFSET);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_VIEWOFFSET);
 }
 static ConCommand ent_viewoffset("ent_viewoffset", CC_Ent_ViewOffset, "Displays the eye position for the given entity(ies) in red.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_Remove( const CCommand& args )
+void CC_Ent_Remove( const CCommand& args, int nClientIndex)
 {
 	IServerEntity *pEntity = NULL;
 
 	// If no name was given set bits based on the picked
 	if ( FStrEq( args[1],"") ) 
 	{
-		pEntity = EntityList()->FindPickerEntity( UTIL_GetCommandClient() );
+		pEntity = EntityList()->FindPickerEntity( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	}
 	else 
 	{
@@ -4615,7 +4615,7 @@ void CC_Ent_Remove( const CCommand& args )
 static ConCommand ent_remove("ent_remove", CC_Ent_Remove, "Removes the given entity(s)\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_RemoveAll( const CCommand& args )
+void CC_Ent_RemoveAll( const CCommand& args, int nClientIndex)
 {
 	// If no name was given remove based on the picked
 	if ( args.ArgC() < 2 )
@@ -4651,13 +4651,13 @@ void CC_Ent_RemoveAll( const CCommand& args )
 static ConCommand ent_remove_all("ent_remove_all", CC_Ent_RemoveAll, "Removes all entities of the specified type\n\tArguments:   	{entity_name} / {class_name} ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Ent_SetName( const CCommand& args )
+void CC_Ent_SetName( const CCommand& args, int nClientIndex)
 {
 	IServerEntity *pEntity = NULL;
 
 	if ( args.ArgC() < 1 )
 	{
-		CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+		CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 		if (!pPlayer)
 			return;
 
@@ -4668,7 +4668,7 @@ void CC_Ent_SetName( const CCommand& args )
 		// If no name was given set bits based on the picked
 		if ( FStrEq( args[2],"") ) 
 		{
-			pEntity = EntityList()->FindPickerEntity( UTIL_GetCommandClient() );
+			pEntity = EntityList()->FindPickerEntity( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 		}
 		else 
 		{
@@ -4697,7 +4697,7 @@ void CC_Ent_SetName( const CCommand& args )
 static ConCommand ent_setname("ent_setname", CC_Ent_SetName, "Sets the targetname of the given entity(s)\n\tArguments:   	{new entity name} {entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Find_Ent( const CCommand& args )
+void CC_Find_Ent( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -4745,7 +4745,7 @@ void CC_Find_Ent( const CCommand& args )
 static ConCommand find_ent("find_ent", CC_Find_Ent, "Find and list all entities with classnames or targetnames that contain the specified substring.\nFormat: find_ent <substring>\n", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_Find_Ent_Index( const CCommand& args )
+void CC_Find_Ent_Index( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -4768,9 +4768,9 @@ static ConCommand find_ent_index("find_ent_index", CC_Find_Ent_Index, "Display d
 
 // Purpose : 
 //------------------------------------------------------------------------------
-void CC_Ent_Dump( const CCommand& args )
+void CC_Ent_Dump( const CCommand& args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if (!pPlayer)
 	{
 		return;
@@ -4853,18 +4853,18 @@ static ConCommand ent_dump("ent_dump", CC_Ent_Dump, "Usage:\n   ent_dump <entity
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_FireTarget( const CCommand& args )
+void CC_Ent_FireTarget( const CCommand& args, int nClientIndex)
 {
-	ConsoleFireTargets(UTIL_GetCommandClient(),args[1]);
+	ConsoleFireTargets(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1]);
 }
 static ConCommand firetarget("firetarget", CC_Ent_FireTarget, 0, FCVAR_CHEAT);
 
 class CEntFireAutoCompletionFunctor : public ICommandCallback, public ICommandCompletionCallback
 {
 public:
-	virtual void CommandCallback( const CCommand &command )
+	virtual void CommandCallback( const CCommand &command, int nClientIndex)
 	{
-		CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+		CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 		if (!pPlayer)
 		{
 			return;
@@ -5090,12 +5090,12 @@ private:
 static CEntFireAutoCompletionFunctor g_EntFireAutoComplete;
 static ConCommand ent_fire("ent_fire", &g_EntFireAutoComplete, "Usage:\n   ent_fire <target> [action] [value] [delay]\n", FCVAR_CHEAT, &g_EntFireAutoComplete );
 
-void CC_Ent_CancelPendingEntFires( const CCommand& args )
+void CC_Ent_CancelPendingEntFires( const CCommand& args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if (!pPlayer)
 		return;
 
@@ -5108,9 +5108,9 @@ static ConCommand ent_cancelpendingentfires("ent_cancelpendingentfires", CC_Ent_
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Info( const CCommand& args )
+void CC_Ent_Info( const CCommand& args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if (!pPlayer)
 	{
 		return;
@@ -5168,9 +5168,9 @@ static ConCommand ent_info("ent_info", CC_Ent_Info, "Usage:\n   ent_info <class 
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Messages( const CCommand& args )
+void CC_Ent_Messages( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_MESSAGE_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_MESSAGE_BIT);
 }
 static ConCommand ent_messages("ent_messages", CC_Ent_Messages ,"Toggles input/output message display for the selected entity(ies).  The name of the entity will be displayed as well as any messages that it sends or receives.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at", FCVAR_CHEAT);
 
@@ -5180,7 +5180,7 @@ static ConCommand ent_messages("ent_messages", CC_Ent_Messages ,"Toggles input/o
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Pause( void )
+void CC_Ent_Pause(int nClientIndex)
 {
 	if (CBaseEntity::Debug_IsPaused())
 	{
@@ -5202,12 +5202,12 @@ static ConCommand ent_pause("ent_pause", CC_Ent_Pause, "Toggles pausing of input
 // Input   : an optional command line argument "full" enables all debug info.
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Picker( void )
+void CC_Ent_Picker(int nClientIndex)
 {
 	CBaseEntity::m_bInDebugSelect = CBaseEntity::m_bInDebugSelect ? false : true;
 
 	// Remember the player that's making this request
-	CBaseEntity::m_nDebugPlayer = UTIL_GetCommandClientIndex();
+	CBaseEntity::m_nDebugPlayer = nClientIndex + 1;
 }
 static ConCommand picker("picker", CC_Ent_Picker, "Toggles 'picker' mode.  When picker is on, the bounding box, pivot and debugging text is displayed for whatever entity the player is looking at.\n\tArguments:	full - enables all debug information", FCVAR_CHEAT);
 
@@ -5216,9 +5216,9 @@ static ConCommand picker("picker", CC_Ent_Picker, "Toggles 'picker' mode.  When 
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Pivot( const CCommand& args )
+void CC_Ent_Pivot( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits(UTIL_GetCommandClient(),args[1],OVERLAY_PIVOT_BIT);
+	SetDebugBits(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1],OVERLAY_PIVOT_BIT);
 }
 static ConCommand ent_pivot("ent_pivot", CC_Ent_Pivot, "Displays the pivot for the given entity(ies).\n\t(y=up=green, z=forward=blue, x=left=red). \n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at ", FCVAR_CHEAT);
 
@@ -5227,7 +5227,7 @@ static ConCommand ent_pivot("ent_pivot", CC_Ent_Pivot, "Displays the pivot for t
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Ent_Step( const CCommand& args )
+void CC_Ent_Step( const CCommand& args, int nClientIndex)
 {
 	int nSteps = atoi(args[1]);
 	if (nSteps <= 0)
@@ -6114,10 +6114,10 @@ void CBaseEntity::DumpResponseCriteria( void )
 }
 
 //------------------------------------------------------------------------------
-void CC_Ent_Show_Response_Criteria( const CCommand& args )
+void CC_Ent_Show_Response_Criteria( const CCommand& args, int nClientIndex)
 {
 	IServerEntity *pEntity = NULL;
-	while ( (pEntity = GetNextCommandEntity( UTIL_GetCommandClient(), args[1], pEntity )) != NULL )
+	while ( (pEntity = GetNextCommandEntity( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)), args[1], pEntity )) != NULL )
 	{
 		pEntity->DumpResponseCriteria();
 	}
@@ -6127,9 +6127,9 @@ static ConCommand ent_show_response_criteria("ent_show_response_criteria", CC_En
 //------------------------------------------------------------------------------
 // Purpose: Show an entity's autoaim radius
 //------------------------------------------------------------------------------
-void CC_Ent_Autoaim( const CCommand& args )
+void CC_Ent_Autoaim( const CCommand& args, int nClientIndex)
 {
-	SetDebugBits( UTIL_GetCommandClient(),args[1], OVERLAY_AUTOAIM_BIT );
+	SetDebugBits( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)),args[1], OVERLAY_AUTOAIM_BIT );
 }
 static ConCommand ent_autoaim("ent_autoaim", CC_Ent_Autoaim, "Displays the entity's autoaim radius.\n\tArguments:   	{entity_name} / {class_name} / no argument picks what player is looking at", FCVAR_CHEAT );
 
@@ -6673,11 +6673,11 @@ void CBaseEntity::RemoveWatcherFromEntity(IServerEntity* pWatcher, int watcherTy
 //------------------------------------------------------------------------------
 // Purpose: Create an NPC of the given type
 //------------------------------------------------------------------------------
-void CC_Ent_Create( const CCommand& args )
+void CC_Ent_Create( const CCommand& args, int nClientIndex)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 	if (!pPlayer)
 	{
 		return;
@@ -6744,7 +6744,7 @@ static ConCommand ent_create("ent_create", CC_Ent_Create, "Creates an entity of 
 //------------------------------------------------------------------------------
 // Purpose: Teleport a specified entity to where the player is looking
 //------------------------------------------------------------------------------
-bool CC_GetCommandEnt( const CCommand& args, IServerEntity **ent, Vector *vecTargetPoint, QAngle *vecPlayerAngle )
+bool CC_GetCommandEnt( const CCommand& args, int nClientIndex, IServerEntity **ent, Vector *vecTargetPoint, QAngle *vecPlayerAngle )
 {
 	// Find the entity
 	*ent = NULL;
@@ -6772,7 +6772,7 @@ bool CC_GetCommandEnt( const CCommand& args, IServerEntity **ent, Vector *vecTar
 		return false;
 	}
 
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 	if ( vecTargetPoint )
 	{
 		trace_t tr;
@@ -6799,7 +6799,7 @@ bool CC_GetCommandEnt( const CCommand& args, IServerEntity **ent, Vector *vecTar
 //------------------------------------------------------------------------------
 // Purpose: Teleport a specified entity to where the player is looking
 //------------------------------------------------------------------------------
-void CC_Ent_Teleport( const CCommand& args )
+void CC_Ent_Teleport( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -6809,7 +6809,7 @@ void CC_Ent_Teleport( const CCommand& args )
 
 	IServerEntity *pEnt;
 	Vector vecTargetPoint;
-	if ( CC_GetCommandEnt( args, &pEnt, &vecTargetPoint, NULL ) )
+	if ( CC_GetCommandEnt( args, nClientIndex, &pEnt, &vecTargetPoint, NULL ) )
 	{
 		pEnt->Teleport( &vecTargetPoint, NULL, NULL );
 	}
@@ -6820,7 +6820,7 @@ static ConCommand ent_teleport("ent_teleport", CC_Ent_Teleport, "Teleport the sp
 //------------------------------------------------------------------------------
 // Purpose: Orient a specified entity to match the player's angles
 //------------------------------------------------------------------------------
-void CC_Ent_Orient( const CCommand& args )
+void CC_Ent_Orient( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -6830,7 +6830,7 @@ void CC_Ent_Orient( const CCommand& args )
 
 	IServerEntity *pEnt;
 	QAngle vecPlayerAngles;
-	if ( CC_GetCommandEnt( args, &pEnt, NULL, &vecPlayerAngles ) )
+	if ( CC_GetCommandEnt( args, nClientIndex, &pEnt, NULL, &vecPlayerAngles ) )
 	{
 		QAngle vecEntAngles = pEnt->GetEngineObject()->GetAbsAngles();
 		if ( args.ArgC() == 3 && !Q_strncmp( args[2], "allangles", 9 ) )

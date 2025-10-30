@@ -997,7 +997,7 @@ public:
 	virtual IServerEntity* GetPlayerSpawnSpot(CBasePlayer* pPlayer) = 0;// Place this player on their spawnspot and face them the proper direction.
 	virtual bool IsSpawnPointValid(CBaseEntity* pSpot, CBasePlayer* pPlayer) = 0;
 	virtual bool AllowAutoTargetCrosshair(void) = 0;
-	virtual bool ClientCommand(CBaseEntity* pEdict, const CCommand& args) = 0;  // handles the user commands;  returns TRUE if command handled properly
+	virtual bool ClientCommand(CBaseEntity* pEdict, const CCommand& args, int nClientIndex) = 0;  // handles the user commands;  returns TRUE if command handled properly
 	virtual void ClientSettingsChanged(CBasePlayer* pPlayer) = 0;		 // the player has changed cvars
 	// Client kills/scoring
 	virtual int IPointsForKill(CBasePlayer* pAttacker, CBasePlayer* pKilled) = 0;// how many points do I award whoever kills this player?

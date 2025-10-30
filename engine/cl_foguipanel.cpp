@@ -515,7 +515,7 @@ void CFogUIPanel::UpdateFogColors()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void FogUI_f()
+void FogUI_f(int nClientIndex)
 {
 	if ( !g_pFogUI )
 		return;

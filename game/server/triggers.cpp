@@ -48,7 +48,7 @@ ConVar showtriggers( "showtriggers", "0", FCVAR_CHEAT, "Shows trigger brushes" )
 bool IsTriggerClass( CBaseEntity *pEntity );
 
 // Command to dynamically toggle trigger visibility
-void Cmd_ShowtriggersToggle_f( const CCommand &args )
+void Cmd_ShowtriggersToggle_f( const CCommand &args, int nClientIndex)
 {
 	// Loop through the entities in the game and make visible anything derived from CBaseTrigger
 	IServerEntity *pEntity = EntityList()->FirstEnt();

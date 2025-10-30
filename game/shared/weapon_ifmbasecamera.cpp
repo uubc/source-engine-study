@@ -103,7 +103,7 @@ void CWeaponIFMBaseCamera::SetRenderInfo( float flAspectRatio, float flFOV, floa
 
 CON_COMMAND( ifm_basecamera_camerastate, "Set camera state" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	if ( !pPlayer )
 		return;
 

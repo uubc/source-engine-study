@@ -262,7 +262,7 @@ private:
 
 	void UploadLevelStats( void );
 
-	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
 	virtual void RadiusDamage( const ITakeDamageInfo&info, const Vector &vecSrcIn, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore, bool bIgnoreWorld = false );
 	void RadiusStun( const ITakeDamageInfo&info, const Vector &vecSrc, float flRadius );

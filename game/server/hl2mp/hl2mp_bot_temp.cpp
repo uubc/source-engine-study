@@ -372,7 +372,7 @@ void Bot_Think( CHL2MP_Player *pBot )
 			//send the cmd from this bot
 			CCommand args;
 			args.Tokenize( bot_sendcmd.GetString() );
-			pBot->ClientCommand( args );
+			pBot->ClientCommand( args, pBot->entindex()-1 );
 
 			bot_sendcmd.SetValue("");
 		}

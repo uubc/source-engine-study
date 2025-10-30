@@ -1988,7 +1988,7 @@ static bool ComputeNextIncrementalDemoFilename( char *name, int namesize )
 //-----------------------------------------------------------------------------
 // Purpose: List the contents of a demo file.
 //-----------------------------------------------------------------------------
-void CL_ListDemo_f( const CCommand &args )
+void CL_ListDemo_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;
@@ -2127,7 +2127,7 @@ CON_COMMAND_F( record, "Record a demo.", FCVAR_DONTRECORD )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CL_PlayDemo_f( const CCommand &args )
+void CL_PlayDemo_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;
@@ -2165,7 +2165,7 @@ void CL_PlayDemo_f( const CCommand &args )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CL_TimeDemo_f( const CCommand &args )
+void CL_TimeDemo_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;
@@ -2199,13 +2199,13 @@ void CL_TimeDemo_f( const CCommand &args )
 	}
 }
 
-void CL_TimeDemoQuit_f( const CCommand &args )
+void CL_TimeDemoQuit_f( const CCommand &args, int nClientIndex)
 {
 	demo_quitafterplayback.SetValue( 1 );
-	CL_TimeDemo_f( args );
+	CL_TimeDemo_f( args, nClientIndex);
 }
 
-void CL_BenchFrame_f( const CCommand &args )
+void CL_BenchFrame_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;

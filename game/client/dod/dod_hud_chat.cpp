@@ -24,9 +24,9 @@ Color g_DoDColorGrey( 200, 200, 200, 255 );
 #define DOD_MAX_CHAT_LENGTH	128
 
 // Stuff for the Radio Menus
-static void voicemenu1_f( void );
-static void voicemenu2_f( void );
-static void voicemenu3_f( void );
+static void voicemenu1_f(int nClientIndex);
+static void voicemenu2_f(int nClientIndex);
+static void voicemenu3_f(int nClientIndex);
 
 static ConCommand voicemenu1( "voicemenu1", voicemenu1_f, "Opens a voice menu" );
 static ConCommand voicemenu2( "voicemenu2", voicemenu2_f, "Opens a voice menu" );
@@ -104,17 +104,17 @@ void OpenVoiceMenu( int index )
 	}
 }
 
-static void voicemenu1_f( void )
+static void voicemenu1_f(int nClientIndex)
 {
 	OpenVoiceMenu( 1 );
 }
 
-static void voicemenu2_f( void )
+static void voicemenu2_f(int nClientIndex)
 {
 	OpenVoiceMenu( 2 );
 }
 
-static void voicemenu3_f( void )
+static void voicemenu3_f(int nClientIndex)
 {
 	OpenVoiceMenu( 3 );
 }

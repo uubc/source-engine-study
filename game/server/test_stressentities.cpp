@@ -59,7 +59,7 @@ Vector GetRandomSpot()
 }
 
 
-void Test_InitRandomEntitySpawner( const CCommand &args )
+void Test_InitRandomEntitySpawner( const CCommand &args, int nClientIndex)
 {
 	// Put the list of registered functions into array form for convenience.
 	g_StressEntityRegs.Purge();
@@ -78,7 +78,7 @@ void Test_InitRandomEntitySpawner( const CCommand &args )
 }
 
 
-void Test_SpawnRandomEntities( const CCommand &args )
+void Test_SpawnRandomEntities( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 3 )
 	{
@@ -109,7 +109,7 @@ void Test_SpawnRandomEntities( const CCommand &args )
 }
 
 
-void Test_RandomizeInPVS( const CCommand &args )
+void Test_RandomizeInPVS( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -135,7 +135,7 @@ void Test_RandomizeInPVS( const CCommand &args )
 }
 
 
-void Test_RemoveAllRandomEntities()
+void Test_RemoveAllRandomEntities(int nClientIndex)
 {
 	for ( int i=0; i < g_StressEntities.Count(); i++ )
 	{

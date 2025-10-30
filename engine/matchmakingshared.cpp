@@ -1313,7 +1313,7 @@ void CMatchmaking::UpdateMuteList()
 	}
 }
 
-void Con_PrintTalkers( const CCommand &args )
+void Con_PrintTalkers( const CCommand &args, int nClientIndex)
 {
 	g_pMatchmaking->PrintVoiceStatus();
 }

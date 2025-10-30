@@ -19,7 +19,7 @@
 
 CON_COMMAND(soundscape_flush, "Flushes the server & client side soundscapes")
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	if ( engine->IsDedicatedServer() )
 	{
 		// If it's a dedicated server, only the server console can run this.
@@ -94,7 +94,7 @@ void CSoundscapeSystem::AddSoundscapeFile( const char *filename )
 
 CON_COMMAND_F( sv_soundscape_printdebuginfo, "print soundscapes", FCVAR_DEVELOPMENTONLY )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	g_SoundscapeSystem.PrintDebugInfo();

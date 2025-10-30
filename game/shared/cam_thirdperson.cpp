@@ -21,18 +21,18 @@ extern ConVar cam_idealdist;
 extern ConVar cam_idealdistright;
 extern ConVar cam_idealdistup;
 
-void CAM_ToThirdPerson(void);
-void CAM_ToFirstPerson(void);
+void CAM_ToThirdPerson(int nClientIndex);
+void CAM_ToFirstPerson(int nClientIndex);
 
 void ToggleThirdPerson( bool bValue )
 {
 	if ( bValue == true )
 	{
-		CAM_ToThirdPerson();
+		CAM_ToThirdPerson(-1);
 	}
 	else
 	{
-		CAM_ToFirstPerson();
+		CAM_ToFirstPerson(-1);
 	}
 }
 

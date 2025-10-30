@@ -1005,7 +1005,7 @@ static const char *g_rgValidCommands[] =
 	"Disconnect",
 };
 
-static void CC_GameMenuCommand( const CCommand &args )
+static void CC_GameMenuCommand( const CCommand &args, int nClientIndex)
 {
 	int c = args.ArgC();
 	if ( c < 2 )
@@ -4939,7 +4939,7 @@ void CBasePanel::CloseBaseDialogs( void )
 		m_hCreateMultiplayerGameDialog->Close();
 }
 
-static void CC_GameUIShowDialog( const CCommand &args )
+static void CC_GameUIShowDialog( const CCommand &args, int nClientIndex)
 {
 	int c = args.ArgC();
 
@@ -4953,7 +4953,7 @@ static void CC_GameUIShowDialog( const CCommand &args )
 }
 static ConCommand gameui_show_dialog( "gameui_show_dialog", CC_GameUIShowDialog, "Show an arbitrary Dialog.", 0 );
 
-static void CC_GameUIHideDialog( const CCommand &args )
+static void CC_GameUIHideDialog( const CCommand &args, int nClientIndex)
 {
 	int c = args.ArgC();
 	if ( c < 1 )
@@ -4966,7 +4966,7 @@ static void CC_GameUIHideDialog( const CCommand &args )
 }
 static ConCommand gameui_hide_dialog( "gameui_hide_dialog", CC_GameUIHideDialog, "asdf", 0 );
 
-static void RefreshOptionsDialog( const CCommand &args )
+static void RefreshOptionsDialog( const CCommand &args, int nClientIndex)
 {
 	if ( g_hOptionsDialog )
 	{

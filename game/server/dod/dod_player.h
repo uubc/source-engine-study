@@ -343,7 +343,7 @@ public:
 
 	void MoveToNextIntroCamera();	//Cycle view through available intro cameras
  
-	bool ClientCommand( const CCommand &args );
+	bool ClientCommand( const CCommand &args, int nClientIndex);
 	
 	virtual bool IsReadyToPlay( void );
 

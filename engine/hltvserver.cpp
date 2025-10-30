@@ -2396,7 +2396,7 @@ CON_COMMAND( tv_msg, "Send a screen message to all clients." )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void EditDemo_f( const CCommand &args )
+void EditDemo_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;

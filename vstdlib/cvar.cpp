@@ -910,7 +910,7 @@ void CCvar::PublishToVXConsole()
 //-----------------------------------------------------------------------------
 // Console commands
 //-----------------------------------------------------------------------------
-void CCvar::Find( const CCommand &args )
+void CCvar::Find( const CCommand &args, int nClientIndex)
 {
 	const char *search;
 	const ConCommandBase *var;

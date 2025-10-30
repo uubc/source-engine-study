@@ -247,7 +247,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CommentaryShowModelViewer( const CCommand &args )
+void CommentaryShowModelViewer( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{

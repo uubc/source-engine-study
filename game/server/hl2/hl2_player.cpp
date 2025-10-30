@@ -221,9 +221,9 @@ public:
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_ToggleZoom( void )
+void CC_ToggleZoom(int nClientIndex)
 {
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	if( pPlayer )
 	{
@@ -244,9 +244,9 @@ ConVar xc_use_crouch_limiter( "xc_use_crouch_limiter", "0", FCVAR_ARCHIVE, "Use 
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_ToggleDuck( void )
+void CC_ToggleDuck(int nClientIndex)
 {
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( pPlayer == NULL )
 		return;
 
@@ -2947,7 +2947,7 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 // Input  : *cmd - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CHL2_Player::ClientCommand( const CCommand &args )
+bool CHL2_Player::ClientCommand( const CCommand &args, int nClientIndex)
 {
 #if	HL2_SINGLE_PRIMARY_WEAPON_MODE
 
@@ -2974,7 +2974,7 @@ bool CHL2_Player::ClientCommand( const CCommand &args )
 		return true;
 	}
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 //-----------------------------------------------------------------------------

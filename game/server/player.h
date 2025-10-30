@@ -458,7 +458,7 @@ public:
 	// custom player functions
 	virtual void			ImpulseCommands( void );
 	virtual void			CheatImpulseCommands( int iImpulse );
-	virtual bool			ClientCommand( const CCommand &args );
+	virtual bool			ClientCommand( const CCommand &args, int nClientIndex);
 
 	void					NotifySinglePlayerGameEnding() { m_bSinglePlayerGameEnding = true; }
 	bool					IsSinglePlayerGameEnding() { return m_bSinglePlayerGameEnding == true; }

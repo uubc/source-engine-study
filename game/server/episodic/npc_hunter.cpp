@@ -411,14 +411,14 @@ CHunterFlechette *CHunterFlechette::FlechetteCreate( const Vector &vecOrigin, co
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_Hunter_Shoot_Flechette( const CCommand& args )
+void CC_Hunter_Shoot_Flechette( const CCommand& args, int nClientIndex)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
 	bool allowPrecache = engine->IsPrecacheAllowed();//CBaseEntity::
 	engine->SetAllowPrecache( true );//CBaseEntity::
 
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	QAngle angEye = pPlayer->EyeAngles();
 	CHunterFlechette *entity = CHunterFlechette::FlechetteCreate( pPlayer->EyePosition(), angEye, pPlayer );

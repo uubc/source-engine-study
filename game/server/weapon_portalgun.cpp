@@ -689,9 +689,9 @@ void CWeaponPortalgun::DoEffectNone( void )
 	}
 }
 
-void CC_UpgradePortalGun( void )
+void CC_UpgradePortalGun(int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 
 	CWeaponPortalgun *pPortalGun = static_cast<CWeaponPortalgun*>( pPlayer->Weapon_OwnsThisType( "weapon_portalgun" ) );
 	if ( pPortalGun )
@@ -706,7 +706,7 @@ static ConCommand upgrade_portal("upgrade_portalgun", CC_UpgradePortalGun, "Equi
 
 
 
-static void change_portalgun_linkage_id_f( const CCommand &args )
+static void change_portalgun_linkage_id_f( const CCommand &args, int nClientIndex)
 {
 	if( sv_cheats->GetBool() == false ) //heavy handed version since setting the concommand with FCVAR_CHEATS isn't working like I thought
 		return;
@@ -716,7 +716,7 @@ static void change_portalgun_linkage_id_f( const CCommand &args )
 
 	unsigned char iNewID = (unsigned char)atoi( args[1] );
 
-	CBasePlayer *pPlayer = (CBasePlayer*)UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = (CBasePlayer*)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	int iWeaponCount = pPlayer->WeaponCount();
 	for( int i = 0; i != iWeaponCount; ++i )

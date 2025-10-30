@@ -507,8 +507,8 @@ public:
 	{
 		if( code==KEY_ESCAPE )
 		{
-			void ShowHideColorCorrectionUI();
-			ShowHideColorCorrectionUI();
+			void ShowHideColorCorrectionUI(int nClientIndex);
+			ShowHideColorCorrectionUI(-1);
 		}
 	}
 
@@ -4932,8 +4932,8 @@ void CColorOperationListPanel::OnKeyCodeTyped( KeyCode code )
 	}
 	else if( code==KEY_ESCAPE )
 	{
-		void ShowHideColorCorrectionUI();
-		ShowHideColorCorrectionUI();
+		void ShowHideColorCorrectionUI(int nClientIndex);
+		ShowHideColorCorrectionUI(-1);
 	}
 
 	BaseClass::OnKeyCodeTyped( code );
@@ -5371,7 +5371,7 @@ void CColorCorrectionTools::SetFinalOperation( IColorOperation *pOp )
 	g_pColorCorrectionUI->SetFinalOperation( pOp );
 }
 
-void ShowHideColorCorrectionUI()
+void ShowHideColorCorrectionUI(int nClientIndex)
 {
 	if ( !g_pColorCorrectionUI )
 		return;
@@ -5391,7 +5391,7 @@ void ShowHideColorCorrectionUI()
 
 static ConCommand colorcorrectionui( "colorcorrectionui", ShowHideColorCorrectionUI, "Show/hide the color correction tools UI.", FCVAR_CHEAT );
 
-void PrintColorCorrection()
+void PrintColorCorrection(int nClientIndex)
 {
 	ConMsg( "Default weight : %0.5f\n", colorcorrection->GetLookupWeight(-1) );
 	ConMsg( "Weight 0       : %0.5f\n", colorcorrection->GetLookupWeight(0) );

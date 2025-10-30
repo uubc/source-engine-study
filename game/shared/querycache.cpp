@@ -330,7 +330,7 @@ CON_COMMAND( sv_querycache_stats, "Display status of the query cache (client onl
 #endif
 {
 #ifndef CLIENT_DLL
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 #endif
 

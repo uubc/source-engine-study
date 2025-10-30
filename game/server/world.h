@@ -216,7 +216,7 @@ public:
 	virtual bool IsSpawnPointValid(CBaseEntity* pSpot, CBasePlayer* pPlayer);
 
 	virtual bool AllowAutoTargetCrosshair(void) { return TRUE; };
-	virtual bool ClientCommand(CBaseEntity* pEdict, const CCommand& args);  // handles the user commands;  returns TRUE if command handled properly
+	virtual bool ClientCommand(CBaseEntity* pEdict, const CCommand& args, int nClientIndex);  // handles the user commands;  returns TRUE if command handled properly
 	virtual void ClientSettingsChanged(CBasePlayer* pPlayer);		 // the player has changed cvars
 
 	// Client kills/scoring

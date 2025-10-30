@@ -68,7 +68,7 @@ void R_StudioInitLightingCache( void );
 float Engine_WorldLightDistanceFalloff( const dworldlight_t *wl, const Vector& delta, bool bNoRadiusCheck = false );
 void SetRootLOD_f( IConVar *var, const char *pOldString, float flOldValue );
 void r_lod_f( IConVar *var, const char *pOldValue, float flOldValue );
-void FlushLOD_f();
+void FlushLOD_f(int nClientIndex);
 
 class CColorMeshData;
 static void CreateLightmapsFromData(CColorMeshData* _colorMeshData);
@@ -4800,7 +4800,7 @@ void SetRootLOD_f( IConVar *pConVar, const char *pOldString, float flOldValue )
 //-----------------------------------------------------------------------------
 // Discard and reload (rebuild, rebake, etc) models to the current lod
 //-----------------------------------------------------------------------------
-void FlushLOD_f()
+void FlushLOD_f(int nClientIndex)
 {
 	UpdateStudioRenderConfig();
 	if ( !g_LostVideoMemory )

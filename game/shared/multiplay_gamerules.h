@@ -211,7 +211,7 @@ public:
 	virtual void EndMultiplayerGame( void ) { GoToIntermission(); }
 
 // Voice commands
-	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual VoiceCommandMenuItem_t *VoiceCommand( CBaseMultiplayerPlayer *pPlayer, int iMenu, int iItem );
 	
 // Bugbait report	

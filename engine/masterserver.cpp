@@ -631,7 +631,7 @@ void CMaster::Heartbeat_f (void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void AddMaster_f( const CCommand &args )
+void AddMaster_f( const CCommand &args, int nClientIndex)
 {
 	master->AddMaster_f( args );
 }
@@ -639,7 +639,7 @@ void AddMaster_f( const CCommand &args )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Heartbeat1_f( void )
+void Heartbeat1_f( int nClientIndex )
 {
 	master->Heartbeat_f();
 }

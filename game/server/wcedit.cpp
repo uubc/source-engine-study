@@ -546,20 +546,20 @@ error:
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_Create( void )
+void CC_WC_Create(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode())
 	{
-		CBaseEntity::m_nDebugPlayer = UTIL_GetCommandClientIndex();
+		CBaseEntity::m_nDebugPlayer = nClientIndex + 1;
 
 		if (g_pAINetworkManager->GetEditOps()->m_bLinkEditMode)
 		{
-			NWCEdit::CreateAILink(UTIL_GetCommandClient());
+			NWCEdit::CreateAILink(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 		}
 		else
 		{
-			NWCEdit::CreateAINode(UTIL_GetCommandClient());
+			NWCEdit::CreateAINode(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 		}
 	}
 }
@@ -570,12 +570,12 @@ static ConCommand wc_create("wc_create", CC_WC_Create, "When in WC edit mode, cr
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_Destroy( void )
+void CC_WC_Destroy(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode())
 	{
-		CBaseEntity::m_nDebugPlayer = UTIL_GetCommandClientIndex();
+		CBaseEntity::m_nDebugPlayer = nClientIndex + 1;
 
 		// UNDONE: For now just deal with info_nodes
 		//CBaseEntity* pEntity = FindEntity( pEdict, ""); - use when generalize this to any class
@@ -583,11 +583,11 @@ void CC_WC_Destroy( void )
 
 		if (g_pAINetworkManager->GetEditOps()->m_bLinkEditMode)
 		{
-			NWCEdit::DestroyAILink(UTIL_GetCommandClient());
+			NWCEdit::DestroyAILink(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 		}
 		else
 		{
-			NWCEdit::DestroyAINode(UTIL_GetCommandClient());
+			NWCEdit::DestroyAINode(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 		}
 	}
 }
@@ -598,12 +598,12 @@ static ConCommand wc_destroy("wc_destroy", CC_WC_Destroy, "When in WC edit mode,
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_DestroyUndo( void )
+void CC_WC_DestroyUndo(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode())
 	{
-		CBaseEntity::m_nDebugPlayer = UTIL_GetCommandClientIndex();
+		CBaseEntity::m_nDebugPlayer = nClientIndex + 1;
 
 		NWCEdit::UndoDestroyAINode();
 	}
@@ -615,7 +615,7 @@ static ConCommand wc_destroy_undo("wc_destroy_undo", CC_WC_DestroyUndo, "When in
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_AirNodeEdit( void )
+void CC_WC_AirNodeEdit(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode())
@@ -638,7 +638,7 @@ static ConCommand wc_air_node_edit("wc_air_node_edit", CC_WC_AirNodeEdit, "When 
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_AirNodeEditFurther( void )
+void CC_WC_AirNodeEditFurther(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode() && g_pAINetworkManager->GetEditOps()->m_bAirEditMode)
@@ -653,7 +653,7 @@ static ConCommand wc_air_edit_further("wc_air_edit_further", CC_WC_AirNodeEditFu
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_AirNodeEditNearer( void )
+void CC_WC_AirNodeEditNearer(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode() && g_pAINetworkManager->GetEditOps()->m_bAirEditMode)
@@ -668,7 +668,7 @@ static ConCommand wc_air_edit_nearer("wc_air_edit_nearer", CC_WC_AirNodeEditNear
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_WC_LinkEdit( void )
+void CC_WC_LinkEdit(int nClientIndex)
 {
 	// Only allowed in wc_edit_mode 
 	if (engine->IsInEditMode())
@@ -740,12 +740,12 @@ END_DATADESC()
 
 CON_COMMAND( hammer_update_entity, "Updates the entity's position/angles when in edit mode" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() < 2 )
 	{
-		CBasePlayer *pPlayer = UTIL_GetCommandClient();
+		CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
@@ -772,7 +772,7 @@ CON_COMMAND( hammer_update_safe_entities, "Updates entities in the map that can 
 	int iCount = 0;
 	IServerEntity *pEnt = NULL;
 
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	Msg("\n====================================================\nPerforming Safe Entity Update\n" );

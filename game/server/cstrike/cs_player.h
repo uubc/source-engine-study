@@ -454,7 +454,7 @@ public:
 	// This is the think function for the player when they first join the server and have to select a team
 	void JoiningThink();
 
-	virtual bool ClientCommand( const CCommand &args );
+	virtual bool ClientCommand( const CCommand &args, int nClientIndex);
 
 	bool HandleCommand_JoinClass( int iClass );
 	bool HandleCommand_JoinTeam( int iTeam );

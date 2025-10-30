@@ -1227,7 +1227,7 @@ void CNavMesh::RemoveOverlappingObstacleTopAreas()
 
 }
 
-static void CommandNavCheckStairs( void )
+static void CommandNavCheckStairs(int nClientIndex)
 {
 	TheNavMesh->MarkStairAreas();
 }
@@ -4795,7 +4795,7 @@ void CNavMesh::CommandNavSubdivide( const CCommand &args )
 
 CON_COMMAND_F( nav_subdivide, "Subdivides all selected areas.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSubdivide( args );

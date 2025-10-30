@@ -78,7 +78,7 @@ public:
 
 	virtual void PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper);
 
-	virtual bool ClientCommand( const CCommand &args );
+	virtual bool ClientCommand( const CCommand &args, int nClientIndex);
 	virtual void CreateViewModel( int viewmodelindex = 0 );
 	//virtual bool BecomeRagdollOnClient( const Vector &force );
 	virtual int	OnTakeDamage( const ITakeDamageInfo&inputInfo );

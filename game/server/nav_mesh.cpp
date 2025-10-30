@@ -1566,9 +1566,9 @@ void CNavMesh::IncreaseDangerNearby( int teamID, float amount, CNavArea *startAr
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRemoveJumpAreas( void )
+void CommandNavRemoveJumpAreas(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavRemoveJumpAreas();
@@ -1577,9 +1577,9 @@ static ConCommand nav_remove_jump_areas( "nav_remove_jump_areas", CommandNavRemo
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavDelete( void )
+void CommandNavDelete(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() || !nav_edit.GetBool() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) || !nav_edit.GetBool() )
 		return;
 
 	TheNavMesh->CommandNavDelete();
@@ -1588,9 +1588,9 @@ static ConCommand nav_delete( "nav_delete", CommandNavDelete, "Deletes the curre
 
 
 //-------------------------------------------------------------------------------------------------------------- 
-void CommandNavDeleteMarked( void ) 
+void CommandNavDeleteMarked(int nClientIndex)
 { 
-	if ( !UTIL_IsCommandIssuedByServerAdmin() || !nav_edit.GetBool() ) 
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) || !nav_edit.GetBool() ) 
 		return; 
 
 	TheNavMesh->CommandNavDeleteMarked(); 
@@ -1601,7 +1601,7 @@ static ConCommand nav_delete_marked( "nav_delete_marked", CommandNavDeleteMarked
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_flood_select, "Selects the current Area and all Areas connected to it, recursively. To clear a selection, use this command again.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavFloodSelect( args );
@@ -1609,9 +1609,9 @@ CON_COMMAND_F( nav_flood_select, "Selects the current Area and all Areas connect
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavToggleSelectedSet( void )
+void CommandNavToggleSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleSelectedSet();
@@ -1620,9 +1620,9 @@ static ConCommand nav_toggle_selected_set( "nav_toggle_selected_set", CommandNav
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavStoreSelectedSet( void )
+void CommandNavStoreSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavStoreSelectedSet();
@@ -1631,9 +1631,9 @@ static ConCommand nav_store_selected_set( "nav_store_selected_set", CommandNavSt
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRecallSelectedSet( void )
+void CommandNavRecallSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavRecallSelectedSet();
@@ -1642,9 +1642,9 @@ static ConCommand nav_recall_selected_set( "nav_recall_selected_set", CommandNav
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavAddToSelectedSet( void )
+void CommandNavAddToSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavAddToSelectedSet();
@@ -1655,7 +1655,7 @@ static ConCommand nav_add_to_selected_set( "nav_add_to_selected_set", CommandNav
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_add_to_selected_set_by_id, "Add specified area id to the selected set.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavAddToSelectedSetByID( args );
@@ -1663,9 +1663,9 @@ CON_COMMAND_F( nav_add_to_selected_set_by_id, "Add specified area id to the sele
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRemoveFromSelectedSet( void )
+void CommandNavRemoveFromSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavRemoveFromSelectedSet();
@@ -1674,9 +1674,9 @@ static ConCommand nav_remove_from_selected_set( "nav_remove_from_selected_set", 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavToggleInSelectedSet( void )
+void CommandNavToggleInSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleInSelectedSet();
@@ -1685,9 +1685,9 @@ static ConCommand nav_toggle_in_selected_set( "nav_toggle_in_selected_set", Comm
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavClearSelectedSet( void )
+void CommandNavClearSelectedSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavClearSelectedSet();
@@ -1785,9 +1785,9 @@ CON_COMMAND_F( nav_select_larger_than, "Select nav areas where both dimensions a
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginSelecting( void )
+void CommandNavBeginSelecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginSelecting();
@@ -1796,9 +1796,9 @@ static ConCommand nav_begin_selecting( "nav_begin_selecting", CommandNavBeginSel
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndSelecting( void )
+void CommandNavEndSelecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndSelecting();
@@ -1807,9 +1807,9 @@ static ConCommand nav_end_selecting( "nav_end_selecting", CommandNavEndSelecting
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginDragSelecting( void )
+void CommandNavBeginDragSelecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginDragSelecting();
@@ -1818,9 +1818,9 @@ static ConCommand nav_begin_drag_selecting( "nav_begin_drag_selecting", CommandN
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndDragSelecting( void )
+void CommandNavEndDragSelecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndDragSelecting();
@@ -1829,9 +1829,9 @@ static ConCommand nav_end_drag_selecting( "nav_end_drag_selecting", CommandNavEn
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginDragDeselecting( void )
+void CommandNavBeginDragDeselecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginDragDeselecting();
@@ -1840,9 +1840,9 @@ static ConCommand nav_begin_drag_deselecting( "nav_begin_drag_deselecting", Comm
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndDragDeselecting( void )
+void CommandNavEndDragDeselecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndDragDeselecting();
@@ -1851,9 +1851,9 @@ static ConCommand nav_end_drag_deselecting( "nav_end_drag_deselecting", CommandN
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRaiseDragVolumeMax( void )
+void CommandNavRaiseDragVolumeMax(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavRaiseDragVolumeMax();
@@ -1862,9 +1862,9 @@ static ConCommand nav_raise_drag_volume_max( "nav_raise_drag_volume_max", Comman
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavLowerDragVolumeMax( void )
+void CommandNavLowerDragVolumeMax(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavLowerDragVolumeMax();
@@ -1873,9 +1873,9 @@ static ConCommand nav_lower_drag_volume_max( "nav_lower_drag_volume_max", Comman
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRaiseDragVolumeMin( void )
+void CommandNavRaiseDragVolumeMin(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavRaiseDragVolumeMin();
@@ -1884,9 +1884,9 @@ static ConCommand nav_raise_drag_volume_min( "nav_raise_drag_volume_min", Comman
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavLowerDragVolumeMin( void )
+void CommandNavLowerDragVolumeMin(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavLowerDragVolumeMin();
@@ -1895,9 +1895,9 @@ static ConCommand nav_lower_drag_volume_min( "nav_lower_drag_volume_min", Comman
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavToggleSelecting( void )
+void CommandNavToggleSelecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleSelecting();
@@ -1906,9 +1906,9 @@ static ConCommand nav_toggle_selecting( "nav_toggle_selecting", CommandNavToggle
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginDeselecting( void )
+void CommandNavBeginDeselecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginDeselecting();
@@ -1917,9 +1917,9 @@ static ConCommand nav_begin_deselecting( "nav_begin_deselecting", CommandNavBegi
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndDeselecting( void )
+void CommandNavEndDeselecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndDeselecting();
@@ -1928,9 +1928,9 @@ static ConCommand nav_end_deselecting( "nav_end_deselecting", CommandNavEndDesel
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavToggleDeselecting( void )
+void CommandNavToggleDeselecting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleDeselecting();
@@ -1941,7 +1941,7 @@ static ConCommand nav_toggle_deselecting( "nav_toggle_deselecting", CommandNavTo
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_half_space, "Selects any areas that intersect the given half-space.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectHalfSpace( args );
@@ -1949,9 +1949,9 @@ CON_COMMAND_F( nav_select_half_space, "Selects any areas that intersect the give
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginShiftXY( void )
+void CommandNavBeginShiftXY(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginShiftXY();
@@ -1960,9 +1960,9 @@ static ConCommand nav_begin_shift_xy( "nav_begin_shift_xy", CommandNavBeginShift
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndShiftXY( void )
+void CommandNavEndShiftXY(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndShiftXY();
@@ -1971,9 +1971,9 @@ static ConCommand nav_end_shift_xy( "nav_end_shift_xy", CommandNavEndShiftXY, "F
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavSelectInvalidAreas( void )
+void CommandNavSelectInvalidAreas(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectInvalidAreas();
@@ -1984,7 +1984,7 @@ static ConCommand nav_select_invalid_areas( "nav_select_invalid_areas", CommandN
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_blocked_areas, "Adds all blocked areas to the selected set", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectBlockedAreas();
@@ -1994,7 +1994,7 @@ CON_COMMAND_F( nav_select_blocked_areas, "Adds all blocked areas to the selected
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_obstructed_areas, "Adds all obstructed areas to the selected set", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectObstructedAreas();
@@ -2004,7 +2004,7 @@ CON_COMMAND_F( nav_select_obstructed_areas, "Adds all obstructed areas to the se
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_damaging_areas, "Adds all damaging areas to the selected set", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectDamagingAreas();
@@ -2014,7 +2014,7 @@ CON_COMMAND_F( nav_select_damaging_areas, "Adds all damaging areas to the select
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_stairs, "Adds all stairway areas to the selected set", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectStairs();
@@ -2024,7 +2024,7 @@ CON_COMMAND_F( nav_select_stairs, "Adds all stairway areas to the selected set",
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_orphans, "Adds all orphan areas to the selected set (highlight a valid area first).", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSelectOrphans();
@@ -2032,9 +2032,9 @@ CON_COMMAND_F( nav_select_orphans, "Adds all orphan areas to the selected set (h
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavSplit( void )
+void CommandNavSplit(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSplit();
@@ -2043,9 +2043,9 @@ static ConCommand nav_split( "nav_split", CommandNavSplit, "To split an Area int
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavMakeSniperSpots( void )
+void CommandNavMakeSniperSpots(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMakeSniperSpots();
@@ -2054,9 +2054,9 @@ static ConCommand nav_make_sniper_spots( "nav_make_sniper_spots", CommandNavMake
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavMerge( void )
+void CommandNavMerge(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMerge();
@@ -2065,9 +2065,9 @@ static ConCommand nav_merge( "nav_merge", CommandNavMerge, "To merge two Areas i
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavMark( const CCommand &args )
+void CommandNavMark( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMark( args );
@@ -2076,9 +2076,9 @@ static ConCommand nav_mark( "nav_mark", CommandNavMark, "Marks the Area or Ladde
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavUnmark( void )
+void CommandNavUnmark(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavUnmark();
@@ -2087,9 +2087,9 @@ static ConCommand nav_unmark( "nav_unmark", CommandNavUnmark, "Clears the marked
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBeginArea( void )
+void CommandNavBeginArea(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBeginArea();
@@ -2098,9 +2098,9 @@ static ConCommand nav_begin_area( "nav_begin_area", CommandNavBeginArea, "Define
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavEndArea( void )
+void CommandNavEndArea(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavEndArea();
@@ -2109,9 +2109,9 @@ static ConCommand nav_end_area( "nav_end_area", CommandNavEndArea, "Defines the 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavConnect( void )
+void CommandNavConnect(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavConnect();
@@ -2120,9 +2120,9 @@ static ConCommand nav_connect( "nav_connect", CommandNavConnect, "To connect two
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavDisconnect( void )
+void CommandNavDisconnect(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavDisconnect();
@@ -2131,9 +2131,9 @@ static ConCommand nav_disconnect( "nav_disconnect", CommandNavDisconnect, "To di
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavDisconnectOutgoingOneWays( void )
+void CommandNavDisconnectOutgoingOneWays(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavDisconnectOutgoingOneWays();
@@ -2142,9 +2142,9 @@ static ConCommand nav_disconnect_outgoing_oneways( "nav_disconnect_outgoing_onew
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavSplice( void )
+void CommandNavSplice(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSplice();
@@ -2153,9 +2153,9 @@ static ConCommand nav_splice( "nav_splice", CommandNavSplice, "To splice, mark a
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavCrouch( void )
+void CommandNavCrouch(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_CROUCH );
@@ -2164,9 +2164,9 @@ static ConCommand nav_crouch( "nav_crouch", CommandNavCrouch, "Toggles the 'must
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPrecise( void )
+void CommandNavPrecise(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_PRECISE );
@@ -2175,9 +2175,9 @@ static ConCommand nav_precise( "nav_precise", CommandNavPrecise, "Toggles the 'd
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavJump( void )
+void CommandNavJump(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_JUMP );
@@ -2186,9 +2186,9 @@ static ConCommand nav_jump( "nav_jump", CommandNavJump, "Toggles the 'traverse t
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavNoJump( void )
+void CommandNavNoJump(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_NO_JUMP );
@@ -2197,9 +2197,9 @@ static ConCommand nav_no_jump( "nav_no_jump", CommandNavNoJump, "Toggles the 'do
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavStop( void )
+void CommandNavStop(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_STOP );
@@ -2208,9 +2208,9 @@ static ConCommand nav_stop( "nav_stop", CommandNavStop, "Toggles the 'must stop 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavWalk( void )
+void CommandNavWalk(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_WALK );
@@ -2219,9 +2219,9 @@ static ConCommand nav_walk( "nav_walk", CommandNavWalk, "Toggles the 'traverse t
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavRun( void )
+void CommandNavRun(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_RUN );
@@ -2230,9 +2230,9 @@ static ConCommand nav_run( "nav_run", CommandNavRun, "Toggles the 'traverse this
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavAvoid( void )
+void CommandNavAvoid(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_AVOID );
@@ -2241,9 +2241,9 @@ static ConCommand nav_avoid( "nav_avoid", CommandNavAvoid, "Toggles the 'avoid t
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavTransient( void )
+void CommandNavTransient(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_TRANSIENT );
@@ -2252,9 +2252,9 @@ static ConCommand nav_transient( "nav_transient", CommandNavTransient, "Toggles 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavDontHide( void )
+void CommandNavDontHide(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_DONT_HIDE );
@@ -2263,9 +2263,9 @@ static ConCommand nav_dont_hide( "nav_dont_hide", CommandNavDontHide, "Toggles t
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavStand( void )
+void CommandNavStand(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_STAND );
@@ -2274,9 +2274,9 @@ static ConCommand nav_stand( "nav_stand", CommandNavStand, "Toggles the 'stand w
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavNoHostages( void )
+void CommandNavNoHostages(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavToggleAttribute( NAV_MESH_NO_HOSTAGES );
@@ -2285,9 +2285,9 @@ static ConCommand nav_no_hostages( "nav_no_hostages", CommandNavNoHostages, "Tog
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavStrip( void )
+void CommandNavStrip(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->StripNavigationAreas();
@@ -2296,9 +2296,9 @@ static ConCommand nav_strip( "nav_strip", CommandNavStrip, "Strips all Hiding Sp
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavSave( void )
+void CommandNavSave(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if (TheNavMesh->Save())
@@ -2315,9 +2315,9 @@ static ConCommand nav_save( "nav_save", CommandNavSave, "Saves the current Navig
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavLoad( void )
+void CommandNavLoad(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if (TheNavMesh->Load() != NAV_OK)
@@ -2336,9 +2336,9 @@ static int PlaceNameAutocompleteCallback( char const *partial, char commands[ CO
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavUsePlace( const CCommand &args )
+void CommandNavUsePlace( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if (args.ArgC() == 1)
@@ -2366,9 +2366,9 @@ static ConCommand nav_use_place( "nav_use_place", CommandNavUsePlace, "If used w
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPlaceReplace( const CCommand &args )
+void CommandNavPlaceReplace( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if (args.ArgC() != 3)
@@ -2403,9 +2403,9 @@ static ConCommand nav_place_replace( "nav_place_replace", CommandNavPlaceReplace
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPlaceList( void )
+void CommandNavPlaceList(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CUtlVector< Place > placeDirectory;
@@ -2435,9 +2435,9 @@ static ConCommand nav_place_list( "nav_place_list", CommandNavPlaceList, "Lists 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavTogglePlaceMode( void )
+void CommandNavTogglePlaceMode(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavTogglePlaceMode();
@@ -2446,9 +2446,9 @@ static ConCommand nav_toggle_place_mode( "nav_toggle_place_mode", CommandNavTogg
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavSetPlaceMode( const CCommand &args )
+void CommandNavSetPlaceMode( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	bool on = true;
@@ -2466,9 +2466,9 @@ static ConCommand nav_set_place_mode( "nav_set_place_mode", CommandNavSetPlaceMo
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPlaceFloodFill( void )
+void CommandNavPlaceFloodFill(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavPlaceFloodFill();
@@ -2477,9 +2477,9 @@ static ConCommand nav_place_floodfill( "nav_place_floodfill", CommandNavPlaceFlo
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPlaceSet( void )
+void CommandNavPlaceSet(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavPlaceSet();
@@ -2488,9 +2488,9 @@ static ConCommand nav_place_set( "nav_place_set", CommandNavPlaceSet, "Sets the 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavPlacePick( void )
+void CommandNavPlacePick(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavPlacePick();
@@ -2499,9 +2499,9 @@ static ConCommand nav_place_pick( "nav_place_pick", CommandNavPlacePick, "Sets t
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavTogglePlacePainting( void )
+void CommandNavTogglePlacePainting(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavTogglePlacePainting();
@@ -2510,9 +2510,9 @@ static ConCommand nav_toggle_place_painting( "nav_toggle_place_painting", Comman
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavMarkUnnamed( void )
+void CommandNavMarkUnnamed(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMarkUnnamed();
@@ -2521,9 +2521,9 @@ static ConCommand nav_mark_unnamed( "nav_mark_unnamed", CommandNavMarkUnnamed, "
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavCornerSelect( void )
+void CommandNavCornerSelect(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavCornerSelect();
@@ -2534,7 +2534,7 @@ static ConCommand nav_corner_select( "nav_corner_select", CommandNavCornerSelect
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_corner_raise, "Raise the selected corner of the currently marked Area.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavCornerRaise( args );
@@ -2544,7 +2544,7 @@ CON_COMMAND_F( nav_corner_raise, "Raise the selected corner of the currently mar
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_corner_lower, "Lower the selected corner of the currently marked Area.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavCornerLower( args );
@@ -2554,7 +2554,7 @@ CON_COMMAND_F( nav_corner_lower, "Lower the selected corner of the currently mar
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_corner_place_on_ground, "Places the selected corner of the currently marked Area on the ground.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavCornerPlaceOnGround( args );
@@ -2562,9 +2562,9 @@ CON_COMMAND_F( nav_corner_place_on_ground, "Places the selected corner of the cu
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavWarpToMark( void )
+void CommandNavWarpToMark(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavWarpToMark();
@@ -2573,9 +2573,9 @@ static ConCommand nav_warp_to_mark( "nav_warp_to_mark", CommandNavWarpToMark, "W
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavLadderFlip( void )
+void CommandNavLadderFlip(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavLadderFlip();
@@ -2584,9 +2584,9 @@ static ConCommand nav_ladder_flip( "nav_ladder_flip", CommandNavLadderFlip, "Fli
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavGenerate( void )
+void CommandNavGenerate(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->BeginGeneration();
@@ -2595,9 +2595,9 @@ static ConCommand nav_generate( "nav_generate", CommandNavGenerate, "Generate a 
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavGenerateIncremental( void )
+void CommandNavGenerateIncremental(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->BeginGeneration( INCREMENTAL_GENERATION );
@@ -2606,9 +2606,9 @@ static ConCommand nav_generate_incremental( "nav_generate_incremental", CommandN
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavAnalyze( void )
+void CommandNavAnalyze(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( nav_edit.GetBool() )
@@ -2620,9 +2620,9 @@ static ConCommand nav_analyze( "nav_analyze", CommandNavAnalyze, "Re-analyze the
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavAnalyzeScripted( const CCommand &args )
+void CommandNavAnalyzeScripted( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *pszCmd = NULL;
@@ -2649,9 +2649,9 @@ static ConCommand nav_analyze_scripted( "nav_analyze_scripted", CommandNavAnalyz
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavMarkWalkable( void )
+void CommandNavMarkWalkable(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMarkWalkable();
@@ -2701,9 +2701,9 @@ static ConCommand nav_mark_walkable( "nav_mark_walkable", CommandNavMarkWalkable
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavClearWalkableMarks( void )
+void CommandNavClearWalkableMarks(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->ClearWalkableSeeds();
@@ -2712,9 +2712,9 @@ static ConCommand nav_clear_walkable_marks( "nav_clear_walkable_marks", CommandN
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavCompressID( void )
+void CommandNavCompressID(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CNavArea::CompressIDs();
@@ -2727,7 +2727,7 @@ static ConCommand nav_compress_id( "nav_compress_id", CommandNavCompressID, "Re-
 #ifdef TERROR
 void CommandNavShowLadderBounds( void )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CFuncSimpleLadder *ladder = NULL;
@@ -2743,9 +2743,9 @@ static ConCommand nav_show_ladder_bounds( "nav_show_ladder_bounds", CommandNavSh
 #endif
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavBuildLadder( void )
+void CommandNavBuildLadder(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavBuildLadder();
@@ -2754,7 +2754,7 @@ static ConCommand nav_build_ladder( "nav_build_ladder", CommandNavBuildLadder, "
 
 
 //--------------------------------------------------------------------------------------------------------
-void NavEditClearAllAttributes( void )
+void NavEditClearAllAttributes(int nClientIndex)
 {
 	NavAttributeClearer clear( (NavAttributeType)0xFFFF );
 	TheNavMesh->ForAllSelectedAreas( clear );
@@ -2863,7 +2863,7 @@ NavAttributeType NameToNavAttribute( const char *name )
 
 
 //--------------------------------------------------------------------------------------------------------
-void NavEditClearAttribute( const CCommand &args )
+void NavEditClearAttribute( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() != 2 )
 	{
@@ -2887,7 +2887,7 @@ static ConCommand NavClearAttribute( "nav_clear_attribute", NavEditClearAttribut
 
 
 //--------------------------------------------------------------------------------------------------------
-void NavEditMarkAttribute( const CCommand &args )
+void NavEditMarkAttribute( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() != 2 )
 	{
@@ -2914,7 +2914,7 @@ static ConCommand NavMarkAttribute( "nav_mark_attribute", NavEditMarkAttribute, 
 //--------------------------------------------------------------------------------------------------------------
 void CommandNavPickArea( void )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavPickArea();
@@ -2925,7 +2925,7 @@ static ConCommand nav_pick_area( "nav_pick_area", CommandNavPickArea, "Marks an 
 //--------------------------------------------------------------------------------------------------------------
 void CommandNavResizeHorizontal( void )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavResizeHorizontal();
@@ -2936,7 +2936,7 @@ static ConCommand nav_resize_horizontal( "nav_resize_horizontal", CommandNavResi
 //--------------------------------------------------------------------------------------------------------------
 void CommandNavResizeVertical( void )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavResizeVertical();
@@ -2947,7 +2947,7 @@ static ConCommand nav_resize_vertical( "nav_resize_vertical", CommandNavResizeVe
 //--------------------------------------------------------------------------------------------------------------
 void CommandNavResizeEnd( void )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavResizeEnd();

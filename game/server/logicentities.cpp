@@ -816,7 +816,7 @@ void CMathColorBlend::InputValue( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Console command to set the state of a global
 //-----------------------------------------------------------------------------
-void CC_Global_Set( const CCommand &args )
+void CC_Global_Set( const CCommand &args, int nClientIndex)
 {
 	const char *szGlobal = args[1];
 	const char *szState = args[2];

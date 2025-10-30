@@ -606,7 +606,7 @@ void CPoseDebuggerImpl::AccumulatePose( const IStudioHdr *pStudioHdr, CIKContext
 //
 //////////////////////////////////////////////////////////////////////////
 
-static void IN_PoseDebuggerStart( const CCommand &args )
+static void IN_PoseDebuggerStart( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() <= 1 )
 	{
@@ -632,7 +632,7 @@ static void IN_PoseDebuggerStart( const CCommand &args )
 	g_pPoseDebugger = &s_PoseDebuggerImpl;
 }
 
-static void IN_PoseDebuggerEnd( const CCommand &args )
+static void IN_PoseDebuggerEnd( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() <= 1 )
 	{

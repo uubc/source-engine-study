@@ -20,11 +20,11 @@
 #include "tier0/memdbgon.h"
 
 // Imported from other .cpp files
-void Host_Map_f( const CCommand &args );
-void Host_Map_Background_f( const CCommand &args );
-void Host_Map_Commentary_f( const CCommand &args );
-void Host_Changelevel_f( const CCommand &args );
-void Host_Changelevel2_f( const CCommand &args );
+void Host_Map_f( const CCommand &args, int nClientIndex);
+void Host_Map_Background_f( const CCommand &args, int nClientIndex);
+void Host_Map_Commentary_f( const CCommand &args, int nClientIndex);
+void Host_Changelevel_f( const CCommand &args, int nClientIndex);
+void Host_Changelevel2_f( const CCommand &args, int nClientIndex);
 
 //-----------------------------------------------------------------------------
 // Purpose: For each map, stores when the map last changed on disk and whether
@@ -675,7 +675,7 @@ static int Host_Changelevel2_f_CompletionFunc( char const *partial, char command
 //-----------------------------------------------------------------------------
 // Purpose: do a dir of the maps dir
 //-----------------------------------------------------------------------------
-static void Host_Maps_f( const CCommand &args )
+static void Host_Maps_f( const CCommand &args, int nClientIndex)
 {
 	const char *pszSubString = NULL;
 

@@ -990,7 +990,7 @@ void CAI_ExpresserHost_NPC_DoModifyOrAppendCriteria( CAI_BaseNPC *pSpeaker, AI_C
 #ifndef CSTRIKE_DLL
 CON_COMMAND( npc_speakall, "Force the npc to try and speak all their responses" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	IServerEntity *pEntity;
@@ -1005,7 +1005,7 @@ CON_COMMAND( npc_speakall, "Force the npc to try and speak all their responses" 
 	}
 	else
 	{
-		pEntity = EntityList()->FindPickerEntity( UTIL_GetCommandClient() );
+		pEntity = EntityList()->FindPickerEntity(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	}
 		
 	if ( pEntity )

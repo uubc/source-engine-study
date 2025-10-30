@@ -173,7 +173,7 @@ static bool R_DecalUnProject( decal_t *pdecal, decallist_t *entry);
 void R_DecalShoot( int textureIndex, int entity, const model_t *model, const Vector &position, const float *saxis, int flags, const color32 &rgbaColor, const Vector *pNormal );
 void R_DecalSortInit( void );
 
-static void r_printdecalinfo_f()
+static void r_printdecalinfo_f(int nClientIndex)
 {
 	int nPermanent = 0;
 	int nDynamic = 0;

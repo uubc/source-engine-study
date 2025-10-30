@@ -592,7 +592,7 @@ void CFloatingAchievementNumber::OnThink()
 // Purpose: Debug command to make one of the achievement panels flash as though it just went up
 //-----------------------------------------------------------------------------
 class CHudAchievementTracker;
-void cc_TrackerAnim_f( const CCommand &args )
+void cc_TrackerAnim_f( const CCommand &args, int nClientIndex)
 {
 	CHudBaseAchievementTracker *pTracker = ( CHudBaseAchievementTracker * )GET_HUDELEMENT( CHudAchievementTracker );
 	if ( !pTracker )

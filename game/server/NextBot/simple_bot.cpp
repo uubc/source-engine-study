@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------------------------------
 CON_COMMAND_F( simple_bot_add, "Add a simple bot.", FCVAR_CHEAT )
 {
-	CBasePlayer *player = UTIL_GetCommandClient();
+	CBasePlayer *player = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( !player )
 	{
 		return;

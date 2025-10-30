@@ -1089,12 +1089,12 @@ bool CGameClient::ExecuteStringCommand( const char *pCommandString )
 			return false;
 		}
 
-		g_pServerPluginHandler->SetCommandClient( m_nClientSlot );
-		Cmd_Dispatch( pCommand, args );
+		//g_pServerPluginHandler->SetCommandClient( m_nClientSlot );
+		Cmd_Dispatch( pCommand, args, m_nClientSlot );
 	}
 	else
 	{
-		g_pServerPluginHandler->ClientCommand( m_nEntityIndex, args ); // TODO pass client id and string
+		g_pServerPluginHandler->ClientCommand( m_nEntityIndex, args, m_nClientSlot ); // TODO pass client id and string
 	}
 
 	return true;

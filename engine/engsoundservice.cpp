@@ -37,7 +37,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-void Snd_Restart_f();
+void Snd_Restart_f(int nClientIndex);
 
 #define MAPLIST_FILE "maplist.txt"
 
@@ -193,7 +193,7 @@ public:
 
 	virtual void RestartSoundSystem()
 	{
-		Snd_Restart_f();
+		Snd_Restart_f(-1);
 	}
 
 	virtual void GetAllManifestFiles( CUtlRBTree< FileNameHandle_t, int >& list )

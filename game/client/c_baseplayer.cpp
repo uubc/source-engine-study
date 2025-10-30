@@ -3784,7 +3784,7 @@ void C_BasePlayer::CalcPortalView(Vector& eyeOrigin, QAngle& eyeAngles)
 	}
 }
 
-void CC_DumpClientSoundscapeData( const CCommand& args )
+void CC_DumpClientSoundscapeData( const CCommand& args, int nClientIndex)
 {
 	C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
 	if ( !pPlayer )

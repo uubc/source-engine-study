@@ -52,9 +52,9 @@ ConVar sv_vote_ui_hide_disabled_issues( "sv_vote_ui_hide_disabled_issues", "1", 
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CommandListIssues( void )
+void CommandListIssues(int nClientIndex)
 {
-	CBasePlayer *commandIssuer = UTIL_GetCommandClient();
+	CBasePlayer *commandIssuer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	if ( g_voteController && commandIssuer )
 	{
@@ -93,7 +93,7 @@ CON_COMMAND( callvote, "Start a vote on an issue." )
 			return;
 	}
 
-	CBasePlayer *pVoteCaller = UTIL_GetCommandClient();
+	CBasePlayer *pVoteCaller = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if( !pVoteCaller )
 		return;
 

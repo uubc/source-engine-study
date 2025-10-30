@@ -91,8 +91,8 @@ void* CubemapsFSFactory( const char *pName, int *pReturnCode );
 bool StripDirName( char *pFilename );
 
 // These are here so you can bind a key to +mat_texture_list and toggle it on and off.
-void mat_texture_list_on_f();
-void mat_texture_list_off_f();
+void mat_texture_list_on_f(int nClientIndex);
+void mat_texture_list_off_f(int nClientIndex);
 
 ConCommand mat_texture_list_on( "+mat_texture_list", mat_texture_list_on_f );
 ConCommand mat_texture_list_off( "-mat_texture_list", mat_texture_list_off_f );
@@ -1475,7 +1475,7 @@ void CRenderTextureEditor::OnCommand( const char *command )
 	{
 		MatViewOverride::RequestSelectNone();
 		MatViewOverride::RequestSelected( m_lstMaterials.Count(), m_lstMaterials.Base() );
-		mat_texture_list_off_f();
+		mat_texture_list_off_f(-1);
 	}
 
 	if ( ( !stricmp( command, "size-" ) || !stricmp( command, "size+" ) ) && m_pInfo )
@@ -1485,7 +1485,7 @@ void CRenderTextureEditor::OnCommand( const char *command )
 		if ( bResult )
 		{
 			CAutoPushPop<bool> auto_g_bRecursiveRequestToShowTextureList( g_bRecursiveRequestToShowTextureList, true );
-			mat_texture_list_on_f();
+			mat_texture_list_on_f(-1);
 		}
 
 		InvalidateLayout();
@@ -2988,7 +2988,7 @@ void CTextureListPanel::OnCommand( const char *command )
 		return;
 	}
 
-	mat_texture_list_on_f();
+	mat_texture_list_on_f(-1);
 	InvalidateLayout();
 }
 
@@ -3079,7 +3079,7 @@ void CTextureListPanel::OnTurnedOn()
 
 void CTextureListPanel::Close()
 {
-	mat_texture_list_off_f();
+	mat_texture_list_off_f(-1);
 }
 
 void CTextureListPanel::EndPaint()
@@ -3297,7 +3297,7 @@ void VGui_UpdateTextureListPanel()
 	if ( g_pTextureListPanel->IsVisible() != bShouldDrawTxListPanel )
 	{
 		g_pTextureListPanel->SetVisible( bShouldDrawTxListPanel );
-		bShouldDrawTxListPanel ? mat_texture_list_on_f() : mat_texture_list_off_f();
+		bShouldDrawTxListPanel ? mat_texture_list_on_f(-1) : mat_texture_list_off_f(-1);
 	}
 }
 
@@ -3327,7 +3327,7 @@ CON_COMMAND( mat_texture_save_fonts, "Save all font textures" )
 	}
 }
 
-void mat_texture_list_on_f()
+void mat_texture_list_on_f(int nClientIndex)
 {
 	ConVarRef sv_cheats( "sv_cheats" );
 	if ( sv_cheats.IsValid() && !sv_cheats.GetBool() )
@@ -3357,7 +3357,7 @@ void mat_texture_list_on_f()
 		g_cursorset = true;
 	}
 }
-void mat_texture_list_off_f()
+void mat_texture_list_off_f(int nClientIndex)
 {
 	mat_texture_list.SetValue( 0 );
 	s_eTxListPanelRequest = TXR_HIDE;

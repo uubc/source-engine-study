@@ -710,7 +710,7 @@ void CBreakableProp::HandleInteractionStick( int index, gamevcollisionevent_t *p
 //-----------------------------------------------------------------------------
 // Purpose: Turn on prop debugging mode
 //-----------------------------------------------------------------------------
-void CC_Prop_Debug( void )
+void CC_Prop_Debug(int nClientIndex)
 {
 	// Toggle the prop debug bit on all props
 	for ( IServerEntity *pEntity = EntityList()->FirstEnt(); pEntity != NULL; pEntity = EntityList()->NextEnt(pEntity) )
@@ -5867,13 +5867,13 @@ void CPhysicsPropRespawnable::Materialize( void )
 //------------------------------------------------------------------------------
 // Purpose: Create a prop of the given type
 //------------------------------------------------------------------------------
-void CC_Prop_Dynamic_Create( const CCommand &args )
+void CC_Prop_Dynamic_Create( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() != 2 )
 		return;
 
 	// Figure out where to place it
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	Vector forward;
 	pPlayer->EyeVectors( &forward );
 
@@ -5949,7 +5949,7 @@ static ConCommand prop_dynamic_create("prop_dynamic_create", CC_Prop_Dynamic_Cre
 //------------------------------------------------------------------------------
 // Purpose: Create a prop of the given type
 //------------------------------------------------------------------------------
-void CC_Prop_Physics_Create( const CCommand &args )
+void CC_Prop_Physics_Create( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() != 2 )
 		return;
@@ -5959,7 +5959,7 @@ void CC_Prop_Physics_Create( const CCommand &args )
 	Q_DefaultExtension( pModelName, ".mdl", sizeof(pModelName) );
 
 	// Figure out where to place it
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	Vector forward;
 	pPlayer->EyeVectors( &forward );
 
@@ -6186,9 +6186,9 @@ bool UTIL_CreateScaledPhysObject( CBaseEntity *pInstance, float flScale )
 //------------------------------------------------------------------------------
 // Rotates an entity
 //------------------------------------------------------------------------------
-void CC_Ent_Rotate( const CCommand &args )
+void CC_Ent_Rotate( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	IServerEntity* pEntity = EntityList()->FindPickerEntity( pPlayer );
 	if ( !pEntity )
 		return;

@@ -127,7 +127,7 @@ bool Filter_ConvertString( const char *s, ipfilter_t *f )
 //-----------------------------------------------------------------------------
 // Purpose: Adds an IP ban
 //-----------------------------------------------------------------------------
-static void Filter_Add_f( const CCommand& args )
+static void Filter_Add_f( const CCommand& args, int nClientIndex)
 {
 	int			i = 0;
 	float		banTime;

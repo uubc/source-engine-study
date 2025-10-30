@@ -878,7 +878,7 @@ void CBonusMapsDatabase::ParseBonusMapData( char const *pszFileName, char const 
 }
 
 
-void CC_BonusMapUnlock( const CCommand &args )
+void CC_BonusMapUnlock( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 3 )
 	{
@@ -891,7 +891,7 @@ void CC_BonusMapUnlock( const CCommand &args )
 static ConCommand sv_bonus_map_unlock("sv_bonus_map_unlock", CC_BonusMapUnlock, "Locks a bonus map.", FCVAR_CHEAT );
 
 
-void CC_BonusMapComplete( const CCommand &args )
+void CC_BonusMapComplete( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 3 )
 	{
@@ -904,7 +904,7 @@ void CC_BonusMapComplete( const CCommand &args )
 static ConCommand sv_bonus_map_complete("sv_bonus_map_complete", CC_BonusMapComplete, "Completes a bonus map.", FCVAR_CHEAT );
 
 
-void CC_BonusMapChallengeUpdate( const CCommand &args )
+void CC_BonusMapChallengeUpdate( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 5 )
 	{

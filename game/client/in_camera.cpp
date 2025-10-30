@@ -57,7 +57,7 @@ CAM_ToThirdPerson
 
 ==============================
 */
-void CAM_ToThirdPerson(void)
+void CAM_ToThirdPerson(int nClientIndex)
 {
 	if ( cl_thirdperson.GetBool() == false )
 	{
@@ -85,7 +85,7 @@ static bool & Is_CAM_ThirdPerson_MayaMode(void)
 	static bool s_b_CAM_ThirdPerson_MayaMode = false;
 	return s_b_CAM_ThirdPerson_MayaMode;
 }
-void CAM_ToThirdPerson_MayaMode(void)
+void CAM_ToThirdPerson_MayaMode(int nClientIndex)
 {
 	bool &rb = Is_CAM_ThirdPerson_MayaMode();
 	rb = !rb;
@@ -97,7 +97,7 @@ CAM_ToFirstPerson
 
 ==============================
 */
-void CAM_ToFirstPerson(void) 
+void CAM_ToFirstPerson(int nClientIndex)
 { 
 	IClientEntity *localPlayer = entitylist->GetLocalPlayer();
 	if ( localPlayer && !localPlayer->AsHandlePlayer()->CanUseFirstPersonCommand() )
@@ -123,7 +123,7 @@ CAM_ToOrthographic
 
 ==============================
 */
-void CAM_ToOrthographic(void) 
+void CAM_ToOrthographic(int nClientIndex)
 { 
 	g_pUserInput->CAM_ToOrthographic();
 }
@@ -134,7 +134,7 @@ CAM_StartMouseMove
 
 ==============================
 */
-void CAM_StartMouseMove( void )
+void CAM_StartMouseMove(int nClientIndex)
 {
 	g_pUserInput->CAM_StartMouseMove();
 }
@@ -145,7 +145,7 @@ CAM_EndMouseMove
 
 ==============================
 */
-void CAM_EndMouseMove( void )
+void CAM_EndMouseMove(int nClientIndex)
 {
 	g_pUserInput->CAM_EndMouseMove();
 }
@@ -156,7 +156,7 @@ CAM_StartDistance
 
 ==============================
 */
-void CAM_StartDistance( void )
+void CAM_StartDistance(int nClientIndex)
 {
 	g_pUserInput->CAM_StartDistance();
 }
@@ -167,7 +167,7 @@ CAM_EndDistance
 
 ==============================
 */
-void CAM_EndDistance( void )
+void CAM_EndDistance(int nClientIndex)
 {
 	g_pUserInput->CAM_EndDistance();
 }
@@ -178,7 +178,7 @@ CAM_ToggleSnapto
 
 ==============================
 */
-void CAM_ToggleSnapto( void )
+void CAM_ToggleSnapto(int nClientIndex)
 { 
 	cam_snapto.SetValue( !cam_snapto.GetInt() );
 }
@@ -654,18 +654,18 @@ void CUserInput::CAM_CameraThirdThink( void )
 	g_ThirdPersonManager.SetCameraOffsetAngles( vecCamOffset );
 }
 
-void CAM_PitchUpDown( const CCommand &args ) { KeyDown( &cam_pitchup, args[1] ); }
-void CAM_PitchUpUp( const CCommand &args ) { KeyUp( &cam_pitchup, args[1] ); }
-void CAM_PitchDownDown( const CCommand &args ) { KeyDown( &cam_pitchdown, args[1] ); }
-void CAM_PitchDownUp( const CCommand &args ) { KeyUp( &cam_pitchdown, args[1] ); }
-void CAM_YawLeftDown( const CCommand &args ) { KeyDown( &cam_yawleft, args[1] ); }
-void CAM_YawLeftUp( const CCommand &args ) { KeyUp( &cam_yawleft, args[1] ); }
-void CAM_YawRightDown( const CCommand &args ) { KeyDown( &cam_yawright, args[1] ); }
-void CAM_YawRightUp( const CCommand &args ) { KeyUp( &cam_yawright, args[1] ); }
-void CAM_InDown( const CCommand &args ) { KeyDown( &cam_in, args[1] ); }
-void CAM_InUp( const CCommand &args ) { KeyUp( &cam_in, args[1] ); }
-void CAM_OutDown( const CCommand &args ) { KeyDown( &cam_out, args[1] ); }
-void CAM_OutUp( const CCommand &args ) { KeyUp( &cam_out, args[1] ); }
+void CAM_PitchUpDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_pitchup, args[1] ); }
+void CAM_PitchUpUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_pitchup, args[1] ); }
+void CAM_PitchDownDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_pitchdown, args[1] ); }
+void CAM_PitchDownUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_pitchdown, args[1] ); }
+void CAM_YawLeftDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_yawleft, args[1] ); }
+void CAM_YawLeftUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_yawleft, args[1] ); }
+void CAM_YawRightDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_yawright, args[1] ); }
+void CAM_YawRightUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_yawright, args[1] ); }
+void CAM_InDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_in, args[1] ); }
+void CAM_InUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_in, args[1] ); }
+void CAM_OutDown( const CCommand &args, int nClientIndex) { KeyDown( &cam_out, args[1] ); }
+void CAM_OutUp( const CCommand &args, int nClientIndex) { KeyUp( &cam_out, args[1] ); }
 
 /*
 ==============================

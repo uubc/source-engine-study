@@ -564,7 +564,7 @@ Cmd_Exec_f
 ===============
 */
 
-void Cmd_Exec_f( const CCommand &args )
+void Cmd_Exec_f( const CCommand &args, int nClientIndex)
 {
 	LOCK_COMMAND_BUFFER();
 	char	fileName[MAX_OSPATH];
@@ -844,10 +844,10 @@ void Cmd_Shutdown( void )
 //-----------------------------------------------------------------------------
 // FIXME: Remove this! This is a temporary hack to deal with backward compat
 //-----------------------------------------------------------------------------
-void Cmd_Dispatch( const ConCommandBase *pCommand, const CCommand &command )
+void Cmd_Dispatch( const ConCommandBase *pCommand, const CCommand &command, int nClientIndex)
 {
 	ConCommand *pConCommand = const_cast<ConCommand*>( static_cast<const ConCommand*>( pCommand ) );
-	pConCommand->Dispatch( command );
+	pConCommand->Dispatch( command, nClientIndex );
 }
 
 
@@ -986,13 +986,13 @@ const ConCommandBase *Cmd_ExecuteCommand( const CCommand &command, cmd_source_t 
 				// We're actually the server, so set it up locally
 				if ( sv.IsActive() )
 				{
-					g_pServerPluginHandler->SetCommandClient( cmd_source == src_client ? nClientSlot : -1 );
+					//g_pServerPluginHandler->SetCommandClient( cmd_source == src_client ? nClientSlot : -1 );
 
 #ifndef SWDS
 					// Special processing for listen server player
 					if ( isServerCommand )
 					{
-						g_pServerPluginHandler->SetCommandClient( cl.m_nPlayerSlot );
+						//g_pServerPluginHandler->SetCommandClient( cl.m_nPlayerSlot );
 					}
 #endif
 				}
@@ -1043,7 +1043,7 @@ const ConCommandBase *Cmd_ExecuteCommand( const CCommand &command, cmd_source_t 
 				return NULL;
 			}
 
-			Cmd_Dispatch( pCommand, command );
+			Cmd_Dispatch( pCommand, command, nClientSlot );
 			return pCommand;
 		}
 	}

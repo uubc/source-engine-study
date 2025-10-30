@@ -39,7 +39,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-void Linefile_Read_f(void);
+void Linefile_Read_f(int nClientIndex);
 
 /*
 ====================
@@ -55,7 +55,7 @@ R_TimeRefresh_f
 For program optimization
 ====================
 */
-void R_TimeRefresh_f (void)
+void R_TimeRefresh_f (int nClientIndex)
 {
 	int			i;
 	float		start, stop, time;

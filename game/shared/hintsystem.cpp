@@ -304,12 +304,12 @@ void CHintSystem::SetHintPlayed( int iHintID )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void HintClear( void )
+void HintClear(int nClientIndex)
 {
 #ifdef CLIENT_DLL
 	C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
 #else
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 #endif
 	if ( pPlayer && pPlayer->Hints() )
 	{

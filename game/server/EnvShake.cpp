@@ -362,9 +362,9 @@ void CEnvShake::Think( void )
 //------------------------------------------------------------------------------
 // Purpose: Console command to cause a screen shake.
 //------------------------------------------------------------------------------
-void CC_Shake( void )
+void CC_Shake(int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if (pPlayer)
 	{
 		UTIL_ScreenShake( pPlayer->WorldSpaceCenter(), 25.0, 150.0, 1.0, 750, SHAKE_START );

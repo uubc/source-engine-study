@@ -579,14 +579,14 @@ int CFileTracker2::ListOpenedFiles( bool bAllOpened, const char *pchFilenameFind
 	return m_treeAllOpenedFiles.Count();
 }
 
-static void CC_TrackerListAllFiles( const CCommand &args )
+static void CC_TrackerListAllFiles( const CCommand &args, int nClientIndex)
 {
 	const char *pchFilenameFind = ( args.ArgC() >= 2 ) ? args[1] : NULL;
 	BaseFileSystem()->m_FileTracker2.ListOpenedFiles( true, pchFilenameFind );
 }
 static ConCommand trackerlistallfiles( "trackerlistallfiles", CC_TrackerListAllFiles, "TrackerListAllFiles" );
 
-static void CC_TrackerListVPKFiles( const CCommand &args )
+static void CC_TrackerListVPKFiles( const CCommand &args, int nClientIndex)
 {
 	const char *pchFilenameFind = ( args.ArgC() >= 2 ) ? args[1] : NULL;
 	BaseFileSystem()->m_FileTracker2.ListOpenedFiles( false, pchFilenameFind );

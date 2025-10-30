@@ -64,9 +64,9 @@ void DBG_AssertFunction( bool fExpr, const char *szExpr, const char *szFile, int
 
 
 
-void DumpEntityFactories_f()
+void DumpEntityFactories_f(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	EntityList()->DumpEntityFactories();
@@ -80,7 +80,7 @@ static ConCommand dumpentityfactories( "dumpentityfactories", DumpEntityFactorie
 //-----------------------------------------------------------------------------
 CON_COMMAND( dump_entity_sizes, "Print sizeof(entclass)" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	EntityList()->ReportEntitySizes();
@@ -393,9 +393,9 @@ CBasePlayer *UTIL_GetListenServerHost( void )
  * Returns true if the command was issued by the listenserver host, or by the dedicated server, via rcon or the server console.
  * This is valid during ConCommand execution.
  */
-bool UTIL_IsCommandIssuedByServerAdmin( void )
+bool UTIL_IsCommandIssuedByServerAdmin(int nClientIndex)
 {
-	int issuingPlayerIndex = UTIL_GetCommandClientIndex();
+	int issuingPlayerIndex = nClientIndex + 1;
 
 	if ( engine->IsDedicatedServer() && issuingPlayerIndex > 0 )
 		return false;
@@ -2305,7 +2305,7 @@ static void CallbackHighlight(IServerEntity* pEntity)
 
 CON_COMMAND(physics_highlight_active, "Turns on the absbox for all active physics objects")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
 	EntityList()->IterateActivePhysicsEntities(CallbackHighlight);
@@ -2323,7 +2323,7 @@ static void CallbackReport(IServerEntity* pEntity)
 
 CON_COMMAND(physics_report_active, "Lists all active physics objects")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
 	EntityList()->IterateActivePhysicsEntities(CallbackReport);
@@ -2331,10 +2331,10 @@ CON_COMMAND(physics_report_active, "Lists all active physics objects")
 
 CON_COMMAND_F(surfaceprop, "Reports the surface properties at the cursor", FCVAR_CHEAT)
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	trace_t tr;
 	Vector forward;
@@ -2442,11 +2442,11 @@ public:
 	CUtlVector<CConstraintFloodEntry> m_entryList;
 };
 
-void PhysicsCommand(const CCommand& args, void (*func)(IServerEntity* pEntity))
+void PhysicsCommand(const CCommand& args, int nClientIndex, void (*func)(IServerEntity* pEntity))
 {
 	if (args.ArgC() < 2)
 	{
-		CBasePlayer* pPlayer = UTIL_GetCommandClient();
+		CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 		trace_t tr;
 		Vector forward;
@@ -2529,10 +2529,10 @@ static void DebugConstraints(IServerEntity* pEntity)
 
 CON_COMMAND(physics_constraints, "Highlights constraint system graph for an entity")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
-	PhysicsCommand(args, DebugConstraints);
+	PhysicsCommand(args, nClientIndex, DebugConstraints);
 }
 
 static void OutputVPhysicsDebugInfo(IServerEntity* pEntity)
@@ -2542,10 +2542,10 @@ static void OutputVPhysicsDebugInfo(IServerEntity* pEntity)
 
 CON_COMMAND(physics_debug_entity, "Dumps debug info for an entity")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
-	PhysicsCommand(args, OutputVPhysicsDebugInfo);
+	PhysicsCommand(args, nClientIndex, OutputVPhysicsDebugInfo);
 }
 
 static void MarkVPhysicsDebug(IServerEntity* pEntity)
@@ -2564,15 +2564,15 @@ static void MarkVPhysicsDebug(IServerEntity* pEntity)
 
 CON_COMMAND(physics_select, "Dumps debug info for an entity")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
-	PhysicsCommand(args, MarkVPhysicsDebug);
+	PhysicsCommand(args, nClientIndex, MarkVPhysicsDebug);
 }
 
 CON_COMMAND(physics_budget, "Times the cost of each active object")
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
 	EntityList()->OutputVPhysicsBudgetInfo();
@@ -2580,7 +2580,7 @@ CON_COMMAND(physics_budget, "Times the cost of each active object")
 
 //-----------------------------------------------------------------------------
 
-void CC_AirDensity(const CCommand& args)
+void CC_AirDensity(const CCommand& args, int nClientIndex)
 {
 	if (!EntityList()->PhysGetEnv())
 		return;
@@ -2655,7 +2655,7 @@ void DumpCollideToGlView(CPhysCollide* pCollide, const Vector& origin, const QAn
 #define NUM_KDTREE_TESTS		2500
 #define NUM_KDTREE_ENTITY_SIZE	256
 
-void CC_KDTreeTest( const CCommand &args )
+void CC_KDTreeTest( const CCommand &args, int nClientIndex)
 {
 	Msg( "Testing kd-tree entity queries." );
 
@@ -2825,7 +2825,7 @@ void CC_KDTreeTest( const CCommand &args )
 
 static ConCommand kdtree_test( "kdtree_test", CC_KDTreeTest, "Tests spatial partition for entities queries.", FCVAR_CHEAT );
 
-void CC_VoxelTreeView( void )
+void CC_VoxelTreeView(int nClientIndex)
 {
 	Msg( "VoxelTreeView\n" );
 	partition->RenderAllObjectsInTree( 10.0f );
@@ -2833,7 +2833,7 @@ void CC_VoxelTreeView( void )
 
 static ConCommand voxeltree_view( "voxeltree_view", CC_VoxelTreeView, "View entities in the voxel-tree.", FCVAR_CHEAT );
 
-void CC_VoxelTreePlayerView( void )
+void CC_VoxelTreePlayerView(int nClientIndex)
 {
 	Msg( "VoxelTreePlayerView\n" );
 
@@ -2844,7 +2844,7 @@ void CC_VoxelTreePlayerView( void )
 
 static ConCommand voxeltree_playerview( "voxeltree_playerview", CC_VoxelTreePlayerView, "View entities in the voxel-tree at the player position.", FCVAR_CHEAT );
 
-void CC_VoxelTreeBox( const CCommand &args )
+void CC_VoxelTreeBox( const CCommand &args, int nClientIndex)
 {
 	Vector vecMin, vecMax;
 	if ( args.ArgC() >= 6 )
@@ -2895,7 +2895,7 @@ void CC_VoxelTreeBox( const CCommand &args )
 
 static ConCommand voxeltree_box( "voxeltree_box", CC_VoxelTreeBox, "View entities in the voxel-tree inside box <Vector(min), Vector(max)>.", FCVAR_CHEAT );
 
-void CC_VoxelTreeSphere( const CCommand &args )
+void CC_VoxelTreeSphere( const CCommand &args, int nClientIndex)
 {
 	Vector vecCenter;
 	float flRadius;
@@ -2952,7 +2952,7 @@ static ConCommand voxeltree_sphere( "voxeltree_sphere", CC_VoxelTreeSphere, "Vie
 
 
 #define NUM_COLLISION_TESTS 2500
-void CC_CollisionTest( const CCommand &args )
+void CC_CollisionTest( const CCommand &args, int nClientIndex)
 {
 	if ( !EntityList()->PhysGetEnv())
 		return;
@@ -3058,9 +3058,9 @@ static ConCommand collision_test("collision_test", CC_CollisionTest, "Tests coll
 
 #ifndef CLIENT_DLL
 
-void CC_Debug_FixMyPosition(void)
+void CC_Debug_FixMyPosition(int nClientIndex)
 {
-	CBaseEntity* pPlayer = UTIL_GetCommandClient();
+	CBaseEntity* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	pPlayer->FindClosestPassableSpace(vec3_origin);
 }

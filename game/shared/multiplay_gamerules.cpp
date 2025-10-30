@@ -87,9 +87,9 @@ ConVar mp_restartgame_immediate( "mp_restartgame_immediate", "0", FCVAR_GAMEDLL,
 
 ConVar mp_mapcycle_empty_timeout_seconds( "mp_mapcycle_empty_timeout_seconds", "0", FCVAR_REPLICATED, "If nonzero, server will cycle to the next map if it has been empty on the current map for N seconds");
 
-void cc_SkipNextMapInCycle()
+void cc_SkipNextMapInCycle(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( MultiplayRules() )
@@ -98,9 +98,9 @@ void cc_SkipNextMapInCycle()
 	}
 }
 
-void cc_GotoNextMapInCycle()
+void cc_GotoNextMapInCycle(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( MultiplayRules() )
@@ -1576,7 +1576,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 		}
 	}
 
-	bool CMultiplayWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+	bool CMultiplayWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 	{
 		CBasePlayer *pPlayer = ToBasePlayer( pEdict );
 
@@ -1599,7 +1599,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 			return true;
 		}
 
-		return BaseClass::ClientCommand( pEdict, args );
+		return BaseClass::ClientCommand( pEdict, args, nClientIndex );
 	}
 
 	void CMultiplayWorld::ClientCommandKeyValues( int pEntity, KeyValues *pKeyValues )

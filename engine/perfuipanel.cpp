@@ -691,7 +691,7 @@ bool CEnginePerfTools::ShouldPause() const
 	return false;
 }
 
-void ShowHidePerfUI()
+void ShowHidePerfUI(int nClientIndex)
 {
 	if ( !g_pPerfUI )
 		return;

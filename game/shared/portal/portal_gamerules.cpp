@@ -56,7 +56,7 @@ extern ConVar	sk_autoaim_scale2;
 
 #ifndef CLIENT_DLL
 // Create the box used for portal puzzles, named 'box'. Used for easy debugging of portal puzzles.
-void CC_Create_PortalWeightBox( void )
+void CC_Create_PortalWeightBox(int nClientIndex)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
@@ -75,7 +75,7 @@ void CC_Create_PortalWeightBox( void )
 		EntityList()->DispatchSpawn(entity);
 
 		// Now attempt to drop into the world
-		CBasePlayer* pPlayer = UTIL_GetCommandClient();
+		CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
@@ -99,7 +99,7 @@ static ConCommand ent_create_portal_weight_box("ent_create_portal_weight_box", C
 
 #ifndef CLIENT_DLL
 // Create a very reflective bouncy metal sphere
-void CC_Create_PortalMetalSphere( void )
+void CC_Create_PortalMetalSphere(int nClientIndex)
 {
 	MDLCACHE_CRITICAL_SECTION();
 
@@ -118,7 +118,7 @@ void CC_Create_PortalMetalSphere( void )
 		EntityList()->DispatchSpawn(entity);
 
 		// Now attempt to drop into the world
-		CBasePlayer* pPlayer = UTIL_GetCommandClient();
+		CBasePlayer* pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 		trace_t tr;
 		Vector forward;
 		pPlayer->EyeVectors( &forward );
@@ -319,14 +319,14 @@ called each time a player is spawned into the game
 	//			Use engine.Cmd_Argv,  engine.Cmd_Argv, and engine.Cmd_Argc to get 
 	//			pointers the character string command.
 	//-----------------------------------------------------------------------------
-	bool CPortalGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+	bool CPortalGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 	{
-		if( BaseClass::ClientCommand( pEdict, args ) )
+		if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 			return true;
 
 		CPortal_Player *pPlayer = (CPortal_Player *) pEdict;
 
-		if ( pPlayer->ClientCommand( args ) )
+		if ( pPlayer->ClientCommand( args, nClientIndex ) )
 			return true;
 
 		return false;

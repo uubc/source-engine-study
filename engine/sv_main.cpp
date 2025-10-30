@@ -125,7 +125,7 @@ int GetSvPureMode()
 	return g_sv_pure_mode;
 }
 
-static void SV_Pure_f( const CCommand &args )
+static void SV_Pure_f( const CCommand &args, int nClientIndex)
 {
     int pure_mode = -2;
     if ( args.ArgC() == 2 )
@@ -1378,7 +1378,7 @@ const char szSvNetSpikeUsageText[] =
 	"Note that having this enabled, even if never triggered, impacts performance.  Set to zero when not in use.\n"
 	"For compatibility reasons, this command can be initialized on the command line with the -netspike option.";
 
-static void sv_netspike_f( const CCommand &args )
+static void sv_netspike_f( const CCommand &args, int nClientIndex)
 {
     if ( args.ArgC() != 2 )
     {
@@ -1609,7 +1609,7 @@ static ConCommand sv_wastememory( "sv_wastememory", sv_WasteMemory, "Causes the 
 #endif
 
 
-static void sv_ShutDownCancel( void )
+static void sv_ShutDownCancel(int nClientIndex)
 {
 	if ( s_bExitWhenEmpty || ( s_timeForceShutdown > 0.0 ) )
 	{
@@ -1627,7 +1627,7 @@ static void sv_ShutDownCancel( void )
 static ConCommand sv_shutdown_cancel( "sv_shutdown_cancel", sv_ShutDownCancel, "Cancels pending sv_shutdown command" );
 
 
-static void sv_ShutDown( void )
+static void sv_ShutDown(int nClientIndex)
 {
 	if ( !sv.IsDedicated() )
 	{

@@ -336,7 +336,7 @@ void ClientPrecache( void )
 
 CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 	
 	Vector forward;
 	trace_t tr;
@@ -358,7 +358,7 @@ CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
 
 CON_COMMAND_F( cast_hull, "Tests hull collision detection", FCVAR_CHEAT )
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 	
 	Vector forward;
 	trace_t tr;
@@ -539,7 +539,7 @@ LINK_ENTITY_TO_CLASS( point_servercommand, CPointServerCommand );
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_DrawLine( const CCommand &args )
+void CC_DrawLine( const CCommand &args, int nClientIndex)
 {
 	Vector startPos;
 	Vector endPos;
@@ -560,7 +560,7 @@ static ConCommand drawline("drawline", CC_DrawLine, "Draws line between two 3D P
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_DrawCross( const CCommand &args )
+void CC_DrawCross( const CCommand &args, int nClientIndex)
 {
 	Vector vPosition;
 
@@ -594,7 +594,7 @@ static ConCommand drawcross("drawcross", CC_DrawCross, "Draws a cross at the giv
 //------------------------------------------------------------------------------
 // helper function for kill and explode
 //------------------------------------------------------------------------------
-void kill_helper( const CCommand &args, bool bExplode )
+void kill_helper( const CCommand &args, int nClientIndex, bool bExplode )
 {
 	if ( args.ArgC() > 1 && sv_cheats->GetBool() )
 	{
@@ -613,7 +613,7 @@ void kill_helper( const CCommand &args, bool bExplode )
 	}
 	else
 	{
-		CBasePlayer *pPlayer = UTIL_GetCommandClient();
+		CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 		if ( pPlayer )
 		{
 			pPlayer->CommitSuicide( bExplode );
@@ -625,22 +625,22 @@ void kill_helper( const CCommand &args, bool bExplode )
 //------------------------------------------------------------------------------
 CON_COMMAND( kill, "Kills the player with generic damage" )
 {
-	kill_helper( args, false );
+	kill_helper( args, nClientIndex, false );
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 CON_COMMAND( explode, "Kills the player with explosive damage" )
 {
-	kill_helper( args, true );
+	kill_helper( args, nClientIndex, true );
 }
 
 //------------------------------------------------------------------------------
 // helper function for killvector and explodevector
 //------------------------------------------------------------------------------
-void killvector_helper( const CCommand &args, bool bExplode )
+void killvector_helper( const CCommand &args, int nClientIndex, bool bExplode )
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1));
 	if ( pPlayer && args.ArgC() == 5 )
 	{
 		// Find the matching netname.
@@ -668,14 +668,14 @@ void killvector_helper( const CCommand &args, bool bExplode )
 //------------------------------------------------------------------------------
 CON_COMMAND_F( killvector, "Kills a player applying force. Usage: killvector <player> <x value> <y value> <z value>", FCVAR_CHEAT )
 {
-	killvector_helper( args, false );
+	killvector_helper( args, nClientIndex, false );
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 CON_COMMAND_F( explodevector, "Kills a player applying an explosive force. Usage: explodevector <player> <x value> <y value> <z value>", FCVAR_CHEAT )
 {
-	killvector_helper( args, false );
+	killvector_helper( args, nClientIndex, false );
 }
 
 
@@ -683,7 +683,7 @@ CON_COMMAND_F( explodevector, "Kills a player applying an explosive force. Usage
 //------------------------------------------------------------------------------
 CON_COMMAND_F( buddha, "Toggle.  Player takes damage but won't die. (Shows red cross when health is zero)", FCVAR_CHEAT )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( pPlayer )
 	{
 		if (pPlayer->m_debugOverlays & OVERLAY_BUDDHA_MODE)
@@ -705,7 +705,7 @@ CON_COMMAND_F( buddha, "Toggle.  Player takes damage but won't die. (Shows red c
 //------------------------------------------------------------------------------
 CON_COMMAND( say, "Display player message" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( pPlayer )
 	{
 		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime) 
@@ -718,7 +718,7 @@ CON_COMMAND( say, "Display player message" )
 	// an index greater than 0 when we don't have a player pointer, 
 	// as would be the case when a client that's connecting generates 
 	// text via a script.  This can be exploited to flood everyone off.
-	else if ( UTIL_GetCommandClientIndex() == 0 )
+	else if (nClientIndex + 1 == 0 )
 	{
 		Host_Say( NULL, args, 0 );
 	}
@@ -729,7 +729,7 @@ CON_COMMAND( say, "Display player message" )
 //------------------------------------------------------------------------------
 CON_COMMAND( say_team, "Display player message to team" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if (pPlayer)
 	{
 		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime) 
@@ -745,7 +745,7 @@ CON_COMMAND( say_team, "Display player message to team" )
 //------------------------------------------------------------------------------
 CON_COMMAND( give, "Give item to player.\n\tArguments: <item_name>" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( pPlayer 
 		&& (gpGlobals->maxClients == 1 || sv_cheats->GetBool()) 
 		&& args.ArgC() >= 2 )
@@ -789,7 +789,7 @@ CON_COMMAND( give, "Give item to player.\n\tArguments: <item_name>" )
 //------------------------------------------------------------------------------
 CON_COMMAND( fov, "Change players FOV" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if ( pPlayer && sv_cheats->GetBool() )
 	{
 		if ( args.ArgC() > 1 )
@@ -807,12 +807,12 @@ CON_COMMAND( fov, "Change players FOV" )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_Player_SetModel( const CCommand &args )
+void CC_Player_SetModel( const CCommand &args, int nClientIndex)
 {
 	if ( gpGlobals->deathmatch )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if ( pPlayer && args.ArgC() == 2)
 	{
 		static char szName[256];
@@ -826,9 +826,9 @@ static ConCommand setmodel("setmodel", CC_Player_SetModel, "Changes's player's m
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_Player_TestDispatchEffect( const CCommand &args )
+void CC_Player_TestDispatchEffect( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	if ( !pPlayer)
 		return;
 	
@@ -905,9 +905,9 @@ static ConCommand test_dispatcheffect("test_dispatcheffect", CC_Player_TestDispa
 //-----------------------------------------------------------------------------
 // Purpose: Quickly switch to the physics cannon, or back to previous item
 //-----------------------------------------------------------------------------
-void CC_Player_PhysSwap( void )
+void CC_Player_PhysSwap(int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	
 	if ( pPlayer )
 	{
@@ -916,7 +916,7 @@ void CC_Player_PhysSwap( void )
 		if ( pWeapon )
 		{
 			// Tell the client to stop selecting weapons
-			engine->ClientCommand( UTIL_GetCommandClient()->entindex(), "cancelselect" );
+			engine->ClientCommand( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1))->entindex(), "cancelselect" );
 
 			const char *strWeaponName = pWeapon->GetName();
 
@@ -938,9 +938,9 @@ static ConCommand physswap("phys_swap", CC_Player_PhysSwap, "Automatically swaps
 //-----------------------------------------------------------------------------
 // Purpose: Quickly switch to the bug bait, or back to previous item
 //-----------------------------------------------------------------------------
-void CC_Player_BugBaitSwap( void )
+void CC_Player_BugBaitSwap(int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) );
 	
 	if ( pPlayer )
 	{
@@ -949,7 +949,7 @@ void CC_Player_BugBaitSwap( void )
 		if ( pWeapon )
 		{
 			// Tell the client to stop selecting weapons
-			engine->ClientCommand( UTIL_GetCommandClient()->entindex(), "cancelselect" );
+			engine->ClientCommand( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1))->entindex(), "cancelselect" );
 
 			const char *strWeaponName = pWeapon->GetName();
 
@@ -968,9 +968,9 @@ static ConCommand bugswap("bug_swap", CC_Player_BugBaitSwap, "Automatically swap
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_Player_Use( const CCommand &args )
+void CC_Player_Use( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( pPlayer)
 	{
 		pPlayer->SelectItem((char *)args[1]);
@@ -1025,12 +1025,12 @@ void EnableNoClip( CBasePlayer *pPlayer )
 	pPlayer->GetEngineObject()->AddEFlags( EFL_NOCLIP_ACTIVE );
 }
 
-void CC_Player_NoClip( void )
+void CC_Player_NoClip(int nClientIndex)
 {
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1085,12 +1085,12 @@ static ConCommand noclip("noclip", CC_Player_NoClip, "Toggle. Player becomes non
 //------------------------------------------------------------------------------
 // Sets client to godmode
 //------------------------------------------------------------------------------
-void CC_God_f (void)
+void CC_God_f (int nClientIndex)
 {
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1123,7 +1123,7 @@ CON_COMMAND_F( setpos, "Move player to specified origin (must have sv_cheats).",
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1152,12 +1152,12 @@ CON_COMMAND_F( setpos, "Move player to specified origin (must have sv_cheats).",
 //------------------------------------------------------------------------------
 // Sets client to godmode
 //------------------------------------------------------------------------------
-void CC_setang_f (const CCommand &args)
+void CC_setang_f (const CCommand &args, int nClientIndex)
 {
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1198,7 +1198,7 @@ CON_COMMAND_F( setpos_exact, "Move player to an exact specified origin (must hav
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1232,7 +1232,7 @@ CON_COMMAND_F( setang_exact, "Snap player eyes and orientation to specified pitc
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1261,12 +1261,12 @@ CON_COMMAND_F( setang_exact, "Snap player eyes and orientation to specified pitc
 //------------------------------------------------------------------------------
 // Sets client to notarget mode.
 //------------------------------------------------------------------------------
-void CC_Notarget_f (void)
+void CC_Notarget_f (int nClientIndex)
 {
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1285,12 +1285,12 @@ ConCommand notarget("notarget", CC_Notarget_f, "Toggle. Player becomes hidden to
 //------------------------------------------------------------------------------
 // Damage the client the specified amount
 //------------------------------------------------------------------------------
-void CC_HurtMe_f(const CCommand &args)
+void CC_HurtMe_f(const CCommand &args, int nClientIndex)
 {
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex+1)) ); 
 	if ( !pPlayer )
 		return;
 
@@ -1371,9 +1371,9 @@ static int DescribeGroundList( CBaseEntity *ent )
 	return c - 1;
 }
 
-void CC_GroundList_f(const CCommand &args)
+void CC_GroundList_f(const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() == 2 )

@@ -402,7 +402,7 @@ IServerBenchmark *g_pServerBenchmark = &g_ServerBenchmark;
 
 CON_COMMAND( sv_benchmark_force_start, "Force start the benchmark. This is only for debugging. It's better to set sv_benchmark to 1 and restart the level." )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	g_ServerBenchmark.InternalStartBenchmark( 1, 1 );

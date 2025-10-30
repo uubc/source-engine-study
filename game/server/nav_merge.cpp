@@ -162,7 +162,7 @@ void CNavMesh::CommandNavSaveSelected( const CCommand &args )
 //--------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_save_selected, "Writes the selected set to disk for merging into another mesh via nav_merge_mesh.", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavSaveSelected( args );
@@ -335,7 +335,7 @@ int NavMeshMergeAutocomplete( char const *partial, char commands[ COMMAND_COMPLE
 //--------------------------------------------------------------------------------------------------------
 CON_COMMAND_F_COMPLETION( nav_merge_mesh, "Merges a saved selected set into the current mesh.", FCVAR_GAMEDLL | FCVAR_CHEAT, NavMeshMergeAutocomplete )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->CommandNavMergeMesh( args );

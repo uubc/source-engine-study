@@ -317,9 +317,9 @@ void AddDebugHistoryLine( int iCategory, const char *pszLine )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_DebugHistory_AddLine( const CCommand &args )
+void CC_DebugHistory_AddLine( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() < 3 )
@@ -337,9 +337,9 @@ static ConCommand dbghist_addline( "dbghist_addline", CC_DebugHistory_AddLine, "
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_DebugHistory_Dump( const CCommand &args )
+void CC_DebugHistory_Dump( const CCommand &args, int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() < 2 )

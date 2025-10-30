@@ -189,7 +189,7 @@ void CCredits::Spawn( void )
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 }
 
-static void CreditsDone_f( void )
+static void CreditsDone_f(int nClientIndex)
 {
 	CCredits *pCredits = (CCredits*)EntityList()->FindEntityByClassname( NULL, "env_credits" );
 

@@ -25,12 +25,12 @@ IGameSystem* PerfVisualBenchmark() { return &s_PerfVisualBenchmark; }
 extern ConVar cl_mouseenable;
 #endif
 
-void usrCmd_Start()
+void usrCmd_Start(int nClientIndex)
 {
 	s_PerfVisualBenchmark.Start();
 }
 
-void usrCmd_Abort()
+void usrCmd_Abort(int nClientIndex)
 {
 	s_PerfVisualBenchmark.Stop();
 }

@@ -32,7 +32,7 @@ ConVar sv_rcon_log( "sv_rcon_log", "1", 0, "Enable/disable rcon logging." );
 //-----------------------------------------------------------------------------
 // Host_Stats_f - prints out interesting stats about the server...
 //-----------------------------------------------------------------------------
-void Host_Stats_f (void)
+void Host_Stats_f (int nClientIndex)
 {
 	char stats[512];
 	g_ServerRemoteAccess.GetStatsString(stats, sizeof(stats));

@@ -202,7 +202,7 @@ static CDODViewVectors g_DODViewVectors(
 		return false;
 	}
 
-    void Load_EntText( void )
+    void Load_EntText(int nClientIndex)
 	{
 		bool oldLock = engine->LockNetworkStringTables( false );
 
@@ -407,7 +407,7 @@ static CDODViewVectors g_DODViewVectors(
 	}
 
 
-	void RestartRound_f()
+	void RestartRound_f(int nClientIndex)
 	{
 		DODGameRules()->State_Transition( STATE_RESTART );
 	}
@@ -992,7 +992,7 @@ called each time a player is spawned into the game
 	// Input  :
 	// Output :
 	//-----------------------------------------------------------------------------
-	bool CDODGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+	bool CDODGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 	{
 		CDODPlayer *pPlayer = ToDODPlayer( pEdict );
 		const char *pcmd = args[0];
@@ -1069,11 +1069,11 @@ called each time a player is spawned into the game
 			}
 			return true;
 		}
-		else if ( pPlayer->ClientCommand( args ) )
+		else if ( pPlayer->ClientCommand( args, nClientIndex) )
 		{
 			return true;
 		}
-		else if ( BaseClass::ClientCommand( pEdict, args ) )
+		else if ( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 		{
 			return true;
 		}
@@ -1971,7 +1971,7 @@ called each time a player is spawned into the game
 		}
 	}
 
-	void TestSpawns()
+	void TestSpawns(int nClientIndex)
 	{
 		TestSpawnPointType( "info_player_allies" );
 		TestSpawnPointType( "info_player_axis" );
@@ -2729,7 +2729,7 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 	{
 		m_flNextPeriodicThink = gpGlobals->curtime + 0.1;
 
-		Load_EntText();
+		Load_EntText(-1);
 	}
 
 	void CDODGameWorld::State_Think_PREGAME( void )
@@ -3785,7 +3785,7 @@ const CDODViewVectors *CDODGameWorld::GetDODViewVectors() const
 		}
 	}
 
-	void TestWinpanel( void )
+	void TestWinpanel(int nClientIndex)
 	{
 		
 		IGameEvent *event = gameeventmanager->CreateEvent( "dod_round_win" );

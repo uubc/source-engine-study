@@ -88,7 +88,7 @@ public:
 
 	virtual void			Think( void );
 
-	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual void			RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
 	virtual void			AfterPlayerSpawn( CBasePlayer *pPlayer );
 

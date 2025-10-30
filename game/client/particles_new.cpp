@@ -595,7 +595,7 @@ int CNewParticleEffect::DrawModel( int flags )
 	return 1;
 }
 
-static void DumpParticleStats_f( void )
+static void DumpParticleStats_f(int nClientIndex)
 {
 	g_pParticleSystemMgr->DumpProfileInformation();
 }

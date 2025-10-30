@@ -61,7 +61,7 @@ public:
 	{ 
 		return true; 
 	}
-	bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	bool ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 
 #ifdef CLIENT_DLL
 #else

@@ -460,7 +460,7 @@ END_DATADESC()
 
 // -------------------------------------------------------------------------------- //
 
-void cc_CreatePredictionError_f( const CCommand &args )
+void cc_CreatePredictionError_f( const CCommand &args, int nClientIndex)
 {
 	float distance = 32;
 
@@ -2975,7 +2975,7 @@ public:
 // identification and radar color).
 CON_COMMAND( cs_make_vip, "Marks a player as the VIP" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() != 2 )
@@ -4498,7 +4498,7 @@ bool CCSPlayer::ShouldRunRateLimitedCommand( const CCommand &args )
 	}
 }
 
-bool CCSPlayer::ClientCommand( const CCommand &args )
+bool CCSPlayer::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	const char *pcmd = args[0];
 
@@ -4525,7 +4525,7 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 		if ( pPlayer && pPlayer != this && ( pPlayer->GetEngineObject()->GetFlags() & FL_FAKECLIENT ) )
 		{
 			CCommand botArgs( args.ArgC() - 2, &args.ArgV()[2] );
-			pPlayer->ClientCommand( botArgs );
+			pPlayer->ClientCommand( botArgs, nClientIndex);
 			pPlayer->GetEngineObject()->RemoveEffects( EF_NODRAW );
 		}
 		return true;
@@ -4804,7 +4804,7 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 		return true;
 	}
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 
@@ -5924,7 +5924,7 @@ void CCSPlayer::RescueZoneTouch( inputdata_t &inputdata )
 //------------------------------------------------------------------------------------------
 CON_COMMAND( timeleft, "prints the time remaining in the match" )
 {
-	CCSPlayer *pPlayer = ToCSPlayer( UTIL_GetCommandClient() );
+	CCSPlayer *pPlayer = ToCSPlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	if ( pPlayer && pPlayer->m_iNextTimeCheck >= gpGlobals->curtime )
 	{
 		return; // rate limiting
@@ -6000,9 +6000,9 @@ void CCSPlayer::EmitPrivateSound( const char *soundName )
 //=====================
 //Autobuy
 //=====================
-static void AutoBuy( void )
+static void AutoBuy(int nClientIndex)
 {
-	CCSPlayer *player = ToCSPlayer( UTIL_GetCommandClient() );
+	CCSPlayer *player = ToCSPlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 
 	if ( player )
 		player->AutoBuy();
@@ -6301,9 +6301,9 @@ void CCSPlayer::PrioritizeAutoBuyString(char *autobuyString, const char *priorit
 // ReBuy
 // system for attempting to buy the weapons you had last round
 //==============================================================
-static void Rebuy( void )
+static void Rebuy(int nClientIndex)
 {
-	CCSPlayer *player = ToCSPlayer( UTIL_GetCommandClient() );
+	CCSPlayer *player = ToCSPlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 
 	if ( player )
 		player->Rebuy();

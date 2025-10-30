@@ -111,7 +111,7 @@ void CL_NameCvarChanged( IConVar *pConVar, const char *pOldString, float flOldVa
 
 
 #ifndef SWDS
-void askconnect_accept_f()
+void askconnect_accept_f(int nClientIndex)
 {
 	char szHostName[256];
 	if ( IsAskConnectPanelActive( szHostName, sizeof( szHostName ) ) )

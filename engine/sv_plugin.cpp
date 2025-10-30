@@ -466,15 +466,15 @@ void CServerPlugin::ClientPutInServer( int pEntity, char const *playername )
 	serverGameClients->ClientPutInServer( pEntity, playername );
 }
 
-void CServerPlugin::SetCommandClient( int index )
-{
-	FORALL_PLUGINS
-	{
-		CALL_PLUGIN_IF_ENABLED( SetCommandClient( index ) );
-	}
-
-	serverGameClients->SetCommandClient( index );
-}
+//void CServerPlugin::SetCommandClient( int index )
+//{
+//	FORALL_PLUGINS
+//	{
+//		CALL_PLUGIN_IF_ENABLED( SetCommandClient( index ) );
+//	}
+//
+//	serverGameClients->SetCommandClient( index );
+//}
 
 void CServerPlugin::ClientSettingsChanged( int pEdict )
 {
@@ -512,20 +512,20 @@ bool CServerPlugin::ClientConnect( int pEntity, const char *pszName, const char 
 	return bRetValOverridden ? bSavedRetVal : bAllowConnect;
 }
 
-void CServerPlugin::ClientCommand( int pEntity, const CCommand &args )
+void CServerPlugin::ClientCommand( int pEntity, const CCommand &args, int nClientIndex)
 {
 	PLUGIN_RESULT result = PLUGIN_CONTINUE;
 	FORALL_PLUGINS
 	{
 		if ( !m_Plugins[i]->IsDisabled() )
 		{
-			result = m_Plugins[i]->GetCallback()->ClientCommand( pEntity, args );
+			result = m_Plugins[i]->GetCallback()->ClientCommand( pEntity, args, nClientIndex );
 			if ( result == PLUGIN_STOP ) // stop executing right away
 				return;
 		}
 	}
 
-	serverGameClients->ClientCommand( pEntity, args );
+	serverGameClients->ClientCommand( pEntity, args, nClientIndex );
 }
 
 QueryCvarCookie_t CServerPlugin::StartQueryCvarValue( int pEntity, const char *pCvarName )

@@ -232,7 +232,7 @@ CStringTableSaveRestoreOps g_VguiScreenStringOps;
 // Holds global variables shared between engine and game.
 CGlobalVars *gpGlobals;
 IServerEntity *g_pDebugEdictBase = 0;
-static int		g_nCommandClientIndex = 0;
+//static int		g_nCommandClientIndex = 0;
 
 // The chapter number of the current
 static int		g_nCurrentChapterIndex = -1;
@@ -421,30 +421,30 @@ static CModelSoundsCacheSaver g_ModelSoundsCacheSaver("CModelSoundsCacheSaver");
 // Purpose: 
 // Output : int
 //-----------------------------------------------------------------------------
-int UTIL_GetCommandClientIndex( void )
-{
-	// -1 == unknown,dedicated server console
-	// 0  == player 1
-
-	// Convert to 1 based offset
-	return (g_nCommandClientIndex+1);
-}
+//int UTIL_GetCommandClientIndex( void )
+//{
+//	// -1 == unknown,dedicated server console
+//	// 0  == player 1
+//
+//	// Convert to 1 based offset
+//	return (g_nCommandClientIndex+1);
+//}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : CBasePlayer
 //-----------------------------------------------------------------------------
-CBasePlayer *UTIL_GetCommandClient( void )
-{
-	int idx = UTIL_GetCommandClientIndex();
-	if ( idx > 0 )
-	{
-		return ToBasePlayer(EntityList()->GetPlayerByIndex( idx ));
-	}
-
-	// HLDS console issued command
-	return NULL;
-}
+//CBasePlayer *UTIL_GetCommandClient( void )
+//{
+//	int idx = UTIL_GetCommandClientIndex();
+//	if ( idx > 0 )
+//	{
+//		return ToBasePlayer(EntityList()->GetPlayerByIndex( idx ));
+//	}
+//
+//	// HLDS console issued command
+//	return NULL;
+//}
 
 //-----------------------------------------------------------------------------
 // Purpose: Retrieves the MOD directory for the active game (ie. "hl2")
@@ -3431,10 +3431,10 @@ void CServerGameClients::ClientPutInServer( int pEntity, const char *playername 
 		g_pGameRules->ClientPutInServer( pEntity, playername );
 }
 
-void CServerGameClients::ClientCommand( int pEntity, const CCommand &args )
+void CServerGameClients::ClientCommand( int pEntity, const CCommand &args, int nClientIndex)
 {
 	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetBaseEntity( pEntity ) );
-	if (!g_pGameRules->ClientCommand(pPlayer, args))
+	if (!g_pGameRules->ClientCommand(pPlayer, args, nClientIndex))
 	{
 		const char* pCmd = args[0];
 		if (Q_strlen(pCmd) > 128)
@@ -3769,10 +3769,10 @@ void CServerGameClients::PostClientMessagesSent_DEPRECIATED( void )
 }
 
 // Sets the client index for the client who typed the command into his/her console
-void CServerGameClients::SetCommandClient( int index )
-{
-	g_nCommandClientIndex = index;
-}
+//void CServerGameClients::SetCommandClient( int index )
+//{
+//	g_nCommandClientIndex = index;
+//}
 
 int	CServerGameClients::GetReplayDelay( int pEdict, int &entity )
 {

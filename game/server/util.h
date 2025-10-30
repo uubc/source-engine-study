@@ -149,7 +149,7 @@ CBasePlayer* UTIL_PlayerByName( const char *name ); // not case sensitive
 
 // Returns true if the command was issued by the listenserver host, or by the dedicated server, via rcon or the server console.
 // This is valid during ConCommand execution.
-bool UTIL_IsCommandIssuedByServerAdmin( void );
+bool UTIL_IsCommandIssuedByServerAdmin(int nClientIndex);
 
 void		UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss );
 
@@ -477,8 +477,8 @@ bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, CBaseEntity *pTarget, f
 
 void UTIL_GetDebugColorForRelationship( int nRelationship, int &r, int &g, int &b );
 
-int UTIL_GetCommandClientIndex( void );
-CBasePlayer *UTIL_GetCommandClient( void );
+//int UTIL_GetCommandClientIndex( void );
+//CBasePlayer *UTIL_GetCommandClient( void );
 bool UTIL_GetModDir( char *lpszTextOut, unsigned int nSize );
 
 AngularImpulse WorldToLocalRotation( const VMatrix &localToWorld, const Vector &worldAxis, float rotation );

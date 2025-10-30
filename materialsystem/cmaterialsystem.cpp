@@ -5448,7 +5448,7 @@ void CMaterialSystem::OnRenderingAsyncComplete()
 //-----------------------------------------------------------------------------
 // Material + texture related commands
 //-----------------------------------------------------------------------------
-void CMaterialSystem::DebugPrintUsedMaterials( const CCommand &args )
+void CMaterialSystem::DebugPrintUsedMaterials( const CCommand &args, int nClientIndex)
 {
 	if( args.ArgC() == 1 )
 	{
@@ -5460,7 +5460,7 @@ void CMaterialSystem::DebugPrintUsedMaterials( const CCommand &args )
 	}
 }
 
-void CMaterialSystem::DebugPrintUsedMaterialsVerbose( const CCommand &args )
+void CMaterialSystem::DebugPrintUsedMaterialsVerbose( const CCommand &args, int nClientIndex)
 {
 	if( args.ArgC() == 1 )
 	{
@@ -5472,7 +5472,7 @@ void CMaterialSystem::DebugPrintUsedMaterialsVerbose( const CCommand &args )
 	}
 }
 
-void CMaterialSystem::DebugPrintUsedTextures( const CCommand &args )
+void CMaterialSystem::DebugPrintUsedTextures( const CCommand &args, int nClientIndex)
 {
 	DebugPrintUsedTextures();
 }
@@ -5484,12 +5484,12 @@ void CMaterialSystem::ListUsedMaterials( const CCommand &args )
 }
 #endif // !_X360
 
-void CMaterialSystem::ReloadAllMaterials( const CCommand &args )
+void CMaterialSystem::ReloadAllMaterials( const CCommand &args, int nClientIndex)
 {
 	ReloadMaterials( NULL );
 }
 
-void CMaterialSystem::ReloadMaterials( const CCommand &args )
+void CMaterialSystem::ReloadMaterials( const CCommand &args, int nClientIndex)
 {
 	if( args.ArgC() != 2 )
 	{
@@ -5500,7 +5500,7 @@ void CMaterialSystem::ReloadMaterials( const CCommand &args )
 	ReloadMaterials( args[ 1 ] );
 }
 
-void CMaterialSystem::ReloadTextures( const CCommand &args )
+void CMaterialSystem::ReloadTextures( const CCommand &args, int nClientIndex)
 {
 	ReloadTextures();
 }

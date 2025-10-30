@@ -89,7 +89,7 @@
 #include "tier0/memdbgon.h"
 
 
-static void testfreezeframe_f( void )
+static void testfreezeframe_f(int nClientIndex)
 {
 	g_pViewRender->FreezeFrame( 3.0 );
 }
@@ -8597,7 +8597,7 @@ CON_COMMAND(r_cheapwaterend, "")
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-static void StartPitchDrift(void)
+static void StartPitchDrift(int nClientIndex)
 {
 	g_pViewRender->StartPitchDrift();
 }

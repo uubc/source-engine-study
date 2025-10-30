@@ -313,7 +313,7 @@ int CSoundPatch::g_SoundPatchCount = 0;
 CON_COMMAND( report_soundpatch, "reports sound patch count" )
 {
 #ifndef CLIENT_DLL
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 #endif
 

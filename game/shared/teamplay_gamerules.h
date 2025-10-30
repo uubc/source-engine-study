@@ -66,7 +66,7 @@ public:
 	virtual void LevelInit();
 	virtual void LevelShutdown();
 
-	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual void ClientSettingsChanged( CBasePlayer *pPlayer );
 	virtual bool IsTeamplay( void );
 	virtual bool FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const ITakeDamageInfo &info );

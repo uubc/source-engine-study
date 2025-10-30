@@ -43,11 +43,11 @@ static ConVar vgui_drawtree_draw_selected( "vgui_drawtree_draw_selected", "0", 0
 extern ConVar vgui_drawfocus;
 
 
-void vgui_drawtree_on_f()
+void vgui_drawtree_on_f(int nClientIndex)
 {
 	vgui_drawtree.SetValue( 1 );
 }
-void vgui_drawtree_off_f()
+void vgui_drawtree_off_f(int nClientIndex)
 {
 	vgui_drawtree.SetValue( 0 );
 }
@@ -589,7 +589,7 @@ void VGui_UpdateDrawTreePanel()
 }
 
 
-void vgui_drawtree_clear_f()
+void vgui_drawtree_clear_f(int nClientIndex)
 {
 	if ( g_pDrawTreeFrame && g_pDrawTreeFrame->m_pTree )
 		g_pDrawTreeFrame->m_pTree->RemoveAll();

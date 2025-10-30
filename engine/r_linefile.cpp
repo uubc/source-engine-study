@@ -39,7 +39,7 @@ void Linefile_Draw( void )
 //			this file contains a list of line segments illustrating a leak in
 //			the map
 //-----------------------------------------------------------------------------
-void Linefile_Read_f( void )
+void Linefile_Read_f(int nClientIndex)
 {
 	Vector	org;
 	int		r;

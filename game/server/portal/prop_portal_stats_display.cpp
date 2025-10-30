@@ -292,7 +292,7 @@ void CPropPortalStatsDisplay::InputEnable( inputdata_t &inputdata )
 
 void CPropPortalStatsDisplay::InputUpdateStats( inputdata_t &inputdata )
 {
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CPortal_Player *pPlayer = (CPortal_Player *)ToBasePlayer(EntityList()->GetPlayerByIndex(inputdata.pActivator->entindex()));
 	if( pPlayer == NULL )
 		pPlayer = GetPortalPlayer( 1 ); //last ditch effort
 
@@ -309,7 +309,7 @@ void CPropPortalStatsDisplay::InputUpdateStats( inputdata_t &inputdata )
 
 void CPropPortalStatsDisplay::InputResetPlayerStats( inputdata_t &inputdata )
 {
-	CPortal_Player *pPlayer = (CPortal_Player *)UTIL_GetCommandClient();
+	CPortal_Player *pPlayer = (CPortal_Player *)ToBasePlayer(EntityList()->GetPlayerByIndex(inputdata.pActivator->entindex()));
 	if( pPlayer == NULL )
 		pPlayer = GetPortalPlayer( 1 ); //last ditch effort
 

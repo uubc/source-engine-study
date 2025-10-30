@@ -70,7 +70,7 @@ void CBasePresence::UploadStats()
 //---------------------------------------------------------
 // Debug support
 //---------------------------------------------------------
-void CBasePresence::DebugUserSetContext( const CCommand &args )
+void CBasePresence::DebugUserSetContext( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() == 3 )
 	{
@@ -81,7 +81,7 @@ void CBasePresence::DebugUserSetContext( const CCommand &args )
 		Warning( "user_context <context id> <context value>\n" );
 	}
 }
-void CBasePresence::DebugUserSetProperty( const CCommand &args )
+void CBasePresence::DebugUserSetProperty( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() == 3 )
 	{

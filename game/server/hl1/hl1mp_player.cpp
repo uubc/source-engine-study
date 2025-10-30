@@ -81,7 +81,7 @@ IMPLEMENT_SERVERCLASS_ST( CHL1MP_Player, DT_HL1MP_PLAYER )
 //	SendPropDataTable( SENDINFO_DT( m_Shared ), &REFERENCE_SEND_TABLE( DT_TFCPlayerShared ) )
 END_SEND_TABLE()
 
-void cc_CreatePredictionError_f()
+void cc_CreatePredictionError_f(int nClientIndex)
 {
 	CBaseEntity *pEnt = CBaseEntity::Instance( 1 );
 	pEnt->GetEngineObject()->SetAbsOrigin( pEnt->GetEngineObject()->GetAbsOrigin() + Vector( 63, 0, 0 ) );

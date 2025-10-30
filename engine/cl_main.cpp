@@ -1367,7 +1367,7 @@ CON_COMMAND( jpeg, "Take a jpeg screenshot:  jpeg <filename> <quality 1-100>." )
 	}
 }
 
-static void screenshot_internal( const CCommand &args )
+static void screenshot_internal( const CCommand &args, int nClientIndex)
 {
 
 	if( args.ArgC() != 2 )
@@ -2491,7 +2491,7 @@ void CL_GetBackgroundLevelName( char *pszBackgroundName, int bufSize, bool bMapN
 //-----------------------------------------------------------------------------
 // Purpose: Callback to open the game menus
 //-----------------------------------------------------------------------------
-void CL_CheckToDisplayStartupMenus( const CCommand &args )
+void CL_CheckToDisplayStartupMenus( const CCommand &args, int nClientIndex)
 {
 	if ( CL_ShouldLoadBackgroundLevel( args ) )
 	{
@@ -2553,7 +2553,7 @@ void CL_DemoCheckGameUIRevealTime( )
 			Cbuf_AddText( "disconnect;");
 
 			CCommand args;
-			CL_CheckToDisplayStartupMenus( args );
+			CL_CheckToDisplayStartupMenus( args, -1 );
 
 			s_fDemoPlayMusicTime = Sys_FloatTime() + 1.0;
 		}

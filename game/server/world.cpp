@@ -1534,7 +1534,7 @@ void ConsoleKillTarget(CBasePlayer* pPlayer, const char* name)
 // Purpose: called each time a player uses a "cmd" command
 // Input  : *pEdict - the player who issued the command
 //-----------------------------------------------------------------------------
-bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
+bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args, int nClientIndex)
 {
 	const char* pCmd = args[0];
 
@@ -1564,7 +1564,7 @@ bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
 	if (FStrEq(pCmd, "killtarget"))
 	{
 		ConVarRef developer("developer");
-		if (pEdict->IsPlayer() && developer.GetBool() && sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin())
+		if (pEdict->IsPlayer() && developer.GetBool() && sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		{
 			ConsoleKillTarget((CBasePlayer*)pEdict, args[1]);
 			return true;
@@ -1587,7 +1587,7 @@ bool CWorld::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
 	}
 	else if (FStrEq(pCmd, "te"))
 	{
-		if (sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin())
+		if (sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		{
 			if (FStrEq(args[1], "stop"))
 			{

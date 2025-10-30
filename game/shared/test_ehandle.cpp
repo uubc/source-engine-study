@@ -75,7 +75,7 @@
 	CHandle<CHandleTest> g_HandleTest;
 
 	// The test runs this command.
-	void CC_Test_EHandle()
+	void CC_Test_EHandle(int nClientIndex)
 	{
 		if ( g_HandleTest.Get() )
 		{

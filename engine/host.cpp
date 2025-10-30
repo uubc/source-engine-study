@@ -274,7 +274,7 @@ static ConVar	violence_agibs( "violence_agibs","1", 0, "Show alien gib entities"
 ConVar closecaption( "closecaption", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX | FCVAR_USERINFO, "Enable close captioning." );
 extern ConVar sv_unlockedchapters;
 
-void Snd_Restart_f()
+void Snd_Restart_f(int nClientIndex)
 {
 #ifndef SWDS
 	extern bool snd_firsttime;
@@ -314,7 +314,7 @@ void Snd_Restart_f()
 		char const *argv[ 1 ] = { "cl_soundscape_flush" };
 
 		CCommand cmd( 1, argv );
-		pCommand->Dispatch( cmd );
+		pCommand->Dispatch( cmd, nClientIndex);
 	}
 #endif
 }
@@ -1792,7 +1792,7 @@ void Host_ReadPreStartupConfiguration()
 	delete [] configBuffer;
 }
 
-void Host_RecomputeSpeed_f( void )
+void Host_RecomputeSpeed_f(int nClientIndex)
 {
 	ConMsg( "Recomputing clock speed...\n" );
 
@@ -1802,7 +1802,7 @@ void Host_RecomputeSpeed_f( void )
 
 static ConCommand recompute_speed( "recompute_speed", Host_RecomputeSpeed_f, "Recomputes clock speed (for debugging purposes).", FCVAR_CHEAT );
 
-void DTI_Flush_f()
+void DTI_Flush_f(int nClientIndex)
 {
 	DTI_Flush();
 	ServerDTI_Flush();

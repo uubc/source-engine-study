@@ -189,7 +189,7 @@ ConVar  sv_player_display_usercommand_errors( "sv_player_display_usercommand_err
 ConVar  player_debug_print_damage( "player_debug_print_damage", "0", FCVAR_CHEAT, "When true, print amount and type of all damage received by player to console." );
 
 
-void CC_GiveCurrentAmmo( void )
+void CC_GiveCurrentAmmo(int nClientIndex)
 {
 	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(1));
 
@@ -6536,9 +6536,9 @@ static void CreateJalopy( CBasePlayer *pPlayer )
 	}
 }
 
-void CC_CH_CreateJalopy( void )
+void CC_CH_CreateJalopy(int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( !pPlayer )
 		return;
 	CreateJalopy( pPlayer );
@@ -6574,9 +6574,9 @@ static void CreateJeep( CBasePlayer *pPlayer )
 }
 
 
-void CC_CH_CreateJeep( void )
+void CC_CH_CreateJeep(int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( !pPlayer )
 		return;
 	CreateJeep( pPlayer );
@@ -6613,9 +6613,9 @@ static void CreateAirboat( CBasePlayer *pPlayer )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_CH_CreateAirboat( void )
+void CC_CH_CreateAirboat(int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( !pPlayer )
 		return;
 
@@ -6835,7 +6835,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 }
 
 
-bool CBasePlayer::ClientCommand( const CCommand &args )
+bool CBasePlayer::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	const char *cmd = args[0];
 #ifdef _DEBUG
@@ -9341,7 +9341,7 @@ private:
 //-----------------------------------------------------------------------------
 CON_COMMAND( mp_disable_autokick, "Prevents a userid from being auto-kicked" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( args.ArgC() != 2 )

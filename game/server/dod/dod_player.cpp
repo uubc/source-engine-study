@@ -327,7 +327,7 @@ END_DATADESC()
 
 // -------------------------------------------------------------------------------- //
 
-void cc_CreatePredictionError_f()
+void cc_CreatePredictionError_f(int nClientIndex)
 {
 	CBaseEntity *pEnt = CBaseEntity::Instance( 1 );
 	pEnt->GetEngineObject()->SetAbsOrigin( pEnt->GetEngineObject()->GetAbsOrigin() + Vector( 63, 0, 0 ) );
@@ -2231,7 +2231,7 @@ void CDODPlayer::CheckChatText( char *p, int bufsize )
 	DODGameRules()->CheckChatForReadySignal( this, pReadyCheck );
 }
 
-bool CDODPlayer::ClientCommand( const CCommand &args )
+bool CDODPlayer::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	const char *pcmd = args[0];
 	if ( FStrEq( pcmd, "jointeam" ) ) 
@@ -2434,7 +2434,7 @@ bool CDODPlayer::ClientCommand( const CCommand &args )
 
 #endif //_DEBUG
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 // returns true if the selection has been handled and the player's menu 
@@ -2632,7 +2632,7 @@ void CDODPlayer::State_Enter_WELCOME()
 		// If they want to auto join a team for debugging, pretend they clicked the button.
 		CCommand args;
 		args.Tokenize( "joingame" );
-		ClientCommand( args );
+		ClientCommand( args, entindex()-1 );
 	}
 	else
 	{

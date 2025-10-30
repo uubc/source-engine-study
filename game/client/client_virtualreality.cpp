@@ -94,7 +94,7 @@ ConVar vr_first_person_uses_world_model ( "vr_first_person_uses_world_model", "1
 // --------------------------------------------------------------------
 // Purpose: Cycle through the aim & move modes.
 // --------------------------------------------------------------------
-void CC_VR_Cycle_Aim_Move_Mode ( const CCommand& args )
+void CC_VR_Cycle_Aim_Move_Mode ( const CCommand& args, int nClientIndex)
 {
 	int hmmCurrentMode = vr_moveaim_mode.GetInt();
 	if ( g_ClientVirtualReality.CurrentlyZoomed() )

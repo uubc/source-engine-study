@@ -1259,9 +1259,9 @@ static NavErrorType CheckNavFile( const char *bspFilename )
 
 
 //--------------------------------------------------------------------------------------------------------------
-void CommandNavCheckFileConsistency( void )
+void CommandNavCheckFileConsistency(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	FileFindHandle_t findHandle;

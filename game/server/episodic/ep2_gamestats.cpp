@@ -550,7 +550,7 @@ void CEP2GameStats::Event_IncrementCountedStatistic( const Vector& vecAbsOrigin,
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-static void CC_ListDeaths( const CCommand &args )
+static void CC_ListDeaths( const CCommand &args, int nClientIndex)
 {
 	Ep2LevelStats_t *map = s_CEP2GameStats_Singleton.FindOrAddMapStats( STRING( gpGlobals->mapname ) );
 	if ( !map )

@@ -55,7 +55,7 @@
 		}															\
 	}
 
-#define DECLARE_HUD_COMMAND_NAME(y, x, name) void __CmdFunc_##x( void )									\
+#define DECLARE_HUD_COMMAND_NAME(y, x, name) void __CmdFunc_##x( int nClientIndex )									\
 	{																\
 		CHudElement *pElement = gHUD.FindElement( name );			\
 		{															\

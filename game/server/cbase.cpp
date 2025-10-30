@@ -1005,9 +1005,9 @@ void CEventQueue::ServiceEvents( void )
 //-----------------------------------------------------------------------------
 // Purpose: Dumps the contents of the Entity I/O event queue to the console.
 //-----------------------------------------------------------------------------
-void CC_DumpEventQueue()
+void CC_DumpEventQueue(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	g_EventQueue.Dump();
@@ -1684,7 +1684,7 @@ static CBaseSystem g_BaseSystem("CBaseSystem");
 //-----------------------------------------------------------------------------
 // Respawns all entities in the level
 //-----------------------------------------------------------------------------
-void RespawnEntities()
+void RespawnEntities(int nClientIndex)
 {
 	g_BaseSystem.m_bRespawnAllEntities = true;
 }

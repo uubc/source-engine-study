@@ -59,7 +59,7 @@ public:
 	virtual void PlayerDeathThink( void );
 	virtual void SetAnimation( PLAYER_ANIM playerAnim );
 	virtual bool HandleCommand_JoinTeam( int team );
-	virtual bool ClientCommand( const CCommand &args );
+	virtual bool ClientCommand( const CCommand &args, int nClientIndex);
 	virtual void CreateViewModel( int viewmodelindex = 0 );
 	//virtual bool BecomeRagdollOnClient( const Vector &force );
 	virtual void Event_Killed( const ITakeDamageInfo&info );

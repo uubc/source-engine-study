@@ -157,9 +157,9 @@ ConVar mp_holiday_nogifts( "mp_holiday_nogifts", "1", FCVAR_NOTIFY, "Set to 1 to
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------	
-void cc_SwitchTeams( const CCommand& args )
+void cc_SwitchTeams( const CCommand& args, int nClientIndex)
 {
-	if ( UTIL_IsCommandIssuedByServerAdmin() )
+	if ( UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 	{
 		CTeamplayRoundBasedWorld *pRules = dynamic_cast<CTeamplayRoundBasedWorld*>( GameRules() );
 
@@ -178,9 +178,9 @@ static ConCommand mp_switchteams( "mp_switchteams", cc_SwitchTeams, "Switch team
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------	
-void cc_ScrambleTeams( const CCommand& args )
+void cc_ScrambleTeams( const CCommand& args, int nClientIndex)
 {
-	if ( UTIL_IsCommandIssuedByServerAdmin() )
+	if ( UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 	{
 		CTeamplayRoundBasedWorld *pRules = dynamic_cast<CTeamplayRoundBasedWorld*>( GameRules() );
 
@@ -245,7 +245,7 @@ static const char *s_PreserveEnts[] =
 
 CON_COMMAND_F( mp_forcewin, "Forces team to win", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CTeamplayRoundBasedWorld *pRules = dynamic_cast<CTeamplayRoundBasedWorld*>( GameRules() );
@@ -2294,7 +2294,7 @@ void CTeamplayRoundBasedWorld::SetStalemate( int iReason, bool bForceMapReset /*
 }
 
 #ifdef GAME_DLL
-void CC_CH_ForceRespawn( void )
+void CC_CH_ForceRespawn(int nClientIndex)
 {
 	CTeamplayRoundBasedWorld *pRules = dynamic_cast<CTeamplayRoundBasedWorld*>( GameRules() );
 	if ( pRules )
@@ -2305,11 +2305,11 @@ void CC_CH_ForceRespawn( void )
 static ConCommand mp_forcerespawnplayers("mp_forcerespawnplayers", CC_CH_ForceRespawn, "Force all players to respawn.", FCVAR_CHEAT );
 
 static ConVar mp_tournament_allow_non_admin_restart( "mp_tournament_allow_non_admin_restart", "1", FCVAR_NONE, "Allow mp_tournament_restart command to be issued by players other than admin.");
-void CC_CH_TournamentRestart( void )
+void CC_CH_TournamentRestart(int nClientIndex)
 {
 	if ( mp_tournament_allow_non_admin_restart.GetBool() == false )
 	{
-		if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 			return;
 	}
 

@@ -184,7 +184,7 @@ CON_COMMAND( gameui_allowescape, "Escape key allowed to hide game UI" )
 //-----------------------------------------------------------------------------
 // Purpose: Console command to enable progress bar for next load
 //-----------------------------------------------------------------------------
-void BaseUI_ProgressEnabled_f()
+void BaseUI_ProgressEnabled_f(int nClientIndex)
 {
 	EngineVGui()->EnabledProgressBarForNextLoad();
 }
@@ -1788,7 +1788,7 @@ void CEngineVGui::HideDebugSystem( void )
 }
 
 
-void CEngineVGui::ToggleDebugSystemUI( const CCommand &args )
+void CEngineVGui::ToggleDebugSystemUI( const CCommand &args, int nClientIndex)
 {
 	if ( !staticDebugSystemPanel )
 		return;
@@ -2346,7 +2346,7 @@ void DumpPanels_r( vgui::VPANEL panel, int level )
 	}
 }
 
-void DumpPanels_f()
+void DumpPanels_f(int nClientIndex)
 {
 	vgui::VPANEL embedded = vgui::surface()->GetEmbeddedPanel();
 	DumpPanels_r( embedded, 0 );

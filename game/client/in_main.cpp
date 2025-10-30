@@ -150,7 +150,7 @@ kbutton_t	in_ducktoggle;
 IN_CenterView_f
 ===========
 */
-void IN_CenterView_f (void)
+void IN_CenterView_f (int nClientIndex)
 {
 	QAngle viewangles;
 
@@ -170,7 +170,7 @@ void IN_CenterView_f (void)
 IN_Joystick_Advanced_f
 ===========
 */
-void IN_Joystick_Advanced_f (void)
+void IN_Joystick_Advanced_f (int nClientIndex)
 {
 	g_pUserInput->Joystick_Advanced();
 }
@@ -430,71 +430,71 @@ void KeyUp( kbutton_t *b, const char *c )
 	b->state |= 4; 		// impulse up
 }
 
-void IN_CommanderMouseMoveDown( const CCommand &args ) {KeyDown(&in_commandermousemove, args[1] );}
-void IN_CommanderMouseMoveUp( const CCommand &args ) {KeyUp(&in_commandermousemove, args[1] );}
-void IN_BreakDown( const CCommand &args ) { KeyDown( &in_break , args[1] );}
-void IN_BreakUp( const CCommand &args )
+void IN_CommanderMouseMoveDown( const CCommand &args, int nClientIndex) {KeyDown(&in_commandermousemove, args[1] );}
+void IN_CommanderMouseMoveUp( const CCommand &args, int nClientIndex) {KeyUp(&in_commandermousemove, args[1] );}
+void IN_BreakDown( const CCommand &args, int nClientIndex) { KeyDown( &in_break , args[1] );}
+void IN_BreakUp( const CCommand &args, int nClientIndex)
 { 
 	KeyUp( &in_break, args[1] ); 
 #if defined( _DEBUG )
 	DebuggerBreak();
 #endif
 };
-void IN_KLookDown ( const CCommand &args ) {KeyDown(&in_klook, args[1] );}
-void IN_KLookUp ( const CCommand &args ) {KeyUp(&in_klook, args[1] );}
-void IN_JLookDown ( const CCommand &args ) {KeyDown(&in_jlook, args[1] );}
-void IN_JLookUp ( const CCommand &args ) {KeyUp(&in_jlook, args[1] );}
-void IN_UpDown( const CCommand &args ) {KeyDown(&in_up, args[1] );}
-void IN_UpUp( const CCommand &args ) {KeyUp(&in_up, args[1] );}
-void IN_DownDown( const CCommand &args ) {KeyDown(&in_down, args[1] );}
-void IN_DownUp( const CCommand &args ) {KeyUp(&in_down, args[1] );}
-void IN_LeftDown( const CCommand &args ) {KeyDown(&in_left, args[1] );}
-void IN_LeftUp( const CCommand &args ) {KeyUp(&in_left, args[1] );}
-void IN_RightDown( const CCommand &args ) {KeyDown(&in_right, args[1] );}
-void IN_RightUp( const CCommand &args ) {KeyUp(&in_right, args[1] );}
-void IN_ForwardDown( const CCommand &args ) {KeyDown(&in_forward, args[1] );}
-void IN_ForwardUp( const CCommand &args ) {KeyUp(&in_forward, args[1] );}
-void IN_BackDown( const CCommand &args ) {KeyDown(&in_back, args[1] );}
-void IN_BackUp( const CCommand &args ) {KeyUp(&in_back, args[1] );}
-void IN_LookupDown( const CCommand &args ) {KeyDown(&in_lookup, args[1] );}
-void IN_LookupUp( const CCommand &args ) {KeyUp(&in_lookup, args[1] );}
-void IN_LookdownDown( const CCommand &args ) {KeyDown(&in_lookdown, args[1] );}
-void IN_LookdownUp( const CCommand &args ) {KeyUp(&in_lookdown, args[1] );}
-void IN_MoveleftDown( const CCommand &args ) {KeyDown(&in_moveleft, args[1] );}
-void IN_MoveleftUp( const CCommand &args ) {KeyUp(&in_moveleft, args[1] );}
-void IN_MoverightDown( const CCommand &args ) {KeyDown(&in_moveright, args[1] );}
-void IN_MoverightUp( const CCommand &args ) {KeyUp(&in_moveright, args[1] );}
-void IN_WalkDown( const CCommand &args ) {KeyDown(&in_walk, args[1] );}
-void IN_WalkUp( const CCommand &args ) {KeyUp(&in_walk, args[1] );}
-void IN_SpeedDown( const CCommand &args ) {KeyDown(&in_speed, args[1] );}
-void IN_SpeedUp( const CCommand &args ) {KeyUp(&in_speed, args[1] );}
-void IN_StrafeDown( const CCommand &args ) {KeyDown(&in_strafe, args[1] );}
-void IN_StrafeUp( const CCommand &args ) {KeyUp(&in_strafe, args[1] );}
-void IN_Attack2Down( const CCommand &args ) { KeyDown(&in_attack2, args[1] );}
-void IN_Attack2Up( const CCommand &args ) {KeyUp(&in_attack2, args[1] );}
-void IN_UseDown ( const CCommand &args ) {KeyDown(&in_use, args[1] );}
-void IN_UseUp ( const CCommand &args ) {KeyUp(&in_use, args[1] );}
-void IN_JumpDown ( const CCommand &args ) {KeyDown(&in_jump, args[1] );}
-void IN_JumpUp ( const CCommand &args ) {KeyUp(&in_jump, args[1] );}
-void IN_DuckDown( const CCommand &args ) {KeyDown(&in_duck, args[1] );}
-void IN_DuckUp( const CCommand &args ) {KeyUp(&in_duck, args[1] );}
-void IN_ReloadDown( const CCommand &args ) {KeyDown(&in_reload, args[1] );}
-void IN_ReloadUp( const CCommand &args ) {KeyUp(&in_reload, args[1] );}
-void IN_Alt1Down( const CCommand &args ) {KeyDown(&in_alt1, args[1] );}
-void IN_Alt1Up( const CCommand &args ) {KeyUp(&in_alt1, args[1] );}
-void IN_Alt2Down( const CCommand &args ) {KeyDown(&in_alt2, args[1] );}
-void IN_Alt2Up( const CCommand &args ) {KeyUp(&in_alt2, args[1] );}
-void IN_GraphDown( const CCommand &args ) {KeyDown(&in_graph, args[1] );}
-void IN_GraphUp( const CCommand &args ) {KeyUp(&in_graph, args[1] );}
-void IN_ZoomDown( const CCommand &args ) {KeyDown(&in_zoom, args[1] );}
-void IN_ZoomUp( const CCommand &args ) {KeyUp(&in_zoom, args[1] );}
-void IN_Grenade1Up( const CCommand &args ) { KeyUp( &in_grenade1, args[1] ); }
-void IN_Grenade1Down( const CCommand &args ) { KeyDown( &in_grenade1, args[1] ); }
-void IN_Grenade2Up( const CCommand &args ) { KeyUp( &in_grenade2, args[1] ); }
-void IN_Grenade2Down( const CCommand &args ) { KeyDown( &in_grenade2, args[1] ); }
-void IN_XboxStub( const CCommand &args ) { /*do nothing*/ }
-void IN_Attack3Down( const CCommand &args ) { KeyDown(&in_attack3, args[1] );}
-void IN_Attack3Up( const CCommand &args ) { KeyUp(&in_attack3, args[1] );}
+void IN_KLookDown ( const CCommand &args, int nClientIndex) {KeyDown(&in_klook, args[1] );}
+void IN_KLookUp ( const CCommand &args, int nClientIndex) {KeyUp(&in_klook, args[1] );}
+void IN_JLookDown ( const CCommand &args, int nClientIndex) {KeyDown(&in_jlook, args[1] );}
+void IN_JLookUp ( const CCommand &args, int nClientIndex) {KeyUp(&in_jlook, args[1] );}
+void IN_UpDown( const CCommand &args, int nClientIndex) {KeyDown(&in_up, args[1] );}
+void IN_UpUp( const CCommand &args, int nClientIndex) {KeyUp(&in_up, args[1] );}
+void IN_DownDown( const CCommand &args, int nClientIndex) {KeyDown(&in_down, args[1] );}
+void IN_DownUp( const CCommand &args, int nClientIndex) {KeyUp(&in_down, args[1] );}
+void IN_LeftDown( const CCommand &args, int nClientIndex) {KeyDown(&in_left, args[1] );}
+void IN_LeftUp( const CCommand &args, int nClientIndex) {KeyUp(&in_left, args[1] );}
+void IN_RightDown( const CCommand &args, int nClientIndex) {KeyDown(&in_right, args[1] );}
+void IN_RightUp( const CCommand &args, int nClientIndex) {KeyUp(&in_right, args[1] );}
+void IN_ForwardDown( const CCommand &args, int nClientIndex) {KeyDown(&in_forward, args[1] );}
+void IN_ForwardUp( const CCommand &args, int nClientIndex) {KeyUp(&in_forward, args[1] );}
+void IN_BackDown( const CCommand &args, int nClientIndex) {KeyDown(&in_back, args[1] );}
+void IN_BackUp( const CCommand &args, int nClientIndex) {KeyUp(&in_back, args[1] );}
+void IN_LookupDown( const CCommand &args, int nClientIndex) {KeyDown(&in_lookup, args[1] );}
+void IN_LookupUp( const CCommand &args, int nClientIndex) {KeyUp(&in_lookup, args[1] );}
+void IN_LookdownDown( const CCommand &args, int nClientIndex) {KeyDown(&in_lookdown, args[1] );}
+void IN_LookdownUp( const CCommand &args, int nClientIndex) {KeyUp(&in_lookdown, args[1] );}
+void IN_MoveleftDown( const CCommand &args, int nClientIndex) {KeyDown(&in_moveleft, args[1] );}
+void IN_MoveleftUp( const CCommand &args, int nClientIndex) {KeyUp(&in_moveleft, args[1] );}
+void IN_MoverightDown( const CCommand &args, int nClientIndex) {KeyDown(&in_moveright, args[1] );}
+void IN_MoverightUp( const CCommand &args, int nClientIndex) {KeyUp(&in_moveright, args[1] );}
+void IN_WalkDown( const CCommand &args, int nClientIndex) {KeyDown(&in_walk, args[1] );}
+void IN_WalkUp( const CCommand &args, int nClientIndex) {KeyUp(&in_walk, args[1] );}
+void IN_SpeedDown( const CCommand &args, int nClientIndex) {KeyDown(&in_speed, args[1] );}
+void IN_SpeedUp( const CCommand &args, int nClientIndex) {KeyUp(&in_speed, args[1] );}
+void IN_StrafeDown( const CCommand &args, int nClientIndex) {KeyDown(&in_strafe, args[1] );}
+void IN_StrafeUp( const CCommand &args, int nClientIndex) {KeyUp(&in_strafe, args[1] );}
+void IN_Attack2Down( const CCommand &args, int nClientIndex) { KeyDown(&in_attack2, args[1] );}
+void IN_Attack2Up( const CCommand &args, int nClientIndex) {KeyUp(&in_attack2, args[1] );}
+void IN_UseDown ( const CCommand &args, int nClientIndex) {KeyDown(&in_use, args[1] );}
+void IN_UseUp ( const CCommand &args, int nClientIndex) {KeyUp(&in_use, args[1] );}
+void IN_JumpDown ( const CCommand &args, int nClientIndex) {KeyDown(&in_jump, args[1] );}
+void IN_JumpUp ( const CCommand &args, int nClientIndex) {KeyUp(&in_jump, args[1] );}
+void IN_DuckDown( const CCommand &args, int nClientIndex) {KeyDown(&in_duck, args[1] );}
+void IN_DuckUp( const CCommand &args, int nClientIndex) {KeyUp(&in_duck, args[1] );}
+void IN_ReloadDown( const CCommand &args, int nClientIndex) {KeyDown(&in_reload, args[1] );}
+void IN_ReloadUp( const CCommand &args, int nClientIndex) {KeyUp(&in_reload, args[1] );}
+void IN_Alt1Down( const CCommand &args, int nClientIndex) {KeyDown(&in_alt1, args[1] );}
+void IN_Alt1Up( const CCommand &args, int nClientIndex) {KeyUp(&in_alt1, args[1] );}
+void IN_Alt2Down( const CCommand &args, int nClientIndex) {KeyDown(&in_alt2, args[1] );}
+void IN_Alt2Up( const CCommand &args, int nClientIndex) {KeyUp(&in_alt2, args[1] );}
+void IN_GraphDown( const CCommand &args, int nClientIndex) {KeyDown(&in_graph, args[1] );}
+void IN_GraphUp( const CCommand &args, int nClientIndex) {KeyUp(&in_graph, args[1] );}
+void IN_ZoomDown( const CCommand &args, int nClientIndex) {KeyDown(&in_zoom, args[1] );}
+void IN_ZoomUp( const CCommand &args, int nClientIndex) {KeyUp(&in_zoom, args[1] );}
+void IN_Grenade1Up( const CCommand &args, int nClientIndex) { KeyUp( &in_grenade1, args[1] ); }
+void IN_Grenade1Down( const CCommand &args, int nClientIndex) { KeyDown( &in_grenade1, args[1] ); }
+void IN_Grenade2Up( const CCommand &args, int nClientIndex) { KeyUp( &in_grenade2, args[1] ); }
+void IN_Grenade2Down( const CCommand &args, int nClientIndex) { KeyDown( &in_grenade2, args[1] ); }
+void IN_XboxStub( const CCommand &args, int nClientIndex) { /*do nothing*/ }
+void IN_Attack3Down( const CCommand &args, int nClientIndex) { KeyDown(&in_attack3, args[1] );}
+void IN_Attack3Up( const CCommand &args, int nClientIndex) { KeyUp(&in_attack3, args[1] );}
 
 void IN_DuckToggle( const CCommand &args ) 
 { 
@@ -508,29 +508,29 @@ void IN_DuckToggle( const CCommand &args )
 	}
 }
 
-void IN_AttackDown( const CCommand &args )
+void IN_AttackDown( const CCommand &args, int nClientIndex)
 {
 	KeyDown( &in_attack, args[1] );
 }
 
-void IN_AttackUp( const CCommand &args )
+void IN_AttackUp( const CCommand &args, int nClientIndex)
 {
 	KeyUp( &in_attack, args[1] );
 	in_cancel = 0;
 }
 
 // Special handling
-void IN_Cancel( const CCommand &args )
+void IN_Cancel( const CCommand &args, int nClientIndex)
 {
 	in_cancel = 1;
 }
 
-void IN_Impulse( const CCommand &args )
+void IN_Impulse( const CCommand &args, int nClientIndex)
 {
 	in_impulse = atoi( args[1] );
 }
 
-void IN_ScoreDown( const CCommand &args )
+void IN_ScoreDown( const CCommand &args, int nClientIndex)
 {
 	KeyDown( &in_score, args[1] );
 	if ( gViewPortInterface )
@@ -539,7 +539,7 @@ void IN_ScoreDown( const CCommand &args )
 	}
 }
 
-void IN_ScoreUp( const CCommand &args )
+void IN_ScoreUp( const CCommand &args, int nClientIndex)
 {
 	KeyUp( &in_score, args[1] );
 	if ( gViewPortInterface )

@@ -56,7 +56,7 @@ CDODMapOverview *GetDODOverview( void )
 
 // overview_togglezoom rotates through 3 levels of zoom for the small map
 //-----------------------------------------------------------------------
-void ToggleZoom( void )
+void ToggleZoom(int nClientIndex)
 {
 	if ( !GetDODOverview() )
 		return;
@@ -67,7 +67,7 @@ static ConCommand overview_togglezoom( "overview_togglezoom", ToggleZoom );
 
 // overview_largemap toggles showing the large map
 //------------------------------------------------
-void ShowLargeMap( void )
+void ShowLargeMap(int nClientIndex)
 {
 	if ( !GetDODOverview() )
 		return;
@@ -76,7 +76,7 @@ void ShowLargeMap( void )
 }
 static ConCommand overview_showlargemap( "+overview_largemap", ShowLargeMap );
 
-void HideLargeMap( void )
+void HideLargeMap(int nClientIndex)
 {
 	if ( !GetDODOverview() )
 		return;

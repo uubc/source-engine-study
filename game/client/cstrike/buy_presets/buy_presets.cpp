@@ -142,7 +142,7 @@ CON_COMMAND_F( cl_buy_favorite_set, "Saves the current loadout as a favorite", F
 /**
  *  Callback function for handling the "cl_buy_favorite_reset" command
  */
-void __CmdFunc_BuyPresetsReset(void)
+void __CmdFunc_BuyPresetsReset(int nClientIndex)
 {
 	if ( !engine->IsConnected() )
 		return;

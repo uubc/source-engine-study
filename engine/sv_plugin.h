@@ -79,10 +79,10 @@ public:
 	virtual void			ClientActive( int pEntity, bool bLoadGame );
 	virtual void			ClientDisconnect( int pEntity );
 	virtual void			ClientPutInServer( int pEntity, char const *playername );
-	virtual void			SetCommandClient( int index );
+	//virtual void			SetCommandClient( int index );
 	virtual void			ClientSettingsChanged( int pEdict );
 	virtual bool			ClientConnect( int pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen );
-	virtual void			ClientCommand( int pEntity, const CCommand &args );
+	virtual void			ClientCommand( int pEntity, const CCommand &args, int nClientIndex);
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID );
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, int pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue );
 

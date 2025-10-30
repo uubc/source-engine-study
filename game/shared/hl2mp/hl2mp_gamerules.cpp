@@ -1115,16 +1115,16 @@ bool CHL2MPWorld::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 
 }
 
-bool CHL2MPWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+bool CHL2MPWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 {
 #ifndef CLIENT_DLL
-	if( BaseClass::ClientCommand( pEdict, args ) )
+	if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 		return true;
 
 
 	CHL2MP_Player *pPlayer = (CHL2MP_Player *) pEdict;
 
-	if ( pPlayer->ClientCommand( args ) )
+	if ( pPlayer->ClientCommand( args, nClientIndex ) )
 		return true;
 #endif
 

@@ -3034,7 +3034,7 @@ IResponseSystem *g_pResponseSystem = &defaultresponsesytem;
 
 CON_COMMAND( rr_reloadresponsesystems, "Reload all response system scripts." )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	defaultresponsesytem.ReloadAllResponseSystems();

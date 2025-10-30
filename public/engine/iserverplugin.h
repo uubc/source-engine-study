@@ -93,7 +93,7 @@ public:
 	virtual void			ClientPutInServer( int pEntity, char const *playername ) = 0;
 
 	// Sets the client index for the client who typed the command into their console
-	virtual void			SetCommandClient( int index ) = 0;
+	//virtual void			SetCommandClient( int index ) = 0;
 
 	// A player changed one/several replicated cvars (name etc)
 	virtual void			ClientSettingsChanged( int pEdict ) = 0;
@@ -103,7 +103,7 @@ public:
 	virtual PLUGIN_RESULT	ClientConnect( bool *bAllowConnect, int pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;
 
 	// The client has typed a command at the console
-	virtual PLUGIN_RESULT	ClientCommand( int pEntity, const CCommand &args ) = 0;
+	virtual PLUGIN_RESULT	ClientCommand( int pEntity, const CCommand &args, int nClientIndex) = 0;
 
 	// A user has had their network id setup and validated 
 	virtual PLUGIN_RESULT	NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;

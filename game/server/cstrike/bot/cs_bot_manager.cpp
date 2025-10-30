@@ -531,7 +531,7 @@ void BotArgumentsFromArgv( const CCommand &args, const char **name, CSWeaponType
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_add, "bot_add <t|ct> <type> <difficulty> <name> - Adds a bot matching the given criteria.", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *name;
@@ -546,7 +546,7 @@ CON_COMMAND_F( bot_add, "bot_add <t|ct> <type> <difficulty> <name> - Adds a bot 
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_add_t, "bot_add_t <type> <difficulty> <name> - Adds a terrorist bot matching the given criteria.", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *name;
@@ -560,7 +560,7 @@ CON_COMMAND_F( bot_add_t, "bot_add_t <type> <difficulty> <name> - Adds a terrori
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_add_ct, "bot_add_ct <type> <difficulty> <name> - Adds a Counter-Terrorist bot matching the given criteria.", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *name;
@@ -666,7 +666,7 @@ private:
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_kill, "bot_kill <all> <t|ct> <type> <difficulty> <name> - Kills a specific bot, or all bots, matching the given criteria.", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *name;
@@ -703,7 +703,7 @@ CON_COMMAND_F( bot_kill, "bot_kill <all> <t|ct> <type> <difficulty> <name> - Kil
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_kick, "bot_kick <all> <t|ct> <type> <difficulty> <name> - Kicks a specific bot, or all bots, matching the given criteria.", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	const char *name;
@@ -750,7 +750,7 @@ CON_COMMAND_F( bot_kick, "bot_kick <all> <t|ct> <type> <difficulty> <name> - Kic
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_knives_only, "Restricts the bots to only using knives", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	cv_bot_allow_pistols.SetValue( 0 );
@@ -769,7 +769,7 @@ CON_COMMAND_F( bot_knives_only, "Restricts the bots to only using knives", FCVAR
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_pistols_only, "Restricts the bots to only using pistols", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	cv_bot_allow_pistols.SetValue( 1 );
@@ -788,7 +788,7 @@ CON_COMMAND_F( bot_pistols_only, "Restricts the bots to only using pistols", FCV
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_snipers_only, "Restricts the bots to only using sniper rifles", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	cv_bot_allow_pistols.SetValue( 0 );
@@ -807,7 +807,7 @@ CON_COMMAND_F( bot_snipers_only, "Restricts the bots to only using sniper rifles
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_all_weapons, "Allows the bots to use all weapons", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	cv_bot_allow_pistols.SetValue( 1 );
@@ -826,7 +826,7 @@ CON_COMMAND_F( bot_all_weapons, "Allows the bots to use all weapons", FCVAR_GAME
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( bot_goto_mark, "Sends a bot to the selected nav area (useful for testing navigation meshes)", FCVAR_GAMEDLL | FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	// tell the first bot we find to go to our marked area
@@ -860,7 +860,7 @@ CON_COMMAND_F( bot_goto_mark, "Sends a bot to the selected nav area (useful for 
 #if 0
 CON_COMMAND_F( bot_memory_usage, "Reports on the bots' memory usage", FCVAR_GAMEDLL )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	Msg( "Memory usage:\n" );
@@ -904,7 +904,7 @@ bool CCSBotManager::ServerCommand( const char *cmd )
 }
 
 
-bool CCSBotManager::ClientCommand( CBasePlayer *player, const CCommand &args )
+bool CCSBotManager::ClientCommand( CBasePlayer *player, const CCommand &args, int nClientIndex)
 {
 	return false;
 }
@@ -2358,7 +2358,7 @@ CON_COMMAND_F( nav_check_connectivity, "Checks to be sure every (or just the mar
 {
 	//Nav command in here since very CS specific.
 
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( TheNavMesh->GetMarkedArea() )

@@ -66,7 +66,7 @@ static const char *debugTypeName[] =
 };
 
 
-static void CC_SetDebug( const CCommand &args )
+static void CC_SetDebug( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -110,7 +110,7 @@ static void CC_SetDebug( const CCommand &args )
 static ConCommand SetDebug( "nb_debug", CC_SetDebug, "Debug NextBots.  Categories are: BEHAVIOR, LOOK_AT, PATH, ANIMATION, LOCOMOTION, VISION, HEARING, EVENTS, ERRORS.", FCVAR_CHEAT );
 
 //---------------------------------------------------------------------------------------------
-static void CC_SetDebugFilter( const CCommand &args )
+static void CC_SetDebugFilter( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -176,7 +176,7 @@ public:
 	bool m_useLOS;
 };
 
-static void CC_SelectBot( const CCommand &args )
+static void CC_SelectBot( const CCommand &args, int nClientIndex)
 {
 	CBasePlayer *player = UTIL_GetListenServerHost();
 	if ( player )
@@ -196,7 +196,7 @@ static ConCommand SelectBot( "nb_select", CC_SelectBot, "Select the bot you are 
 
 
 //---------------------------------------------------------------------------------------------
-static void CC_ForceLookAt( const CCommand &args )
+static void CC_ForceLookAt( const CCommand &args, int nClientIndex)
 {
 	CBasePlayer *player = UTIL_GetListenServerHost();
 	INextBot *pick = TheNextBots().GetSelected();
@@ -210,9 +210,9 @@ static ConCommand ForceLookAt( "nb_force_look_at", CC_ForceLookAt, "Force select
 
 
 //--------------------------------------------------------------------------------------------------------
-void CC_WarpSelectedHere( const CCommand &args )
+void CC_WarpSelectedHere( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *me = dynamic_cast< CBasePlayer * >( UTIL_GetCommandClient() ); 
+	CBasePlayer *me = dynamic_cast< CBasePlayer * >(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	INextBot *pick = TheNextBots().GetSelected();
 
 	if ( me == NULL || pick == NULL )
@@ -850,7 +850,7 @@ CON_COMMAND( nb_dump_debug_history, "Dumps debug history for the bot under the c
 		return;
 	}
 
-	CBasePlayer *player = UTIL_GetCommandClient();
+	CBasePlayer *player = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if ( !player )
 	{
 		player = UTIL_GetListenServerHost();

@@ -1429,14 +1429,14 @@ void CBaseGameStats::SetHL2UnlockedChapterStatistic( void )
 	}	
 }
 
-static void CC_ResetGameStats( const CCommand &args )
+static void CC_ResetGameStats( const CCommand &args, int nClientIndex)
 {
 #if defined ( TF_DLL ) || defined ( TF_CLIENT_DLL )
 	// Disabled this until we fix the TF gamestat crashes that result
 	return;
 #endif
 
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	gamestats->Clear();

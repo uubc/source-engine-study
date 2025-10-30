@@ -38,14 +38,14 @@ public:
 	virtual void			ClientActive( int pEntity, bool bLoadGame ) OVERRIDE;
 	virtual void			ClientDisconnect( int pEntity ) OVERRIDE;
 	virtual void			ClientPutInServer( int pEntity, const char *playername ) OVERRIDE;
-	virtual void			ClientCommand( int pEntity, const CCommand &args ) OVERRIDE;
+	virtual void			ClientCommand( int pEntity, const CCommand &args, int nClientIndex) OVERRIDE;
 	virtual void			ClientSettingsChanged( int pEntity ) OVERRIDE;
 	virtual void			ClientSetupVisibility(const IServerEntity *pViewEntity, int pClient, unsigned char *pvs, int pvssize ) OVERRIDE;
 	virtual float			ProcessUsercmds( int player, bf_read *buf, int numcmds, int totalcmds,
 								int dropped_packets, bool ignore, bool paused ) OVERRIDE;
 	// Player is running a command
 	virtual void			PostClientMessagesSent_DEPRECIATED( void ) OVERRIDE;
-	virtual void			SetCommandClient( int index ) OVERRIDE;
+	//virtual void			SetCommandClient( int index ) OVERRIDE;
 	virtual CPlayerState	*GetPlayerState( int player ) OVERRIDE;
 	virtual void			ClientEarPosition( int pEntity, Vector *pEarOrigin ) OVERRIDE;
 

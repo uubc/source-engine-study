@@ -123,9 +123,9 @@ void CTeamplayWorld::Think ( void )
 // the user has typed a command which is unrecognized by everything else;
 // this check to see if the gamerules knows anything about the command
 //=========================================================
-bool CTeamplayWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+bool CTeamplayWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 {
-	if( BaseClass::ClientCommand( pEdict, args ) )
+	if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 		return true;
 	
 	if ( FStrEq( args[0], "menuselect" ) )

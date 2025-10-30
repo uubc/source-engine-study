@@ -127,9 +127,9 @@ string_t FindPooledString( const char *pszValue )
 //------------------------------------------------------------------------------
 // Purpose: 
 //------------------------------------------------------------------------------
-void CC_DumpGameStringTable( void )
+void CC_DumpGameStringTable(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	g_GameStringPool.Dump();

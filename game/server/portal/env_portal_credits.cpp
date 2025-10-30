@@ -63,7 +63,7 @@ void CPortalCredits::Spawn( void )
 	GetEngineObject()->SetMoveType( MOVETYPE_NONE );
 }
 
-static void CreditsDone_f( void )
+static void CreditsDone_f(int nClientIndex)
 {
 	CPortalCredits *pCredits = (CPortalCredits*)EntityList()->FindEntityByClassname( NULL, "env_credits" );
 

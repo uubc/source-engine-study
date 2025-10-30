@@ -58,9 +58,9 @@ bool CEntityBlocker::TestCollision( const Ray_t &ray, unsigned int mask, trace_t
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CC_Test_Entity_Blocker( void )
+void CC_Test_Entity_Blocker(int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	Vector vecForward;
 	pPlayer->GetEngineObject()->GetVectors( &vecForward, NULL, NULL );
 

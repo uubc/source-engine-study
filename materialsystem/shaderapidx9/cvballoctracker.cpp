@@ -750,7 +750,7 @@ bool CVBAllocTracker::TrackMeshAllocations( const char * allocatorName )
 
 #ifndef RETAIL
 
-static void CC_DumpVBMemAllocs()
+static void CC_DumpVBMemAllocs(int nClientIndex)
 {
 #if ( ENABLE_VB_ALLOC_TRACKER == 0 )
 	Warning( "ENABLE_VB_ALLOC_TRACKER must be 1 to enable VB mem alloc tracking\n");

@@ -806,10 +806,10 @@ public:
 	virtual void			ClientPutInServer( int pEntity, char const *playername ) = 0;
 	
 	// The client has typed a command at the console
-	virtual void			ClientCommand( int pEntity, const CCommand &args ) = 0;
+	virtual void			ClientCommand( int pEntity, const CCommand &args, int nClientIndex) = 0;
 
 	// Sets the client index for the client who typed the command into his/her console
-	virtual void			SetCommandClient( int index ) = 0;
+	//virtual void			SetCommandClient( int index ) = 0;
 	
 	// A player changed one/several replicated cvars (name etc)
 	virtual void			ClientSettingsChanged( int pEdict ) = 0;

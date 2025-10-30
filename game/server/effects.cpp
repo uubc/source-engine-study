@@ -1218,7 +1218,7 @@ void CBlood::InputEmitBlood( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose: Console command for emitting the blood spray effect from an NPC.
 //-----------------------------------------------------------------------------
-void CC_BloodSpray( const CCommand &args )
+void CC_BloodSpray( const CCommand &args, int nClientIndex)
 {
 	IServerEntity *pEnt = NULL;
 	while ( ( pEnt = EntityList()->FindEntityGeneric( pEnt, args[1] ) ) != NULL )

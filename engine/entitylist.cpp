@@ -19240,7 +19240,7 @@ private:
 
 CON_COMMAND(report_entities, "Lists all entities")
 {
-	//if (!UTIL_IsCommandIssuedByServerAdmin())
+	//if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 	//	return;
 
 	CSortedEntityList list;
@@ -19256,7 +19256,7 @@ CON_COMMAND(report_entities, "Lists all entities")
 
 CON_COMMAND(report_touchlinks, "Lists all touchlinks")
 {
-	//if (!UTIL_IsCommandIssuedByServerAdmin())
+	//if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 	//	return;
 
 	CSortedEntityList list;
@@ -19288,7 +19288,7 @@ CON_COMMAND(report_touchlinks, "Lists all touchlinks")
 
 CON_COMMAND(report_simthinklist, "Lists all simulating/thinking entities")
 {
-	//if (!UTIL_IsCommandIssuedByServerAdmin())
+	//if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 	//	return;
 
 	IServerEntity* pTmp[NUM_ENT_ENTRIES];

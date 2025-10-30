@@ -572,12 +572,12 @@ void CEnergyBallLauncher::SpawnBall()
 
 
 
-static void fire_energy_ball_f( void )
+static void fire_energy_ball_f(int nClientIndex)
 {
 	if( sv_cheats->GetBool() == false ) //heavy handed version since setting the concommand with FCVAR_CHEATS isn't working like I thought
 		return;
 
-	CBasePlayer *pPlayer = (CBasePlayer *)UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = (CBasePlayer *)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	Vector ptEyes, vForward;
 	ptEyes = pPlayer->EyePosition();

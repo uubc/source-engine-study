@@ -109,7 +109,7 @@ static void host_name_changed_f( IConVar *var, const char *pOldValue, float flOl
 ConVar host_name( "hostname", "", 0, "Hostname for server.", host_name_changed_f );
 ConVar host_map( "host_map", "", 0, "Current map name." );
 
-void Host_VoiceRecordStop_f(void);
+void Host_VoiceRecordStop_f(int nClientIndex);
 static void voiceconvar_file_changed_f( IConVar *pConVar, const char *pOldValue, float flOldValue )
 {
 #ifndef SWDS
@@ -118,7 +118,7 @@ static void voiceconvar_file_changed_f( IConVar *pConVar, const char *pOldValue,
 	{
 		// Force voice recording to stop if they turn off voice_inputfromfile or if sv_allow_voice_from_file is set to 0. 
 		// Prevents an exploit where clients turn it on, start voice sending a long file, and then turn it off immediately.
-		Host_VoiceRecordStop_f();
+		Host_VoiceRecordStop_f(-1);
 	}
 #endif
 }
@@ -270,7 +270,7 @@ CON_COMMAND( quit_x360, "" )
 Host_Quit_f
 ==================
 */
-void Host_Quit_f( const CCommand &args )
+void Host_Quit_f( const CCommand &args, int nClientIndex)
 {
 #if !defined(SWDS)
 	
@@ -318,11 +318,11 @@ CON_COMMAND( _restart, "Shutdown and restart the engine." )
 //-----------------------------------------------------------------------------
 // A console command to spew out driver information
 //-----------------------------------------------------------------------------
-void Host_LightCrosshair (void);
+void Host_LightCrosshair (int nClientIndex);
 
 static ConCommand light_crosshair( "light_crosshair", Host_LightCrosshair, "Show texture color at crosshair", FCVAR_CHEAT );
 
-void Host_LightCrosshair (void)
+void Host_LightCrosshair (int nClientIndex)
 {
 	Vector endPoint;
 	Vector lightmapColor;
@@ -866,7 +866,7 @@ map <servername>
 command from the console.  Active clients are kicked off.
 ======================
 */
-void Host_Map_f( const CCommand &args )
+void Host_Map_f( const CCommand &args, int nClientIndex)
 {
 	Host_Map_Helper( args, false, false, false );
 }
@@ -888,7 +888,7 @@ CON_COMMAND( map_edit, "" )
 //-----------------------------------------------------------------------------
 // Purpose: Runs a map as the background
 //-----------------------------------------------------------------------------
-void Host_Map_Background_f( const CCommand &args )
+void Host_Map_Background_f( const CCommand &args, int nClientIndex)
 {
 	Host_Map_Helper( args, false, true, false );
 }
@@ -897,7 +897,7 @@ void Host_Map_Background_f( const CCommand &args )
 //-----------------------------------------------------------------------------
 // Purpose: Runs a map in commentary mode
 //-----------------------------------------------------------------------------
-void Host_Map_Commentary_f( const CCommand &args )
+void Host_Map_Commentary_f( const CCommand &args, int nClientIndex)
 {
 	Host_Map_Helper( args, false, false, true );
 }
@@ -1010,7 +1010,7 @@ CON_COMMAND( reload, "Reload the most recent saved game (add setpos to jump to c
 // Purpose: Goes to a new map, taking all clients along
 // Output : void Host_Changelevel_f
 //-----------------------------------------------------------------------------
-void Host_Changelevel_f( const CCommand &args )
+void Host_Changelevel_f( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -1064,7 +1064,7 @@ void Host_Changelevel_f( const CCommand &args )
 //-----------------------------------------------------------------------------
 // Purpose: Changing levels within a unit, uses save/restore
 //-----------------------------------------------------------------------------
-void Host_Changelevel2_f( const CCommand &args )
+void Host_Changelevel2_f( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -1918,7 +1918,7 @@ CON_COMMAND( killserver, "Shutdown the server." )
 }
 
 #if !defined(SWDS)
-void Host_VoiceRecordStart_f(void)
+void Host_VoiceRecordStart_f(int nClientIndex)
 {
 #ifdef VOICE_VOX_ENABLE
 	ConVarRef voice_vox( "voice_vox" );
@@ -1955,7 +1955,7 @@ void Host_VoiceRecordStart_f(void)
 }
 
 
-void Host_VoiceRecordStop_f(void)
+void Host_VoiceRecordStop_f(int nClientIndex)
 {
 #ifdef VOICE_VOX_ENABLE
 	ConVarRef voice_vox( "voice_vox" );

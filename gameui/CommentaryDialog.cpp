@@ -151,7 +151,7 @@ void OpenCommentaryDialog( void )
 // Purpose: 
 //-----------------------------------------------------------------------------
 ConVar commentary_firstrun("commentary_firstrun", "0", FCVAR_ARCHIVE );
-void CC_CommentaryTestFirstRun( void )
+void CC_CommentaryTestFirstRun(int nClientIndex)
 {
 	// The enable/disable commentary box in the sound options got lost in time;
 	// always prompt the user for commentary mode instead on new game.

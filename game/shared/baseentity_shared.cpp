@@ -1915,10 +1915,10 @@ void ClearModelSoundsCache();
 
 #endif // !CLIENT_DLL
 
-void S_SoundEmitterSystemFlush(void)
+void S_SoundEmitterSystemFlush(int nClientIndex)
 {
 #if !defined( CLIENT_DLL )
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 #endif
 
@@ -1946,7 +1946,7 @@ CON_COMMAND_F(cl_soundemitter_flush, "Flushes the sounds.txt system (client only
 CON_COMMAND_F(sv_soundemitter_flush, "Flushes the sounds.txt system (server only)", FCVAR_DEVELOPMENTONLY)
 #endif
 {
-	S_SoundEmitterSystemFlush();
+	S_SoundEmitterSystemFlush(nClientIndex);
 }
 
 #if !defined(_RETAIL)
@@ -1957,7 +1957,7 @@ CON_COMMAND_F(sv_soundemitter_flush, "Flushes the sounds.txt system (server only
 
 CON_COMMAND_F(sv_soundemitter_filecheck, "Report missing wave files for sounds and game_sounds files.", FCVAR_DEVELOPMENTONLY)
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
 	int missing = soundemitterbase->CheckForMissingWavFiles(true);
@@ -1966,7 +1966,7 @@ CON_COMMAND_F(sv_soundemitter_filecheck, "Report missing wave files for sounds a
 
 CON_COMMAND_F(sv_findsoundname, "Find sound names which reference the specified wave files.", FCVAR_DEVELOPMENTONLY)
 {
-	if (!UTIL_IsCommandIssuedByServerAdmin())
+	if (!UTIL_IsCommandIssuedByServerAdmin(nClientIndex))
 		return;
 
 	if (args.ArgC() != 2)
@@ -2006,7 +2006,7 @@ CON_COMMAND_F(sv_findsoundname, "Find sound names which reference the specified 
 #endif // !_XBOX
 
 #else
-void Playgamesound_f(const CCommand& args)
+void Playgamesound_f(const CCommand& args, int nClientIndex)
 {
 	CBasePlayer* pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
 	if (pPlayer)

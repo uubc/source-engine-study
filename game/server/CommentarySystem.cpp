@@ -861,7 +861,7 @@ void CV_GlobalChange_Commentary( IConVar *var, const char *pOldString, float flO
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_CommentaryNotChanging( void )
+void CC_CommentaryNotChanging(int nClientIndex)
 {
 	g_CommentarySystem.SetCommentaryConvarsChanging( false );
 }
@@ -1143,7 +1143,7 @@ void CPointCommentaryNode::StartCommentary( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CC_CommentaryFinishNode( void )
+void CC_CommentaryFinishNode(int nClientIndex)
 {
 	// We were told by the client DLL that our commentary has finished
 	if ( g_CommentarySystem.GetActiveNode() )

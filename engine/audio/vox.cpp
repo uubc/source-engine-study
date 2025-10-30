@@ -86,7 +86,7 @@ static void			VOX_InitAllEntnames( void );
 
 void VOX_LookupMapnames( void );
 
-static void VOX_Reload()
+static void VOX_Reload(int nClientIndex)
 {
 	VOX_Shutdown();
 	VOX_Init();

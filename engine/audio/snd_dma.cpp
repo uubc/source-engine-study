@@ -74,13 +74,13 @@ extern IPhysicsSurfaceProps	*physprop;
 
 extern bool IsReplayRendering();
 
-static void S_Play( const CCommand &args );
-static void S_PlayVol( const CCommand &args );
-void S_SoundList(void);
-static void S_Say ( const CCommand &args );
+static void S_Play( const CCommand &args, int nClientIndex);
+static void S_PlayVol( const CCommand &args, int nClientIndex);
+void S_SoundList(int nClientIndex);
+static void S_Say ( const CCommand &args, int nClientIndex);
 void S_Update_(float);
 void S_StopAllSounds(bool clear);
-void S_StopAllSoundsC(void);
+void S_StopAllSoundsC(int nClientIndex);
 void S_ShutdownMixThread();
 const char *GetClientClassname( SoundSource soundsource );
 
@@ -593,7 +593,7 @@ float S_GetMasterVolume( void )
 }
 
 
-void S_SoundInfo_f(void)
+void S_SoundInfo_f(int nClientIndex)
 {
 	if ( !g_AudioDevice->IsActive() )
 	{
@@ -5947,7 +5947,7 @@ void S_StopAllSounds( bool bClear )
 	Assert( g_ActiveChannels.GetActiveCount() == 0 );
 }
 
-void S_StopAllSoundsC( void )
+void S_StopAllSoundsC(int nClientIndex)
 {
 	S_StopAllSounds( true );
 }
@@ -6642,7 +6642,7 @@ console functions
 extern void DSP_DEBUGSetParams(int ipreset, int iproc, float *pvalues, int cparams);
 extern void DSP_DEBUGReloadPresetFile( void );
 
-void S_DspParms( const CCommand &args )
+void S_DspParms( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() == 1)
 	{
@@ -6713,7 +6713,7 @@ void S_Play( const char *pszName, bool flush = false )
 	S_StartSound( params );
 }
 
-static void S_Play( const CCommand &args )
+static void S_Play( const CCommand &args, int nClientIndex)
 {
 	bool bFlush = !Q_stricmp( args[0], "playflush" );
 	for ( int i = 1; i < args.ArgC(); ++i )
@@ -6722,7 +6722,7 @@ static void S_Play( const CCommand &args )
 	}
 }
 
-static void S_PlayVol( const CCommand &args )
+static void S_PlayVol( const CCommand &args, int nClientIndex)
 {
 	static int hash=543;
 	float vol;
@@ -6759,7 +6759,7 @@ static void S_PlayVol( const CCommand &args )
 	}
 }
 
-static void S_PlayDelay( const CCommand &args )
+static void S_PlayDelay( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() != 3 )
 	{
@@ -6805,7 +6805,7 @@ static bool SortByNameLessFunc( const int &lhs, const int &rhs )
 	return CaselessStringLessThan( pSfx1->getname(), pSfx2->getname() );
 }
 
-void S_SoundList(void)
+void S_SoundList(int nClientIndex)
 {
 	CSfxTable		*sfx;
 	CAudioSource	*pSource;
@@ -6989,7 +6989,7 @@ void DEBUG_StopSoundMeasure(int type, int samplecount )
 
 extern ConVar dsp_room;
 
-static void S_Say( const CCommand &args )
+static void S_Say( const CCommand &args, int nClientIndex)
 {
 	CSfxTable *pSfx;
 

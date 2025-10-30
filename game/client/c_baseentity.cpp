@@ -5197,7 +5197,7 @@ CBaseEntity *FindEntityInFrontOfLocalPlayer()
 //-----------------------------------------------------------------------------
 // Purpose: Debug command to wipe the decals off an entity
 //-----------------------------------------------------------------------------
-static void RemoveDecals_f( void )
+static void RemoveDecals_f(int nClientIndex)
 {
 	CBaseEntity *pHit = FindEntityInFrontOfLocalPlayer();
 	if ( pHit )
@@ -5835,7 +5835,7 @@ bool C_BoneFollower::TestCollision(const Ray_t& ray, unsigned int mask, trace_t&
 }
 
 //------------------------------------------------------------------------------
-void CC_CL_Find_Ent( const CCommand& args )
+void CC_CL_Find_Ent( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -5873,7 +5873,7 @@ void CC_CL_Find_Ent( const CCommand& args )
 static ConCommand cl_find_ent("cl_find_ent", CC_CL_Find_Ent, "Find and list all client entities with classnames that contain the specified substring.\nFormat: cl_find_ent <substring>\n", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-void CC_CL_Find_Ent_Index( const CCommand& args )
+void CC_CL_Find_Ent_Index( const CCommand& args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{

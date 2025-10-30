@@ -2356,7 +2356,7 @@ void CNavMesh::CommandNavEndShiftXY( void )
 //--------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_shift, "Shifts the selected areas by the specified amount", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CBasePlayer *player = UTIL_GetListenServerHost();
@@ -2400,9 +2400,9 @@ CON_COMMAND_F( nav_shift, "Shifts the selected areas by the specified amount", F
 
 
 //--------------------------------------------------------------------------------------------------------
-void CommandNavCenterInWorld( void )
+void CommandNavCenterInWorld(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CBasePlayer *player = UTIL_GetListenServerHost();
@@ -4880,7 +4880,7 @@ public:
 //--------------------------------------------------------------------------------------------------------------
 CON_COMMAND_F( nav_select_radius, "Adds all areas in a radius to the selection set", FCVAR_CHEAT )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() || engine->IsDedicatedServer() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) || engine->IsDedicatedServer() )
 		return;
 
 	if ( args.ArgC() < 2 )

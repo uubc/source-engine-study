@@ -242,7 +242,7 @@ void UTIL_DrawOverlayLines(void)
 //-----------------------------------------------------------------------------
 CON_COMMAND( clear_debug_overlays, "clears debug overlays" )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	IServerEntity *pEntity = EntityList()->FirstEnt();

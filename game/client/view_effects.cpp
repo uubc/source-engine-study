@@ -124,7 +124,7 @@ private:
 	int							m_FadeColorRGBA[4];
 	bool						m_bModulate;
 
-	friend void CC_Shake_Stop();
+	friend void CC_Shake_Stop(int nClientIndex);
 };
 
 static CViewEffects g_ViewEffects;
@@ -201,7 +201,7 @@ static ConCommand shake_stop("shake_stop", CC_Shake_Stop, "Stops all active scre
 //-----------------------------------------------------------------------------
 // Purpose: Stops all active screen shakes.
 //-----------------------------------------------------------------------------
-void CC_Shake_Stop()
+void CC_Shake_Stop(int nClientIndex)
 {
 	g_ViewEffects.ClearAllShakes();
 }

@@ -990,7 +990,7 @@ called each time a player is spawned into the game
 	// Input  :
 	// Output :
 	//-----------------------------------------------------------------------------
-	bool CCSGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+	bool CCSGameWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 	{
 		CCSPlayer *pPlayer = ToCSPlayer( pEdict );
 
@@ -1019,11 +1019,11 @@ called each time a player is spawned into the game
 			}
 			return true;
 		}
-		else if( pPlayer->ClientCommand( args ) )
+		else if( pPlayer->ClientCommand( args, nClientIndex ) )
 		{
 			return true;
 		}
-		else if( BaseClass::ClientCommand( pEdict, args ) )
+		else if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 		{
 			return true;
 		}
@@ -1033,7 +1033,7 @@ called each time a player is spawned into the game
 		}
 		else
 		{
-			return TheBots->ClientCommand( pPlayer, args );
+			return TheBots->ClientCommand( pPlayer, args, nClientIndex);
 		}
 	}
 
@@ -3753,10 +3753,10 @@ called each time a player is spawned into the game
 		}
 	}
 
-	void CCSGameWorld::DumpTimers( void ) const
+	void CCSGameWorld::DumpTimers(int nClientIndex) const
 	{
 		extern ConVar bot_join_delay;
-		CBasePlayer *player = UTIL_GetCommandClient();
+		CBasePlayer *player = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 		CFmtStr str;
 
 		PrintToConsole( player, str.sprintf( "Timers and related info at %f:\n", gpGlobals->curtime ) );
@@ -3799,12 +3799,12 @@ called each time a player is spawned into the game
 
 	CON_COMMAND( mp_dump_timers, "Prints round timers to the console for debugging" )
 	{
-		if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 			return;
 
 		if ( CSGameRules() )
 		{
-			CSGameRules()->DumpTimers();
+			CSGameRules()->DumpTimers(nClientIndex);
 		}
 	}
 
@@ -4946,7 +4946,7 @@ called each time a player is spawned into the game
 	}
 
 
-	void CCSGameWorld::EndRound()
+	void CCSGameWorld::EndRound(int nClientIndex)
 	{
 		// fake a round end
 		CSGameRules()->TerminateRound( 0.0f, Round_Draw );
@@ -5639,7 +5639,7 @@ CON_COMMAND_F( map_setbombradius, "Sets the bomb radius for the map.", FCVAR_CHE
 	if ( args.ArgC() != 2 )
 		return;
 
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( !g_pMapInfo )
@@ -5649,7 +5649,7 @@ CON_COMMAND_F( map_setbombradius, "Sets the bomb radius for the map.", FCVAR_CHE
 		return;
 
 	g_pMapInfo->m_flBombRadius = atof( args[1] );
-	map_showbombradius( args );
+	map_showbombradius( args, nClientIndex );
 }
 
 //void CreateBlackMarketString( void )

@@ -146,13 +146,13 @@ static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
 //-----------------------------------------------------------------------------
 // Purpose: Console command to fade out to a given color.
 //-----------------------------------------------------------------------------
-static void CC_FadeOut( const CCommand &args )
+static void CC_FadeOut( const CCommand &args, int nClientIndex)
 {
 	float flTime;
 	color32 clrFade;
 	GetFadeParms( args, flTime, clrFade );
 
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	UTIL_ScreenFade( pPlayer, clrFade, flTime, 0, FFADE_OUT | FFADE_PURGE | FFADE_STAYOUT );
 }
 static ConCommand fadeout("fadeout", CC_FadeOut, "fadeout {time r g b}: Fades the screen to black or to the specified color over the given number of seconds.", FCVAR_CHEAT );
@@ -161,13 +161,13 @@ static ConCommand fadeout("fadeout", CC_FadeOut, "fadeout {time r g b}: Fades th
 //-----------------------------------------------------------------------------
 // Purpose: Console command to fade in from a given color.
 //-----------------------------------------------------------------------------
-static void CC_FadeIn( const CCommand &args )
+static void CC_FadeIn( const CCommand &args, int nClientIndex)
 {
 	float flTime;
 	color32 clrFade;
 	GetFadeParms( args, flTime, clrFade );
 
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	UTIL_ScreenFade( pPlayer, clrFade, flTime, 0, FFADE_IN | FFADE_PURGE );
 }
 

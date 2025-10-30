@@ -120,7 +120,7 @@ public:
 
 	virtual void		CommanderMode();
 
-	virtual bool		ClientCommand( const CCommand &args );
+	virtual bool		ClientCommand( const CCommand &args, int nClientIndex);
 
 	// from cbasecombatcharacter
 	void				InitVCollision();

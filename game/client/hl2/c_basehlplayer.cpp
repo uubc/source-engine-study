@@ -41,7 +41,7 @@ END_PREDICTION_DATA()
 //-----------------------------------------------------------------------------
 // Purpose: Drops player's primary weapon
 //-----------------------------------------------------------------------------
-void CC_DropPrimary( void )
+void CC_DropPrimary(int nClientIndex)
 {
 	C_BasePlayer *pPlayer = (C_BasePlayer *)EntityList()->GetLocalPlayer();
 	

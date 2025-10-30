@@ -80,7 +80,7 @@ END_SEND_TABLE()
 // Console commands for this test.
 // ---------------------------------------------------------------------------------------- //
 
-void Test_ProxyToggle_EnableProxy( const CCommand &args )
+void Test_ProxyToggle_EnableProxy( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{
@@ -90,7 +90,7 @@ void Test_ProxyToggle_EnableProxy( const CCommand &args )
 	g_bEnableProxy = !!atoi( args[ 1 ] );
 }
 
-void Test_ProxyToggle_SetValue( const CCommand &args )
+void Test_ProxyToggle_SetValue( const CCommand &args, int nClientIndex)
 {
 	if ( args.ArgC() < 2 )
 	{

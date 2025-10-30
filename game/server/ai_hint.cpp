@@ -1535,7 +1535,7 @@ void CAI_Hint::NPCStoppedUsing( CAI_BaseNPC *pNPC )
 
 CON_COMMAND(ai_dump_hints, "")
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CAI_HintManager::ValidateHints();
@@ -1648,9 +1648,9 @@ const char *GetHintTypeDescription( CAI_Hint *pHint )
 //-----------------------------------------------------------------------------
 // Purpose: Debug command to drop hints into the world
 //-----------------------------------------------------------------------------
-void CC_ai_drop_hint( const CCommand &args )
+void CC_ai_drop_hint( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	CBasePlayer *pPlayer = ToBasePlayer(ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1)));
 	if ( !pPlayer )
 		return;
 

@@ -1518,7 +1518,7 @@ Vector CTeamTrainWatcher::GetNextCheckpointPosition( void ) const
 CON_COMMAND_F( tf_dumptrainstats, "Dump the stats for the current train watcher to the console", FCVAR_GAMEDLL )
 {
 	// Listenserver host or rcon access only!
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	CTeamTrainWatcher *pWatcher = NULL;

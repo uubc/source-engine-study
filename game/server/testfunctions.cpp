@@ -14,12 +14,12 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-void Test_CreateEntity( const CCommand &args )
+void Test_CreateEntity( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	// Require a player entity or that the command was entered from the dedicated server console
-	if ( !pPlayer && UTIL_GetCommandClientIndex() > 0 )
+	if ( !pPlayer && nClientIndex + 1 > 0 )
 	{
 		return;
 	}
@@ -56,7 +56,7 @@ void Test_CreateEntity( const CCommand &args )
 }
 
 
-void Test_RandomPlayerPosition()
+void Test_RandomPlayerPosition(int nClientIndex)
 {
 	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetLocalPlayer());
 	CWorld *pWorld = GetWorldEntity();

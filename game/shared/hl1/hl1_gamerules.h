@@ -64,7 +64,7 @@ public:
 	virtual void			ClientActive(int pEdict, bool bLoadGame);
 	virtual void			ClientPutInServer(int pEdict, const char* playername);
 
-	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual void			RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
 	virtual void			AfterPlayerSpawn( CBasePlayer *pPlayer );
 

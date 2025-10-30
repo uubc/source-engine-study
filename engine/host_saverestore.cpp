@@ -6145,7 +6145,7 @@ static void LoadSaveGame( const char *savename )
 // Purpose: 
 // Output : void Host_Loadgame_f
 //-----------------------------------------------------------------------------
-void Host_Loadgame_f( const CCommand &args )
+void Host_Loadgame_f( const CCommand &args, int nClientIndex)
 {
 	if ( cmd_source != src_command )
 		return;

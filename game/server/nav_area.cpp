@@ -4565,9 +4565,9 @@ void CNavArea::Shift( const Vector &shift )
 
 
 //--------------------------------------------------------------------------------------------------------------
-static void CommandNavUpdateBlocked( void )
+static void CommandNavUpdateBlocked(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( TheNavMesh->GetMarkedArea() )
@@ -5147,9 +5147,9 @@ void CNavArea::CheckWaterLevel( void )
 
 
 //--------------------------------------------------------------------------------------------------------------
-static void CommandNavCheckFloor( void )
+static void CommandNavCheckFloor(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	if ( TheNavMesh->GetMarkedArea() )
@@ -5222,9 +5222,9 @@ bool SelectOverlappingAreas::operator()( CNavArea *area )
 
 
 //--------------------------------------------------------------------------------------------------------------
-static void CommandNavSelectOverlapping( void )
+static void CommandNavSelectOverlapping(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	TheNavMesh->ClearSelectedSet();

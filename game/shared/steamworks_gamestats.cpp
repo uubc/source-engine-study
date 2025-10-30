@@ -72,7 +72,7 @@ enum
 static CSteamWorksGameStatsUploader g_SteamWorksGameStats;
 
 #if defined(CLIENT_DLL) || defined(CSTRIKE_DLL)
-void Show_Steam_Stats_Session_ID( void )
+void Show_Steam_Stats_Session_ID(int nClientIndex)
 {
 	DevMsg( "Client session ID (%s).\n", steamworks_sessionid_client.GetString() );
 	DevMsg( "Server session ID (%s).\n", steamworks_sessionid_server.GetString() );

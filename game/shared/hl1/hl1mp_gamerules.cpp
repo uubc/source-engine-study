@@ -340,16 +340,16 @@ float CHL1MPWorld::GetDamageMultiplier( void )
 }
 
 
-bool CHL1MPWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+bool CHL1MPWorld::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 {
 #ifndef CLIENT_DLL
-	if( BaseClass::ClientCommand( pEdict, args ) )
+	if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 		return true;
 
 
 	CHL1MP_Player *pPlayer = (CHL1MP_Player *) pEdict;
 
-	if ( pPlayer->ClientCommand( args ) )
+	if ( pPlayer->ClientCommand( args, nClientIndex ) )
 		return true;
 #endif
 

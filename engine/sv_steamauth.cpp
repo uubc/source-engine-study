@@ -1011,7 +1011,7 @@ void Heartbeat_f()
 //-----------------------------------------------------------------------------
 // Purpose: Select Steam gameserver account to login to
 //-----------------------------------------------------------------------------
-void sv_setsteamaccount_f( const CCommand &args )
+void sv_setsteamaccount_f( const CCommand &args, int nClientIndex)
 {
 	if ( Steam3Server().SteamGameServer() && Steam3Server().SteamGameServer()->BLoggedOn() )
 	{

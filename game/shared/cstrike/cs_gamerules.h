@@ -199,11 +199,11 @@ public:
 	virtual void	ClientActive(int pEdict, bool bLoadGame);
 	virtual void	ClientPutInServer(int pEdict, const char* playername);
 	
-	void DumpTimers( void ) const;	// debugging to help track down a stuck server (rare?)
+	void DumpTimers(int nClientIndex) const;	// debugging to help track down a stuck server (rare?)
 
 	IServerEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );
 
-	static void EndRound();
+	static void EndRound(int nClientIndex);
 
 	virtual void PlayerKilled( CBasePlayer *pVictim, const ITakeDamageInfo&info );
 	virtual void Think();
@@ -212,7 +212,7 @@ public:
 	// Called at the end of GameFrame (i.e. after all game logic has run this frame)
 	virtual void EndGameFrame( void );
 
-	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
+	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex);
 	virtual void RespawnPlayer(CBaseEntity* pEdict, bool fCopyCorpse);
 	virtual void AfterPlayerSpawn( CBasePlayer *pPlayer );
 			void ShowSpawnPoints();

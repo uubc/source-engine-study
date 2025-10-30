@@ -163,7 +163,7 @@ bool CBaseMultiplayerPlayer::ShouldRunRateLimitedCommand( const char *pszCommand
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseMultiplayerPlayer::ClientCommand( const CCommand &args )
+bool CBaseMultiplayerPlayer::ClientCommand( const CCommand &args, int nClientIndex)
 {
 	const char *pcmd = args[0];
 
@@ -190,7 +190,7 @@ bool CBaseMultiplayerPlayer::ClientCommand( const CCommand &args )
 		return true;
 	}
 
-	return BaseClass::ClientCommand( args );
+	return BaseClass::ClientCommand( args, nClientIndex );
 }
 
 bool CBaseMultiplayerPlayer::ShouldShowVoiceSubtitleToEnemy( void )

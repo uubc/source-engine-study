@@ -42,7 +42,7 @@ CON_COMMAND( viewanim_create, "viewanim_create" )
 }
 
 // run the test animation
-void TestViewAnim( void )
+void TestViewAnim(int nClientIndex)
 {
 	if ( g_pTestAnimation )
 	{
@@ -57,7 +57,7 @@ void TestViewAnim( void )
 ConCommand viewanim_test( "viewanim_test", TestViewAnim, "test view animation" );
 
 // set view angles to (0,0,0)
-void ResetViewAngles( void )
+void ResetViewAngles(int nClientIndex)
 {
 	// create a blank anim
 	QAngle angles = vec3_angle;

@@ -249,9 +249,9 @@ int CEnvProjectedTexture::UpdateTransmitState()
 
 
 // Console command for creating env_projectedtexture entities
-void CC_CreateFlashlight( const CCommand &args )
+void CC_CreateFlashlight( const CCommand &args, int nClientIndex)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 	if( !pPlayer )
 		return;
 

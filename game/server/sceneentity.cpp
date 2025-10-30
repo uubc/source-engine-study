@@ -5625,9 +5625,9 @@ int GetRecentNPCSpeech( recentNPCSpeech_t speech[ SPEECH_LIST_MAX_SOUNDS ] )
 // Output : 
 //-----------------------------------------------------------------------------
 
-static void ListRecentNPCSpeech( void )
+static void ListRecentNPCSpeech(int nClientIndex)
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	recentNPCSpeech_t speech[ SPEECH_LIST_MAX_SOUNDS ];
@@ -5648,7 +5648,7 @@ static ConCommand ListRecentNPCSpeechCmd( "listRecentNPCSpeech", ListRecentNPCSp
 
 CON_COMMAND( scene_flush, "Flush all .vcds from the cache and reload from disk." )
 {
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if ( !UTIL_IsCommandIssuedByServerAdmin(nClientIndex) )
 		return;
 
 	Msg( "Reloading\n" );

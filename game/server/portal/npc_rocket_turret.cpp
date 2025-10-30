@@ -1420,9 +1420,9 @@ void CRocket_Turret_Projectile::CreateSmokeTrail( void )
 
 
 
-static void fire_rocket_projectile_f( void )
+static void fire_rocket_projectile_f(int nClientIndex)
 {
-	CBasePlayer *pPlayer = (CBasePlayer *)UTIL_GetCommandClient();
+	CBasePlayer *pPlayer = (CBasePlayer *)ToBasePlayer(EntityList()->GetPlayerByIndex(nClientIndex + 1));
 
 	Vector ptEyes, vForward;
 	QAngle vLookAng;

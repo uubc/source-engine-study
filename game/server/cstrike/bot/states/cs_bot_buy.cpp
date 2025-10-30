@@ -486,7 +486,7 @@ void BuyState::OnUpdate( CCSBot *me )
 
 				CCommand args;
 				args.Tokenize( cmdBuffer );
-				me->ClientCommand( args );
+				me->ClientCommand( args, me->entindex()-1);
 
 				me->PrintIfWatched( "Tried to buy preferred weapon %s.\n", buyAlias );
 				isPreferredAllDisallowed = false;
@@ -508,7 +508,7 @@ void BuyState::OnUpdate( CCSBot *me )
 				// buy a shield
 				CCommand args;
 				args.Tokenize( "buy shield" );
-				me->ClientCommand( args );
+				me->ClientCommand( args, me->entindex() - 1);
 
 				me->PrintIfWatched( "Tried to buy a shield.\n" );
 			}
@@ -576,7 +576,7 @@ void BuyState::OnUpdate( CCSBot *me )
 
 					CCommand args;
 					args.Tokenize( cmdBuffer );
-					me->ClientCommand( args );
+					me->ClientCommand( args, me->entindex() - 1);
 
 					me->PrintIfWatched( "Tried to buy %s.\n", stockPrimary[ which ]->buyAlias );
 				}
@@ -594,14 +594,14 @@ void BuyState::OnUpdate( CCSBot *me )
 			if (me->HasPrimaryWeapon())
 			{
 				args.Tokenize( "buy primammo" );
-				me->ClientCommand( args );
+				me->ClientCommand( args, me->entindex() - 1);
 			}
 
 			// buy armor last, to make sure we bought a weapon first
 			args.Tokenize( "buy vesthelm" );
-			me->ClientCommand( args );
+			me->ClientCommand( args, me->entindex() - 1);
 			args.Tokenize( "buy vest" );
-			me->ClientCommand( args );
+			me->ClientCommand( args, me->entindex() - 1);
 
 			// pistols - if we have no preferred pistol, buy at random
 			if (TheCSBots()->AllowPistols() && !me->GetProfile()->HasPistolPreference())
@@ -619,7 +619,7 @@ void BuyState::OnUpdate( CCSBot *me )
 
 					Q_snprintf( cmdBuffer, 256, "buy %s\n", what );
 					args.Tokenize( cmdBuffer );
-					me->ClientCommand( args );
+					me->ClientCommand( args, me->entindex() - 1);
 
 
 					// only buy one pistol
@@ -628,7 +628,7 @@ void BuyState::OnUpdate( CCSBot *me )
 
 				// make sure we have enough pistol ammo
 				args.Tokenize( "buy secammo" );
-				me->ClientCommand( args );
+				me->ClientCommand( args, me->entindex() - 1);
 			}
 
 			// buy a grenade if we wish, and we don't already have one
@@ -642,17 +642,17 @@ void BuyState::OnUpdate( CCSBot *me )
 					if (rnd < 10)
 					{
 						args.Tokenize( "buy smokegrenade" );
-						me->ClientCommand( args );	// smoke grenade
+						me->ClientCommand( args, me->entindex() - 1);	// smoke grenade
 					}
 					else if (rnd < 35)
 					{
 						args.Tokenize( "buy flashbang" );
-						me->ClientCommand( args );	// flashbang
+						me->ClientCommand( args, me->entindex() - 1);	// flashbang
 					}
 					else
 					{
 						args.Tokenize( "buy hegrenade" );
-						me->ClientCommand( args );	// he grenade
+						me->ClientCommand( args, me->entindex() - 1);	// he grenade
 					}
 				}
 				else
@@ -660,12 +660,12 @@ void BuyState::OnUpdate( CCSBot *me )
 					if (RandomFloat( 0, 100 ) < 10)
 					{
 						args.Tokenize( "buy smokegrenade" );	// smoke grenade
-						me->ClientCommand( args );
+						me->ClientCommand( args, me->entindex() - 1);
 					}
 					else
 					{
 						args.Tokenize( "buy hegrenade" );	// he grenade
-						me->ClientCommand( args );
+						me->ClientCommand( args, me->entindex() - 1);
 					}
 				}
 			}
@@ -673,7 +673,7 @@ void BuyState::OnUpdate( CCSBot *me )
 			if (m_buyDefuseKit)
 			{
 				args.Tokenize( "buy defuser" );
-				me->ClientCommand( args );
+				me->ClientCommand( args, me->entindex() - 1);
 			}
 
 			m_doneBuying = true;

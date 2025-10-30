@@ -416,14 +416,14 @@ called each time a player is spawned into the game
 	//			Use engine.Cmd_Argv,  engine.Cmd_Argv, and engine.Cmd_Argc to get 
 	//			pointers the character string command.
 	//-----------------------------------------------------------------------------
-	bool CHalfLife2World::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+	bool CHalfLife2World::ClientCommand( CBaseEntity *pEdict, const CCommand &args, int nClientIndex)
 	{
-		if( BaseClass::ClientCommand( pEdict, args ) )
+		if( BaseClass::ClientCommand( pEdict, args, nClientIndex ) )
 			return true;
 
 		CHL2_Player *pPlayer = ToHL2Player(pEdict);
 
-		if ( pPlayer->ClientCommand( args ) )
+		if ( pPlayer->ClientCommand( args, nClientIndex ) )
 			return true;
 
 		return false;

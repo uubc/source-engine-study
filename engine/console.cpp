@@ -211,7 +211,7 @@ Con_HideConsole_f
 
 ================
 */
-void Con_HideConsole_f( void )
+void Con_HideConsole_f(int nClientIndex)
 {
 	if ( IsX360() )
 		return;
@@ -228,7 +228,7 @@ void Con_HideConsole_f( void )
 Con_ShowConsole_f
 ================
 */
-void Con_ShowConsole_f( void )
+void Con_ShowConsole_f(int nClientIndex)
 {
 	if ( IsX360() )
 		return;
@@ -257,28 +257,28 @@ void Con_ShowConsole_f( void )
 //-----------------------------------------------------------------------------
 // Purpose: toggles the console
 //-----------------------------------------------------------------------------
-void Con_ToggleConsole_f( void )
+void Con_ToggleConsole_f(int nClientIndex)
 {
 	if ( IsX360() )
 		return;
 
 	if (EngineVGui()->IsConsoleVisible())
 	{
-		Con_HideConsole_f();
+		Con_HideConsole_f(nClientIndex);
 
 		// If we hide the console, we also hide the game UI
 		EngineVGui()->HideGameUI();
 	}
 	else
 	{
-		Con_ShowConsole_f();
+		Con_ShowConsole_f(nClientIndex);
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Clears the console
 //-----------------------------------------------------------------------------
-void Con_Clear_f( void )
+void Con_Clear_f(int nClientIndex)
 {	
 	if ( IsX360() )
 		return;
