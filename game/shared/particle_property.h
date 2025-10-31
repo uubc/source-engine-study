@@ -18,8 +18,8 @@
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-class CBaseEntity;
-typedef CHandle<CBaseEntity> EHANDLE;
+class C_BaseEntity;
+typedef CHandle<C_BaseEntity> EHANDLE;
 class CNewParticleEffect;
 
 // Argh: Server considers -1 to be an invalid attachment, whereas the client uses 0
@@ -75,8 +75,8 @@ public:
 	CParticleProperty();
 	~CParticleProperty();
 
-	void				Init( CBaseEntity *pEntity );
-	CBaseEntity			*GetOuter( void ) { return m_pOuter; }
+	void				Init( C_BaseEntity *pEntity );
+	C_BaseEntity			*GetOuter( void ) { return m_pOuter; }
 
 	// Effect Creation
 	CNewParticleEffect *Create( const char *pszParticleName, ParticleAttachment_t iAttachType, const char *pszAttachmentName );
@@ -92,7 +92,7 @@ public:
 	void				StopEmissionAndDestroyImmediately( CNewParticleEffect *pEffect = NULL );
 
 	// kill all particle systems involving a given entity for their control points
-	void				StopParticlesInvolving( CBaseEntity *pEntity );
+	void				StopParticlesInvolving( C_BaseEntity *pEntity );
 	void				StopParticlesNamed( const char *pszEffectName, bool bForceRemoveInstantly = false ); ///< kills all particles using the given definition name
 	void				StopParticlesWithNameAndAttachment( const char *pszEffectName, int iAttachmentPoint, bool bForceRemoveInstantly = false ); ///< kills all particles using the given definition name
 
@@ -120,11 +120,11 @@ private:
 	void				UpdateControlPoint( ParticleEffectList_t *pEffect, int iPoint, bool bInitializing );
 
 private:
-	CBaseEntity *m_pOuter;
+	C_BaseEntity *m_pOuter;
 	CUtlVector<ParticleEffectList_t>	m_ParticleEffects;
 	int			m_iDormancyChangedAtFrame;
 
-	friend class CBaseEntity;
+	friend class C_BaseEntity;
 };
 
 #include "particle_property_inlines.h"

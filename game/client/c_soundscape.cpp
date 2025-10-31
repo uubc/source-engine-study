@@ -308,7 +308,7 @@ bool C_SoundscapeSystem::Init()
 	const char *mapSoundscapeFilename = NULL;
 	if ( mapname && *mapname )
 	{
-		mapSoundscapeFilename = VarArgs( "scripts/soundscapes_%s.txt", mapname );
+		mapSoundscapeFilename = UTIL_VarArgs( "scripts/soundscapes_%s.txt", mapname );
 	}
 
 	KeyValues *manifest = new KeyValues( SOUNDSCAPE_MANIFEST_FILE );
@@ -809,7 +809,7 @@ void C_SoundscapeSystem::ProcessPlayLooping( KeyValues *pAmbient, const subsound
 
 void C_SoundscapeSystem::TouchSoundFile( char const *wavefile )
 {
-	filesystem->GetFileTime( VarArgs( "sound/%s", PSkipSoundChars( wavefile ) ), "GAME" );
+	filesystem->GetFileTime(UTIL_VarArgs( "sound/%s", PSkipSoundChars( wavefile ) ), "GAME" );
 }
 
 // start a new looping sound

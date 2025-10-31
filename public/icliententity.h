@@ -1047,6 +1047,7 @@ public:
 
 class IClientPlayer : public IHandlePlayer {
 public:
+	virtual bool IsLocalPlayer(void) const = 0;
 	virtual int GetDefaultFOV() const = 0;
 	virtual float GetFOV(void) = 0;
 	virtual float GetMinFOV() const = 0;
@@ -1057,6 +1058,7 @@ public:
 	virtual bool AudioStateIsUnderwater(Vector vecMainViewOrigin) = 0;
 	virtual CPlayerLocalData* GetLocalData() = 0;
 	virtual bool InFirstPersonView() = 0;
+	virtual const QAngle& EyeAngles() = 0;		// Direction of eyes
 	virtual bool ShouldDrawThisPlayer() = 0;
 	virtual int GetObserverMode() const = 0;
 	virtual void SetObserverMode(int iNewMode) = 0;

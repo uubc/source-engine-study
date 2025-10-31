@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
+#include "tempent.h"
 #include "c_ai_basenpc.h"
 #include "c_te_particlesystem.h"
 #include "fx.h"
@@ -784,7 +785,7 @@ void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 	{
 		offset = (forward * (i*2.0f*flScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -819,7 +820,7 @@ void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 	{
 		offset = (dir * (i*flScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -850,7 +851,7 @@ void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 	{
 		offset = (-dir * (i*flScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -881,7 +882,7 @@ void MuzzleFlash_Strider( IClientEntity* hEntity, int attachmentIndex )
 	{
 		offset = (dir * (i*flScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;

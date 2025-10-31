@@ -258,7 +258,7 @@ void C_SmokeStack::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 
 	Q_snprintf( szNames, sizeof( szNames ), "%s%d.vmt", str, iCount );
 
-	while ( filesystem->FileExists( VarArgs( "materials/%s", szNames ) ) && iCount < SMOKESTACK_MAX_MATERIALS )
+	while ( filesystem->FileExists(UTIL_VarArgs( "materials/%s", szNames ) ) && iCount < SMOKESTACK_MAX_MATERIALS )
 	{
 		char *pExt = Q_stristr( szNames, ".vmt" );
 		if ( pExt )

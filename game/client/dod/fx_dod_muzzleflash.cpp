@@ -5,6 +5,7 @@
 //=============================================================================//
 
 #include "cbase.h"
+#include "tempent.h"
 #include "particles_simple.h"
 #include "particles_localspace.h"
 #include "c_te_effect_dispatch.h"

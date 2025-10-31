@@ -4,7 +4,8 @@
 //
 // $NoKeywords: $
 //===========================================================================//
-#include "cbase.h"
+//#include "cbase.h"
+#include "c_baseentity.h"
 #include "particlemgr.h"
 #include "particles_new.h"
 #include "iclientmode.h"
@@ -28,14 +29,14 @@ extern int g_cl_particle_show_bbox_cost;
 //-----------------------------------------------------------------------------
 // Constructor, destructor
 //-----------------------------------------------------------------------------
-CNewParticleEffect::CNewParticleEffect( CBaseEntity *pOwner, CParticleSystemDefinition *pEffect )
+CNewParticleEffect::CNewParticleEffect( C_BaseEntity *pOwner, CParticleSystemDefinition *pEffect )
 {
 	m_hOwner = pOwner;
 	CParticleCollection::Init( pEffect );
 	Construct();
 }
 
-CNewParticleEffect::CNewParticleEffect( CBaseEntity *pOwner, const char* pEffectName )
+CNewParticleEffect::CNewParticleEffect( C_BaseEntity *pOwner, const char* pEffectName )
 {
 	m_hOwner = pOwner;
 	CParticleCollection::Init( pEffectName );
@@ -197,7 +198,7 @@ void CNewParticleEffect::SetDormant( bool bDormant )
 	CParticleCollection::SetDormant( bDormant );
 }
 
-void CNewParticleEffect::SetControlPointEntity( int nWhichPoint, CBaseEntity *pEntity )
+void CNewParticleEffect::SetControlPointEntity( int nWhichPoint, C_BaseEntity *pEntity )
 {
 	if ( m_nToolParticleEffectId != TOOLPARTICLESYSTEMID_INVALID && clienttools->IsInRecordingMode() )
 	{
@@ -507,7 +508,7 @@ int CNewParticleEffect::DrawModel( int flags )
 	if ( r_DrawParticles.GetBool() == false )
 		return 0;
 
-	if ( !g_pGameRules->ShouldDrawParticles() || !ParticleMgr()->ShouldRenderParticleSystems() )
+	if ( !EntityList()->GetWorld()->ShouldDrawParticles() || !ParticleMgr()->ShouldRenderParticleSystems())
 		return 0;
 	
 	if ( ( flags & ( STUDIO_SHADOWDEPTHTEXTURE | STUDIO_SSAODEPTHTEXTURE ) ) != 0 )
@@ -555,11 +556,11 @@ int CNewParticleEffect::DrawModel( int flags )
 						return 0;
 
 					// If we're spectating in-eyes of the camera object, we don't see it
-					C_BasePlayer *pPlayer = (C_BasePlayer*)EntityList()->GetLocalPlayer();
+					C_BaseEntity *pPlayer = (C_BaseEntity*)EntityList()->GetLocalPlayer();
 					if ( pPlayer == pCameraObject )
 					{
-						C_BaseEntity *pObTarget = pPlayer->GetObserverTarget();
-						if ( pPlayer->GetObserverMode() == OBS_MODE_IN_EYE && (pObTarget == pEntity || pRootMove == pObTarget ) )
+						C_BaseEntity *pObTarget = (C_BaseEntity*)pPlayer->AsHandlePlayer()->GetObserverTarget();
+						if ( pPlayer->AsHandlePlayer()->GetObserverMode() == OBS_MODE_IN_EYE && (pObTarget == pEntity || pRootMove == pObTarget ) )
 							return 0;
 					}
 				}

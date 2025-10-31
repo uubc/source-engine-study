@@ -16,6 +16,7 @@
 #include "icliententity.h"
 #include "soundflags.h"
 #include "bitvec.h"
+#include "SoundEmitterSystem/isoundemittersystembase.h"
 
 class C_BasePlayer;
 class C_Team;

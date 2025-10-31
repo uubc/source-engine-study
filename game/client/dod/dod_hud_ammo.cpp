@@ -156,8 +156,8 @@ void CHudAmmo::OnThink()
 		ammo2 = player->GetAmmoCount(wpn->GetPrimaryAmmoType());
 	}
 
-	hudlcd->SetGlobalStat( "(ammo_primary)", VarArgs( "%d", ammo1 ) );
-	hudlcd->SetGlobalStat( "(ammo_secondary)", VarArgs( "%d", ammo2 ) );
+	hudlcd->SetGlobalStat( "(ammo_primary)", UTIL_VarArgs( "%d", ammo1 ) );
+	hudlcd->SetGlobalStat( "(ammo_secondary)", UTIL_VarArgs( "%d", ammo2 ) );
 
 	if (wpn == m_hCurrentActiveWeapon)
 	{

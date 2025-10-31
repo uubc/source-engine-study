@@ -177,7 +177,7 @@ void HapticsHandleMsg_SPHapWeapEvent( int iActivity )
 	if(pPlayer)
 		weap = pPlayer->GetActiveWeapon();
 	if(weap)
-		haptics->ProcessHapticEvent(4,"Weapons",weap->GetName(),"Activities",VarArgs("%i",iActivity));
+		haptics->ProcessHapticEvent(4,"Weapons",weap->GetName(),"Activities",UTIL_VarArgs("%i",iActivity));
 }
 
 void HapticsHandleMsg_HapPunch( QAngle const &angle )

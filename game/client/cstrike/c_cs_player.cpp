@@ -5,6 +5,7 @@
 //=============================================================================//
 
 #include "cbase.h"
+#include "tempent.h"
 #include "c_cs_player.h"
 #include "c_user_message_register.h"
 #include "iviewrender.h"

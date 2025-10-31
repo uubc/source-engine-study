@@ -683,7 +683,7 @@ void C_RocketTrail::Update( float fTimeDelta )
 	{
 		offset = GetEngineObject()->GetAbsOrigin() + (forward * (i*2.0f*m_flFlareScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -779,7 +779,7 @@ void C_RocketTrail::Update( float fTimeDelta )
 
 		pEmitter->SetSortOrigin(GetEngineObject()->GetAbsOrigin() );
 
-		PMaterialHandle flameMaterial = m_pRocketEmitter->GetPMaterial( VarArgs( "sprites/flamelet%d", random->RandomInt( 1, 4 ) ) );
+		PMaterialHandle flameMaterial = m_pRocketEmitter->GetPMaterial(UTIL_VarArgs( "sprites/flamelet%d", random->RandomInt( 1, 4 ) ) );
 		
 		// Flames from the rocket
 		for ( i = 0; i < 8; i++ )

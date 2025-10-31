@@ -178,7 +178,7 @@ void CHudAmmo::Paint( void )
 		// Draw the ammo Icon
 		icon_ammo->DrawSelf( x, y, clrAmmo );
 
-		hudlcd->SetGlobalStat( "(ammo_primary)", VarArgs( "%d", pPlayer->GetAmmoCount( pActiveWeapon->GetPrimaryAmmoType() ) ) );
+		hudlcd->SetGlobalStat( "(ammo_primary)", UTIL_VarArgs( "%d", pPlayer->GetAmmoCount( pActiveWeapon->GetPrimaryAmmoType() ) ) );
 	}
 	else
 	{
@@ -208,7 +208,7 @@ void CHudAmmo::Paint( void )
 			icon_ammo->DrawSelf( x, y, clrAmmo );
 		}
 
-		hudlcd->SetGlobalStat( "(ammo_secondary)", VarArgs( "%d", pPlayer->GetAmmoCount( pActiveWeapon->GetSecondaryAmmoType() ) ) );
+		hudlcd->SetGlobalStat( "(ammo_secondary)", UTIL_VarArgs( "%d", pPlayer->GetAmmoCount( pActiveWeapon->GetSecondaryAmmoType() ) ) );
 	}
 	else
 	{

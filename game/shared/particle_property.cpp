@@ -4,7 +4,8 @@
 //
 //=============================================================================
 
-#include "cbase.h"
+//#include "cbase.h"
+#include "c_baseentity.h"
 #include "particle_property.h"
 #include "utlvector.h"
 
@@ -66,7 +67,7 @@ CParticleProperty::~CParticleProperty()
 //-----------------------------------------------------------------------------
 // Initialization
 //-----------------------------------------------------------------------------
-void CParticleProperty::Init( CBaseEntity *pEntity )
+void CParticleProperty::Init( C_BaseEntity *pEntity )
 {
 	m_pOuter = pEntity;
 }
@@ -109,9 +110,9 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 static ConVar cl_particle_batch_mode( "cl_particle_batch_mode", "1" );
 CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, ParticleAttachment_t iAttachType, int iAttachmentPoint, Vector vecOriginOffset )
 {
-	if ( GameRules() )
+	if ( EntityList()->GetWorld() )
 	{
-		pszParticleName = GameRules()->TranslateEffectForVisionFilter( "particles", pszParticleName );
+		pszParticleName = EntityList()->GetWorld()->TranslateEffectForVisionFilter( "particles", pszParticleName );
 	}
 
 	int nBatchMode = cl_particle_batch_mode.GetInt();
@@ -313,7 +314,7 @@ void CParticleProperty::StopEmissionAndDestroyImmediately( CNewParticleEffect *p
 // Purpose: Stop all effects that have  a control point associated with the given
 //          entity.
 //-----------------------------------------------------------------------------
-void CParticleProperty::StopParticlesInvolving( CBaseEntity *pEntity )
+void CParticleProperty::StopParticlesInvolving( C_BaseEntity *pEntity )
 {
 	Assert( pEntity );
 
@@ -546,7 +547,7 @@ void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int i
 
 #ifdef TF_CLIENT_DLL
 
-	CBaseEntity *pWearable = (CBaseEntity*) pPoint->hEntity.Get();
+	C_BaseEntity *pWearable = (C_BaseEntity*) pPoint->hEntity.Get();
 	if ( pWearable && dynamic_cast<IHasAttributes*>( pWearable ) && !pWearable->IsPlayer() )
 	{
 		//C_BaseAnimating *pAnimating = pPoint->hEntity->GetBaseAnimating();

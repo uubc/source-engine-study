@@ -267,6 +267,7 @@ public:
 
 	CDynamicProp();
 
+	virtual bool IsDynamicProp(void) const { return true; }
 	virtual void PostConstructor(const char* szClassname, int iForceEdictIndex);
 	void	Spawn( void );
 	bool	CreateVPhysics( void );

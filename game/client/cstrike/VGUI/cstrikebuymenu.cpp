@@ -199,7 +199,7 @@ CCSBaseBuyMenu::CCSBaseBuyMenu(IViewPort *pViewPort, const char *subPanelName) :
 #if USE_BUY_PRESETS
 	for ( int i=0; i<NUM_BUY_PRESET_BUTTONS; ++i )
 	{
-		m_pBuyPresetButtons[i] = new BuyPresetButton( m_pMainMenu, VarArgs( "BuyPresetButton%c", 'A' + i ), "" );
+		m_pBuyPresetButtons[i] = new BuyPresetButton( m_pMainMenu, UTIL_VarArgs( "BuyPresetButton%c", 'A' + i ), "" );
 	}
  	m_pMoney = new Label( m_pMainMenu, "money", "" );
 	//=============================================================================
@@ -755,7 +755,7 @@ void CCSBuySubMenu::OnCommand( const char *command )
 			// can save
 			if ( cl_buy_favorite_quiet.GetBool() )
 			{
-				BaseClass::OnCommand( VarArgs( "cl_buy_favorite_set %d", atoi( command + strlen( buyPresetSetString ) ) ) );
+				BaseClass::OnCommand(UTIL_VarArgs( "cl_buy_favorite_set %d", atoi( command + strlen( buyPresetSetString ) ) ) );
 			}
 			else
 			{
@@ -763,7 +763,7 @@ void CCSBuySubMenu::OnCommand( const char *command )
 				pBox->SetCancelButtonAsDefault();
 				if ( pBox->GetOkButton() )
 				{
-					pBox->GetOkButton()->SetCommand( VarArgs( "cl_buy_favorite_set %d", atoi( command + strlen( buyPresetSetString ) ) ) );
+					pBox->GetOkButton()->SetCommand(UTIL_VarArgs( "cl_buy_favorite_set %d", atoi( command + strlen( buyPresetSetString ) ) ) );
 				}
 				pBox->AddActionSignalTarget( this );
 				pBox->DoModal();

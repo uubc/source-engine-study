@@ -64,7 +64,7 @@ CReplayPreviewPanelBase::CReplayPreviewPanelBase( Panel *pParent, QueryableRepla
 	{
 		for ( int j = 0; j < 2; ++j )
 		{
-			m_pReplayInfoLabels[i][j] = new CExLabel( m_pInfoPanel, VarArgs("Label%d_%d", i, j), "" );
+			m_pReplayInfoLabels[i][j] = new CExLabel( m_pInfoPanel, UTIL_VarArgs("Label%d_%d", i, j), "" );
 		}
 	}
 	m_pReplayInfoLabels[ LABEL_PLAYED_AS   ][1]->SetText( pReplay->GetPlayerClass() );

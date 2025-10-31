@@ -477,7 +477,7 @@ public:
 
 abstract_class IHandlePlayer{
 public:
-
+	virtual IHandleEntity* AsHandleEntity() = 0;
 };
 
 abstract_class IHandleNPC{
@@ -521,6 +521,8 @@ public:
 	virtual bool IsBSPModel() const { return false; }
 	virtual bool IsCombatCharacter(void) const { return false; }
 	virtual bool IsNPC(void) const { return false; }
+	virtual bool IsDoor(void) const { return false; }
+	virtual bool IsDynamicProp(void) const { return false; }
 	virtual bool IsPlayer(void) const { return false; }
 	virtual bool IsLocalPlayer(void) const { return false; }
 	virtual IHandlePlayer* AsHandlePlayer() { return NULL; }

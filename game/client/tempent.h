@@ -52,6 +52,13 @@
 #define FTENT_USEFASTCOLLISIONS		0x10000000	// Use fast collisions (cl_fasttempentcollision).
 #define FTENT_COLLIDEPROPS			0x20000000	// Collide with the world and props
 
+enum
+{
+	LIGHT_INDEX_TE_DYNAMIC = 0x10000000,
+	LIGHT_INDEX_PLAYER_BRIGHT = 0x20000000,
+	LIGHT_INDEX_MUZZLEFLASH = 0x40000000,
+};
+
 class C_LocalTempEntity;
 
 typedef int (*pfnDrawHelper)( C_LocalTempEntity *entity, int flags );

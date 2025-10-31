@@ -5,19 +5,23 @@
 // $Workfile:     $
 // $NoKeywords: $
 //=============================================================================//
-#include "cbase.h"
+//#include "cbase.h"
 #include "model_types.h"
+#include "dlight.h"
+#include "entitylist_base.h"
+#include "engine/IEngineTrace.h"
+#include "engine/IEngineSound.h"
 #include "view_shared.h"
 #include "iviewrender.h"
-#include "iviewrender.h"
+#include "sharedInterface.h"
 #include "tempentity.h"
-#include "dlight.h"
+#include "c_recipientfilter.h"
+#include "c_baseentity.h"
 #include "tempent.h"
 #include "c_te_legacytempents.h"
 #include "clientsideeffects.h"
 #include "cl_animevent.h"
 #include "iefx.h"
-#include "engine/IEngineSound.h"
 #include "env_wind_shared.h"
 #include "clienteffectprecachesystem.h"
 #include "fx_sparks.h"
@@ -33,8 +37,8 @@
 #include "engine/ivdebugoverlay.h"
 #include "effect_dispatch_data.h"
 #include "c_te_effect_dispatch.h"
-#include "c_props.h"
-#include "c_basedoor.h"
+//#include "c_props.h"
+//#include "c_basedoor.h"
 
 // NOTE: Always include this last!
 #include "tier0/memdbgon.h"
@@ -424,8 +428,8 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 
 				if ( (flags & FTENT_COLLIDEPROPS) && trace.m_pEnt )
 				{
-					bool bIsDynamicProp = ( NULL != dynamic_cast<CDynamicProp *>( trace.m_pEnt ) );
-					bool bIsDoor = ( NULL != dynamic_cast<CBaseDoor *>( trace.m_pEnt ) );
+					bool bIsDynamicProp = trace.m_pEnt->IsDynamicProp();
+					bool bIsDoor = trace.m_pEnt->IsDoor();
 					if ( !bIsDynamicProp && !bIsDoor && !((IClientEntity*)trace.m_pEnt)->IsWorld() ) // Die on props, doors, and the world.
 						return true;
 				}
@@ -2492,7 +2496,7 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 	{
 		if ( m_Material_MuzzleFlash_Player[i] == NULL )
 		{
-			m_Material_MuzzleFlash_Player[i] = ParticleMgr()->GetPMaterial( VarArgs( "effects/muzzleflash%d_noz", i+1 ) );
+			m_Material_MuzzleFlash_Player[i] = ParticleMgr()->GetPMaterial(UTIL_VarArgs( "effects/muzzleflash%d_noz", i+1 ) );
 		}
 	}
 
@@ -2500,7 +2504,7 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 	{
 		if ( m_Material_MuzzleFlash_NPC[i] == NULL )
 		{
-			m_Material_MuzzleFlash_NPC[i] = ParticleMgr()->GetPMaterial( VarArgs( "effects/muzzleflash%d", i+1 ) );
+			m_Material_MuzzleFlash_NPC[i] = ParticleMgr()->GetPMaterial(UTIL_VarArgs( "effects/muzzleflash%d", i+1 ) );
 		}
 	}
 
@@ -2508,7 +2512,7 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 	{
 		if ( m_Material_Combine_MuzzleFlash_Player[i] == NULL )
 		{
-			m_Material_Combine_MuzzleFlash_Player[i] = ParticleMgr()->GetPMaterial( VarArgs( "effects/combinemuzzle%d_noz", i+1 ) );
+			m_Material_Combine_MuzzleFlash_Player[i] = ParticleMgr()->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d_noz", i+1 ) );
 		}
 	}
 
@@ -2516,7 +2520,7 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 	{
 		if ( m_Material_Combine_MuzzleFlash_NPC[i] == NULL )
 		{
-			m_Material_Combine_MuzzleFlash_NPC[i] = ParticleMgr()->GetPMaterial( VarArgs( "effects/combinemuzzle%d", i+1 ) );
+			m_Material_Combine_MuzzleFlash_NPC[i] = ParticleMgr()->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", i+1 ) );
 		}
 	}
 }
@@ -3331,7 +3335,7 @@ void CTempEnts::HL1EjectBrass( const Vector &vecPosition, const QAngle &angAngle
 #define SHELLTYPE_SHOTGUN	2
 
 
-void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVelocity, int nVelocity, int shellType, CBasePlayer *pShooter )
+void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVelocity, int nVelocity, int shellType, IClientPlayer*pShooter )
 {
 	const model_t *pModel = NULL;
 	int hitsound = TE_BOUNCE_SHELL;
@@ -3385,7 +3389,7 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 			   right * random->RandomFloat( -20, 20 );
 
 	if( pShooter )
-		velocity += pShooter->GetEngineObject()->GetAbsVelocity();
+		velocity += pShooter ->AsHandleEntity()->GetEngineObject()->GetAbsVelocity();
 
 	C_LocalTempEntity *pTemp = TempEntAlloc( vecPosition, pModel );
 	if ( !pTemp )
@@ -3418,13 +3422,13 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 	if ( pShooter && pShooter->GetObserverMode() == OBS_MODE_IN_EYE )
 	{
 		// we are spectating the shooter in first person view
-		pShooter = ToBasePlayer( pShooter->GetObserverTarget() );
+		pShooter = (IClientPlayer*)( pShooter->GetObserverTarget() );
 		bViewModelBrass = true;
 	}
 
 	if ( pShooter )
 	{
-		pTemp->clientIndex = pShooter->entindex();
+		pTemp->clientIndex = pShooter->AsHandleEntity()->entindex();
 		bViewModelBrass |= pShooter->IsLocalPlayer();
 	}
 	else

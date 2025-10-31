@@ -160,7 +160,7 @@ IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *inf
 	if ( !info->customFiles[0] )	
 		return NULL;
 
-	IMaterial *logo = materials->FindMaterial( VarArgs("decals/playerlogo%2.2d", iPlayerIndex), TEXTURE_GROUP_DECAL );
+	IMaterial *logo = materials->FindMaterial(UTIL_VarArgs("decals/playerlogo%2.2d", iPlayerIndex), TEXTURE_GROUP_DECAL );
 	if ( IsErrorMaterial( logo ) )
 		return NULL;
 

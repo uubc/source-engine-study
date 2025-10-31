@@ -74,9 +74,6 @@ unsigned char UTIL_ComputeEntityFade( C_BaseEntity *pEntity, float flMinDist, fl
 
 client_textmessage_t	*TextMessageGet( const char *pName );
 
-char	*VarArgs( PRINTF_FORMAT_STRING const char *format, ... );
-	
-
 // Get the entity the local player is spectating (can be a player or a ragdoll entity).
 int		GetSpectatorTarget();
 int		GetSpectatorMode( void );
@@ -100,13 +97,6 @@ const char *nexttoken(char *token, const char *str, char sep);
 //-----------------------------------------------------------------------------
 // Base light indices to avoid index collision
 //-----------------------------------------------------------------------------
-
-enum
-{
-	LIGHT_INDEX_TE_DYNAMIC = 0x10000000,
-	LIGHT_INDEX_PLAYER_BRIGHT = 0x20000000,
-	LIGHT_INDEX_MUZZLEFLASH = 0x40000000,
-};
 
 void UTIL_PrecacheOther( const char *szClassname );
 

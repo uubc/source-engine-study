@@ -132,7 +132,7 @@ void C_BaseViewModel::FireEvent( const Vector& origin, const QAngle& angles, int
 	{
 		// NVNT notify the haptics system of our viewmodel's event
 		if ( haptics )
-			haptics->ProcessHapticEvent(4,"Weapons",pWeapon->GetName(),"AnimationEvents",VarArgs("%i",event));
+			haptics->ProcessHapticEvent(4,"Weapons",pWeapon->GetName(),"AnimationEvents", UTIL_VarArgs("%i",event));
 
 		bool bResult = pWeapon->OnFireEvent( this, origin, angles, event, options );
 		if ( !bResult )

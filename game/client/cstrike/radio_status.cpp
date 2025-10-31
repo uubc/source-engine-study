@@ -115,7 +115,7 @@ CON_COMMAND_F( menuselect, "menuselect", FCVAR_CLIENTCMD_CAN_EXECUTE )
 	if( g_whichMenu == 0 )
 	{
 		// if we didn't have a menu open, maybe a plugin did.  send it on to the server.
-		const char *cmd = VarArgs( "menuselect %s", args[1] );
+		const char *cmd = UTIL_VarArgs( "menuselect %s", args[1] );
 		engine->ServerCmd( cmd );
 		return;
 	}
@@ -213,7 +213,7 @@ CON_COMMAND_F( menuselect, "menuselect", FCVAR_CLIENTCMD_CAN_EXECUTE )
 
 		default:
 			// if we didn't have a menu open, maybe a plugin did.  send it on to the server.
-			const char *cmd = VarArgs( "menuselect %d", whichEntry );
+			const char *cmd = UTIL_VarArgs( "menuselect %d", whichEntry );
 			engine->ServerCmd( cmd );
 			break;
 	}

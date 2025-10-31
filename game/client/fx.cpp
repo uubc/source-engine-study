@@ -6,6 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
+#include "tempent.h"
 #include "engine/IEngineSound.h"
 #include "particles_simple.h"
 #include "particles_localspace.h"
@@ -219,7 +220,7 @@ void FX_MuzzleEffect(
 	{
 		offset = origin + (forward * (i*2.0f*scale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;

@@ -4,6 +4,7 @@
 //
 //=============================================================================//
 #include "cbase.h"
+#include "tempent.h"
 #include "fx.h"
 #include "c_te_effect_dispatch.h"
 #include "tier0/vprof.h"
@@ -551,7 +552,7 @@ void MuzzleFlash_Chopper( IClientEntity* hEntity, int attachmentIndex )
 	{
 		offset = (forward * (i*2.0f*flScale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial(UTIL_VarArgs( "effects/combinemuzzle%d", random->RandomInt(1,2) ) ), offset );
 			
 		if ( pParticle == NULL )
 			return;

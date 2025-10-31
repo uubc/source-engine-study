@@ -245,6 +245,7 @@ public:
 	CBasePlayer();
 	~CBasePlayer();
 	IServerPlayer* AsHandlePlayer() { return this; }
+	virtual IHandleEntity* AsHandleEntity() { return this; }
 	// IPlayerInfo passthrough (because we can't do multiple inheritance)
 	IPlayerInfo *GetPlayerInfo() { return &m_PlayerInfo; }
 	IBotController *GetBotController() { return &m_PlayerInfo; }

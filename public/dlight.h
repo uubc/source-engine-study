@@ -11,6 +11,7 @@
 #pragma once
 #endif
 
+#include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 
 //-----------------------------------------------------------------------------

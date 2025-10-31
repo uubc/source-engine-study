@@ -7,6 +7,7 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
+#include "tempent.h"
 #include "c_basetempentity.h"
 #include "dlight.h"
 #include "iefx.h"

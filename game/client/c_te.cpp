@@ -6,6 +6,7 @@
 //===========================================================================//
 #include "cbase.h"
 #include "itempents.h"
+#include "tempent.h"
 #include "effect_dispatch_data.h"
 #include "tier1/KeyValues.h"
 #include "iefx.h"

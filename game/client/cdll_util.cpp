@@ -45,24 +45,6 @@ ConVar r_FadeProps( "r_FadeProps", "1" );
 #endif
 bool g_MakingDevShots = false;
 extern ConVar cl_leveloverview;
-
-//-----------------------------------------------------------------------------
-// Purpose: Performs a var args printf into a static return buffer
-// Input  : *format - 
-//			... - 
-// Output : char
-//-----------------------------------------------------------------------------
-char *VarArgs( const char *format, ... )
-{
-	va_list		argptr;
-	static char		string[1024];
-	
-	va_start (argptr, format);
-	Q_vsnprintf (string, sizeof( string ), format,argptr);
-	va_end (argptr);
-
-	return string;	
-}
 	
 //-----------------------------------------------------------------------------
 // Purpose: Returns true if the entity index corresponds to a player slot 

@@ -36,7 +36,7 @@ static void FovChanged_Callback( IConVar *pConVar, const char *pOldString, float
 	ConVarRef var( pConVar );
 	if ( engine->IsInGame() )
 	{
-		engine->ServerCmd( VarArgs( "fov %f\n", var.GetFloat() ) );
+		engine->ServerCmd(UTIL_VarArgs( "fov %f\n", var.GetFloat() ) );
 	}
 }
 

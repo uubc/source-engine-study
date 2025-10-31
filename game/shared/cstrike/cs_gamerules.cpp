@@ -6517,7 +6517,7 @@ void UpdateClassImageEntity(
 		if (weapon)
 		{
 			pWeaponName = weapon->GetWorldModel();
-			pWeaponSequence = VarArgs("Walk_Upper_%s", weapon->GetCSWpnData().m_szAnimExtension);
+			pWeaponSequence = UTIL_VarArgs("Walk_Upper_%s", weapon->GetCSWpnData().m_szAnimExtension);
 		}
 	}
 

@@ -69,13 +69,13 @@ public:
 	bool GetAutoUpdateBBox( void );
 	bool ShouldPerformCullCheck() const;
 	void MarkShouldPerformCullCheck( bool bEnable );
-	CBaseEntity *GetOwner( void ) { return m_hOwner; }
-	void SetOwner( CBaseEntity *pOwner ) { m_hOwner = pOwner; }
+	C_BaseEntity *GetOwner( void ) { return m_hOwner; }
+	void SetOwner( C_BaseEntity *pOwner ) { m_hOwner = pOwner; }
 	CNewParticleEffect* ReplaceWith( const char *pParticleSystemName );
 
-	static CSmartPtr<CNewParticleEffect> Create( CBaseEntity *pOwner, const char *pParticleSystemName,
+	static CSmartPtr<CNewParticleEffect> Create( C_BaseEntity *pOwner, const char *pParticleSystemName,
 												 const char *pDebugName = NULL );
-	static CSmartPtr<CNewParticleEffect> Create( CBaseEntity *pOwner, CParticleSystemDefinition *pDef,
+	static CSmartPtr<CNewParticleEffect> Create( C_BaseEntity *pOwner, CParticleSystemDefinition *pDef,
 												 const char *pDebugName = NULL );
 	virtual int DrawModel( int flags );
 
@@ -86,7 +86,7 @@ public:
 	void StopEmission( bool bInfiniteOnly = false, bool bRemoveAllParticles = false, bool bWakeOnStop = false );
 	void SetDormant( bool bDormant );
 	void SetControlPoint( int nWhichPoint, const Vector &v );
-	void SetControlPointEntity( int nWhichPoint, CBaseEntity *pEntity );
+	void SetControlPointEntity( int nWhichPoint, C_BaseEntity *pEntity );
 	void SetControlPointOrientation( int nWhichPoint, const Quaternion &q );
 	void SetControlPointOrientation( int nWhichPoint, const Vector &forward, const Vector &right, const Vector &up );
 	void SetControlPointForwardVector( int nWhichPoint, const Vector &v );
@@ -125,8 +125,8 @@ public:
 
 	int AllocateToolParticleEffectId();
 	int GetToolParticleEffectId() const;
-	CNewParticleEffect( CBaseEntity *pOwner, const char *pEffectName );
-	CNewParticleEffect( CBaseEntity *pOwner, CParticleSystemDefinition *pEffect );
+	CNewParticleEffect( C_BaseEntity *pOwner, const char *pEffectName );
+	CNewParticleEffect( C_BaseEntity *pOwner, CParticleSystemDefinition *pEffect );
 	virtual ~CNewParticleEffect();
 
 protected:
@@ -308,7 +308,7 @@ inline void CNewParticleEffect::MarkShouldPerformCullCheck( bool bEnable )
 	m_bShouldPerformCullCheck = bEnable;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( CBaseEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
+inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( C_BaseEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pParticleSystemName );
 	pRet->m_pDebugName = pDebugName;
@@ -316,7 +316,7 @@ inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( CBaseEntity *pO
 	return pRet;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( CBaseEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
+inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( C_BaseEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pDef );
 	pRet->m_pDebugName = pDebugName;

@@ -151,7 +151,7 @@ CON_COMMAND( menuselect, "menuselect" )
 	case 0:
 	default:
 		// if we didn't have a menu open, maybe a plugin did.  send it on to the server.
-		const char *cmd = VarArgs( "menuselect %d", iSlot );
+		const char *cmd = UTIL_VarArgs( "menuselect %d", iSlot );
 		engine->ServerCmd( cmd );
 		break;
 	}

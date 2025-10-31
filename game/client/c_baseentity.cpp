@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
+#include "tempent.h"
 #include "c_baseentity.h"
 #include "iprediction.h"
 #include "model_types.h"

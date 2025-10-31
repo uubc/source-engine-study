@@ -16,7 +16,7 @@
 #endif
 
 #include "mathlib/vector.h"
-#include "icliententityinternal.h"
+//#include "icliententityinternal.h"
 #include "engine/ivmodelinfo.h"
 #include "engine/ivmodelrender.h"
 #include "client_class.h"
@@ -32,13 +32,13 @@
 #include "shareddefs.h"
 #include "networkvar.h"
 #include "interpolatedvar.h"
-#include "particle_property.h"
 #include "toolframework/itoolentity.h"
 #include "tier0/threadtools.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 //#include "engine\ivmodelrender.h"
 #include "bone_accessor.h"
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
+#include "particle_property.h"
 
 class C_Team;
 class IPhysicsObject;
@@ -744,6 +744,7 @@ public:
 	virtual bool					IsCombatItem(void) const { return false; }
 
 	virtual bool					IsBaseTrain(void) const { return false; }
+	virtual bool					IsDoor(void) const { return false; }
 
 	// Returns the eye point + angles (used for viewing + shooting)
 	virtual Vector EyePosition(void);

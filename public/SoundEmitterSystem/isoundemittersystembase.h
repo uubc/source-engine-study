@@ -13,6 +13,7 @@
 
 #include "tier1/utldict.h"
 #include "vstdlib/random.h"
+#include "tier1/utlsymbol.h"
 #include "soundflags.h"
 #include "mathlib/compressed_vector.h"
 #include "appframework/IAppSystem.h"

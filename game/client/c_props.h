@@ -28,6 +28,7 @@ public:
 	C_DynamicProp( void );
 	~C_DynamicProp( void );
 
+	virtual bool IsDynamicProp(void) const { return true; }
 	void GetRenderBounds( Vector& theMins, Vector& theMaxs );
 	unsigned int ComputeClientSideAnimationFlags();
 	bool TestBoneFollowers( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
