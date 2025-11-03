@@ -140,4 +140,24 @@ inline CBaseEntity* EntityFromEntityHandle(IHandleEntity* pHandleEntity)
 #endif
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+inline void DevMsgRT(PRINTF_FORMAT_STRING char const* pMsg, ...)
+{
+	if (gpGlobals->frametime != 0.0f)
+	{
+		va_list argptr;
+		va_start(argptr, pMsg);
+		// 
+		{
+			static char	string[1024];
+			Q_vsnprintf(string, sizeof(string), pMsg, argptr);
+			DevMsg(1, "%s", string);
+		}
+		// DevMsg( pMsg, argptr );
+		va_end(argptr);
+	}
+}
+
 #endif // CBASE_H

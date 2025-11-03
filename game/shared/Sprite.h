@@ -26,6 +26,8 @@ class CBasePlayer;
 #include "c_pixel_visibility.h"
 class CEngineSprite;
 
+extern CGlobalVarsBase* gpGlobals;
+
 class C_SpriteRenderer
 {
 public:

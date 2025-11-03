@@ -8,7 +8,8 @@
 
 
 //#include "cbase.h"
-#include "c_baseentity.h"
+#include "cdll_client_int.h"
+//#include "c_baseentity.h"
 #include "sharedInterface.h"
 #include "particlemgr.h"
 #include "particledraw.h"
@@ -1374,8 +1375,8 @@ void CParticleMgr::RemoveAllNewEffects()
 		CNewParticleEffect *pNextEffect = pNewEffect->m_pNext;
 		// see it any entitiy has a particle prop pointing at this one. this loop through all
 		// entities shouldn't be important perf-wise because it only happens on reload
-		C_BaseEntityIterator iterator;
-		C_BaseEntity *pEnt;
+		IClientEntityIterator iterator(EntityList());
+		IClientEntity *pEnt;
 		while ( (pEnt = iterator.Next()) != NULL )
 		{
 			if ( pEnt->ParticleProp() )

@@ -44,6 +44,7 @@
 #include "holiday_gift.h"
 #include "physics_prop_ragdoll.h"
 #include "IEffects.h"
+#include "ipredictionsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

@@ -6764,8 +6764,8 @@ bool CCSGameWorld::CanRecordDemo(char* errorMsg, int length) const
 	}
 
 	// don't start recording while smoke grenades are spewing smoke, as the existing smoke would be destroyed
-	C_BaseEntityIterator it;
-	C_BaseEntity* ent;
+	IClientEntityIterator it(EntityList());
+	IClientEntity* ent;
 	while ((ent = it.Next()) != NULL)
 	{
 		if (Q_strcmp(ent->GetClassname(), "class C_ParticleSmokeGrenade") == 0)

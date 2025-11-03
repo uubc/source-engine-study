@@ -5,6 +5,7 @@
 //=============================================================================
 
 //#include "cbase.h"
+#include "cdll_client_int.h"
 #include "c_baseentity.h"
 #include "particle_property.h"
 #include "utlvector.h"

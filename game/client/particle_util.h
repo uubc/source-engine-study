@@ -12,8 +12,10 @@
 #include "materialsystem/imesh.h"
 #include "particledraw.h"
 #include "particlemgr.h"
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
 #include "timedevent.h"
+
+extern IVEngineClient* engine;
 
 // Lerp between two floating point numbers.
 inline float FLerp(float minVal, float maxVal, float t)

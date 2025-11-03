@@ -5,6 +5,7 @@
 //===========================================================================//
 
 //#include "cbase.h"
+#include "cdll_client_int.h"
 #include "iviewrender.h"
 #include "view_shared.h"
 #include "ivieweffects.h"// aaa
@@ -67,6 +68,7 @@
 #include "ivmodemanager.h"
 #include "iclientshadowmgr.h"
 #include "particles/particles.h"
+#include "c_pixel_visibility.h"
 
 #if defined( HL2_CLIENT_DLL ) || defined( CSTRIKE_DLL )
 #define USE_MONITORS

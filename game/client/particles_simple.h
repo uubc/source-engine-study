@@ -11,6 +11,7 @@
 #pragma once
 #endif
 
+#include "networkvar.h"
 #include "particlemgr.h"
 #include "particlesphererenderer.h"
 #include "smartptr.h"

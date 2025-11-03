@@ -20,8 +20,6 @@
 #include "tier1/utlobjectreference.h"
 #include "ehandle.h"
 
-class C_BaseEntity;
-typedef CHandle<C_BaseEntity> EHANDLE;
 //-----------------------------------------------------------------------------
 // Particle effect
 //-----------------------------------------------------------------------------
@@ -69,13 +67,13 @@ public:
 	bool GetAutoUpdateBBox( void );
 	bool ShouldPerformCullCheck() const;
 	void MarkShouldPerformCullCheck( bool bEnable );
-	C_BaseEntity *GetOwner( void ) { return m_hOwner; }
-	void SetOwner( C_BaseEntity *pOwner ) { m_hOwner = pOwner; }
+	IClientEntity *GetOwner( void ) { return m_hOwner; }
+	void SetOwner( IClientEntity *pOwner ) { m_hOwner = pOwner; }
 	CNewParticleEffect* ReplaceWith( const char *pParticleSystemName );
 
-	static CSmartPtr<CNewParticleEffect> Create( C_BaseEntity *pOwner, const char *pParticleSystemName,
+	static CSmartPtr<CNewParticleEffect> Create( IClientEntity *pOwner, const char *pParticleSystemName,
 												 const char *pDebugName = NULL );
-	static CSmartPtr<CNewParticleEffect> Create( C_BaseEntity *pOwner, CParticleSystemDefinition *pDef,
+	static CSmartPtr<CNewParticleEffect> Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef,
 												 const char *pDebugName = NULL );
 	virtual int DrawModel( int flags );
 
@@ -86,14 +84,14 @@ public:
 	void StopEmission( bool bInfiniteOnly = false, bool bRemoveAllParticles = false, bool bWakeOnStop = false );
 	void SetDormant( bool bDormant );
 	void SetControlPoint( int nWhichPoint, const Vector &v );
-	void SetControlPointEntity( int nWhichPoint, C_BaseEntity *pEntity );
+	void SetControlPointEntity( int nWhichPoint, IClientEntity *pEntity );
 	void SetControlPointOrientation( int nWhichPoint, const Quaternion &q );
 	void SetControlPointOrientation( int nWhichPoint, const Vector &forward, const Vector &right, const Vector &up );
 	void SetControlPointForwardVector( int nWhichPoint, const Vector &v );
 	void SetControlPointUpVector( int nWhichPoint, const Vector &v );
 	void SetControlPointRightVector( int nWhichPoint, const Vector &v );
 
-	FORCEINLINE EHANDLE const &GetControlPointEntity( int nWhichPoint )
+	FORCEINLINE CHandle<IClientEntity> const &GetControlPointEntity( int nWhichPoint )
 	{
 		return m_hControlPointOwners[ nWhichPoint ];
 	}
@@ -125,8 +123,8 @@ public:
 
 	int AllocateToolParticleEffectId();
 	int GetToolParticleEffectId() const;
-	CNewParticleEffect( C_BaseEntity *pOwner, const char *pEffectName );
-	CNewParticleEffect( C_BaseEntity *pOwner, CParticleSystemDefinition *pEffect );
+	CNewParticleEffect( IClientEntity *pOwner, const char *pEffectName );
+	CNewParticleEffect( IClientEntity *pOwner, CParticleSystemDefinition *pEffect );
 	virtual ~CNewParticleEffect();
 
 protected:
@@ -148,8 +146,8 @@ protected:
 
 	int			m_nToolParticleEffectId;
 	Vector		m_vSortOrigin;
-	EHANDLE		m_hOwner;
-	EHANDLE     m_hControlPointOwners[MAX_PARTICLE_CONTROL_POINTS];
+	CHandle<IClientEntity>		m_hOwner;
+	CHandle<IClientEntity>     m_hControlPointOwners[MAX_PARTICLE_CONTROL_POINTS];
 
 	// holds the min/max bounds used to manage this thing in the client leaf system
 	Vector		m_LastMin;
@@ -308,7 +306,7 @@ inline void CNewParticleEffect::MarkShouldPerformCullCheck( bool bEnable )
 	m_bShouldPerformCullCheck = bEnable;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( C_BaseEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
+inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pParticleSystemName );
 	pRet->m_pDebugName = pDebugName;
@@ -316,7 +314,7 @@ inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( C_BaseEntity *p
 	return pRet;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( C_BaseEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
+inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pDef );
 	pRet->m_pDebugName = pDebugName;

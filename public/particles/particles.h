@@ -25,7 +25,7 @@
 #include "tier1/utlsoacontainer.h"
 
 #if defined( CLIENT_DLL )
-#include "c_pixel_visibility.h"
+//#include "c_pixel_visibility.h"
 #endif
 
 //-----------------------------------------------------------------------------

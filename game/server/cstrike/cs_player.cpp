@@ -58,7 +58,7 @@
 #include "../../shared/cstrike/cs_achievement_constants.h"
 #include "physics_prop_ragdoll.h"
 #include "game/server/iservervehicle.h"
-
+#include "ipredictionsystem.h"
 //=============================================================================
 // HPE_BEGIN
 //=============================================================================

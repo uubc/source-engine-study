@@ -29,6 +29,7 @@
 #include "GameEventListener.h"
 #include "portalrenderable_flatbasic.h"
 #include "igamemovement.h"
+#include "steam/steamclientpublic.h"
 
 #if defined USES_ECON_ITEMS
 #include "econ_item.h"

@@ -13,7 +13,8 @@
 #include "smartptr.h"
 #include "globalvars_base.h"
 #include "particles_new.h"
-#include "particle_parse.h"
+#include "IEffects.h"
+//#include "particle_parse.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -62,7 +63,7 @@ extern int GetAttachTypeFromString( const char *pszString );
 //-----------------------------------------------------------------------------
 // Encapsulates particle handling for an entity
 //-----------------------------------------------------------------------------
-class CParticleProperty 
+class CParticleProperty : public IParticleProperty
 {
 	DECLARE_CLASS_NOBASE( CParticleProperty );
 	DECLARE_EMBEDDED_NETWORKVAR();

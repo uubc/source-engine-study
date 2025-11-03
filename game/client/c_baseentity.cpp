@@ -5736,8 +5736,8 @@ void C_BaseEntity::CheckCLInterpChanged()
 		flLastValue_InterpNPCs = flCurValue_InterpNPCs;
 	
 		// Tell all the existing entities to update their interpolation amounts to account for the change.
-		C_BaseEntityIterator iterator;
-		C_BaseEntity *pEnt;
+		IClientEntityIterator iterator(EntityList());
+		IClientEntity *pEnt;
 		while ( (pEnt = iterator.Next()) != NULL )
 		{
 			pEnt->GetEngineObject()->Interp_UpdateInterpolationAmounts();

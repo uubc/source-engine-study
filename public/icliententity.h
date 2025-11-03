@@ -1095,6 +1095,15 @@ enum CollideType_t
 	ENTITY_SHOULD_RESPOND
 };
 
+class CNewParticleEffect;
+
+abstract_class IParticleProperty{
+public:
+	virtual void OnParticleSystemUpdated(CNewParticleEffect* pEffect, float flTimeDelta) = 0;
+	virtual void OnParticleSystemDeleted(CNewParticleEffect* pEffect) = 0;
+	virtual void ReplaceParticleEffect(CNewParticleEffect* pOldEffect, CNewParticleEffect* pNewEffect) = 0;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: All client entities must implement this interface.
 //-----------------------------------------------------------------------------
@@ -1179,6 +1188,7 @@ public:
 	virtual float GetFinalPredictedTime() const = 0;
 	virtual unsigned int ComputeClientSideAnimationFlags() = 0;
 	virtual void UpdateClientSideAnimation() = 0;
+	virtual void Simulate() = 0;
 	virtual void PhysicsSimulate(void) = 0;
 	virtual void Think(void) = 0;
 	virtual void ClientThink() = 0;
@@ -1260,6 +1270,9 @@ public:
 	virtual ITraceFilter* GetBeamTraceFilter(void) = 0;
 	virtual void PerformCustomPhysics(Vector* pNewPosition, Vector* pNewVelocity, QAngle* pNewAngles, QAngle* pNewAngVelocity) = 0;
 	virtual void ResolveFlyCollisionCustom(trace_t& trace, Vector& vecVelocity) = 0;
+
+	virtual IParticleProperty* ParticleProp() = 0;
+	virtual const IParticleProperty* ParticleProp() const = 0;
 };
 
 inline bool FClassnameIs(IClientEntity* pEntity, const char* szClassname)
@@ -1508,5 +1521,49 @@ inline AutoAllowBoneAccess::~AutoAllowBoneAccess()
 {
 	entitylist->PopBoneAccess((char const*)1);
 }
+
+class IClientEntityIterator
+{
+public:
+	// -------------------------------------------------------------------------------------------------- //
+	// C_BaseEntityIterator
+	// -------------------------------------------------------------------------------------------------- //
+	IClientEntityIterator(IClientEntityList* pEntityList)
+	{
+		m_pEntityList = pEntityList;
+		Restart();
+	}
+
+	void Restart()
+	{
+		start = false;
+		m_CurBaseEntity.Term();
+	}
+
+	IClientEntity* Next()
+	{
+		while (!start || m_CurBaseEntity.IsValid()) {
+			if (!start) {
+				start = true;
+				m_CurBaseEntity = m_pEntityList->FirstHandle();
+			}
+			else {
+				m_CurBaseEntity = m_pEntityList->NextHandle(m_CurBaseEntity);
+			}
+			if (!m_CurBaseEntity.IsValid()) {
+				break;
+			}
+			IClientEntity* pRet = m_pEntityList->GetBaseEntityFromHandle(m_CurBaseEntity);
+			if (!pRet->GetEngineObject()->IsDormant())
+				return pRet;
+		}
+
+		return NULL;
+	}
+private:
+	bool start = false;
+	CBaseHandle m_CurBaseEntity;
+	IClientEntityList* m_pEntityList = NULL;
+};
 
 #endif // ICLIENTENTITY_H

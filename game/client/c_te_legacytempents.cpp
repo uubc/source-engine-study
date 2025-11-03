@@ -6,6 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 //#include "cbase.h"
+#include "cdll_client_int.h"
 #include "model_types.h"
 #include "dlight.h"
 #include "entitylist_base.h"

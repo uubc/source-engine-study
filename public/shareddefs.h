@@ -11,6 +11,10 @@
 #pragma once
 #endif
 
+#include "mathlib/vector.h"
+
+class IHandleEntity;
+
 #ifdef ENGINE_DLL
 #define TICK_INTERVAL			(host_state.interval_per_tick)
 #endif // ENGINE_DLL

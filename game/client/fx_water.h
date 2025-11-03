@@ -15,6 +15,8 @@
 
 #include "tier0/memdbgon.h"
 
+extern IVEngineClient* engine;
+
 class CSplashParticle : public CSimpleEmitter
 {
 public:

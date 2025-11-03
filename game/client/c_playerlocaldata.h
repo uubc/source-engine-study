@@ -17,6 +17,8 @@
 #include "playernet_vars.h"
 #include "interpolatedvar.h"
 
+extern CGlobalVarsBase* gpGlobals;
+
 //-----------------------------------------------------------------------------
 // Purpose: Player specific data ( sent only to local player, too )
 //-----------------------------------------------------------------------------
