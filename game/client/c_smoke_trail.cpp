@@ -245,7 +245,7 @@ void C_SmokeTrail::OnDataChanged(DataUpdateType_t updateType)
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_SmokeTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_SmokeTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if(!pParticleMgr->AddEffect( &m_ParticleEffect, this ))
 		return;
@@ -624,7 +624,7 @@ void C_RocketTrail::OnDataChanged(DataUpdateType_t updateType)
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_RocketTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_RocketTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if(!pParticleMgr->AddEffect( &m_ParticleEffect, this ))
 		return;
@@ -958,7 +958,7 @@ void C_SporeExplosion::OnDataChanged( DataUpdateType_t updateType )
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_SporeExplosion::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_SporeExplosion::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	//Add us into the effect manager
 	if( pParticleMgr->AddEffect( &m_ParticleEffect, this ) == false )
@@ -1152,7 +1152,7 @@ public:
 
 // IPrototypeAppEffect
 public:
-	virtual void	Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
+	virtual void	Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
 
 // IParticleEffect
 public:
@@ -1188,7 +1188,7 @@ private:
 									// to eliminate holes in the trail.
 
 	VMatrix			m_mAttachmentMatrix;
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 };
 
 
@@ -1264,7 +1264,7 @@ void C_SporeTrail::OnDataChanged( DataUpdateType_t updateType )
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_SporeTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_SporeTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if( pParticleMgr->AddEffect( &m_ParticleEffect, this ) == false )
 		return;
@@ -1433,7 +1433,7 @@ C_FireTrail::~C_FireTrail( void )
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_FireTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_FireTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	BaseClass::Start( pParticleMgr, pArgs );
 
@@ -1755,7 +1755,7 @@ CLIENTEFFECT_REGISTER_END()
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_DustTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_DustTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if(!pParticleMgr->AddEffect( &m_ParticleEffect, this ))
 		return;

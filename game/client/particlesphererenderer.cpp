@@ -23,7 +23,7 @@ CParticleSphereRenderer::CParticleSphereRenderer()
 }
 
 
-void CParticleSphereRenderer::Init( CParticleMgr *pParticleMgr, IMaterial *pMaterial )
+void CParticleSphereRenderer::Init( IParticleMgr *pParticleMgr, IMaterial *pMaterial )
 {
 	m_pParticleMgr = pParticleMgr;
 

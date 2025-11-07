@@ -17,6 +17,8 @@
 #include "fx.h"
 #include "c_pixel_visibility.h"
 #include "particles_ez.h"
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

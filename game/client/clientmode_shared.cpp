@@ -16,7 +16,7 @@
 
 #include <KeyValues.h>
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "fmtstr.h"
 #if defined( _X360 )
 #include "xbox/xbox_console.h"

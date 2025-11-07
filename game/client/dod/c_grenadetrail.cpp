@@ -176,7 +176,7 @@ void C_GrenadeTrail::OnDataChanged(DataUpdateType_t updateType)
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_GrenadeTrail::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_GrenadeTrail::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if(!pParticleMgr->AddEffect( &m_ParticleEffect, this ))
 		return;

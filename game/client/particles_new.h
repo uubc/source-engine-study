@@ -12,7 +12,7 @@
 #pragma once
 #endif
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particles/particles.h"
 #include "particlesphererenderer.h"
 #include "smartptr.h"

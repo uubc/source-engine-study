@@ -11,6 +11,8 @@
 #pragma once
 #endif
 
+#include "clientleafsystem.h"
+
 void StudioStats_FindClosestEntity( CClientRenderablesList *pClientRenderablesList );
 
 extern IClientRenderable	*g_pStudioStatsEntity;

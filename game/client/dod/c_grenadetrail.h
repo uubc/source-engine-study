@@ -11,7 +11,7 @@
 #ifndef PARTICLE_SMOKETRAIL_H
 #define PARTICLE_SMOKETRAIL_H
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particle_prototype.h"
 #include "particle_util.h"
 #include "particles_simple.h"
@@ -50,7 +50,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -91,7 +91,7 @@ private:
 	PMaterialHandle	m_MaterialHandle[2];
 	TimedEvent		m_ParticleSpawn;
 
-	CParticleMgr	*m_pParticleMgr;
+	IParticleMgr	*m_pParticleMgr;
 	CSmartPtr<CSimpleEmitter> m_pSmokeEmitter;
 
 	C_GrenadeTrail( const C_GrenadeTrail & );

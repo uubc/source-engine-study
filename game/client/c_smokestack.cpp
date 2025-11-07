@@ -51,7 +51,7 @@ public:
 
 //IPrototypeAppEffect
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 	virtual bool	GetPropEditInfo(RecvTable **ppTable, void **ppObj);
 
 
@@ -115,7 +115,7 @@ private:
 	float			m_flAlphaScale;
 	float			m_InvLifetime;		// Calculated from m_JetLength / m_Speed;
 
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 	PMaterialHandle	m_MaterialHandle[SMOKESTACK_MAX_MATERIALS];
 	TimedEvent		m_ParticleSpawn;
 	int				m_iMaxFrames;
@@ -230,7 +230,7 @@ static ConVar mat_reduceparticles( "mat_reduceparticles", "0" );
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_SmokeStack::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_SmokeStack::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	pParticleMgr->AddEffect( &m_ParticleEffect, this );
 	

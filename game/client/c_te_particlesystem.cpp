@@ -8,6 +8,8 @@
 #include "cbase.h"	   
 #include "c_te_particlesystem.h"
 #include "movevars_shared.h"
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

@@ -15,7 +15,7 @@
 #define C_TE_PARTICLESYSTEM_H
 
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "c_basetempentity.h"
 #include "particles_simple.h"
 
@@ -75,7 +75,7 @@ public:
 
 	StandardParticle_t*		AddParticle();
 
-	CParticleMgr*			GetParticleMgr();
+	//IParticleMgr*			GetParticleMgr();
 
 	void					SetParticleType( StandardParticle_t *pParticle, ptype_t type );
 	ptype_t					GetParticleType( StandardParticle_t *pParticle );

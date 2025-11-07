@@ -1501,18 +1501,18 @@ void CServerGameDLL::PreClientUpdate( bool simulating )
 			if ( !pEntity )
 				break;
 
-			CBaseAnimating *anim = dynamic_cast< CBaseAnimating * >( pEntity );
+			//CBaseAnimating *anim = dynamic_cast< CBaseAnimating * >( pEntity );
 
-			if (anim)
+			if (((CBaseEntity*)pEntity)->IsBaseAnimating())
 			{
-				anim->GetEngineObject()->DrawServerHitboxes();
+				pEntity->GetEngineObject()->DrawServerHitboxes();
 			}
 		}
 		return;
 	}
 
-	CBaseAnimating *anim = dynamic_cast< CBaseAnimating * >(EntityList()->GetBaseEntity( sv_showhitboxes.GetInt() )  );
-	if ( !anim )
+	CBaseEntity *anim = dynamic_cast<CBaseEntity* >(EntityList()->GetBaseEntity( sv_showhitboxes.GetInt() )  );
+	if ( !anim || !anim->IsBaseAnimating())
 		return;
 
 	anim->GetEngineObject()->DrawServerHitboxes();

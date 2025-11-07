@@ -5,12 +5,13 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particle_prototype.h"
 #include "particle_util.h"
 #include "surfinfo.h"
 #include "baseparticleentity.h"
 #include "materialsystem/imaterialsystemhardwareconfig.h"
+#include "particle_iterators.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -64,7 +65,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -75,7 +76,7 @@ public:
 
 
 public:
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 	PMaterialHandle	m_MaterialHandle;
 
 private:
@@ -183,7 +184,7 @@ void C_AR2Explosion::OnDataChanged(DataUpdateType_t updateType)
 
 static ConVar mat_reduceparticles( "mat_reduceparticles", "0" );
 
-void C_AR2Explosion::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_AR2Explosion::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	m_pParticleMgr = pParticleMgr;
 	if(!pParticleMgr->AddEffect(&m_ParticleEffect, this))

@@ -60,7 +60,7 @@ public:
 	
 // IPrototypeAppEffect.
 public:
-	virtual void	Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
+	virtual void	Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
 
 // IParticleEffect.
 public:
@@ -306,7 +306,7 @@ void C_FuncSmokeVolume::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 }
 
-void C_FuncSmokeVolume::Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
+void C_FuncSmokeVolume::Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs )
 {
 	if( !pParticleMgr->AddEffect( &m_ParticleEffect, this ) )
 		return;

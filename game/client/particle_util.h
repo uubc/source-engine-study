@@ -10,8 +10,10 @@
 #define PARTICLE_UTIL_H
 
 #include "materialsystem/imesh.h"
+#include "cdll_int.h"
+#include "icliententity.h"
 #include "particledraw.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 //#include "cdll_client_int.h"
 #include "timedevent.h"
 
@@ -430,6 +432,13 @@ inline Vector WorldGetLightForPoint(const Vector &vPos, bool bClamp)
 		return engine->GetLightForPoint(vPos, bClamp);
 	#endif
 }
+
+// Helper functions to abstract out the particle testbed app.
+float	Helper_GetTime();
+float	Helper_GetFrameTime();
+float	Helper_RandomFloat(float minVal, float maxVal);
+int		Helper_RandomInt(int minVal, int maxVal);
+
 
 #endif
 

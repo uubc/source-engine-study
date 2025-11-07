@@ -14,7 +14,8 @@
 
 #include "materialsystem/imesh.h"
 #include "particledraw.h"
-
+#include "icliententity.h"
+#include "particle_simple3d.h"
 
 #define NUM_PARTICLES_PER_BATCH 200
 #ifndef _XBOX

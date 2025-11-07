@@ -83,12 +83,12 @@ private:
 	CUtlDict<int, int> m_CheckPointsHit;	// Which checkpoints we've hit.
 
 	// Console command handlers.
-	friend void Test_Wait( const CCommand &args );
-	friend void Test_RunFrame( const CCommand &args );
-	friend void Test_StartLoop( const CCommand &args );
-	friend void Test_LoopCount( const CCommand &args );
-	friend void Test_Loop( const CCommand &args );
-	friend void Test_LoopForNumSeconds( const CCommand &args );
+	friend void Test_Wait( const CCommand &args, int nClientIndex);
+	friend void Test_RunFrame( const CCommand &args, int nClientIndex);
+	friend void Test_StartLoop( const CCommand &args, int nClientIndex);
+	friend void Test_LoopCount( const CCommand &args, int nClientIndex);
+	friend void Test_Loop( const CCommand &args, int nClientIndex);
+	friend void Test_LoopForNumSeconds( const CCommand &args, int nClientIndex);
 };
 
 

@@ -11,7 +11,7 @@
 #include "iinput.h"
 #include "model_types.h"
 #include "clientsideeffects.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "iviewrender.h"
 #include "iclientmode.h"
 #include "voice_status.h"

@@ -35,7 +35,7 @@ public:
 public:
 	virtual	void	OnDataChanged(DataUpdateType_t updateType);
 
-	virtual void	Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
+	virtual void	Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
 
 	int				m_nAttachment;
 	float			m_flLifetime;			// How long this effect will last
@@ -46,7 +46,7 @@ private:
 	bool			m_bEmit;				// Keep emitting particles?
 
 	TimedEvent		m_ParticleSpawn;
-	CParticleMgr	*m_pParticleMgr;
+	IParticleMgr	*m_pParticleMgr;
 
 private:
 

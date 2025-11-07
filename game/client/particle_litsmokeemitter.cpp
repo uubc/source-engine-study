@@ -6,7 +6,8 @@
 
 #include "cbase.h"
 #include "particle_litsmokeemitter.h"
-
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 //
 // CLitSmokeEmitter

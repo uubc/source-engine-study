@@ -961,7 +961,7 @@ void C_BaseEntity::StudioFrameAdvance()
 		return;
 
 #ifdef DEBUG
-	bool watch = dbganimmodel.GetString()[0] && V_stristr(hdr->pszName(), dbganimmodel.GetString());
+	bool watch = false;// dbganimmodel.GetString()[0] && V_stristr(hdr->pszName(), dbganimmodel.GetString());
 #else
 	bool watch = false; // Q_strstr( hdr->name, "rifle" ) ? true : false;
 #endif
@@ -1035,7 +1035,7 @@ float C_BaseEntity::FrameAdvance(float flInterval)
 		return 0.0f;
 
 #ifdef DEBUG
-	bool bWatch = dbganimmodel.GetString()[0] && V_stristr(hdr->pszName(), dbganimmodel.GetString());
+	bool bWatch = false;// dbganimmodel.GetString()[0] && V_stristr(hdr->pszName(), dbganimmodel.GetString());
 #else
 	bool bWatch = false; // Q_strstr( hdr->name, "medkit_large" ) ? true : false;
 #endif
@@ -2264,7 +2264,7 @@ void C_BaseEntity::DoAnimationEvents(IStudioHdr* pStudioHdr)
 		return;
 
 #ifdef DEBUG
-	bool watch = dbganimmodel.GetString()[0] && V_stristr(pStudioHdr->pszName(), dbganimmodel.GetString());
+	bool watch = false;// dbganimmodel.GetString()[0] && V_stristr(pStudioHdr->pszName(), dbganimmodel.GetString());
 #else
 	bool watch = false; // Q_strstr( hdr->name, "rifle" ) ? true : false;
 #endif

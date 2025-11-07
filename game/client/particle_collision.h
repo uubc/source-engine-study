@@ -18,7 +18,7 @@
 #endif
 
 #include "particles_simple.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 
 #define	MAX_COLLISION_PLANES	6
 

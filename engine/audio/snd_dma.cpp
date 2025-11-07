@@ -100,7 +100,7 @@ char *MXR_GetGroupnameFromId( int mixgroupid );
 int MXR_GetMixgroupFromName( const char *pszgroupname );
 void MXR_DebugShowMixVolumes( void );
 #ifdef _DEBUG
-static void MXR_DebugSetMixGroupVolume( const CCommand &args );
+static void MXR_DebugSetMixGroupVolume( const CCommand &args, int nClientIndex);
 #endif //_DEBUG
 void MXR_UpdateAllDuckerVolumes( void );
 
@@ -7836,7 +7836,7 @@ void MXR_DebugShowMixVolumes( void )
 #ifdef _DEBUG
 
 // set the named mixgroup volume to vol for the current soundmixer
-static void MXR_DebugSetMixGroupVolume( const CCommand &args )
+static void MXR_DebugSetMixGroupVolume( const CCommand &args, int nClientIndex )
 {
 	if ( args.ArgC() != 3 )
 	{

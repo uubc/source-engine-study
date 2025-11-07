@@ -22,6 +22,8 @@
 #include "tier0/vprof.h"
 #include "iviewrender.h"
 #include "igamesystem.h"
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

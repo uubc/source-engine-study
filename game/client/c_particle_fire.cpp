@@ -108,7 +108,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 
 // IParticleEffect.
@@ -119,7 +119,7 @@ public:
 
 
 public:
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 	PMaterialHandle	m_MaterialHandle;
 
 	// Controls where the initial fire goes.
@@ -179,7 +179,7 @@ void C_ParticleFire::OnDataChanged(DataUpdateType_t updateType)
 }
 
 
-void C_ParticleFire::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_ParticleFire::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	m_pParticleMgr = pParticleMgr;
 	m_pParticleMgr->AddEffect( &m_ParticleEffect, this );

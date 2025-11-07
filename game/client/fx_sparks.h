@@ -12,7 +12,7 @@
 //=============================================================================//
 
 #include "particles_simple.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "c_pixel_visibility.h"
 #include "fx_fleck.h"
 

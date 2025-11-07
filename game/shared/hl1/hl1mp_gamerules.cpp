@@ -72,7 +72,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(HL1MPWorld, DT_HL1MPWorld)
 #ifdef DEBUG
 
 	// Handler for the "bot" command.
-	void Bot_f()
+	void Bot_f(int nClientIndex)
 	{		
 		// Look at -count.
 		int count = 1;

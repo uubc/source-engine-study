@@ -11,7 +11,7 @@
 #define PARTICLE_PROTOTYPE_H
 
 
-class CParticleMgr;
+class IParticleMgr;
 class RecvTable;
 
 
@@ -31,7 +31,7 @@ public:
 	virtual				~IPrototypeAppEffect()	{}
 	
 	// Start the effect. You can get command-line args with pArgs.
-	virtual void		Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)=0;
+	virtual void		Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)=0;
 	
 	// Return false if you don't allow properties to be edited in the prototype app.
 	virtual bool		GetPropEditInfo(RecvTable **ppTable, void **ppObj) {return false;}

@@ -3620,7 +3620,7 @@ called each time a player is spawned into the game
 	}
 
 #if defined (_DEBUG)
-	void TestRoundWinpanel( void )
+	void TestRoundWinpanel(int nClientIndex)
 	{
 		IGameEvent *event = gameeventmanager->CreateEvent( "round_end" );
 		event->SetInt( "winner", TEAM_TERRORIST );
@@ -3691,7 +3691,7 @@ called each time a player is spawned into the game
 	}
 	ConCommand test_round_winpanel( "test_round_winpanel", TestRoundWinpanel, "", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT );
 
-	void TestMatchWinpanel( void )
+	void TestMatchWinpanel(int nClientIndex)
 	{
 		IGameEvent *event = gameeventmanager->CreateEvent( "round_end" );
 		event->SetInt( "winner", TEAM_TERRORIST );
@@ -3722,7 +3722,7 @@ called each time a player is spawned into the game
 	}
 	ConCommand test_match_winpanel( "test_match_winpanel", TestMatchWinpanel, "", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT );
 
-	void TestFreezePanel( void )
+	void TestFreezePanel(int nClientIndex)
 	{
 		IGameEvent *event = gameeventmanager->CreateEvent( "freezecam_started" );
 		if ( event )

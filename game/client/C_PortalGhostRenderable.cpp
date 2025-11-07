@@ -10,6 +10,7 @@
 #include "PortalRender.h"
 //#include "c_portal_player.h"
 #include "model_types.h"
+#include "clientleafsystem.h"
 
 static CEntityFactory<C_PortalGhostRenderable> g_C_PortalGhostRenderable_Factory("","C_PortalGhostRenderable");
 

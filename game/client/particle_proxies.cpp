@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "materialsystem/imaterialproxy.h"
 #include "materialsystem/imaterialvar.h"
 
@@ -41,7 +41,7 @@ public:
 		if( !pvParticleMgr )
 			return;
 
-		CParticleMgr *pMgr = (CParticleMgr*)pvParticleMgr;
+		IParticleMgr *pMgr = (IParticleMgr*)pvParticleMgr;
 		CParticleLightInfo info;
 		pMgr->GetDirectionalLightInfo( info );
 

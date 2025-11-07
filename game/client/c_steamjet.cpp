@@ -57,7 +57,7 @@ public:
 
 //IPrototypeAppEffect
 public:
-	virtual void		Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void		Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 	virtual bool		GetPropEditInfo(RecvTable **ppTable, void **ppObj);
 
 
@@ -100,7 +100,7 @@ private:
 	// We sample the world to get these colors and ramp the particles.
 	Vector			m_Ramps[STEAMJET_NUMRAMPS];
 
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 	PMaterialHandle	m_MaterialHandle;
 	TimedEvent		m_ParticleSpawn;
 
@@ -186,7 +186,7 @@ void C_SteamJet::OnDataChanged(DataUpdateType_t updateType)
 // Input  : *pParticleMgr - 
 //			*pArgs - 
 //-----------------------------------------------------------------------------
-void C_SteamJet::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_SteamJet::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	pParticleMgr->AddEffect( &m_ParticleEffect, this );
 	

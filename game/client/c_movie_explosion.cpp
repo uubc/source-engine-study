@@ -49,7 +49,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -62,7 +62,7 @@ public:
 	MovieExplosionEmitter	m_Emitters[NUM_MOVIEEXPLOSION_EMITTERS];
 	float					m_EmitterLifetime;
 
-	CParticleMgr			*m_pParticleMgr;
+	IParticleMgr			*m_pParticleMgr;
 	PMaterialHandle			m_iFireballMaterial;
 
 	// Setup for temporary usage in SimulateAndRender.
@@ -108,7 +108,7 @@ void C_MovieExplosion::OnDataChanged(DataUpdateType_t updateType)
 }
 
 
-void C_MovieExplosion::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_MovieExplosion::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	if(!pParticleMgr->AddEffect(&m_ParticleEffect, this))
 		return;

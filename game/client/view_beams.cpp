@@ -21,6 +21,7 @@
 #include "iviewrender.h"
 #include "view_shared.h"
 #include "iviewrender.h"
+#include "clientleafsystem.h"
 
 //#ifdef PORTAL
 	#include "prop_portal_shared.h"

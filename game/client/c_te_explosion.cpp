@@ -15,6 +15,8 @@
 #include "tier1/KeyValues.h"
 #include "toolframework_client.h"
 #include "ragdoll.h"
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -118,7 +120,7 @@ public:
 	int				m_nMagnitude;
 
 	//CParticleCollision	m_ParticleCollision;
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 	PMaterialHandle		m_MaterialHandle;
 	bool			m_bShouldAffectRagdolls;
 };

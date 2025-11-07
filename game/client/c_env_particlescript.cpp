@@ -7,10 +7,11 @@
 
 #include "cbase.h"
 //#include "c_baseanimating.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "materialsystem/imaterialvar.h"
 #include "cl_animevent.h"
 #include "particle_util.h"
+#include "particle_iterators.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

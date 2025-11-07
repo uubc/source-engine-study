@@ -12,6 +12,8 @@
 #include "particles/particles.h"
 #include "particle_parse.h"
 #include "rendertexture.h"
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
 
 //#ifdef PORTAL
 	#include "PortalRender.h"

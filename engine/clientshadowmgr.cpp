@@ -2811,7 +2811,7 @@ void CClientShadowMgr::UpdateBrushShadow( IClientRenderable *pRenderable, Client
 
 static bool s_bBreak = false;
 
-void ShadowBreak_f()
+void ShadowBreak_f(int nClientIndex)
 {
 	s_bBreak = true;
 }

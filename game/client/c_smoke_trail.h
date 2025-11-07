@@ -11,7 +11,7 @@
 #ifndef PARTICLE_SMOKETRAIL_H
 #define PARTICLE_SMOKETRAIL_H
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particle_prototype.h"
 #include "particle_util.h"
 #include "particles_simple.h"
@@ -53,7 +53,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -96,7 +96,7 @@ private:
 	PMaterialHandle	m_MaterialHandle[2];
 	TimedEvent		m_ParticleSpawn;
 
-	CParticleMgr	*m_pParticleMgr;
+	IParticleMgr	*m_pParticleMgr;
 	CSmartPtr<CSimpleEmitter> m_pSmokeEmitter;
 };
 
@@ -131,7 +131,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -175,7 +175,7 @@ private:
 	PMaterialHandle	m_MaterialHandle[2];
 	TimedEvent		m_ParticleSpawn;
 
-	CParticleMgr	*m_pParticleMgr;
+	IParticleMgr	*m_pParticleMgr;
 	CSmartPtr<CSimpleEmitter> m_pRocketEmitter;
 };
 
@@ -221,7 +221,7 @@ public:
 
 // IPrototypeAppEffect
 public:
-	virtual void	Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
+	virtual void	Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
 
 // IParticleEffect
 public:
@@ -250,7 +250,7 @@ private:
 	TimedEvent			m_teParticleSpawn;
 
 	SporeEffect			*m_pSporeEffect;
-	CParticleMgr		*m_pParticleMgr;
+	IParticleMgr		*m_pParticleMgr;
 };
 
 //
@@ -268,7 +268,7 @@ public:
 	C_FireTrail( void );
 	virtual ~C_FireTrail( void );
 
-	virtual void	Start( CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
+	virtual void	Start( IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs );
 	virtual void	Update( float fTimeDelta );
 
 private:
@@ -341,7 +341,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 // IParticleEffect.
 public:
@@ -383,7 +383,7 @@ private:
 	PMaterialHandle	m_MaterialHandle[DUSTTRAIL_MATERIALS];
 	TimedEvent		m_ParticleSpawn;
 
-	CParticleMgr	*m_pParticleMgr;
+	IParticleMgr	*m_pParticleMgr;
 	CSmartPtr<CSimpleEmitter> m_pDustEmitter;
 };
 

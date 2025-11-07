@@ -12,9 +12,10 @@
 #endif
 
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particle_util.h"
 
+extern CGlobalVarsBase* gpGlobals;
 
 class CParticleSphereRenderer
 {
@@ -23,7 +24,7 @@ public:
 				CParticleSphereRenderer();
 
 	// Initialize and tell it the material you'll be using.
-	void		Init( CParticleMgr *pParticleMgr, IMaterial *pMaterial );
+	void		Init( IParticleMgr *pParticleMgr, IMaterial *pMaterial );
 	
 	// Pass this call through from your particle system too.
 	void		StartRender( VMatrix &effectMatrix );
@@ -74,7 +75,7 @@ private:
 
 	int m_iLastTickStartRenderCalled;	// Used for debugging.
 	
-	CParticleMgr *m_pParticleMgr;
+	IParticleMgr *m_pParticleMgr;
 	
 	Vector			m_vBaseColor;
 	CParticleLightInfo m_AmbientLight;

@@ -1180,7 +1180,7 @@ CAmmoDef *GetAmmoDef()
 #ifdef DEBUG
 
 	// Handler for the "bot" command.
-	void Bot_f()
+	void Bot_f(int nClientIndex)
 	{		
 		// Look at -count.
 		int count = 1;

@@ -241,7 +241,7 @@ void CBaseMultiplayerPlayer::AwardAchievement( int iAchievement, int iCount )
 
 	#include "utlbuffer.h"
 
-	void DumpAchievementCounters( const CCommand &args )
+	void DumpAchievementCounters( const CCommand &args, int nClientIndex )
 	{
 		int iPlayerIndex = 1;
 

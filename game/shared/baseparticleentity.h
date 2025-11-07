@@ -14,11 +14,15 @@
 
 //#include "predictable_entity.h"
 #include "baseentity_shared.h"
+#ifdef CLIENT_DLL
+#include "particle_iterators.h"
+#include "clientleafsystem.h"
+#endif // CLIENT_DLL
 
 #if defined( CLIENT_DLL )
 #define CBaseParticleEntity C_BaseParticleEntity
 
-#include "particlemgr.h"
+//#include "particlemgr.h"
 
 #endif 
 

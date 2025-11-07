@@ -30,7 +30,7 @@ bool g_bUsedPlayerClassSlots[MAX_PLAYERCLASSES] = { 0 };
 
 #ifdef DEBUG
 
-void CC_ReloadPlayerClasses_f (void)
+void CC_ReloadPlayerClasses_f (int nClientIndex)
 {
 	//ResetFilePlayerClassInfoDatabase();
 }

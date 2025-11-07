@@ -85,7 +85,7 @@ public:
 
 // IPrototypeAppEffect.
 public:
-	virtual void	Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
+	virtual void	Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs);
 
 
 // IParticleEffect.
@@ -350,7 +350,7 @@ void C_ParticleSmokeGrenade::OnDataChanged( DataUpdateType_t updateType )
 }
 
 
-void C_ParticleSmokeGrenade::Start(CParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
+void C_ParticleSmokeGrenade::Start(IParticleMgr *pParticleMgr, IPrototypeArgAccess *pArgs)
 {
 	if(!pParticleMgr->AddEffect( &m_ParticleEffect, this ))
 		return;

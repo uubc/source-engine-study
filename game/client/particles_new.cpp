@@ -587,7 +587,7 @@ int CNewParticleEffect::DrawModel( int flags )
 
 	if ( !IsRetail() )
 	{
-		CParticleMgr *pMgr = ParticleMgr();
+		CParticleMgr *pMgr = GetParticleMgr();
 		if ( pMgr->m_bStatsRunning )
 		{
 			pMgr->StatsNewParticleEffectDrawn ( this );

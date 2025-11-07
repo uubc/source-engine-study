@@ -248,7 +248,7 @@ void CL_PrintWhitelistInfo()
 
 // Console command to force a whitelist on the system.
 #ifdef _DEBUG
-void whitelist_f( const CCommand &args )
+void whitelist_f( const CCommand &args, int nClientIndex)
 {
 	int pureLevel = 2;
 	if ( args.ArgC() == 2 )

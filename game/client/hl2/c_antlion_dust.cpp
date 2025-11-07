@@ -7,7 +7,7 @@
 
 #include "cbase.h"
 #include "fx.h"
-#include "particlemgr.h"
+//#include "particlemgr.h"
 #include "particle_prototype.h"
 #include "particle_util.h"
 #include "c_te_particlesystem.h"
