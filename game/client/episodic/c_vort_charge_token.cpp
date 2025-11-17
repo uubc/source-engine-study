@@ -151,7 +151,7 @@ void C_NPC_Vortigaunt::ReceiveMessage( int classID, bf_read &msg )
 			msg.ReadBitVec3Coord( vecEndPos );
 
 			// Place a beam between the two points
-			CNewParticleEffect *pEffect = ParticleProp()->Create( "vortigaunt_beam", PATTACH_POINT_FOLLOW, nAttachment );
+			INewParticleEffect *pEffect = ParticleProp()->Create( "vortigaunt_beam", PATTACH_POINT_FOLLOW, nAttachment );
 			if ( pEffect )
 			{
 				pEffect->SetControlPoint( 0, vecStart );
@@ -174,7 +174,7 @@ void C_NPC_Vortigaunt::ReceiveMessage( int classID, bf_read &msg )
 				Vector vecNormal;
 				msg.ReadBitVec3Normal( vecNormal );
 				
-				CNewParticleEffect *pEffect = pEnt->ParticleProp()->Create( "vortigaunt_beam_charge", PATTACH_POINT_FOLLOW, nAttachment );
+				INewParticleEffect *pEffect = pEnt->ParticleProp()->Create( "vortigaunt_beam_charge", PATTACH_POINT_FOLLOW, nAttachment );
 				if ( pEffect )
 				{
 					// Set the control point's angles to be the surface normal we struct
@@ -210,7 +210,7 @@ private:
 	bool		SetupEmitters( void );
 
 	bool							m_bFadeOut;
-	CNewParticleEffect				*m_hEffect;
+	INewParticleEffect				*m_hEffect;
 	dlight_t						*m_pDLight;
 };
 
@@ -324,7 +324,7 @@ public:
 private:
 	bool	SetupEmitters( void );
 
-	CNewParticleEffect				*m_hEffect;
+	INewParticleEffect				*m_hEffect;
 	bool							m_bFadeOut;
 	dlight_t						*m_pDLight;
 };

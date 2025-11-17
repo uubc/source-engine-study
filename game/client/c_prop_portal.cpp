@@ -496,7 +496,7 @@ void C_Prop_Portal::UpdateOnRemove( void )
 	CProp_Portal_Shared::AllPortals.FindAndRemove(this);
 }
 
-void C_Prop_Portal::OnNewParticleEffect( const char *pszParticleName, CNewParticleEffect *pNewParticleEffect )
+void C_Prop_Portal::OnNewParticleEffect( const char *pszParticleName, INewParticleEffect *pNewParticleEffect )
 {
 	if ( Q_stricmp( pszParticleName, "portal_1_overlap" ) == 0 || Q_stricmp( pszParticleName, "portal_2_overlap" ) == 0 )
 	{
@@ -513,7 +513,7 @@ void C_Prop_Portal::OnNewParticleEffect( const char *pszParticleName, CNewPartic
 				{
 					Vector vPosition = pTempPortal->AsEngineObject()->GetAbsOrigin();
 
-					float fDistanceSqr = pNewParticleEffect->GetRenderOrigin().DistToSqr( vPosition );
+					float fDistanceSqr = pNewParticleEffect->GetClientRenderable()->GetRenderOrigin().DistToSqr(vPosition);
 
 					if ( fClosestDistanceSqr == -1.0f || fClosestDistanceSqr > fDistanceSqr )
 					{

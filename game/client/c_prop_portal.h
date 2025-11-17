@@ -48,7 +48,7 @@ public:
 
 	virtual void			UpdateOnRemove( void );
 
-	virtual void			OnNewParticleEffect( const char *pszParticleName, CNewParticleEffect *pNewParticleEffect );
+	virtual void			OnNewParticleEffect( const char *pszParticleName, INewParticleEffect *pNewParticleEffect );
 
 	struct Portal_PreDataChanged
 	{

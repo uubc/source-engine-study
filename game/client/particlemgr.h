@@ -126,7 +126,7 @@ entities. Each one is useful under different conditions.
 #endif
 #include "tier1/utlintrusivelist.h"
 #include "tier1/utlstring.h"
-
+#include "particles_new.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -144,7 +144,6 @@ class CParticleRenderIterator;
 class IThreadPool;
 class CParticleSystemDefinition;
 class CParticleMgr;
-class CNewParticleEffect;
 class CParticleCollection;
 
 
@@ -215,8 +214,8 @@ public:
 	bool			AddEffect( CParticleEffectBinding *pEffect, IParticleEffect *pSim );
 	void			RemoveEffect( CParticleEffectBinding *pEffect );
 
-	void			AddEffect( CNewParticleEffect *pEffect );
-	void			RemoveEffect( CNewParticleEffect *pEffect );
+	void			AddEffect( INewParticleEffect *pEffect );
+	void			RemoveEffect( INewParticleEffect *pEffect );
 
 	// Called at level shutdown to free all the lingering particle effects (usually
 	// CParticleEffect-derived effects that can linger with noone holding onto them).
@@ -279,7 +278,7 @@ public:
 	void StatsAccumulateActiveParticleSystems();
 	void StatsReset();
 	void StatsSpewResults();
-	void StatsNewParticleEffectDrawn ( CNewParticleEffect *pParticles );
+	void StatsNewParticleEffectDrawn ( INewParticleEffect *pParticles );
 	void StatsOldParticleEffectDrawn ( CParticleEffectBinding *pParticles );
 
 	IMaterialSystem* GetMaterialSystem() {

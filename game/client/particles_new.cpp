@@ -299,7 +299,10 @@ void CNewParticleEffect::SetControlPointRightVector( int nWhichPoint, const Vect
 	RecordControlPointOrientation( nWhichPoint );
 }
 
-
+void CNewParticleEffect::SetControlPointParent(int nWhichPoint, int n)
+{
+	CParticleCollection::SetControlPointParent(nWhichPoint, n);
+}
 //-----------------------------------------------------------------------------
 // Called when the particle effect is about to update
 //-----------------------------------------------------------------------------
@@ -315,14 +318,14 @@ void CNewParticleEffect::Update( float flTimeDelta )
 //-----------------------------------------------------------------------------
 // Bounding box
 //-----------------------------------------------------------------------------
-CNewParticleEffect* CNewParticleEffect::ReplaceWith( const char *pParticleSystemName )
+INewParticleEffect* CNewParticleEffect::ReplaceWith( const char *pParticleSystemName )
 {
 	StopEmission( false, true, true );
 	if ( !pParticleSystemName || !pParticleSystemName[0] )
 		return NULL;
 
-	CSmartPtr< CNewParticleEffect > pNewEffect = CNewParticleEffect::Create( GetOwner(), pParticleSystemName, pParticleSystemName );
-	if ( !pNewEffect->IsValid() )
+	CSmartPtr< INewParticleEffect > pNewEffect = CNewParticleEffect::Create( GetOwner(), pParticleSystemName, pParticleSystemName );
+	if ( !pNewEffect->GetParticleCollection()->IsValid() )
 		return pNewEffect.GetObject();
 
 	// Copy over the control point data

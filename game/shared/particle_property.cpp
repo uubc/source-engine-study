@@ -95,7 +95,7 @@ int CParticleProperty::GetParticleAttachment( C_BaseEntity *pEntity, const char 
 //-----------------------------------------------------------------------------
 // Purpose: Create a new particle system and attach it to our owner
 //-----------------------------------------------------------------------------
-CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, ParticleAttachment_t iAttachType, const char *pszAttachmentName )
+INewParticleEffect *CParticleProperty::Create( const char *pszParticleName, ParticleAttachment_t iAttachType, const char *pszAttachmentName )
 {
 	int iAttachment = GetParticleAttachment( GetOuter(), pszAttachmentName, pszParticleName );
 	if ( iAttachment == INVALID_PARTICLE_ATTACHMENT )
@@ -109,7 +109,7 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 // Purpose: Create a new particle system and attach it to our owner
 //-----------------------------------------------------------------------------
 static ConVar cl_particle_batch_mode( "cl_particle_batch_mode", "1" );
-CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, ParticleAttachment_t iAttachType, int iAttachmentPoint, Vector vecOriginOffset )
+INewParticleEffect *CParticleProperty::Create( const char *pszParticleName, ParticleAttachment_t iAttachType, int iAttachmentPoint, Vector vecOriginOffset )
 {
 	if ( EntityList()->GetWorld() )
 	{
@@ -124,8 +124,8 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 		int iIndex = FindEffect( pszParticleName );
 		if ( iIndex >= 0 )
 		{
-			CNewParticleEffect *pEffect = m_ParticleEffects[iIndex].pParticleEffect.GetObject();
-			pEffect->Restart();
+			INewParticleEffect *pEffect = m_ParticleEffects[iIndex].pParticleEffect.GetObject();
+			pEffect->GetParticleCollection()->Restart();
 			return pEffect;
 		}
 	}
@@ -141,7 +141,7 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 	ParticleEffectList_t *newEffect = &m_ParticleEffects[iIndex];
 	newEffect->pParticleEffect = CNewParticleEffect::Create( m_pOuter, pDef );
 
-	if ( !newEffect->pParticleEffect->IsValid() )
+	if ( !newEffect->pParticleEffect->GetParticleCollection()->IsValid() )
 	{
 		// Caused by trying to spawn an unregistered particle effect. Remove it.
 		ParticleMgr()->RemoveEffect( newEffect->pParticleEffect.GetObject() );
@@ -161,7 +161,7 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CParticleProperty::AddControlPoint( CNewParticleEffect *pEffect, int iPoint, C_BaseEntity *pEntity, ParticleAttachment_t iAttachType, const char *pszAttachmentName, Vector vecOriginOffset )
+void CParticleProperty::AddControlPoint( INewParticleEffect *pEffect, int iPoint, C_BaseEntity *pEntity, ParticleAttachment_t iAttachType, const char *pszAttachmentName, Vector vecOriginOffset )
 {
 	int iAttachment = INVALID_PARTICLE_ATTACHMENT;
 	if ( pszAttachmentName )
@@ -217,7 +217,7 @@ void CParticleProperty::AddControlPoint( int iEffectIndex, int iPoint, C_BaseEnt
 //-----------------------------------------------------------------------------
 // Used to replace a particle effect with a different one; attaches the control point updating to the new one
 //-----------------------------------------------------------------------------
-void CParticleProperty::ReplaceParticleEffect( CNewParticleEffect *pOldEffect, CNewParticleEffect *pNewEffect )
+void CParticleProperty::ReplaceParticleEffect( INewParticleEffect *pOldEffect, INewParticleEffect *pNewEffect )
 {
 	int nCount = m_ParticleEffects.Count();
 	for ( int i = 0; i < nCount; ++i )
@@ -225,7 +225,7 @@ void CParticleProperty::ReplaceParticleEffect( CNewParticleEffect *pOldEffect, C
 		if ( pOldEffect != m_ParticleEffects[i].pParticleEffect.GetObject() )
 			continue;
 
-		m_ParticleEffects[i].pParticleEffect = pNewEffect;
+		m_ParticleEffects[i].pParticleEffect = (CNewParticleEffect*)pNewEffect;
 		UpdateParticleEffect( &m_ParticleEffects[i], true );
 	}
 }
@@ -244,7 +244,7 @@ void CParticleProperty::SetControlPointParent( int iEffectIndex, int whichContro
 // Purpose: Stop effects from emitting more particles. If no effect is 
 //			specified, all effects attached to this entity are stopped.
 //-----------------------------------------------------------------------------
-void CParticleProperty::StopEmission( CNewParticleEffect *pEffect, bool bWakeOnStop, bool bDestroyAsleepSystems )
+void CParticleProperty::StopEmission( INewParticleEffect *pEffect, bool bWakeOnStop, bool bDestroyAsleepSystems )
 {
 	// If we return from dormancy and are then told to stop emitting,
 	// we should have died while dormant. Remove ourselves immediately.
@@ -264,8 +264,8 @@ void CParticleProperty::StopEmission( CNewParticleEffect *pEffect, bool bWakeOnS
 		int nCount = m_ParticleEffects.Count();
 		for ( int i = nCount-1; i >= 0; i-- )
 		{
-			CNewParticleEffect *pTmp = m_ParticleEffects[i].pParticleEffect.GetObject();
-			bool bRemoveSystem = bRemoveInstantly || ( bDestroyAsleepSystems && ( flNow >= pTmp->m_flNextSleepTime ) );
+			INewParticleEffect *pTmp = m_ParticleEffects[i].pParticleEffect.GetObject();
+			bool bRemoveSystem = bRemoveInstantly || ( bDestroyAsleepSystems && ( flNow >= pTmp->GetParticleCollection()->m_flNextSleepTime ) );
 			if ( bRemoveSystem )
 			{
 				m_ParticleEffects.Remove( i );
@@ -280,7 +280,7 @@ void CParticleProperty::StopEmission( CNewParticleEffect *pEffect, bool bWakeOnS
 // Purpose: Remove effects immediately, including all current particles. If no
 // effect is specified, all effects attached to this entity are removed.
 //-----------------------------------------------------------------------------
-void CParticleProperty::StopEmissionAndDestroyImmediately( CNewParticleEffect *pEffect )
+void CParticleProperty::StopEmissionAndDestroyImmediately( INewParticleEffect *pEffect )
 {
 	if ( pEffect )
 	{
@@ -301,7 +301,7 @@ void CParticleProperty::StopEmissionAndDestroyImmediately( CNewParticleEffect *p
 		int nCount = m_ParticleEffects.Count();
 		for ( int i = nCount-1; i >= 0; i-- )
 		{
-			CNewParticleEffect *pTmp = m_ParticleEffects[i].pParticleEffect.GetObject();
+			INewParticleEffect *pTmp = m_ParticleEffects[i].pParticleEffect.GetObject();
 			m_ParticleEffects.Remove( i );
 
 			// Clear the owner so it doesn't try to call back to us on deletion
@@ -370,8 +370,8 @@ void CParticleProperty::StopParticlesNamed( const char *pszEffectName, bool bFor
 	for ( int i = 0; i < nCount; ++i )
 	{
 		// for each effect...
-		CNewParticleEffect *pParticleEffect = m_ParticleEffects[i].pParticleEffect.GetObject();
-		if (pParticleEffect->m_pDef() == pDef)
+		INewParticleEffect *pParticleEffect = m_ParticleEffects[i].pParticleEffect.GetObject();
+		if (pParticleEffect->GetParticleCollection()->m_pDef() == pDef)
 		{
 			pParticleEffect->StopEmission( false, bRemoveInstantly );
 		}
@@ -397,8 +397,8 @@ void CParticleProperty::StopParticlesWithNameAndAttachment( const char *pszEffec
 	{
 		// for each effect...
 		ParticleEffectList_t *pParticleEffectList = &m_ParticleEffects[i];
-		CNewParticleEffect *pParticleEffect = pParticleEffectList->pParticleEffect.GetObject();
-		if (pParticleEffect->m_pDef() == pDef)
+		INewParticleEffect *pParticleEffect = pParticleEffectList->pParticleEffect.GetObject();
+		if (pParticleEffect->GetParticleCollection()->m_pDef() == pDef)
 		{
 			int nControlPointCount = pParticleEffectList->pControlPoints.Count();
 			for ( int j = 0; j < nControlPointCount; ++j )
@@ -416,7 +416,7 @@ void CParticleProperty::StopParticlesWithNameAndAttachment( const char *pszEffec
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CParticleProperty::OnParticleSystemUpdated( CNewParticleEffect *pEffect, float flTimeDelta )
+void CParticleProperty::OnParticleSystemUpdated( INewParticleEffect *pEffect, float flTimeDelta )
 {
 	int iIndex = FindEffect( pEffect );
 	Assert( iIndex != -1 );
@@ -440,7 +440,7 @@ void CParticleProperty::OnParticleSystemUpdated( CNewParticleEffect *pEffect, fl
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CParticleProperty::OnParticleSystemDeleted( CNewParticleEffect *pEffect )
+void CParticleProperty::OnParticleSystemDeleted( INewParticleEffect *pEffect )
 {
 	int iIndex = FindEffect( pEffect );
 	if ( iIndex == -1 )
@@ -470,7 +470,7 @@ void CParticleProperty::OwnerSetDormantTo( bool bDormant )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int	CParticleProperty::FindEffect( CNewParticleEffect *pEffect )
+int	CParticleProperty::FindEffect( INewParticleEffect *pEffect )
 {
 	for ( int i = 0; i < m_ParticleEffects.Count(); i++ )
 	{
@@ -485,7 +485,7 @@ int CParticleProperty::FindEffect( const char *pEffectName, int nStart /*= 0*/ )
 {
 	for ( int i = nStart; i < m_ParticleEffects.Count(); i++ )
 	{
-		if ( !Q_stricmp( m_ParticleEffects[i].pParticleEffect->GetName(), pEffectName ) )
+		if ( !Q_stricmp( m_ParticleEffects[i].pParticleEffect->GetParticleCollection()->GetName(), pEffectName ) )
 			return i;
 	}
 
@@ -612,7 +612,7 @@ void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int i
 					MatrixVectors( vMat.As3x4(), &vecForward, &vecRight, &vecUp );
 					MatrixPosition( vMat.As3x4(), vecOrigin );
 
-					if ( pEffect->pParticleEffect->m_pDef->IsViewModelEffect() )
+					if ( pEffect->pParticleEffect->GetParticleCollection()->m_pDef->IsViewModelEffect() )
 					{
 						FormatViewModelAttachment( vecOrigin, true );
 					}
@@ -664,7 +664,7 @@ void CParticleProperty::DebugPrintEffects( void )
 	for ( int i = 0; i < nCount; ++i )
 	{
 		// for each effect...
-		CNewParticleEffect *pParticleEffect = m_ParticleEffects[i].pParticleEffect.GetObject();
+		INewParticleEffect *pParticleEffect = m_ParticleEffects[i].pParticleEffect.GetObject();
 
 		if ( !pParticleEffect )
 			continue;
@@ -672,7 +672,7 @@ void CParticleProperty::DebugPrintEffects( void )
 		Msg( "(%d)  EffectName \"%s\"  Dormant? %s  Emission Stopped? %s \n",
 			i,
 			pParticleEffect->GetEffectName(),
-			( pParticleEffect->m_bDormant ) ? "yes" : "no",
-			( pParticleEffect->m_bEmissionStopped ) ? "yes" : "no" );
+			( pParticleEffect->GetParticleCollection()->m_bDormant ) ? "yes" : "no",
+			( pParticleEffect->GetParticleCollection()->m_bEmissionStopped ) ? "yes" : "no" );
 	}
 }

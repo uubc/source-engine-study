@@ -50,6 +50,7 @@
 #include "eventlist.h"
 #include "cl_animevent.h"
 #include "c_te_legacytempents.h"
+#include "particle_parse.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -3472,7 +3473,7 @@ IStudioHdr *C_BaseEntity::OnNewModel()
 	}
 }
 
-void C_BaseEntity::OnNewParticleEffect( const char *pszParticleName, CNewParticleEffect *pNewParticleEffect )
+void C_BaseEntity::OnNewParticleEffect( const char *pszParticleName, INewParticleEffect *pNewParticleEffect )
 {
 	return;
 }

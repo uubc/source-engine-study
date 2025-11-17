@@ -11,10 +11,10 @@
 #pragma once
 #endif
 
-
 #include "iclientrenderable.h"
 #include "iclientnetworkable.h"
 #include "iclientthinkable.h"
+#include "IEffects.h"
 #include "client_class.h"
 #include "isaverestore.h"
 #include "vcollide_parse.h"
@@ -56,6 +56,7 @@ class CViewSetup;
 class IClientVehicle;
 class CClientThinkHandlePtr;
 typedef CClientThinkHandlePtr* ClientThinkHandle_t;
+class CParticleCollection;
 
 class VarMapEntry_t
 {
@@ -1100,13 +1101,29 @@ enum CollideType_t
 	ENTITY_SHOULD_RESPOND
 };
 
-class CNewParticleEffect;
+class INewParticleEffect;
+// Argh: Server considers -1 to be an invalid attachment, whereas the client uses 0
+#ifdef CLIENT_DLL
+#define INVALID_PARTICLE_ATTACHMENT			0
+#else
+#define INVALID_PARTICLE_ATTACHMENT			-1
+#endif
 
 abstract_class IParticleProperty{
 public:
-	virtual void OnParticleSystemUpdated(CNewParticleEffect* pEffect, float flTimeDelta) = 0;
-	virtual void OnParticleSystemDeleted(CNewParticleEffect* pEffect) = 0;
-	virtual void ReplaceParticleEffect(CNewParticleEffect* pOldEffect, CNewParticleEffect* pNewEffect) = 0;
+	virtual void				Init(C_BaseEntity* pEntity) = 0;
+	virtual INewParticleEffect* Create(const char* pszParticleName, ParticleAttachment_t iAttachType, const char* pszAttachmentName) = 0;
+	virtual INewParticleEffect* Create(const char* pszParticleName, ParticleAttachment_t iAttachType, int iAttachmentPoint = INVALID_PARTICLE_ATTACHMENT, Vector vecOriginOffset = vec3_origin) = 0;
+	virtual void				AddControlPoint(INewParticleEffect* pEffect, int iPoint, C_BaseEntity* pEntity, ParticleAttachment_t iAttachType, const char* pszAttachmentName = NULL, Vector vecOriginOffset = vec3_origin) = 0;
+	virtual void				AddControlPoint(int iEffectIndex, int iPoint, C_BaseEntity* pEntity, ParticleAttachment_t iAttachType, int iAttachmentPoint = INVALID_PARTICLE_ATTACHMENT, Vector vecOriginOffset = vec3_origin) = 0;
+	virtual void				SetControlPointParent(INewParticleEffect* pEffect, int whichControlPoint, int parentIdx) = 0;
+	virtual void				SetControlPointParent(int iEffectIndex, int whichControlPoint, int parentIdx) = 0;
+	virtual void OnParticleSystemUpdated(INewParticleEffect* pEffect, float flTimeDelta) = 0;
+	virtual void OnParticleSystemDeleted(INewParticleEffect* pEffect) = 0;
+	virtual void ReplaceParticleEffect(INewParticleEffect* pOldEffect, INewParticleEffect* pNewEffect) = 0;
+	virtual void				OwnerSetDormantTo(bool bDormant) = 0;
+	virtual void				StopEmission(INewParticleEffect* pEffect = NULL, bool bWakeOnStop = false, bool bDestroyAsleepSystems = false) = 0;
+	virtual void				StopEmissionAndDestroyImmediately(INewParticleEffect* pEffect = NULL) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -1742,6 +1759,29 @@ abstract_class IParticleEffect
 		virtual const char* GetEffectName() { return "???"; }
 };
 
+class INewParticleEffect : public IParticleEffect {
+public:
+	virtual CParticleCollection* GetParticleCollection() = 0;
+	virtual IClientRenderable* GetClientRenderable() = 0;
+	virtual IClientEntity* GetOwner(void) = 0;
+	virtual void SetOwner(IClientEntity* pOwner) = 0;
+	virtual void SetSortOrigin(const Vector& vSortOrigin) = 0;
+	virtual void StopEmission(bool bInfiniteOnly = false, bool bRemoveAllParticles = false, bool bWakeOnStop = false) = 0;
+	virtual void SetDormant(bool bDormant) = 0;
+	virtual void SetControlPoint(int nWhichPoint, const Vector& v) = 0;
+	virtual void SetControlPointEntity(int nWhichPoint, IClientEntity* pEntity) = 0;
+	virtual void SetControlPointOrientation(int nWhichPoint, const Quaternion& q) = 0;
+	virtual void SetControlPointOrientation(int nWhichPoint, const Vector& forward, const Vector& right, const Vector& up) = 0;
+	virtual void SetControlPointForwardVector(int nWhichPoint, const Vector& v) = 0;
+	virtual void SetControlPointUpVector(int nWhichPoint, const Vector& v) = 0;
+	virtual void SetControlPointRightVector(int nWhichPoint, const Vector& v) = 0;
+	virtual void SetControlPointParent(int nWhichPoint, int n) = 0;
+	virtual void SetRemoveFlag(void) = 0;
+	virtual bool GetRemoveFlag(void) = 0;
+	virtual void		AddRef() = 0;
+	virtual void		Release() = 0;
+};
+
 typedef IParticleEffect* (*CreateParticleEffectFN)();
 
 abstract_class IParticleMgr{
@@ -1769,8 +1809,8 @@ public:
 	virtual	bool			AddEffect(CParticleEffectBinding* pEffect, IParticleEffect* pSim) = 0;
 	virtual	void			RemoveEffect(CParticleEffectBinding* pEffect) = 0;
 
-	virtual	void			AddEffect(CNewParticleEffect* pEffect) = 0;
-	virtual	void			RemoveEffect(CNewParticleEffect* pEffect) = 0;
+	virtual	void			AddEffect(INewParticleEffect* pEffect) = 0;
+	virtual	void			RemoveEffect(INewParticleEffect* pEffect) = 0;
 
 	virtual Particle*		AllocParticle(int size) = 0;
 	virtual void			FreeParticle(Particle*) = 0;

@@ -131,7 +131,7 @@ void C_ParticleSystem::ClientThink( void )
 			if ( m_bWeatherEffect && !GameRules()->AllowWeatherParticles() )
 				return;
 
-			CNewParticleEffect *pEffect = ParticleProp()->Create( pszName, PATTACH_ABSORIGIN_FOLLOW );
+			INewParticleEffect *pEffect = ParticleProp()->Create( pszName, PATTACH_ABSORIGIN_FOLLOW );
 			AssertMsg1( pEffect, "Particle system couldn't make %s", pszName );
 			if (pEffect)
 			{
@@ -164,7 +164,7 @@ void C_ParticleSystem::ClientThink( void )
 				if ( flTimeDelta > 0.01f )
 				{
 					VPROF_BUDGET( "C_ParticleSystem::ClientThink SkipToTime", "Particle Simulation" );
-					pEffect->SkipToTime( flTimeDelta );
+					pEffect->GetParticleCollection()->SkipToTime(flTimeDelta);
 				}
 			}
 		}
@@ -185,7 +185,7 @@ void ParticleEffectCallback( const CEffectData &data )
 
 	const char *pszName = GetParticleSystemNameFromIndex( data.m_nHitBox );
 
-	CSmartPtr<CNewParticleEffect> pEffect = NULL;
+	CSmartPtr<INewParticleEffect> pEffect = NULL;
 	if ( data.m_fFlags & PARTICLE_DISPATCH_FROM_ENTITY )
 	{
 		if ( EntityList()->GetBaseEntityFromHandle(data.m_hEntity) )
@@ -199,9 +199,9 @@ void ParticleEffectCallback( const CEffectData &data )
 				}
 
 				pEffect = pEnt->ParticleProp()->Create( pszName, (ParticleAttachment_t)data.m_nDamageType, data.m_nAttachmentIndex );
-				AssertMsg2( pEffect.IsValid() && pEffect->IsValid(), "%s could not create particle effect %s",
+				AssertMsg2( pEffect.IsValid() && pEffect->GetParticleCollection()->IsValid(), "%s could not create particle effect %s",
 					C_BaseEntity::Instance( data.m_hEntity )->GetDebugName(), pszName );
-				if ( pEffect.IsValid() && pEffect->IsValid() )
+				if ( pEffect.IsValid() && pEffect->GetParticleCollection()->IsValid() )
 				{
 					if ( (ParticleAttachment_t)data.m_nDamageType == PATTACH_CUSTOMORIGIN )
 					{
@@ -224,7 +224,7 @@ void ParticleEffectCallback( const CEffectData &data )
 		}
 
 		pEffect = CNewParticleEffect::Create( NULL, pszName );
-		if ( pEffect->IsValid() )
+		if ( pEffect->GetParticleCollection()->IsValid() )
 		{
 			pEffect->SetSortOrigin( data.m_vOrigin );
 			pEffect->SetControlPoint( 0, data.m_vOrigin );
@@ -235,7 +235,7 @@ void ParticleEffectCallback( const CEffectData &data )
 		}
 	}
 
-	if ( pEffect.IsValid() && pEffect->IsValid() )
+	if ( pEffect.IsValid() && pEffect->GetParticleCollection()->IsValid() )
 	{
 		if ( data.m_bCustomColors )
 		{

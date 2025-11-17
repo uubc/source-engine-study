@@ -359,16 +359,16 @@ IParticleEffect *CParticleMgr::CreateEffect( const char *pEffectType )
 //-----------------------------------------------------------------------------
 // Adds and removes effects from our global list
 //-----------------------------------------------------------------------------
-void CParticleMgr::AddEffect( CNewParticleEffect *pEffect )
+void CParticleMgr::AddEffect( INewParticleEffect *pEffect )
 {
-	m_NewEffects.AddToHead( pEffect );
+	m_NewEffects.AddToHead( (CNewParticleEffect*)pEffect );
 
 #if !defined( PARTICLEPROTOTYPE_APP )
-	ClientLeafSystem()->CreateRenderableHandle( pEffect );
+	ClientLeafSystem()->CreateRenderableHandle((CNewParticleEffect*)pEffect );
 #endif
-	if ( pEffect->IsValid() && pEffect->m_pDef->IsViewModelEffect() )
+	if (((CNewParticleEffect*)pEffect)->IsValid() && ((CNewParticleEffect*)pEffect)->m_pDef->IsViewModelEffect() )
 	{
-		ClientLeafSystem()->SetRenderGroup( pEffect->GetRenderHandle(), RENDER_GROUP_VIEW_MODEL_TRANSLUCENT );
+		ClientLeafSystem()->SetRenderGroup(((CNewParticleEffect*)pEffect)->GetRenderHandle(), RENDER_GROUP_VIEW_MODEL_TRANSLUCENT );
 	}
 }
 
@@ -444,7 +444,7 @@ void CParticleMgr::RemoveEffect( CParticleEffectBinding *pEffect )
 	}
 }
 
-void CParticleMgr::RemoveEffect( CNewParticleEffect *pEffect )
+void CParticleMgr::RemoveEffect( INewParticleEffect *pEffect )
 {
 	// Don't call RemoveEffect while inside an IParticleEffect's Update() function.
 	// Return false from the Update function instead.
@@ -452,10 +452,10 @@ void CParticleMgr::RemoveEffect( CNewParticleEffect *pEffect )
 
 #if !defined( PARTICLEPROTOTYPE_APP )
 	// Take it out of the leaf system.
-	ClientLeafSystem()->RemoveRenderable( pEffect->m_hRenderHandle );
+	ClientLeafSystem()->RemoveRenderable(((CNewParticleEffect*)pEffect)->m_hRenderHandle );
 #endif
 
-	m_NewEffects.RemoveNode( pEffect );
+	m_NewEffects.RemoveNode((CNewParticleEffect*)pEffect );
 	pEffect->NotifyRemove();
 }
 
@@ -764,7 +764,7 @@ bool CParticleMgr::RetireParticleCollections( CParticleSystemDefinition* pDef,
 			continue;
 
 		CNewParticleEffect* pRetireEffect = static_cast< CNewParticleEffect* >( pInfo[i].m_pCollection );
-		CNewParticleEffect* pNewEffect = pRetireEffect->ReplaceWith( pReplacementDef );
+		CNewParticleEffect* pNewEffect = (CNewParticleEffect*)pRetireEffect->ReplaceWith( pReplacementDef );
 		if ( pNewEffect )
 		{
 			pNewEffect->Update( s_flThreadedPSystemTimeStep );
@@ -1377,7 +1377,7 @@ int Profiling_nMaxParticles;
 
 
 // These functions will be called by the particles as they're actually drawn. (TODO: thread safety?)
-void CParticleMgr::StatsNewParticleEffectDrawn ( CNewParticleEffect *pParticles )
+void CParticleMgr::StatsNewParticleEffectDrawn ( INewParticleEffect *pParticles )
 {
 #ifdef STAGING_ONLY
 	ParticleInfo_t *pParticleInfo = &(SingleFrameHistogram[ pParticles->GetName() ]);

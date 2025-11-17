@@ -40,7 +40,7 @@ private:
 #if HL2_EPISODIC
 	unsigned char m_iBleedingLevel; //< the version coming from the server
 	unsigned char m_iPerformingBleedingLevel; //< the version we're currently performing (for comparison to one above)
-	CNewParticleEffect *m_pBleedingFX;
+	INewParticleEffect *m_pBleedingFX;
 
 	/// update the hemorrhage particle effect
 	virtual void UpdateBleedingPerformance( void );
@@ -97,7 +97,7 @@ void C_NPC_AntlionGuard::OnDataChanged( DataUpdateType_t type )
 void C_NPC_AntlionGuard::UpdateBleedingPerformance()
 {
 	// get my particles
-	CParticleProperty * pProp = ParticleProp();
+	IParticleProperty * pProp = ParticleProp();
 
 	// squelch the prior effect if it exists
 	if (m_pBleedingFX)

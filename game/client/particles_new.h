@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------
 // Particle effect
 //-----------------------------------------------------------------------------
-class CNewParticleEffect : public IParticleEffect, public CParticleCollection, public CDefaultClientRenderable
+class CNewParticleEffect : public INewParticleEffect, public CParticleCollection, public CDefaultClientRenderable
 {
 public:
 	DECLARE_CLASS_NOBASE( CNewParticleEffect );
@@ -31,6 +31,9 @@ public:
 
 public:
 	friend class CRefCountAccessor;
+
+	virtual CParticleCollection* GetParticleCollection() { return this; }
+	virtual IClientRenderable* GetClientRenderable() { return this; }
 
 	// list management
 	CNewParticleEffect *m_pNext;
@@ -69,11 +72,11 @@ public:
 	void MarkShouldPerformCullCheck( bool bEnable );
 	IClientEntity *GetOwner( void ) { return m_hOwner; }
 	void SetOwner( IClientEntity *pOwner ) { m_hOwner = pOwner; }
-	CNewParticleEffect* ReplaceWith( const char *pParticleSystemName );
+	INewParticleEffect* ReplaceWith( const char *pParticleSystemName );
 
-	static CSmartPtr<CNewParticleEffect> Create( IClientEntity *pOwner, const char *pParticleSystemName,
+	static CSmartPtr<INewParticleEffect> Create( IClientEntity *pOwner, const char *pParticleSystemName,
 												 const char *pDebugName = NULL );
-	static CSmartPtr<CNewParticleEffect> Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef,
+	static CSmartPtr<INewParticleEffect> Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef,
 												 const char *pDebugName = NULL );
 	virtual int DrawModel( int flags );
 
@@ -90,6 +93,7 @@ public:
 	void SetControlPointForwardVector( int nWhichPoint, const Vector &v );
 	void SetControlPointUpVector( int nWhichPoint, const Vector &v );
 	void SetControlPointRightVector( int nWhichPoint, const Vector &v );
+	void SetControlPointParent(int nWhichPoint, int n);
 
 	FORCEINLINE CHandle<IClientEntity> const &GetControlPointEntity( int nWhichPoint )
 	{
@@ -306,7 +310,7 @@ inline void CNewParticleEffect::MarkShouldPerformCullCheck( bool bEnable )
 	m_bShouldPerformCullCheck = bEnable;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
+inline CSmartPtr<INewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, const char *pParticleSystemName, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pParticleSystemName );
 	pRet->m_pDebugName = pDebugName;
@@ -314,7 +318,7 @@ inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( IClientEntity *
 	return pRet;
 }
 
-inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
+inline CSmartPtr<INewParticleEffect> CNewParticleEffect::Create( IClientEntity *pOwner, CParticleSystemDefinition *pDef, const char *pDebugName )
 {
 	CNewParticleEffect *pRet = new CNewParticleEffect( pOwner, pDef );
 	pRet->m_pDebugName = pDebugName;

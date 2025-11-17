@@ -334,8 +334,8 @@ public:
 
 public:
 
-	CParticleProperty* ParticleProp();
-	const CParticleProperty* ParticleProp() const;
+	IParticleProperty* ParticleProp();
+	const IParticleProperty* ParticleProp() const;
 
 	// Simply here for game shared 
 	bool					IsFloating();
@@ -561,7 +561,7 @@ public:
 
 	// Initialize things given a new model.
 	virtual IStudioHdr* OnNewModel();
-	virtual void					OnNewParticleEffect(const char* pszParticleName, CNewParticleEffect* pNewParticleEffect);
+	virtual void					OnNewParticleEffect(const char* pszParticleName, INewParticleEffect* pNewParticleEffect);
 
 	float							GetInterpolationAmount(int flags);
 
@@ -1157,12 +1157,12 @@ EXTERN_RECV_TABLE(DT_BaseEntity);
 //-----------------------------------------------------------------------------
 // An inline version the game code can use
 //-----------------------------------------------------------------------------
-inline CParticleProperty *C_BaseEntity::ParticleProp()
+inline IParticleProperty *C_BaseEntity::ParticleProp()
 {
 	return &m_Particles;
 }
 
-inline const CParticleProperty *C_BaseEntity::ParticleProp() const
+inline const IParticleProperty *C_BaseEntity::ParticleProp() const
 {
 	return &m_Particles;
 }

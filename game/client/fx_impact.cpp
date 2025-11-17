@@ -245,7 +245,7 @@ static ImpactEffect_t s_pImpactEffect[26] =
 	{ "warp_shield_impact", NULL },							// CHAR_TEX_WARPSHIELD		
 };
 
-static void SetImpactControlPoint( CNewParticleEffect *pEffect, int nPoint, const Vector &vecImpactPoint, const Vector &vecForward, C_BaseEntity *pEntity )
+static void SetImpactControlPoint( INewParticleEffect *pEffect, int nPoint, const Vector &vecImpactPoint, const Vector &vecForward, C_BaseEntity *pEntity )
 {
 	Vector vecImpactY, vecImpactZ;
 	VectorVectors( vecForward, vecImpactY, vecImpactZ ); 
@@ -274,8 +274,8 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 	if ( !pImpactName )
 		return;
 
-	CSmartPtr<CNewParticleEffect> pEffect = CNewParticleEffect::Create( NULL, pImpactName );
-	if ( !pEffect->IsValid() )
+	CSmartPtr<INewParticleEffect> pEffect = CNewParticleEffect::Create( NULL, pImpactName );
+	if ( !pEffect->GetParticleCollection()->IsValid())
 		return;
 
 	Vector	vecReflect;
@@ -292,7 +292,7 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 	SetImpactControlPoint( pEffect.GetObject(), 1, vecImpactPoint, vecReflect, (C_BaseEntity*)tr.m_pEnt );
 	SetImpactControlPoint( pEffect.GetObject(), 2, vecImpactPoint, vecShotBackward, (C_BaseEntity*)tr.m_pEnt );
 	pEffect->SetControlPoint( 3, Vector( iScale, iScale, iScale ) );
-	if ( pEffect->m_pDef->ReadsControlPoint( 4 ) )
+	if ( pEffect->GetParticleCollection()->m_pDef->ReadsControlPoint(4))
 	{
 		Vector vecColor;
 		GetColorForSurface( &tr, &vecColor );

@@ -164,7 +164,7 @@ void C_NPC_Advisor::StartBeamFX( C_BaseEntity *pOnEntity )
 	if (!pOnEntity)
 		return;
 
-	CNewParticleEffect *pEffect = ParticleProp()->Create( "Advisor_Psychic_Beam", PATTACH_ABSORIGIN_FOLLOW );
+	INewParticleEffect *pEffect = ParticleProp()->Create( "Advisor_Psychic_Beam", PATTACH_ABSORIGIN_FOLLOW );
 
 	Assert(pEffect); 
 	if (!pEffect) return;
