@@ -155,6 +155,7 @@
 #include "touch.h"
 
 extern vgui::IInputInternal *g_InputInternal;
+extern IParticleSystemQuery* g_pParticleSystemQuery;
 
 //=============================================================================
 // HPE_BEGIN
@@ -680,6 +681,8 @@ public:
 	virtual void IN_TouchEvent( int type, int fingerId, int x, int y );
 
 	virtual void GetWindspeedAtTime(float flTime, Vector& vecVelocity);
+
+	virtual IParticleSystemMgr* GetParticleSystemMgr() { return g_pParticleSystemMgr; }
 private:
 	void UncacheAllMaterials( );
 	void ResetStringTablePointers();
@@ -1025,6 +1028,15 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	Assert(g_pClosecaption);
 	//if (!Initializer::InitializeAllObjects())
 	//	return false;
+
+		// Initialize the particle system
+	g_pParticleSystemMgr->Init(g_pParticleSystemQuery);
+	// tell particle mgr to add the default simulation + rendering ops
+	g_pParticleSystemMgr->AddBuiltinSimulationOperators();
+	g_pParticleSystemMgr->AddBuiltinRenderingOperators();
+
+	// Send true to load the sheets
+	ParseParticleEffects(true, false);
 
 	if (!ParticleMgr()->Init(MAX_TOTAL_PARTICLES, materials))
 		return false;

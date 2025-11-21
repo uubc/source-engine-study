@@ -8,16 +8,17 @@
 
 
 //#include "cbase.h"
-#include "cdll_client_int.h"
+//#include "cdll_client_int.h"
 //#include "c_baseentity.h"
-#include "sharedInterface.h"
+//#include "sharedInterface.h"
 #include "particlemgr.h"
 #include "particledraw.h"
 #include "materialsystem/imesh.h"
 #include "materialsystem/imaterialvar.h"
 #include "mempool.h"
 #include "iclientmode.h"
-#include "view_scene.h"
+#include "view_shared.h"
+//#include "view_scene.h"
 #include "tier0/vprof.h"
 #include "engine/ivdebugoverlay.h"
 #include "iviewrender.h"
@@ -27,7 +28,7 @@
 #include "particles_new.h"
 #include "vstdlib/jobthread.h"
 #include "filesystem.h"
-#include "particle_parse.h"
+//#include "particle_parse.h"
 #include "model_types.h"
 #ifdef TF_CLIENT_DLL
 #include "rtime.h"
@@ -36,8 +37,20 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern IParticleSystemQuery *g_pParticleSystemQuery;
+extern IClientEntityList* EntityList();
+extern CGlobalVarsBase* gpGlobals;
 
+#ifdef POSIX
+#define random random_valve// stdlib.h defined random() and our class defn conflicts so under POSIX rename it using the preprocessor
+#endif
+#if defined(_STATIC_LINKED) && defined(_SUBSYSTEM) && (defined(CLIENT_DLL) || defined(GAME_DLL))
+namespace _SUBSYSTEM
+{
+	extern IUniformRandomStream* random;
+}
+#else
+extern IUniformRandomStream* random;
+#endif
 //static int g_nParticlesDrawn;
 // CCycleCount	g_ParticleTimer;
 
@@ -68,11 +81,13 @@ static ConVar cl_particle_stats_trigger_count( "cl_particle_stats_trigger_count"
 // Particle manager implementation
 //
 //-----------------------------------------------------------------------------
+static CParticleMgr s_ParticleMgr;
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CParticleMgr, IParticleMgr, CLIENT_DLL_PARTICLEMGR_VERSION, s_ParticleMgr);
 
 
 CParticleMgr *GetParticleMgr()
 {
-	static CParticleMgr s_ParticleMgr;
 	return &s_ParticleMgr;
 }
 
@@ -149,12 +164,12 @@ CParticleMgr::CParticleMgr()
 	
 	m_nCurrentParticlesAllocated = 0;
 
-	SetDefLessFunc( m_effectFactories );
+	//SetDefLessFunc( m_effectFactories );
 }
 
 CParticleMgr::~CParticleMgr()
 {
-	Term();
+	//Term();
 }
 
 
@@ -169,15 +184,6 @@ bool CParticleMgr::Init(unsigned long count, IMaterialSystem *pMaterials)
 	m_nStatsFramesSinceLastAlert = 0;
 
 	m_pMaterialSystem = pMaterials;
-
-	// Initialize the particle system
-	g_pParticleSystemMgr->Init( g_pParticleSystemQuery );
-	// tell particle mgr to add the default simulation + rendering ops
-	g_pParticleSystemMgr->AddBuiltinSimulationOperators();
-	g_pParticleSystemMgr->AddBuiltinRenderingOperators();
-
-	// Send true to load the sheets
-	ParseParticleEffects( true, false );
 
 #ifdef TF_CLIENT_DLL
 	if ( IsX360() )
@@ -211,7 +217,7 @@ void CParticleMgr::Term()
 	for ( intp i = m_Effects.Head(); i != m_Effects.InvalidIndex(); i = iNext )
 	{
 		iNext = m_Effects.Next( i );
-		m_Effects[i]->m_pSim->NotifyRemove();
+		m_Effects[i]->GetParticleEffect()->NotifyRemove();
 	}
 	m_Effects.Purge();
 	m_NewEffects.Purge();
@@ -326,34 +332,34 @@ void CParticleMgr::RemoveEffectListener( IClientParticleListener *pListener )
 // registers effects classes, and create instances of these effects classes
 //-----------------------------------------------------------------------------
 
-void CParticleMgr::RegisterEffect( const char *pEffectType, CreateParticleEffectFN func )
-{
-#ifdef _DEBUG
-	int i = m_effectFactories.Find( pEffectType );
-	Assert( !m_effectFactories.IsValidIndex( i ) );
-#endif
+//void CParticleMgr::RegisterEffect( const char *pEffectType, CreateParticleEffectFN func )
+//{
+//#ifdef _DEBUG
+//	int i = m_effectFactories.Find( pEffectType );
+//	Assert( !m_effectFactories.IsValidIndex( i ) );
+//#endif
+//
+//	m_effectFactories.Insert( pEffectType, func );
+//}
 
-	m_effectFactories.Insert( pEffectType, func );
-}
-
-IParticleEffect *CParticleMgr::CreateEffect( const char *pEffectType )
-{
-	int i = m_effectFactories.Find( pEffectType );
-	if ( !m_effectFactories.IsValidIndex( i ) )
-	{
-		Msg( "CParticleMgr::CreateEffect: factory not found for effect '%s'\n", pEffectType );
-		return NULL;
-	}
-
-	CreateParticleEffectFN func = m_effectFactories[ i ];
-	if ( func == NULL )
-	{
-		Msg( "CParticleMgr::CreateEffect: NULL factory for effect '%s'\n", pEffectType );
-		return NULL;
-	}
-
-	return func();
-}
+//IParticleEffect *CParticleMgr::CreateEffect( const char *pEffectType )
+//{
+//	int i = m_effectFactories.Find( pEffectType );
+//	if ( !m_effectFactories.IsValidIndex( i ) )
+//	{
+//		Msg( "CParticleMgr::CreateEffect: factory not found for effect '%s'\n", pEffectType );
+//		return NULL;
+//	}
+//
+//	CreateParticleEffectFN func = m_effectFactories[ i ];
+//	if ( func == NULL )
+//	{
+//		Msg( "CParticleMgr::CreateEffect: NULL factory for effect '%s'\n", pEffectType );
+//		return NULL;
+//	}
+//
+//	return func();
+//}
 
 
 //-----------------------------------------------------------------------------
@@ -373,7 +379,7 @@ void CParticleMgr::AddEffect( INewParticleEffect *pEffect )
 }
 
 
-bool CParticleMgr::AddEffect( CParticleEffectBinding *pEffect, IParticleEffect *pSim )
+bool CParticleMgr::AddEffect( IParticleEffectBinding *pEffect, IParticleEffect *pSim )
 {
 #ifdef _DEBUG
 	FOR_EACH_LL( m_Effects, i )
@@ -390,10 +396,10 @@ bool CParticleMgr::AddEffect( CParticleEffectBinding *pEffect, IParticleEffect *
 
 	// Add it to the leaf system.
 #if !defined( PARTICLEPROTOTYPE_APP )
-	ClientLeafSystem()->CreateRenderableHandle( pEffect );
+	ClientLeafSystem()->CreateRenderableHandle( pEffect->GetClientRenderable() );
 #endif
 
-	pEffect->m_ListIndex = m_Effects.AddToTail( pEffect );
+	pEffect->SetListIndex(m_Effects.AddToTail( pEffect ));
 
 	Assert( pEffect->m_ListIndex != 0xFFFF );
 
@@ -408,7 +414,7 @@ bool CParticleMgr::AddEffect( CParticleEffectBinding *pEffect, IParticleEffect *
 }
 
 
-void CParticleMgr::RemoveEffect( CParticleEffectBinding *pEffect )
+void CParticleMgr::RemoveEffect( IParticleEffectBinding *pEffect )
 {
 	// This prevents certain recursive situations where a NotifyRemove
 	// call can wind up triggering another one, usually in an effect's
@@ -425,16 +431,16 @@ void CParticleMgr::RemoveEffect( CParticleEffectBinding *pEffect )
 	int nListeners = m_effectListeners.Count();
 	for ( int i = 0; i < nListeners; ++i )
 	{
-		m_effectListeners[ i ]->OnParticleEffectRemoved( pEffect->m_pSim );
+		m_effectListeners[ i ]->OnParticleEffectRemoved( pEffect->GetParticleEffect());
 	}
 
 	// Take it out of the leaf system.
-	ClientLeafSystem()->RemoveRenderable( pEffect->m_hRenderHandle );
+	ClientLeafSystem()->RemoveRenderable( pEffect->GetClientRenderable()->GetRenderHandle());
 
-	int listIndex = pEffect->m_ListIndex;
-	if ( pEffect->m_pSim )
+	int listIndex = pEffect->GetListIndex();
+	if ( pEffect->GetParticleEffect())
 	{
-		pEffect->m_pSim->NotifyRemove();
+		pEffect->GetParticleEffect()->NotifyRemove();
 		m_Effects.Remove( listIndex );
 		
 	}
@@ -528,7 +534,7 @@ void CParticleMgr::IncrementFrameCode()
 		// Reset all the CParticleEffectBindings..
 		FOR_EACH_LL( m_Effects, i )
 		{
-			m_Effects[i]->m_FrameCode = 0;
+			m_Effects[i]->SetFrameCode(0);
 		}
 
 		m_FrameCode = 1;
@@ -575,13 +581,13 @@ void CParticleMgr::PostRender()
 	// Simulate all effects that weren't drawn (if they have their 'always simulate' flag set).
 	FOR_EACH_LL( m_Effects, i )
 	{
-		CParticleEffectBinding *pEffect = m_Effects[i];
+		IParticleEffectBinding *pEffect = m_Effects[i];
 		
 		// Tell the effect if it was drawn or not.
 		pEffect->SetWasDrawnPrevFrame( pEffect->WasDrawn() );
 
 		// Now that we've rendered, clear this flag so it'll simulate next frame.
-		pEffect->SetFlag( CParticleEffectBinding::FLAGS_FIRST_FRAME, false );	
+		pEffect->SetFlag( IParticleEffectBinding::FLAGS_FIRST_FRAME, false );	
 	}
 }
 
@@ -593,12 +599,12 @@ void CParticleMgr::DrawBeforeViewModelEffects()
 
 	FOR_EACH_LL( m_Effects, i )
 	{
-		CParticleEffectBinding *pEffect = m_Effects[i];
+		IParticleEffectBinding *pEffect = m_Effects[i];
 
-		if ( pEffect->GetFlag( CParticleEffectBinding::FLAGS_DRAW_BEFORE_VIEW_MODEL ) )
+		if ( pEffect->GetFlag(IParticleEffectBinding::FLAGS_DRAW_BEFORE_VIEW_MODEL ) )
 		{
 			Assert( !pEffect->WasDrawn() );
-			pEffect->DrawModel( 1 );
+			pEffect->GetClientRenderable()->DrawModel(1);
 		}
 	}
 
@@ -1016,7 +1022,7 @@ void CParticleMgr::UpdateAllEffects( float flTimeDelta )
 
 	FOR_EACH_LL( m_Effects, iEffect )
 	{
-		CParticleEffectBinding *pEffect = m_Effects[iEffect];
+		IParticleEffectBinding *pEffect = m_Effects[iEffect];
 
 		// Don't update this effect if it will be removed.
 		if( pEffect->GetRemoveFlag() )
@@ -1039,7 +1045,7 @@ void CParticleMgr::UpdateAllEffects( float flTimeDelta )
 		pEffect->SetDrawn( false );
 
 		// Update the effect.
-		pEffect->m_pSim->Update( flTimeDelta );
+		pEffect->GetParticleEffect()->Update( flTimeDelta );
 
 		if ( pEffect->GetFirstFrameFlag() )
 			pEffect->SetFirstFrameFlag( false );
@@ -1069,7 +1075,7 @@ void CParticleMgr::UpdateAllEffects( float flTimeDelta )
 	for ( intp i = m_Effects.Head(); i != m_Effects.InvalidIndex(); i=iNext )
 	{
 		iNext = m_Effects.Next( i );
-		CParticleEffectBinding *pEffect = m_Effects[i];
+		IParticleEffectBinding *pEffect = m_Effects[i];
 
 		if( pEffect->GetRemoveFlag() )
 		{
@@ -1385,7 +1391,7 @@ void CParticleMgr::StatsNewParticleEffectDrawn ( INewParticleEffect *pParticles 
 #endif
 }
 
-void CParticleMgr::StatsOldParticleEffectDrawn ( CParticleEffectBinding *pParticles )
+void CParticleMgr::StatsOldParticleEffectDrawn ( IParticleEffectBinding *pParticles )
 {
 #ifdef STAGING_ONLY
 	ParticleInfo_t *pParticleInfo = &(SingleFrameHistogram[ pParticles->m_pSim->GetEffectName() ]);

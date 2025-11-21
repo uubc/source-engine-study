@@ -69,6 +69,7 @@ class CMouthInfo;
 class IConVar;
 class ISaveRestoreBlockHandler;
 class IRestore;
+class IParticleSystemMgr;
 
 //-----------------------------------------------------------------------------
 // Purpose: This data structure is filled in by the engine when the client .dll requests information about
@@ -841,6 +842,8 @@ public:
 	virtual void IN_TouchEvent( int type, int fingerId, int x, int y ) = 0;
 
 	virtual void GetWindspeedAtTime(float flTime, Vector& vecVelocity) = 0;
+
+	virtual IParticleSystemMgr* GetParticleSystemMgr() = 0;
 };
 
 #define CLIENT_DLL_INTERFACE_VERSION		"VClient017"

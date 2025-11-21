@@ -19,7 +19,7 @@
 // In order to create a particle effect, you must have one of these around and
 // implement IParticleEffect. Pass them both into CParticleMgr::AddEffect and you
 // are good to go.
-class CParticleEffectBinding : public CDefaultClientRenderable
+class CParticleEffectBinding : public IParticleEffectBinding,public CDefaultClientRenderable
 {
 	friend class CParticleMgr;
 	friend class CParticleSimulateIterator;
@@ -32,6 +32,7 @@ public:
 
 	// Helper functions to setup, add particles, etc..
 public:
+	IClientRenderable* GetClientRenderable() { return this; }
 
 	// Simulate all the particles.
 	void			SimulateParticles(float flTimeDelta);
@@ -211,31 +212,14 @@ public:
 	virtual bool					IsTransparent(void);
 	virtual int						DrawModel(int flags);
 
-
+	virtual IParticleEffect* GetParticleEffect() { return m_pSim; }
+	virtual unsigned short	GetListIndex() { return m_ListIndex; }
+	virtual void SetListIndex(unsigned short index) { m_ListIndex = index; };
+	virtual unsigned short GetFrameCode() { return m_FrameCode; }
+	virtual void SetFrameCode(unsigned short code) { m_FrameCode = code; }
 private:
 
-	enum
-	{
-		FLAGS_REMOVE = (1 << 0),	// Set in SetRemoveFlag
-		FLAGS_REMOVALINPROGRESS = (1 << 1), // Set while the effect is being removed to prevent
-		// infinite recursion.
-		FLAGS_NEEDS_BBOX_UPDATE = (1 << 2),	// This is set until the effect's bbox has been updated once.
-		FLAGS_AUTOUPDATEBBOX = (1 << 3),	// Update bbox automatically? Cleared in SetBBox.
-		FLAGS_ALWAYSSIMULATE = (1 << 4), // See SetAlwaysSimulate.
-		FLAGS_DRAWN = (1 << 5),	// Set if the effect is drawn through the leaf system.
-		FLAGS_DRAWN_PREVFRAME = (1 << 6),	// Set if the effect was drawn the previous frame.
-		// This can be used by particle effect classes
-		// to decide whether or not they want to spawn
-		// new particles - if they weren't drawn, then
-		// they can 'freeze' the particle system to avoid
-		// overhead.
-		FLAGS_CAMERASPACE = (1 << 7),	// See SetEffectCameraSpace.
-		FLAGS_DRAW_THRU_LEAF_SYSTEM = (1 << 8),	// This is the default - do the effect's visibility through the leaf system.
-		FLAGS_DRAW_BEFORE_VIEW_MODEL = (1 << 9),// Draw before the view model? If this is set, it assumes FLAGS_DRAW_THRU_LEAF_SYSTEM goes off.
-		FLAGS_AUTOAPPLYLOCALTRANSFORM = (1 << 10), // Automatically apply the local transform to CParticleMgr::GetModelView()'s matrix.
-		FLAGS_FIRST_FRAME = (1 << 11),	// Cleared after the first frame that this system exists (so it can simulate after rendering once).
-		FLAGS_NEW_PARTICLE_SYSTEM = (1 << 12) // uses new particle system
-	};
+
 
 
 	VMatrix m_LocalSpaceTransform;
@@ -286,11 +270,6 @@ inline const matrix3x4_t& CParticleEffectBinding::GetLocalSpaceTransform() const
 {
 	return m_LocalSpaceTransform.As3x4();
 }
-
-enum
-{
-	TOOLPARTICLESYSTEMID_INVALID = -1,
-};
 
 // ------------------------------------------------------------------------------------------------ //
 // CParticleEffect is the base class that you can derive from to make a particle effect.

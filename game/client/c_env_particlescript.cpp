@@ -71,7 +71,7 @@ private:
 	bool m_bSimulate;
 };
 
-REGISTER_EFFECT( C_EnvParticleScript );
+//REGISTER_EFFECT( C_EnvParticleScript );
 
 //-----------------------------------------------------------------------------
 // Datatable

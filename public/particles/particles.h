@@ -299,7 +299,113 @@ public:
 //-----------------------------------------------------------------------------
 typedef int ParticleSystemHandle_t;
 
-class CParticleSystemMgr
+class IParticleSystemMgr
+{
+public:
+	// Constructor, destructor
+	virtual ~IParticleSystemMgr() {}
+
+	// Initialize the particle system
+	virtual bool Init(IParticleSystemQuery* pQuery) = 0;
+
+	// methods to add builtin operators. If you don't call these at startup, you won't be able to sim or draw. These are done separately from Init, so that
+	// the server can omit the code needed for rendering/simulation, if desired.
+	virtual void AddBuiltinSimulationOperators(void) = 0;
+	virtual void AddBuiltinRenderingOperators(void) = 0;
+
+
+
+	// Registration of known operators
+	virtual void AddParticleOperator(ParticleFunctionType_t nOpType, IParticleOperatorDefinition* pOpFactory) = 0;
+
+	// Read a particle config file, add it to the list of particle configs
+	virtual bool ReadParticleConfigFile(const char* pFileName, bool bPrecache, bool bDecommitTempMemory = true) = 0;
+	virtual bool ReadParticleConfigFile(CUtlBuffer& buf, bool bPrecache, bool bDecommitTempMemory = true, const char* pFileName = NULL) = 0;
+	virtual void DecommitTempMemory() = 0;
+
+	// For recording, write a specific particle system to a CUtlBuffer in DMX format
+	virtual bool WriteParticleConfigFile(const char* pParticleSystemName, CUtlBuffer& buf, bool bPreventNameBasedLookup = false) = 0;
+	virtual bool WriteParticleConfigFile(const DmObjectId_t& id, CUtlBuffer& buf, bool bPreventNameBasedLookup = false) = 0;
+
+	// create a particle system by name. returns null if one of that name does not exist
+	virtual CParticleCollection* CreateParticleCollection(const char* pParticleSystemName, float flDelay = 0.0f, int nRandomSeed = 0) = 0;
+
+	// create a particle system given a particle system id
+	virtual CParticleCollection* CreateParticleCollection(const DmObjectId_t& id, float flDelay = 0.0f, int nRandomSeed = 0) = 0;
+
+	// Is a particular particle system defined?
+	virtual bool IsParticleSystemDefined(const char* pParticleSystemName) = 0;
+	virtual bool IsParticleSystemDefined(const DmObjectId_t& id) = 0;
+
+	// Returns the index of the specified particle system. 
+	virtual ParticleSystemHandle_t GetParticleSystemIndex(const char* pParticleSystemName) = 0;
+
+	// Returns the name of the specified particle system.
+	virtual const char* GetParticleSystemNameFromIndex(ParticleSystemHandle_t iIndex) = 0;
+
+	// Return the number of particle systems in our dictionary
+	virtual int GetParticleSystemCount(void) = 0;
+
+	// call to get available particle operator definitions
+	// NOTE: FUNCTION_CHILDREN will return a faked one, for ease of writing the editor
+	virtual CUtlVector< IParticleOperatorDefinition*>& GetAvailableParticleOperatorList(ParticleFunctionType_t nWhichList) = 0;
+
+	// Returns the unpack structure for a particle system definition
+	virtual const DmxElementUnpackStructure_t* GetParticleSystemDefinitionUnpackStructure() = 0;
+
+	// Particle sheet management
+	virtual void ShouldLoadSheets(bool bLoadSheets) = 0;
+	virtual CSheet* FindOrLoadSheet(char const* pszFname, ITexture* pTexture) = 0;
+	virtual CSheet* FindOrLoadSheet(IMaterial* pMaterial) = 0;
+	virtual void FlushAllSheets(void) = 0;
+
+
+	// Render cache used to render opaque particle collections
+	virtual void ResetRenderCache(void) = 0;
+	virtual void AddToRenderCache(CParticleCollection* pParticles) = 0;
+	virtual void DrawRenderCache(bool bShadowDepth) = 0;
+
+	virtual IParticleSystemQuery* Query(void) = 0;
+
+	// return the particle field name
+	virtual const char* GetParticleFieldName(int nParticleField) const = 0;
+
+	// WARNING: the pointer returned by this function may be invalidated 
+	// *at any time* by the editor, so do not ever cache it.
+	virtual CParticleSystemDefinition* FindParticleSystem(const char* pName) = 0;
+	virtual CParticleSystemDefinition* FindParticleSystem(const DmObjectId_t& id) = 0;
+
+	virtual void CommitProfileInformation(bool bCommit) = 0;			// call after simulation, if you want
+	// sim time recorded. if oyu pass
+	// flase, info will be thrown away and
+	// uncomitted time reset.  Having this
+	// function lets you only record
+	// profile data for slow frames if
+	// desired.
+
+
+	virtual void DumpProfileInformation(void) = 0;					// write particle_profile.csv
+
+	// Cache/uncache materials used by particle systems
+	virtual void PrecacheParticleSystem(const char* pName) = 0;
+	virtual void UncacheAllParticleSystems() = 0;
+
+	// Sets the last simulation time, used for particle system sleeping logic
+	virtual void SetLastSimulationTime(float flTime) = 0;
+	virtual float GetLastSimulationTime() const = 0;
+
+	virtual int Debug_GetTotalParticleCount() const = 0;
+	virtual bool Debug_FrameWarningNeededTestAndReset() = 0;
+	virtual float ParticleThrottleScaling() const = 0;		// Returns 1.0 = not restricted, 0.0 = fully restricted (i.e. don't draw!)
+	virtual bool ParticleThrottleRandomEnable() const = 0;	// Retruns a randomish bool to say if you should draw this particle.
+
+	virtual void TallyParticlesRendered(int nVertexCount, int nIndexCount = 0) = 0;
+
+};
+
+extern IParticleSystemMgr* g_pParticleSystemMgr;
+
+class CParticleSystemMgr : public IParticleSystemMgr
 {
 public:
 	// Constructor, destructor
@@ -481,7 +587,6 @@ private:
 	friend class CParticleCollection;
 };
 
-extern CParticleSystemMgr *g_pParticleSystemMgr;
 
 
 //-----------------------------------------------------------------------------

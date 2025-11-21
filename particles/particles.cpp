@@ -115,7 +115,7 @@ static char const *RemapOperatorName( char const *pOpName )
 // Default implementation of particle system mgr
 //-----------------------------------------------------------------------------
 static CParticleSystemMgr s_ParticleSystemMgr;
-CParticleSystemMgr *g_pParticleSystemMgr = &s_ParticleSystemMgr;
+IParticleSystemMgr *g_pParticleSystemMgr = &s_ParticleSystemMgr;
 
 
 int g_nParticle_Multiplier = 1;
@@ -548,7 +548,7 @@ void CParticleSystemDefinition::ParseChildren( CDmxElement *pElement )
 
 		// Check to see if this child has been encountered already, and if not, then
 		// create a new particle definition for this child
-		g_pParticleSystemMgr->AddParticleSystem( pChild );
+		s_ParticleSystemMgr.AddParticleSystem( pChild );
 	}
 }
 
@@ -660,11 +660,11 @@ void CParticleSystemDefinition::WriteChildren( CDmxElement *pElement )
 		CDmxElement *pChildParticleSystem;
 		if ( m_Children[i].m_bUseNameBasedLookup )
 		{
-			pChildParticleSystem = g_pParticleSystemMgr->CreateParticleDmxElement( m_Children[i].m_Name );
+			pChildParticleSystem = s_ParticleSystemMgr.CreateParticleDmxElement( m_Children[i].m_Name );
 		}
 		else
 		{
-			pChildParticleSystem = g_pParticleSystemMgr->CreateParticleDmxElement( m_Children[i].m_Id );
+			pChildParticleSystem = s_ParticleSystemMgr.CreateParticleDmxElement( m_Children[i].m_Id );
 		}
 		pChildRef->SetValue( "name", pChildParticleSystem->GetName() );
 		pChildRef->SetValue( "child", pChildParticleSystem );
@@ -1959,7 +1959,7 @@ void CParticleCollection::Simulate( float dt, bool updateBboxOnly )
 
 	if (!HasAttachedKillList())
 	{
-		g_pParticleSystemMgr->AttachKillList(this);
+		s_ParticleSystemMgr.AttachKillList(this);
 		bAttachedKillList = true;
 	}
 
@@ -2105,7 +2105,7 @@ void CParticleCollection::Simulate( float dt, bool updateBboxOnly )
 	}
 
 	if (bAttachedKillList)
-		g_pParticleSystemMgr->DetachKillList(this);
+		s_ParticleSystemMgr.DetachKillList(this);
 
 	UpdatePrevControlPoints(dt);
 

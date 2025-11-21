@@ -1155,7 +1155,7 @@ Particle *CParticleEffect::AddParticle( unsigned int particleSize, PMaterialHand
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
 
-REGISTER_EFFECT_USING_CREATE( CSimpleEmitter );
+//REGISTER_EFFECT_USING_CREATE( CSimpleEmitter );
 
 CSimpleEmitter::CSimpleEmitter( const char *pDebugName ) : CParticleEffect( pDebugName )
 {

@@ -203,16 +203,16 @@ public:
 
 	void			LevelInit();
 
-	void			RegisterEffect( const char *pEffectType, CreateParticleEffectFN func );
-	IParticleEffect	*CreateEffect( const char *pEffectType );
+	//void			RegisterEffect( const char *pEffectType, CreateParticleEffectFN func );
+	//IParticleEffect	*CreateEffect( const char *pEffectType );
 
 	// Add and remove effects from the active list.
 	// Note: once you call AddEffect, CParticleEffectBinding will automatically call
 	//       RemoveEffect in its destructor.
 	// Note: it's much safer to call CParticleEffectBinding::SetRemoveFlag instead of
 	//       CParticleMgr::RemoveEffect.
-	bool			AddEffect( CParticleEffectBinding *pEffect, IParticleEffect *pSim );
-	void			RemoveEffect( CParticleEffectBinding *pEffect );
+	bool			AddEffect( IParticleEffectBinding *pEffect, IParticleEffect *pSim );
+	void			RemoveEffect( IParticleEffectBinding *pEffect );
 
 	void			AddEffect( INewParticleEffect *pEffect );
 	void			RemoveEffect( INewParticleEffect *pEffect );
@@ -279,7 +279,7 @@ public:
 	void StatsReset();
 	void StatsSpewResults();
 	void StatsNewParticleEffectDrawn ( INewParticleEffect *pParticles );
-	void StatsOldParticleEffectDrawn ( CParticleEffectBinding *pParticles );
+	void StatsOldParticleEffectDrawn ( IParticleEffectBinding *pParticles );
 
 	IMaterialSystem* GetMaterialSystem() {
 		return m_pMaterialSystem;
@@ -327,7 +327,7 @@ private:
 	bool							m_bRenderParticleEffects;
 
 	// All the active effects.
-	CUtlLinkedList<CParticleEffectBinding*, unsigned short>		m_Effects;
+	CUtlLinkedList<IParticleEffectBinding*, unsigned short>		m_Effects;
 
 	// all the active effects using the new particle interface
 	CUtlIntrusiveDList< CNewParticleEffect > m_NewEffects;
@@ -344,7 +344,7 @@ private:
 	CUtlDict<CParticleSubTexture*,unsigned short>		m_SubTextures;		// lookup by material name
 	CParticleSubTexture m_DefaultInvalidSubTexture; // Used when they specify an invalid material name.
 
-	CUtlMap< const char*, CreateParticleEffectFN > m_effectFactories;
+	//CUtlMap< const char*, CreateParticleEffectFN > m_effectFactories;
 
 	int m_nToolParticleEffectId;
 
@@ -392,7 +392,7 @@ CParticleMgr* GetParticleMgr();
 
 
 
-#include "particle_iterators.h"
+//#include "particle_iterators.h"
 
 
 #endif

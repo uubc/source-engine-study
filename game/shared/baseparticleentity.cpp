@@ -28,7 +28,7 @@ END_PREDICTION_DATA()
 #endif
 
 #ifdef CLIENT_DLL
-REGISTER_EFFECT( CBaseParticleEntity );
+//REGISTER_EFFECT( CBaseParticleEntity );
 #endif
 
 CBaseParticleEntity::CBaseParticleEntity( void )

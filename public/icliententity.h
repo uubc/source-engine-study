@@ -1624,7 +1624,6 @@ public:
 	IMaterial* m_pMaterial;
 };
 
-class CParticleEffectBinding;
 class CParticleSimulateIterator;
 class CParticleRenderIterator;
 
@@ -1761,6 +1760,7 @@ abstract_class IParticleEffect
 
 class INewParticleEffect : public IParticleEffect {
 public:
+	virtual			~INewParticleEffect() {}
 	virtual CParticleCollection* GetParticleCollection() = 0;
 	virtual IClientRenderable* GetClientRenderable() = 0;
 	virtual IClientEntity* GetOwner(void) = 0;
@@ -1782,7 +1782,64 @@ public:
 	virtual void		Release() = 0;
 };
 
-typedef IParticleEffect* (*CreateParticleEffectFN)();
+class IParticleMgr;
+
+class IParticleEffectBinding {
+public:
+	enum
+	{
+		FLAGS_REMOVE = (1 << 0),	// Set in SetRemoveFlag
+		FLAGS_REMOVALINPROGRESS = (1 << 1), // Set while the effect is being removed to prevent
+		// infinite recursion.
+		FLAGS_NEEDS_BBOX_UPDATE = (1 << 2),	// This is set until the effect's bbox has been updated once.
+		FLAGS_AUTOUPDATEBBOX = (1 << 3),	// Update bbox automatically? Cleared in SetBBox.
+		FLAGS_ALWAYSSIMULATE = (1 << 4), // See SetAlwaysSimulate.
+		FLAGS_DRAWN = (1 << 5),	// Set if the effect is drawn through the leaf system.
+		FLAGS_DRAWN_PREVFRAME = (1 << 6),	// Set if the effect was drawn the previous frame.
+		// This can be used by particle effect classes
+		// to decide whether or not they want to spawn
+		// new particles - if they weren't drawn, then
+		// they can 'freeze' the particle system to avoid
+		// overhead.
+		FLAGS_CAMERASPACE = (1 << 7),	// See SetEffectCameraSpace.
+		FLAGS_DRAW_THRU_LEAF_SYSTEM = (1 << 8),	// This is the default - do the effect's visibility through the leaf system.
+		FLAGS_DRAW_BEFORE_VIEW_MODEL = (1 << 9),// Draw before the view model? If this is set, it assumes FLAGS_DRAW_THRU_LEAF_SYSTEM goes off.
+		FLAGS_AUTOAPPLYLOCALTRANSFORM = (1 << 10), // Automatically apply the local transform to CParticleMgr::GetModelView()'s matrix.
+		FLAGS_FIRST_FRAME = (1 << 11),	// Cleared after the first frame that this system exists (so it can simulate after rendering once).
+		FLAGS_NEW_PARTICLE_SYSTEM = (1 << 12) // uses new particle system
+	};
+
+	virtual			~IParticleEffectBinding() {}
+	virtual void			Init(IParticleMgr* pMgr, IParticleEffect* pSim) = 0;
+	virtual IParticleEffect* GetParticleEffect() = 0;
+	virtual IClientRenderable* GetClientRenderable() = 0;
+	virtual unsigned short	GetListIndex() = 0;
+	virtual void SetListIndex(unsigned short index) = 0;
+	virtual int				GetRemovalInProgressFlag() = 0;
+	virtual void			SetRemovalInProgressFlag() = 0;
+	virtual void SetFrameCode(unsigned short code) = 0;
+	virtual unsigned short GetFrameCode() = 0;
+	virtual int				WasDrawnPrevFrame() = 0;
+	virtual void			SetWasDrawnPrevFrame(int bWasDrawnPrevFrame) = 0;
+	virtual int				WasDrawn() = 0;
+	virtual void			SetDrawn(int bDrawn) = 0;
+	virtual void			SetFlag(int flag, int bOn) = 0;
+	virtual int				GetFlag(int flag) const = 0;
+	virtual int				GetRemoveFlag() = 0;
+	virtual void			SetRemoveFlag() = 0;
+	virtual int				GetNeedsBBoxUpdate() = 0;
+	virtual void			SetNeedsBBoxUpdate(int bFirstUpdate) = 0;
+	virtual int				GetAutoUpdateBBox() = 0;
+	virtual void			SetAutoUpdateBBox(int bAutoUpdate) = 0;
+	virtual bool			RecalculateBoundingBox() = 0;
+	virtual int				GetFirstFrameFlag() = 0;
+	virtual void			SetFirstFrameFlag(int bFirstUpdate) = 0;
+	virtual void			SimulateParticles(float flTimeDelta) = 0;
+	virtual void			DetectChanges() = 0;
+
+};
+
+//typedef IParticleEffect* (*CreateParticleEffectFN)();
 
 abstract_class IParticleMgr{
 public:
@@ -1803,11 +1860,11 @@ public:
 	virtual	IMaterial* PMaterialToIMaterial(PMaterialHandle hMaterial) = 0;
 	virtual void RepairPMaterial(PMaterialHandle hMaterial) = 0;
 
-	virtual	void			RegisterEffect(const char* pEffectType, CreateParticleEffectFN func) = 0;
-	virtual	IParticleEffect* CreateEffect(const char* pEffectType) = 0;
+	//virtual	void			RegisterEffect(const char* pEffectType, CreateParticleEffectFN func) = 0;
+	//virtual	IParticleEffect* CreateEffect(const char* pEffectType) = 0;
 
-	virtual	bool			AddEffect(CParticleEffectBinding* pEffect, IParticleEffect* pSim) = 0;
-	virtual	void			RemoveEffect(CParticleEffectBinding* pEffect) = 0;
+	virtual	bool			AddEffect(IParticleEffectBinding* pEffect, IParticleEffect* pSim) = 0;
+	virtual	void			RemoveEffect(IParticleEffectBinding* pEffect) = 0;
 
 	virtual	void			AddEffect(INewParticleEffect* pEffect) = 0;
 	virtual	void			RemoveEffect(INewParticleEffect* pEffect) = 0;
@@ -1838,8 +1895,10 @@ public:
 	virtual CParticleSubTexture* GetDefaultInvalidSubTexture() = 0;
 
 	virtual bool IsStatsRunning() = 0;
-	virtual void StatsOldParticleEffectDrawn(CParticleEffectBinding* pParticles) = 0;
+	virtual void StatsOldParticleEffectDrawn(IParticleEffectBinding* pParticles) = 0;
 };
+
+#define CLIENT_DLL_PARTICLEMGR_VERSION		"ParticleMgr"
 
 extern IParticleMgr* ParticleMgr();
 
@@ -1884,33 +1943,45 @@ inline void SwapParticles(Particle* pPrev, Particle* pCur)
 	InsertParticleBefore(pCur, pPrev);
 }
 
-#define REGISTER_EFFECT( effect )														\
-	IParticleEffect* effect##_Factory()													\
-	{																					\
-		return new effect;																\
-	}																					\
-	struct effect##_RegistrationHelper													\
-	{																					\
-		effect##_RegistrationHelper()													\
-		{																				\
-			ParticleMgr()->RegisterEffect( typeid( effect ).name(), effect##_Factory );	\
-		}																				\
-	};																					\
-	static effect##_RegistrationHelper g_##effect##_RegistrationHelper
+#define NUM_PARTICLES_PER_BATCH 200
+#ifndef _XBOX
+#define MAX_TOTAL_PARTICLES		2048	// Max particles in the world
+#else
+#define MAX_TOTAL_PARTICLES		1024
+#endif
 
-#define REGISTER_EFFECT_USING_CREATE( effect )											\
-	IParticleEffect* effect##_Factory()													\
-	{																					\
-		return effect::Create( #effect ).GetObject();									\
-	}																					\
-	struct effect##_RegistrationHelper													\
-	{																					\
-		effect##_RegistrationHelper()													\
-		{																				\
-			ParticleMgr()->RegisterEffect( typeid( effect ).name(), effect##_Factory );	\
-		}																				\
-	};																					\
-	static effect##_RegistrationHelper g_##effect##_RegistrationHelper
+enum
+{
+	TOOLPARTICLESYSTEMID_INVALID = -1,
+};
+
+//#define REGISTER_EFFECT( effect )														\
+//	IParticleEffect* effect##_Factory()													\
+//	{																					\
+//		return new effect;																\
+//	}																					\
+//	struct effect##_RegistrationHelper													\
+//	{																					\
+//		effect##_RegistrationHelper()													\
+//		{																				\
+//			ParticleMgr()->RegisterEffect( typeid( effect ).name(), effect##_Factory );	\
+//		}																				\
+//	};																					\
+//	static effect##_RegistrationHelper g_##effect##_RegistrationHelper
+
+//#define REGISTER_EFFECT_USING_CREATE( effect )											\
+//	IParticleEffect* effect##_Factory()													\
+//	{																					\
+//		return effect::Create( #effect ).GetObject();									\
+//	}																					\
+//	struct effect##_RegistrationHelper													\
+//	{																					\
+//		effect##_RegistrationHelper()													\
+//		{																				\
+//			ParticleMgr()->RegisterEffect( typeid( effect ).name(), effect##_Factory );	\
+//		}																				\
+//	};																					\
+//	static effect##_RegistrationHelper g_##effect##_RegistrationHelper
 
 #define INVALID_MATERIAL_HANDLE	NULL
 
