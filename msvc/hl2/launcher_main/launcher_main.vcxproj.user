@@ -6,6 +6,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>-game hl2 -w 1280 -h 720 -windowed -language schinese -audiolanguage schinese</LocalDebuggerCommandArguments>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerCommandArgumentsHistory>-game hl2 -w 1280 -h 720 -windowed -language schinese -audiolanguage schinese|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerCommand>C:\Games\Half-Life 2\hl2_launcher.exe</LocalDebuggerCommand>
@@ -13,5 +14,6 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>-game cstrike -w 1280 -h 720 -windowed -language schinese -audiolanguage schinese</LocalDebuggerCommandArguments>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerCommandArgumentsHistory>-game cstrike -w 1280 -h 720 -windowed -language schinese -audiolanguage schinese|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
 </Project>
